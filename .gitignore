@@ -1,0 +1,9 @@
+.idea/
+build/
+
+# configuration
+*.toml
+*.json
+
+# coverage
+coverage.out
