@@ -4,5 +4,7 @@ go 1.14
 
 require (
 	github.com/cosmos/cosmos-sdk v0.38.4
-	github.com/desmos-labs/juno v0.0.0-20200417104809-f00f004c35a1
+	github.com/desmos-labs/juno v0.0.0-20200610142034-96785421ad58
+	github.com/rs/zerolog v1.18.0
+	github.com/tendermint/tendermint v0.33.3
 )

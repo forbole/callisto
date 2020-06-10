@@ -41,3 +41,56 @@ CREATE TABLE transaction
     signatures jsonb                       NOT NULL DEFAULT '[]'::jsonb,
     memo       character varying(256)
 );
+
+--- CUSTOM ----------------------------------------------
+
+CREATE TABLE validator_description
+(
+    id               SERIAL PRIMARY KEY,
+    moniker          TEXT,
+    identify         TEXT,
+    website          TEXT,
+    security_contact TEXT,
+    DETAILS          TEXT
+);
+
+CREATE TABLE validator_commission
+(
+    id              SERIAL PRIMARY KEY,
+    current_rate    DECIMAL NOT NULL,
+    max_rate        DECIMAL NOT NULL,
+    max_rate_change DECIMAL NOT NULL,
+    update_time     DATE
+);
+
+CREATE TABLE validator_staking_info
+(
+    validator_address      character varying(40) NOT NULL REFERENCES validator (address),
+    operator_address       TEXT                  NOT NULL,
+    consensus_pubkey       TEXT                  NOT NULL,
+    jailed                 BOOLEAN               NOT NULL,
+    status                 SMALLINT              NOT NULL,
+    tokens                 BIGINT,
+    delegator_shares       DECIMAL               NOT NULL,
+    description_id         INT references validator_description (id),
+    unbonding_height       BIGINT                NOT NULL,
+    unbonding_time         DATE                  NOT NULL,
+    commissions            INT                   NOT NULL references validator_commissions (id),
+    min_self_delegation    INT                   NOT NULL,
+    self_delegation_ration DECIMAL               NOT NULL
+);
+
+CREATE TABLE delegation
+(
+    id                SERIAL PRIMARY KEY,
+    delegator_address TEXT    NOT NULL,
+    validator_address TEXT    NOT NULL references validator_staking_info (operator_address),
+    shares            DECIMAL NOT NULL
+);
+
+CREATE TABLE delegation_balance
+(
+    delegation_id INT     NOT NULL references delegation (id),
+    denom         TEXT    NOT NULL,
+    amount        DECIMAL NOT NULL
+)
