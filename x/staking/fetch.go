@@ -13,16 +13,32 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 )
 
+// getValidatorDetails queries the details of the validator having the given address from the LCD endpoint
 func getValidatorDetails(validatorAddress tmtypes.Address, w worker.Worker) (*staking.Validator, error) {
+	// Create the validator address from the hex string
+	valOperAddr := sdk.ValAddress(validatorAddress.Bytes())
+
+	// Get the validator details
+	var validator staking.Validator
+	endpoint := fmt.Sprintf("staking/validators/%s", valOperAddr.String())
+	if err := w.ClientProxy.QueryLCD(endpoint, &validator); err != nil {
+		return nil, err
+	}
+
+	return &validator, nil
+}
+
+// getValidatorDetails queries the delegations of the validator having the given address from the LCD endpoint
+func getValidatorDelegations(validatorAddress tmtypes.Address, w worker.Worker) (*staking.Delegations, error) {
 	// Create the validator address from the hex string
 	valOperAddr, err := sdk.ValAddressFromHex(hex.EncodeToString(validatorAddress))
 	if err != nil {
 		return nil, err
 	}
 
-	// Get the validator address
-	var validator staking.Validator
-	endpoint := fmt.Sprintf("staking/validators/%s", valOperAddr.String())
+	// Get the validator delegations
+	var validator staking.Delegations
+	endpoint := fmt.Sprintf("staking/validators/%s/delegations", valOperAddr.String())
 	if err := w.ClientProxy.QueryLCD(endpoint, &validator); err != nil {
 		return nil, err
 	}
@@ -35,7 +51,7 @@ func DataFetcher(
 	block *coretypes.ResultBlock, txs []djuno.Tx, vals *tmctypes.ResultValidators, w worker.Worker,
 ) (interface{}, error) {
 
-	var validators []*staking.Validator
+	var validators []ValidatorInfo
 
 	for _, val := range vals.Validators {
 		// Get the validator details
@@ -43,11 +59,16 @@ func DataFetcher(
 		if err != nil {
 			return nil, err
 		}
-		validators = append(validators, validator)
 
-		// TODO: Get the delegations
+		// Get the delegations
+		delegations, err := getValidatorDelegations(val.Address, w)
+		if err != nil {
+			return nil, err
+		}
+
+		validatorInfo := NewValidatorInfo(validator, delegations)
+		validators = append(validators, validatorInfo)
 	}
 
-	// TODO: Return the proper data
-	return nil, nil
+	return validators, nil
 }
