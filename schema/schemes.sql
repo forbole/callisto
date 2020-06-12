@@ -1,4 +1,6 @@
---- COSMOS ----------------------------------------------
+---------------------------------------------------------
+--- STANDARD --------------------------------------------
+---------------------------------------------------------
 
 CREATE TABLE validator
 (
@@ -42,7 +44,17 @@ CREATE TABLE transaction
     memo       character varying(256)
 );
 
---- CUSTOM ----------------------------------------------
+---------------------------------------------------------
+--- STAKING ---------------------------------------------
+---------------------------------------------------------
+
+CREATE TABLE staking_pool
+(
+    height            BIGINT                      NOT NULL,
+    timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    bonded_tokens     BIGINT                      NOT NULL,
+    not_bonded_tokens BIGINT                      NOT NULL
+);
 
 CREATE TABLE validator_description
 (
@@ -75,7 +87,7 @@ CREATE TABLE validator_staking_info
     description_id         INT references validator_description (id),
     unbonding_height       BIGINT                NOT NULL,
     unbonding_time         DATE                  NOT NULL,
-    commissions            INT                   NOT NULL references validator_commissions (id),
+    commissions            INT                   NOT NULL references validator_commission (id),
     min_self_delegation    INT                   NOT NULL,
     self_delegation_ration DECIMAL               NOT NULL
 );

@@ -5,16 +5,16 @@ The BDjuno is working as a backend for Big Dipper. The followings are the featur
 ### Done by Juno by default
 - [x] Parsing all blocks
 - [x] Parsing all transactions
+- [x] Store validator set of the block
 
 ### Custom BDJuno implementations
-- [ ] Update validator information (staking) 
-- [ ] Calculate validator voting power percentage
-- [ ] Calculate validator self delegation ratio
-- [ ] Store validator set of the block
 - [ ] Update miss block records
 - [ ] Read the latest consensus state
+- [ ] Update validator information (staking) 
+- [ ] Calculate validator voting power percentage (staking) 
+- [ ] Calculate validator self delegation ratio (staking)
+- [ ] Update the total staked tokens (staking) 
 - [ ] Update the total supply (supply)
-- [ ] Update the total staked tokens (staking)
 - [ ] Update the inflation (mint)
 - [ ] Update community pool (distribution)
 
