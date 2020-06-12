@@ -8,16 +8,18 @@ import (
 )
 
 // updateValidatorsUptime reads from the LCD the current staking pool and stores its value inside the database
-func updateStakingPool(cp client.ClientProxy, db database.BigDipperDb) {
+func updateStakingPool(cp client.ClientProxy, db database.BigDipperDb) error {
 	log.Debug().Msg("updating staking pool")
 
 	var pool staking.Pool
 	height, err := cp.QueryLCDWithHeight("/staking/pool", &pool)
 	if err != nil {
-		log.Error().Err(err).Send()
+		return err
 	}
 
 	if err := db.SaveStakingPool(height, pool); err != nil {
-		log.Error().Err(err).Send()
+		return err
 	}
+
+	return nil
 }
