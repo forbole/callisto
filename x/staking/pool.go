@@ -7,15 +7,17 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// updateStakingPool reads from the LCD the current staking pool and stores its value inside the database
+// updateValidatorsUptime reads from the LCD the current staking pool and stores its value inside the database
 func updateStakingPool(cp client.ClientProxy, db database.BigDipperDb) {
+	log.Debug().Msg("updating staking pool")
+
 	var pool staking.Pool
 	height, err := cp.QueryLCDWithHeight("/staking/pool", &pool)
 	if err != nil {
-		log.Error().Err(err)
+		log.Error().Err(err).Send()
 	}
 
 	if err := db.SaveStakingPool(height, pool); err != nil {
-		log.Error().Err(err)
+		log.Error().Err(err).Send()
 	}
 }

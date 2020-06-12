@@ -32,8 +32,14 @@ func periodicStakingOperations(scheduler *gocron.Scheduler) parse.AdditionalOper
 		}
 
 		// Setup a cron job to run every 15 seconds
-		if _, err := scheduler.Every(15).Second().Do(func() {
-			go updateStakingPool(cp, bdDatabase)
+		if _, err := scheduler.Every(10).Second().Do(func() {
+			//go updateStakingPool(cp, bdDatabase)
+			go func() {
+				err := updateValidatorsUptime(cp, bdDatabase)
+				if err != nil {
+					log.Error().Err(err).Send()
+				}
+			}()
 		}); err != nil {
 			return err
 		}
