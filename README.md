@@ -17,7 +17,7 @@ To install the binary simply run `make install`.
 Before running the parser, you need to: 
 
 1. Create a [PostgreSQL](https://www.postgresql.org/) database.
-2. Run the SQL queries you find inside the [`schemes.sql` file](schema/schemes.sql) inside such database to create all the necessary tables.
+2. Run the SQL queries you find inside the [`cosmos.sql` file](schema/cosmos.sql) inside such database to create all the necessary tables.
 
 ## Running the parser
 To parse the chain state, you need to use the following command: 
