@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/juno/config"
@@ -9,6 +11,7 @@ import (
 	"github.com/desmos-labs/juno/version"
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/staking"
+	"github.com/go-co-op/gocron"
 )
 
 func main() {
@@ -50,5 +53,12 @@ func SetupConfig(prefix string) func(cfg *sdk.Config) {
 }
 
 func SetupModules() {
-	staking.Setup()
+	// Create the scheduler
+	scheduler := gocron.NewScheduler(time.UTC)
+
+	// Register periodic operations
+	parse.RegisterAdditionalOperation(staking.PeriodicStakingOperations(scheduler))
+
+	// Start the scheduler
+	scheduler.StartAsync()
 }

@@ -1,8 +1,6 @@
 package staking
 
 import (
-	"time"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/desmos-labs/juno/config"
 	"github.com/desmos-labs/juno/db"
@@ -14,16 +12,9 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// Setup setups the staking module to register all the operations that need to be performed
-func Setup() {
-	scheduler := gocron.NewScheduler(time.UTC)
-	parse.RegisterAdditionalOperation(periodicStakingOperations(scheduler))
-	scheduler.StartAsync()
-}
-
-// periodicStakingOperations returns the AdditionalOperation that periodically runs fetches from
+// PeriodicStakingOperations returns the AdditionalOperation that periodically runs fetches from
 // the LCD to make sure that constantly changing data are synced properly.
-func periodicStakingOperations(scheduler *gocron.Scheduler) parse.AdditionalOperation {
+func PeriodicStakingOperations(scheduler *gocron.Scheduler) parse.AdditionalOperation {
 	log.Debug().Str("module", "staking").Msg("setting up 15 secs periodic task")
 
 	return func(_ config.Config, _ *codec.Codec, cp client.ClientProxy, db db.Database) error {
