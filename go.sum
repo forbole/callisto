@@ -84,8 +84,8 @@ github.com/davecgh/go-spew v0.0.0-20171005155431-ecdeabc65495/go.mod h1:J7Y8YcW2
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/desmos-labs/juno v0.0.0-20200612123728-010ffd0b270b h1:jjOlm+9MPVNwpKYiHWGUrQaQSUKOU1ANsLtx5geeHuQ=
-github.com/desmos-labs/juno v0.0.0-20200612123728-010ffd0b270b/go.mod h1:vO/rzafpCjazuhsTl/HN9z08pHdY8E/YxQnyizXbAr8=
+github.com/desmos-labs/juno v0.0.0-20200615084022-e95f19b114df h1:FMgMcvlgqOv3XMjqN/QuzQQJDLRzNFdqb/6DtXAyMZk=
+github.com/desmos-labs/juno v0.0.0-20200615084022-e95f19b114df/go.mod h1:vO/rzafpCjazuhsTl/HN9z08pHdY8E/YxQnyizXbAr8=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
 github.com/dgryski/go-sip13 v0.0.0-20181026042036-e10d5fee7954/go.mod h1:vAd38F8PWV+bWy6jNmig1y/TA+kYO4g3RSRF0IAv0no=
 github.com/dustin/go-humanize v0.0.0-20171111073723-bb3d318650d4/go.mod h1:HtrtbFcZ19U5GC7JDqmcUSB87Iq5E25KnS6fMYU6eOk=
