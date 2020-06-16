@@ -1,4 +1,4 @@
-package auth
+package staking
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -12,10 +12,10 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// PeriodicAuthOperations returns the AdditionalOperation that periodically runs fetches from
+// PeriodicStakingOperations returns the AdditionalOperation that periodically runs fetches from
 // the LCD to make sure that constantly changing data are synced properly.
-func PeriodicAuthOperations(scheduler *gocron.Scheduler) parse.AdditionalOperation {
-	log.Debug().Str("module", "auth").Msg("setting up periodic tasks")
+func PeriodicStakingOperations(scheduler *gocron.Scheduler) parse.AdditionalOperation {
+	log.Debug().Str("module", "staking").Msg("setting up 15 secs periodic task")
 
 	return func(_ config.Config, _ *codec.Codec, cp client.ClientProxy, db db.Database) error {
 		bdDatabase, ok := db.(database.BigDipperDb)
@@ -23,9 +23,17 @@ func PeriodicAuthOperations(scheduler *gocron.Scheduler) parse.AdditionalOperati
 			log.Fatal().Msg("given database instance is not a BigDipperDb")
 		}
 
+		// Setup a cron job to run every 15 seconds
+		if _, err := scheduler.Every(15).Second().Do(func() {
+			utils.WatchMethod(func() error { return updateStakingPool(cp, bdDatabase) })
+			utils.WatchMethod(func() error { return updateValidatorsUptime(cp, bdDatabase) })
+		}); err != nil {
+			return err
+		}
+
 		// Setup a cron job to run every midnight
-		if _, err := scheduler.Every(1).Day().At("00:00").StartImmediately().Do(func() {
-			utils.WatchMethod(func() error { return updateAccounts(cp, bdDatabase) })
+		if _, err := scheduler.Every(1).Day().At("00:00").Do(func() {
+			utils.WatchMethod(func() error { return updateStakingPool(cp, bdDatabase) })
 		}); err != nil {
 			return err
 		}

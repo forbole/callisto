@@ -8,11 +8,8 @@ import (
 	"github.com/desmos-labs/juno/config"
 	"github.com/desmos-labs/juno/executor"
 	"github.com/desmos-labs/juno/parse"
-	"github.com/desmos-labs/juno/parse/worker"
 	"github.com/desmos-labs/juno/version"
 	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/x/auth"
-	"github.com/forbole/bdjuno/x/bank"
 	"github.com/forbole/bdjuno/x/staking"
 	"github.com/go-co-op/gocron"
 )
@@ -56,15 +53,12 @@ func SetupConfig(prefix string) func(cfg *sdk.Config) {
 }
 
 func SetupModules() {
-	// Register genesis handlers
-	worker.RegisterGenesisHandler(auth.GenesisHandler)
-
-	// Register msg handlers
-	worker.RegisterMsgHandler(bank.MsgHandler)
+	// Create the scheduler
+	scheduler := gocron.NewScheduler(time.UTC)
 
 	// Register periodic operations
-	scheduler := gocron.NewScheduler(time.UTC)
 	parse.RegisterAdditionalOperation(staking.PeriodicStakingOperations(scheduler))
-	parse.RegisterAdditionalOperation(auth.PeriodicAuthOperations(scheduler))
+
+	// Start the scheduler
 	scheduler.StartAsync()
 }
