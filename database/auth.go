@@ -42,31 +42,56 @@ func NewDbCoins(coins sdk.Coins) DbCoins {
 
 // SaveAccount saves the given account information for the given block height and timestamp
 func (db BigDipperDb) SaveAccount(account exported.Account, height int64, timestamp time.Time) error {
-	statement := `INSERT INTO account (address, coins, height, timestamp) 
-				  VALUES ($1, $2::coin[], $3, $4) 
-				  ON CONFLICT DO NOTHING`
+	accStmt := `INSERT INTO account (address) VALUES ($1) ON CONFLICT DO NOTHING`
+	_, err := db.Sql.Exec(accStmt, account.GetAddress())
+	if err != nil {
+		return err
+	}
 
-	_, err := db.Sql.Exec(statement,
+	balStmt := `INSERT INTO balance (address, coins, height, timestamp) 
+				VALUES ($1, $2::coin[], $3, $4) ON CONFLICT DO NOTHING`
+	_, err = db.Sql.Exec(balStmt,
 		account.GetAddress().String(), pq.Array(NewDbCoins(account.GetCoins())), height, timestamp)
 	return err
 }
 
 // SaveAccount saves the given accounts information for the given block height and timestamp
 func (db BigDipperDb) SaveAccounts(accounts []exported.Account, height int64, timestamp time.Time) error {
-	var insertParams []interface{}
+	// Do nothing with empty accounts
+	if len(accounts) == 0 {
+		return nil
+	}
 
-	queryInsert := "INSERT INTO account (address, coins, height, timestamp) VALUES "
+	accountsStmt := "INSERT INTO account (address) VALUES "
+	var accountParams []interface{}
+
+	balancesStmt := "INSERT INTO balance (address, coins, height, timestamp) VALUES "
+	var balanceParams []interface{}
+
 	for i, account := range accounts {
-		p1 := i * 4 // Starting position for insert params
+		a1 := i * 1 // Starting position for
+		b1 := i * 4 // Starting position for balances insertion
 
-		queryInsert += fmt.Sprintf("($%d,$%d,$%d,$%d),", p1+1, p1+2, p1+3, p1+4)
-		insertParams = append(insertParams,
+		accountsStmt += fmt.Sprintf("($%d),", a1+1)
+		accountParams = append(accountParams, account.GetAddress().String())
+
+		balancesStmt += fmt.Sprintf("($%d,$%d,$%d,$%d),", b1+1, b1+2, b1+3, b1+4)
+		balanceParams = append(balanceParams,
 			account.GetAddress().String(), pq.Array(NewDbCoins(account.GetCoins())), height, timestamp)
 	}
 
-	queryInsert = queryInsert[:len(queryInsert)-1] // Remove trailing ","
-	queryInsert += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(queryInsert, insertParams...)
+	// Store the accounts
+	accountsStmt = accountsStmt[:len(accountsStmt)-1] // Remove trailing ","
+	accountsStmt += " ON CONFLICT DO NOTHING"
+	_, err := db.Sql.Exec(accountsStmt, accountParams...)
+	if err != nil {
+		return err
+	}
+
+	// Store the balances
+	balancesStmt = balancesStmt[:len(balancesStmt)-1] // Remove trailing ","
+	balancesStmt += " ON CONFLICT DO NOTHING"
+	_, err = db.Sql.Exec(balancesStmt, balanceParams...)
 	return err
 }
 
