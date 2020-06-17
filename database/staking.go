@@ -36,3 +36,47 @@ func (db BigDipperDb) SaveValidatorUptime(uptime ValidatorUptime) error {
 		uptime.Height, uptime.ValidatorAddress.String(), uptime.SignedBlocksWindow, uptime.MissedBlocksCounter)
 	return err
 }
+
+/*
+//getValidatorUptime
+func (db BigDipperDb) GetValidatorUptime(validator sdk.ConsAddress, height int64) (float64, error) {
+	if found, _ := db.HasValidator(validator.String()); !found {
+		return 0, nil
+	}
+	statement := `SELECT signed_blocks_window,missed_blocks_counter FROM validator_uptime WHERE validator_address = $1 and height = $2`
+	rows, err := db.Sql.Query(statement, validator.String(), height)
+	if err != nil {
+		return _, err
+	}
+	var (
+		signed_blocks_window  int64
+		missed_blocks_counter int64
+	)
+	defer rows.Close()
+	//supposed there is only one row(height is unique?)
+	for rows.Next() {
+		if err := rows.Scan(&signed_blocks_window, &missed_blocks_counter); err != nil {
+			return _, err
+		}
+	}
+	uptime := (float64(signed_blocks_window) - float64(missed_blocks_counter)) / float64(signed_blocks_window)
+
+	return uptime, err
+}
+*/
+type ValidatorCommission struct {
+	ValidatorAddress sdk.ConsAddress `db:"validator_address"`
+	Commission       sdk.Dec         `db:"new_commission"`
+}
+
+func (db BigDipperDb) SaveVaildatorComission(v ValidatorCommission) error {
+	if found, _ := db.HasValidator(v.ValidatorAddress.String()); !found {
+		return nil
+	}
+	statement := `INSERT INTO validator_commission (validatorAddress,commissions,timestamp) VALUES ($1,$2,$3)`
+	_, err := db.Sql.Exec(statement,
+		v.ValidatorAddress.String(), v.Commission.String(), time.Now().UTC())
+	return err
+}
+
+//get array of

@@ -20,3 +20,10 @@ CREATE TABLE validator_info
     operator_address  TEXT                  NOT NULL
 );
 
+CREATE TABLE validator_commission
+(
+    validator_address     CHARACTER VARYING(52) NOT NULL REFERENCES validator (consensus_address),
+    timestamp             TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    commission             CHARACTER VARYING(52)              NOT NULL,
+    PRIMARY KEY (validator_address,timestamp)
+);
