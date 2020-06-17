@@ -20,7 +20,7 @@ func PeriodicStakingOperations(scheduler *gocron.Scheduler) parse.AdditionalOper
 	return func(_ config.Config, _ *codec.Codec, cp client.ClientProxy, db db.Database) error {
 		bdDatabase, ok := db.(database.BigDipperDb)
 		if !ok {
-			log.Fatal().Msg("given database instance is not a BigDipperDb")
+			log.Fatal().Str("module", "staking").Msg("given database instance is not a BigDipperDb")
 		}
 
 		// Setup a cron job to run every 15 seconds
@@ -33,6 +33,7 @@ func PeriodicStakingOperations(scheduler *gocron.Scheduler) parse.AdditionalOper
 
 		// Setup a cron job to run every midnight
 		if _, err := scheduler.Every(1).Day().At("00:00").Do(func() {
+			utils.WatchMethod(func() error { return updateDelegations(cp, bdDatabase) })
 			utils.WatchMethod(func() error { return updateStakingPool(cp, bdDatabase) })
 		}); err != nil {
 			return err
