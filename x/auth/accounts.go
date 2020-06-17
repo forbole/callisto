@@ -17,6 +17,11 @@ import (
 func RefreshAccounts(
 	addresses []sdk.AccAddress, height int64, timestamp time.Time, cp client.ClientProxy, db database.BigDipperDb,
 ) error {
+	log.Debug().
+		Str("module", "auth").
+		Str("operation", "accounts").
+		Msg("getting accounts data")
+
 	// Get all the accounts information
 	var accounts []exported.Account
 	for _, address := range addresses {
@@ -31,13 +36,16 @@ func RefreshAccounts(
 		accounts = append(accounts, account)
 	}
 
+	log.Debug().
+		Str("module", "auth").
+		Str("operation", "accounts").
+		Msg("saving accounts data")
 	return db.SaveAccounts(accounts, height, timestamp)
 }
 
 // updateAccounts gets all the accounts stored inside the database, and refreshes their
 // balances by fetching the LCD endpoint.
 func updateAccounts(cp client.ClientProxy, db database.BigDipperDb) error {
-	log.Debug().Str("module_name", "auth").Msg("updating accounts")
 
 	var block tmctypes.ResultBlock
 	err := cp.QueryLCD("/blocks/latest", &block)
