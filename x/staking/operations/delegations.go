@@ -1,4 +1,4 @@
-package staking
+package operations
 
 import (
 	"fmt"
@@ -11,8 +11,8 @@ import (
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
 
-// updateDelegations updates all the validators delegations
-func updateDelegations(cp client.ClientProxy, db database.BigDipperDb) error {
+// UpdateDelegations updates all the validators delegations
+func UpdateDelegations(cp client.ClientProxy, db database.BigDipperDb) error {
 	log.Debug().
 		Str("module", "staking").
 		Str("operation", "delegations").

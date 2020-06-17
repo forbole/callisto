@@ -17,6 +17,33 @@ type Validator interface {
 	GetOperator() sdk.ValAddress
 }
 
+// validator allows to easily implement the Validator interface
+type validator struct {
+	ConsensusAddr sdk.ConsAddress
+	ConsPubKey    crypto.PubKey
+	OperatorAddr  sdk.ValAddress
+}
+
+func (v validator) GetConsAddr() sdk.ConsAddress {
+	return v.ConsensusAddr
+}
+
+func (v validator) GetConsPubKey() crypto.PubKey {
+	return v.ConsPubKey
+}
+
+func (v validator) GetOperator() sdk.ValAddress {
+	return v.OperatorAddr
+}
+
+func NewValidator(consAddr sdk.ConsAddress, opAddr sdk.ValAddress, consPubKey crypto.PubKey) Validator {
+	return validator{
+		ConsensusAddr: consAddr,
+		ConsPubKey:    consPubKey,
+		OperatorAddr:  opAddr,
+	}
+}
+
 // ValidatorUptime contains the uptime information of a single
 // validator for a specific height and point in time
 type ValidatorUptime struct {

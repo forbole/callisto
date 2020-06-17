@@ -9,5 +9,6 @@ require (
 	github.com/jmoiron/sqlx v1.2.1-0.20200324155115-ee514944af4b
 	github.com/lib/pq v1.3.0
 	github.com/rs/zerolog v1.18.0
+	github.com/stretchr/testify v1.5.1
 	github.com/tendermint/tendermint v0.33.3
 )
