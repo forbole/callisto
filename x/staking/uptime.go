@@ -7,11 +7,15 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/desmos-labs/juno/parse/client"
 	"github.com/forbole/bdjuno/database"
+	"github.com/forbole/bdjuno/x/staking/types"
 	"github.com/rs/zerolog/log"
 )
 
 func updateValidatorsUptime(cp client.ClientProxy, db database.BigDipperDb) error {
-	log.Debug().Msg("updating validators uptime")
+	log.Debug().
+		Str("module", "staking").
+		Str("operation", "uptime").
+		Msg("getting validators uptime")
 
 	// Get the staking parameters
 	var params slashing.Params
@@ -33,16 +37,26 @@ func updateValidatorsUptime(cp client.ClientProxy, db database.BigDipperDb) erro
 	}
 
 	// Store the signing infos into the database
+	log.Debug().
+		Str("module", "staking").
+		Str("operation", "uptime").
+		Msg("saving validators uptime")
+
 	for _, info := range signingInfo {
-		validatorUptime := database.ValidatorUptime{
+		validatorUptime := types.ValidatorUptime{
 			Height:              height,
 			ValidatorAddress:    info.Address,
 			SignedBlocksWindow:  params.SignedBlocksWindow,
 			MissedBlocksCounter: info.MissedBlocksCounter,
 		}
 
+		// Skip non existing validators
+		if found, _ := db.HasValidator(info.Address.String()); !found {
+			continue
+		}
+
+		// Save the validator uptime information
 		if err := db.SaveValidatorUptime(validatorUptime); err != nil {
-			log.Debug().Str("validator_address", info.Address.String()).Msg("saving validator update")
 			return err
 		}
 	}
@@ -51,20 +65,30 @@ func updateValidatorsUptime(cp client.ClientProxy, db database.BigDipperDb) erro
 }
 
 func updateValidators(height int64, cp client.ClientProxy, db database.BigDipperDb) error {
+	log.Debug().
+		Str("module", "staking").
+		Str("operation", "validators").
+		Msg("getting validators data")
+
 	statuses := []string{"bonded", "unbonded", "unbonding"}
 
 	// Get all the validators in any state
-	var validators staking.Validators
+	var validators []types.Validator
 	for _, status := range statuses {
-		var validatorSet staking.Validators
+		var validatorSet []staking.Validator
 		endpoint := fmt.Sprintf("/staking/validators?status=%s&height=%d", status, height)
 		if _, err := cp.QueryLCDWithHeight(endpoint, &validatorSet); err != nil {
 			return err
 		}
 
-		validators = append(validators, validatorSet...)
+		for _, validator := range validatorSet {
+			validators = append(validators, validator)
+		}
 	}
 
-	log.Debug().Int("validators", len(validators)).Msg("updating validators")
+	log.Debug().
+		Str("module", "staking").
+		Str("operation", "validators").
+		Msg("saving validators data")
 	return db.SaveValidators(validators)
 }

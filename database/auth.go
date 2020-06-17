@@ -1,43 +1,20 @@
 package database
 
 import (
-	"database/sql/driver"
 	"fmt"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/exported"
+	"github.com/forbole/bdjuno/database/types"
 	"github.com/lib/pq"
 )
 
 type AccountRow struct {
-	Address   string    `db:"address"`
-	Coins     DbCoin    `db:"coins"`
-	Height    int64     `db:"height"`
-	Timestamp time.Time `db:"height"`
-}
-
-// DbCoin represents the information stored inside the database about a single coin
-type DbCoin struct {
-	Denom  string
-	Amount int64
-}
-
-// Value implements driver.Valuer
-func (coin *DbCoin) Value() (driver.Value, error) {
-	return fmt.Sprintf("(%s,%d)", coin.Denom, coin.Amount), nil
-}
-
-// DbCoins represents an array of coins
-type DbCoins []*DbCoin
-
-// NewDbCoins build a new DbCoins object starting from an array of coins
-func NewDbCoins(coins sdk.Coins) DbCoins {
-	dbCoins := make([]*DbCoin, 0)
-	for _, coin := range coins {
-		dbCoins = append(dbCoins, &DbCoin{Amount: coin.Amount.Int64(), Denom: coin.Denom})
-	}
-	return dbCoins
+	Address   string       `db:"address"`
+	Coins     types.DbCoin `db:"coins"`
+	Height    int64        `db:"height"`
+	Timestamp time.Time    `db:"height"`
 }
 
 // SaveAccount saves the given account information for the given block height and timestamp
@@ -51,7 +28,7 @@ func (db BigDipperDb) SaveAccount(account exported.Account, height int64, timest
 	balStmt := `INSERT INTO balance (address, coins, height, timestamp) 
 				VALUES ($1, $2::coin[], $3, $4) ON CONFLICT DO NOTHING`
 	_, err = db.Sql.Exec(balStmt,
-		account.GetAddress().String(), pq.Array(NewDbCoins(account.GetCoins())), height, timestamp)
+		account.GetAddress().String(), pq.Array(types.NewDbCoins(account.GetCoins())), height, timestamp)
 	return err
 }
 
@@ -77,7 +54,7 @@ func (db BigDipperDb) SaveAccounts(accounts []exported.Account, height int64, ti
 
 		balancesStmt += fmt.Sprintf("($%d,$%d,$%d,$%d),", b1+1, b1+2, b1+3, b1+4)
 		balanceParams = append(balanceParams,
-			account.GetAddress().String(), pq.Array(NewDbCoins(account.GetCoins())), height, timestamp)
+			account.GetAddress().String(), pq.Array(types.NewDbCoins(account.GetCoins())), height, timestamp)
 	}
 
 	// Store the accounts
@@ -95,8 +72,7 @@ func (db BigDipperDb) SaveAccounts(accounts []exported.Account, height int64, ti
 	return err
 }
 
-// GetPollByPostID returns the poll row associated to the post having the specified id.
-// If the post with the same id has no poll associated to it, nil is returned instead.
+// GetAccounts returns all the accounts that are currently stored inside the database.
 func (db BigDipperDb) GetAccounts() ([]sdk.AccAddress, error) {
 	sqlStmt := `SELECT DISTINCT address from account`
 

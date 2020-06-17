@@ -20,7 +20,7 @@ func PeriodicAuthOperations(scheduler *gocron.Scheduler) parse.AdditionalOperati
 	return func(_ config.Config, _ *codec.Codec, cp client.ClientProxy, db db.Database) error {
 		bdDatabase, ok := db.(database.BigDipperDb)
 		if !ok {
-			log.Fatal().Msg("given database instance is not a BigDipperDb")
+			log.Fatal().Str("module", "auth").Msg("given database instance is not a BigDipperDb")
 		}
 
 		// Setup a cron job to run every midnight
