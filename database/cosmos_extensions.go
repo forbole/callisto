@@ -13,19 +13,18 @@ func (db BigDipperDb) SaveValidators(validators []staking.Validator) error {
 
 	queryInsert := "INSERT INTO validator (consensus_address, consensus_pubkey) VALUES "
 	for i, result := range validators {
-		p1 := i * 2 // starting position for insert params
+		p1 := i * 2 // Starting position for insert params
 
-		queryInsert += fmt.Sprintf("($%d,$%d),", p1+1, p1+2)
-
-		key, err := sdk.Bech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, result.ConsPubKey)
+		publicKey, err := sdk.Bech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, result.ConsPubKey)
 		if err != nil {
 			return err
 		}
 
-		insertParams = append(insertParams, result.ConsAddress().String(), key)
+		queryInsert += fmt.Sprintf("($%d,$%d),", p1+1, p1+2)
+		insertParams = append(insertParams, result.ConsAddress().String(), publicKey)
 	}
 
-	queryInsert = queryInsert[:len(queryInsert)-1] // remove trailing ","
+	queryInsert = queryInsert[:len(queryInsert)-1] // Remove trailing ","
 	queryInsert += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(queryInsert, insertParams...)
 	return err

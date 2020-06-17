@@ -15,7 +15,7 @@ import (
 // PeriodicStakingOperations returns the AdditionalOperation that periodically runs fetches from
 // the LCD to make sure that constantly changing data are synced properly.
 func PeriodicStakingOperations(scheduler *gocron.Scheduler) parse.AdditionalOperation {
-	log.Debug().Str("module", "staking").Msg("setting up 15 secs periodic task")
+	log.Debug().Str("module", "staking").Msg("setting up periodic tasks")
 
 	return func(_ config.Config, _ *codec.Codec, cp client.ClientProxy, db db.Database) error {
 		bdDatabase, ok := db.(database.BigDipperDb)
@@ -24,7 +24,7 @@ func PeriodicStakingOperations(scheduler *gocron.Scheduler) parse.AdditionalOper
 		}
 
 		// Setup a cron job to run every 15 seconds
-		if _, err := scheduler.Every(15).Second().Do(func() {
+		if _, err := scheduler.Every(15).Second().StartImmediately().Do(func() {
 			utils.WatchMethod(func() error { return updateStakingPool(cp, bdDatabase) })
 			utils.WatchMethod(func() error { return updateValidatorsUptime(cp, bdDatabase) })
 		}); err != nil {
