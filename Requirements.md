@@ -8,12 +8,12 @@ The BDjuno is working as a backend for Big Dipper. The followings are the featur
 - [x] Store validator set of the block
 
 ### Custom BDJuno implementations
-- [ ] Update miss block records
+- [x] Update miss block records
 - [ ] Read the latest consensus state
 - [ ] Update validator information (staking) 
 - [ ] Calculate validator voting power percentage (staking) 
 - [ ] Calculate validator self delegation ratio (staking)
-- [ ] Update the total staked tokens (staking) 
+- [x] Update the total staked tokens (staking) 
 - [ ] Update the total supply (supply)
 - [ ] Update the inflation (mint)
 - [ ] Update community pool (distribution)
@@ -23,7 +23,7 @@ The BDjuno is working as a backend for Big Dipper. The followings are the featur
 
 ## On intervals
 - [ ] Calculate average block time (per minute, per hour, per day)
-- [ ] Calculate average delagtion ratio (per hour, per day)
+- [ ] Calculate average delegation ratio (per hour, per day)
 - [ ] Calculate voting power distribution (per hour)
 - [ ] Record all delegations (per day)
 - [ ] Record all undelegatios (per day)
