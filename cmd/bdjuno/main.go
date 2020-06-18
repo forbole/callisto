@@ -68,10 +68,6 @@ func SetupModules() {
 	worker.RegisterMsgHandler(bank.MsgHandler)
 	worker.RegisterMsgHandler(staking.MsgHandler)
 
-
-
-	scheduler := gocron.NewScheduler(time.UTC)
-
 	// Register periodic operations
 	scheduler := gocron.NewScheduler(time.UTC)
 	parse.RegisterAdditionalOperation(staking.PeriodicStakingOperations(scheduler))

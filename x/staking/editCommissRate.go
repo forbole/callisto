@@ -38,7 +38,6 @@ func StoreModifiedCommission(msg staking.MsgEditValidator, cp client.ClientProxy
 	//should I take from REST or store the message?
 	//store the message
 	address := msg.ValidatorAddress
-	commission := msg.CommissionRate
 	if found, _ := db.HasValidator(address.String()); !found {
 		return nil
 	}
