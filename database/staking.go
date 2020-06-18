@@ -42,8 +42,8 @@ func (db BigDipperDb) SaveVaildatorComission(v staking.Validator, height int64) 
 	if found, _ := db.HasValidator(v.OperatorAddress.String()); !found {
 		return nil
 	}
-	statement := `INSERT INTO validator_commission (validatorAddress,commissions,height,timestamp) VALUES ($1,$2,$3,$4)`
+	statement := `INSERT INTO validator_commission (validatorAddress,commissions,min_self_delegtion,height,timestamp) VALUES ($1,$2,$3,$4)`
 	_, err := db.Sql.Exec(statement,
-		v.OperatorAddress.String(), v.Commission.Rate.String(), height,time.Now().UTC())
+		v.OperatorAddress.String(), v.Commission.Rate ,v.MinSelfDelegation, height,time.Now().UTC())
 	return err
 }
