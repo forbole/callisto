@@ -38,6 +38,7 @@ func (db BigDipperDb) SaveValidatorUptime(uptime ValidatorUptime) error {
 	_, err := db.Sql.Exec(statement,
 		uptime.Height, uptime.ValidatorAddress.String(), uptime.SignedBlocksWindow, uptime.MissedBlocksCounter)
 
+	return nil
 }
 
 // GetAccounts returns all the accounts that are currently stored inside the database.
