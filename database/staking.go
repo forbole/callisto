@@ -38,6 +38,7 @@ func (db BigDipperDb) SaveValidatorUptime(uptime ValidatorUptime) error {
 	_, err := db.Sql.Exec(statement,
 		uptime.Height, uptime.ValidatorAddress.String(), uptime.SignedBlocksWindow, uptime.MissedBlocksCounter)
 
+}
 
 // GetAccounts returns all the accounts that are currently stored inside the database.
 func (db BigDipperDb) GetValidators() ([]bstaking.Validator, error) {
@@ -119,28 +120,15 @@ func (db BigDipperDb) SaveValidators(validators []bstaking.Validator) error {
 	return err
 }
 
-// SaveValidatorUptime stores into the database the given validator uptime information.
-// It assumes that for each uptime information provided, the associated validator data
-// have already been saved inside the database properly.
-func (db BigDipperDb) SaveValidatorUptime(uptime bstaking.ValidatorUptime) error {
-	statement := `INSERT INTO validator_uptime (height, validator_address, signed_blocks_window, missed_blocks_counter)
-				  VALUES ($1, $2, $3, $4)`
-	_, err := db.Sql.Exec(statement,
-		uptime.Height, uptime.ValidatorAddress.String(), uptime.SignedBlocksWindow, uptime.MissedBlocksCounter)
-	return err
-}
-
-
 func (db BigDipperDb) SaveVaildatorComission(v staking.Validator, height int64) error {
 	if found, _ := db.HasValidator(v.OperatorAddress.String()); !found {
 		return nil
 	}
 	statement := `INSERT INTO validator_commission (validatorAddress,commissions,min_self_delegtion,discription,height,timestamp) VALUES ($1,$2,$3,$4,$5)`
 	_, err := db.Sql.Exec(statement,
-		v.OperatorAddress.String(), v.Commission.Rate ,v.MinSelfDelegation,v.Description.Details, height,time.Now().UTC())
+		v.OperatorAddress.String(), v.Commission.Rate, v.MinSelfDelegation, v.Description.Details, height, time.Now().UTC())
 	return nil
 }
-
 
 // SaveValidatorsDelegations stores into the database the given validator delegations information.
 // It assumes that for each delegation information provided, the associated validator data
