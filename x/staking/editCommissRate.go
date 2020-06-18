@@ -1,17 +1,16 @@
 package staking
 
 import (
-	
-	"github.com/desmos-labs/juno/parse/worker"
-	"github.com/forbole/bdjuno/database"
-	"github.com/rs/zerolog/log"
-	"github.com/desmos-labs/juno/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/desmos-labs/juno/parse/client"
+	"github.com/desmos-labs/juno/parse/worker"
+	"github.com/desmos-labs/juno/types"
+	"github.com/forbole/bdjuno/database"
+	"github.com/rs/zerolog/log"
 
 	"fmt"
-)	
+)
 
 func MsgHandler(tx types.Tx, index int, msg sdk.Msg, w worker.Worker) error {
 	log.Info().Str("tx_hash", tx.TxHash).Int("msg_index", index).Str("msg_type", msg.Type()).Msg("found message")
@@ -29,19 +28,27 @@ func MsgHandler(tx types.Tx, index int, msg sdk.Msg, w worker.Worker) error {
 	case staking.MsgEditValidator:
 		// TODO: Handle message here
 		//store commission rate
-			StoreModifiedVaildator(stakingMsg,db) 
+		StoreModifiedCommission(stakingMsg, w.ClientProxy, db)
 	}
 
 	return nil
 }
 
-
-func StoreModifiedVaildator(msg staking.MsgEditValidator,db database.BigDipperDb){
+func StoreModifiedCommission(msg staking.MsgEditValidator, cp client.ClientProxy, db database.BigDipperDb) error {
 	//should I take from REST or store the message?
 	//store the message
-	vc := database.ValidatorCommission{
-		ValidatorAddress : msg.ValidatorAddr,
-		Commission       : msg.CommissionRate,
+	address := msg.ValidatorAddress
+	commission := msg.CommissionRate
+	if found, _ := db.HasValidator(address.String()); !found {
+		return nil
 	}
-	db.SaveVaildatorComission(vc)
+
+	var validator staking.Validator
+	endpoint := fmt.Sprintf("/staking/validators/$s", address.String())
+	height, ok := cp.QueryLCDWithHeight(endpoint, &validator)
+	if ok!=nil {
+		return ok
+	}
+
+	db.SaveVaildatorComission(validator,height)
 }

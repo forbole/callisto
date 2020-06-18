@@ -25,5 +25,6 @@ CREATE TABLE validator_commission
     validator_address     CHARACTER VARYING(52) NOT NULL REFERENCES validator (consensus_address),
     timestamp             TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     commission             CHARACTER VARYING(52)              NOT NULL,
-    PRIMARY KEY (validator_address,timestamp)
+    height                BIGINT                NOT NULL,
+    PRIMARY KEY (validator_address,height)
 );
