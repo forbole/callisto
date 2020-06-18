@@ -10,12 +10,6 @@ import (
 	bstaking "github.com/forbole/bdjuno/x/staking/types"
 )
 
-type ValidatorUptime struct {
-	Height              int64           `db:"height"`
-	ValidatorAddress    sdk.ConsAddress `db:"validator_address"`
-	SignedBlocksWindow  int64           `db:"signed_blocks_window"`
-	MissedBlocksCounter int64           `db:"missed_blocks_counter"`
-}
 
 // SaveStakingPool allows to save for the given height the given staking pool
 func (db BigDipperDb) SaveStakingPool(height int64, pool staking.Pool) error {
@@ -27,7 +21,7 @@ func (db BigDipperDb) SaveStakingPool(height int64, pool staking.Pool) error {
 }
 
 // SaveValidatorUptime stores into the database the given validator uptime information
-func (db BigDipperDb) SaveValidatorUptime(uptime ValidatorUptime) error {
+func (db BigDipperDb) SaveValidatorUptime(uptime bstaking.ValidatorUptime) error {
 	if found, _ := db.HasValidator(uptime.ValidatorAddress.String()); !found {
 		// Validator does not exist, return simply
 		return nil
@@ -38,6 +32,9 @@ func (db BigDipperDb) SaveValidatorUptime(uptime ValidatorUptime) error {
 	_, err := db.Sql.Exec(statement,
 		uptime.Height, uptime.ValidatorAddress.String(), uptime.SignedBlocksWindow, uptime.MissedBlocksCounter)
 
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -128,6 +125,9 @@ func (db BigDipperDb) SaveVaildatorComission(v staking.Validator, height int64) 
 	statement := `INSERT INTO validator_commission (validatorAddress,commissions,min_self_delegtion,discription,height,timestamp) VALUES ($1,$2,$3,$4,$5)`
 	_, err := db.Sql.Exec(statement,
 		v.OperatorAddress.String(), v.Commission.Rate, v.MinSelfDelegation, v.Description.Details, height, time.Now().UTC())
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
