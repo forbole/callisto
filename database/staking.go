@@ -129,3 +129,14 @@ func (db BigDipperDb) SaveValidatorUptime(uptime bstaking.ValidatorUptime) error
 		uptime.Height, uptime.ValidatorAddress.String(), uptime.SignedBlocksWindow, uptime.MissedBlocksCounter)
 	return err
 }
+
+
+func (db BigDipperDb) SaveVaildatorComission(v staking.Validator, height int64) error {
+	if found, _ := db.HasValidator(v.OperatorAddress.String()); !found {
+		return nil
+	}
+	statement := `INSERT INTO validator_commission (validatorAddress,commissions,min_self_delegtion,discription,height,timestamp) VALUES ($1,$2,$3,$4,$5)`
+	_, err := db.Sql.Exec(statement,
+		v.OperatorAddress.String(), v.Commission.Rate ,v.MinSelfDelegation,v.Description.Details, height,time.Now().UTC())
+	return nil
+}
