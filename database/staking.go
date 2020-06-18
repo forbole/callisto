@@ -140,3 +140,131 @@ func (db BigDipperDb) SaveVaildatorComission(v staking.Validator, height int64) 
 		v.OperatorAddress.String(), v.Commission.Rate ,v.MinSelfDelegation,v.Description.Details, height,time.Now().UTC())
 	return nil
 }
+
+
+// SaveValidatorsDelegations stores into the database the given validator delegations information.
+// It assumes that for each delegation information provided, the associated validator data
+// have already been saved inside the database properly.
+func (db BigDipperDb) SaveValidatorsDelegations(
+	delegationsInfo []bstaking.ValidatorDelegations, height int64, timestamp time.Time,
+) error {
+	var delegations []staking.DelegationResponse
+	var unbondingDelegations []staking.UnbondingDelegation
+
+	for _, info := range delegationsInfo {
+		delegations = append(delegations, info.Delegations...)
+		unbondingDelegations = append(unbondingDelegations, info.UnbondingDelegations...)
+	}
+
+	// Save the delegations
+	err := db.saveValidatorDelegations(height, timestamp, delegations)
+	if err != nil {
+		return err
+	}
+
+	// Save the unbonding delegations
+	return db.saveUnbondingDelegations(height, timestamp, unbondingDelegations)
+}
+
+func (db BigDipperDb) saveValidatorDelegations(
+	height int64, timestamp time.Time, delegations []staking.DelegationResponse,
+) error {
+	accountsQuery := `INSERT INTO account (address) VALUES `
+	var accountsParams []interface{}
+
+	delegationsQuery := `INSERT INTO validator_delegations 
+						 (consensus_address, delegator_address, shares, balance, height, timestamp) VALUES `
+	var delegationsParams []interface{}
+
+	for i, delegation := range delegations {
+		a1 := i * 1
+		d1 := i * 6 // Starting position for the delegations query
+
+		accountsQuery += fmt.Sprintf("($%d),", a1+1)
+		accountsParams = append(accountsParams, delegation.DelegatorAddress.String())
+
+		var result []dbtypes.ValidatorInfoRow
+		stmt := "SELECT consensus_address FROM validator_info WHERE operator_address = $1"
+		err := db.sqlx.Select(&result, stmt, delegation.ValidatorAddress.String())
+		if err != nil {
+			return err
+		}
+
+		balance := dbtypes.NewDbCoin(delegation.Balance)
+		coin, err := balance.Value()
+		if err != nil {
+			return err
+		}
+
+		delegationsQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d),", d1+1, d1+2, d1+3, d1+4, d1+5, d1+6)
+		delegationsParams = append(delegationsParams,
+			result[0].ConsAddress, delegation.DelegatorAddress.String(), delegation.Shares.String(),
+			coin, height, timestamp)
+	}
+
+	// Insert the accounts
+	accountsQuery = accountsQuery[:len(accountsQuery)-1] // Remove the trailing ","
+	accountsQuery += " ON CONFLICT DO NOTHING"
+	_, err := db.Sql.Exec(accountsQuery, accountsParams...)
+	if err != nil {
+		return err
+	}
+
+	// Insert the delegations
+	delegationsQuery = delegationsQuery[:len(delegationsQuery)-1] // Remove the trailing ","
+	delegationsQuery += " ON CONFLICT DO NOTHING"
+	_, err = db.Sql.Exec(delegationsQuery, delegationsParams...)
+	return err
+}
+
+func (db BigDipperDb) saveUnbondingDelegations(
+	height int64, timestamp time.Time, delegations []staking.UnbondingDelegation,
+) error {
+	// If the delegations are empty just return
+	if len(delegations) == 0 {
+		return nil
+	}
+
+	accountsQuery := `INSERT INTO account (address) VALUES `
+	var accountsParams []interface{}
+
+	udQuery := `INSERT INTO validator_unbonding_delegations 
+			    (consensus_address, delegator_address, initial_balance, balance, creation_height, height, timestamp) VALUES `
+	var delegationsParams []interface{}
+
+	for i, delegation := range delegations {
+		var result []dbtypes.ValidatorInfoRow
+		stmt := "SELECT consensus_address FROM validator_info WHERE operator_address = $1"
+		err := db.sqlx.Select(&result, stmt, delegation.ValidatorAddress.String())
+		if err != nil {
+			return err
+		}
+
+		for j, entry := range delegation.Entries {
+			a1 := (i * 1) + j // Starting position for the account query
+			d1 := (i * 7) + j // Starting position for the delegations query
+
+			accountsQuery += fmt.Sprintf("($%d),", a1+1)
+			accountsParams = append(accountsParams, delegation.DelegatorAddress.String())
+
+			udQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d),", d1+1, d1+2, d1+3, d1+4, d1+5, d1+6, d1+7)
+			delegationsParams = append(delegationsParams,
+				result[0].ConsAddress, delegation.DelegatorAddress.String(),
+				entry.InitialBalance.String(), entry.Balance.String(), entry.CreationHeight, height, timestamp)
+		}
+	}
+
+	// Insert the accounts
+	accountsQuery = accountsQuery[:len(accountsQuery)-1] // Remove the trailing ","
+	accountsQuery += " ON CONFLICT DO NOTHING"
+	_, err := db.Sql.Exec(accountsQuery, accountsParams...)
+	if err != nil {
+		return err
+	}
+
+	// Insert the delegations
+	udQuery = udQuery[:len(udQuery)-1] // Remove the trailing ","
+	udQuery += " ON CONFLICT DO NOTHING"
+	_, err = db.Sql.Exec(udQuery, delegationsParams...)
+	return err
+}
