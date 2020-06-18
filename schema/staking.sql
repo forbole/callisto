@@ -26,6 +26,7 @@ CREATE TABLE validator_commission
     timestamp             TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     commission            decimal	              NOT NULL,
     min_self_delegation    BIGINT              NOT NULL,
+    Discription          CHARACTER VARYING(52) NOT NULL,
     height                BIGINT                NOT NULL,
     PRIMARY KEY (validator_address,height)
 );
