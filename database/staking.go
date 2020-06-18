@@ -116,7 +116,7 @@ func (db BigDipperDb) SaveValidatorUptime(uptime bstaking.ValidatorUptime) error
 func (db BigDipperDb) SaveValidatorsDelegations(
 	delegationsInfo []bstaking.ValidatorDelegations, height int64, timestamp time.Time,
 ) error {
-	var delegations []staking.DelegationResponse
+	var delegations []staking.Delegation
 	var unbondingDelegations []staking.UnbondingDelegation
 
 	for _, info := range delegationsInfo {
@@ -135,18 +135,18 @@ func (db BigDipperDb) SaveValidatorsDelegations(
 }
 
 func (db BigDipperDb) saveValidatorDelegations(
-	height int64, timestamp time.Time, delegations []staking.DelegationResponse,
+	height int64, timestamp time.Time, delegations []staking.Delegation,
 ) error {
 	accountsQuery := `INSERT INTO account (address) VALUES `
 	var accountsParams []interface{}
 
 	delegationsQuery := `INSERT INTO validator_delegations 
-						 (consensus_address, delegator_address, shares, balance, height, timestamp) VALUES `
+						 (consensus_address, delegator_address, shares, height, timestamp) VALUES `
 	var delegationsParams []interface{}
 
 	for i, delegation := range delegations {
 		a1 := i * 1
-		d1 := i * 6 // Starting position for the delegations query
+		d1 := i * 5 // Starting position for the delegations query
 
 		accountsQuery += fmt.Sprintf("($%d),", a1+1)
 		accountsParams = append(accountsParams, delegation.DelegatorAddress.String())
@@ -158,16 +158,10 @@ func (db BigDipperDb) saveValidatorDelegations(
 			return err
 		}
 
-		balance := dbtypes.NewDbCoin(delegation.Balance)
-		coin, err := balance.Value()
-		if err != nil {
-			return err
-		}
-
-		delegationsQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d),", d1+1, d1+2, d1+3, d1+4, d1+5, d1+6)
+		delegationsQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", d1+1, d1+2, d1+3, d1+4, d1+5)
 		delegationsParams = append(delegationsParams,
-			result[0].ConsAddress, delegation.DelegatorAddress.String(), delegation.Shares.String(),
-			coin, height, timestamp)
+			result[0].ConsAddress, delegation.DelegatorAddress.String(), delegation.Shares.String(), height, timestamp,
+		)
 	}
 
 	// Insert the accounts

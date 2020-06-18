@@ -57,7 +57,7 @@ type ValidatorUptime struct {
 // well as its unbonding delegations
 type ValidatorDelegations struct {
 	ConsAddress          sdk.ConsAddress
-	Delegations          staking.DelegationResponses
+	Delegations          staking.Delegations
 	UnbondingDelegations staking.UnbondingDelegations
 	Height               int64
 	Timestamp            time.Time

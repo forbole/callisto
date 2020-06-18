@@ -26,7 +26,6 @@ CREATE TABLE validator_delegations
     consensus_address TEXT                        NOT NULL REFERENCES validator (consensus_address),
     delegator_address TEXT                        NOT NULL REFERENCES account (address),
     shares            DECIMAL                     NOT NULL,
-    balance           COIN,
     height            BIGINT                      NOT NULL,
     timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     PRIMARY KEY (consensus_address, delegator_address, height)

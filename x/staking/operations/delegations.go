@@ -33,11 +33,16 @@ func UpdateDelegations(cp client.ClientProxy, db database.BigDipperDb) error {
 	for index, validator := range validators {
 
 		// Get the delegations
-		dEndpoint := fmt.Sprintf("/staking/validators/%s/delegations?height=%d",
+		dEndpoint := fmt.Sprintf("/staking/validators/%s/delegationResponses?height=%d",
 			validator.GetOperator().String(), block.Block.Height)
-		var delegations staking.DelegationResponses
-		if _, err := cp.QueryLCDWithHeight(dEndpoint, &delegations); err != nil {
+		var delegationResponses staking.DelegationResponses
+		if _, err := cp.QueryLCDWithHeight(dEndpoint, &delegationResponses); err != nil {
 			return err
+		}
+
+		delegations := make([]staking.Delegation, len(delegationResponses))
+		for index, delegation := range delegationResponses {
+			delegations[index] = delegation.Delegation
 		}
 
 		// Get the unbonding delegations
