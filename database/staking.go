@@ -123,7 +123,7 @@ func (db BigDipperDb) SaveEditValidator(validator sdk.ValAddress, commissionRate
 	if found, _ := db.HasValidator(validator.String()); !found {
 		return nil
 	}
-	//query the stuff and see if the validator detail changed
+	//query the latest entry and see if the validator detail changed
 	query := `SELECT commission,min_self_delegation,details,identity,moniker,website,securityContact
 				FROM validator_commission INNER JOIN validator_info 
 				ON  validator_commission.validator_address = validator_info.consensus_address
