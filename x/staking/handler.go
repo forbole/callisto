@@ -1,6 +1,8 @@
 package staking
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/desmos-labs/juno/parse/client"
@@ -13,43 +15,46 @@ import (
 )
 
 func MsgHandler(tx types.Tx, index int, msg sdk.Msg, w worker.Worker) error {
-	log.Info().Str("tx_hash", tx.TxHash).Int("msg_index", index).Str("msg_type", msg.Type()).Msg("found message")
+	log.Info().Str("tx_hash", tx.TxHash).Int("msg_index", index).
+		Str("msg_type", msg.Type()).Msg("found message")
 
+	if len(tx.Logs) == 0 {
+		log.Info().Str("tx_hash", tx.TxHash).Int("msg_index", index).
+			Msg("skipping message as it was not successful")
+		return nil
+	}
+
+	db, ok := w.Db.(database.BigDipperDb)
+	if !ok {
+		return fmt.Errorf("given database instance is not a BigDipperDb")
+	}
+
+	timestamp, err := time.Parse("2006-01-02T15:04:05Z", tx.Timestamp)
+	if err != nil {
+		return err
+	}
 	if len(tx.Logs) == 0 {
 		log.Info().Msg(fmt.Sprintf("Skipping message at index %d of tx hash %s as it was not successull",
 			index, tx.TxHash))
 		return nil
 	}
-	db, ok := w.Db.(database.BigDipperDb)
-	if !ok {
-		return fmt.Errorf("invalid database")
-	}
 	switch stakingMsg := msg.(type) {
 	case staking.MsgEditValidator:
 		// TODO: Handle message here
 		//store commission rate
-		StoreEditValidator(stakingMsg, w.ClientProxy,tx, db)
+		StoreEditValidator(stakingMsg, w.ClientProxy, timestamp, tx.Height, db)
 	}
 
 	return nil
 }
 
-func StoreEditValidator(msg staking.MsgEditValidator, cp client.ClientProxy,tx types.Tx, db database.BigDipperDb) error {
+func StoreEditValidator(msg staking.MsgEditValidator, cp client.ClientProxy, time time.Time, height int64, db database.BigDipperDb) error {
 	//should I take from REST or store the message?
 	//store the message
 	address := msg.ValidatorAddress
 	if found, _ := db.HasValidator(address.String()); !found {
 		return nil
 	}
-
-	var validator staking.Validator
-	/*
-	endpoint := fmt.Sprintf("/staking/validators/%v", address.String())
-	height, ok := cp.QueryLCDWithHeight(endpoint, &validator)
-	if ok != nil {
-		return ok
-	}
-*/
-	db.SaveEditValidator(msg.ValidatorAddress,msg.CommissionRate.Int64,msg.MinSelfDelegation.Int64,msg.Description, tx.Time,tx.Height)
+	db.SaveEditValidator(msg.ValidatorAddress, msg.CommissionRate.Int64(), msg.MinSelfDelegation.Int64(), msg.Description, time, height)
 	return nil
 }
