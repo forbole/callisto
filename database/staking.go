@@ -10,7 +10,6 @@ import (
 	bstaking "github.com/forbole/bdjuno/x/staking/types"
 )
 
-
 // SaveStakingPool allows to save for the given height the given staking pool
 func (db BigDipperDb) SaveStakingPool(height int64, pool staking.Pool) error {
 	statement := `INSERT INTO staking_pool (timestamp, height, bonded_tokens, not_bonded_tokens) 
@@ -118,16 +117,58 @@ func (db BigDipperDb) SaveValidators(validators []bstaking.Validator) error {
 	return err
 }
 
-func (db BigDipperDb) SaveVaildatorComission(v staking.Validator, height int64) error {
-	if found, _ := db.HasValidator(v.OperatorAddress.String()); !found {
+func (db BigDipperDb) SaveEditValidator(validator sdk.ValAddress,commissionRate float64,minSelfDelegation float64,
+	description staking.Description, time time.Time,height int64)error {
+
+	if found, _ := db.HasValidator(validator.String()); !found {
 		return nil
 	}
-	statement := `INSERT INTO validator_commission (validatorAddress,commissions,min_self_delegtion,discription,height,timestamp) VALUES ($1,$2,$3,$4,$5)`
-	_, err := db.Sql.Exec(statement,
-		v.OperatorAddress.String(), v.Commission.Rate, v.MinSelfDelegation, v.Description.Details, height, time.Now().UTC())
-	if err != nil {
-		return err
+	//query the stuff and see if the validator detail changed
+	query := `SELECT commission,min_self_delegation,discription 
+				FROM validator_commission INNER JOIN validator_info 
+				ON  validator_commission.validator_address = validator_info.consensus_address
+				WHERE timestamp = (
+					SELECT MAX(timestamp) 
+					FROM validator_commission
+					WHERE validator_address = $1
+				) and validator_address = $2 ;`
+	var c float64
+	var m float64
+	var d staking.Description
+				
+	rows,err1 := db.Sql.Query(query,validator.String(),validator.String())
+	if err1!=nil{
+		return err1
 	}
+	for rows.Next(){
+		err := rows.Scan(&c,&m,&d)
+		if err != nil{
+			return err
+		}
+		if commissionRate==c || minSelfDelegation==m{
+			//commission rate changed(insert)
+			statement := `INSERT INTO validator_commission (validatorAddress,commissions,min_self_delegtion,height,timestamp) VALUES ($1,$2,$3,$4,$5);`
+			_, err := db.Sql.Exec(statement,
+				validator.String(), commissionRate,minSelfDelegation, height, time)
+			if err != nil {
+				return err
+			}
+		}
+		if description == d{
+			//discription change(update)
+			descriptionStatement:=`UPDATE validator_info 
+				SET validator_description = $1
+				WHERE consensus_address = $2;`
+			_,err := db.Sql.Exec(descriptionStatement,description,validator.String())
+			if err!=nil{
+				return err
+			}
+		}
+	}
+
+	return nil
+
+
 	return nil
 }
 
