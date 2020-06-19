@@ -28,13 +28,13 @@ func MsgHandler(tx types.Tx, index int, msg sdk.Msg, w worker.Worker) error {
 	case staking.MsgEditValidator:
 		// TODO: Handle message here
 		//store commission rate
-		StoreModifiedCommission(stakingMsg, w.ClientProxy,tx, db)
+		StoreEditValidator(stakingMsg, w.ClientProxy,tx, db)
 	}
 
 	return nil
 }
 
-func StoreModifiedCommission(msg staking.MsgEditValidator, cp client.ClientProxy,tx types.Tx, db database.BigDipperDb) error {
+func StoreEditValidator(msg staking.MsgEditValidator, cp client.ClientProxy,tx types.Tx, db database.BigDipperDb) error {
 	//should I take from REST or store the message?
 	//store the message
 	address := msg.ValidatorAddress
@@ -50,7 +50,6 @@ func StoreModifiedCommission(msg staking.MsgEditValidator, cp client.ClientProxy
 		return ok
 	}
 */
-	db.SaveEditValidator(msg.ValidatorAddress,msg.CommissionRate.Float64(),msg.MinSelfDelegation.Float64(),msg.Description
-		, tx.Time,tx.Height)
+	db.SaveEditValidator(msg.ValidatorAddress,msg.CommissionRate.Int64,msg.MinSelfDelegation.Int64,msg.Description, tx.Time,tx.Height)
 	return nil
 }

@@ -117,14 +117,14 @@ func (db BigDipperDb) SaveValidators(validators []bstaking.Validator) error {
 	return err
 }
 
-func (db BigDipperDb) SaveEditValidator(validator sdk.ValAddress,commissionRate float64,minSelfDelegation float64,
-	description staking.Description, time time.Time,height int64)error {
+func (db BigDipperDb) SaveEditValidator(validator sdk.ValAddress, commissionRate int64, minSelfDelegation int64,
+	description staking.Description, time time.Time, height int64) error {
 
 	if found, _ := db.HasValidator(validator.String()); !found {
 		return nil
 	}
 	//query the stuff and see if the validator detail changed
-	query := `SELECT commission,min_self_delegation,discription 
+	query := `SELECT commission,min_self_delegation,details,identity,moniker,website,securityContact
 				FROM validator_commission INNER JOIN validator_info 
 				ON  validator_commission.validator_address = validator_info.consensus_address
 				WHERE timestamp = (
@@ -132,42 +132,45 @@ func (db BigDipperDb) SaveEditValidator(validator sdk.ValAddress,commissionRate 
 					FROM validator_commission
 					WHERE validator_address = $1
 				) and validator_address = $2 ;`
-	var c float64
-	var m float64
-	var d staking.Description
-				
-	rows,err1 := db.Sql.Query(query,validator.String(),validator.String())
-	if err1!=nil{
+	var c int64
+	var m int64
+	var d [5]string
+	discriptionArray := [5]string{description.Details, description.Identity, description.Moniker,
+		description.Website, description.SecurityContact}
+
+	rows, err1 := db.Sql.Query(query, validator.String(), validator.String())
+	if err1 != nil {
 		return err1
 	}
-	for rows.Next(){
-		err := rows.Scan(&c,&m,&d)
-		if err != nil{
+	for rows.Next() {
+		err := rows.Scan(&c, &m, &(d[0]), &(d[1]), &(d[2]), &(d[3]), &(d[4]))
+		if err != nil {
 			return err
 		}
-		if commissionRate==c || minSelfDelegation==m{
+		if commissionRate == c || minSelfDelegation == m {
 			//commission rate changed(insert)
 			statement := `INSERT INTO validator_commission (validatorAddress,commissions,min_self_delegtion,height,timestamp) VALUES ($1,$2,$3,$4,$5);`
 			_, err := db.Sql.Exec(statement,
-				validator.String(), commissionRate,minSelfDelegation, height, time)
+				validator.String(), commissionRate, minSelfDelegation, height, time)
 			if err != nil {
 				return err
 			}
 		}
-		if description == d{
+		if d == discriptionArray {
 			//discription change(update)
-			descriptionStatement:=`UPDATE validator_info 
-				SET validator_description = $1
-				WHERE consensus_address = $2;`
-			_,err := db.Sql.Exec(descriptionStatement,description,validator.String())
-			if err!=nil{
+			descriptionStatement := `UPDATE validator_info 
+				SET Moniker     =$1,
+				Identity        =$2,
+				Website         =$3,
+				SecurityContact =$4,
+				Details         =$5
+				WHERE consensus_address = $6;`
+			_, err := db.Sql.Exec(descriptionStatement, d[0], d[1], d[2], d[3], d[4], validator.String())
+			if err != nil {
 				return err
 			}
 		}
 	}
-
-	return nil
-
 
 	return nil
 }
