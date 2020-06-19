@@ -1,6 +1,8 @@
 package staking
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/desmos-labs/juno/parse/client"
@@ -30,7 +32,7 @@ func MsgHandler(tx types.Tx, index int, msg sdk.Msg, w worker.Worker) error {
 		//store commission rate
 		StoreModifiedCommission(stakingMsg, w.ClientProxy, db)
 	case staking.MsgDelegate:
-		StoreDelegation(stakingMsg,w.ClientProxy,db)
+		StoreDelegation(stakingMsg, w.ClientProxy, timestamp, tx.Height, db)
 	}
 
 	return nil
@@ -38,9 +40,9 @@ func MsgHandler(tx types.Tx, index int, msg sdk.Msg, w worker.Worker) error {
 
 //once there is delegation, store current volting power
 //if delegators delegation address is the self delegation address
-//store the /staking/delegators/{delegatorAddr}/delegations/{validatorAddr} 
+//store the /staking/delegators/{delegatorAddr}/delegations/{validatorAddr}
 //else store in other table and see what happen
-func StoreDelegation(msg staking.MsgDelegate, cp client.ClientProxy, db database.BigDipperDb) error{
+func StoreDelegation(msg staking.MsgDelegate, cp client.ClientProxy, time time.Time, height int64, db database.BigDipperDb) error {
 	validatorAddress := msg.ValidatorAddress
 	deligatorAddress := msg.DelegatorAddress
 	if found, _ := db.HasValidator(validatorAddress.String()); !found {
@@ -50,20 +52,19 @@ func StoreDelegation(msg staking.MsgDelegate, cp client.ClientProxy, db database
 		return nil
 	}
 	var delegation staking.Delegation
-	endpoint := fmt.Sprintf("/staking/delegators/%s/delegations/%s", validatorAddress.String(),selfAddress.String())
+	endpoint := fmt.Sprintf("/staking/delegators/%s/delegations/%s", deligatorAddress.String(), validatorAddress.String())
 	height, ok := cp.QueryLCDWithHeight(endpoint, &delegation)
-	if ok !=nil{
+	if ok != nil {
 		return nil
 	}
 	//check if the delegation is self delegation
 	selfAddress := sdk.AccAddress(validatorAddress.Bytes())
-	if (deligatorAddress.Equals(selfAddress)){
-		//DO SOMETHING
-		db.SaveSelfDelegation(delegation,height,tx.Time)
-	}else{
-		//If that is the message that delegated to other validator
+	if deligatorAddress.Equals(selfAddress) {
+		db.SaveSelfDelegation(delegation, time, height)
+	} else {
+		//If that is the message that delegated to other account
 	}
-
+	return nil
 }
 
 func StoreModifiedCommission(msg staking.MsgEditValidator, cp client.ClientProxy, db database.BigDipperDb) error {
