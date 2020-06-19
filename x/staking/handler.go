@@ -43,7 +43,7 @@ func StoreModifiedCommission(msg staking.MsgEditValidator, cp client.ClientProxy
 	}
 
 	var validator staking.Validator
-	endpoint := fmt.Sprintf("/staking/validators/$s", address.String())
+	endpoint := fmt.Sprintf("/staking/validators/%v", address.String())
 	height, ok := cp.QueryLCDWithHeight(endpoint, &validator)
 	if ok != nil {
 		return ok
