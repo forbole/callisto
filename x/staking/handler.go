@@ -49,10 +49,19 @@ func StoreDelegation(msg staking.MsgDelegate, cp client.ClientProxy, db database
 	if found, _ := db.HasValidator(deligatorAddress.String()); !found {
 		return nil
 	}
+	var delegation staking.Delegation
+	endpoint := fmt.Sprintf("/staking/delegators/%s/delegations/%s", validatorAddress.String(),selfAddress.String())
+	height, ok := cp.QueryLCDWithHeight(endpoint, &delegation)
+	if ok !=nil{
+		return nil
+	}
+	//check if the delegation is self delegation
 	selfAddress := sdk.AccAddress(validatorAddress.Bytes())
 	if (deligatorAddress.Equals(selfAddress)){
 		//DO SOMETHING
-		StoreSelfDelegation(validatorAddress)
+		db.SaveSelfDelegation(delegation,height,tx.Time)
+	}else{
+		//If that is the message that delegated to other validator
 	}
 
 }

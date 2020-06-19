@@ -236,3 +236,14 @@ func (db BigDipperDb) saveUnbondingDelegations(
 	_, err = db.Sql.Exec(udQuery, delegationsParams...)
 	return err
 }
+
+func (db BigDipperDb) SaveSelfDelegation(
+	delegation staking.Delegation, height int64, timestamp time.Time) error {
+	statement := `INSERT INTO validator_self_delegation(consensus_address,shares,height,timestamp) VALUES
+			($1,$2,$3,$4)`
+	_, err := db.Sql.Exec(statement, delegation.ValidatorAddress, delegation.Shares, height, timestamp)
+	if err != nil {
+		return err
+	}
+	return nil
+}

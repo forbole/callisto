@@ -43,3 +43,13 @@ CREATE TABLE validator_unbonding_delegations
     timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     PRIMARY KEY (consensus_address, delegator_address, height)
 )
+
+CREATE TABLE validator_self_delegation
+(    
+    consensus_address TEXT                        NOT NULL REFERENCES validator (consensus_address),
+    shares    DECIMAL                     NOT NUll,
+    height            BIGINT                      NOT NULL,
+    timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    PRIMARY KEY (consensus_address , height)
+
+)
