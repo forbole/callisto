@@ -5,28 +5,32 @@ import (
 	"github.com/tendermint/tendermint/crypto"
 )
 
-// ValidatorInfoRow represents a single row of the validator_info table
+// ValidatorInfoRow represents a single row of the validator_info table.
+// It implements types.Validator interface
 type ValidatorInfoRow struct {
 	ConsAddress string `db:"consensus_address"`
 	ValAddress  string `db:"operator_address"`
 	ConsPubKey  string `db:"consensus_pubkey"`
 }
 
-// Validator data implements bstaking.Validator interface
-type ValidatorData struct {
-	ConsAddress sdk.ConsAddress
-	ValAddress  sdk.ValAddress
-	ConsPubKey  crypto.PubKey
+func (v ValidatorInfoRow) GetConsAddr() sdk.ConsAddress {
+	addr, err := sdk.ConsAddressFromBech32(v.ConsAddress)
+	if err != nil {
+		panic(err)
+	}
+
+	return addr
 }
 
-func (v ValidatorData) GetConsAddr() sdk.ConsAddress {
-	return v.ConsAddress
+func (v ValidatorInfoRow) GetConsPubKey() crypto.PubKey {
+	return sdk.MustGetPubKeyFromBech32(sdk.Bech32PubKeyTypeConsPub, v.ValAddress)
 }
 
-func (v ValidatorData) GetConsPubKey() crypto.PubKey {
-	return v.ConsPubKey
-}
+func (v ValidatorInfoRow) GetOperator() sdk.ValAddress {
+	addr, err := sdk.ValAddressFromBech32(v.ValAddress)
+	if err != nil {
+		panic(err)
+	}
 
-func (v ValidatorData) GetOperator() sdk.ValAddress {
-	return v.ValAddress
+	return addr
 }

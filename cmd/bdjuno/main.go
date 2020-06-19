@@ -64,6 +64,7 @@ func SetupModules() {
 	worker.RegisterBlockHandler(staking.BlockHandler)
 
 	// Register msg handlers
+	worker.RegisterMsgHandler(staking.MsgHandler)
 	worker.RegisterMsgHandler(bank.MsgHandler)
 
 	// Register periodic operations
