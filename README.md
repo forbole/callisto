@@ -1,6 +1,8 @@
 # BDJuno
 [![Build Status](https://travis-ci.com/forbole/bdjuno.svg?branch=master)](https://travis-ci.com/forbole/bdjuno)
 [![Go Report Card](https://goreportcard.com/badge/github.com/forbole/bdjuno)](https://goreportcard.com/reporl-debugt/github.com/forbole/bdjuno)
+[![Codecov](https://img.shields.io/codecov/c/github/forbole/bdjuno)](https://codecov.io/gh/forbole/bdjuno/branch/master)
+
 
 BDJuno (shorthand for BigDipper Juno) is the [Juno](https://github.com/desmos-labs/juno) implementation for [BigDipper](https://github.com/forbole/big-dipper). 
 
