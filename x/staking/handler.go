@@ -47,8 +47,6 @@ func MsgHandler(tx types.Tx, index int, msg sdk.Msg, w worker.Worker) error {
 }
 
 func StoreEditValidator(msg staking.MsgEditValidator, cp client.ClientProxy, time time.Time, height int64, db database.BigDipperDb) error {
-	//should I take from REST or store the message?
-	//store the message
 	address := msg.ValidatorAddress
 	if found, _ := db.HasValidator(address.String()); !found {
 		return nil
