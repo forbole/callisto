@@ -32,22 +32,30 @@ install: go.sum
 ###############################################################################
 
 coverage:
-	@echo "viewing test coverage..."
+	@echo "Viewing test coverage..."
 	@go tool cover --html=coverage.out
 
-ci-test:
-	@echo "executing unit tests..."
-	@go test -mod=readonly -v -coverprofile coverage.out ./...
+stop-docker-test:
+	@echo "Stopping Docker container..."
+	@docker stop bdjuno-test-db || true && docker rm bdjuno-test-db || true
+
+start-docker-test: stop-docker-test
+	@echo "Starting Docker container..."
+	@docker run --name bdjuno-test-db -e POSTGRES_USER=bdjuno -e POSTGRES_PASSWORD=password -e POSTGRES_DB=bdjuno -d -p 5433:5432 postgres
+
+ci-test: start-docker-test
+	@echo "Executing unit tests..."
+	@go test -mod=readonly -v -coverprofile coverage.txt ./...
 
 ci-lint:
-	@echo "running GolangCI-Lint..."
+	@echo "Running GolangCI-Lint..."
 	@GO111MODULE=on golangci-lint run
-	@echo "formatting..."
+	@echo "Formatting..."
 	@find . -name '*.go' -type f -not -path "*.git*" | xargs gofmt -d -s
-	@echo "verifying modules..."
+	@echo "Verifying modules..."
 	@go mod verify
 
 clean:
 	rm -f tools-stamp ./build/**
 
-.PHONY: install build ci-test ci-lint coverage clean
+.PHONY: install build ci-test ci-lint coverage clean start-docker-test

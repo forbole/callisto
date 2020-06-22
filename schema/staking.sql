@@ -21,25 +21,33 @@ CREATE TABLE validator_info
     operator_address  TEXT NOT NULL
 );
 
-CREATE TABLE validator_delegations
+CREATE TABLE validator_delegation
 (
     consensus_address TEXT                        NOT NULL REFERENCES validator (consensus_address),
     delegator_address TEXT                        NOT NULL REFERENCES account (address),
-    shares            DECIMAL                     NOT NULL,
-    balance           COIN,
+    amount            COIN                        NOT NULL,
     height            BIGINT                      NOT NULL,
     timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     PRIMARY KEY (consensus_address, delegator_address, height)
 );
 
-CREATE TABLE validator_unbonding_delegations
+CREATE TABLE validator_unbonding_delegation
 (
-    consensus_address TEXT                        NOT NULL REFERENCES validator (consensus_address),
-    delegator_address TEXT                        NOT NULL REFERENCES account (address),
-    initial_balance   DECIMAL                     NOT NUll,
-    balance           DECIMAL                     NOT NULL,
-    creation_height   BIGINT                      NOT NULL,
-    height            BIGINT                      NOT NULL,
-    timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    consensus_address    TEXT                        NOT NULL REFERENCES validator (consensus_address),
+    delegator_address    TEXT                        NOT NULL REFERENCES account (address),
+    amount               COIN                        NOT NUll,
+    completion_timestamp TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    height               BIGINT                      NOT NULL,
+    timestamp            TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     PRIMARY KEY (consensus_address, delegator_address, height)
+);
+
+CREATE TABLE validator_redelegation
+(
+    delegator_address     TEXT                        NOT NULL REFERENCES account (address),
+    src_validator_address TEXT                        NOT NULL REFERENCES validator (consensus_address),
+    dst_validator_address TEXT                        NOT NULL REFERENCES validator (consensus_address),
+    amount                COIN                        NOT NULL,
+    height                BIGINT                      NOT NULL,
+    completion_time       TIMESTAMP WITHOUT TIME ZONE NOT NULL
 )

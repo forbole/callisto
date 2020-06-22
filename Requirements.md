@@ -10,27 +10,27 @@ The BDjuno is working as a backend for Big Dipper. The followings are the featur
 ### Custom BDJuno implementations
 - [x] Update miss block records
 - [ ] Read the latest consensus state
-- [ ] Update validator information (staking) 
-- [ ] Calculate validator voting power percentage (staking) 
-- [ ] Calculate validator self delegation ratio (staking)
-- [x] Update the total staked tokens (staking) 
-- [ ] Update the total supply (supply)
-- [ ] Update the inflation (mint)
-- [ ] Update community pool (distribution)
+- [ ] [x/staking] Update validator information 
+- [ ] [x/staking] Calculate validator voting power percentage 
+- [ ] [x/staking] Calculate validator self delegation ratio
+- [x] [x/staking] Update the total staked tokens (staking) 
+- [ ] [x/supply] Update the total supply (supply)
+- [x] [x/mint] Update the inflation (mint)
+- [ ] [x/distribution] Update community pool (distribution)
 
 ### Achievable using GraphQL APIs
 - [x] Calculate the average block time
 
 ## On intervals
 - [ ] Calculate average block time (per minute, per hour, per day)
-- [ ] Calculate average delegation ratio (per hour, per day)
-- [ ] Calculate voting power distribution (per hour)
-- [ ] Record all delegations (per day)
-- [ ] Record all undelegatios (per day)
-- [ ] Record all redelegations (per day)
 - [ ] Get token price and marketcap (per 30 seconds)
-- [ ] Get gov proposals (per 30 seconds, gov)
-- [ ] Calculate the tally result (per 30 seconds, gov)
+- [ ] [x/staking] Calculate average delegation ratio (per hour, per day)
+- [ ] [x/staking] Calculate voting power distribution (per hour)
+- [ ] [x/staking] Record all delegations (per day)
+- [ ] [x/staking] Record all undelegatios (per day)
+- [ ] [x/staking] Record all redelegations (per day)
+- [ ] [x/gov] Get gov proposals (per 30 seconds)
+- [ ] [x/gox] Calculate the tally result (per 30 seconds)
 
 ## Not on Big Dipper now but we are considering to add
 - [ ] Validators signing-info (slashing)

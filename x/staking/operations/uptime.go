@@ -1,4 +1,4 @@
-package staking
+package operations
 
 import (
 	"fmt"
@@ -11,7 +11,9 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func updateValidatorsUptime(cp client.ClientProxy, db database.BigDipperDb) error {
+// UpdateValidatorsUptime fetches from the REST APIs the uptimes for all the currently
+// stored validators, later saving them into the database.
+func UpdateValidatorsUptime(cp client.ClientProxy, db database.BigDipperDb) error {
 	log.Debug().
 		Str("module", "staking").
 		Str("operation", "uptime").
@@ -90,5 +92,5 @@ func updateValidators(height int64, cp client.ClientProxy, db database.BigDipper
 		Str("module", "staking").
 		Str("operation", "validators").
 		Msg("saving validators data")
-	return db.SaveValidators(validators)
+	return db.SaveValidatorsInfo(validators)
 }

@@ -58,8 +58,13 @@ func SetupConfig(prefix string) func(cfg *sdk.Config) {
 func SetupModules() {
 	// Register genesis handlers
 	worker.RegisterGenesisHandler(auth.GenesisHandler)
+	worker.RegisterGenesisHandler(staking.GenesisHandler)
+
+	// Register block handlers
+	worker.RegisterBlockHandler(staking.BlockHandler)
 
 	// Register msg handlers
+	worker.RegisterMsgHandler(staking.MsgHandler)
 	worker.RegisterMsgHandler(bank.MsgHandler)
 
 	// Register periodic operations
