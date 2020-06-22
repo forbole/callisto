@@ -29,7 +29,7 @@ func MsgHandler(tx types.Tx, index int, msg sdk.Msg, w worker.Worker) error {
 		return fmt.Errorf("given database instance is not a BigDipperDb")
 	}
 
-	timestamp, err := time.Parse("2006-01-02T15:04:05Z", tx.Timestamp)
+	timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
 	if err != nil {
 		return err
 	}
