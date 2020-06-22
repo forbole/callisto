@@ -40,8 +40,6 @@ func MsgHandler(tx types.Tx, index int, msg sdk.Msg, w worker.Worker) error {
 	}
 	switch stakingMsg := msg.(type) {
 	case staking.MsgEditValidator:
-		// TODO: Handle message here
-		//store commission rate
 		StoreEditValidator(stakingMsg, w.ClientProxy, timestamp, tx.Height, db)
 	}
 
