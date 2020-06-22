@@ -7,20 +7,14 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/exported"
 	"github.com/forbole/bdjuno/database/types"
+	dbtypes "github.com/forbole/bdjuno/database/types"
 	"github.com/lib/pq"
 )
-
-type AccountRow struct {
-	Address   string       `db:"address"`
-	Coins     types.DbCoin `db:"coins"`
-	Height    int64        `db:"height"`
-	Timestamp time.Time    `db:"height"`
-}
 
 // SaveAccount saves the given account information for the given block height and timestamp
 func (db BigDipperDb) SaveAccount(account exported.Account, height int64, timestamp time.Time) error {
 	accStmt := `INSERT INTO account (address) VALUES ($1) ON CONFLICT DO NOTHING`
-	_, err := db.Sql.Exec(accStmt, account.GetAddress())
+	_, err := db.Sql.Exec(accStmt, account.GetAddress().String())
 	if err != nil {
 		return err
 	}
@@ -74,9 +68,9 @@ func (db BigDipperDb) SaveAccounts(accounts []exported.Account, height int64, ti
 
 // GetAccounts returns all the accounts that are currently stored inside the database.
 func (db BigDipperDb) GetAccounts() ([]sdk.AccAddress, error) {
-	sqlStmt := `SELECT DISTINCT address from account`
+	sqlStmt := `SELECT * FROM account`
 
-	var rows []AccountRow
+	var rows []dbtypes.AccountRow
 	err := db.Sqlx.Select(&rows, sqlStmt)
 	if err != nil {
 		return nil, err
