@@ -10,23 +10,38 @@ import (
 	"github.com/forbole/bdjuno/x/staking/types"
 )
 
-// _________________________________________________________
-
 // SaveStakingPool allows to save for the given height the given stakingtypes pool
-func (db BigDipperDb) SaveStakingPool(height int64, pool stakingtypes.Pool) error {
+func (db BigDipperDb) SaveStakingPool(pool stakingtypes.Pool, height int64, timestamp time.Time) error {
 	statement := `INSERT INTO staking_pool (timestamp, height, bonded_tokens, not_bonded_tokens) 
-				  VALUES ($1, $2, $3, $4)`
+				  VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(statement,
-		time.Now().UTC(), height, pool.BondedTokens.Int64(), pool.NotBondedTokens.Int64())
+		timestamp, height, pool.BondedTokens.Int64(), pool.NotBondedTokens.Int64())
 	return err
 }
 
 // _________________________________________________________
 
-// GetValidatorInfo returns the validator having the given validator address.
+// SaveValidator saves properly the information about the given validator
+func (db BigDipperDb) SaveValidatorData(validator types.Validator) error {
+	stmt := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES ($1, $2) ON CONFLICT DO NOTHING`
+	_, err := db.Sql.Exec(stmt,
+		validator.GetConsAddr().String(),
+		sdk.MustBech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, validator.GetConsPubKey()),
+	)
+	if err != nil {
+		return err
+	}
+
+	stmt = `INSERT INTO validator_info (consensus_address, operator_address) VALUES ($1, $2) ON CONFLICT DO NOTHING`
+	_, err = db.Sql.Exec(stmt,
+		validator.GetConsAddr().String(), validator.GetOperator().String())
+	return err
+}
+
+// GetValidatorData returns the validator having the given validator address.
 // If no validator for such address can be found, an error is returned instead.
-func (db BigDipperDb) GetValidatorInfo(valAddress sdk.ValAddress) (types.Validator, error) {
-	var result []dbtypes.ValidatorInfoRow
+func (db BigDipperDb) GetValidatorData(valAddress sdk.ValAddress) (types.Validator, error) {
+	var result []dbtypes.ValidatorData
 	stmt := `SELECT validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address 
 			 FROM validator INNER JOIN validator_info 
     		 ON validator.consensus_address=validator_info.consensus_address 
@@ -43,47 +58,8 @@ func (db BigDipperDb) GetValidatorInfo(valAddress sdk.ValAddress) (types.Validat
 	return result[0], nil
 }
 
-// GetAccounts returns all the accounts that are currently stored inside the database.
-func (db BigDipperDb) GetValidatorInfos() ([]types.Validator, error) {
-	sqlStmt := `SELECT DISTINCT ON (validator.consensus_address)
-				validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address 
-				FROM validator 
-				INNER JOIN validator_info 
-				ON validator.consensus_address = validator_info.consensus_address`
-
-	var rows []dbtypes.ValidatorInfoRow
-	err := db.Sqlx.Select(&rows, sqlStmt)
-	if err != nil {
-		return nil, err
-	}
-
-	validators := make([]types.Validator, len(rows))
-	for index, row := range rows {
-		validators[index] = row
-	}
-
-	return validators, nil
-}
-
-// SaveValidator saves properly the information about the given validator
-func (db BigDipperDb) SaveValidatorInfo(validator types.Validator) error {
-	stmt := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES ($1, $2) ON CONFLICT DO NOTHING`
-	_, err := db.Sql.Exec(stmt,
-		validator.GetConsAddr().String(),
-		sdk.MustBech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, validator.GetConsPubKey()),
-	)
-	if err != nil {
-		return err
-	}
-
-	stmt = `INSERT INTO validator_info (consensus_address, operator_address) VALUES ($1, $2) ON CONFLICT DO NOTHING`
-	_, err = db.Sql.Exec(stmt,
-		validator.GetConsAddr().String(), validator.GetOperator().String())
-	return err
-}
-
-// SaveValidatorsInfo allows the bulk saving of a list of validators
-func (db BigDipperDb) SaveValidatorsInfo(validators []types.Validator) error {
+// SaveValidatorsData allows the bulk saving of a list of validators
+func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 	validatorQuery := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES `
 	var validatorParams []interface{}
 
@@ -121,6 +97,29 @@ func (db BigDipperDb) SaveValidatorsInfo(validators []types.Validator) error {
 	return err
 }
 
+// GetValidatorsData returns the data of all the validators that are currently stored inside the database.
+func (db BigDipperDb) GetValidatorsData() ([]types.Validator, error) {
+	sqlStmt := `SELECT DISTINCT ON (validator.consensus_address)
+				validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address 
+				FROM validator 
+				INNER JOIN validator_info 
+				ON validator.consensus_address = validator_info.consensus_address
+				ORDER BY validator.consensus_address`
+
+	var rows []dbtypes.ValidatorData
+	err := db.Sqlx.Select(&rows, sqlStmt)
+	if err != nil {
+		return nil, err
+	}
+
+	validators := make([]types.Validator, len(rows))
+	for index, row := range rows {
+		validators[index] = row
+	}
+
+	return validators, nil
+}
+
 // _________________________________________________________
 
 // SaveValidatorUptime stores into the database the given validator uptime information.
@@ -128,7 +127,7 @@ func (db BigDipperDb) SaveValidatorsInfo(validators []types.Validator) error {
 // have already been saved inside the database properly.
 func (db BigDipperDb) SaveValidatorUptime(uptime types.ValidatorUptime) error {
 	statement := `INSERT INTO validator_uptime (height, validator_address, signed_blocks_window, missed_blocks_counter)
-				  VALUES ($1, $2, $3, $4)`
+				  VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(statement,
 		uptime.Height, uptime.ValidatorAddress.String(), uptime.SignedBlocksWindow, uptime.MissedBlocksCounter)
 	return err
@@ -142,7 +141,7 @@ func (db BigDipperDb) SaveValidatorUptime(uptime types.ValidatorUptime) error {
 // To store the validators data call SaveValidator(s).
 // To store the account data call SaveAccount.
 func (db BigDipperDb) SaveDelegation(delegation types.Delegation) error {
-	validator, err := db.GetValidatorInfo(delegation.ValidatorAddress)
+	validator, err := db.GetValidatorData(delegation.ValidatorAddress)
 	if err != nil {
 		return err
 	}
@@ -182,7 +181,7 @@ func (db BigDipperDb) SaveDelegations(delegations []types.Delegation) error {
 		accountsQuery += fmt.Sprintf("($%d),", a1+1)
 		accountsParams = append(accountsParams, delegation.DelegatorAddress.String())
 
-		validator, err := db.GetValidatorInfo(delegation.ValidatorAddress)
+		validator, err := db.GetValidatorData(delegation.ValidatorAddress)
 		if err != nil {
 			return err
 		}
@@ -222,7 +221,7 @@ func (db BigDipperDb) SaveDelegations(delegations []types.Delegation) error {
 // To store the validators data call SaveValidator(s).
 // To store the account data call SaveAccount.
 func (db BigDipperDb) SaveUnbondingDelegation(delegation types.UnbondingDelegation) error {
-	validator, err := db.GetValidatorInfo(delegation.ValidatorAddress)
+	validator, err := db.GetValidatorData(delegation.ValidatorAddress)
 	if err != nil {
 		return err
 	}
@@ -263,7 +262,7 @@ func (db BigDipperDb) SaveUnbondingDelegations(delegations []types.UnbondingDele
 	for i, delegation := range delegations {
 		d1 := i * 6 // Starting position for the delegations query
 
-		validator, err := db.GetValidatorInfo(delegation.ValidatorAddress)
+		validator, err := db.GetValidatorData(delegation.ValidatorAddress)
 		if err != nil {
 			return err
 		}
@@ -294,12 +293,12 @@ func (db BigDipperDb) SaveUnbondingDelegations(delegations []types.UnbondingDele
 // To store the account data call SaveAccount.
 func (db BigDipperDb) SaveRedelegation(redelegation types.Redelegation) error {
 	// Get the validators info
-	srcVal, err := db.GetValidatorInfo(redelegation.SrcValidator)
+	srcVal, err := db.GetValidatorData(redelegation.SrcValidator)
 	if err != nil {
 		return err
 	}
 
-	dstVal, err := db.GetValidatorInfo(redelegation.DstValidator)
+	dstVal, err := db.GetValidatorData(redelegation.DstValidator)
 	if err != nil {
 		return err
 	}
@@ -338,12 +337,12 @@ func (db BigDipperDb) SaveRedelegations(redelegations []types.Redelegation) erro
 		r1 := i * 6 // Starting position for the redelegation query
 
 		// Get the validators info
-		srcVal, err := db.GetValidatorInfo(redelegation.SrcValidator)
+		srcVal, err := db.GetValidatorData(redelegation.SrcValidator)
 		if err != nil {
 			return err
 		}
 
-		dstVal, err := db.GetValidatorInfo(redelegation.DstValidator)
+		dstVal, err := db.GetValidatorData(redelegation.DstValidator)
 		if err != nil {
 			return err
 		}

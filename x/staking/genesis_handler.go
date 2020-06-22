@@ -62,7 +62,7 @@ func saveValidators(genState staking.GenesisState, db database.BigDipperDb) erro
 			validator.GetConsPubKey(),
 		))
 	}
-	if err := db.SaveValidatorsInfo(validators); err != nil {
+	if err := db.SaveValidatorsData(validators); err != nil {
 		return err
 	}
 	return nil

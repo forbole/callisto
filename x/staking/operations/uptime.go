@@ -92,5 +92,5 @@ func updateValidators(height int64, cp client.ClientProxy, db database.BigDipper
 		Str("module", "staking").
 		Str("operation", "validators").
 		Msg("saving validators data")
-	return db.SaveValidatorsInfo(validators)
+	return db.SaveValidatorsData(validators)
 }
