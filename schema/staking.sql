@@ -19,7 +19,6 @@ CREATE TABLE validator_info
 (
     consensus_address TEXT NOT NULL REFERENCES validator (consensus_address) UNIQUE PRIMARY KEY,
     operator_address  TEXT NOT NULL,
-    validator_description       TEXT,
     moniker         TEXT     ,
 	identity        TEXT    ,
 	website         TEXT    ,

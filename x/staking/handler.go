@@ -51,6 +51,15 @@ func StoreEditValidator(msg staking.MsgEditValidator, cp client.ClientProxy, tim
 	if found, _ := db.HasValidator(address.String()); !found {
 		return nil
 	}
+
+	commission, err := db.GetCommission(msg.ValidatorAddress)
+	if err != nil {
+		log.Info().Msg(fmt.Sprintf("Cannot get self delegate",
+			index, tx.TxHash))
+	}
+	if commission.commission == msg.CommissionRate || commission.MinSelfDelegation == msg.MinSelfDelegation {
+		//change commission table
+	}
 	db.SaveEditValidator(msg.ValidatorAddress, msg.CommissionRate.Int64(), msg.MinSelfDelegation.Int64(), msg.Description, time, height)
 	return nil
 }
