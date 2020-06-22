@@ -45,7 +45,7 @@ start-docker-test: stop-docker-test
 
 ci-test: start-docker-test
 	@echo "Executing unit tests..."
-	@go test -mod=readonly -v -coverprofile coverage.out ./...
+	@go test -mod=readonly -v -coverprofile coverage.txt ./...
 
 ci-lint:
 	@echo "Running GolangCI-Lint..."
