@@ -150,7 +150,7 @@ func (db BigDipperDb) SaveEditValidator(validator sdk.ValAddress, commissionRate
 		}
 		if commissionRate == c || minSelfDelegation == m {
 			//commission rate changed(insert)
-			statement := `INSERT INTO validator_commission (validatorAddress,commissions,min_self_delegtion,height,timestamp) VALUES ($1,$2,$3,$4,$5);`
+			statement := `INSERT INTO validator_commission (validator_address,commissions,min_self_delegtion,height,timestamp) VALUES ($1,$2,$3,$4,$5);`
 			_, err := db.Sql.Exec(statement,
 				validator.String(), commissionRate, minSelfDelegation, height, time)
 			if err != nil {
