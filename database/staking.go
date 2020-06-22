@@ -32,7 +32,7 @@ func (db BigDipperDb) GetValidatorInfo(valAddress sdk.ValAddress) (types.Validat
     		 ON validator.consensus_address=validator_info.consensus_address 
 			 WHERE validator_info.operator_address = $1`
 
-	if err := db.sqlx.Select(&result, stmt, valAddress.String()); err != nil {
+	if err := db.Sqlx.Select(&result, stmt, valAddress.String()); err != nil {
 		return nil, err
 	}
 
@@ -52,7 +52,7 @@ func (db BigDipperDb) GetValidatorInfos() ([]types.Validator, error) {
 				ON validator.consensus_address = validator_info.consensus_address`
 
 	var rows []dbtypes.ValidatorInfoRow
-	err := db.sqlx.Select(&rows, sqlStmt)
+	err := db.Sqlx.Select(&rows, sqlStmt)
 	if err != nil {
 		return nil, err
 	}

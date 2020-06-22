@@ -77,7 +77,7 @@ func (db BigDipperDb) GetAccounts() ([]sdk.AccAddress, error) {
 	sqlStmt := `SELECT DISTINCT address from account`
 
 	var rows []AccountRow
-	err := db.sqlx.Select(&rows, sqlStmt)
+	err := db.Sqlx.Select(&rows, sqlStmt)
 	if err != nil {
 		return nil, err
 	}
