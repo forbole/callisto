@@ -23,7 +23,7 @@ CREATE TABLE validator_info
 	identity        TEXT    ,
 	website         TEXT    ,
 	securityContact TEXT,
-	details         TEXT 
+	details         TEXT
 );
 
 CREATE TABLE validator_delegations
