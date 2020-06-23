@@ -13,7 +13,7 @@ import (
 	"github.com/tendermint/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/staking/exported"
-	dbtypes "github.com/forbole/bdjuno/databse/types"
+	dbtypes "github.com/forbole/bdjuno/database/types"
 
 )
 
