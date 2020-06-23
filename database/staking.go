@@ -117,9 +117,13 @@ func (db BigDipperDb) SaveValidators(validators []bstaking.Validator) error {
 	return err
 }
 
+func (db BigDipperDb) SaveInitialCommission(validators []bstaking.ValidatorCommission) error {
+
+}
+
 func (db BigDipperDb) SaveEditValidator(validator sdk.ValAddress, commissionRate int64, minSelfDelegation int64,
 	description staking.Description, time time.Time, height int64) error {
-	
+
 	if found, _ := db.HasValidator(validator.String()); !found {
 		return nil
 	}
@@ -177,11 +181,11 @@ func (db BigDipperDb) SaveEditValidator(validator sdk.ValAddress, commissionRate
 }
 
 //check the new commission is the same as the one before
-func (db BigDipperDb) GetCommission(validator sdk.ValAddress) (ValidatorCommission,error) {
+func (db BigDipperDb) GetCommission(validator sdk.ValAddress) (ValidatorCommission, error) {
 
 	var result []dbtypes.ValidatorCommission
 	if found, _ := db.HasValidator(validator.String()); !found {
-		return nil,nil
+		return nil, nil
 	}
 	//query the latest entry and see if the validator detail changed
 	query := `SELECT commission,min_self_delegation
@@ -191,7 +195,7 @@ func (db BigDipperDb) GetCommission(validator sdk.ValAddress) (ValidatorCommissi
 					FROM validator_commission
 					WHERE validator_address = $1
 				) and validator_address = $2 ;`
-	
+
 	var c int64
 	var m int64
 	rows, err1 := db.Sql.Query(query, validator.String(), validator.String())
@@ -203,6 +207,7 @@ func (db BigDipperDb) GetCommission(validator sdk.ValAddress) (ValidatorCommissi
 	}
 	return result[0], nil
 }
+
 // SaveValidatorsDelegations stores into the database the given validator delegations information.
 // It assumes that for each delegation information provided, the associated validator data
 // have already been saved inside the database properly.

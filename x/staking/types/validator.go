@@ -35,3 +35,4 @@ type ValidatorDelegations struct {
 	Height               int64
 	Timestamp            time.Time
 }
+
