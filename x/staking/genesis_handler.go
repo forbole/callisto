@@ -74,7 +74,7 @@ func InitialInformation(stakingGenesisState staking.GenesisState,db database.Big
 		}
 	}
 
-	err := db.SaveValidatorCommissions(accounts)
+	err := db.SaveInitialValidatorInfo(accounts)
 	if err!=nil{
 		return err
 	}
