@@ -252,8 +252,8 @@ func (suite *DbTestSuite) getDelegator(addr string) sdk.AccAddress {
 func (suite *DbTestSuite) TestBigDipperDb_SaveDelegation() {
 	// Setup
 	validator := suite.getValidator(
-		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
+		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
 		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
 	)
 	delegator := suite.getDelegator("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
@@ -261,7 +261,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDelegation() {
 	var height int64 = 1000
 	amount := sdk.NewCoin("cosmos", sdk.NewInt(10000))
 
-	timestamp, err := time.Parse(time.RFC3339, "2020-10-10T15:00:00T")
+	timestamp, err := time.Parse(time.RFC3339, "2020-10-10T15:00:00Z")
 	suite.Require().NoError(err)
 
 	delegation := types.NewDelegation(delegator, validator.GetOperator(), amount, height, timestamp)
@@ -269,9 +269,6 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDelegation() {
 	// Save data
 	err = suite.database.SaveDelegation(delegation)
 	suite.Require().NoError(err, "saving a delegation should return no error")
-
-	err = suite.database.SaveDelegation(delegation)
-	suite.Require().NoError(err, "double delegation saving should return no error")
 
 	// Get data
 	var delegationRows []dbtypes.ValidatorDelegationRow
@@ -561,9 +558,6 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveRedelegation() {
 	completionTimestamp, err := time.Parse(time.RFC3339, "2020-08-10T16:00:00Z")
 	suite.Require().NoError(err)
 
-	timestamp, err := time.Parse(time.RFC3339, "2020-01-01T10:00:00Z")
-	suite.Require().NoError(err)
-
 	// Save data
 	reDelegation := types.NewRedelegation(
 		delegator,
@@ -577,16 +571,17 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveRedelegation() {
 	suite.Require().NoError(err)
 
 	// Get inserted data
-	var rows []dbtypes.ValidatorUnbondingDelegationRow
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM validator_unbonding_delegation`)
+	var rows []dbtypes.ValidatorReDelegationRow
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM validator_redelegation`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
-	suite.Require().True(rows[0].Equal(dbtypes.NewValidatorUnbondingDelegationRow(
-		srcValidator.GetConsAddr().String(),
+	suite.Require().True(rows[0].Equal(dbtypes.NewValidatorReDelegationRow(
 		delegator.String(),
+		srcValidator.GetConsAddr().String(),
+		dstValidator.GetConsAddr().String(),
 		dbtypes.NewDbCoin(amount),
-		completionTimestamp, height,
-		timestamp,
+		height,
+		completionTimestamp,
 	)))
 }
 
