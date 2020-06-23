@@ -11,11 +11,12 @@ It extends the custom Juno behavior by adding different handlers and custom oper
 All the chains' data that are queried from the LCD and RPC endpoints are stored inside a [PostgreSQL](https://www.postgresql.org/) database on top of which [GraphQL](https://graphql.org/) APIs can then be created using [Hasura](https://hasura.io/). 
  
 ## Installation
+### Install the binaries
 To install the binary simply run `make install`.
 
-**Note**: Requires [Go 1.13+](https://golang.org/dl/)
+**Note**: Requires [Go 1.13+](https://golang.org/dl/).
 
-## Database
+### Database
 Before running the parser, you need to: 
 
 1. Create a [PostgreSQL](https://www.postgresql.org/) database.
@@ -59,3 +60,19 @@ name = "big-dipper"
 user = "<username>"
 password = "<password>"
 ```
+
+## Testing
+If you want to test the code, you can do so by running
+
+```sh
+make ci-test
+```
+
+**Note**: Requires [Docker](https://docker.com).
+
+This will: 
+
+1. Create a Docker container running a PostgreSQL database.
+2. Run all the tests using that database as support.
+
+

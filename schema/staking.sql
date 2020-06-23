@@ -27,8 +27,7 @@ CREATE TABLE validator_delegation
     delegator_address TEXT                        NOT NULL REFERENCES account (address),
     amount            COIN                        NOT NULL,
     height            BIGINT                      NOT NULL,
-    timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    PRIMARY KEY (consensus_address, delegator_address, height)
+    timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
 CREATE TABLE validator_unbonding_delegation
@@ -38,8 +37,7 @@ CREATE TABLE validator_unbonding_delegation
     amount               COIN                        NOT NUll,
     completion_timestamp TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     height               BIGINT                      NOT NULL,
-    timestamp            TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    PRIMARY KEY (consensus_address, delegator_address, height)
+    timestamp            TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
 CREATE TABLE validator_redelegation
