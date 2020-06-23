@@ -145,3 +145,115 @@ func (v ValidatorUptimeRow) Equal(w ValidatorUptimeRow) bool {
 		v.SignedBlockWindow == w.SignedBlockWindow &&
 		v.MissedBlockCounter == w.MissedBlockCounter
 }
+
+// ________________________________________________
+
+// ValidatorDelegationRow represents a single validator_delegation table row
+type ValidatorDelegationRow struct {
+	ConsensusAddress string    `db:"consensus_address"`
+	DelegatorAddress string    `db:"delegator_address"`
+	Amount           DbCoin    `db:"amount"`
+	Height           int64     `db:"height"`
+	Timestamp        time.Time `db:"timestamp"`
+}
+
+// NewValidatorDelegationRow allows to build a new ValidatorDelegationRow
+func NewValidatorDelegationRow(
+	consAddr, delegator string, amount DbCoin,
+	height int64, timestamp time.Time,
+) ValidatorDelegationRow {
+	return ValidatorDelegationRow{
+		ConsensusAddress: consAddr,
+		DelegatorAddress: delegator,
+		Amount:           amount,
+		Height:           height,
+		Timestamp:        timestamp,
+	}
+}
+
+// Equals tells whether v and w represent the same row
+func (v ValidatorDelegationRow) Equal(w ValidatorDelegationRow) bool {
+	return v.ConsensusAddress == w.ConsensusAddress &&
+		v.DelegatorAddress == w.DelegatorAddress &&
+		v.Amount.Equal(w.Amount) &&
+		v.Height == w.Height &&
+		v.Timestamp.Equal(w.Timestamp)
+}
+
+// ________________________________________________
+
+// ValidatorUnbondingDelegationRow represents a single row inside the
+// validator_unbonding_delegation table
+type ValidatorUnbondingDelegationRow struct {
+	ConsensusAddress    string    `db:"consensus_address"`
+	DelegatorAddress    string    `db:"delegator_address"`
+	Amount              DbCoin    `db:"amount"`
+	CompletionTimestamp time.Time `db:"completion_timestamp"`
+	Height              int64     `db:"height"`
+	Timestamp           time.Time `db:"timestamp"`
+}
+
+// NewValidatorUnbondingDelegationRow allows to build a new
+// ValidatorUnbondingDelegationRow instance
+func NewValidatorUnbondingDelegationRow(
+	consAddr, delegator string, amount DbCoin, completionTimestamp time.Time,
+	height int64, timestamp time.Time,
+) ValidatorUnbondingDelegationRow {
+	return ValidatorUnbondingDelegationRow{
+		ConsensusAddress:    consAddr,
+		DelegatorAddress:    delegator,
+		Amount:              amount,
+		CompletionTimestamp: completionTimestamp,
+		Height:              height,
+		Timestamp:           timestamp,
+	}
+}
+
+// Equal tells whether v and w represent the same rows
+func (v ValidatorUnbondingDelegationRow) Equal(w ValidatorUnbondingDelegationRow) bool {
+	return v.ConsensusAddress == w.ConsensusAddress &&
+		v.DelegatorAddress == w.DelegatorAddress &&
+		v.Amount.Equal(w.Amount) &&
+		v.CompletionTimestamp.Equal(w.CompletionTimestamp) &&
+		v.Height == w.Height &&
+		v.Timestamp.Equal(w.Timestamp)
+}
+
+// ________________________________________________
+
+// ValidatorReDelegationRow represents a single row of the
+// validator_redelegation database table
+type ValidatorReDelegationRow struct {
+	DelegatorAddress    string    `db:"delegator_address"`
+	SrcValidatorAddress string    `db:"src_validator_address"`
+	DstValidatorAddress string    `db:"dst_validator_address"`
+	Amount              DbCoin    `db:"amount"`
+	Height              int64     `db:"height"`
+	CompletionTime      time.Time `db:"completion_time"`
+}
+
+// NewValidatorReDelegationRow allows to easily build a new
+// ValidatorReDelegationRow instance
+func NewValidatorReDelegationRow(
+	delegator, srcConsAddr, dstConsAddr string, amount DbCoin,
+	height int64, completionTime time.Time,
+) ValidatorReDelegationRow {
+	return ValidatorReDelegationRow{
+		DelegatorAddress:    delegator,
+		SrcValidatorAddress: srcConsAddr,
+		DstValidatorAddress: dstConsAddr,
+		Amount:              amount,
+		Height:              height,
+		CompletionTime:      completionTime,
+	}
+}
+
+// Equals tells whether v and w represent the same database rows
+func (v ValidatorReDelegationRow) Equal(w ValidatorReDelegationRow) bool {
+	return v.DelegatorAddress == w.DelegatorAddress &&
+		v.SrcValidatorAddress == w.SrcValidatorAddress &&
+		v.DstValidatorAddress == w.DstValidatorAddress &&
+		v.Amount.Equal(w.Amount) &&
+		v.Height == w.Height &&
+		v.CompletionTime.Equal(w.CompletionTime)
+}

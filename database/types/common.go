@@ -33,6 +33,28 @@ func (coin *DbCoin) Value() (driver.Value, error) {
 	return fmt.Sprintf("(%s,%d)", coin.Denom, coin.Amount), nil
 }
 
+// Scan implements sql.Scanner
+func (coin *DbCoin) Scan(src interface{}) error {
+	strValue := string(src.([]byte))
+	strValue = strings.ReplaceAll(strValue, `"`, "")
+	strValue = strings.ReplaceAll(strValue, "{", "")
+	strValue = strings.ReplaceAll(strValue, "}", "")
+	strValue = strings.ReplaceAll(strValue, "(", "")
+	strValue = strings.ReplaceAll(strValue, ")", "")
+
+	values := strings.Split(strValue, ",")
+
+	amt, err := strconv.ParseInt(values[1], 10, 64)
+	if err != nil {
+		return err
+	}
+
+	*coin = DbCoin{Denom: values[0], Amount: amt}
+	return nil
+}
+
+// _________________________________________________________
+
 // DbCoins represents an array of coins
 type DbCoins []*DbCoin
 

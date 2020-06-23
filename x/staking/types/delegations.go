@@ -32,6 +32,8 @@ func NewDelegation(
 	}
 }
 
+// _________________________________________________________
+
 // UnbondingDelegation represents a single unbonding delegation
 type UnbondingDelegation struct {
 	DelegatorAddress    sdk.AccAddress
@@ -56,6 +58,8 @@ func NewUnbondingDelegation(
 		Timestamp:           timestamp,
 	}
 }
+
+// _________________________________________________________
 
 // Redelegation represents a single re-delegations
 type Redelegation struct {

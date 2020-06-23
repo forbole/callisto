@@ -136,11 +136,16 @@ func (db BigDipperDb) SaveValidatorUptime(uptime types.ValidatorUptime) error {
 // _________________________________________________________
 
 // SaveRedelegation saves the given delegation inside the database.
-// It assumes that all both validator as well as the delegator addresses are
-// already present inside the proper tables of the database.
-// To store the validators data call SaveValidator(s).
-// To store the account data call SaveAccount.
+// It assumes that the delegator address is already present inside the
+// proper database table.
+// TIP: To store the validator data call SaveValidator.
 func (db BigDipperDb) SaveDelegation(delegation types.Delegation) error {
+	accStmt := `INSERT INTO account (address) VALUES ($1)`
+	_, err := db.Sql.Exec(accStmt, delegation.ValidatorAddress.String())
+	if err != nil {
+		return err
+	}
+
 	validator, err := db.GetValidatorData(delegation.ValidatorAddress)
 	if err != nil {
 		return err
@@ -153,7 +158,7 @@ func (db BigDipperDb) SaveDelegation(delegation types.Delegation) error {
 	}
 
 	stmt := `INSERT INTO validator_delegation (consensus_address, delegator_address, amount, height, timestamp) 
-			 VALUES ($1, $2, $3, $4, $5)`
+			 VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`
 	_, err = db.Sql.Exec(stmt,
 		validator.GetConsAddr().String(), delegation.DelegatorAddress.String(), value,
 		delegation.Height, delegation.Timestamp,
@@ -162,15 +167,14 @@ func (db BigDipperDb) SaveDelegation(delegation types.Delegation) error {
 }
 
 // SaveDelegations stores inside the database the given delegations data.
-// It assumes that all both validator as well as the delegator addresses are
-// already present inside the proper tables of the database.
-// To store the validators data call SaveValidator(s).
-// To store the account data call SaveAccount.
+// It assumes that the validators addresses are already present inside
+// the proper database table.
+// TIP: To store the validators data call SaveValidators.
 func (db BigDipperDb) SaveDelegations(delegations []types.Delegation) error {
 	accountsQuery := `INSERT INTO account (address) VALUES `
 	var accountsParams []interface{}
 
-	delegationsQuery := `INSERT INTO validator_delegations 
+	delegationsQuery := `INSERT INTO validator_delegation 
 						 (consensus_address, delegator_address, amount, height, timestamp) VALUES `
 	var delegationsParams []interface{}
 
@@ -195,7 +199,7 @@ func (db BigDipperDb) SaveDelegations(delegations []types.Delegation) error {
 
 		delegationsQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", d1+1, d1+2, d1+3, d1+4, d1+5)
 		delegationsParams = append(delegationsParams,
-			validator.GetConsAddr(), delegation.DelegatorAddress.String(), value,
+			validator.GetConsAddr().String(), delegation.DelegatorAddress.String(), value,
 			delegation.Height, delegation.Timestamp,
 		)
 	}
@@ -216,11 +220,16 @@ func (db BigDipperDb) SaveDelegations(delegations []types.Delegation) error {
 }
 
 // SaveRedelegation saves the given unbonding delegation inside the database.
-// It assumes that all both validator as well as the delegator addresses are
-// already present inside the proper tables of the database.
-// To store the validators data call SaveValidator(s).
-// To store the account data call SaveAccount.
+// It assumes that the validator address is already present inside the proper
+// database table.
+// TIP: To store the validators data call SaveValidator.
 func (db BigDipperDb) SaveUnbondingDelegation(delegation types.UnbondingDelegation) error {
+	accStmt := `INSERT INTO account(address) VALUES ($1) ON CONFLICT DO NOTHING`
+	_, err := db.Sql.Exec(accStmt, delegation.DelegatorAddress.String())
+	if err != nil {
+		return err
+	}
+
 	validator, err := db.GetValidatorData(delegation.ValidatorAddress)
 	if err != nil {
 		return err
@@ -254,13 +263,20 @@ func (db BigDipperDb) SaveUnbondingDelegations(delegations []types.UnbondingDele
 		return nil
 	}
 
-	udQuery := `INSERT INTO validator_unbonding_delegations 
+	accQuery := `INSERT INTO account (address) VALUES `
+	var accParams []interface{}
+
+	udQuery := `INSERT INTO validator_unbonding_delegation 
 			    (consensus_address, delegator_address, amount, completion_timestamp, height, timestamp) 
 			    VALUES `
 	var delegationsParams []interface{}
 
 	for i, delegation := range delegations {
+		a1 := i * 1
 		d1 := i * 6 // Starting position for the delegations query
+
+		accQuery += fmt.Sprintf("($%d),", a1+1)
+		accParams = append(accParams, delegation.DelegatorAddress.String())
 
 		validator, err := db.GetValidatorData(delegation.ValidatorAddress)
 		if err != nil {
@@ -279,19 +295,32 @@ func (db BigDipperDb) SaveUnbondingDelegations(delegations []types.UnbondingDele
 			amount, delegation.CompletionTimestamp, delegation.Height, delegation.Timestamp)
 	}
 
+	// Insert the delegators
+	accQuery = accQuery[:len(accQuery)-1] // Remove the trailing ","
+	accQuery += " ON CONFLICT DO NOTHING"
+	_, err := db.Sql.Exec(accQuery, accParams...)
+	if err != nil {
+		return err
+	}
+
 	// Insert the delegations
 	udQuery = udQuery[:len(udQuery)-1] // Remove the trailing ","
 	udQuery += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(udQuery, delegationsParams...)
+	_, err = db.Sql.Exec(udQuery, delegationsParams...)
 	return err
 }
 
 // SaveRedelegation saves the given re-delegation inside the database.
-// It assumes that all both validator as well as the delegator addresses are
-// already present inside the proper tables of the database.
+// It assumes that the validator info are already present inside the
+// proper tables of the database.
 // To store the validators data call SaveValidator(s).
-// To store the account data call SaveAccount.
 func (db BigDipperDb) SaveRedelegation(redelegation types.Redelegation) error {
+	accStmt := `INSERT INTO account (address) VALUES ($1)`
+	_, err := db.Sql.Exec(accStmt, redelegation.DelegatorAddress.String())
+	if err != nil {
+		return err
+	}
+
 	// Get the validators info
 	srcVal, err := db.GetValidatorData(redelegation.SrcValidator)
 	if err != nil {
@@ -328,13 +357,20 @@ func (db BigDipperDb) SaveRedelegation(redelegation types.Redelegation) error {
 // To store the validators data call SaveValidator(s).
 // To store the account data call SaveAccount.
 func (db BigDipperDb) SaveRedelegations(redelegations []types.Redelegation) error {
-	redelQuery := `INSERT INTO validator_redelegations 
+	accQuery := `INSERT INTO account (address) VALUES `
+	var accParams []interface{}
+
+	redelQuery := `INSERT INTO validator_redelegation 
     		 (delegator_address, src_validator_address, dst_validator_address, amount, height, completion_time) 
     		 VALUES `
 	var redelParams []interface{}
 
 	for i, redelegation := range redelegations {
+		a1 := i * 1 // Starting position for the account query
 		r1 := i * 6 // Starting position for the redelegation query
+
+		accQuery += fmt.Sprintf("($%d),", a1+1)
+		accParams = append(accParams, redelegation.DelegatorAddress.String())
 
 		// Get the validators info
 		srcVal, err := db.GetValidatorData(redelegation.SrcValidator)
@@ -360,9 +396,17 @@ func (db BigDipperDb) SaveRedelegations(redelegations []types.Redelegation) erro
 			amountValue, redelegation.CreationHeight, redelegation.CompletionTime)
 	}
 
+	// Inser the delegators
+	accQuery = accQuery[:len(accQuery)-1] // Remove the trailing ","
+	accQuery += " ON CONFLICT DO NOTHING"
+	_, err := db.Sql.Exec(accQuery, accParams...)
+	if err != nil {
+		return err
+	}
+
 	// Insert the redelegations
 	redelQuery = redelQuery[:len(redelQuery)-1] // Remove the trailing ","
 	redelQuery += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(redelQuery, redelParams...)
+	_, err = db.Sql.Exec(redelQuery, redelParams...)
 	return err
 }
