@@ -33,22 +33,51 @@ func GenesisHandler(codec *codec.Codec, genDoc *types.GenesisDoc, appState map[s
 	if err := codec.UnmarshalJSON(appState[staking.ModuleName], &stakingGenesisState); err != nil {
 		return err
 	}
+	err = InitialCommission(stakingGenesisState,db)
+	if err!=nil{
+		return err
+	}
+	return nil
+}
 
+func InitialCommission(stakingGenesisState staking.GenesisState,db database.BigDipperDb)error{
 	// Store the accounts
 	accounts := make([]dbtypes.ValidatorCommission, len(stakingGenesisState.Validators))
 	for index, account := range stakingGenesisState.Validators {
 		accounts[index] = ValidatorCommission{
-			ValidatorAddress  : account.ConsAddress
+			ValidatorAddress  : account.ConsAddress.String()
 	        Timestamp         : time.Time.now
-	        Commission        : account.Commission
+	        Commission        : account.Commission.
 	        MinSelfDelegation : account.MinSelfDelegation
 	        Height            : 0
 		}
 	}
 
-	
-
-
-
+	err := db.SaveValidatorCommissions(accounts)
+	if err!=nil{
+		return err
+	}
 	return nil
+}
+
+func InitialInformation(stakingGenesisState staking.GenesisState,db database.BigDipperDb)error{
+	accounts := make([]dbtypes.ValidatorInfoRow, len(stakingGenesisState.Validators))
+	for index, account := range stakingGenesisState.Validators {
+		accounts[index] = ValidatorInfoRow{
+			consensus_address    : account.ConsAddress.String()
+			operator_address     : account.OperatorAddress.String()
+			moniker             :  account.Description.Moniker
+			identity            : account.Description.Identity
+			website              :account.Description.Website
+			securityContact    :  account.Description.SecurityContact
+			details            :  account.Description.Details
+		}
+	}
+
+	err := db.SaveValidatorCommissions(accounts)
+	if err!=nil{
+		return err
+	}
+	return nil
+}
 }

@@ -117,8 +117,40 @@ func (db BigDipperDb) SaveValidators(validators []bstaking.Validator) error {
 	return err
 }
 
-func (db BigDipperDb) SaveInitialCommission(validators []bstaking.ValidatorCommission) error {
+func (db BigDipperDb) SaveValidatorCommissions(validators []dbtypes.ValidatorCommission) error {
+	query := `INSERT INTO validator_commission(validator_address,timestamp,commission,min_self_delegation,height) VALUES`
+	var param []interface{}
+	for i,validator := range(validators){
+	vi:=i*5
+		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),",vi+1,vi+2,vi+3,vi+4,vi+5)
+		param=append(param,validator.ValidatorAddress,validator.Timestamp.UTC,validator.Commission,
+								validator.MinSelfDelegation,validator.Height)
+	}
+	query = query[:len(query)-1] // Remove trailing ","
+	query += " ON CONFLICT DO NOTHING"
+	_, err := db.Sql.Exec(query,param...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
+func (db BigDipperDb) SaveValidatorInfo(validators []dbtypes.ValidatorCommission) error{
+	query := `INSERT INTO validator_info(consensus_address,operator_address,moniker,identity,website,securityContact, details) VALUES`
+	var param []interface
+	for i,validator := range(validators){
+	vi:=i*5
+		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),",vi+1,vi+2,vi+3,vi+4,vi+5)
+		param=append(param,validator.ValidatorAddress,validator.Timestamp.UTC,validator.Commission,
+								validator.MinSelfDelegation,validator.Height)
+	}
+	query = query[:len(query)-1] // Remove trailing ","
+	query += " ON CONFLICT DO NOTHING"
+	_, err := db.Sql.Exec(query,param...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (db BigDipperDb) SaveEditValidator(validator sdk.ValAddress, commissionRate int64, minSelfDelegation int64,
@@ -127,7 +159,6 @@ func (db BigDipperDb) SaveEditValidator(validator sdk.ValAddress, commissionRate
 	if found, _ := db.HasValidator(validator.String()); !found {
 		return nil
 	}
-	validator_
 	//query the latest entry and see if the validator detail changed
 	query := `SELECT commission,min_self_delegation,details,identity,moniker,website,securityContact
 				FROM validator_commission INNER JOIN validator_info 
