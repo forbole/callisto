@@ -10,7 +10,7 @@ import (
 // saving into the database all the data associated to such validator
 func HandleMsgCreateValidator(msg stakingtypes.MsgCreateValidator, db database.BigDipperDb) error {
 	stakingValidator := stakingtypes.NewValidator(msg.ValidatorAddress, msg.PubKey, msg.Description)
-	return db.SaveValidatorInfo(types.NewValidator(
+	return db.SaveValidatorData(types.NewValidator(
 		stakingValidator.GetConsAddr(),
 		stakingValidator.GetOperator(),
 		stakingValidator.GetConsPubKey(),

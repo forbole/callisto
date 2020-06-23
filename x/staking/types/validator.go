@@ -17,25 +17,7 @@ type Validator interface {
 	GetOperator() sdk.ValAddress
 }
 
-// validator allows to easily implement the Validator interface
-type validator struct {
-	ConsensusAddr sdk.ConsAddress
-	ConsPubKey    crypto.PubKey
-	OperatorAddr  sdk.ValAddress
-}
-
-func (v validator) GetConsAddr() sdk.ConsAddress {
-	return v.ConsensusAddr
-}
-
-func (v validator) GetConsPubKey() crypto.PubKey {
-	return v.ConsPubKey
-}
-
-func (v validator) GetOperator() sdk.ValAddress {
-	return v.OperatorAddr
-}
-
+// NewValidator allows to build a new Validator implementation having the given data
 func NewValidator(consAddr sdk.ConsAddress, opAddr sdk.ValAddress, consPubKey crypto.PubKey) Validator {
 	return validator{
 		ConsensusAddr: consAddr,
@@ -44,14 +26,58 @@ func NewValidator(consAddr sdk.ConsAddress, opAddr sdk.ValAddress, consPubKey cr
 	}
 }
 
+// validator allows to easily implement the Validator interface
+type validator struct {
+	ConsensusAddr sdk.ConsAddress
+	ConsPubKey    crypto.PubKey
+	OperatorAddr  sdk.ValAddress
+}
+
+// GetConsAddr implements the Validator interface
+func (v validator) GetConsAddr() sdk.ConsAddress {
+	return v.ConsensusAddr
+}
+
+// GetConsPubKey implements the Validator interface
+func (v validator) GetConsPubKey() crypto.PubKey {
+	return v.ConsPubKey
+}
+
+// GetOperator implements the Validator interface
+func (v validator) GetOperator() sdk.ValAddress {
+	return v.OperatorAddr
+}
+
+// _________________________________________________________
+
 // ValidatorUptime contains the uptime information of a single
 // validator for a specific height and point in time
 type ValidatorUptime struct {
 	ValidatorAddress    sdk.ConsAddress
-	Height              int64
 	SignedBlocksWindow  int64
 	MissedBlocksCounter int64
+	Height              int64
 }
+
+// NewValidatorUptime allows to build a new ValidatorUptime instance
+func NewValidatorUptime(valAddr sdk.ConsAddress, signedBlocWindow, missedBlocksCounter, height int64) ValidatorUptime {
+	return ValidatorUptime{
+		ValidatorAddress:    valAddr,
+		SignedBlocksWindow:  signedBlocWindow,
+		MissedBlocksCounter: missedBlocksCounter,
+		Height:              height,
+	}
+}
+
+// Equal tells whether v and w represent the same uptime
+func (v ValidatorUptime) Equal(w ValidatorUptime) bool {
+	return v.ValidatorAddress.Equals(w.ValidatorAddress) &&
+		v.SignedBlocksWindow == w.SignedBlocksWindow &&
+		v.MissedBlocksCounter == w.MissedBlocksCounter &&
+		v.Height == w.Height
+}
+
+// _________________________________________________________
 
 // ValidatorDelegations contains both a validator delegations as
 // well as its unbonding delegations

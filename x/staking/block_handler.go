@@ -2,6 +2,7 @@ package staking
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/desmos-labs/juno/parse/client"
@@ -45,7 +46,7 @@ func updateStakingPool(height int64, cp client.ClientProxy, db database.BigDippe
 		Str("module", "staking").
 		Str("operation", "staking_pool").
 		Msg("saving staking pool")
-	if err := db.SaveStakingPool(height, pool); err != nil {
+	if err := db.SaveStakingPool(pool, height, time.Now()); err != nil {
 		return err
 	}
 
