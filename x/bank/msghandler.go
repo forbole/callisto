@@ -14,11 +14,18 @@ import (
 )
 
 func MsgHandler(tx types.Tx, index int, msg sdk.Msg, w worker.Worker) error {
-	log.Info().Str("tx_hash", tx.TxHash).Int("msg_index", index).
-		Str("msg_type", msg.Type()).Msg("found message")
+	log.Info().
+		Str("module", "bank").
+		Str("tx_hash", tx.TxHash).
+		Int("msg_index", index).
+		Str("msg_type", msg.Type()).
+		Msg("found message")
 
 	if len(tx.Logs) == 0 {
-		log.Info().Str("tx_hash", tx.TxHash).Int("msg_index", index).
+		log.Info().
+			Str("module", "bank").
+			Str("tx_hash", tx.TxHash).
+			Int("msg_index", index).
 			Msg("skipping message as it was not successful")
 		return nil
 	}
