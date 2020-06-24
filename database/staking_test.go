@@ -79,6 +79,11 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorData() {
 	suite.Require().True(valInfoRows[0].Equal(dbtypes.NewValidatorInfoRow(
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
+		"ExampleMoniker",
+		"ExampleIdentity",
+		"ExampleWebsite",
+		"ExampleSecurity",
+		"ExampleDetails"
 	)))
 }
 
