@@ -61,7 +61,6 @@ func (v ValidatorRow) Equal(w ValidatorRow) bool {
 type ValidatorInfoRow struct {
 	ConsAddress     string `db:"consensus_address"`
 	ValAddress      string `db:"operator_address"`
-	ConsPubKey      string `db:"consensus_pubkey"`
 	moniker         string `db:"moniker"`
 	identity        string `db:"identity"`
 	website         string `db:"website"`
@@ -75,7 +74,6 @@ func NewValidatorInfoRow(consAddress string, valAddress string, ConsPubKey strin
 	return ValidatorInfoRow{
 		ConsAddress: consAddress,
 		ValAddress:  valAddress,
-		ConsPubKey  :ConsPubKey,    
 		moniker:moniker,
 		identity:identity,
 		website:website,

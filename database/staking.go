@@ -20,6 +20,41 @@ func (db BigDipperDb) SaveStakingPool(pool stakingtypes.Pool, height int64, time
 	return err
 }
 
+func (db BigDipperDb) SaveValidatorCommissions(validators []dbtypes.ValidatorCommission) error {
+	query := `INSERT INTO validator_commission(validator_address,timestamp,commission,min_self_delegation,height) VALUES`
+	var param []interface{}
+	for i, validator := range validators {
+		vi := i * 5
+		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5)
+		param = append(param, validator.ValidatorAddress, validator.Timestamp.UTC, validator.Commission,
+			validator.MinSelfDelegation, validator.Height)
+	}
+	query = query[:len(query)-1] // Remove trailing ","
+	query += " ON CONFLICT DO NOTHING"
+	_, err := db.Sql.Exec(query, param...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (db BigDipperDb) SaveValidatorInfo(validators []dbtypes.ValidatorInfoRow) error {
+	query := `INSERT INTO validator_info(consensus_address,operator_address,moniker,identity,website,securityContact, details) VALUES`
+	var param []interface{}
+	for i, validator := range validators {
+		vi := i * 7
+		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7)
+		param = append(param, validator.ConsAddress, validator.ValAddress, validator.moniker, validator.identity, validator.websity, validator.securityContact, validator.details)
+	}
+	query = query[:len(query)-1] // Remove trailing ","
+	query += " ON CONFLICT DO NOTHING"
+	_, err := db.Sql.Exec(query, param...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // GetAccounts returns all the accounts that are currently stored inside the database.
 func (db BigDipperDb) GetValidators() ([]bstaking.Validator, error) {
 	sqlStmt := `SELECT DISTINCT ON (validator.consensus_address)
@@ -30,10 +65,10 @@ func (db BigDipperDb) GetValidators() ([]bstaking.Validator, error) {
 
 	var rows []bstaking.Validator
 	err := db.Sqlx.Select(&rows, sqlStmt)
-	if err!=nil{
-		return nil,err
+	if err != nil {
+		return nil, err
 	}
-	return  rows,nil
+	return rows, nil
 }
 
 // SaveValidator saves properly the information about the given validator

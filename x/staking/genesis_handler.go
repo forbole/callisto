@@ -77,15 +77,15 @@ func InitialCommission(stakingGenesisState staking.GenesisState, db database.Big
 func InitialInformation(stakingGenesisState staking.GenesisState, db database.BigDipperDb) error {
 	accounts := make([]dbtypes.ValidatorInfoRow, len(stakingGenesisState.Validators))
 	for index, account := range stakingGenesisState.Validators {
-		accounts[index] = dbtypes.ValidatorInfoRow{
-			consensus_address: account.ConsAddress.String(),
-			operator_address:  account.OperatorAddress.String(),
-			moniker:           account.Description.Moniker,
-			identity:          account.Description.Identity,
-			website:           account.Description.Website,
-			securityContact:   account.Description.SecurityContact,
-			details:           account.Description.Details,
-		}
+		accounts[index] = dbtypes.NewValidatorInfoRow(
+			account.ConsAddress().String(),
+			account.OperatorAddress.String(),
+			account.Description.Moniker,
+			account.Description.Identity,
+			account.Description.Website,
+			account.Description.SecurityContact,
+			account.Description.Details,
+		)
 	}
 
 	err := db.SaveInitialValidatorInfo(accounts)
