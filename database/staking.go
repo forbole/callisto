@@ -54,7 +54,7 @@ func (db BigDipperDb) GetCommission(validator sdk.ValAddress) (dbtypes.Validator
 					WHERE validator_address = $1
 				) and validator_address = $2 ;`
 
-	if err := db.Sqlx.Select(&result, query,validator.String(),validator.String()); err != nil {
+	if err := db.Sqlx.Select(&result, query, validator.String(), validator.String()); err != nil {
 		return dbtypes.ValidatorCommission{}, err
 	}
 	if len(result) == 0 {
@@ -63,7 +63,7 @@ func (db BigDipperDb) GetCommission(validator sdk.ValAddress) (dbtypes.Validator
 	return result[0], nil
 }
 
-func (db BigDipperDb) UpdateValidatorInfo(validator dbtypes.ValidatorInfoRow)error{
+func (db BigDipperDb) UpdateValidatorInfo(validator dbtypes.ValidatorInfoRow) error {
 	query := `UPDATE validator_info 
 				SET moniker=:Moniker,identity=:Identity,website=:Website,securityContact=:SecurityContact, details=:Details)
 				 WHERE consAddress=:ConsAddress`
@@ -79,7 +79,7 @@ func (db BigDipperDb) SaveValidatorInfo(validators []dbtypes.ValidatorInfoRow) e
 	var param []interface{}
 	for i, validator := range validators {
 		vi := i * 7
-		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7)
+		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7)
 		param = append(param, validator.ConsAddress, validator.ValAddress, validator.Moniker,
 			validator.Identity, validator.Website, validator.SecurityContact, validator.Details)
 	}
@@ -92,15 +92,15 @@ func (db BigDipperDb) SaveValidatorInfo(validators []dbtypes.ValidatorInfoRow) e
 	return nil
 }
 
-func (db BigDipperDb) SaveEditCommission(data dbtypes.ValidatorCommission)error{
-	statement :=`INSERT INTO validator_commission (validator_address,commissions,min_self_delegtion,height,timestamp)
+func (db BigDipperDb) SaveEditCommission(data dbtypes.ValidatorCommission) error {
+	statement := `INSERT INTO validator_commission (validator_address,commissions,min_self_delegtion,height,timestamp)
 	 VALUES (:ValidatorAddress  ,
 		:Timestamp         ,
 		:Commission        ,
 		:MinSelfDelegation ,
 		:Height            );`
-	_,err := db.Sqlx.NamedExec(statement,data);
-	if err != nil{
+	_, err := db.Sqlx.NamedExec(statement, data)
+	if err != nil {
 		return err
 	}
 	return nil
