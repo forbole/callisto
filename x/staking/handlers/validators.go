@@ -29,6 +29,7 @@ func HandleEditValidator(msg stakingtypes.MsgEditValidator, tx jtypes.Tx, db dat
 	if err!=nil{
 		return err
 	}
+	
 	if commission.Commission == msg.CommissionRate.Int64() || commission.MinSelfDelegation == msg.MinSelfDelegation.Int64() {
 		//change commission table
 		commission.Height = tx.Height
@@ -36,6 +37,6 @@ func HandleEditValidator(msg stakingtypes.MsgEditValidator, tx jtypes.Tx, db dat
 		commission.ValidatorAddress = msg.ValidatorAddress.String()
 		db.SaveEditCommission(commission)
 	}
-
+	
 	return nil
 }

@@ -54,7 +54,7 @@ func (db BigDipperDb) GetCommission(validator sdk.ValAddress) (dbtypes.Validator
 					WHERE validator_address = $1
 				) and validator_address = $2 ;`
 
-	if err := db.Sqlx.Select(&result, query); err != nil {
+	if err := db.Sqlx.Select(&result, query,validator.String(),validator.String()); err != nil {
 		return dbtypes.ValidatorCommission{}, err
 	}
 	if len(result) == 0 {
@@ -62,6 +62,18 @@ func (db BigDipperDb) GetCommission(validator sdk.ValAddress) (dbtypes.Validator
 	}
 	return result[0], nil
 }
+
+func (db BigDipperDb) UpdateValidatorInfo(validator dbtypes.ValidatorInfoRow)error{
+	query := `UPDATE validator_info 
+				SET moniker=:Moniker,identity=:Identity,website=:Website,securityContact=:SecurityContact, details=:Details)
+				 WHERE consAddress=:ConsAddress`
+	_, err := db.Sqlx.NamedExec(query, validator)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (db BigDipperDb) SaveValidatorInfo(validators []dbtypes.ValidatorInfoRow) error {
 	query := `INSERT INTO validator_info(consensus_address,operator_address,moniker,identity,website,securityContact, details) VALUES`
 	var param []interface{}
