@@ -38,13 +38,38 @@ func (db BigDipperDb) SaveValidatorCommissions(validators []dbtypes.ValidatorCom
 	return nil
 }
 
+//check the new commission is the same as the one before
+func (db BigDipperDb) GetCommission(validator sdk.ValAddress) (dbtypes.ValidatorCommission, error) {
+
+	var result []dbtypes.ValidatorCommission
+	if found, _ := db.HasValidator(validator.String()); !found {
+		return dbtypes.ValidatorCommission{}, nil
+	}
+	//query the latest entry and see if the validator detail changed
+	query := `SELECT commission,min_self_delegation
+				FROM validator_commission
+				WHERE timestamp = (
+					SELECT MAX(timestamp) 
+					FROM validator_commission
+					WHERE validator_address = $1
+				) and validator_address = $2 ;`
+
+	if err := db.Sqlx.Select(&result, query); err != nil {
+		return dbtypes.ValidatorCommission{}, err
+	}
+	if len(result) == 0 {
+		return dbtypes.ValidatorCommission{}, fmt.Errorf("no validator with validator address %s could be found", validator.String())
+	}
+	return result[0], nil
+}
 func (db BigDipperDb) SaveValidatorInfo(validators []dbtypes.ValidatorInfoRow) error {
 	query := `INSERT INTO validator_info(consensus_address,operator_address,moniker,identity,website,securityContact, details) VALUES`
 	var param []interface{}
 	for i, validator := range validators {
 		vi := i * 7
 		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7)
-		param = append(param, validator.ConsAddress, validator.ValAddress, validator.moniker, validator.identity, validator.websity, validator.securityContact, validator.details)
+		param = append(param, validator.ConsAddress, validator.ValAddress, validator.Moniker,
+			validator.Identity, validator.Website, validator.SecurityContact, validator.Details)
 	}
 	query = query[:len(query)-1] // Remove trailing ","
 	query += " ON CONFLICT DO NOTHING"
@@ -55,6 +80,79 @@ func (db BigDipperDb) SaveValidatorInfo(validators []dbtypes.ValidatorInfoRow) e
 	return nil
 }
 
+func (db BigDipperDb) SaveEditCommission(data dbtypes.ValidatorCommission)error{
+	statement :=`INSERT INTO validator_commission (validator_address,commissions,min_self_delegtion,height,timestamp)
+	 VALUES (:ValidatorAddress  ,
+		:Timestamp         ,
+		:Commission        ,
+		:MinSelfDelegation ,
+		:Height            );`
+	_,err := db.Sqlx.NamedExec(statement,data);
+	if err != nil{
+		return err
+	}
+	return nil
+}
+
+/*
+func (db BigDipperDb) SaveEditValidator(validator sdk.ValAddress, commissionRate int64, minSelfDelegation int64,
+	description staking.Description, time time.Time, height int64) error {
+
+	if found, _ := db.HasValidator(validator.String()); !found {
+		return nil
+	}
+	//query the latest entry and see if the validator detail changed
+	query := `SELECT commission,min_self_delegation,details,identity,moniker,website,securityContact
+				FROM validator_commission INNER JOIN validator_info
+				ON  validator_commission.validator_address = validator_info.consensus_address
+				WHERE timestamp = (
+					SELECT MAX(timestamp)
+					FROM validator_commission
+					WHERE validator_address = $1
+				) and validator_address = $2 ;`
+	var c int64
+	var m int64
+	var d [5]string
+	discriptionArray := [5]string{description.Details, description.Identity, description.Moniker,
+		description.Website, description.SecurityContact}
+
+	rows, err1 := db.Sql.Query(query, validator.String(), validator.String())
+	if err1 != nil {
+		return err1
+	}
+	for rows.Next() {
+		err := rows.Scan(&c, &m, &(d[0]), &(d[1]), &(d[2]), &(d[3]), &(d[4]))
+		if err != nil {
+			return err
+		}
+		if commissionRate == c || minSelfDelegation == m {
+			//commission rate changed(insert)
+			statement := `INSERT INTO validator_commission (validator_address,commissions,min_self_delegtion,height,timestamp) VALUES ($1,$2,$3,$4,$5);`
+			_, err := db.Sql.Exec(statement,
+				validator.String(), commissionRate, minSelfDelegation, height, time)
+			if err != nil {
+				return err
+			}
+		}
+		if d == discriptionArray {
+			//discription change(update)
+			descriptionStatement := `UPDATE validator_info
+				SET Moniker     =$1,
+				Identity        =$2,
+				Website         =$3,
+				SecurityContact =$4,
+				Details         =$5
+				WHERE consensus_address = $6;`
+			_, err := db.Sql.Exec(descriptionStatement, d[0], d[1], d[2], d[3], d[4], validator.String())
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+*/
 // GetAccounts returns all the accounts that are currently stored inside the database.
 func (db BigDipperDb) GetValidators() ([]bstaking.Validator, error) {
 	sqlStmt := `SELECT DISTINCT ON (validator.consensus_address)

@@ -61,24 +61,24 @@ func (v ValidatorRow) Equal(w ValidatorRow) bool {
 type ValidatorInfoRow struct {
 	ConsAddress     string `db:"consensus_address"`
 	ValAddress      string `db:"operator_address"`
-	moniker         string `db:"moniker"`
-	identity        string `db:"identity"`
-	website         string `db:"website"`
-	securityContact string `db:"securityContact"`
-	details         string `db:"details"`
+	Moniker         string `db:"moniker"`
+	Identity        string `db:"identity"`
+	Website         string `db:"website"`
+	SecurityContact string `db:"securityContact"`
+	Details         string `db:"details"`
 }
 
 // NewValidatorInfoRow allows to build a new ValidatorInfoRow
-func NewValidatorInfoRow(consAddress string, valAddress string, ConsPubKey string ,moniker string,identity string,
+func NewValidatorInfoRow(consAddress string, valAddress string,moniker string,identity string,
 	website string ,securityContact string ,details string ) ValidatorInfoRow {
 	return ValidatorInfoRow{
 		ConsAddress: consAddress,
 		ValAddress:  valAddress,
-		moniker:moniker,
-		identity:identity,
-		website:website,
-		securityContact :securityContact ,
-		details:details,
+		Moniker:moniker,
+		Identity:identity,
+		Website:website,
+		SecurityContact :securityContact ,
+		Details:details,
 	}
 }
 
@@ -272,14 +272,14 @@ func (v ValidatorReDelegationRow) Equal(w ValidatorReDelegationRow) bool {
 type ValidatorCommission struct {
 	ValidatorAddress  string    `db:"validator_address"`
 	Timestamp         time.Time `db:"timestamp"`
-	Commission        float64   `db"commission"`
+	Commission        int64   `db"commission"`
 	MinSelfDelegation int64     `db:"min_self_delegation"`
 	Height            int64     `db:"height"`
 }
 
-func (v ValidatorCommission)NewValidatorCommission(	ValidatorAddress  string ,   
+func NewValidatorCommission(	ValidatorAddress  string ,   
 	Timestamp         time.Time ,
-	Commission        float64   ,
+	Commission        int64   ,
 	MinSelfDelegation int64     ,
 	Height            int64     )ValidatorCommission{
 		return ValidatorCommission{

@@ -39,6 +39,8 @@ func MsgHandler(tx types.Tx, index int, msg sdk.Msg, w worker.Worker) error {
 
 	case staking.MsgUndelegate:
 		return handlers.HandleMsgUndelegate(tx, index, cosmosMsg, bigDipperDb)
+	case staking.MsgEditValidator:
+		return handlers.HandleEditValidator(cosmosMsg,tx,bigDipperDb)
 	}
 
 	return nil

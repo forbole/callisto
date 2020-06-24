@@ -11,12 +11,12 @@ import (
 	"github.com/desmos-labs/juno/parse/worker"
 	"github.com/forbole/bdjuno/database"
 	dbtypes "github.com/forbole/bdjuno/database/types"
+	"github.com/forbole/bdjuno/x/staking/types"
 	"github.com/rs/zerolog/log"
-	"github.com/tendermint/tendermint/types"
 	tmtypes "github.com/tendermint/tendermint/types"
 )
 
-func GenesisHandler(codec *codec.Codec, genesisDoc *types.GenesisDoc, appState map[string]json.RawMessage, w worker.Worker) error {
+func GenesisHandler(codec *codec.Codec, genesisDoc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, w worker.Worker) error {
 	log.Debug().Str("module", "auth").Msg("parsing genesis")
 
 	bigDipperDb, ok := w.Db.(database.BigDipperDb)
@@ -63,8 +63,8 @@ func InitialCommission(stakingGenesisState staking.GenesisState, db database.Big
 	// Store the accounts
 	accounts := make([]dbtypes.ValidatorCommission, len(stakingGenesisState.Validators))
 	for index, account := range stakingGenesisState.Validators {
-		accounts[index] = dbtypes.NewValidatorCommission(account.ConsAddress.String(), time.Now,
-			account.Commission, account.MinSelfDelegation, 0)
+		accounts[index] = dbtypes.NewValidatorCommission(account.ConsAddress().String(), time.Now(),
+			account.Commission.Rate.Int64(), account.MinSelfDelegation.Int64(), 0)
 	}
 
 	err := db.SaveValidatorCommissions(accounts)
@@ -88,7 +88,7 @@ func InitialInformation(stakingGenesisState staking.GenesisState, db database.Bi
 		)
 	}
 
-	err := db.SaveInitialValidatorInfo(accounts)
+	err := db.SaveValidatorInfo(accounts)
 	if err != nil {
 		return err
 	}
