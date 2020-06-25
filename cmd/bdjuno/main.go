@@ -13,6 +13,7 @@ import (
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/auth"
 	"github.com/forbole/bdjuno/x/bank"
+	"github.com/forbole/bdjuno/x/consensus"
 	"github.com/forbole/bdjuno/x/staking"
 	"github.com/go-co-op/gocron"
 )
@@ -66,6 +67,9 @@ func SetupModules() {
 	// Register msg handlers
 	worker.RegisterMsgHandler(staking.MsgHandler)
 	worker.RegisterMsgHandler(bank.MsgHandler)
+
+	// Register other operations
+	parse.RegisterAdditionalOperation(consensus.ListeningOperation)
 
 	// Register periodic operations
 	scheduler := gocron.NewScheduler(time.UTC)
