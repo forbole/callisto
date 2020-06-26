@@ -83,7 +83,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorData() {
 		"ExampleIdentity",
 		"ExampleWebsite",
 		"ExampleSecurity",
-		"ExampleDetails"
+		"ExampleDetails",
 	)))
 }
 
