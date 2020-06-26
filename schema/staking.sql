@@ -53,7 +53,7 @@ CREATE TABLE validator_redelegation
     amount                COIN                        NOT NULL,
     height                BIGINT                      NOT NULL,
     completion_time       TIMESTAMP WITHOUT TIME ZONE NOT NULL
-)
+);
 
 CREATE TABLE validator_commission
 (
