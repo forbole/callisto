@@ -170,7 +170,7 @@ func (suite *DbTestSuite) TestBigDipperDb_GetValidatorsData() {
 	}
 
 	// Get the data
-	data, err := suite.database.GetValidators()
+	data, err := suite.database.GetValidatorsData()
 	suite.Require().NoError(err)
 
 	// Verify

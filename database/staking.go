@@ -181,6 +181,29 @@ func (db BigDipperDb) GetValidators() ([]bstaking.Validator, error) {
 	return rows, nil
 }
 
+// GetValidatorsData returns the data of all the validators that are currently stored inside the database.
+func (db BigDipperDb) GetValidatorsData() ([]types.Validator, error) {
+	sqlStmt := `SELECT DISTINCT ON (validator.consensus_address)
+				validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address 
+				FROM validator 
+				INNER JOIN validator_info 
+				ON validator.consensus_address = validator_info.consensus_address
+				ORDER BY validator.consensus_address`
+
+	var rows []dbtypes.ValidatorData
+	err := db.Sqlx.Select(&rows, sqlStmt)
+	if err != nil {
+		return nil, err
+	}
+
+	validators := make([]types.Validator, len(rows))
+	for index, row := range rows {
+		validators[index] = row
+	}
+
+	return validators, nil
+}
+
 // SaveValidator saves properly the information about the given validator
 func (db BigDipperDb) SaveValidatorData(validator types.Validator) error {
 	stmt := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES ($1, $2) ON CONFLICT DO NOTHING`
