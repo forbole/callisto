@@ -4,7 +4,6 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/forbole/cosmos-sdk/x/stake"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/tendermint/tendermint/crypto"
 )
@@ -12,20 +11,15 @@ import (
 // Validator represents a single validator.
 // This is defined as an interface so that we can use the SDK types
 // as well as database types properly.
-type Validator interface {
+type ValidatorI interface {
 	GetConsAddr() sdk.ConsAddress
 	GetConsPubKey() crypto.PubKey
 	GetOperator() sdk.ValAddress
-	GetMoniker() string
-	GetIdentity() string
-	GetWebsite() string
-	GetSecurityContact() string
-	GetDetails() string
 }
 
 // NewValidator allows to build a new Validator implementation having the given data
 func NewValidator(consAddr sdk.ConsAddress, opAddr sdk.ValAddress, consPubKey crypto.PubKey, moniker string, identity string,
-	website string, securityContact string, details string) Validator {
+	website string, securityContact string, details string) ValidatorI {
 	return validator{
 		ConsensusAddr: consAddr,
 		ConsPubKey:    consPubKey,
@@ -41,6 +35,7 @@ func NewValidator(consAddr sdk.ConsAddress, opAddr sdk.ValAddress, consPubKey cr
 }
 
 // validator allows to easily implement the Validator interface
+//unexported
 type validator struct {
 	ConsensusAddr sdk.ConsAddress
 	ConsPubKey    crypto.PubKey

@@ -3,7 +3,7 @@ package handlers
 import (
 	"time"
 
-	stakingtypes "github.com/forbole/cosmos-sdk/x/staking/types"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	jtypes "github.com/desmos-labs/juno/types"
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/staking/types"

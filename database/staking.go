@@ -218,7 +218,7 @@ func (db BigDipperDb) SaveValidatorData(validator types.Validator) error {
 	stmt = `INSERT INTO validator_info (consensus_address,operator_address,moniker,identity,website,securityContact, details) VALUES ($1, $2,$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING`
 	_, err = db.Sql.Exec(stmt,
 		validator.GetConsAddr().String(), validator.GetOperator().String(), validator.GetMoniker(),
-		validator.GetIdentity(), validator.GetWebsite(), validator.GetSecurityContact(), validator.GetDetails())
+		validator.GetIdentity(), validator.GetWebsite, validator.GetSecurityContact(), validator.GetDetails())
 	return err
 }
 

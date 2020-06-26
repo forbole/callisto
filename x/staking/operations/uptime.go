@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/x/slashing"
+	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/desmos-labs/juno/parse/client"
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/staking/types"
@@ -76,7 +77,7 @@ func updateValidators(height int64, cp client.ClientProxy, db database.BigDipper
 	// Get all the validators in any state
 	var validators []types.Validator
 	for _, status := range statuses {
-		var validatorSet []types.Validator
+		var validatorSet []staking.Validator
 		endpoint := fmt.Sprintf("/staking/validators?status=%s&height=%d", status, height)
 		if _, err := cp.QueryLCDWithHeight(endpoint, &validatorSet); err != nil {
 			return err
