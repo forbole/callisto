@@ -96,14 +96,25 @@ type ValidatorData struct {
 	ConsAddress string `db:"consensus_address"`
 	ValAddress  string `db:"operator_address"`
 	ConsPubKey  string `db:"consensus_pubkey"`
+	Moniker         string `db:"moniker"`
+	Identity        string `db:"identity"`
+	Website         string `db:"website"`
+	SecurityContact string `db:"securityContact"`
+	Details         string `db:"details"`
 }
 
 // NewValidatorData allows to build a new ValidatorData
-func NewValidatorData(consAddress, valAddress, consPubKey string) ValidatorData {
+func NewValidatorData(consAddress, valAddress, consPubKey string,moniker string,identity string,
+	website string ,securityContact string ,details string ) ValidatorData {
 	return ValidatorData{
 		ConsAddress: consAddress,
 		ValAddress:  valAddress,
 		ConsPubKey:  consPubKey,
+		Moniker:moniker,
+		Identity:identity,
+		Website:website,
+		SecurityContact :securityContact ,
+		Details:details,
 	}
 }
 
@@ -128,6 +139,24 @@ func (v ValidatorData) GetOperator() sdk.ValAddress {
 
 	return addr
 }
+
+
+func (v ValidatorData) GetMoniker() string{
+	return v.Moniker
+}
+func (v ValidatorData) 	GetIdentity() string{
+	return v.Identity
+}
+func (v ValidatorData) 	GetWebsite() string{
+	return v.Website
+}
+func (v ValidatorData) 	GetSecurityContact() string{
+	return v.SecurityContact
+}
+func (v ValidatorData) 	GetDetails() string{
+	return v.Details
+}
+
 
 // ________________________________________________
 
@@ -272,7 +301,7 @@ func (v ValidatorReDelegationRow) Equal(w ValidatorReDelegationRow) bool {
 type ValidatorCommission struct {
 	ValidatorAddress  string    `db:"validator_address"`
 	Timestamp         time.Time `db:"timestamp"`
-	Commission        int64   `db"commission"`
+	Commission        int64   `db:"commission"`
 	MinSelfDelegation int64     `db:"min_self_delegation"`
 	Height            int64     `db:"height"`
 }

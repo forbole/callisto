@@ -54,6 +54,11 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorData() {
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
 		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
+		"ExampleMoniker",
+		"ExampleIdentity",
+		"ExampleWebsite",
+		"ExampleSecurity",
+		"ExampleDetails",
 	)
 
 	// First inserting
@@ -61,7 +66,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorData() {
 	suite.Require().NoError(err, "inserting a validator info should return no error")
 
 	// Test double inserting
-	err = suite.database.SaveValidatorData(validator)
+	err = suite.database.a(validator)
 	suite.Require().NoError(err, "inserting the same validator info twice should return no error")
 
 	// Verify the data
@@ -121,11 +126,21 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorsData() {
 			"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 			"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
 			"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
+			"ExampleMoniker",
+			"ExampleIdentity",
+			"ExampleWebsite",
+			"ExampleSecurity",
+			"ExampleDetails",
 		),
 		dbtypes.NewValidatorData(
 			"cosmosvalcons1qq92t2l4jz5pt67tmts8ptl4p0jhr6utx5xa8y",
 			"cosmosvaloper1000ya26q2cmh399q4c5aaacd9lmmdqp90kw2jn",
 			"cosmosvalconspub1zcjduepqe93asg05nlnj30ej2pe3r8rkeryyuflhtfw3clqjphxn4j3u27msrr63nk",
+			"ExampleMoniker2",
+			"ExampleIdentity2",
+			"ExampleWebsite2",
+			"ExampleSecurity2",
+			"ExampleDetails2",
 		),
 	}
 
@@ -179,11 +194,21 @@ func (suite *DbTestSuite) TestBigDipperDb_GetValidatorsData() {
 			"cosmosvalcons1qq92t2l4jz5pt67tmts8ptl4p0jhr6utx5xa8y",
 			"cosmosvaloper1000ya26q2cmh399q4c5aaacd9lmmdqp90kw2jn",
 			"cosmosvalconspub1zcjduepqe93asg05nlnj30ej2pe3r8rkeryyuflhtfw3clqjphxn4j3u27msrr63nk",
+			"ExampleMoniker2",
+			"ExampleIdentity2",
+			"ExampleWebsite2",
+			"ExampleSecurity2",
+			"ExampleDetails2",
 		),
 		dbtypes.NewValidatorData(
 			"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 			"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
 			"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
+			"ExampleMoniker",
+			"ExampleIdentity",
+			"ExampleWebsite",
+			"ExampleSecurity",
+			"ExampleDetails",
 		),
 	}
 

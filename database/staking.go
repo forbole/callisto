@@ -75,7 +75,7 @@ func (db BigDipperDb) UpdateValidatorInfo(validator dbtypes.ValidatorInfoRow) er
 }
 
 func (db BigDipperDb) SaveValidatorInfo(validators []dbtypes.ValidatorInfoRow) error {
-	query := `INSERT INTO validator_info(consensus_address,operator_address,moniker,identity,website,securityContact, details) VALUES`
+	query := `INSERT INTO validator_info (consensus_address,operator_address,moniker,identity,website,securityContact, details) VALUES`
 	var param []interface{}
 	for i, validator := range validators {
 		vi := i * 7
@@ -215,9 +215,10 @@ func (db BigDipperDb) SaveValidatorData(validator types.Validator) error {
 		return err
 	}
 
-	stmt = `INSERT INTO validator_info (consensus_address, operator_address) VALUES ($1, $2) ON CONFLICT DO NOTHING`
+	stmt = `INSERT INTO validator_info (consensus_address,operator_address,moniker,identity,website,securityContact, details) VALUES ($1, $2,$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING`
 	_, err = db.Sql.Exec(stmt,
-		validator.GetConsAddr().String(), validator.GetOperator().String())
+		validator.GetConsAddr().String(), validator.GetOperator().String(), validator.GetMoniker(),
+		validator.GetIdentity(), validator.GetWebsite, validator.GetSecurityContact(), validator.GetDetails())
 	return err
 }
 
@@ -246,12 +247,13 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 	validatorQuery := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES `
 	var validatorParams []interface{}
 
-	validatorInfoQuery := `INSERT INTO validator_info (consensus_address, operator_address) VALUES `
+	validatorInfoQuery := `INSERT INTO validator_info (consensus_address,operator_address,moniker,identity,website,securityContact, details) VALUES`
+
 	var validatorInfoParams []interface{}
 
 	for i, validator := range validators {
 		v1 := i * 2 // Starting position for validator params
-		i1 := i * 2 // Starting position for validator info params
+		i1 := i * 7 // Starting position for validator info params
 
 		publicKey, err := sdk.Bech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, validator.GetConsPubKey())
 		if err != nil {
@@ -262,9 +264,10 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 		validatorParams = append(validatorParams,
 			validator.GetConsAddr().String(), publicKey)
 
-		validatorInfoQuery += fmt.Sprintf("($%d,$%d),", i1+1, i1+2)
-		validatorInfoParams = append(validatorInfoParams,
-			validator.GetConsAddr().String(), validator.GetOperator().String())
+		validatorInfoQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7)
+		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddress(), validator.GetValAddress(), validator.GetMoniker(),
+			validator.GetIdentity(), validator.GetWebsite(), validator.GetSecurityContact(), validator.GetDetails())
+
 	}
 
 	validatorQuery = validatorQuery[:len(validatorQuery)-1] // Remove trailing ","

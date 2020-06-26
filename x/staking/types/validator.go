@@ -15,22 +15,36 @@ type Validator interface {
 	GetConsAddr() sdk.ConsAddress
 	GetConsPubKey() crypto.PubKey
 	GetOperator() sdk.ValAddress
+	GetMoniker() string
+	GetIdentity() string
+	GetWebsite() string
+	GetSecurityContact() string
+	GetDetails() string
 }
 
 // NewValidator allows to build a new Validator implementation having the given data
-func NewValidator(consAddr sdk.ConsAddress, opAddr sdk.ValAddress, consPubKey crypto.PubKey) Validator {
+func NewValidator(consAddr sdk.ConsAddress, opAddr sdk.ValAddress, consPubKey crypto.PubKey,moniker string,identity string,
+	website string ,securityContact string ,details string ) Validator {
 	return validator{
 		ConsensusAddr: consAddr,
 		ConsPubKey:    consPubKey,
 		OperatorAddr:  opAddr,
+		Discription:staking.Description{
+			Moniker:moniker,
+			Identity:identity,
+			Website:website,
+			SecurityContact :securityContact ,
+			Details:details,
+		},
 	}
 }
 
 // validator allows to easily implement the Validator interface
 type validator struct {
-	ConsensusAddr sdk.ConsAddress `db:"consensus_address"`
-	ConsPubKey    crypto.PubKey   `db:"consensus_pubkey"`
-	OperatorAddr  sdk.ValAddress  `db:"operator_address"`
+	ConsensusAddr sdk.ConsAddress 
+	ConsPubKey    crypto.PubKey   
+	OperatorAddr  sdk.ValAddress  
+	Discription   staking.Description
 }
 
 // GetConsAddr implements the Validator interface
@@ -47,6 +61,23 @@ func (v validator) GetConsPubKey() crypto.PubKey {
 func (v validator) GetOperator() sdk.ValAddress {
 	return v.OperatorAddr
 }
+
+func (v validator) GetMoniker() string{
+	return v.Discription.Moniker
+}
+func (v validator) 	GetIdentity() string{
+	return v.Discription.Identity
+}
+func (v validator) 	GetWebsite() string{
+	return v.Discription.Website
+}
+func (v validator) 	GetSecurityContact() string{
+	return v.Discription.SecurityContact
+}
+func (v validator) 	GetDetails() string{
+	return v.Discription.Details
+}
+
 
 // _________________________________________________________
 
