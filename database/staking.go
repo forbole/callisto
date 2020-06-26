@@ -253,7 +253,7 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 
 	for i, validator := range validators {
 		v1 := i * 2 // Starting position for validator params
-		i1 := i * 7 // Starting position for validator info params
+		vi := i * 7 // Starting position for validator info params
 
 		publicKey, err := sdk.Bech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, validator.GetConsPubKey())
 		if err != nil {
@@ -265,7 +265,7 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 			validator.GetConsAddr().String(), publicKey)
 
 		validatorInfoQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7)
-		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddress(), validator.GetValAddress(), validator.GetMoniker(),
+		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr(), validator.GetOperator(), validator.GetMoniker(),
 			validator.GetIdentity(), validator.GetWebsite(), validator.GetSecurityContact(), validator.GetDetails())
 
 	}
