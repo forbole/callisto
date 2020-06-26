@@ -39,7 +39,6 @@ func GenesisHandler(codec *codec.Codec, genDoc *types.GenesisDoc, appState map[s
 	for index, account := range stakingGenesisState.Validators {
 		accounts[index] = account.(exported.Account)
 		selfAddress := sdk.AccAddress(account[index].Bytes())
-
 	}
 
 

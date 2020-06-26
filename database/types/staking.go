@@ -30,3 +30,10 @@ func (v ValidatorData) GetConsPubKey() crypto.PubKey {
 func (v ValidatorData) GetOperator() sdk.ValAddress {
 	return v.ValAddress
 }
+
+type ValidatorSelfCommission stuct{
+	Consensus_address string `db:"consensus_address"`
+	Shares    int64 `db:"shares"`   
+	Height           int64 `db:"height"`   
+	Timestamp         time.Time `db:"timestamp"`
+}

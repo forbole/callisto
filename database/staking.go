@@ -234,7 +234,7 @@ func (db BigDipperDb) saveUnbondingDelegations(
 	udQuery = udQuery[:len(udQuery)-1] // Remove the trailing ","
 	udQuery += " ON CONFLICT DO NOTHING"
 	_, err = db.Sql.Exec(udQuery, delegationsParams...)
-	return err
+	return err 
 }
 
 func (db BigDipperDb) SaveSelfDelegation(delegation staking.Delegation, timestamp time.Time,height int64) error {
@@ -245,4 +245,14 @@ func (db BigDipperDb) SaveSelfDelegation(delegation staking.Delegation, timestam
 		return err
 	}
 	return nil
+}
+
+func (db BigDupperDB) SaveAllSelfDelegation(delegations []dbtypes.ValidatorSelfCommission)error{
+	statement := `INSERT INTO validator_self_delegation(consenus_address,shares,height,timestamp) VALUES`
+	selfDelegationrow := make([]dbtypes.ValidatorSelfCommission,length(delegations))
+	for i ,delegation := range delegations{
+		i1=i*4
+		statement += fmt.Sprintf(`(%$d,%$d,%$d,%$d)`,i1+1,i1+2,i1+3,i1+4)
+		selfDelegationrow = append(selfDelegationrow,delegation.)
+	}
 }
