@@ -4,6 +4,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/forbole/cosmos-sdk/x/stake"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/tendermint/tendermint/crypto"
 )
@@ -23,27 +24,27 @@ type Validator interface {
 }
 
 // NewValidator allows to build a new Validator implementation having the given data
-func NewValidator(consAddr sdk.ConsAddress, opAddr sdk.ValAddress, consPubKey crypto.PubKey,moniker string,identity string,
-	website string ,securityContact string ,details string ) Validator {
+func NewValidator(consAddr sdk.ConsAddress, opAddr sdk.ValAddress, consPubKey crypto.PubKey, moniker string, identity string,
+	website string, securityContact string, details string) Validator {
 	return validator{
 		ConsensusAddr: consAddr,
 		ConsPubKey:    consPubKey,
 		OperatorAddr:  opAddr,
-		Discription:staking.Description{
-			Moniker:moniker,
-			Identity:identity,
-			Website:website,
-			SecurityContact :securityContact ,
-			Details:details,
+		Discription: staking.Description{
+			Moniker:         moniker,
+			Identity:        identity,
+			Website:         website,
+			SecurityContact: securityContact,
+			Details:         details,
 		},
 	}
 }
 
 // validator allows to easily implement the Validator interface
 type validator struct {
-	ConsensusAddr sdk.ConsAddress 
-	ConsPubKey    crypto.PubKey   
-	OperatorAddr  sdk.ValAddress  
+	ConsensusAddr sdk.ConsAddress
+	ConsPubKey    crypto.PubKey
+	OperatorAddr  sdk.ValAddress
 	Discription   staking.Description
 }
 
@@ -62,22 +63,21 @@ func (v validator) GetOperator() sdk.ValAddress {
 	return v.OperatorAddr
 }
 
-func (v validator) GetMoniker() string{
+func (v validator) GetMoniker() string {
 	return v.Discription.Moniker
 }
-func (v validator) 	GetIdentity() string{
+func (v validator) GetIdentity() string {
 	return v.Discription.Identity
 }
-func (v validator) 	GetWebsite() string{
+func (v validator) GetWebsite() string {
 	return v.Discription.Website
 }
-func (v validator) 	GetSecurityContact() string{
+func (v validator) GetSecurityContact() string {
 	return v.Discription.SecurityContact
 }
-func (v validator) 	GetDetails() string{
+func (v validator) GetDetails() string {
 	return v.Discription.Details
 }
-
 
 // _________________________________________________________
 

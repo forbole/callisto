@@ -3,7 +3,7 @@ package handlers
 import (
 	"time"
 
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	stakingtypes "github.com/forbole/cosmos-sdk/x/staking/types"
 	jtypes "github.com/desmos-labs/juno/types"
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/staking/types"
@@ -17,6 +17,11 @@ func HandleMsgCreateValidator(msg stakingtypes.MsgCreateValidator, db database.B
 		stakingValidator.GetConsAddr(),
 		stakingValidator.GetOperator(),
 		stakingValidator.GetConsPubKey(),
+		stakingValidator.Description.Moniker,
+		stakingValidator.Description.Identity,
+		stakingValidator.Description.Website,
+		stakingValidator.Description.SecurityContact,
+		stakingValidator.Description.Details,
 	))
 }
 func HandleEditValidator(msg stakingtypes.MsgEditValidator, tx jtypes.Tx, db database.BigDipperDb) error {
