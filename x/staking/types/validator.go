@@ -28,9 +28,9 @@ func NewValidator(consAddr sdk.ConsAddress, opAddr sdk.ValAddress, consPubKey cr
 
 // validator allows to easily implement the Validator interface
 type validator struct {
-	ConsensusAddr sdk.ConsAddress
-	ConsPubKey    crypto.PubKey
-	OperatorAddr  sdk.ValAddress
+	ConsensusAddr sdk.ConsAddress `db:"consensus_address"`
+	ConsPubKey    crypto.PubKey   `db:"consensus_pubkey"`
+	OperatorAddr  sdk.ValAddress  `db:"operator_address"`
 }
 
 // GetConsAddr implements the Validator interface
@@ -88,4 +88,3 @@ type ValidatorDelegations struct {
 	Height               int64
 	Timestamp            time.Time
 }
-
