@@ -205,7 +205,7 @@ func (db BigDipperDb) GetValidatorsData() ([]types.Validator, error) {
 }
 
 // SaveValidator saves properly the information about the given validator
-func (db BigDipperDb) SaveValidatorData(validator types.Validator,description stakingtypes.Description) error {
+func (db BigDipperDb) SaveValidatorData(validator types.Validator, description stakingtypes.Description) error {
 	stmt := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES ($1, $2) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(stmt,
 		validator.GetConsAddr().String(),
@@ -265,8 +265,8 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 			validator.GetConsAddr().String(), publicKey)
 
 		validatorInfoQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7)
-		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr(), validator.GetOperator(), validator.Description().Moniker,
-			validator.Description().Identity, validator.Description().Website, validator.Description().SecurityContact, validator.Description().Details)
+		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr(), validator.GetOperator(), validator.Description.Moniker,
+			validator.Description.Identity, validator.Description.Website, validator.Description.SecurityContact, validator.Description.Details)
 
 	}
 

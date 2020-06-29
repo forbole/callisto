@@ -77,7 +77,7 @@ func updateValidators(height int64, cp client.ClientProxy, db database.BigDipper
 	// Get all the validators in any state
 	var validators []types.Validator
 	for _, status := range statuses {
-		var validatorSet []staking.Validator
+		var validatorSet []types.Validator
 		endpoint := fmt.Sprintf("/staking/validators?status=%s&height=%d", status, height)
 		if _, err := cp.QueryLCDWithHeight(endpoint, &validatorSet); err != nil {
 			return err
