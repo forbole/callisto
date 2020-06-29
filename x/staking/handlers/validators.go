@@ -3,9 +3,11 @@ package handlers
 import (
 	"time"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	jtypes "github.com/desmos-labs/juno/types"
 	"github.com/forbole/bdjuno/database"
+	dbtypes "github.com/forbole/bdjuno/database/types"
 	"github.com/forbole/bdjuno/x/staking/types"
 )
 
@@ -33,7 +35,7 @@ func HandleEditValidator(msg stakingtypes.MsgEditValidator, tx jtypes.Tx, db dat
 		db.SaveEditCommission(commission)
 	}
 
-	db.UpdateValidatorInfo(NewValidatorInfoRow(msg.ValidatorAddress, stakingtypes.AccAddress(msg.ValidatorAddress), msg.Description.Moniker,
+	db.UpdateValidatorInfo(dbtypes.NewValidatorInfoRow(msg.ValidatorAddress.String(), sdk.AccAddress(msg.ValidatorAddress).String(), msg.Description.Moniker,
 		msg.Description.Identity, msg.Description.Website,
 		msg.Description.SecurityContact, msg.Description.Details))
 
