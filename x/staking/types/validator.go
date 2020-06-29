@@ -15,6 +15,7 @@ type Validator interface {
 	GetConsAddr() sdk.ConsAddress
 	GetConsPubKey() crypto.PubKey
 	GetOperator() sdk.ValAddress
+	GetDescription() staking.Description
 }
 
 // NewValidator allows to build a new Validator implementation having the given data
@@ -24,9 +25,8 @@ func NewValidator(consAddr sdk.ConsAddress, opAddr sdk.ValAddress, consPubKey cr
 		ConsPubKey:    consPubKey,
 		OperatorAddr:  opAddr,
 		Description:  description,
-		}
 	}
-
+}
 
 // validator allows to easily implement the Validator interface
 //unexported
@@ -47,26 +47,11 @@ func (v validator) GetConsPubKey() crypto.PubKey {
 	return v.ConsPubKey
 }
 
-// GetOperator implements the Validator interface
-func (v validator) GetOperator() sdk.ValAddress {
-	return v.OperatorAddr
+func (v validator) GetDescription() staking.Description{
+	return v.Description
 }
 
-func (v validator) GetMoniker() string {
-	return v.Description.Moniker
-}
-func (v validator) GetIdentity() string {
-	return v.Description.Identity
-}
-func (v validator) GetWebsite() string {
-	return v.Description.Website
-}
-func (v validator) GetSecurityContact() string {
-	return v.Description.SecurityContact
-}
-func (v validator) GetDetails() string {
-	return v.Description.Details
-}
+
 
 // _________________________________________________________
 

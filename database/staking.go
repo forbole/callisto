@@ -125,8 +125,8 @@ func (db BigDipperDb) SaveEditValidator(validator sdk.ValAddress, commissionRate
 	var c int64
 	var m int64
 	var d [5]string
-	discriptionArray := [5]string{description.Details, description.Identity, description.Moniker,
-		description.Website, description.SecurityContact}
+	discriptionArray := [5]string{Description().Details, Description().Identity, Description().Moniker,
+		Description().Website, Description().SecurityContact}
 
 	rows, err1 := db.Sql.Query(query, validator.String(), validator.String())
 	if err1 != nil {
@@ -217,8 +217,8 @@ func (db BigDipperDb) SaveValidatorData(validator types.Validator) error {
 
 	stmt = `INSERT INTO validator_info (consensus_address,operator_address,moniker,identity,website,securityContact, details) VALUES ($1, $2,$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING`
 	_, err = db.Sql.Exec(stmt,
-		validator.GetConsAddr().String(), validator.GetOperator().String(), validator.Description.Moniker,
-		validator.Description.Identity, validator.Description.Website, validator.Description.SecurityContact, validator.Description.Details)
+		validator.GetConsAddr().String(), validator.GetOperator().String(), validator.Description().Moniker,
+		validator.Description().Identity, validator.Description().Website, validator.Description().SecurityContact, validator.Description().Details)
 	return err
 }
 
@@ -265,8 +265,8 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 			validator.GetConsAddr().String(), publicKey)
 
 		validatorInfoQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7)
-		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr(), validator.GetOperator(), validator.Description.Moniker,
-		validator.Description.Identity, validator.Description.Website, validator.Description.SecurityContact, validator.Description.Details)
+		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr(), validator.GetOperator(), validator.Description().Moniker,
+		validator.Description().Identity, validator.Description().Website, validator.Description().SecurityContact, validator.Description().Details)
 
 	}
 
