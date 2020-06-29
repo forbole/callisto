@@ -17,8 +17,7 @@ func HandleMsgCreateValidator(msg stakingtypes.MsgCreateValidator, db database.B
 		stakingValidator.GetConsAddr(),
 		stakingValidator.GetOperator(),
 		stakingValidator.GetConsPubKey(),
-		stakingValidator.Description
-	))
+	), stakingValidator.Description)
 }
 func HandleEditValidator(msg stakingtypes.MsgEditValidator, tx jtypes.Tx, db database.BigDipperDb) error {
 	commission, err := db.GetCommission(msg.ValidatorAddress)
@@ -33,6 +32,10 @@ func HandleEditValidator(msg stakingtypes.MsgEditValidator, tx jtypes.Tx, db dat
 		commission.ValidatorAddress = msg.ValidatorAddress.String()
 		db.SaveEditCommission(commission)
 	}
+
+	db.UpdateValidatorInfo(NewValidatorInfoRow(msg.ValidatorAddress, stakingtypes.AccAddress(msg.ValidatorAddress), msg.Description.Moniker,
+		msg.Description.Identity, msg.Description.Website,
+		msg.Description.SecurityContact, msg.Description.Details))
 
 	return nil
 }

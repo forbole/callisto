@@ -44,15 +44,7 @@ func GenesisHandler(codec *codec.Codec, genesisDoc *tmtypes.GenesisDoc, appState
 		return err
 	}
 
-	var stakingGenesisState staking.GenesisState
-	if err := codec.UnmarshalJSON(appState[staking.ModuleName], &stakingGenesisState); err != nil {
-		return err
-	}
-
-	if err := codec.UnmarshalJSON(appState[staking.ModuleName], &stakingGenesisState); err != nil {
-		return err
-	}
-	err := InitialCommission(stakingGenesisState, bigDipperDb)
+	err := InitialCommission(genState, bigDipperDb)
 	if err != nil {
 		return err
 	}

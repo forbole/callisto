@@ -66,7 +66,7 @@ func (db BigDipperDb) GetCommission(validator sdk.ValAddress) (dbtypes.Validator
 func (db BigDipperDb) UpdateValidatorInfo(validator dbtypes.ValidatorInfoRow) error {
 	query := `UPDATE validator_info 
 				SET moniker=:Moniker,identity=:Identity,website=:Website,securityContact=:SecurityContact, details=:Details)
-				 WHERE consAddress=:ConsAddress`
+				 WHERE consensus_address=:consensus_address`
 	_, err := db.Sqlx.NamedExec(query, validator)
 	if err != nil {
 		return err
@@ -205,7 +205,7 @@ func (db BigDipperDb) GetValidatorsData() ([]types.Validator, error) {
 }
 
 // SaveValidator saves properly the information about the given validator
-func (db BigDipperDb) SaveValidatorData(validator types.Validator) error {
+func (db BigDipperDb) SaveValidatorData(validator types.Validator,description stakingtypes.Description) error {
 	stmt := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES ($1, $2) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(stmt,
 		validator.GetConsAddr().String(),
@@ -217,8 +217,8 @@ func (db BigDipperDb) SaveValidatorData(validator types.Validator) error {
 
 	stmt = `INSERT INTO validator_info (consensus_address,operator_address,moniker,identity,website,securityContact, details) VALUES ($1, $2,$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING`
 	_, err = db.Sql.Exec(stmt,
-		validator.GetConsAddr().String(), validator.GetOperator().String(), validator.Description().Moniker,
-		validator.Description().Identity, validator.Description().Website, validator.Description().SecurityContact, validator.Description().Details)
+		validator.GetConsAddr().String(), validator.GetOperator().String(), description.Moniker,
+		description.Identity, description.Website, description.SecurityContact, description.Details)
 	return err
 }
 
@@ -266,7 +266,7 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 
 		validatorInfoQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7)
 		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr(), validator.GetOperator(), validator.Description().Moniker,
-		validator.Description().Identity, validator.Description().Website, validator.Description().SecurityContact, validator.Description().Details)
+			validator.Description().Identity, validator.Description().Website, validator.Description().SecurityContact, validator.Description().Details)
 
 	}
 
