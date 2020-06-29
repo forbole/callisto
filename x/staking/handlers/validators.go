@@ -17,11 +17,7 @@ func HandleMsgCreateValidator(msg stakingtypes.MsgCreateValidator, db database.B
 		stakingValidator.GetConsAddr(),
 		stakingValidator.GetOperator(),
 		stakingValidator.GetConsPubKey(),
-		stakingValidator.Description.Moniker,
-		stakingValidator.Description.Identity,
-		stakingValidator.Description.Website,
-		stakingValidator.Description.SecurityContact,
-		stakingValidator.Description.Details,
+		stakingValidator.Description
 	))
 }
 func HandleEditValidator(msg stakingtypes.MsgEditValidator, tx jtypes.Tx, db database.BigDipperDb) error {

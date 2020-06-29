@@ -217,8 +217,8 @@ func (db BigDipperDb) SaveValidatorData(validator types.Validator) error {
 
 	stmt = `INSERT INTO validator_info (consensus_address,operator_address,moniker,identity,website,securityContact, details) VALUES ($1, $2,$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING`
 	_, err = db.Sql.Exec(stmt,
-		validator.GetConsAddr().String(), validator.GetOperator().String(), validator.GetMoniker(),
-		validator.GetIdentity(), validator.GetWebsite, validator.GetSecurityContact(), validator.GetDetails())
+		validator.GetConsAddr().String(), validator.GetOperator().String(), validator.Description.Moniker,
+		validator.Description.Identity, validator.Description.Website, validator.Description.SecurityContact, validator.Description.Details)
 	return err
 }
 
@@ -265,8 +265,8 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 			validator.GetConsAddr().String(), publicKey)
 
 		validatorInfoQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7)
-		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr(), validator.GetOperator(), validator.GetMoniker(),
-			validator.GetIdentity(), validator.GetWebsite(), validator.GetSecurityContact(), validator.GetDetails())
+		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr(), validator.GetOperator(), validator.Description.Moniker,
+		validator.Description.Identity, validator.Description.Website, validator.Description.SecurityContact, validator.Description.Details)
 
 	}
 

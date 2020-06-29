@@ -11,28 +11,22 @@ import (
 // Validator represents a single validator.
 // This is defined as an interface so that we can use the SDK types
 // as well as database types properly.
-type ValidatorI interface {
+type Validator interface {
 	GetConsAddr() sdk.ConsAddress
 	GetConsPubKey() crypto.PubKey
 	GetOperator() sdk.ValAddress
 }
 
 // NewValidator allows to build a new Validator implementation having the given data
-func NewValidator(consAddr sdk.ConsAddress, opAddr sdk.ValAddress, consPubKey crypto.PubKey, moniker string, identity string,
-	website string, securityContact string, details string) ValidatorI {
+func NewValidator(consAddr sdk.ConsAddress, opAddr sdk.ValAddress, consPubKey crypto.PubKey, description staking.Description) Validator {
 	return validator{
 		ConsensusAddr: consAddr,
 		ConsPubKey:    consPubKey,
 		OperatorAddr:  opAddr,
-		Discription: staking.Description{
-			Moniker:         moniker,
-			Identity:        identity,
-			Website:         website,
-			SecurityContact: securityContact,
-			Details:         details,
-		},
+		Description:  description,
+		}
 	}
-}
+
 
 // validator allows to easily implement the Validator interface
 //unexported
@@ -40,7 +34,7 @@ type validator struct {
 	ConsensusAddr sdk.ConsAddress
 	ConsPubKey    crypto.PubKey
 	OperatorAddr  sdk.ValAddress
-	Discription   staking.Description
+	Description   staking.Description
 }
 
 // GetConsAddr implements the Validator interface
@@ -59,19 +53,19 @@ func (v validator) GetOperator() sdk.ValAddress {
 }
 
 func (v validator) GetMoniker() string {
-	return v.Discription.Moniker
+	return v.Description.Moniker
 }
 func (v validator) GetIdentity() string {
-	return v.Discription.Identity
+	return v.Description.Identity
 }
 func (v validator) GetWebsite() string {
-	return v.Discription.Website
+	return v.Description.Website
 }
 func (v validator) GetSecurityContact() string {
-	return v.Discription.SecurityContact
+	return v.Description.SecurityContact
 }
 func (v validator) GetDetails() string {
-	return v.Discription.Details
+	return v.Description.Details
 }
 
 // _________________________________________________________
