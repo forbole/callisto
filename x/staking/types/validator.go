@@ -24,7 +24,7 @@ func NewValidator(consAddr sdk.ConsAddress, opAddr sdk.ValAddress, consPubKey cr
 		ConsensusAddr: consAddr,
 		ConsPubKey:    consPubKey,
 		OperatorAddr:  opAddr,
-		Description:  description,
+		Description:   description,
 	}
 }
 
@@ -47,11 +47,13 @@ func (v validator) GetConsPubKey() crypto.PubKey {
 	return v.ConsPubKey
 }
 
-func (v validator) GetDescription() staking.Description{
+func (v validator) GetDescription() staking.Description {
 	return v.Description
 }
 
-
+func (v validator) GetOperator() sdk.ValAddress {
+	return v.OperatorAddr
+}
 
 // _________________________________________________________
 
