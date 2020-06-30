@@ -243,7 +243,7 @@ func (db BigDipperDb) GetValidatorData(valAddress sdk.ValAddress) (types.Validat
 }
 
 // SaveValidatorsData allows the bulk saving of a list of validators
-func (db BigDipperDb) SaveValidatorsData(validators []stakingtypes.Validator) error {
+func (db BigDipperDb) SaveValidatorsData(validators []dbtypes.ValidatorData) error {
 	validatorQuery := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES `
 	var validatorParams []interface{}
 
@@ -265,8 +265,8 @@ func (db BigDipperDb) SaveValidatorsData(validators []stakingtypes.Validator) er
 			validator.GetConsAddr().String(), publicKey)
 
 		validatorInfoQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7)
-		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr(), validator.GetOperator(), validator.Description.Moniker,
-			validator.Description.Identity, validator.Description.Website, validator.Description.SecurityContact, validator.Description.Details)
+		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr(), validator.GetOperator(), validator.Moniker,
+			validator.Identity, validator.Website, validator.SecurityContact, validator.Details)
 
 	}
 

@@ -93,9 +93,9 @@ func (v ValidatorInfoRow) Equal(w ValidatorInfoRow) bool {
 // ValidatorData contains all the data of a single validator.
 // It implements types.Validator interface
 type ValidatorData struct {
-	ConsAddress string `db:"consensus_address"`
-	ValAddress  string `db:"operator_address"`
-	ConsPubKey  string `db:"consensus_pubkey"`
+	ConsAddress     string `db:"consensus_address"`
+	ValAddress      string `db:"operator_address"`
+	ConsPubKey      string `db:"consensus_pubkey"`
 	Moniker         string `db:"moniker"`
 	Identity        string `db:"identity"`
 	Website         string `db:"website"`
