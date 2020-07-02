@@ -7,6 +7,7 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	dbtypes "github.com/forbole/bdjuno/database/types"
 	"github.com/forbole/bdjuno/x/staking/types"
+
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveStakingPool() {
@@ -62,11 +63,10 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorData() {
 	)
 
 	// First inserting
-	err := suite.database.SaveValidatorData(validator,stakingtypes.NewDescription("moniker","identity","website","security","details"))
-	suite.Require().NoError(err, "inserting a validator info should return no error")
+	err := suite.database.SaveValidatorData(validator)
 
 	// Test double inserting
-	err = suite.database.SaveValidatorData(validator,stakingtypes.NewDescription("moniker","identity","website","security","details"))
+	err = suite.database.SaveValidatorData(validator)
 	suite.Require().NoError(err, "inserting the same validator info twice should return no error")
 
 	// Verify the data
@@ -121,7 +121,7 @@ VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl','cosmosvaloper1rc
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorsData() {
-	validators := []dbtypes.Validator{
+	validators := []dbtypes.ValidatorData{
 		dbtypes.NewValidatorData(
 			"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 			"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
@@ -263,8 +263,8 @@ func (suite *DbTestSuite) getValidator(consAddr, valAddr, pubkey string) types.V
 	pubKey, err := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeConsPub, pubkey)
 	suite.Require().NoError(err)
 
-	validator := types.NewValidator(constAddrObj, valAddrObj, pubKey)
-	err = suite.database.SaveValidatorData(validator,stakingtypes.NewDescription("moniker","identity","website","security","details"))
+	validator := types.NewValidator(constAddrObj, valAddrObj, pubKey,stakingtypes.NewDescription("moniker","identity","website","security","details"))
+	err = suite.database.SaveValidatorData(validator)
 	suite.Require().NoError(err)
 
 	return validator
