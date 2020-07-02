@@ -21,7 +21,7 @@ func (db BigDipperDb) SaveStakingPool(pool stakingtypes.Pool, height int64, time
 }
 
 //Insert into Validator Commission Database
-func (db BigDipperDb) SaveValidatorCommissions(validators []dbtypes.ValidatorCommission) error {
+func (db BigDipperDb) SaveValidatorCommissions(validators []types.ValidatorCommission) error {
 	query := `INSERT INTO validator_commission(validator_address,timestamp,commission,min_self_delegation,height) VALUES`
 	var param []interface{}
 	for i, validator := range validators {
@@ -64,17 +64,22 @@ func (db BigDipperDb) GetCommission(validator sdk.ValAddress) (dbtypes.Validator
 	return result[0], nil
 }
 
-func (db BigDipperDb) UpdateValidatorInfo(validator dbtypes.ValidatorInfoRow) error {
+
+//UpdateValidatorInfo update a single transaction of validator info
+//not update very often
+func (db BigDipperDb) UpdateValidatorInfo(validator types.Validator) error {
 	query := `UPDATE validator_info 
-				SET moniker=:Moniker,identity=:Identity,website=:Website,securityContact=:SecurityContact, details=:Details)
-				 WHERE consensus_address=:consensus_address`
-	_, err := db.Sqlx.NamedExec(query, validator)
+				SET moniker=$1,identity=$2,website=$3,securityContact=$4, details=$5)
+				 WHERE consensus_address=%6`
+	_, err := db.Sql.Exec(query, validator.GetDescription().Moniker,validator.GetDescription().Identity,validator.GetDescription().Website,validator.GetDescription().SecurityContact,
+	validator.GetDescription().Details,validator.GetConsAddr().String())
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
+//SaveValidatorInfo insert group of new validator
 func (db BigDipperDb) SaveValidatorInfo(validators []types.Validator) error {
 	query := `INSERT INTO validator_info (consensus_address,operator_address,moniker,identity,website,securityContact, details) VALUES`
 	var param []interface{}
@@ -93,79 +98,17 @@ func (db BigDipperDb) SaveValidatorInfo(validators []types.Validator) error {
 	return nil
 }
 
-func (db BigDipperDb) SaveEditCommission(data dbtypes.ValidatorCommission) error {
+//SaveEditCommission save a single save edit commission operation
+func (db BigDipperDb) SaveEditCommission(data types.ValidatorCommission) error {
 	statement := `INSERT INTO validator_commission (validator_address,commissions,min_self_delegtion,height,timestamp)
-	 VALUES (:ValidatorAddress  ,
-		:Timestamp         ,
-		:Commission        ,
-		:MinSelfDelegation ,
-		:Height            );`
-	_, err := db.Sqlx.NamedExec(statement, data)
+	 VALUES ($1,$2,$3,$4,%5);`
+	_, err := db.Sql.Exec(statement, data.ConsensusAddr.String(),data.Commission,data.MinSelfDelegation,data.Height,data.Timestamp)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-/*
-func (db BigDipperDb) SaveEditValidator(validator sdk.ValAddress, commissionRate int64, minSelfDelegation int64,
-	description staking.Description, time time.Time, height int64) error {
-
-	if found, _ := db.HasValidator(validator.String()); !found {
-		return nil
-	}
-	//query the latest entry and see if the validator detail changed
-	query := `SELECT commission,min_self_delegation,details,identity,moniker,website,securityContact
-				FROM validator_commission INNER JOIN validator_info
-				ON  validator_commission.validator_address = validator_info.consensus_address
-				WHERE timestamp = (
-					SELECT MAX(timestamp)
-					FROM validator_commission
-					WHERE validator_address = $1
-				) and validator_address = $2 ;`
-	var c int64
-	var m int64
-	var d [5]string
-	discriptionArray := [5]string{Description().Details, Description().Identity, Description().Moniker,
-		Description().Website, Description().SecurityContact}
-
-	rows, err1 := db.Sql.Query(query, validator.String(), validator.String())
-	if err1 != nil {
-		return err1
-	}
-	for rows.Next() {
-		err := rows.Scan(&c, &m, &(d[0]), &(d[1]), &(d[2]), &(d[3]), &(d[4]))
-		if err != nil {
-			return err
-		}
-		if commissionRate == c || minSelfDelegation == m {
-			//commission rate changed(insert)
-			statement := `INSERT INTO validator_commission (validator_address,commissions,min_self_delegtion,height,timestamp) VALUES ($1,$2,$3,$4,$5);`
-			_, err := db.Sql.Exec(statement,
-				validator.String(), commissionRate, minSelfDelegation, height, time)
-			if err != nil {
-				return err
-			}
-		}
-		if d == discriptionArray {
-			//discription change(update)
-			descriptionStatement := `UPDATE validator_info
-				SET Moniker     =$1,
-				Identity        =$2,
-				Website         =$3,
-				SecurityContact =$4,
-				Details         =$5
-				WHERE consensus_address = $6;`
-			_, err := db.Sql.Exec(descriptionStatement, d[0], d[1], d[2], d[3], d[4], validator.String())
-			if err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-*/
 // GetAccounts returns all the accounts that are currently stored inside the database.
 func (db BigDipperDb) GetValidators() ([]bstaking.Validator, error) {
 	sqlStmt := `SELECT DISTINCT ON (validator.consensus_address)

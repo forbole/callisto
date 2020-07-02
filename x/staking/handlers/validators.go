@@ -21,6 +21,9 @@ func HandleMsgCreateValidator(msg stakingtypes.MsgCreateValidator, db database.B
 		stakingValidator.GetConsPubKey(),
 		stakingValidator.Description))
 }
+
+//HandleEditValidator handles MsgEditValidator
+//save the message into the database
 func HandleEditValidator(msg stakingtypes.MsgEditValidator, tx jtypes.Tx, db database.BigDipperDb) error {
 	commission, err := db.GetCommission(msg.ValidatorAddress)
 	if err != nil {
@@ -28,14 +31,11 @@ func HandleEditValidator(msg stakingtypes.MsgEditValidator, tx jtypes.Tx, db dat
 	}
 
 	if commission.Commission == msg.CommissionRate.Int64() || commission.MinSelfDelegation == msg.MinSelfDelegation.Int64() {
-		//change commission table
-		commission.Height = tx.Height
-		commission.Timestamp, _ = time.Parse(time.RFC3339, tx.Timestamp)
-		commission.ValidatorAddress = msg.ValidatorAddress.String()
-		db.SaveEditCommission(commission)
+		db.SaveEditCommission(types.NewValidatorCommission(msg.ValidatorAddress,msg.CommissionRate.Int64(),
+		msg.MinSelfDelegation.Int64(),tx.Height,tx.TimeStamp))
 	}
 
-	db.UpdateValidatorInfo(dbtypes.NewValidatorInfoRow(msg.ValidatorAddress.String(), sdk.AccAddress(msg.ValidatorAddress).String(), msg.Description.Moniker,
+	db.UpdateValidatorInfo(types.NewValidator(msg.ValidatorAddress.String(), sdk.AccAddress(msg.ValidatorAddress).String(), msg.Description.Moniker,
 		msg.Description.Identity, msg.Description.Website,
 		msg.Description.SecurityContact, msg.Description.Details))
 
