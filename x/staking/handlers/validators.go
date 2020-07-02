@@ -19,7 +19,7 @@ func HandleMsgCreateValidator(msg stakingtypes.MsgCreateValidator, db database.B
 		stakingValidator.GetConsAddr(),
 		stakingValidator.GetOperator(),
 		stakingValidator.GetConsPubKey(),
-	), stakingValidator.Description)
+		stakingValidator.Description))
 }
 func HandleEditValidator(msg stakingtypes.MsgEditValidator, tx jtypes.Tx, db database.BigDipperDb) error {
 	commission, err := db.GetCommission(msg.ValidatorAddress)

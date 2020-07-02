@@ -20,13 +20,14 @@ func (db BigDipperDb) SaveStakingPool(pool stakingtypes.Pool, height int64, time
 	return err
 }
 
+//Insert into Validator Commission Database
 func (db BigDipperDb) SaveValidatorCommissions(validators []dbtypes.ValidatorCommission) error {
 	query := `INSERT INTO validator_commission(validator_address,timestamp,commission,min_self_delegation,height) VALUES`
 	var param []interface{}
 	for i, validator := range validators {
 		vi := i * 5
 		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5)
-		param = append(param, validator.ValidatorAddress, validator.Timestamp.UTC, validator.Commission,
+		param = append(param, validator.ConsensusAddr.String(), validator.Timestamp.UTC, validator.Commission,
 			validator.MinSelfDelegation, validator.Height)
 	}
 	query = query[:len(query)-1] // Remove trailing ","
@@ -74,14 +75,14 @@ func (db BigDipperDb) UpdateValidatorInfo(validator dbtypes.ValidatorInfoRow) er
 	return nil
 }
 
-func (db BigDipperDb) SaveValidatorInfo(validators []dbtypes.ValidatorInfoRow) error {
+func (db BigDipperDb) SaveValidatorInfo(validators []types.Validator) error {
 	query := `INSERT INTO validator_info (consensus_address,operator_address,moniker,identity,website,securityContact, details) VALUES`
 	var param []interface{}
 	for i, validator := range validators {
 		vi := i * 7
 		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7)
-		param = append(param, validator.ConsAddress, validator.ValAddress, validator.Moniker,
-			validator.Identity, validator.Website, validator.SecurityContact, validator.Details)
+		param = append(param, validator.GetConsAddr(), validator.GetOperator(),validator.GetDescription().Moniker,
+		validator.GetDescription().Identity, validator.GetDescription().Website, validator.GetDescription().SecurityContact, validator.GetDescription().Details )
 	}
 	query = query[:len(query)-1] // Remove trailing ","
 	query += " ON CONFLICT DO NOTHING"
@@ -182,7 +183,7 @@ func (db BigDipperDb) GetValidators() ([]bstaking.Validator, error) {
 }
 
 // GetValidatorsData returns the data of all the validators that are currently stored inside the database.
-func (db BigDipperDb) GetValidatorsData() ([]types.Validator, error) {
+func (db BigDipperDb) GetValidatorsData() ([]dbtypes.ValidatorData, error) {
 	sqlStmt := `SELECT DISTINCT ON (validator.consensus_address)
 				validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address 
 				FROM validator 
@@ -196,7 +197,7 @@ func (db BigDipperDb) GetValidatorsData() ([]types.Validator, error) {
 		return nil, err
 	}
 
-	validators := make([]types.Validator, len(rows))
+	validators := make([]dbtypes.ValidatorData, len(rows))
 	for index, row := range rows {
 		validators[index] = row
 	}
@@ -205,7 +206,7 @@ func (db BigDipperDb) GetValidatorsData() ([]types.Validator, error) {
 }
 
 // SaveValidator saves properly the information about the given validator
-func (db BigDipperDb) SaveValidatorData(validator types.Validator, description stakingtypes.Description) error {
+func (db BigDipperDb) SaveValidatorData(validator types.Validator) error {
 	stmt := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES ($1, $2) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(stmt,
 		validator.GetConsAddr().String(),
@@ -217,14 +218,14 @@ func (db BigDipperDb) SaveValidatorData(validator types.Validator, description s
 
 	stmt = `INSERT INTO validator_info (consensus_address,operator_address,moniker,identity,website,securityContact, details) VALUES ($1, $2,$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING`
 	_, err = db.Sql.Exec(stmt,
-		validator.GetConsAddr().String(), validator.GetOperator().String(), description.Moniker,
-		description.Identity, description.Website, description.SecurityContact, description.Details)
+		validator.GetConsAddr().String(), validator.GetOperator().String(), validator.GetDescription().Moniker,
+		validator.GetDescription().Identity, validator.GetDescription().Website, validator.GetDescription().SecurityContact, validator.GetDescription().Details)
 	return err
 }
 
 // GetValidatorData returns the validator having the given validator address.
 // If no validator for such address can be found, an error is returned instead.
-func (db BigDipperDb) GetValidatorData(valAddress sdk.ValAddress) (types.Validator, error) {
+func (db BigDipperDb) GetValidatorData(valAddress sdk.ValAddress) (dbtypes.ValidatorData, error) {
 	var result []dbtypes.ValidatorData
 	stmt := `SELECT validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address 
 			 FROM validator INNER JOIN validator_info 
@@ -232,18 +233,18 @@ func (db BigDipperDb) GetValidatorData(valAddress sdk.ValAddress) (types.Validat
 			 WHERE validator_info.operator_address = $1`
 
 	if err := db.Sqlx.Select(&result, stmt, valAddress.String()); err != nil {
-		return nil, err
+		return dbtypes.ValidatorData{}, err
 	}
 
 	if len(result) == 0 {
-		return nil, fmt.Errorf("no validator with validator address %s could be found", valAddress.String())
+		return dbtypes.ValidatorData{}, fmt.Errorf("no validator with validator address %s could be found", valAddress.String())
 	}
 
 	return result[0], nil
 }
 
 // SaveValidatorsData allows the bulk saving of a list of validators
-func (db BigDipperDb) SaveValidatorsData(validators []dbtypes.ValidatorData) error {
+func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 	validatorQuery := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES `
 	var validatorParams []interface{}
 
@@ -265,8 +266,8 @@ func (db BigDipperDb) SaveValidatorsData(validators []dbtypes.ValidatorData) err
 			validator.GetConsAddr().String(), publicKey)
 
 		validatorInfoQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7)
-		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr(), validator.GetOperator(), validator.Moniker,
-			validator.Identity, validator.Website, validator.SecurityContact, validator.Details)
+		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr(), validator.GetOperator(), validator.GetDescription().Moniker,
+			validator.GetDescription().Identity, validator.GetDescription().Website, validator.GetDescription().SecurityContact, validator.GetDescription().Details)
 
 	}
 

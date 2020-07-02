@@ -7,7 +7,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/desmos-labs/juno/parse/client"
 	"github.com/forbole/bdjuno/database"
-	dbtypes "github.com/forbole/bdjuno/database/types"
 	"github.com/forbole/bdjuno/x/staking/types"
 	"github.com/rs/zerolog/log"
 )
@@ -77,7 +76,7 @@ func updateValidators(height int64, cp client.ClientProxy, db database.BigDipper
 	statuses := []string{"bonded", "unbonded", "unbonding"}
 
 	// Get all the validators in any state
-	var validators []dbtypes.ValidatorData
+	var validators []types.Validator
 	for _, status := range statuses {
 		var validatorSet []sdk.Validator
 		endpoint := fmt.Sprintf("/staking/validators?status=%s&height=%d", status, height)
@@ -86,11 +85,7 @@ func updateValidators(height int64, cp client.ClientProxy, db database.BigDipper
 		}
 
 		for _, validator := range validatorSet {
-			//change to dbtype!(Validator_Info)
-			inforow :=dbtypes.NewValidatorData(validator.GetConsAddr().String(),validator.OperatorAddress.String(),
-			string(validator.ConsPubKey.Bytes()),validator.Description.Moniker,validator.Description.Identity,validator.Description.Website,
-			validator.Description.SecurityContact,validator.Description.Details)
-			validators = append(validators, inforow)
+			validators = append(validators, ConvertValidator(validator))
 		}
 	}
 
@@ -99,4 +94,8 @@ func updateValidators(height int64, cp client.ClientProxy, db database.BigDipper
 		Str("operation", "validators").
 		Msg("saving validators data")
 	return db.SaveValidatorsData(validators)
+}
+
+func ConvertValidator(validator sdk.Validator) types.Validator {
+	return types.NewValidator(validator.ConsAddress(), validator.OperatorAddress, validator.ConsPubKey, validator.Description)
 }

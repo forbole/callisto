@@ -53,10 +53,10 @@ func GenesisHandler(codec *codec.Codec, genesisDoc *tmtypes.GenesisDoc, appState
 
 func InitialCommission(stakingGenesisState staking.GenesisState, db database.BigDipperDb) error {
 	// Store the accounts
-	accounts := make([]dbtypes.ValidatorCommission, len(stakingGenesisState.Validators))
+	accounts := make([]types.ValidatorCommission, len(stakingGenesisState.Validators))
 	for index, account := range stakingGenesisState.Validators {
-		accounts[index] = dbtypes.NewValidatorCommission(account.ConsAddress().String(), time.Now(),
-			account.Commission.Rate.Int64(), account.MinSelfDelegation.Int64(), 0)
+		accounts[index] = types.NewValidatorCommission(account.ConsAddress(),
+			account.Commission.Rate.Int64(), account.MinSelfDelegation.Int64(), 0, genesisDoc.GenesisTime)
 	}
 
 	err := db.SaveValidatorCommissions(accounts)
@@ -67,17 +67,13 @@ func InitialCommission(stakingGenesisState staking.GenesisState, db database.Big
 }
 
 func InitialInformation(stakingGenesisState staking.GenesisState, db database.BigDipperDb) error {
-	accounts := make([]dbtypes.ValidatorInfoRow, len(stakingGenesisState.Validators))
+	accounts := make([]types.Validator, len(stakingGenesisState.Validators))
 	for index, account := range stakingGenesisState.Validators {
-		accounts[index] = dbtypes.NewValidatorInfoRow(
-			account.ConsAddress().String(),
-			account.OperatorAddress.String(),
-			account.Description.Moniker,
-			account.Description.Identity,
-			account.Description.Website,
-			account.Description.SecurityContact,
-			account.Description.Details,
-		)
+		accounts[index] = types.NewValidator(
+			account.ConsAddress(),
+			account.OperatorAddress,
+			account.ConsPubKey,
+			account.Description)
 	}
 
 	err := db.SaveValidatorInfo(accounts)

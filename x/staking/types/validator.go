@@ -15,14 +15,16 @@ type Validator interface {
 	GetConsAddr() sdk.ConsAddress
 	GetConsPubKey() crypto.PubKey
 	GetOperator() sdk.ValAddress
+	GetDescription() staking.Description
 }
 
 // NewValidator allows to build a new Validator implementation having the given data
-func NewValidator(consAddr sdk.ConsAddress, opAddr sdk.ValAddress, consPubKey crypto.PubKey) Validator {
+func NewValidator(consAddr sdk.ConsAddress, opAddr sdk.ValAddress, consPubKey crypto.PubKey,description staking.Description) Validator {
 	return validator{
 		ConsensusAddr: consAddr,
 		ConsPubKey:    consPubKey,
 		OperatorAddr:  opAddr,
+		Description:   description,
 	}
 }
 
@@ -32,6 +34,7 @@ type validator struct {
 	ConsensusAddr sdk.ConsAddress
 	ConsPubKey    crypto.PubKey
 	OperatorAddr  sdk.ValAddress
+	Description    staking.Description
 }
 
 // GetConsAddr implements the Validator interface
@@ -46,6 +49,10 @@ func (v validator) GetConsPubKey() crypto.PubKey {
 
 func (v validator) GetOperator() sdk.ValAddress {
 	return v.OperatorAddr
+}
+
+func (v validator) GetDescription() staking.Description{
+	return v.Description
 }
 
 // _________________________________________________________
@@ -87,4 +94,27 @@ type ValidatorDelegations struct {
 	UnbondingDelegations staking.UnbondingDelegations
 	Height               int64
 	Timestamp            time.Time
+}
+
+//-----------------------------------------------------
+
+//ValidatorCommission allow to build a validator commission instance
+type ValidatorCommission struct{
+	ConsensusAddr sdk.ConsAddress
+	Commission 			int64
+	MinSelfDelegation int64
+	Height               int64
+	Timestamp            time.Time
+}
+
+//return a new validator commission instance
+func NewValidatorCommission(ConsensusAddr sdk.ConsAddress,Rate int64,
+	MinSelfDelegation int64,Height int64,Timestamp time.Time)(ValidatorCommission){
+	return ValidatorCommission{
+		ConsensusAddr    :ConsensusAddr,
+		Commission 		:Rate,
+		MinSelfDelegation:MinSelfDelegation,
+        Height        :Height,
+        Timestamp     :Timestamp,
+	}
 }
