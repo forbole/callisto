@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/cosmos/cosmos-sdk/x/staking"
-
+	"github.com/forbole/bdjuno/x/staking/types"
 )
 
 // StakingPoolRow represents a single row inside the staking_pool table
@@ -106,6 +106,7 @@ type ValidatorData struct {
 }
 
 // NewValidatorData allows to build a new ValidatorData
+//implenment x/staking/types
 func NewValidatorData(consAddress, valAddress, consPubKey string,moniker string,identity string,
 	website string ,securityContact string ,details string ) ValidatorData {
 	return ValidatorData{

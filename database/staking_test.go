@@ -121,7 +121,7 @@ VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl','cosmosvaloper1rc
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorsData() {
-	validators := []dbtypes.ValidatorData{
+	validators := []types.ValidatorData{
 		dbtypes.NewValidatorData(
 			"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 			"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
