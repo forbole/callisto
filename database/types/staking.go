@@ -5,6 +5,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/tendermint/tendermint/crypto"
+	"github.com/cosmos/cosmos-sdk/x/staking"
+
 )
 
 // StakingPoolRow represents a single row inside the staking_pool table
@@ -140,21 +142,14 @@ func (v ValidatorData) GetOperator() sdk.ValAddress {
 	return addr
 }
 
-
-func (v ValidatorData) GetMoniker() string{
-	return v.Moniker
-}
-func (v ValidatorData) 	GetIdentity() string{
-	return v.Identity
-}
-func (v ValidatorData) 	GetWebsite() string{
-	return v.Website
-}
-func (v ValidatorData) 	GetSecurityContact() string{
-	return v.SecurityContact
-}
-func (v ValidatorData) 	GetDetails() string{
-	return v.Details
+func (v ValidatorData) GetDescription() staking.Description{
+	return staking.NewDescription(
+		v.Moniker,
+		v.Identity,
+		v.Website,
+		v.SecurityContact,
+		v.Details,
+	)
 }
 
 
