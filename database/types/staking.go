@@ -65,7 +65,7 @@ type ValidatorInfoRow struct {
 	Moniker         string `db:"moniker"`
 	Identity        string `db:"identity"`
 	Website         string `db:"website"`
-	SecurityContact string `db:"securityContact"`
+	SecurityContact string `db:"securitycontact"`
 	Details         string `db:"details"`
 }
 

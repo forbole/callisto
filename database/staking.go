@@ -209,7 +209,7 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 			validator.GetConsAddr().String(), publicKey)
 
 		validatorInfoQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7)
-		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr(), validator.GetOperator(), validator.GetDescription().Moniker,
+		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr().String(), validator.GetOperator().String(), validator.GetDescription().Moniker,
 			validator.GetDescription().Identity, validator.GetDescription().Website, validator.GetDescription().SecurityContact, validator.GetDescription().Details)
 
 	}
@@ -232,7 +232,7 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 // have already been saved inside the database properly.
 func (db BigDipperDb) SaveValidatorUptime(uptime bstaking.ValidatorUptime) error {
 	statement := `INSERT INTO validator_uptime (height, validator_address, signed_blocks_window, missed_blocks_counter)
-				  VALUES ($1, $2, $3, $4)`
+				  VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(statement,
 		uptime.Height, uptime.ValidatorAddress.String(), uptime.SignedBlocksWindow, uptime.MissedBlocksCounter)
 	return err
