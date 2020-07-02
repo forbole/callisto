@@ -458,7 +458,6 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommission() {
 	timestamp, err := time.Parse(time.RFC3339, "2020-01-01T10:00:00Z")
 	suite.Require().NoError(err)
 
-
 	commission:=types.NewValidatorCommission(validator.GetOperator(),commissionRate,minSelfDelegation,height,timestamp)
 
 	err = suite.database.SaveEditCommission(commission)
@@ -477,7 +476,45 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommission() {
 	)))
 }
 
+func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommissions() {
+	validator1 := suite.getValidator(
+		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
+		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
+		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
+	)
+	validator2 := suite.getValidator(
+		"cosmosvalcons1qq92t2l4jz5pt67tmts8ptl4p0jhr6utx5xa8y",
+		"cosmosvaloper1000ya26q2cmh399q4c5aaacd9lmmdqp90kw2jn",
+		"cosmosvalconspub1zcjduepqe93asg05nlnj30ej2pe3r8rkeryyuflhtfw3clqjphxn4j3u27msrr63nk",
+	)
 
+	timestamp, err := time.Parse(time.RFC3339, "2020-01-01T10:00:00Z")
+	suite.Require().NoError(err)
+
+	commissions:=[]types.ValidatorCommission{
+		types.NewValidatorCommission(validator1.GetOperator(),10,30,0,timestamp),
+		types.NewValidatorCommission(validator2.GetOperator(),20,40,0,timestamp),
+	}
+
+	err =suite.database.SaveValidatorCommissions(commissions)
+	suite.Require().NoError(err)
+
+	expected := []dbtypes.ValidatorCommission{
+		dbtypes.NewValidatorCommission(
+			validator1.GetOperator().String(),timestamp,10,30,0,
+		),
+		dbtypes.NewValidatorCommission(
+			validator2.GetOperator().String(),timestamp,20,40,0,
+		),
+	}
+
+	var rows []dbtypes.ValidatorCommission
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM validator_commission`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 2)
+	for index, row := range rows {
+		suite.Require().True(row.Equal(expected[index]))
+	}}
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveUnbondingDelegation() {
 	// Setup
