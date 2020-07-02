@@ -100,21 +100,24 @@ type ValidatorDelegations struct {
 
 //ValidatorCommission allow to build a validator commission instance
 type ValidatorCommission struct{
-	ConsensusAddr sdk.ConsAddress
+	ValAddress sdk.ValAddress
 	Commission 			int64
 	MinSelfDelegation int64
 	Height               int64
 	Timestamp            time.Time
 }
 
-//return a new validator commission instance
-func NewValidatorCommission(ConsensusAddr sdk.ConsAddress,Rate int64,
+//NewValidatorCommission return a new validator commission instance
+func NewValidatorCommission(ValAddress sdk.ValAddress,Rate int64,
 	MinSelfDelegation int64,Height int64,Timestamp time.Time)(ValidatorCommission){
 	return ValidatorCommission{
-		ConsensusAddr    :ConsensusAddr,
+		ValAddress    :ValAddress,
 		Commission 		:Rate,
 		MinSelfDelegation:MinSelfDelegation,
         Height        :Height,
         Timestamp     :Timestamp,
 	}
 }
+
+//--------------------------------------------
+

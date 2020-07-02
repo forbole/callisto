@@ -2,12 +2,9 @@ package handlers
 
 import (
 	"time"
-
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	jtypes "github.com/desmos-labs/juno/types"
 	"github.com/forbole/bdjuno/database"
-	dbtypes "github.com/forbole/bdjuno/database/types"
 	"github.com/forbole/bdjuno/x/staking/types"
 )
 
@@ -24,20 +21,20 @@ func HandleMsgCreateValidator(msg stakingtypes.MsgCreateValidator, db database.B
 
 //HandleEditValidator handles MsgEditValidator
 //save the message into the database
-func HandleEditValidator(msg stakingtypes.MsgEditValidator, tx jtypes.Tx, db database.BigDipperDb) error {
-	commission, err := db.GetCommission(msg.ValidatorAddress)
+func HandleEditValidator(msg stakingtypes.MsgEditValidator, tx jtypes.Tx, db database.BigDipperDb) error {	
+	validatorinfo,err := db.GetValidatorData(msg.ValidatorAddress)
 	if err != nil {
 		return err
 	}
 
-	if commission.Commission == msg.CommissionRate.Int64() || commission.MinSelfDelegation == msg.MinSelfDelegation.Int64() {
-		db.SaveEditCommission(types.NewValidatorCommission(msg.ValidatorAddress,msg.CommissionRate.Int64(),
-		msg.MinSelfDelegation.Int64(),tx.Height,tx.TimeStamp))
+	timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
+	if err != nil {
+		return err
 	}
+	db.SaveEditCommission(types.NewValidatorCommission(msg.ValidatorAddress,msg.CommissionRate.Int64(),
+		msg.MinSelfDelegation.Int64(),tx.Height,timestamp))
 
-	db.UpdateValidatorInfo(types.NewValidator(msg.ValidatorAddress.String(), sdk.AccAddress(msg.ValidatorAddress).String(), msg.Description.Moniker,
-		msg.Description.Identity, msg.Description.Website,
-		msg.Description.SecurityContact, msg.Description.Details))
+	db.UpdateValidatorInfo(types.NewValidator(validatorinfo.GetConsAddr(),validatorinfo.GetOperator() ,validatorinfo.GetConsPubKey(), msg.Description))
 
 	return nil
 }

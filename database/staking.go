@@ -27,7 +27,7 @@ func (db BigDipperDb) SaveValidatorCommissions(validators []types.ValidatorCommi
 	for i, validator := range validators {
 		vi := i * 5
 		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5)
-		param = append(param, validator.ConsensusAddr.String(), validator.Timestamp.UTC, validator.Commission,
+		param = append(param, validator.ValAddress.String(), validator.Timestamp, validator.Commission,
 			validator.MinSelfDelegation, validator.Height)
 	}
 	query = query[:len(query)-1] // Remove trailing ","
@@ -72,7 +72,7 @@ func (db BigDipperDb) UpdateValidatorInfo(validator types.Validator) error {
 				SET moniker=$1,identity=$2,website=$3,securityContact=$4, details=$5)
 				 WHERE consensus_address=%6`
 	_, err := db.Sql.Exec(query, validator.GetDescription().Moniker,validator.GetDescription().Identity,validator.GetDescription().Website,validator.GetDescription().SecurityContact,
-	validator.GetDescription().Details,validator.GetConsAddr().String())
+	validator.GetDescription().Details,validator.GetOperator().String())
 	if err != nil {
 		return err
 	}
@@ -102,7 +102,7 @@ func (db BigDipperDb) SaveValidatorInfo(validators []types.Validator) error {
 func (db BigDipperDb) SaveEditCommission(data types.ValidatorCommission) error {
 	statement := `INSERT INTO validator_commission (validator_address,commissions,min_self_delegtion,height,timestamp)
 	 VALUES ($1,$2,$3,$4,%5);`
-	_, err := db.Sql.Exec(statement, data.ConsensusAddr.String(),data.Commission,data.MinSelfDelegation,data.Height,data.Timestamp)
+	_, err := db.Sql.Exec(statement, data.ValAddress.String(),data.Commission,data.MinSelfDelegation,data.Height,data.Timestamp)
 	if err != nil {
 		return err
 	}

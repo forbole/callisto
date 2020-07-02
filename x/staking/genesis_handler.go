@@ -3,14 +3,12 @@ package staking
 import (
 	"encoding/json"
 	"fmt"
-	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/desmos-labs/juno/parse/worker"
 	"github.com/forbole/bdjuno/database"
-	dbtypes "github.com/forbole/bdjuno/database/types"
 	"github.com/forbole/bdjuno/x/staking/types"
 	"github.com/rs/zerolog/log"
 	tmtypes "github.com/tendermint/tendermint/types"
@@ -44,19 +42,20 @@ func GenesisHandler(codec *codec.Codec, genesisDoc *tmtypes.GenesisDoc, appState
 		return err
 	}
 
-	err := InitialCommission(genState, bigDipperDb)
+	err := InitialCommission(genState, genesisDoc, bigDipperDb)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func InitialCommission(stakingGenesisState staking.GenesisState, db database.BigDipperDb) error {
+//InitialCommission save initial commission for validators
+func InitialCommission(sgenState staking.GenesisState, genesisDoc *tmtypes.GenesisDoc, db database.BigDipperDb) error {
 	// Store the accounts
-	accounts := make([]types.ValidatorCommission, len(stakingGenesisState.Validators))
-	for index, account := range stakingGenesisState.Validators {
-		accounts[index] = types.NewValidatorCommission(account.ConsAddress(),
-			account.Commission.Rate.Int64(), account.MinSelfDelegation.Int64(), 0, genesisDoc.GenesisTime)
+	accounts := make([]types.ValidatorCommission, len(sgenState.Validators))
+	for index, account := range sgenState.Validators {
+		accounts[index] = types.NewValidatorCommission(account.GetOperator(),
+			account.Commission.Rate.Int64(), account.MinSelfDelegation.Int64(), 0,genesisDoc.GenesisTime)
 	}
 
 	err := db.SaveValidatorCommissions(accounts)
@@ -66,9 +65,10 @@ func InitialCommission(stakingGenesisState staking.GenesisState, db database.Big
 	return nil
 }
 
-func InitialInformation(stakingGenesisState staking.GenesisState, db database.BigDipperDb) error {
-	accounts := make([]types.Validator, len(stakingGenesisState.Validators))
-	for index, account := range stakingGenesisState.Validators {
+//InitialIndormation save initial descriptions for validators
+func InitialInformation(sgenState staking.GenesisState, db database.BigDipperDb) error {
+	accounts := make([]types.Validator, len(sgenState.Validators))
+	for index, account := range sgenState.Validators {
 		accounts[index] = types.NewValidator(
 			account.ConsAddress(),
 			account.OperatorAddress,
