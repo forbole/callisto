@@ -283,7 +283,7 @@ func NewValidatorReDelegationRow(
 	}
 }
 
-// Equals tells whether v and w represent the same database rows
+// Equal tells whether v and w represent the same database rows
 func (v ValidatorReDelegationRow) Equal(w ValidatorReDelegationRow) bool {
 	return v.DelegatorAddress == w.DelegatorAddress &&
 		v.SrcValidatorAddress == w.SrcValidatorAddress &&
@@ -293,6 +293,8 @@ func (v ValidatorReDelegationRow) Equal(w ValidatorReDelegationRow) bool {
 		v.CompletionTime.Equal(w.CompletionTime)
 }
 
+// ValidatorCommission represents a single row of the
+// validator_commission database table
 type ValidatorCommission struct {
 	ValidatorAddress  string    `db:"validator_address"`
 	Timestamp         time.Time `db:"timestamp"`
@@ -301,6 +303,8 @@ type ValidatorCommission struct {
 	Height            int64     `db:"height"`
 }
 
+// NewValidatorCommission allows to easily build a new
+// ValidatorCommission instance
 func NewValidatorCommission(	ValidatorAddress  string ,   
 	Timestamp         time.Time ,
 	Commission        int64   ,
@@ -314,3 +318,12 @@ func NewValidatorCommission(	ValidatorAddress  string ,
 			Height            :Height            ,
 		}
 	}
+
+// Equal tells whether v and w represent the same rows
+func (v ValidatorCommission) Equal(w ValidatorCommission) bool {
+		return v.ValidatorAddress == w.ValidatorAddress &&
+			v.Timestamp == w.Timestamp &&
+			v.Commission == w.Commission &&
+			v.MinSelfDelegation == w.MinSelfDelegation &&
+			v.Height == w.Height
+}

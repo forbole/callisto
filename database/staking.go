@@ -39,32 +39,6 @@ func (db BigDipperDb) SaveValidatorCommissions(validators []types.ValidatorCommi
 	return nil
 }
 
-//check the new commission is the same as the one before
-func (db BigDipperDb) GetCommission(validator sdk.ValAddress) (dbtypes.ValidatorCommission, error) {
-
-	var result []dbtypes.ValidatorCommission
-	if found, _ := db.HasValidator(validator.String()); !found {
-		return dbtypes.ValidatorCommission{}, nil
-	}
-	//query the latest entry and see if the validator detail changed
-	query := `SELECT commission,min_self_delegation
-				FROM validator_commission
-				WHERE timestamp = (
-					SELECT MAX(timestamp) 
-					FROM validator_commission
-					WHERE validator_address = $1
-				) and validator_address = $2 ;`
-
-	if err := db.Sqlx.Select(&result, query, validator.String(), validator.String()); err != nil {
-		return dbtypes.ValidatorCommission{}, err
-	}
-	if len(result) == 0 {
-		return dbtypes.ValidatorCommission{}, fmt.Errorf("no validator with validator address %s could be found", validator.String())
-	}
-	return result[0], nil
-}
-
-
 //UpdateValidatorInfo update a single transaction of validator info
 //not update very often
 func (db BigDipperDb) UpdateValidatorInfo(validator types.Validator) error {
@@ -79,8 +53,8 @@ func (db BigDipperDb) UpdateValidatorInfo(validator types.Validator) error {
 	return nil
 }
 
-//SaveValidatorInfo insert group of new validator
-func (db BigDipperDb) SaveValidatorInfo(validators []types.Validator) error {
+//SaveMultipleValidatorInfo insert group of new validator
+func (db BigDipperDb) SaveMultipleValidatorInfo(validators []types.Validator) error {
 	query := `INSERT INTO validator_info (consensus_address,operator_address,moniker,identity,website,securityContact, details) VALUES`
 	var param []interface{}
 	for i, validator := range validators {
@@ -148,22 +122,12 @@ func (db BigDipperDb) GetValidatorsData() ([]dbtypes.ValidatorData, error) {
 	return validators, nil
 }
 
-// SaveValidator saves properly the information about the given validator
-func (db BigDipperDb) SaveValidatorData(validator types.Validator) error {
-	stmt := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES ($1, $2) ON CONFLICT DO NOTHING`
-	_, err := db.Sql.Exec(stmt,
-		validator.GetConsAddr().String(),
-		sdk.MustBech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, validator.GetConsPubKey()),
-	)
-	if err != nil {
-		return err
-	}
-
-	stmt = `INSERT INTO validator_info (consensus_address,operator_address,moniker,identity,website,securityContact, details) VALUES ($1, $2,$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING`
-	_, err = db.Sql.Exec(stmt,
-		validator.GetConsAddr().String(), validator.GetOperator().String(), validator.GetDescription().Moniker,
-		validator.GetDescription().Identity, validator.GetDescription().Website, validator.GetDescription().SecurityContact, validator.GetDescription().Details)
-	return err
+// SaveSingleValidatorData saves properly the information about the given validator
+func (db BigDipperDb) SaveSingleValidatorData(validator types.Validator) error {
+		if err := db.SaveMultipleValidatorInfo([]types.Validator{validator});err!=nil{
+			return err
+		}
+		return nil
 }
 
 // GetValidatorData returns the validator having the given validator address.
