@@ -63,10 +63,10 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorData() {
 	)
 
 	// First inserting
-	err := suite.database.SaveValidatorData(validator)
+	err := suite.database.SaveSingleValidatorData(validator)
 
 	// Test double inserting
-	err = suite.database.SaveValidatorData(validator)
+	err = suite.database.SaveSingleValidatorData(validator)
 	suite.Require().NoError(err, "inserting the same validator info twice should return no error")
 
 	// Verify the data
@@ -90,6 +90,35 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorData() {
 		"ExampleSecurity",
 		"ExampleDetails",
 	)))
+
+	//test for updating a existion row
+	updateValidator := dbtypes.NewValidatorData(
+		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
+		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
+		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
+		"UpdateExampleMoniker",
+		"UpdateExampleIdentity",
+		"UpdateExampleWebsite",
+		"UpdateExampleSecurity",
+		"UpdateExampleDetails",
+	)
+
+	err=suite.database.UpdateValidatorInfo(updateValidator)
+	suite.Require().NoError(err)
+
+	var updateValInfoRows []dbtypes.ValidatorInfoRow
+	err = suite.database.Sqlx.Select(&updateValInfoRows, `SELECT * FROM validator_info`)
+	suite.Require().Len(updateValInfoRows, 1)
+	suite.Require().True(updateValInfoRows[0].Equal(dbtypes.NewValidatorInfoRow(
+		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
+		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
+		"UpdateExampleMoniker",
+		"UpdateExampleIdentity",
+		"UpdateExampleWebsite",
+		"UpdateExampleSecurity",
+		"UpdateExampleDetails",
+	)))
+
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_GetValidatorData() {
@@ -264,7 +293,7 @@ func (suite *DbTestSuite) getValidator(consAddr, valAddr, pubkey string) types.V
 	suite.Require().NoError(err)
 
 	validator := types.NewValidator(constAddrObj, valAddrObj, pubKey,stakingtypes.NewDescription("moniker","identity","website","security","details"))
-	err = suite.database.SaveValidatorData(validator)
+	err = suite.database.SaveSingleValidatorData(validator)
 	suite.Require().NoError(err)
 
 	return validator
@@ -413,6 +442,42 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDelegations() {
 		suite.Require().True(delegation.Equal(rows[index]))
 	}
 }
+
+func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommission() {
+	validator := suite.getValidator(
+		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
+		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
+		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
+	)
+
+	var height int64 = 1000
+	var commissionRate int64 = 10
+	var minSelfDelegation int64 = 12
+
+
+	timestamp, err := time.Parse(time.RFC3339, "2020-01-01T10:00:00Z")
+	suite.Require().NoError(err)
+
+
+	commission:=types.NewValidatorCommission(validator.GetOperator(),commissionRate,minSelfDelegation,height,timestamp)
+
+	err = suite.database.SaveEditCommission(commission)
+	//get back commission
+	suite.Require().NoError(err)
+	var rows []dbtypes.ValidatorCommission
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM validator_commission`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	suite.Require().True(rows[0].Equal(dbtypes.NewValidatorCommission(
+		validator.GetOperator().String(),
+		timestamp,
+		commissionRate,
+		minSelfDelegation,
+		height,
+	)))
+}
+
+
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveUnbondingDelegation() {
 	// Setup

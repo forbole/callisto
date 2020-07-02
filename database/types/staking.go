@@ -322,7 +322,7 @@ func NewValidatorCommission(	ValidatorAddress  string ,
 // Equal tells whether v and w represent the same rows
 func (v ValidatorCommission) Equal(w ValidatorCommission) bool {
 		return v.ValidatorAddress == w.ValidatorAddress &&
-			v.Timestamp == w.Timestamp &&
+			v.Timestamp.Equal(w.Timestamp) &&
 			v.Commission == w.Commission &&
 			v.MinSelfDelegation == w.MinSelfDelegation &&
 			v.Height == w.Height

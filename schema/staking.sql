@@ -57,10 +57,10 @@ CREATE TABLE validator_redelegation
 
 CREATE TABLE validator_commission
 (
-    validator_address     CHARACTER VARYING(52) NOT NULL REFERENCES validator (consensus_address),
+    validator_address     CHARACTER VARYING(52) NOT NULL,
     timestamp             TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     commission            decimal	              NOT NULL,
-    min_self_delegation    BIGINT              NOT NULL,
+    min_self_delegation    decimal              NOT NULL,
     height                BIGINT                NOT NULL,
     PRIMARY KEY (validator_address,height)
 );

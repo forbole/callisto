@@ -76,7 +76,7 @@ func InitialInformation(sgenState staking.GenesisState, db database.BigDipperDb)
 			account.Description)
 	}
 
-	err := db.SaveMultipleValidatorInfo(accounts)
+	err := db.SaveValidatorsData(accounts)
 	if err != nil {
 		return err
 	}
