@@ -55,6 +55,14 @@ func (v validator) GetDescription() staking.Description{
 	return v.Description
 }
 
+//Equals return the equality of two validator
+func (v validator) Equals(w validator) bool{
+	return v.ConsensusAddr.Equals(w.ConsensusAddr)&&
+	v.ConsPubKey.Equals(w.ConsPubKey)&&
+	v.OperatorAddr.Equals(w.OperatorAddr)&&
+	v.Description==w.Description
+} 
+
 // _________________________________________________________
 
 // ValidatorUptime contains the uptime information of a single
@@ -117,6 +125,15 @@ func NewValidatorCommission(ValAddress sdk.ValAddress,Rate int64,
         Height        :Height,
         Timestamp     :Timestamp,
 	}
+}
+
+//Equals return the equality of two validatorCommission
+func (v ValidatorCommission) Equals(w ValidatorCommission) bool{
+	return v.ValAddress.Equals(w.ValAddress) &&
+	v.Commission == w.Commission&&
+	v.MinSelfDelegation == w.MinSelfDelegation&&
+	v.Height == w.Height&&
+	v.Timestamp.Equal(w.Timestamp)
 }
 
 //--------------------------------------------

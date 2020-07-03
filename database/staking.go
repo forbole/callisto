@@ -8,7 +8,6 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	dbtypes "github.com/forbole/bdjuno/database/types"
 	"github.com/forbole/bdjuno/x/staking/types"
-	bstaking "github.com/forbole/bdjuno/x/staking/types"
 )
 
 // SaveStakingPool allows to save for the given height the given stakingtypes pool
@@ -97,7 +96,7 @@ func (db BigDipperDb) SaveSingleValidatorData(validator types.Validator) error {
 
 // GetValidatorData returns the validator having the given validator address.
 // If no validator for such address can be found, an error is returned instead.
-func (db BigDipperDb) GetValidatorData(valAddress sdk.ValAddress) (dbtypes.ValidatorData, error) {
+func (db BigDipperDb) GetValidatorData(valAddress sdk.ValAddress) (types.Validator, error) {
 	var result []dbtypes.ValidatorData
 	stmt := `SELECT validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address 
 			 FROM validator INNER JOIN validator_info 
