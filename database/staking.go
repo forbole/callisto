@@ -44,8 +44,8 @@ func (db BigDipperDb) UpdateValidatorInfo(validator types.Validator) error {
 	query := `UPDATE validator_info 
 				SET moniker=$1,identity=$2,website=$3,securityContact=$4, details=$5
 				 WHERE consensus_address=$6;`
-	_, err := db.Sql.Exec(query, validator.GetDescription().Moniker,validator.GetDescription().Identity,validator.GetDescription().Website,validator.GetDescription().SecurityContact,
-	validator.GetDescription().Details,validator.GetOperator().String())
+	_, err := db.Sql.Exec(query, validator.GetDescription().Moniker, validator.GetDescription().Identity, validator.GetDescription().Website, validator.GetDescription().SecurityContact,
+		validator.GetDescription().Details, validator.GetConsAddr().String())
 	if err != nil {
 		return err
 	}
@@ -56,7 +56,7 @@ func (db BigDipperDb) UpdateValidatorInfo(validator types.Validator) error {
 func (db BigDipperDb) SaveEditCommission(data types.ValidatorCommission) error {
 	statement := `INSERT INTO validator_commission (validator_address,commission,min_self_delegation,height,timestamp)
 	 VALUES ($1,$2,$3,$4,$5);`
-	_, err := db.Sql.Exec(statement, data.ValAddress.String(),data.Commission,data.MinSelfDelegation,data.Height,data.Timestamp)
+	_, err := db.Sql.Exec(statement, data.ValAddress.String(), data.Commission, data.MinSelfDelegation, data.Height, data.Timestamp)
 	if err != nil {
 		return err
 	}
@@ -67,6 +67,7 @@ func (db BigDipperDb) SaveEditCommission(data types.ValidatorCommission) error {
 func (db BigDipperDb) GetValidatorsData() ([]dbtypes.ValidatorData, error) {
 	sqlStmt := `SELECT DISTINCT ON (validator.consensus_address)
 				validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address 
+				,validator_info.moniker,validator_info.identity,validator_info.website,validator_info.securityContact, validator_info.details
 				FROM validator 
 				INNER JOIN validator_info 
 				ON validator.consensus_address = validator_info.consensus_address
@@ -88,10 +89,10 @@ func (db BigDipperDb) GetValidatorsData() ([]dbtypes.ValidatorData, error) {
 
 // SaveSingleValidatorData saves properly the information about the given validator
 func (db BigDipperDb) SaveSingleValidatorData(validator types.Validator) error {
-		if err := db.SaveValidatorsData([]types.Validator{validator});err!=nil{
-			return err
-		}
-		return nil
+	if err := db.SaveValidatorsData([]types.Validator{validator}); err != nil {
+		return err
+	}
+	return nil
 }
 
 // GetValidatorData returns the validator having the given validator address.
@@ -99,6 +100,7 @@ func (db BigDipperDb) SaveSingleValidatorData(validator types.Validator) error {
 func (db BigDipperDb) GetValidatorData(valAddress sdk.ValAddress) (types.Validator, error) {
 	var result []dbtypes.ValidatorData
 	stmt := `SELECT validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address 
+				,validator_info.moniker,validator_info.identity,validator_info.website,validator_info.securityContact, validator_info.details
 			 FROM validator INNER JOIN validator_info 
     		 ON validator.consensus_address=validator_info.consensus_address 
 			 WHERE validator_info.operator_address = $1`

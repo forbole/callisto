@@ -4,8 +4,8 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/tendermint/tendermint/crypto"
 	"github.com/cosmos/cosmos-sdk/x/staking"
+	"github.com/tendermint/tendermint/crypto"
 )
 
 // StakingPoolRow represents a single row inside the staking_pool table
@@ -65,33 +65,33 @@ type ValidatorInfoRow struct {
 	Moniker         string `db:"moniker"`
 	Identity        string `db:"identity"`
 	Website         string `db:"website"`
-	SecurityContact string `db:"securitycontact"`
+	SecurityContact string `db:"securityContact"`
 	Details         string `db:"details"`
 }
 
 // NewValidatorInfoRow allows to build a new ValidatorInfoRow
-func NewValidatorInfoRow(consAddress string, valAddress string,moniker string,identity string,
-	website string ,securityContact string ,details string ) ValidatorInfoRow {
+func NewValidatorInfoRow(consAddress string, valAddress string, moniker string, identity string,
+	website string, securityContact string, details string) ValidatorInfoRow {
 	return ValidatorInfoRow{
-		ConsAddress: consAddress,
-		ValAddress:  valAddress,
-		Moniker:moniker,
-		Identity:identity,
-		Website:website,
-		SecurityContact :securityContact ,
-		Details:details,
+		ConsAddress:     consAddress,
+		ValAddress:      valAddress,
+		Moniker:         moniker,
+		Identity:        identity,
+		Website:         website,
+		SecurityContact: securityContact,
+		Details:         details,
 	}
 }
 
 // Equal tells whether v and w represent the same rows
 func (v ValidatorInfoRow) Equal(w ValidatorInfoRow) bool {
 	return v.ConsAddress == w.ConsAddress &&
-		v.ValAddress == w.ValAddress && 
+		v.ValAddress == w.ValAddress &&
 		v.Moniker == w.Moniker &&
-		v.Identity ==w.Identity &&
+		v.Identity == w.Identity &&
 		v.Website == w.Website &&
-		v.SecurityContact ==w.SecurityContact&&
-		v.Details ==w.Details
+		v.SecurityContact == w.SecurityContact &&
+		v.Details == w.Details
 }
 
 // ________________________________________________
@@ -111,17 +111,17 @@ type ValidatorData struct {
 
 // NewValidatorData allows to build a new ValidatorData
 //implenment x/staking/types
-func NewValidatorData(consAddress, valAddress, consPubKey string,moniker string,identity string,
-	website string ,securityContact string ,details string ) ValidatorData {
+func NewValidatorData(consAddress, valAddress, consPubKey string, moniker string, identity string,
+	website string, securityContact string, details string) ValidatorData {
 	return ValidatorData{
-		ConsAddress: consAddress,
-		ValAddress:  valAddress,
-		ConsPubKey:  consPubKey,
-		Moniker:moniker,
-		Identity:identity,
-		Website:website,
-		SecurityContact :securityContact ,
-		Details:details,
+		ConsAddress:     consAddress,
+		ValAddress:      valAddress,
+		ConsPubKey:      consPubKey,
+		Moniker:         moniker,
+		Identity:        identity,
+		Website:         website,
+		SecurityContact: securityContact,
+		Details:         details,
 	}
 }
 
@@ -147,7 +147,7 @@ func (v ValidatorData) GetOperator() sdk.ValAddress {
 	return addr
 }
 
-func (v ValidatorData) GetDescription() staking.Description{
+func (v ValidatorData) GetDescription() staking.Description {
 	return staking.NewDescription(
 		v.Moniker,
 		v.Identity,
@@ -156,7 +156,6 @@ func (v ValidatorData) GetDescription() staking.Description{
 		v.Details,
 	)
 }
-
 
 // ________________________________________________
 
@@ -303,32 +302,32 @@ func (v ValidatorReDelegationRow) Equal(w ValidatorReDelegationRow) bool {
 type ValidatorCommission struct {
 	ValidatorAddress  string    `db:"validator_address"`
 	Timestamp         time.Time `db:"timestamp"`
-	Commission        int64   `db:"commission"`
+	Commission        int64     `db:"commission"`
 	MinSelfDelegation int64     `db:"min_self_delegation"`
 	Height            int64     `db:"height"`
 }
 
 // NewValidatorCommission allows to easily build a new
 // ValidatorCommission instance
-func NewValidatorCommission(	ValidatorAddress  string ,   
-	Timestamp         time.Time ,
-	Commission        int64   ,
-	MinSelfDelegation int64     ,
-	Height            int64     )ValidatorCommission{
-		return ValidatorCommission{
-			ValidatorAddress  :ValidatorAddress  ,
-			Timestamp         :Timestamp         ,
-			Commission        :Commission        ,
-			MinSelfDelegation :MinSelfDelegation ,
-			Height            :Height            ,
-		}
+func NewValidatorCommission(ValidatorAddress string,
+	Timestamp time.Time,
+	Commission int64,
+	MinSelfDelegation int64,
+	Height int64) ValidatorCommission {
+	return ValidatorCommission{
+		ValidatorAddress:  ValidatorAddress,
+		Timestamp:         Timestamp,
+		Commission:        Commission,
+		MinSelfDelegation: MinSelfDelegation,
+		Height:            Height,
 	}
+}
 
 // Equal tells whether v and w represent the same rows
 func (v ValidatorCommission) Equal(w ValidatorCommission) bool {
-		return v.ValidatorAddress == w.ValidatorAddress &&
-			v.Timestamp.Equal(w.Timestamp) &&
-			v.Commission == w.Commission &&
-			v.MinSelfDelegation == w.MinSelfDelegation &&
-			v.Height == w.Height
+	return v.ValidatorAddress == w.ValidatorAddress &&
+		v.Timestamp.Equal(w.Timestamp) &&
+		v.Commission == w.Commission &&
+		v.MinSelfDelegation == w.MinSelfDelegation &&
+		v.Height == w.Height
 }
