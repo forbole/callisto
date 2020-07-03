@@ -10,7 +10,7 @@ import (
 	"github.com/desmos-labs/juno/types"
 	"github.com/forbole/bdjuno/database"
 	"github.com/rs/zerolog/log"
-
+	bstaking "github.com/forbole/bdjuno/x/staking/types"
 	"fmt"
 )
 
@@ -73,7 +73,14 @@ func StoreDelegation(msg staking.MsgDelegate, cp client.ClientProxy, time time.T
 	//check if the delegation is self delegation
 	selfAddress := sdk.AccAddress(validatorAddress.Bytes())
 	if deligatorAddress.Equals(selfAddress) {
-		db.SaveSelfDelegation(delegation, time, height)
+		//get current total delegation
+		var validator staking.Validator
+		endpoint = fmt.Sprintf("/staking/validators", deligatorAddress.String(), validatorAddress.String())
+		height, ok = cp.QueryLCDWithHeight(endpoint, &validator)
+		db.SaveSelfDelegation(bstaking.NewSelfDelegation(validatorAddress,delegation.Shares.Int64(),
+					float64(delegation.Shares.Int64())/float64(validator.DelegatorShares.Int64(),
+					height,time)
+		)))
 	} else {
 		//If that is the message that delegated to other account
 	}

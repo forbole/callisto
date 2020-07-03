@@ -7,7 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	dbtypes "github.com/forbole/bdjuno/database/types"
-	bstaking "github.com/forbole/bdjuno/x/staking/types"
+    "github.com/forbole/bdjuno/x/staking/types"
 )
 
 // SaveStakingPool allows to save for the given height the given staking pool
@@ -20,7 +20,7 @@ func (db BigDipperDb) SaveStakingPool(height int64, pool staking.Pool) error {
 }
 
 // GetAccounts returns all the accounts that are currently stored inside the database.
-func (db BigDipperDb) GetValidators() ([]bstaking.Validator, error) {
+func (db BigDipperDb) GetValidators() ([]types.Validator, error) {
 	sqlStmt := `SELECT DISTINCT ON (validator.consensus_address)
 				validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address 
 				FROM validator 
@@ -33,7 +33,7 @@ func (db BigDipperDb) GetValidators() ([]bstaking.Validator, error) {
 		return nil, err
 	}
 
-	validators := make([]bstaking.Validator, len(rows))
+	validators := make([]types.Validator, len(rows))
 	for index, row := range rows {
 		consAddress, err := sdk.ConsAddressFromBech32(row.ConsAddress)
 		if err != nil {
@@ -61,7 +61,7 @@ func (db BigDipperDb) GetValidators() ([]bstaking.Validator, error) {
 }
 
 // SaveValidators allows the bulk saving of a list of validators
-func (db BigDipperDb) SaveValidators(validators []bstaking.Validator) error {
+func (db BigDipperDb) SaveValidators(validators []types.Validator) error {
 	validatorQuery := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES `
 	var validatorParams []interface{}
 
@@ -102,7 +102,7 @@ func (db BigDipperDb) SaveValidators(validators []bstaking.Validator) error {
 // SaveValidatorUptime stores into the database the given validator uptime information.
 // It assumes that for each uptime information provided, the associated validator data
 // have already been saved inside the database properly.
-func (db BigDipperDb) SaveValidatorUptime(uptime bstaking.ValidatorUptime) error {
+func (db BigDipperDb) SaveValidatorUptime(uptime types.ValidatorUptime) error {
 	statement := `INSERT INTO validator_uptime (height, validator_address, signed_blocks_window, missed_blocks_counter)
 				  VALUES ($1, $2, $3, $4)`
 	_, err := db.Sql.Exec(statement,
@@ -114,7 +114,7 @@ func (db BigDipperDb) SaveValidatorUptime(uptime bstaking.ValidatorUptime) error
 // It assumes that for each delegation information provided, the associated validator data
 // have already been saved inside the database properly.
 func (db BigDipperDb) SaveValidatorsDelegations(
-	delegationsInfo []bstaking.ValidatorDelegations, height int64, timestamp time.Time,
+	delegationsInfo []types.ValidatorDelegations, height int64, timestamp time.Time,
 ) error {
 	var delegations []staking.DelegationResponse
 	var unbondingDelegations []staking.UnbondingDelegation
@@ -237,7 +237,7 @@ func (db BigDipperDb) saveUnbondingDelegations(
 	return err 
 }
 
-func (db BigDipperDb) SaveSelfDelegation(delegation staking.Delegation, timestamp time.Time,height int64) error {
+func (db BigDipperDb) SaveSelfDelegation(selfDelegation types.SelfDelegation) error {
 	statement := `INSERT INTO validator_self_delegation(consensus_address,shares,height,timestamp) VALUES
 			($1,$2,$3,$4)`
 	_, err := db.Sql.Exec(statement, delegation.ValidatorAddress, delegation.Shares, height, timestamp)

@@ -48,6 +48,7 @@ CREATE TABLE validator_self_delegation
 (    
     consensus_address TEXT                        NOT NULL REFERENCES validator (consensus_address),
     shares    DECIMAL                     NOT NUll,
+    ratio     DECIMAL          NOT NULL,
     height            BIGINT                      NOT NULL,
     timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     PRIMARY KEY (consensus_address , height)
