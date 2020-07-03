@@ -86,7 +86,12 @@ func NewValidatorInfoRow(consAddress string, valAddress string,moniker string,id
 // Equal tells whether v and w represent the same rows
 func (v ValidatorInfoRow) Equal(w ValidatorInfoRow) bool {
 	return v.ConsAddress == w.ConsAddress &&
-		v.ValAddress == w.ValAddress
+		v.ValAddress == w.ValAddress && 
+		v.Moniker == w.Moniker &&
+		v.Identity ==w.Identity &&
+		v.Website == w.Website &&
+		v.SecurityContact ==w.SecurityContact&&
+		v.Details ==w.Details
 }
 
 // ________________________________________________

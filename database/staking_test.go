@@ -173,6 +173,23 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorsData() {
 		),
 	}
 
+	expectedValidatorInfo:=[]dbtypes.ValidatorInfoRow{
+		dbtypes.NewValidatorInfoRow("cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
+		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
+		"ExampleMoniker",
+		"ExampleIdentity",
+		"ExampleWebsite",
+		"ExampleSecurity",
+		"ExampleDetails"),
+		dbtypes.NewValidatorInfoRow("cosmosvalcons1qq92t2l4jz5pt67tmts8ptl4p0jhr6utx5xa8y",
+		"cosmosvaloper1000ya26q2cmh399q4c5aaacd9lmmdqp90kw2jn",
+		"ExampleMoniker2",
+		"ExampleIdentity2",
+		"ExampleWebsite2",
+		"ExampleSecurity2",
+		"ExampleDetails2"),
+	}
+
 	// Insert the data
 	err := suite.database.SaveValidatorsData(validators)
 
@@ -195,8 +212,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorsData() {
 		suite.Require().Equal(v.ConsPubKey, sdk.MustBech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, w.GetConsPubKey()))
 
 		wInfo := validatorInfoRows[index]
-		suite.Require().Equal(wInfo.ConsAddress, w.GetConsAddr().String())
-		suite.Require().Equal(wInfo.ValAddress, w.GetOperator().String())
+		suite.Require().True(wInfo.Equal(expectedValidatorInfo[index]))
 	}
 }
 
@@ -205,8 +221,8 @@ func (suite *DbTestSuite) TestBigDipperDb_GetValidatorsData() {
 	queries := []string{
 		`INSERT INTO validator (consensus_address, consensus_pubkey) VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl', 'cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8')`,
 		`INSERT INTO validator (consensus_address, consensus_pubkey) VALUES ('cosmosvalcons1qq92t2l4jz5pt67tmts8ptl4p0jhr6utx5xa8y', 'cosmosvalconspub1zcjduepqe93asg05nlnj30ej2pe3r8rkeryyuflhtfw3clqjphxn4j3u27msrr63nk')`,
-		`INSERT INTO validator_info (consensus_address, operator_address) VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl', 'cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl')`,
-		`INSERT INTO validator_info (consensus_address, operator_address) VALUES ('cosmosvalcons1qq92t2l4jz5pt67tmts8ptl4p0jhr6utx5xa8y', 'cosmosvaloper1000ya26q2cmh399q4c5aaacd9lmmdqp90kw2jn')`,
+		`INSERT INTO validator_info (consensus_address, operator_address, moniker,identity,website,securityContact,details) VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl', 'cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl'"ExampleMoniker1","ExampleIdentity1","ExampleWebsite1","ExampleSecurityContact1","ExampleDetails1")`,
+		`INSERT INTO validator_info (consensus_address, operator_address, moniker,identity,website,securityContact,details) VALUES ('cosmosvalcons1qq92t2l4jz5pt67tmts8ptl4p0jhr6utx5xa8y', 'cosmosvaloper1000ya26q2cmh399q4c5aaacd9lmmdqp90kw2jn',"ExampleMoniker2","ExampleIdentity2","ExampleWebsite2","ExampleSecurityContact2","ExampleDetails2")`
 	}
 
 	for _, query := range queries {
@@ -224,21 +240,21 @@ func (suite *DbTestSuite) TestBigDipperDb_GetValidatorsData() {
 			"cosmosvalcons1qq92t2l4jz5pt67tmts8ptl4p0jhr6utx5xa8y",
 			"cosmosvaloper1000ya26q2cmh399q4c5aaacd9lmmdqp90kw2jn",
 			"cosmosvalconspub1zcjduepqe93asg05nlnj30ej2pe3r8rkeryyuflhtfw3clqjphxn4j3u27msrr63nk",
-			"",
-			"",
-			"",
-			"",
-			"",
+			"ExampleMoniker1",
+			"ExampleIdentity1",
+			"ExampleWebsite1",
+			"ExampleSecurityContact1",
+			"ExampleDetails1",
 		),
 		dbtypes.NewValidatorData(
 			"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 			"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
 			"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
-			"",
-			"",
-			"",
-			"",
-			"",
+			"ExampleMoniker2",
+			"ExampleIdentity2",
+			"ExampleWebsite2",
+			"ExampleSecurityContact2",
+			"ExampleDetails2",
 		),
 	}
 

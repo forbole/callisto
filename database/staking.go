@@ -104,11 +104,11 @@ func (db BigDipperDb) GetValidatorData(valAddress sdk.ValAddress) (types.Validat
 			 WHERE validator_info.operator_address = $1`
 
 	if err := db.Sqlx.Select(&result, stmt, valAddress.String()); err != nil {
-		return dbtypes.ValidatorData{}, err
+		return nil, err
 	}
 
 	if len(result) == 0 {
-		return dbtypes.ValidatorData{}, fmt.Errorf("no validator with validator address %s could be found", valAddress.String())
+		return nil, fmt.Errorf("no validator with validator address %s could be found", valAddress.String())
 	}
 
 	return result[0], nil
