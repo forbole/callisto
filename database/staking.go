@@ -158,7 +158,7 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 // SaveValidatorUptime stores into the database the given validator uptime information.
 // It assumes that for each uptime information provided, the associated validator data
 // have already been saved inside the database properly.
-func (db BigDipperDb) SaveValidatorUptime(uptime bstaking.ValidatorUptime) error {
+func (db BigDipperDb) SaveValidatorUptime(uptime types.ValidatorUptime) error {
 	statement := `INSERT INTO validator_uptime (height, validator_address, signed_blocks_window, missed_blocks_counter)
 				  VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(statement,
