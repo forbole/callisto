@@ -308,20 +308,20 @@ func (db BigDipperDb) SaveUnbondingDelegations(delegations []types.UnbondingDele
 	return err 
 }
 
-func (db BigDipperDb) SaveSelfDelegation(selfDelegation types.SelfDelegation) error {
+func (db BigDipperDb) SaveSelfDelegation(delegation types.SelfDelegation) error {
 	statement := `INSERT INTO validator_self_delegation(consensus_address,shares,height,timestamp) VALUES
 			($1,$2,$3,$4)`
-	_, err := db.Sql.Exec(statement, delegation.ValidatorAddress, delegation.Shares, height, timestamp)
+	_, err := db.Sql.Exec(statement, delegation.ValidatorAddress, delegation.Shares, delegation.Height, delegation.Timestamp)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (db BigDupperDB) SaveAllSelfDelegation(delegations []dbtypes.ValidatorSelfCommission)error{
+func (db BigDupperDB) SaveAllSelfDelegation(selfDelegations []types.SelfDelegation)error{
 	statement := `INSERT INTO validator_self_delegation(consenus_address,shares,height,timestamp) VALUES`
 	selfDelegationrow := make([]dbtypes.ValidatorSelfCommission,length(delegations))
-	for i ,delegation := range delegations{
+	for i ,delegation := range selfDelegations{
 		i1=i*4
 		statement += fmt.Sprintf(`(%$d,%$d,%$d,%$d)`,i1+1,i1+2,i1+3,i1+4)
 		selfDelegationrow = append(selfDelegationrow,delegation.)

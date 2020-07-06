@@ -34,7 +34,7 @@ func GenesisHandler(
 		return err
 	}
 
-	// Save the delegations
+	// Save the delegations & self delegation
 	if err := saveDelegations(genState, genesisDoc, bigDipperDb); err != nil {
 		return err
 	}
@@ -71,24 +71,36 @@ func saveValidators(genState staking.GenesisState, db database.BigDipperDb) erro
 // saveDelegations stores the delegations data present inside the given genesis state
 func saveDelegations(genState staking.GenesisState, genesisDoc *tmtypes.GenesisDoc, db database.BigDipperDb) error {
 	var delegations []types.Delegation
+	var selfDelegations []types.SelfDelegation
 	for _, validator := range genState.Validators {
 		tokens := validator.Tokens
 		delegatorShares := validator.DelegatorShares
 
 		for _, delegation := range getDelegations(genState.Delegations, validator.OperatorAddress) {
 			delegationAmount := tokens.ToDec().Mul(delegation.Shares).Quo(delegatorShares).TruncateInt()
-
+			coin :=sdk.NewCoin(genState.Params.BondDenom, delegationAmount)
 			delegations = append(delegations, types.NewDelegation(
 				delegation.DelegatorAddress,
 				validator.OperatorAddress,
-				sdk.NewCoin(genState.Params.BondDenom, delegationAmount),
+				coin,
 				0,
 				genesisDoc.GenesisTime,
 			))
+			selfAddress := sdk.AccAddress(account[index].Bytes())
+			if delegation.DeoegatorAddress == selfAddress {
+				//it is self delegate
+				append(selfDelegations,types.NewSelfDelegation(
+					validator.OperatorAddress,
+					coin,
+					float64(delegation.Shares.Int64())/float64(validator.DelegatorShares.Int64()*100,
+					0,
+					genesisDoc.GenesisTime
+				))
+			}
 		}
 	}
-
-	return db.SaveDelegations(delegations)
+	db.SaveAllSelfDelegation(selfDelegations)
+	db.SaveDelegations(delegations)
 }
 
 // saveUnbondingDelegations stores the unbonding delegations data present inside the given genesis state

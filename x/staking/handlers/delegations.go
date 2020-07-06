@@ -15,13 +15,41 @@ func HandleMsgDelegate(tx juno.Tx, msg staking.MsgDelegate, db database.BigDippe
 	if err != nil {
 		return err
 	}
-
-	return db.SaveDelegation(types.NewDelegation(
-		msg.DelegatorAddress,
-		msg.ValidatorAddress,
-		msg.Amount, tx.Height,
-		timestamp,
-	))
+	validatorAddress := msg.ValidatorAddress
+	deligatorAddress := msg.DelegatorAddress
+	if found, _ := db.HasValidator(validatorAddress.String()); !found {
+		return nil
+	}
+	if found, _ := db.HasValidator(deligatorAddress.String()); !found {
+		return nil
+	}
+	var delegation staking.Delegation
+	endpoint := fmt.Sprintf("/staking/delegators/%s/delegations/%s", deligatorAddress.String(), validatorAddress.String())
+	height, ok := cp.QueryLCDWithHeight(endpoint, &delegation)
+	if ok != nil {
+		return nil
+	}
+	//check if the delegation is self delegation
+	selfAddress := sdk.AccAddress(validatorAddress.Bytes())
+	if deligatorAddress.Equals(selfAddress) {
+		//get current total delegation
+		var validator staking.Validator
+		endpoint = fmt.Sprintf("/staking/validators", deligatorAddress.String(), validatorAddress.String())
+		height, ok = cp.QueryLCDWithHeight(endpoint, &validator)
+		db.SaveSelfDelegation(bstaking.NewSelfDelegation(validatorAddress,delegation.Shares.Int64(),
+					float64(delegation.Shares.Int64())/float64(validator.DelegatorShares.Int64()*100,
+					height,timestamp)
+		)))
+	}  
+		//If that is the message that delegated to other account
+		return db.SaveDelegation(types.NewDelegation(
+			msg.DelegatorAddress,
+			msg.ValidatorAddress,
+			msg.Amount, tx.Height,
+			timestamp,
+		)
+	}
+	return nil
 }
 
 // HandleMsgUndelegate handles properly a MsgUndelegate
