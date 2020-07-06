@@ -7,10 +7,12 @@ import (
 	juno "github.com/desmos-labs/juno/types"
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/staking/types"
+	"github.com/desmos-labs/juno/parse/client"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // HandleMsgDelegate allows to properly handle a MsgDelegate
-func HandleMsgDelegate(tx juno.Tx, msg staking.MsgDelegate, db database.BigDipperDb) error {
+func HandleMsgDelegate(tx juno.Tx, msg staking.MsgDelegate, db database.BigDipperDb,cp client.ClientProxy) error {
 	timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
 	if err != nil {
 		return err
@@ -35,13 +37,12 @@ func HandleMsgDelegate(tx juno.Tx, msg staking.MsgDelegate, db database.BigDippe
 	if deligatorAddress.Equals(selfAddress) {
 		//get current total delegation
 		var validator staking.Validator
-		endpoint = fmt.Sprintf("/staking/validators", deligatorAddress.String(), validatorAddress.String())
+		endpoint = fmt.Sprintf("/staking/validators/%s", deligatorAddress.String())
 		height, ok = cp.QueryLCDWithHeight(endpoint, &validator)
-		db.SaveSelfDelegation(bstaking.NewSelfDelegation(msg.validatorAddress,delegation.Shares,
+		db.SaveSelfDelegation(types.NewSelfDelegation(msg.ValidatorAddress,delegation.Shares.Int64(),
 					float64(delegation.Shares.Int64())/float64(validator.DelegatorShares.Int64())*100,
 					height,timestamp))
-				
-	}  
+	}
 		//for each delegate message it will eventually stored into database
 		return db.SaveDelegation(types.NewDelegation(
 			msg.DelegatorAddress,
@@ -49,7 +50,6 @@ func HandleMsgDelegate(tx juno.Tx, msg staking.MsgDelegate, db database.BigDippe
 			msg.Amount, tx.Height,
 			timestamp,
 		))
-	return nil
 }
 
 // HandleMsgUndelegate handles properly a MsgUndelegate
