@@ -22,7 +22,7 @@ CREATE TABLE validator_info
     moniker         TEXT     ,
 	identity        TEXT    ,
 	website         TEXT    ,
-	securityContact TEXT,
+	security_contact TEXT,
 	details         TEXT
 );
 

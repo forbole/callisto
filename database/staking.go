@@ -42,7 +42,7 @@ func (db BigDipperDb) SaveValidatorCommissions(validators []types.ValidatorCommi
 //not update very often
 func (db BigDipperDb) UpdateValidatorInfo(validator types.Validator) error {
 	query := `UPDATE validator_info 
-				SET moniker=$1,identity=$2,website=$3,securityContact=$4, details=$5
+				SET moniker=$1,identity=$2,website=$3,security_contact=$4, details=$5
 				 WHERE consensus_address=$6;`
 	_, err := db.Sql.Exec(query, validator.GetDescription().Moniker, validator.GetDescription().Identity, validator.GetDescription().Website, validator.GetDescription().SecurityContact,
 		validator.GetDescription().Details, validator.GetConsAddr().String())
@@ -67,7 +67,7 @@ func (db BigDipperDb) SaveEditCommission(data types.ValidatorCommission) error {
 func (db BigDipperDb) GetValidatorsData() ([]dbtypes.ValidatorData, error) {
 	sqlStmt := `SELECT DISTINCT ON (validator.consensus_address)
 				validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address 
-				,validator_info.moniker,validator_info.identity,validator_info.website,validator_info.securityContact, validator_info.details
+				,validator_info.moniker,validator_info.identity,validator_info.website,validator_info.security_contact, validator_info.details
 				FROM validator 
 				INNER JOIN validator_info 
 				ON validator.consensus_address = validator_info.consensus_address
@@ -78,13 +78,7 @@ func (db BigDipperDb) GetValidatorsData() ([]dbtypes.ValidatorData, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	validators := make([]dbtypes.ValidatorData, len(rows))
-	for index, row := range rows {
-		validators[index] = row
-	}
-
-	return validators, nil
+	return rows, nil
 }
 
 // SaveSingleValidatorData saves properly the information about the given validator
@@ -100,7 +94,7 @@ func (db BigDipperDb) SaveSingleValidatorData(validator types.Validator) error {
 func (db BigDipperDb) GetValidatorData(valAddress sdk.ValAddress) (types.Validator, error) {
 	var result []dbtypes.ValidatorData
 	stmt := `SELECT validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address 
-				,validator_info.moniker,validator_info.identity,validator_info.website,validator_info.securityContact, validator_info.details
+				,validator_info.moniker,validator_info.identity,validator_info.website,validator_info.security_contact, validator_info.details
 			 FROM validator INNER JOIN validator_info 
     		 ON validator.consensus_address=validator_info.consensus_address 
 			 WHERE validator_info.operator_address = $1`
@@ -121,7 +115,7 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 	validatorQuery := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES `
 	var validatorParams []interface{}
 
-	validatorInfoQuery := `INSERT INTO validator_info (consensus_address,operator_address,moniker,identity,website,securityContact, details) VALUES`
+	validatorInfoQuery := `INSERT INTO validator_info (consensus_address,operator_address,moniker,identity,website,security_contact, details) VALUES`
 
 	var validatorInfoParams []interface{}
 

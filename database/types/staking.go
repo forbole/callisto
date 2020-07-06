@@ -65,20 +65,20 @@ type ValidatorInfoRow struct {
 	Moniker         string `db:"moniker"`
 	Identity        string `db:"identity"`
 	Website         string `db:"website"`
-	SecurityContact string `db:"securityContact"`
+	SecurityContact string `db:"security_contact"`
 	Details         string `db:"details"`
 }
 
 // NewValidatorInfoRow allows to build a new ValidatorInfoRow
 func NewValidatorInfoRow(consAddress string, valAddress string, moniker string, identity string,
-	website string, securityContact string, details string) ValidatorInfoRow {
+	website string, security_contact string, details string) ValidatorInfoRow {
 	return ValidatorInfoRow{
 		ConsAddress:     consAddress,
 		ValAddress:      valAddress,
 		Moniker:         moniker,
 		Identity:        identity,
 		Website:         website,
-		SecurityContact: securityContact,
+		SecurityContact: security_contact,
 		Details:         details,
 	}
 }
@@ -105,7 +105,7 @@ type ValidatorData struct {
 	Moniker         string `db:"moniker"`
 	Identity        string `db:"identity"`
 	Website         string `db:"website"`
-	SecurityContact string `db:"securityContact"`
+	SecurityContact string `db:"security_contact"`
 	Details         string `db:"details"`
 }
 
