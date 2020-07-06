@@ -13,5 +13,6 @@ require (
 	github.com/stretchr/testify v1.6.1
 	github.com/tendermint/tendermint v0.33.3
 	github.com/ziutek/mymysql v1.5.4 // indirect
+	golang.org/x/tools v0.0.0-20200702044944-0cc1aa72b347 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
 )

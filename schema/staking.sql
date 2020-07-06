@@ -18,7 +18,12 @@ CREATE TABLE validator_uptime
 CREATE TABLE validator_info
 (
     consensus_address TEXT NOT NULL REFERENCES validator (consensus_address) UNIQUE PRIMARY KEY,
-    operator_address  TEXT NOT NULL
+    operator_address  TEXT NOT NULL,
+    moniker         TEXT     ,
+	identity        TEXT    ,
+	website         TEXT    ,
+	security_contact TEXT,
+	details         TEXT
 );
 
 CREATE TABLE validator_delegation
@@ -48,7 +53,7 @@ CREATE TABLE validator_redelegation
     amount                COIN                        NOT NULL,
     height                BIGINT                      NOT NULL,
     completion_time       TIMESTAMP WITHOUT TIME ZONE NOT NULL
-)
+);
 
 CREATE TABLE validator_self_delegation
 (    
@@ -58,5 +63,14 @@ CREATE TABLE validator_self_delegation
     height            BIGINT                      NOT NULL,
     timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     PRIMARY KEY (consensus_address , height)
+);
 
-)
+CREATE TABLE validator_commission
+(
+    validator_address     CHARACTER VARYING(52) NOT NULL,
+    timestamp             TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    commission            decimal	              NOT NULL,
+    min_self_delegation    decimal              NOT NULL,
+    height                BIGINT                NOT NULL,
+    PRIMARY KEY (validator_address,height)
+);
