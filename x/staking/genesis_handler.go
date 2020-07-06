@@ -78,7 +78,6 @@ func saveDelegations(genState staking.GenesisState, genesisDoc *tmtypes.GenesisD
 
 		for _, delegation := range getDelegations(genState.Delegations, validator.OperatorAddress) {
 			delegationAmount := tokens.ToDec().Mul(delegation.Shares).Quo(delegatorShares).TruncateInt()
-			coin :=
 			delegations = append(delegations, types.NewDelegation(
 				delegation.DelegatorAddress,
 				validator.OperatorAddress,
@@ -86,12 +85,13 @@ func saveDelegations(genState staking.GenesisState, genesisDoc *tmtypes.GenesisD
 				0,
 				genesisDoc.GenesisTime,
 			))
-			selfAddress := sdk.AccAddress(account[index].Bytes())
-			if delegation.DeoegatorAddress == selfAddress {
-				//it is self delegate
-				append(selfDelegations,types.NewSelfDelegation(
+			selfAddress := sdk.AccAddress(delegation.ValidatorAddress)
+			//self delegation
+			if delegation.DelegatorAddress.Equals(selfAddress) {
+				selfDelegations = append(selfDelegations,types.NewSelfDelegation(
 					validator.OperatorAddress,
-					delegationAmount,
+					delegationAmount.Int64(),
+					float64(delegationAmount.Int64())/float64(validator.DelegatorShares.Int64())*100.0,
 				0,
 				genesisDoc.GenesisTime,
 				))
@@ -99,8 +99,10 @@ func saveDelegations(genState staking.GenesisState, genesisDoc *tmtypes.GenesisD
 		}
 	}
 
-	return db.SaveDelegations(delegations)
-	db.SaveAllSelfDelegation(delegations)
+	if err := db.SaveDelegations(delegations);err != nil{
+		return err
+	}
+	return db.SaveAllSelfDelegation(selfDelegations)
 }
 
 

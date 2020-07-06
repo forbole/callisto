@@ -25,6 +25,20 @@ func HandleMsgDelegate(tx juno.Tx, msg staking.MsgDelegate, db database.BigDippe
 	if found, _ := db.HasValidator(deligatorAddress.String()); !found {
 		return nil
 	}
+	if err=checkSelfDelegation(validatorAddress,deligatorAddress,cp,db,timestamp);err!=nil{
+		return err
+	}
+		//for each delegate message it will eventually stored into database
+		return db.SaveDelegation(types.NewDelegation(
+			msg.DelegatorAddress,
+			msg.ValidatorAddress,
+			msg.Amount, tx.Height,
+			timestamp,
+		))
+}
+
+func checkSelfDelegation(validatorAddress sdk.ValAddress,deligatorAddress sdk.AccAddress,cp client.ClientProxy,db database.BigDipperDb,
+	timestamp time.Time)error{
 	//handle self delegation
 	var delegation staking.Delegation
 	endpoint := fmt.Sprintf("/staking/delegators/%s/delegations/%s", deligatorAddress.String(), validatorAddress.String())
@@ -39,17 +53,13 @@ func HandleMsgDelegate(tx juno.Tx, msg staking.MsgDelegate, db database.BigDippe
 		var validator staking.Validator
 		endpoint = fmt.Sprintf("/staking/validators/%s", deligatorAddress.String())
 		height, ok = cp.QueryLCDWithHeight(endpoint, &validator)
-		db.SaveSelfDelegation(types.NewSelfDelegation(msg.ValidatorAddress,delegation.Shares.Int64(),
-					float64(delegation.Shares.Int64())/float64(validator.DelegatorShares.Int64())*100,
-					height,timestamp))
+		if err:=db.SaveSelfDelegation(types.NewSelfDelegation(validatorAddress,delegation.Shares.Int64(),
+					float64(delegation.Shares.Int64())/float64(validator.DelegatorShares.Int64())*100.0,
+					height,timestamp));err!=nil{
+						return err
+					}
 	}
-		//for each delegate message it will eventually stored into database
-		return db.SaveDelegation(types.NewDelegation(
-			msg.DelegatorAddress,
-			msg.ValidatorAddress,
-			msg.Amount, tx.Height,
-			timestamp,
-		))
+	return nil
 }
 
 // HandleMsgUndelegate handles properly a MsgUndelegate
