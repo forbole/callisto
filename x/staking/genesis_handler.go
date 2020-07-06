@@ -35,10 +35,14 @@ func GenesisHandler(codec *codec.Codec, genDoc *types.GenesisDoc, appState map[s
 	}
 
 	// Store the accounts
-	accounts := make([]exported.DelegationI, len(stakingGenesisState.Validators))
+	accounts := make([]exported.ValidatorI, len(stakingGenesisState.Validators))
 	for index, account := range stakingGenesisState.Validators {
 		accounts[index] = account.(exported.Account)
 		selfAddress := sdk.AccAddress(account[index].Bytes())
+		bstaking.NewSelfDelegation(validatorAddress,delegation.Shares.Int64(),
+					float64(delegation.Shares.Int64())/float64(validator.DelegatorShares.Int64()*100,
+					0,genDoc.GenesisTime)stakingGenesisState.Delegations
+		//find the self delegation address has delegated to someone?
 	}
 
 

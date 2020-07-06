@@ -78,7 +78,7 @@ func StoreDelegation(msg staking.MsgDelegate, cp client.ClientProxy, time time.T
 		endpoint = fmt.Sprintf("/staking/validators", deligatorAddress.String(), validatorAddress.String())
 		height, ok = cp.QueryLCDWithHeight(endpoint, &validator)
 		db.SaveSelfDelegation(bstaking.NewSelfDelegation(validatorAddress,delegation.Shares.Int64(),
-					float64(delegation.Shares.Int64())/float64(validator.DelegatorShares.Int64(),
+					float64(delegation.Shares.Int64())/float64(validator.DelegatorShares.Int64()*100,
 					height,time)
 		)))
 	} else {
