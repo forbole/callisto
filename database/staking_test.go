@@ -54,14 +54,18 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorData() {
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
 		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
+		"ExampleMoniker",
+		"ExampleIdentity",
+		"ExampleWebsite",
+		"ExampleSecurity",
+		"ExampleDetails",
 	)
 
 	// First inserting
-	err := suite.database.SaveValidatorData(validator)
-	suite.Require().NoError(err, "inserting a validator info should return no error")
+	err := suite.database.SaveSingleValidatorData(validator)
 
 	// Test double inserting
-	err = suite.database.SaveValidatorData(validator)
+	err = suite.database.SaveSingleValidatorData(validator)
 	suite.Require().NoError(err, "inserting the same validator info twice should return no error")
 
 	// Verify the data
@@ -79,7 +83,41 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorData() {
 	suite.Require().True(valInfoRows[0].Equal(dbtypes.NewValidatorInfoRow(
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
+		"ExampleMoniker",
+		"ExampleIdentity",
+		"ExampleWebsite",
+		"ExampleSecurity",
+		"ExampleDetails",
 	)))
+
+	//test for updating a existion row
+	updateValidator := dbtypes.NewValidatorData(
+		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
+		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
+		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
+		"UpdateExampleMoniker",
+		"UpdateExampleIdentity",
+		"UpdateExampleWebsite",
+		"UpdateExampleSecurity",
+		"UpdateExampleDetails",
+	)
+
+	err = suite.database.UpdateValidatorInfo(updateValidator)
+	suite.Require().NoError(err)
+
+	var updateValInfoRows []dbtypes.ValidatorInfoRow
+	err = suite.database.Sqlx.Select(&updateValInfoRows, `SELECT * FROM validator_info`)
+	suite.Require().Len(updateValInfoRows, 1)
+	suite.Require().True(updateValInfoRows[0].Equal(dbtypes.NewValidatorInfoRow(
+		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
+		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
+		"UpdateExampleMoniker",
+		"UpdateExampleIdentity",
+		"UpdateExampleWebsite",
+		"UpdateExampleSecurity",
+		"UpdateExampleDetails",
+	)))
+
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_GetValidatorData() {
@@ -88,8 +126,8 @@ func (suite *DbTestSuite) TestBigDipperDb_GetValidatorData() {
 VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl', 'cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8')`)
 	suite.Require().NoError(err)
 
-	_, err = suite.database.Sql.Exec(`INSERT INTO validator_info (consensus_address, operator_address) 
-VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl','cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl')`)
+	_, err = suite.database.Sql.Exec(`INSERT INTO validator_info (consensus_address, operator_address,moniker,identity,website,security_contact, details) 
+VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl','cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl','ExampleMoniker1','ExampleIdentity1','ExampleWebsite1','ExampleSecurityContact1','ExampleDetails1')`)
 	suite.Require().NoError(err)
 
 	// Get the data
@@ -108,6 +146,8 @@ VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl','cosmosvaloper1rc
 		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
 		sdk.MustBech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, validator.GetConsPubKey()),
 	)
+	suite.Require().True(validator == dbtypes.NewValidatorData("cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl", "cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl", "cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8", "ExampleMoniker1", "ExampleIdentity1", "ExampleWebsite1", "ExampleSecurityContact1", "ExampleDetails1"))
+
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorsData() {
@@ -116,16 +156,44 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorsData() {
 			"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 			"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
 			"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
+			"ExampleMoniker",
+			"ExampleIdentity",
+			"ExampleWebsite",
+			"ExampleSecurity",
+			"ExampleDetails",
 		),
 		dbtypes.NewValidatorData(
 			"cosmosvalcons1qq92t2l4jz5pt67tmts8ptl4p0jhr6utx5xa8y",
 			"cosmosvaloper1000ya26q2cmh399q4c5aaacd9lmmdqp90kw2jn",
 			"cosmosvalconspub1zcjduepqe93asg05nlnj30ej2pe3r8rkeryyuflhtfw3clqjphxn4j3u27msrr63nk",
+			"ExampleMoniker2",
+			"ExampleIdentity2",
+			"ExampleWebsite2",
+			"ExampleSecurity2",
+			"ExampleDetails2",
 		),
+	}
+
+	expectedValidatorInfo := []dbtypes.ValidatorInfoRow{
+		dbtypes.NewValidatorInfoRow("cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
+			"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
+			"ExampleMoniker",
+			"ExampleIdentity",
+			"ExampleWebsite",
+			"ExampleSecurity",
+			"ExampleDetails"),
+		dbtypes.NewValidatorInfoRow("cosmosvalcons1qq92t2l4jz5pt67tmts8ptl4p0jhr6utx5xa8y",
+			"cosmosvaloper1000ya26q2cmh399q4c5aaacd9lmmdqp90kw2jn",
+			"ExampleMoniker2",
+			"ExampleIdentity2",
+			"ExampleWebsite2",
+			"ExampleSecurity2",
+			"ExampleDetails2"),
 	}
 
 	// Insert the data
 	err := suite.database.SaveValidatorsData(validators)
+
 	suite.Require().NoError(err)
 
 	// Verify the inserted data
@@ -145,8 +213,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorsData() {
 		suite.Require().Equal(v.ConsPubKey, sdk.MustBech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, w.GetConsPubKey()))
 
 		wInfo := validatorInfoRows[index]
-		suite.Require().Equal(wInfo.ConsAddress, w.GetConsAddr().String())
-		suite.Require().Equal(wInfo.ValAddress, w.GetOperator().String())
+		suite.Require().True(wInfo == expectedValidatorInfo[index])
 	}
 }
 
@@ -155,8 +222,8 @@ func (suite *DbTestSuite) TestBigDipperDb_GetValidatorsData() {
 	queries := []string{
 		`INSERT INTO validator (consensus_address, consensus_pubkey) VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl', 'cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8')`,
 		`INSERT INTO validator (consensus_address, consensus_pubkey) VALUES ('cosmosvalcons1qq92t2l4jz5pt67tmts8ptl4p0jhr6utx5xa8y', 'cosmosvalconspub1zcjduepqe93asg05nlnj30ej2pe3r8rkeryyuflhtfw3clqjphxn4j3u27msrr63nk')`,
-		`INSERT INTO validator_info (consensus_address, operator_address) VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl', 'cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl')`,
-		`INSERT INTO validator_info (consensus_address, operator_address) VALUES ('cosmosvalcons1qq92t2l4jz5pt67tmts8ptl4p0jhr6utx5xa8y', 'cosmosvaloper1000ya26q2cmh399q4c5aaacd9lmmdqp90kw2jn')`,
+		`INSERT INTO validator_info (consensus_address, operator_address, moniker,identity,website,security_contact,details) VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl', 'cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl','ExampleMoniker1','ExampleIdentity1','ExampleWebsite1','ExampleSecurityContact1','ExampleDetails1')`,
+		`INSERT INTO validator_info (consensus_address, operator_address, moniker,identity,website,security_contact,details) VALUES ('cosmosvalcons1qq92t2l4jz5pt67tmts8ptl4p0jhr6utx5xa8y', 'cosmosvaloper1000ya26q2cmh399q4c5aaacd9lmmdqp90kw2jn','ExampleMoniker2','ExampleIdentity2','ExampleWebsite2','ExampleSecurityContact2','ExampleDetails2')`,
 	}
 
 	for _, query := range queries {
@@ -174,11 +241,21 @@ func (suite *DbTestSuite) TestBigDipperDb_GetValidatorsData() {
 			"cosmosvalcons1qq92t2l4jz5pt67tmts8ptl4p0jhr6utx5xa8y",
 			"cosmosvaloper1000ya26q2cmh399q4c5aaacd9lmmdqp90kw2jn",
 			"cosmosvalconspub1zcjduepqe93asg05nlnj30ej2pe3r8rkeryyuflhtfw3clqjphxn4j3u27msrr63nk",
+			"ExampleMoniker2",
+			"ExampleIdentity2",
+			"ExampleWebsite2",
+			"ExampleSecurityContact2",
+			"ExampleDetails2",
 		),
 		dbtypes.NewValidatorData(
 			"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 			"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
 			"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
+			"ExampleMoniker1",
+			"ExampleIdentity1",
+			"ExampleWebsite1",
+			"ExampleSecurityContact1",
+			"ExampleDetails1",
 		),
 	}
 
@@ -232,8 +309,8 @@ func (suite *DbTestSuite) getValidator(consAddr, valAddr, pubkey string) types.V
 	pubKey, err := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeConsPub, pubkey)
 	suite.Require().NoError(err)
 
-	validator := types.NewValidator(constAddrObj, valAddrObj, pubKey)
-	err = suite.database.SaveValidatorData(validator)
+	validator := types.NewValidator(constAddrObj, valAddrObj, pubKey, stakingtypes.NewDescription("moniker", "identity", "website", "security", "details"))
+	err = suite.database.SaveSingleValidatorData(validator)
 	suite.Require().NoError(err)
 
 	return validator
@@ -380,6 +457,79 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDelegations() {
 	suite.Require().Len(rows, len(expected))
 	for index, delegation := range expected {
 		suite.Require().True(delegation.Equal(rows[index]))
+	}
+}
+
+func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommission() {
+	validator := suite.getValidator(
+		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
+		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
+		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
+	)
+
+	var height int64 = 1000
+	var commissionRate int64 = 10
+	var minSelfDelegation int64 = 12
+
+	timestamp, err := time.Parse(time.RFC3339, "2020-01-01T10:00:00Z")
+	suite.Require().NoError(err)
+
+	commission := types.NewValidatorCommission(validator.GetOperator(), commissionRate, minSelfDelegation, height, timestamp)
+
+	err = suite.database.SaveEditCommission(commission)
+	//get back commission
+	suite.Require().NoError(err)
+	var rows []dbtypes.ValidatorCommission
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM validator_commission`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	suite.Require().True(rows[0].Equal(dbtypes.NewValidatorCommission(
+		validator.GetOperator().String(),
+		timestamp,
+		commissionRate,
+		minSelfDelegation,
+		height,
+	)))
+}
+
+func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommissions() {
+	validator1 := suite.getValidator(
+		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
+		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
+		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
+	)
+	validator2 := suite.getValidator(
+		"cosmosvalcons1qq92t2l4jz5pt67tmts8ptl4p0jhr6utx5xa8y",
+		"cosmosvaloper1000ya26q2cmh399q4c5aaacd9lmmdqp90kw2jn",
+		"cosmosvalconspub1zcjduepqe93asg05nlnj30ej2pe3r8rkeryyuflhtfw3clqjphxn4j3u27msrr63nk",
+	)
+
+	timestamp, err := time.Parse(time.RFC3339, "2020-01-01T10:00:00Z")
+	suite.Require().NoError(err)
+
+	commissions := []types.ValidatorCommission{
+		types.NewValidatorCommission(validator1.GetOperator(), 10, 30, 0, timestamp),
+		types.NewValidatorCommission(validator2.GetOperator(), 20, 40, 0, timestamp),
+	}
+
+	err = suite.database.SaveValidatorCommissions(commissions)
+	suite.Require().NoError(err)
+
+	expected := []dbtypes.ValidatorCommission{
+		dbtypes.NewValidatorCommission(
+			validator1.GetOperator().String(), timestamp, 10, 30, 0,
+		),
+		dbtypes.NewValidatorCommission(
+			validator2.GetOperator().String(), timestamp, 20, 40, 0,
+		),
+	}
+
+	var rows []dbtypes.ValidatorCommission
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM validator_commission`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 2)
+	for index, row := range rows {
+		suite.Require().True(row.Equal(expected[index]))
 	}
 }
 

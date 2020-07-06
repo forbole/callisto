@@ -10,27 +10,20 @@ import (
 	"github.com/desmos-labs/juno/parse/worker"
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/staking/types"
+	"github.com/rs/zerolog/log"
 	tmtypes "github.com/tendermint/tendermint/types"
 )
 
-// GenesisHandler properly handles the staking module genesis state in order
-// to store inside the database all the data that is present inside it
-func GenesisHandler(
-	codec *codec.Codec, genesisDoc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, w worker.Worker,
-) error {
+func GenesisHandler(codec *codec.Codec, genesisDoc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, w worker.Worker) error {
+	log.Debug().Str("module", "auth").Msg("parsing genesis")
+
 	bigDipperDb, ok := w.Db.(database.BigDipperDb)
 	if !ok {
-		return fmt.Errorf("provided database is not a BigDipper database")
+		return fmt.Errorf("given database instance is not a BigDipperDb")
 	}
-
 	// Read the genesis state
 	var genState staking.GenesisState
 	if err := codec.UnmarshalJSON(appState[staking.ModuleName], &genState); err != nil {
-		return err
-	}
-
-	// Save the validators
-	if err := saveValidators(genState, bigDipperDb); err != nil {
 		return err
 	}
 
@@ -49,20 +42,42 @@ func GenesisHandler(
 		return err
 	}
 
+	err := InitialCommission(genState, genesisDoc, bigDipperDb)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
-// saveValidators stores the validators data present inside the given genesis state
-func saveValidators(genState staking.GenesisState, db database.BigDipperDb) error {
-	validators := make([]types.Validator, len(genState.Validators))
-	for _, validator := range genState.Validators {
-		validators = append(validators, types.NewValidator(
-			validator.ConsAddress(),
-			validator.OperatorAddress,
-			validator.GetConsPubKey(),
-		))
+//InitialCommission save initial commission for validators
+func InitialCommission(sgenState staking.GenesisState, genesisDoc *tmtypes.GenesisDoc, db database.BigDipperDb) error {
+	// Store the accounts
+	accounts := make([]types.ValidatorCommission, len(sgenState.Validators))
+	for index, account := range sgenState.Validators {
+		accounts[index] = types.NewValidatorCommission(account.GetOperator(),
+			account.Commission.Rate.Int64(), account.MinSelfDelegation.Int64(), 0,genesisDoc.GenesisTime)
 	}
-	if err := db.SaveValidatorsData(validators); err != nil {
+
+	err := db.SaveValidatorCommissions(accounts)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+//InitialIndormation save initial descriptions for validators
+func InitialInformation(sgenState staking.GenesisState, db database.BigDipperDb) error {
+	accounts := make([]types.Validator, len(sgenState.Validators))
+	for index, account := range sgenState.Validators {
+		accounts[index] = types.NewValidator(
+			account.ConsAddress(),
+			account.OperatorAddress,
+			account.ConsPubKey,
+			account.Description)
+	}
+
+	err := db.SaveValidatorsData(accounts)
+	if err != nil {
 		return err
 	}
 	return nil
