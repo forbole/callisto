@@ -308,24 +308,34 @@ func (db BigDipperDb) SaveUnbondingDelegations(delegations []types.UnbondingDele
 	return err 
 }
 
+//SaveSelfDelegation save some self delegation into the databse
 func (db BigDipperDb) SaveSelfDelegation(delegation types.SelfDelegation) error {
-	statement := `INSERT INTO validator_self_delegation(consensus_address,shares,height,timestamp) VALUES
+	statement := `INSERT INTO validator_self_delegation(consensus_address,shares,ratio,height,timestamp) VALUES
 			($1,$2,$3,$4)`
-	_, err := db.Sql.Exec(statement, delegation.ValidatorAddress, delegation.Shares, delegation.Height, delegation.Timestamp)
+	_, err := db.Sql.Exec(statement, delegation.ValidatorAddress, delegation.Shares, delegation.Ratio, delegation.Height, delegation.Timestamp)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (db BigDupperDB) SaveAllSelfDelegation(selfDelegations []types.SelfDelegation)error{
-	statement := `INSERT INTO validator_self_delegation(consenus_address,shares,height,timestamp) VALUES`
-	selfDelegationrow := make([]dbtypes.ValidatorSelfCommission,length(delegations))
-	for i ,delegation := range selfDelegations{
-		i1=i*4
-		statement += fmt.Sprintf(`(%$d,%$d,%$d,%$d)`,i1+1,i1+2,i1+3,i1+4)
-		selfDelegationrow = append(selfDelegationrow,delegation.)
+//SaveAllSelfDelegation save an array of self delegation inside the database
+func (db BigDipperDb) SaveAllSelfDelegation(selfdelegations []types.SelfDelegation)error{
+	statement := `INSERT INTO validator_self_delegation(consenus_address,shares,ratio,height,timestamp) VALUES`
+	var selfDelegationrow []interface{}
+	for i ,delegation := range selfdelegations{
+		i1:=i*5
+		statement += fmt.Sprintf(`($%d,$%d,$%d,$%d,$%d),`,i1+1,i1+2,i1+3,i1+4,i1+5)
+		selfDelegationrow = append(selfDelegationrow,delegation.ValidatorAddress.String(),delegation.Height,delegation.Timestamp)
 	}
+
+	statement = statement[:len(statement)-1] // Remove trailing ","
+	statement += " ON CONFLICT DO NOTHING"
+	_, err := db.Sql.Exec(statement, selfDelegationrow...)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 // SaveRedelegation saves the given re-delegation inside the database.
 // It assumes that the validator info are already present inside the

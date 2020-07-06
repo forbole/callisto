@@ -258,10 +258,11 @@ func (v ValidatorReDelegationRow) Equal(w ValidatorReDelegationRow) bool {
 		v.CompletionTime.Equal(w.CompletionTime)
 }
 
-type ValidatorSelfCommission stuct{
-	Consensus_address string `db:"consensus_address"`
+type ValidatorSelfCommission struct{
+	ConsensusAddress string `db:"consensus_address"`
 	Shares    int64 `db:"shares"`   
-	Ratio     float64 `db:ratio`
+	Ratio     float64 `db:"ratio"`
 	Height           int64 `db:"height"`   
 	Timestamp         time.Time `db:"timestamp"`
 }
+
