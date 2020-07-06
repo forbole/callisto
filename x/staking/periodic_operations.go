@@ -7,6 +7,7 @@ import (
 	"github.com/desmos-labs/juno/parse"
 	"github.com/desmos-labs/juno/parse/client"
 	"github.com/forbole/bdjuno/database"
+	"github.com/forbole/bdjuno/x/staking/operations"
 	"github.com/forbole/bdjuno/x/utils"
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
@@ -25,16 +26,7 @@ func PeriodicStakingOperations(scheduler *gocron.Scheduler) parse.AdditionalOper
 
 		// Setup a cron job to run every 15 seconds
 		if _, err := scheduler.Every(15).Second().StartImmediately().Do(func() {
-			utils.WatchMethod(func() error { return updateStakingPool(cp, bdDatabase) })
-			utils.WatchMethod(func() error { return updateValidatorsUptime(cp, bdDatabase) })
-		}); err != nil {
-			return err
-		}
-
-		// Setup a cron job to run every midnight
-		if _, err := scheduler.Every(1).Day().At("00:00").Do(func() {
-			utils.WatchMethod(func() error { return updateDelegations(cp, bdDatabase) })
-			utils.WatchMethod(func() error { return updateStakingPool(cp, bdDatabase) })
+			utils.WatchMethod(func() error { return operations.UpdateValidatorsUptime(cp, bdDatabase) })
 		}); err != nil {
 			return err
 		}
