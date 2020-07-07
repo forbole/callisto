@@ -94,7 +94,7 @@ func (db BigDipperDb) SaveSingleValidatorData(validator types.Validator) error {
 func (db BigDipperDb) GetValidatorData(valAddress sdk.ValAddress) (types.Validator, error) {
 	var result []dbtypes.ValidatorData
 	stmt := `SELECT validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address 
-				validator_info.self_delegate_address,validator_info.moniker,validator_info.identity,validator_info.website,validator_info.security_contact, validator_info.details
+				validator_info,validator_info.moniker,validator_info.identity,validator_info.website,validator_info.security_contact, validator_info.details
 			 FROM validator INNER JOIN validator_info 
     		 ON validator.consensus_address=validator_info.consensus_address 
 			 WHERE validator_info.operator_address = $1`
@@ -116,8 +116,10 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 	var validatorParams []interface{}
 
 	validatorInfoQuery := `INSERT INTO validator_info (consensus_address,operator_address,self_delegate_address,moniker,identity,website,security_contact, details) VALUES`
-
 	var validatorInfoParams []interface{}
+
+	selfDelegationAccQuery := `INSERT INTO account (address) VALUES `
+	var selfDelegationParam []interface{}
 
 	for i, validator := range validators {
 		v1 := i * 2 // Starting position for validator params
@@ -136,8 +138,15 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr().String(), validator.GetOperator().String(),validator.GetSelfDelegateAddress(), validator.GetDescription().Moniker,
 			validator.GetDescription().Identity, validator.GetDescription().Website, validator.GetDescription().SecurityContact, validator.GetDescription().Details)
 
+		selfDelegationAccQuery += fmt.Sprintf("($%d),",i+1)
+		selfDelegationParam = append(selfDelegationParam,validator.GetSelfDelegateAddress())
 	}
-	if err := db.SaveUserIfNotExisting(validators.GetSelfDelegateAddress())
+	selfDelegationAccQuery = selfDelegationAccQuery[:len(selfDelegationAccQuery)-1] // Remove trailing ","
+	selfDelegationAccQuery += " ON CONFLICT DO NOTHING"
+	_, err := db.Sql.Exec(selfDelegationAccQuery, selfDelegationParam...)
+	if err != nil {
+		return err
+	}
 
 	validatorQuery = validatorQuery[:len(validatorQuery)-1] // Remove trailing ","
 	validatorQuery += " ON CONFLICT DO NOTHING"
@@ -467,3 +476,4 @@ func (db BigDipperDb) SaveRedelegations(redelegations []types.Redelegation) erro
 	_, err = db.Sql.Exec(redelQuery, redelParams...)
 	return err
 }
+
