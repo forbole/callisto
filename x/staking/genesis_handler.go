@@ -91,7 +91,6 @@ func InitialInformation(sgenState staking.GenesisState, db database.BigDipperDb)
 // saveDelegations stores the delegations data present inside the given genesis state
 func saveDelegations(genState staking.GenesisState, genesisDoc *tmtypes.GenesisDoc, db database.BigDipperDb) error {
 	var delegations []types.Delegation
-	var selfDelegations []types.SelfDelegation
 	for _, validator := range genState.Validators {
 		tokens := validator.Tokens
 		delegatorShares := validator.DelegatorShares
@@ -111,8 +110,7 @@ func saveDelegations(genState staking.GenesisState, genesisDoc *tmtypes.GenesisD
 	if err := db.SaveDelegations(delegations);err != nil{
 		return err
 	}
-	return db.SaveAllSelfDelegation(selfDelegations)
-}
+return nil}
 
 
 

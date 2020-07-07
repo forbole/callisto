@@ -57,7 +57,7 @@ func saveDelegatorsShares(validatorAddress sdk.ValAddress,deligatorAddress sdk.A
 			timestamp,
 		)
 	}
-	if err:=db.SaveDelegations(delegations);err!=nil{
+	if err:=db.SaveDelegationsShares(delegations);err!=nil{
 						return err
 	}
 	
@@ -124,3 +124,4 @@ func HandleMsgBeginRedelegate(tx juno.Tx, index int, msg staking.MsgBeginRedeleg
 	// Store the redelegation
 	return db.SaveRedelegation(reDelegation)
 }
+

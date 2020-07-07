@@ -347,35 +347,6 @@ func (db BigDipperDb) SaveUnbondingDelegations(delegations []types.UnbondingDele
 	return err 
 }
 
-//SaveSelfDelegation save some self delegation into the databse
-func (db BigDipperDb) SaveSelfDelegation(delegation types.SelfDelegation) error {
-	statement := `INSERT INTO validator_self_delegation(consensus_address,shares,ratio,height,timestamp) VALUES
-			($1,$2,$3,$4)`
-	_, err := db.Sql.Exec(statement, delegation.ValidatorAddress, delegation.Shares, delegation.Ratio, delegation.Height, delegation.Timestamp)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-//SaveAllSelfDelegation save an array of self delegation inside the database
-func (db BigDipperDb) SaveAllSelfDelegation(selfdelegations []types.SelfDelegation)error{
-	statement := `INSERT INTO validator_self_delegation(consenus_address,shares,ratio,height,timestamp) VALUES`
-	var selfDelegationrow []interface{}
-	for i ,delegation := range selfdelegations{
-		i1:=i*5
-		statement += fmt.Sprintf(`($%d,$%d,$%d,$%d,$%d),`,i1+1,i1+2,i1+3,i1+4,i1+5)
-		selfDelegationrow = append(selfDelegationrow,delegation.ValidatorAddress.String(),delegation.Height,delegation.Timestamp)
-	}
-
-	statement = statement[:len(statement)-1] // Remove trailing ","
-	statement += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(statement, selfDelegationrow...)
-	if err != nil {
-		return err
-	}
-	return nil
-}
 // SaveRedelegation saves the given re-delegation inside the database.
 // It assumes that the validator info are already present inside the
 // proper tables of the database.
@@ -477,3 +448,20 @@ func (db BigDipperDb) SaveRedelegations(redelegations []types.Redelegation) erro
 	return err
 }
 
+//SaveDelegationsShare sve an array of delegation share
+func (db BigDipperDb)SaveDelegationsShares(shares []types.DelegationShare)error{
+	stmt := `INSERT INTO validator_delegation_shares (consensus_address ,delegator_address,shares,height,timestamp) VALUES`
+	var delegationShareParam []interface{}
+	for i,share:=range shares{
+		i1:=i*5
+		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", i1+1,i1+2,i1+3,i1+4,i1+5)
+		delegationShareParam = append(delegationShareParam, share.ValidatorAddress,share.DelegatorAddress,share.Shares,share.Height,share.Timestamp)
+	}
+	stmt = stmt[:len(stmt)-1] // Remove the trailing ","
+	stmt += " ON CONFLICT DO NOTHING"
+	_, err := db.Sql.Exec(stmt, delegationShareParam...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
