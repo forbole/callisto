@@ -66,8 +66,7 @@ func (v validator) Equals(w validator) bool {
 	return v.ConsensusAddr.Equals(w.ConsensusAddr) &&
 		v.ConsPubKey.Equals(w.ConsPubKey) &&
 		v.OperatorAddr.Equals(w.OperatorAddr) &&
-		v.Description == w.Description &&
-		v.SelfDelegationAddress.Equals(w.SelfDelegationAddress)
+		v.Description == w.Description
 }
 
 // _________________________________________________________

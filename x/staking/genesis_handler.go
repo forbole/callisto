@@ -105,16 +105,6 @@ func saveDelegations(genState staking.GenesisState, genesisDoc *tmtypes.GenesisD
 				0,
 				genesisDoc.GenesisTime,
 			))
-			selfAddress := sdk.AccAddress(delegation.ValidatorAddress)
-			//self delegation
-			if delegation.DelegatorAddress.Equals(selfAddress) {
-				selfDelegations = append(selfDelegations,types.NewSelfDelegation(
-					validator.OperatorAddress,
-					delegationAmount.Int64(),
-				0,
-				genesisDoc.GenesisTime,
-				))
-			}
 		}
 	}
 

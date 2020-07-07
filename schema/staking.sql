@@ -56,13 +56,14 @@ CREATE TABLE validator_redelegation
     completion_time       TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
-CREATE TABLE validator_self_delegation
+CREATE TABLE validator_delegation_shares
 (    
     consensus_address TEXT                        NOT NULL REFERENCES validator (consensus_address),
+    delegator_address TEXT                        NOT NULL REFERENCES account (address),
     shares    DECIMAL                     NOT NUll,
     height            BIGINT                      NOT NULL,
     timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    PRIMARY KEY (consensus_address , height)
+    PRIMARY KEY (consensus_address,delegator_address , height)
 );
 
 CREATE TABLE validator_commission

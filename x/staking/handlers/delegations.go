@@ -25,7 +25,7 @@ func HandleMsgDelegate(tx juno.Tx, msg staking.MsgDelegate, db database.BigDippe
 	if found, _ := db.HasValidator(deligatorAddress.String()); !found {
 		return nil
 	}
-	if err=checkSelfDelegation(validatorAddress,deligatorAddress,cp,db,timestamp);err!=nil{
+	if err=SaveDelegatorsShares(validatorAddress,deligatorAddress,cp,db,timestamp,tx.height);err!=nil{
 		return err
 	}
 		//for each delegate message it will eventually stored into database
@@ -37,27 +37,30 @@ func HandleMsgDelegate(tx juno.Tx, msg staking.MsgDelegate, db database.BigDippe
 		))
 }
 
-func checkSelfDelegation(validatorAddress sdk.ValAddress,deligatorAddress sdk.AccAddress,cp client.ClientProxy,db database.BigDipperDb,
-	timestamp time.Time)error{
+
+func saveDelegatorsShares(validatorAddress sdk.ValAddress,deligatorAddress sdk.AccAddress,cp client.ClientProxy,db database.BigDipperDb,
+	timestamp time.Time,height int64)error{
 	//handle self delegation
-	var delegation staking.Delegation
-	endpoint := fmt.Sprintf("/staking/delegators/%s/delegations/%s", deligatorAddress.String(), validatorAddress.String())
-	height, ok := cp.QueryLCDWithHeight(endpoint, &delegation)
+	var delegations []staking.Delegation
+	var delegationstype []types.DelegationShare
+	endpoint := fmt.Sprintf("/staking/validators/%s/delegations",validatorAddress.String())
+	height, ok := cp.QueryLCDWithHeight(endpoint, &delegations)
 	if ok != nil {
 		return nil
 	}
-	//check if the delegation is self delegation
-	selfAddress := sdk.AccAddress(validatorAddress.Bytes())
-	if deligatorAddress.Equals(selfAddress) {
-		//get current total delegation
-		var validator staking.Validator
-		endpoint = fmt.Sprintf("/staking/validators/%s", deligatorAddress.String())
-		height, ok = cp.QueryLCDWithHeight(endpoint, &validator)
-		if err:=db.SaveSelfDelegation(types.NewSelfDelegation(validatorAddress,delegation.Shares.Int64(),
-					height,timestamp));err!=nil{
-						return err
-					}
+	for _,delegation := range delegations{
+		delegationstype = append(delegationstype,types.NewDelegationShare(
+			delegation.GetValidatorAddr(),
+			delegation.GetDelegatorAddr(),
+			delegation.Shares,
+			height,
+			timestamp,
+		)
 	}
+	if err:=db.SaveDelegations(delegations);err!=nil{
+						return err
+	}
+	
 	return nil
 }
 
