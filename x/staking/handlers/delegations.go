@@ -54,7 +54,6 @@ func checkSelfDelegation(validatorAddress sdk.ValAddress,deligatorAddress sdk.Ac
 		endpoint = fmt.Sprintf("/staking/validators/%s", deligatorAddress.String())
 		height, ok = cp.QueryLCDWithHeight(endpoint, &validator)
 		if err:=db.SaveSelfDelegation(types.NewSelfDelegation(validatorAddress,delegation.Shares.Int64(),
-					float64(delegation.Shares.Int64())/float64(validator.DelegatorShares.Int64())*100.0,
 					height,timestamp));err!=nil{
 						return err
 					}

@@ -157,6 +157,11 @@ func (v ValidatorData) GetDescription() staking.Description {
 	)
 }
 
+func (v ValidatorData)GetSelfDelegateAddress() sdk.AccAddress{
+	return sdk.AccAddress(v.GetOperator())
+}
+
+
 // ________________________________________________
 
 // ValidatorUptimeRow represents a single row of the validator_uptime table

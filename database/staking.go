@@ -94,7 +94,7 @@ func (db BigDipperDb) SaveSingleValidatorData(validator types.Validator) error {
 func (db BigDipperDb) GetValidatorData(valAddress sdk.ValAddress) (types.Validator, error) {
 	var result []dbtypes.ValidatorData
 	stmt := `SELECT validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address 
-				,validator_info.moniker,validator_info.identity,validator_info.website,validator_info.security_contact, validator_info.details
+				validator_info.self_delegate_address,validator_info.moniker,validator_info.identity,validator_info.website,validator_info.security_contact, validator_info.details
 			 FROM validator INNER JOIN validator_info 
     		 ON validator.consensus_address=validator_info.consensus_address 
 			 WHERE validator_info.operator_address = $1`
@@ -115,13 +115,13 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 	validatorQuery := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES `
 	var validatorParams []interface{}
 
-	validatorInfoQuery := `INSERT INTO validator_info (consensus_address,operator_address,moniker,identity,website,security_contact, details) VALUES`
+	validatorInfoQuery := `INSERT INTO validator_info (consensus_address,operator_address,self_delegate_address,moniker,identity,website,security_contact, details) VALUES`
 
 	var validatorInfoParams []interface{}
 
 	for i, validator := range validators {
 		v1 := i * 2 // Starting position for validator params
-		vi := i * 7 // Starting position for validator info params
+		vi := i * 8 // Starting position for validator info params
 
 		publicKey, err := sdk.Bech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, validator.GetConsPubKey())
 		if err != nil {
@@ -133,10 +133,11 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 			validator.GetConsAddr().String(), publicKey)
 
 		validatorInfoQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7)
-		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr().String(), validator.GetOperator().String(), validator.GetDescription().Moniker,
+		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr().String(), validator.GetOperator().String(),validator.GetSelfDelegateAddress(), validator.GetDescription().Moniker,
 			validator.GetDescription().Identity, validator.GetDescription().Website, validator.GetDescription().SecurityContact, validator.GetDescription().Details)
 
 	}
+	if err := db.SaveUserIfNotExisting(validators.GetSelfDelegateAddress())
 
 	validatorQuery = validatorQuery[:len(validatorQuery)-1] // Remove trailing ","
 	validatorQuery += " ON CONFLICT DO NOTHING"

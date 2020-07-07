@@ -90,7 +90,6 @@ func NewRedelegation(
 type SelfDelegation struct{
 	ValidatorAddress sdk.ValAddress
 	Shares           int64
-	Ratio            float64
 	Height           int64
 	Timestamp        time.Time
 }
@@ -98,13 +97,11 @@ type SelfDelegation struct{
 //NewSelfDelegation get a new instance of modifly self Delegation
 func NewSelfDelegation (ValidatorAddress sdk.ValAddress,
 	Shares           int64,
-	Ratio     		 float64,
 	Height           int64,
 	Timestamp        time.Time) SelfDelegation{
 		return SelfDelegation{
 			ValidatorAddress:	ValidatorAddress,
 			Shares          :	Shares        ,
-			Ratio  			: 	Ratio         ,
 			Height          :	Height        ,
 			Timestamp       :	Timestamp     ,
 		}
