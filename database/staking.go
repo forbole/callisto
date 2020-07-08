@@ -66,7 +66,7 @@ func (db BigDipperDb) SaveEditCommission(data types.ValidatorCommission) error {
 // GetValidatorsData returns the data of all the validators that are currently stored inside the database.
 func (db BigDipperDb) GetValidatorsData() ([]dbtypes.ValidatorData, error) {
 	sqlStmt := `SELECT DISTINCT ON (validator.consensus_address)
-				validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address 
+				validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address,validator_info.self_delegate_address
 				,validator_info.moniker,validator_info.identity,validator_info.website,validator_info.security_contact, validator_info.details
 				FROM validator 
 				INNER JOIN validator_info 
@@ -130,16 +130,16 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 			return err
 		}
 
+		selfDelegationAccQuery += fmt.Sprintf("($%d),", i+1)
+		selfDelegationParam = append(selfDelegationParam, validator.GetSelfDelegateAddress().String())
+
 		validatorQuery += fmt.Sprintf("($%d,$%d),", v1+1, v1+2)
 		validatorParams = append(validatorParams,
 			validator.GetConsAddr().String(), publicKey)
 
-		validatorInfoQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7)
-		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr().String(), validator.GetOperator().String(), validator.GetSelfDelegateAddress(), validator.GetDescription().Moniker,
+		validatorInfoQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7,vi+8)
+		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr().String(), validator.GetOperator().String(), validator.GetSelfDelegateAddress().String(), validator.GetDescription().Moniker,
 			validator.GetDescription().Identity, validator.GetDescription().Website, validator.GetDescription().SecurityContact, validator.GetDescription().Details)
-
-		selfDelegationAccQuery += fmt.Sprintf("($%d),", i+1)
-		selfDelegationParam = append(selfDelegationParam, validator.GetSelfDelegateAddress())
 	}
 	selfDelegationAccQuery = selfDelegationAccQuery[:len(selfDelegationAccQuery)-1] // Remove trailing ","
 	selfDelegationAccQuery += " ON CONFLICT DO NOTHING"

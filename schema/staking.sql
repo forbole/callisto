@@ -38,7 +38,7 @@ CREATE TABLE validator_delegation
 
 CREATE TABLE validator_unbonding_delegation
 (
-    operator_address    TEXT                        NOT NULL REFERENCES validator (consensus_address),
+    consensus_address    TEXT                        NOT NULL REFERENCES validator (consensus_address),
     delegator_address    TEXT                        NOT NULL REFERENCES account (address),
     amount               COIN                        NOT NUll,
     completion_timestamp TIMESTAMP WITHOUT TIME ZONE NOT NULL,

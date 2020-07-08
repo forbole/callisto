@@ -121,12 +121,12 @@ func NewValidatorData(consAddress, valAddress, consPubKey string,	SelfDelegateAd
 		ConsAddress:     consAddress,
 		ValAddress:      valAddress,
 		ConsPubKey:      consPubKey,
+		SelfDelegateAddress: SelfDelegateAddress,
 		Moniker:         moniker,
 		Identity:        identity,
 		Website:         website,
 		SecurityContact: securityContact,
 		Details:         details,
-		SelfDelegateAddress: SelfDelegateAddress,
 	}
 }
 
