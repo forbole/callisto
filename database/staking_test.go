@@ -871,19 +871,41 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveReDelegations() {
 	}
 }
 
-/*
+
 func (suite *DbTestSuite) TestBigDipperDb_SaveSelfDelegation(){
 	delegator1 := suite.getDelegator("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
-	delegator2 := suite.getDelegator("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
-	srcValidator1 := suite.getValidator(
+	validator1 := suite.getValidator(
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
 		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
 	)
 
-	completionTimestamp1, err := time.Parse(time.RFC3339, "2020-08-10T16:00:00Z")
+
+	timestamp1, err := time.Parse(time.RFC3339, "2020-01-01T15:00:00Z")
 	suite.Require().NoError(err)
 
-	//delegation := types.NewSelfDelegation()
+
+	// Save data
+	delegations := []types.DelegationShare{
+		types.NewDelegationShare(
+			validator1.GetOperator(),
+			delegator1,
+			1000,
+			1000,
+			timestamp1,
+		),
+		types.NewDelegationShare(
+			validator1.GetOperator(),
+			delegator1,
+			1000,
+			1000,
+			timestamp1,
+		),
+	}
+
+	err=suite.database.SaveDelegationsShares(delegations)
+	suite.Require().NoError(err)
+
+
 }
-*/
+
