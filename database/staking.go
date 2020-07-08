@@ -93,8 +93,8 @@ func (db BigDipperDb) SaveSingleValidatorData(validator types.Validator) error {
 // If no validator for such address can be found, an error is returned instead.
 func (db BigDipperDb) GetValidatorData(valAddress sdk.ValAddress) (types.Validator, error) {
 	var result []dbtypes.ValidatorData
-	stmt := `SELECT validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address 
-	          ,validator_info.moniker,validator_info.identity,validator_info.website,validator_info.security_contact, validator_info.details
+	stmt := `SELECT validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address, 
+	         validator_info.self_delegate_address ,validator_info.moniker,validator_info.identity,validator_info.website,validator_info.security_contact, validator_info.details
 			 FROM validator INNER JOIN validator_info 
     		 ON validator.consensus_address=validator_info.consensus_address 
 			 WHERE validator_info.operator_address = $1`
