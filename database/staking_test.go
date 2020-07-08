@@ -880,7 +880,6 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSelfDelegation(){
 		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
 	)
 
-
 	timestamp1, err := time.Parse(time.RFC3339, "2020-01-01T15:00:00Z")
 	suite.Require().NoError(err)
 

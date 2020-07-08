@@ -455,7 +455,7 @@ func (db BigDipperDb) SaveDelegationsShares(shares []types.DelegationShare) erro
 	for i, share := range shares {
 		i1 := i * 5
 		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", i1+1, i1+2, i1+3, i1+4, i1+5)
-		delegationShareParam = append(delegationShareParam, share.ValidatorAddress, share.DelegatorAddress, share.Shares, share.Height, share.Timestamp)
+		delegationShareParam = append(delegationShareParam, share.ValidatorAddress.String(), share.DelegatorAddress.String(), share.Shares, share.Height, share.Timestamp)
 	}
 	stmt = stmt[:len(stmt)-1] // Remove the trailing ","
 	stmt += " ON CONFLICT DO NOTHING"
@@ -467,11 +467,11 @@ func (db BigDipperDb) SaveDelegationsShares(shares []types.DelegationShare) erro
 }
 
 func (db BigDipperDb) GetSelfDelegateShares(v sdk.ValAddress) ([]dbtypes.ValidatorDelegation, error) {
-	stmt := `SELECT validator_delegation_shares.operator_address, 
+	stmt := `SELECT validator_delegation_shares.consensus_address, 
 			validator_delegation_shares.delegator_address,shares,height,timestamp
 			FROM validator_delegation_shares LEFT OUTER JOIN validator_info
 			WHERE validator_delegation_shares.delegator_addres = validator_info.self_delegate_address
-			AND validator_delegation_shares.operator_address = validator_info.operator_address
+			AND validator_delegation_shares.consensus_address = validator_info.consensus_address
 			ORDER BY timestamp`
 
 	var rows []dbtypes.ValidatorDelegation
