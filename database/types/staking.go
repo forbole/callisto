@@ -67,19 +67,21 @@ type ValidatorInfoRow struct {
 	Website         string `db:"website"`
 	SecurityContact string `db:"security_contact"`
 	Details         string `db:"details"`
+	SelfDelegateAddress string `db:"self_delegate_address"`
 }
 
 // NewValidatorInfoRow allows to build a new ValidatorInfoRow
-func NewValidatorInfoRow(consAddress string, valAddress string, moniker string, identity string,
-	website string, security_contact string, details string) ValidatorInfoRow {
+func NewValidatorInfoRow(consAddress string, valAddress string,SelfDelegateAddress string, moniker string, identity string,
+	website string, SecurityContact string, details string) ValidatorInfoRow {
 	return ValidatorInfoRow{
 		ConsAddress:     consAddress,
 		ValAddress:      valAddress,
 		Moniker:         moniker,
 		Identity:        identity,
 		Website:         website,
-		SecurityContact: security_contact,
+		SecurityContact: SecurityContact,
 		Details:         details,
+		SelfDelegateAddress:SelfDelegateAddress,
 	}
 }
 
@@ -91,7 +93,8 @@ func (v ValidatorInfoRow) Equal(w ValidatorInfoRow) bool {
 		v.Identity == w.Identity &&
 		v.Website == w.Website &&
 		v.SecurityContact == w.SecurityContact &&
-		v.Details == w.Details
+		v.Details == w.Details &&
+		v.SelfDelegateAddress==w.SelfDelegateAddress
 }
 
 // ________________________________________________
@@ -102,6 +105,7 @@ type ValidatorData struct {
 	ConsAddress     string `db:"consensus_address"`
 	ValAddress      string `db:"operator_address"`
 	ConsPubKey      string `db:"consensus_pubkey"`
+	SelfDelegateAddress string `db:"self_delegate_address"`
 	Moniker         string `db:"moniker"`
 	Identity        string `db:"identity"`
 	Website         string `db:"website"`
@@ -111,7 +115,7 @@ type ValidatorData struct {
 
 // NewValidatorData allows to build a new ValidatorData
 //implenment x/staking/types
-func NewValidatorData(consAddress, valAddress, consPubKey string, moniker string, identity string,
+func NewValidatorData(consAddress, valAddress, consPubKey string,	SelfDelegateAddress string, moniker string, identity string,
 	website string, securityContact string, details string) ValidatorData {
 	return ValidatorData{
 		ConsAddress:     consAddress,
@@ -122,6 +126,7 @@ func NewValidatorData(consAddress, valAddress, consPubKey string, moniker string
 		Website:         website,
 		SecurityContact: securityContact,
 		Details:         details,
+		SelfDelegateAddress: SelfDelegateAddress,
 	}
 }
 
@@ -158,7 +163,12 @@ func (v ValidatorData) GetDescription() staking.Description {
 }
 
 func (v ValidatorData)GetSelfDelegateAddress() sdk.AccAddress{
-	return sdk.AccAddress(v.GetOperator())
+	addr, err := sdk.AccAddressFromBech32(v.SelfDelegateAddress)
+	if err != nil {
+		panic(err)
+	}
+
+	return addr
 }
 
 

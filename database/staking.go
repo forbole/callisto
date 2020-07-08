@@ -7,7 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	dbtypes "github.com/forbole/bdjuno/database/types"
-    "github.com/forbole/bdjuno/x/staking/types"
+	"github.com/forbole/bdjuno/x/staking/types"
 )
 
 // SaveStakingPool allows to save for the given height the given stakingtypes pool
@@ -94,7 +94,7 @@ func (db BigDipperDb) SaveSingleValidatorData(validator types.Validator) error {
 func (db BigDipperDb) GetValidatorData(valAddress sdk.ValAddress) (types.Validator, error) {
 	var result []dbtypes.ValidatorData
 	stmt := `SELECT validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address 
-				validator_info,validator_info.moniker,validator_info.identity,validator_info.website,validator_info.security_contact, validator_info.details
+	          ,validator_info.moniker,validator_info.identity,validator_info.website,validator_info.security_contact, validator_info.details
 			 FROM validator INNER JOIN validator_info 
     		 ON validator.consensus_address=validator_info.consensus_address 
 			 WHERE validator_info.operator_address = $1`
@@ -135,11 +135,11 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 			validator.GetConsAddr().String(), publicKey)
 
 		validatorInfoQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7)
-		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr().String(), validator.GetOperator().String(),validator.GetSelfDelegateAddress(), validator.GetDescription().Moniker,
+		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr().String(), validator.GetOperator().String(), validator.GetSelfDelegateAddress(), validator.GetDescription().Moniker,
 			validator.GetDescription().Identity, validator.GetDescription().Website, validator.GetDescription().SecurityContact, validator.GetDescription().Details)
 
-		selfDelegationAccQuery += fmt.Sprintf("($%d),",i+1)
-		selfDelegationParam = append(selfDelegationParam,validator.GetSelfDelegateAddress())
+		selfDelegationAccQuery += fmt.Sprintf("($%d),", i+1)
+		selfDelegationParam = append(selfDelegationParam, validator.GetSelfDelegateAddress())
 	}
 	selfDelegationAccQuery = selfDelegationAccQuery[:len(selfDelegationAccQuery)-1] // Remove trailing ","
 	selfDelegationAccQuery += " ON CONFLICT DO NOTHING"
@@ -344,7 +344,7 @@ func (db BigDipperDb) SaveUnbondingDelegations(delegations []types.UnbondingDele
 	udQuery = udQuery[:len(udQuery)-1] // Remove the trailing ","
 	udQuery += " ON CONFLICT DO NOTHING"
 	_, err = db.Sql.Exec(udQuery, delegationsParams...)
-	return err 
+	return err
 }
 
 // SaveRedelegation saves the given re-delegation inside the database.
@@ -449,13 +449,13 @@ func (db BigDipperDb) SaveRedelegations(redelegations []types.Redelegation) erro
 }
 
 //SaveDelegationsShare sve an array of delegation share
-func (db BigDipperDb)SaveDelegationsShares(shares []types.DelegationShare)error{
+func (db BigDipperDb) SaveDelegationsShares(shares []types.DelegationShare) error {
 	stmt := `INSERT INTO validator_delegation_shares (operator_address ,delegator_address,shares,height,timestamp) VALUES`
 	var delegationShareParam []interface{}
-	for i,share:=range shares{
-		i1:=i*5
-		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", i1+1,i1+2,i1+3,i1+4,i1+5)
-		delegationShareParam = append(delegationShareParam, share.ValidatorAddress,share.DelegatorAddress,share.Shares,share.Height,share.Timestamp)
+	for i, share := range shares {
+		i1 := i * 5
+		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", i1+1, i1+2, i1+3, i1+4, i1+5)
+		delegationShareParam = append(delegationShareParam, share.ValidatorAddress, share.DelegatorAddress, share.Shares, share.Height, share.Timestamp)
 	}
 	stmt = stmt[:len(stmt)-1] // Remove the trailing ","
 	stmt += " ON CONFLICT DO NOTHING"
@@ -466,7 +466,7 @@ func (db BigDipperDb)SaveDelegationsShares(shares []types.DelegationShare)error{
 	return nil
 }
 
-func (db BigDipperDb)GetSelfDelegateShares(v sdk.ValAddress)([]dbtypes.ValidatorDelegation,error){
+func (db BigDipperDb) GetSelfDelegateShares(v sdk.ValAddress) ([]dbtypes.ValidatorDelegation, error) {
 	stmt := `SELECT validator_delegation_shares.operator_address, 
 			validator_delegation_shares.delegator_address,shares,height,timestamp
 			FROM validator_delegation_shares LEFT OUTER JOIN validator_info
@@ -475,8 +475,8 @@ func (db BigDipperDb)GetSelfDelegateShares(v sdk.ValAddress)([]dbtypes.Validator
 			ORDER BY timestamp`
 
 	var rows []dbtypes.ValidatorDelegation
-	if err := db.Sqlx.Select(&rows, stmt);err!=nil{
-		return nil,err
+	if err := db.Sqlx.Select(&rows, stmt); err != nil {
+		return nil, err
 	}
-	return rows,nil
+	return rows, nil
 }
