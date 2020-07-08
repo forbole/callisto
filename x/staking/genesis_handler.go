@@ -78,7 +78,9 @@ func InitialInformation(sgenState staking.GenesisState, db database.BigDipperDb)
 			account.ConsAddress(),
 			account.OperatorAddress,
 			account.ConsPubKey,
-			account.Description)
+			account.Description,
+			sdk.AccAddress(account.ConsAddress()),
+		)
 	}
 
 	err := db.SaveValidatorsData(accounts)
@@ -191,6 +193,7 @@ func saveValidators(genState staking.GenesisState, db database.BigDipperDb) erro
 			validator.OperatorAddress,
 			validator.GetConsPubKey(),
 			validator.Description,
+			sdk.AccAddress(validator.ConsAddress()),
 		))
 		if err := db.SaveValidatorsData(validators); err != nil {
 			return err

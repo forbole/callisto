@@ -309,7 +309,7 @@ func (suite *DbTestSuite) getValidator(consAddr, valAddr, pubkey string) types.V
 	pubKey, err := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeConsPub, pubkey)
 	suite.Require().NoError(err)
 
-	validator := types.NewValidator(constAddrObj, valAddrObj, pubKey, stakingtypes.NewDescription("moniker", "identity", "website", "security", "details"))
+	validator := types.NewValidator(constAddrObj, valAddrObj, pubKey, stakingtypes.NewDescription("moniker", "identity", "website", "security", "details"),sdk.AccAddress(constAddrObj))
 	err = suite.database.SaveSingleValidatorData(validator)
 	suite.Require().NoError(err)
 
