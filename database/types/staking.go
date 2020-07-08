@@ -301,15 +301,6 @@ func (v ValidatorReDelegationRow) Equal(w ValidatorReDelegationRow) bool {
 		v.Height == w.Height &&
 		v.CompletionTime.Equal(w.CompletionTime)
 }
-
-type ValidatorSelfCommission struct{
-	ConsensusAddress string `db:"consensus_address"`
-	Shares    int64 `db:"shares"`   
-	Ratio     float64 `db:"ratio"`
-	Height           int64 `db:"height"`   
-	Timestamp         time.Time `db:"timestamp"`
-}
-
 // ValidatorCommission represents a single row of the
 // validator_commission database table
 type ValidatorCommission struct {
@@ -343,4 +334,22 @@ func (v ValidatorCommission) Equal(w ValidatorCommission) bool {
 		v.Commission == w.Commission &&
 		v.MinSelfDelegation == w.MinSelfDelegation &&
 		v.Height == w.Height
+}
+
+//ValidatorDelegation store the return of delegations and also self delegation
+type ValidatorDelegation struct{
+	ValidatorAddress  string    `db:"validator_address"`
+	DelegatorAddress  string    `db:"delegator_address"`
+	Shares    int64     `db:"shares"`
+	Timestamp         time.Time `db:"timestamp"`
+	Height            int64     `db:"height"`
+}
+
+//Equal determain two validatorDelegation refer as same row
+func (v ValidatorDelegation) Equal(w ValidatorDelegation) bool{
+	return v.ValidatorAddress ==w.ValidatorAddress &&
+		   v.DelegatorAddress ==w.DelegatorAddress &&
+		   v.Shares       ==w.Shares &&
+		   v.Timestamp.Equal(w.Timestamp) &&
+		   v.Height==w.Height
 }

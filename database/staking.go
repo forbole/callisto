@@ -150,7 +150,7 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 
 	validatorQuery = validatorQuery[:len(validatorQuery)-1] // Remove trailing ","
 	validatorQuery += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(validatorQuery, validatorParams...)
+	_, err = db.Sql.Exec(validatorQuery, validatorParams...)
 	if err != nil {
 		return err
 	}
@@ -450,7 +450,7 @@ func (db BigDipperDb) SaveRedelegations(redelegations []types.Redelegation) erro
 
 //SaveDelegationsShare sve an array of delegation share
 func (db BigDipperDb)SaveDelegationsShares(shares []types.DelegationShare)error{
-	stmt := `INSERT INTO validator_delegation_shares (consensus_address ,delegator_address,shares,height,timestamp) VALUES`
+	stmt := `INSERT INTO validator_delegation_shares (operator_address ,delegator_address,shares,height,timestamp) VALUES`
 	var delegationShareParam []interface{}
 	for i,share:=range shares{
 		i1:=i*5
@@ -464,4 +464,19 @@ func (db BigDipperDb)SaveDelegationsShares(shares []types.DelegationShare)error{
 		return err
 	}
 	return nil
+}
+
+func (db BigDipperDb)GetSelfDelegateShares(v sdk.ValAddress)([]dbtypes.ValidatorDelegation,error){
+	stmt := `SELECT validator_delegation_shares.operator_address, 
+			validator_delegation_shares.delegator_address,shares,height,timestamp
+			FROM validator_delegation_shares LEFT OUTER JOIN validator_info
+			WHERE validator_delegation_shares.delegator_addres = validator_info.self_delegate_address
+			AND validator_delegation_shares.operator_address = validator_info.operator_address
+			ORDER BY timestamp`
+
+	var rows []dbtypes.ValidatorDelegation
+	if err := db.Sqlx.Select(&rows, stmt);err!=nil{
+		return nil,err
+	}
+	return rows,nil
 }

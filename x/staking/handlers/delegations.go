@@ -25,7 +25,7 @@ func HandleMsgDelegate(tx juno.Tx, msg staking.MsgDelegate, db database.BigDippe
 	if found, _ := db.HasValidator(deligatorAddress.String()); !found {
 		return nil
 	}
-	if err=SaveDelegatorsShares(validatorAddress,deligatorAddress,cp,db,timestamp,tx.height);err!=nil{
+	if err=saveDelegatorsShares(validatorAddress,deligatorAddress,cp,db,timestamp,tx.Height);err!=nil{
 		return err
 	}
 		//for each delegate message it will eventually stored into database
@@ -52,15 +52,13 @@ func saveDelegatorsShares(validatorAddress sdk.ValAddress,deligatorAddress sdk.A
 		delegationstype = append(delegationstype,types.NewDelegationShare(
 			delegation.GetValidatorAddr(),
 			delegation.GetDelegatorAddr(),
-			delegation.Shares,
+			delegation.Shares.Int64(),
 			height,
-			timestamp,
-		)
-	}
-	if err:=db.SaveDelegationsShares(delegations);err!=nil{
+			timestamp))
+		}
+	if err:=db.SaveDelegationsShares(delegationstype);err!=nil{
 						return err
 	}
-	
 	return nil
 }
 
