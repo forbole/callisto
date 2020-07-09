@@ -481,20 +481,3 @@ func (db BigDipperDb) SaveDelegationsShares(shares []types.DelegationShare) erro
 
 	return nil
 }
-
-/*
-func (db BigDipperDb) GetSelfDelegateShares(v sdk.ValAddress) ([]dbtypes.ValidatorDelegation, error) {
-	stmt := `SELECT validator_delegation_shares.consensus_address,
-			validator_delegation_shares.delegator_address,shares,height,timestamp
-			FROM validator_delegation_shares LEFT OUTER JOIN validator_info
-			WHERE validator_delegation_shares.delegator_addres = validator_info.self_delegate_address
-			AND validator_delegation_shares.consensus_address = validator_info.consensus_address
-			ORDER BY timestamp`
-
-	var rows []dbtypes.ValidatorDelegation
-	if err := db.Sqlx.Select(&rows, stmt); err != nil {
-		return nil, err
-	}
-	return rows, nil
-}
-*/
