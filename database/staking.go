@@ -471,10 +471,10 @@ func (db BigDipperDb) SaveDelegationsShares(shares []types.DelegationShare) erro
 	FROM validator_delegation_shares INNER JOIN validator_info
 	ON (validator_delegation_shares.delegator_address = validator_info.self_delegate_address
 		AND validator_delegation_shares.operator_address = validator_info.operator_address)
-	WHERE timestamp = $1`
+	WHERE height = $1`
 
 	//Since shares have same timestamp
-	_, err = db.Sql.Exec(stmt, shares[0].Timestamp)
+	_, err = db.Sql.Exec(stmt, shares[0].Height)
 	if err != nil {
 		return err
 	}
