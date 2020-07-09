@@ -874,6 +874,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveReDelegations() {
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveSelfDelegation(){
 	delegator1 := suite.getDelegator("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
+	delegator2 := suite.getDelegator("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 	validator1 := suite.getValidator(
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
@@ -887,6 +888,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSelfDelegation(){
 	// Save data
 	delegations := []types.DelegationShare{
 		types.NewDelegationShare(
+			//self delegation
 			validator1.GetOperator(),
 			delegator1,
 			1000,
@@ -895,7 +897,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSelfDelegation(){
 		),
 		types.NewDelegationShare(
 			validator1.GetOperator(),
-			delegator1,
+			delegator2,
 			1000,
 			1000,
 			timestamp1,
@@ -905,6 +907,50 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSelfDelegation(){
 	err=suite.database.SaveDelegationsShares(delegations)
 	suite.Require().NoError(err)
 
+	//expected
+	delegationsExpected := []dbtypes.ValidatorDelegation{
+		dbtypes.NewValidatorDelegationRow(
+			//self delegation
+			validator1.GetOperator(),
+			delegator1,
+			1000,
+			1000,
+			timestamp1,
+		),
+		dbtypes.NewValidatorDelegationRow(
+			validator1.GetOperator(),
+			delegator2,
+			1000,
+			1000,
+			timestamp1,
+		),
+	}
 
+	//self delegation expected
+	selfDelegationExpected:=[]dbtypes.ValidatorSelfDelegationRow{
+		dbtypes.NewValidatorSelfDelegationRow{
+			validator1.GetOperator(),
+			1000,
+			1000,
+			timestamp1,
+		},
+	}
+
+	//read data
+	var delegationrows []dbtypes.NewValidatorDelegationSharesRow
+	err = suite.database.Sqlx.Select(&delegationrows, `SELECT * FROM validator_delegation_shares`)
+	suite.Require().NoError(err)
+
+	var selfDelegationrows []dbtypes.ValidatorSelfDelegationRow
+	err = suite.database.Sqlx.Select(&selfDelegationrows, `SELECT * FROM validator_self_delegation`)
+	suite.Require().NoError(err)
+
+	for index, row := range delegationrows {
+		suite.Require().True(row.Equal(delegationsExpected[index]))
+	}
+
+	for index, row := range selfDelegationrows {
+		suite.Require().True(row.Equal(selfDelegationrows[index]))
+	}
 }
 

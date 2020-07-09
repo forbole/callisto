@@ -137,7 +137,7 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 		validatorParams = append(validatorParams,
 			validator.GetConsAddr().String(), publicKey)
 
-		validatorInfoQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7,vi+8)
+		validatorInfoQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8)
 		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr().String(), validator.GetOperator().String(), validator.GetSelfDelegateAddress().String(), validator.GetDescription().Moniker,
 			validator.GetDescription().Identity, validator.GetDescription().Website, validator.GetDescription().SecurityContact, validator.GetDescription().Details)
 	}
@@ -463,11 +463,28 @@ func (db BigDipperDb) SaveDelegationsShares(shares []types.DelegationShare) erro
 	if err != nil {
 		return err
 	}
+
+	//insert self delegation in this entry into self_deleation_row
+	//for each time there are someone delegated to that validator, save the validator_self delegation?
+	stmt = `INSERT INTO validator_self_delegation (operator_address ,shares,height,timestamp)
+	SELECT validator_delegation_shares.operator_address, shares,height,timestamp
+	FROM validator_delegation_shares INNER JOIN validator_info
+	ON (validator_delegation_shares.delegator_address = validator_info.self_delegate_address
+		AND validator_delegation_shares.operator_address = validator_info.operator_address)
+	WHERE timestamp = $1`
+
+	//Since shares have same timestamp
+	_, err = db.Sql.Exec(stmt, shares[0].Timestamp)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
+/*
 func (db BigDipperDb) GetSelfDelegateShares(v sdk.ValAddress) ([]dbtypes.ValidatorDelegation, error) {
-	stmt := `SELECT validator_delegation_shares.consensus_address, 
+	stmt := `SELECT validator_delegation_shares.consensus_address,
 			validator_delegation_shares.delegator_address,shares,height,timestamp
 			FROM validator_delegation_shares LEFT OUTER JOIN validator_info
 			WHERE validator_delegation_shares.delegator_addres = validator_info.self_delegate_address
@@ -480,3 +497,4 @@ func (db BigDipperDb) GetSelfDelegateShares(v sdk.ValAddress) ([]dbtypes.Validat
 	}
 	return rows, nil
 }
+*/

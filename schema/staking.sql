@@ -75,3 +75,12 @@ CREATE TABLE validator_commission
     height                BIGINT                NOT NULL,
     PRIMARY KEY (validator_address,height)
 );
+
+CREATE TABLE validator_self_delegation
+(
+    operator_address TEXT                        NOT NULL REFERENCES validator_info (operator_address),
+    shares    DECIMAL                     NOT NUll,
+    height            BIGINT                      NOT NULL,
+    timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    PRIMARY KEY (operator_address , height)
+);
