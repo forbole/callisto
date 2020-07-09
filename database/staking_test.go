@@ -908,36 +908,36 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSelfDelegation(){
 	suite.Require().NoError(err)
 
 	//expected
-	delegationsExpected := []dbtypes.ValidatorDelegation{
-		dbtypes.NewValidatorDelegationRow(
+	delegationsExpected := []dbtypes.ValidatorDelegationSharesRow{
+		dbtypes.NewValidatorDelegationSharesRow(
 			//self delegation
-			validator1.GetOperator(),
-			delegator1,
-			1000,
+			validator1.GetOperator().String(),
+			delegator1.String(),
 			1000,
 			timestamp1,
+			1000,
 		),
-		dbtypes.NewValidatorDelegationRow(
-			validator1.GetOperator(),
-			delegator2,
-			1000,
+		dbtypes.NewValidatorDelegationSharesRow(
+			validator1.GetOperator().String(),
+			delegator2.String(),
 			1000,
 			timestamp1,
+			1000,
 		),
 	}
 
 	//self delegation expected
 	selfDelegationExpected:=[]dbtypes.ValidatorSelfDelegationRow{
-		dbtypes.NewValidatorSelfDelegationRow{
-			validator1.GetOperator(),
-			1000,
+		dbtypes.NewValidatorSelfDelegationRow(
+			validator1.GetOperator().String(),
 			1000,
 			timestamp1,
-		},
+			1000,
+		),
 	}
 
 	//read data
-	var delegationrows []dbtypes.NewValidatorDelegationSharesRow
+	var delegationrows []dbtypes.ValidatorDelegationSharesRow
 	err = suite.database.Sqlx.Select(&delegationrows, `SELECT * FROM validator_delegation_shares`)
 	suite.Require().NoError(err)
 
@@ -950,7 +950,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSelfDelegation(){
 	}
 
 	for index, row := range selfDelegationrows {
-		suite.Require().True(row.Equal(selfDelegationrows[index]))
+		suite.Require().True(row.Equal(selfDelegationExpected[index]))
 	}
 }
 
