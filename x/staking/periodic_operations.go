@@ -31,11 +31,9 @@ func PeriodicStakingOperations(scheduler *gocron.Scheduler) parse.AdditionalOper
 			return err
 		}
 
-		if _,err := scheduler.Every(1).Minute().StartImmediately.Do(
-			func (){
-				utils.WatchMethod(func() error { return operations.UpdateValidatorVotingPower(cp, bdDatabase) })
-			}
-		);err!=nil{
+		if _, err := scheduler.Every(1).Minute().StartImmediately().Do(func() {
+			utils.WatchMethod(func() error { return operations.UpdateValidatorVotingPower(cp, bdDatabase) })
+		}); err != nil {
 			return err
 		}
 		return nil

@@ -2,9 +2,6 @@ package operations
 
 import (
 	"fmt"
-	"time"
-	"github.com/cosmos/cosmos-sdk/x/slashing"
-	staking "github.com/cosmos/cosmos-sdk/x/staking/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/juno/parse/client"
 	"github.com/forbole/bdjuno/database"
@@ -15,8 +12,8 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 )
 
-//this fetch all 
-func UpdateValidatorVotingPower(cp client.ClientProxy, db database.BigDipperDb)error{
+//this fetch all
+func UpdateValidatorVotingPower(cp client.ClientProxy, db database.BigDipperDb) error {
 	log.Debug().
 		Str("module", "staking").
 		Str("operation", " voting percentage").
@@ -25,14 +22,14 @@ func UpdateValidatorVotingPower(cp client.ClientProxy, db database.BigDipperDb)e
 	// First, the the latest block height
 	var block tmctypes.ResultBlock
 	if err := cp.QueryLCD("/blocks/latest", &block); err != nil {
-	return err
+		return err
 	}
 	// Second, get the validators
 	var validators []tmtypes.Validator
 	endpoint := fmt.Sprintf("/validatorsets/latest?height=%d", block.Block.Height)
-	height,err := cp.QueryLCDWithHeight(endpoint, &validators); 
+	height, err := cp.QueryLCDWithHeight(endpoint, &validators)
 	if err != nil {
-	return err
+		return err
 	}
 	// Store the signing infos into the database
 	log.Debug().
@@ -40,25 +37,25 @@ func UpdateValidatorVotingPower(cp client.ClientProxy, db database.BigDipperDb)e
 		Str("operation", "uptime").
 		Msg("saving  voting percentage")
 	var totalVotingPower int64
-	totalVotingPower=0
+	totalVotingPower = 0
 	var votings []types.ValidatorVotingPower
-	for _,validator :=range validators{
+	for _, validator := range validators {
 		if found, _ := db.HasValidator(validator.Address.String()); !found {
 			continue
 		}
-		consAddress,err:=sdk.ConsAddressFromBech32(validator.Address.String())
-		if err!=nil{
+		consAddress, err := sdk.ConsAddressFromBech32(validator.Address.String())
+		if err != nil {
 			return err
 		}
-		votings=append(votings,types.NewValidatorVotingPower(
+		votings = append(votings, types.NewValidatorVotingPower(
 			consAddress,
 			validator.VotingPower,
 			height,
 		))
-		totalVotingPower+=validator.VotingPower
+		totalVotingPower += validator.VotingPower
 	}
 
-	if err:=db.SaveVotingPowers(votings,totalVotingPower);err!=nil{
+	if err := db.SaveVotingPowers(votings, totalVotingPower); err != nil {
 		return err
 	}
 	return nil
