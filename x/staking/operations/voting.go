@@ -2,68 +2,64 @@ package operations
 
 import (
 	"fmt"
-
+	"time"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	sdk "github.com/cosmos/cosmos-sdk/x/staking/types"
+	staking "github.com/cosmos/cosmos-sdk/x/staking/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/juno/parse/client"
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/staking/types"
+
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
-
+	tmtypes "github.com/tendermint/tendermint/types"
 )
 
 //this fetch all 
 func UpdateValidatorVotingPower(cp client.ClientProxy, db database.BigDipperDb)error{
 	log.Debug().
 		Str("module", "staking").
-		Str("operation", "uptime").
-		Msg("getting validators uptime")
+		Str("operation", " voting percentage").
+		Msg("getting validators  voting percentage")
 
-	// Get the staking parameters
-	var params []tmctypes.ValidatorInfo
-	height, err := cp.QueryLCD("/validators/result/validators",param)
+	// First, the the latest block height
+	var block tmctypes.ResultBlock
+	if err := cp.QueryLCD("/blocks/latest", &block); err != nil {
+	return err
+	}
+	// Second, get the validators
+	var validators []tmtypes.Validator
+	endpoint := fmt.Sprintf("/validatorsets/latest?height=%d", block.Block.Height)
+	height,err := cp.QueryLCDWithHeight(endpoint, &validators); 
 	if err != nil {
-		return err
+	return err
 	}
-
-	// Update the validators
-	if err := updateValidators(height, cp, db); err != nil {
-		return err
-	}
-
-	// Get the validator signing info
-	var signingInfo []slashing.ValidatorSigningInfo
-	endpoint := fmt.Sprintf("/slashing/signing_infos?height=%d", height)
-	if _, err := cp.QueryLCDWithHeight(endpoint, &signingInfo); err != nil {
-		return err
-	}
-
 	// Store the signing infos into the database
 	log.Debug().
 		Str("module", "staking").
 		Str("operation", "uptime").
-		Msg("saving validators uptime")
-
-	for _, info := range signingInfo {
-		validatorUptime := types.ValidatorUptime{
-			Height:              height,
-			ValidatorAddress:    info.Address,
-			SignedBlocksWindow:  params.SignedBlocksWindow,
-			MissedBlocksCounter: info.MissedBlocksCounter,
-		}
-
-		// Skip non existing validators
-		if found, _ := db.HasValidator(info.Address.String()); !found {
+		Msg("saving  voting percentage")
+	var totalVotingPower int64
+	totalVotingPower=0
+	var votings []types.ValidatorVotingPower
+	for _,validator :=range validators{
+		if found, _ := db.HasValidator(validator.Address.String()); !found {
 			continue
 		}
-
-		// Save the validator uptime information
-		if err := db.SaveValidatorUptime(validatorUptime); err != nil {
+		consAddress,err:=sdk.ConsAddressFromBech32(validator.Address.String())
+		if err!=nil{
 			return err
 		}
+		votings=append(votings,types.NewValidatorVotingPower(
+			consAddress,
+			validator.VotingPower,
+			height,
+		))
+		totalVotingPower+=validator.VotingPower
 	}
 
+	if err:=db.SaveVotingPowers(votings,totalVotingPower);err!=nil{
+		return err
+	}
 	return nil
 }
