@@ -62,5 +62,4 @@ CREATE TABLE validator_commission
     commission            decimal	              NOT NULL,
     min_self_delegation    decimal              NOT NULL,
     height                BIGINT                NOT NULL,
-    PRIMARY KEY (validator_address,height)
 );
