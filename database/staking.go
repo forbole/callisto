@@ -112,14 +112,15 @@ func (db BigDipperDb) GetValidatorData(valAddress sdk.ValAddress) (types.Validat
 // SaveValidatorsData allows the bulk saving of a list of validators
 func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 
+	selfDelegationAccQuery := `INSERT INTO account (address) VALUES `
+	var selfDelegationParam []interface{}
+
 	validatorQuery := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES `
 	var validatorParams []interface{}
 
 	validatorInfoQuery := `INSERT INTO validator_info (consensus_address,operator_address,self_delegate_address,moniker,identity,website,security_contact, details) VALUES`
 	var validatorInfoParams []interface{}
 
-	selfDelegationAccQuery := `INSERT INTO account (address) VALUES `
-	var selfDelegationParam []interface{}
 
 	for i, validator := range validators {
 		v1 := i * 2 // Starting position for validator params
@@ -464,20 +465,6 @@ func (db BigDipperDb) SaveDelegationsShares(shares []types.DelegationShare) erro
 		return err
 	}
 
-	//insert self delegation in this entry into self_deleation_row
-	//for each time there are someone delegated to that validator, save the validator_self delegation
-	stmt = `INSERT INTO validator_self_delegation (operator_address ,shares,height,timestamp)
-	SELECT validator_delegation_shares.operator_address, shares,height,timestamp
-	FROM validator_delegation_shares INNER JOIN validator_info
-	ON (validator_delegation_shares.delegator_address = validator_info.self_delegate_address
-		AND validator_delegation_shares.operator_address = validator_info.operator_address)
-	WHERE height = $1`
-
-	//Since shares have same timestamp
-	_, err = db.Sql.Exec(stmt, shares[0].Height)
-	if err != nil {
-		return err
-	}
-
+	
 	return nil
 }
