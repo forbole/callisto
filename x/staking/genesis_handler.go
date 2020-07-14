@@ -15,7 +15,7 @@ import (
 )
 
 func GenesisHandler(codec *codec.Codec, genesisDoc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, w worker.Worker) error {
-	log.Debug().Str("module", "auth").Msg("parsing genesis")
+ 	log.Debug().Str("module", "staking").Msg("parsing genesis")
 
 	bigDipperDb, ok := w.Db.(database.BigDipperDb)
 	if !ok {
