@@ -72,8 +72,7 @@ CREATE TABLE validator_commission
     timestamp             TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     commission            decimal	              NOT NULL,
     min_self_delegation    decimal              NOT NULL,
-    height                BIGINT                NOT NULL,
-    PRIMARY KEY (validator_address,height)
+    height                BIGINT                NOT NULL
 );
 
 CREATE TABLE validator_self_delegation

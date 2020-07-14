@@ -21,7 +21,7 @@ func (db BigDipperDb) SaveStakingPool(pool stakingtypes.Pool, height int64, time
 
 //Insert into Validator Commission Database
 func (db BigDipperDb) SaveValidatorCommissions(validators []types.ValidatorCommission) error {
-	query := `INSERT INTO validator_commission(validator_address,timestamp,commission,min_self_delegation,height) VALUES`
+	query := `INSERT INTO validator_commission(validator_address,timestamp,commission,min_self_delegation,height) VALUES `
 	var param []interface{}
 	for i, validator := range validators {
 		vi := i * 5
@@ -30,7 +30,6 @@ func (db BigDipperDb) SaveValidatorCommissions(validators []types.ValidatorCommi
 			validator.MinSelfDelegation, validator.Height)
 	}
 	query = query[:len(query)-1] // Remove trailing ","
-	query += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(query, param...)
 	if err != nil {
 		return err

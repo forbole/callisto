@@ -15,7 +15,7 @@ import (
 )
 
 func GenesisHandler(codec *codec.Codec, genesisDoc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, w worker.Worker) error {
-	log.Debug().Str("module", "auth").Msg("parsing genesis")
+ 	log.Debug().Str("module", "staking").Msg("parsing genesis")
 
 	bigDipperDb, ok := w.Db.(database.BigDipperDb)
 	if !ok {
@@ -24,6 +24,14 @@ func GenesisHandler(codec *codec.Codec, genesisDoc *tmtypes.GenesisDoc, appState
 	// Read the genesis state
 	var genState staking.GenesisState
 	if err := codec.UnmarshalJSON(appState[staking.ModuleName], &genState); err != nil {
+		return err
+	}
+
+	if err := InitialInformation(genState, bigDipperDb); err != nil {
+		return err
+	}
+
+	if err := InitialCommission(genState, genesisDoc, bigDipperDb); err != nil {
 		return err
 	}
 
@@ -42,15 +50,6 @@ func GenesisHandler(codec *codec.Codec, genesisDoc *tmtypes.GenesisDoc, appState
 		return err
 	}
 
-	err := InitialCommission(genState, genesisDoc, bigDipperDb)
-	if err != nil {
-		return err
-	}
-	// Save the validators
-	if err := saveValidators(genState, bigDipperDb); err != nil {
-		return err
-	}
-	
 	return nil
 }
 
@@ -59,8 +58,8 @@ func InitialCommission(sgenState staking.GenesisState, genesisDoc *tmtypes.Genes
 	// Store the accounts
 	accounts := make([]types.ValidatorCommission, len(sgenState.Validators))
 	for index, account := range sgenState.Validators {
-		accounts[index] = types.NewValidatorCommission(account.GetOperator(),
-			account.Commission.Rate.Int64(), account.MinSelfDelegation.Int64(), 0,genesisDoc.GenesisTime)
+		accounts[index] = types.NewValidatorCommission(account.OperatorAddress,
+			account.Commission.Rate.Int64(), account.MinSelfDelegation.Int64(), 0, genesisDoc.GenesisTime)
 	}
 
 	err := db.SaveValidatorCommissions(accounts)
