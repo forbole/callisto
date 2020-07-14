@@ -380,34 +380,3 @@ func NewValidatorDelegationSharesRow(
 		Height:           Height,
 	}
 }
-
-//ValidatorSelfDelegation store the return of validator_self_delegation
-type ValidatorSelfDelegationRow struct {
-	OperatorAddress string    `db:"operator_address"`
-	Shares          int64     `db:"shares"`
-	Timestamp       time.Time `db:"timestamp"`
-	Height          int64     `db:"height"`
-}
-
-//Equal determain two validatorDelegation refer as same row
-func (v ValidatorSelfDelegationRow) Equal(w ValidatorSelfDelegationRow) bool {
-	return v.OperatorAddress == w.OperatorAddress &&
-		v.Shares == w.Shares &&
-		v.Timestamp.Equal(w.Timestamp) &&
-		v.Height == w.Height
-}
-
-// ValidatorSelfDelegationRow make a new instance of ValidatorSelfDelegationRow
-func NewValidatorSelfDelegationRow(
-	OperatorAddress string,
-	Shares int64,
-	Timestamp time.Time,
-	Height int64,
-) ValidatorSelfDelegationRow {
-	return ValidatorSelfDelegationRow{
-		OperatorAddress:  OperatorAddress,
-		Shares:           Shares,
-		Timestamp:        Timestamp,
-		Height:           Height,
-	}
-}
