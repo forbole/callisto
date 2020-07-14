@@ -112,6 +112,7 @@ func (db BigDipperDb) GetValidatorData(valAddress sdk.ValAddress) (types.Validat
 
 // SaveValidatorsData allows the bulk saving of a list of validators
 func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
+
 	validatorQuery := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES `
 	var validatorParams []interface{}
 
@@ -465,7 +466,7 @@ func (db BigDipperDb) SaveDelegationsShares(shares []types.DelegationShare) erro
 	}
 
 	//insert self delegation in this entry into self_deleation_row
-	//for each time there are someone delegated to that validator, save the validator_self delegation?
+	//for each time there are someone delegated to that validator, save the validator_self delegation
 	stmt = `INSERT INTO validator_self_delegation (operator_address ,shares,height,timestamp)
 	SELECT validator_delegation_shares.operator_address, shares,height,timestamp
 	FROM validator_delegation_shares INNER JOIN validator_info
