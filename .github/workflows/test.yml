@@ -22,9 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: test & coverage report creation
-        run: |
-          make install test-unit stop-docker-test
-        if: "env.GIT_DIFF != ''"
+        run: make install test-unit stop-docker-test
       - name: filter out DONTCOVER
         run: |
           excludelist="$(find ./ -type f -name '*.go' | xargs grep -l 'DONTCOVER')"
