@@ -1,0 +1,38 @@
+name: Tests / Code Coverage
+# Tests / Code Coverage workflow runs unit tests and uploads a code coverage report.
+# This workflow is run on pushes to master & every Pull Requests where a .go, .mod, .sum have been changed.
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  Cleanup-runs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: rokroskar/workflow-run-cleanup-action@master
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+    if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master'"
+
+  Unit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - name: Test & Coverage report creation
+        run: make install test-unit stop-docker-test
+      - name: Filter out DONTCOVER
+        run: |
+          excludelist="$(find ./ -type f -name '*.go' | xargs grep -l 'DONTCOVER')"
+          excludelist+=" $(find ./ -type f -name '*.pb.go')"
+          excludelist+=" $(find ./ -type f -path './tests/mocks/*.go')"
+          for filename in ${excludelist}; do
+            filename=$(echo $filename | sed 's/^./github.com\/forbole\/bdjuno/g')
+            echo "Excluding ${filename} from coverage report..."
+            sed -i.bak "/$(echo $filename | sed 's/\//\\\//g')/d" coverage.txt
+          done
+      - uses: codecov/codecov-action@v1.0.7
+        with:
+          file: ./coverage.txt

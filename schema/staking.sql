@@ -17,14 +17,14 @@ CREATE TABLE validator_uptime
 
 CREATE TABLE validator_info
 (
-    consensus_address TEXT NOT NULL REFERENCES validator (consensus_address) UNIQUE PRIMARY KEY,
-    operator_address  TEXT NOT NULL UNIQUE,
+    consensus_address     TEXT NOT NULL REFERENCES validator (consensus_address) UNIQUE PRIMARY KEY,
+    operator_address      TEXT NOT NULL UNIQUE,
     self_delegate_address TEXT REFERENCES account (address),
-    moniker         TEXT     ,
-	identity        TEXT    ,
-	website         TEXT    ,
-	security_contact TEXT,
-	details         TEXT
+    moniker               TEXT,
+    identity              TEXT,
+    website               TEXT,
+    security_contact      TEXT,
+    details               TEXT
 );
 
 CREATE TABLE validator_delegation
@@ -57,20 +57,20 @@ CREATE TABLE validator_redelegation
 );
 
 CREATE TABLE validator_delegation_shares
-(    
-    operator_address TEXT                        NOT NULL REFERENCES validator_info (operator_address),
+(
+    operator_address  TEXT                        NOT NULL REFERENCES validator_info (operator_address),
     delegator_address TEXT                        NOT NULL REFERENCES account (address),
-    shares    DECIMAL                     NOT NUll,
+    shares            DECIMAL                     NOT NUll,
     height            BIGINT                      NOT NULL,
     timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    PRIMARY KEY (operator_address,delegator_address , height)
+    PRIMARY KEY (operator_address, delegator_address, height)
 );
 
 CREATE TABLE validator_commission
 (
-    validator_address     CHARACTER VARYING(52) NOT NULL,
-    timestamp             TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    commission            decimal	              NOT NULL,
-    min_self_delegation    decimal              NOT NULL,
-    height                BIGINT                NOT NULL
+    validator_address   CHARACTER VARYING(52)       NOT NULL,
+    timestamp           TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    commission          decimal                     NOT NULL,
+    min_self_delegation decimal                     NOT NULL,
+    height              BIGINT                      NOT NULL
 );
