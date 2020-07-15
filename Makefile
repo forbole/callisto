@@ -3,16 +3,24 @@ COMMIT  := $(shell git log -1 --format='%H')
 
 export GO111MODULE = on
 
-all: ci-lint ci-test install
+###############################################################################
+###                                   All                                   ###
+###############################################################################
+
+all: lint build test-unit
 
 ###############################################################################
-# Build / Install
+###                                Build flags                              ###
 ###############################################################################
 
 LD_FLAGS = -X github.com/desmos-labs/juno/version.Version=$(VERSION) \
 	-X github.com/desmos-labs/juno/version.Commit=$(COMMIT)
 
 BUILD_FLAGS := -ldflags '$(LD_FLAGS)'
+
+###############################################################################
+###                                  Build                                  ###
+###############################################################################
 
 build: go.sum
 ifeq ($(OS),Windows_NT)
@@ -22,40 +30,41 @@ else
 	@echo "building bdjuno binary..."
 	@go build -mod=readonly $(BUILD_FLAGS) -o build/bdjuno ./cmd/bdjuno
 endif
+.PHONY: build
+
+###############################################################################
+###                                 Install                                 ###
+###############################################################################
 
 install: go.sum
 	@echo "installing bdjuno binary..."
 	@go install -mod=readonly $(BUILD_FLAGS) ./cmd/bdjuno
+.PHONY: install
 
 ###############################################################################
-# Tests / CI
+###                           Tests & Simulation                            ###
 ###############################################################################
-
-coverage:
-	@echo "Viewing test coverage..."
-	@go tool cover --html=coverage.out
 
 stop-docker-test:
 	@echo "Stopping Docker container..."
 	@docker stop bdjuno-test-db || true && docker rm bdjuno-test-db || true
+.PHONY: stop-docker-test
 
 start-docker-test: stop-docker-test
 	@echo "Starting Docker container..."
 	@docker run --name bdjuno-test-db -e POSTGRES_USER=bdjuno -e POSTGRES_PASSWORD=password -e POSTGRES_DB=bdjuno -d -p 5433:5432 postgres
+.PHONY: start-docker-test
 
-ci-test: start-docker-test
+test-unit: start-docker-test
 	@echo "Executing unit tests..."
 	@go test -mod=readonly -v -coverprofile coverage.txt ./...
+.PHONY: test-unit
 
-ci-lint:
-	@echo "Running GolangCI-Lint..."
-	@GO111MODULE=on golangci-lint run
-	@echo "Formatting..."
-	@find . -name '*.go' -type f -not -path "*.git*" | xargs gofmt -d -s
-	@echo "Verifying modules..."
-	@go mod verify
+lint:
+	golangci-lint run --out-format=tab --issues-exit-code=0
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -name '*.pb.go' | xargs gofmt -d -s
+.PHONY: lint
 
 clean:
 	rm -f tools-stamp ./build/**
-
-.PHONY: install build ci-test ci-lint coverage clean start-docker-test
+.PHONY: clean
