@@ -15,7 +15,6 @@ import (
 	"github.com/forbole/bdjuno/x/bank"
 	"github.com/forbole/bdjuno/x/staking"
 	"github.com/go-co-op/gocron"
-	
 )
 
 func main() {
@@ -29,10 +28,6 @@ func main() {
 		version.GetVersionCmd(),
 		parse.GetParseCmd(simapp.MakeCodec(), database.Builder),
 	)
-
-	//call worker and just pass function to the stuff
-	//since a daemon is set on line 64,just set the command that retrive the info of 
-	//the vaildator at the certain amount of time
 
 	command := config.PrepareMainCmd(rootCmd)
 
