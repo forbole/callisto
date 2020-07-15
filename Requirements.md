@@ -9,7 +9,7 @@ The BDjuno is working as a backend for Big Dipper. The followings are the featur
 
 ### Custom BDJuno implementations
 - [x] Update miss block records
-- [ ] Read the latest consensus state
+- [x] Read the latest consensus state
 - [x] [x/staking] Update validator information 
 - [ ] [x/staking] Calculate validator voting power percentage 
 - [x] [x/staking] Calculate validator self delegation ratio
