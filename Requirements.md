@@ -13,10 +13,10 @@ The BDjuno is working as a backend for Big Dipper. The followings are the featur
 - [x] [x/staking] Update validator information 
 - [ ] [x/staking] Calculate validator voting power percentage 
 - [x] [x/staking] Calculate validator self delegation ratio
-- [x] [x/staking] Update the total staked tokens (staking) 
-- [ ] [x/supply] Update the total supply (supply)
-- [x] [x/mint] Update the inflation (mint)
-- [ ] [x/distribution] Update community pool (distribution)
+- [x] [x/staking] Update the total staked tokens 
+- [ ] [x/supply] Update the total supply
+- [x] [x/mint] Update the inflation
+- [ ] [x/distribution] Update community pool
 
 ### Achievable using GraphQL APIs
 - [x] Calculate the average block time
