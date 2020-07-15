@@ -1,12 +1,13 @@
 package handlers
 
 import (
+	"time"
+
 	sdktypes "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	jtypes "github.com/desmos-labs/juno/types"
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/staking/types"
-	"time"
 )
 
 // HandleMsgCreateValidator handles properly a MsgCreateValidator instance by

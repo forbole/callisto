@@ -506,10 +506,10 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommission() {
 	suite.Require().Len(rows, 1)
 	suite.Require().True(rows[0].Equal(dbtypes.NewValidatorCommission(
 		validator.GetOperator().String(),
-		timestamp,
 		commissionRate,
 		minSelfDelegation,
 		height,
+		timestamp,
 	)))
 }
 
@@ -538,10 +538,10 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommissions() {
 
 	expected := []dbtypes.ValidatorCommission{
 		dbtypes.NewValidatorCommission(
-			validator1.GetOperator().String(), timestamp, 10, 30, 0,
+			validator1.GetOperator().String(), 10, 30, 0, timestamp,
 		),
 		dbtypes.NewValidatorCommission(
-			validator2.GetOperator().String(), timestamp, 20, 40, 0,
+			validator2.GetOperator().String(), 20, 40, 0, timestamp,
 		),
 	}
 
