@@ -71,17 +71,19 @@ type ValidatorInfoRow struct {
 }
 
 // NewValidatorInfoRow allows to build a new ValidatorInfoRow
-func NewValidatorInfoRow(consAddress string, valAddress string, SelfDelegateAddress string, moniker string, identity string,
-	website string, SecurityContact string, details string) ValidatorInfoRow {
+func NewValidatorInfoRow(
+	consAddress string, valAddress string, selfDelegateAddress string, moniker string, identity string,
+	website string, securityContact string, details string,
+) ValidatorInfoRow {
 	return ValidatorInfoRow{
 		ConsAddress:         consAddress,
 		ValAddress:          valAddress,
 		Moniker:             moniker,
 		Identity:            identity,
 		Website:             website,
-		SecurityContact:     SecurityContact,
+		SecurityContact:     securityContact,
 		Details:             details,
-		SelfDelegateAddress: SelfDelegateAddress,
+		SelfDelegateAddress: selfDelegateAddress,
 	}
 }
 
@@ -114,14 +116,15 @@ type ValidatorData struct {
 }
 
 // NewValidatorData allows to build a new ValidatorData
-//implenment x/staking/types
-func NewValidatorData(consAddress, valAddress, consPubKey string, SelfDelegateAddress string, moniker string, identity string,
-	website string, securityContact string, details string) ValidatorData {
+func NewValidatorData(
+	consAddress, valAddress, consPubKey string, selfDelegateAddress string, moniker string, identity string,
+	website string, securityContact string, details string,
+) ValidatorData {
 	return ValidatorData{
 		ConsAddress:         consAddress,
 		ValAddress:          valAddress,
 		ConsPubKey:          consPubKey,
-		SelfDelegateAddress: SelfDelegateAddress,
+		SelfDelegateAddress: selfDelegateAddress,
 		Moniker:             moniker,
 		Identity:            identity,
 		Website:             website,
@@ -323,17 +326,15 @@ type ValidatorCommission struct {
 
 // NewValidatorCommission allows to easily build a new
 // ValidatorCommission instance
-func NewValidatorCommission(ValidatorAddress string,
-	Timestamp time.Time,
-	Commission int64,
-	MinSelfDelegation int64,
-	Height int64) ValidatorCommission {
+func NewValidatorCommission(
+	validatorAddress string, commission int64, minSelfDelegation int64, height int64, timestamp time.Time,
+) ValidatorCommission {
 	return ValidatorCommission{
-		ValidatorAddress:  ValidatorAddress,
-		Timestamp:         Timestamp,
-		Commission:        Commission,
-		MinSelfDelegation: MinSelfDelegation,
-		Height:            Height,
+		ValidatorAddress:  validatorAddress,
+		Timestamp:         timestamp,
+		Commission:        commission,
+		MinSelfDelegation: minSelfDelegation,
+		Height:            height,
 	}
 }
 
@@ -366,17 +367,14 @@ func (v ValidatorDelegationSharesRow) Equal(w ValidatorDelegationSharesRow) bool
 
 // NewValidatorDelegationSharesRow make a new instance of ValidatorDelegationSharesRow
 func NewValidatorDelegationSharesRow(
-	OperatorAddress string,
-	DelegatorAddress string,
-	Shares int64,
-	Timestamp time.Time,
-	Height int64,
+	operatorAddress string, delegatorAddress string, shares int64,
+	timestamp time.Time, height int64,
 ) ValidatorDelegationSharesRow {
 	return ValidatorDelegationSharesRow{
-		OperatorAddress:  OperatorAddress,
-		DelegatorAddress: DelegatorAddress,
-		Shares:           Shares,
-		Timestamp:        Timestamp,
-		Height:           Height,
+		OperatorAddress:  operatorAddress,
+		DelegatorAddress: delegatorAddress,
+		Shares:           shares,
+		Timestamp:        timestamp,
+		Height:           height,
 	}
 }

@@ -20,25 +20,27 @@ type Validator interface {
 }
 
 // NewValidator allows to build a new Validator implementation having the given data
-func NewValidator(consAddr sdk.ConsAddress, opAddr sdk.ValAddress, consPubKey crypto.PubKey, description staking.Description,
-	SelfDelegateAddress sdk.AccAddress) Validator {
+func NewValidator(
+	consAddr sdk.ConsAddress, opAddr sdk.ValAddress, consPubKey crypto.PubKey, description staking.Description,
+	selfDelegateAddress sdk.AccAddress,
+) Validator {
 	return validator{
-		ConsensusAddr: consAddr,
-		ConsPubKey:    consPubKey,
-		OperatorAddr:  opAddr,
-		Description:   description,
-		SelfDelegateAddress:SelfDelegateAddress, 
+		ConsensusAddr:       consAddr,
+		ConsPubKey:          consPubKey,
+		OperatorAddr:        opAddr,
+		Description:         description,
+		SelfDelegateAddress: selfDelegateAddress,
 	}
 }
 
 // validator allows to easily implement the Validator interface
 //unexported
 type validator struct {
-	ConsensusAddr sdk.ConsAddress
-	ConsPubKey    crypto.PubKey
-	OperatorAddr  sdk.ValAddress
-	Description   staking.Description
-	SelfDelegateAddress  sdk.AccAddress
+	ConsensusAddr       sdk.ConsAddress
+	ConsPubKey          crypto.PubKey
+	OperatorAddr        sdk.ValAddress
+	Description         staking.Description
+	SelfDelegateAddress sdk.AccAddress
 }
 
 // GetConsAddr implements the Validator interface
@@ -123,15 +125,16 @@ type ValidatorCommission struct {
 	Timestamp         time.Time
 }
 
-//NewValidatorCommission return a new validator commission instance
-func NewValidatorCommission(ValAddress sdk.ValAddress, Rate int64,
-	MinSelfDelegation int64, Height int64, Timestamp time.Time) ValidatorCommission {
+// NewValidatorCommission return a new validator commission instance
+func NewValidatorCommission(
+	valAddress sdk.ValAddress, rate int64, minSelfDelegation int64, height int64, timestamp time.Time,
+) ValidatorCommission {
 	return ValidatorCommission{
-		ValAddress:        ValAddress,
-		Commission:        Rate,
-		MinSelfDelegation: MinSelfDelegation,
-		Height:            Height,
-		Timestamp:         Timestamp,
+		ValAddress:        valAddress,
+		Commission:        rate,
+		MinSelfDelegation: minSelfDelegation,
+		Height:            height,
+		Timestamp:         timestamp,
 	}
 }
 

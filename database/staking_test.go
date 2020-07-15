@@ -281,7 +281,7 @@ func (suite *DbTestSuite) TestBigDipperDb_GetValidatorsData() {
 
 	suite.Require().Len(data, len(expected))
 	for index, validator := range data {
-		suite.Require().Equal(expected[index],validator )
+		suite.Require().Equal(expected[index], validator)
 	}
 }
 
@@ -320,7 +320,7 @@ VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl', 'cosmosvalconspu
 // _________________________________________________________
 
 func (suite *DbTestSuite) getValidator(consAddr, valAddr, pubkey string) types.Validator {
-	selfDelegation:=suite.getDelegator("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
+	selfDelegation := suite.getDelegator("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	valAddrObj, err := sdk.ValAddressFromBech32(valAddr)
 	suite.Require().NoError(err)
 
@@ -506,10 +506,10 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommission() {
 	suite.Require().Len(rows, 1)
 	suite.Require().True(rows[0].Equal(dbtypes.NewValidatorCommission(
 		validator.GetOperator().String(),
-		timestamp,
 		commissionRate,
 		minSelfDelegation,
 		height,
+		timestamp,
 	)))
 }
 
@@ -538,10 +538,10 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommissions() {
 
 	expected := []dbtypes.ValidatorCommission{
 		dbtypes.NewValidatorCommission(
-			validator1.GetOperator().String(), timestamp, 10, 30, 0,
+			validator1.GetOperator().String(), 10, 30, 0, timestamp,
 		),
 		dbtypes.NewValidatorCommission(
-			validator2.GetOperator().String(), timestamp, 20, 40, 0,
+			validator2.GetOperator().String(), 20, 40, 0, timestamp,
 		),
 	}
 
@@ -871,8 +871,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveReDelegations() {
 	}
 }
 
-
-func (suite *DbTestSuite) TestBigDipperDb_SaveSelfDelegation(){
+func (suite *DbTestSuite) TestBigDipperDb_SaveSelfDelegation() {
 	delegator1 := suite.getDelegator("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	delegator2 := suite.getDelegator("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 	validator1 := suite.getValidator(
@@ -883,7 +882,6 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSelfDelegation(){
 
 	timestamp1, err := time.Parse(time.RFC3339, "2020-01-01T15:00:00Z")
 	suite.Require().NoError(err)
-
 
 	// Save data
 	delegations := []types.DelegationShare{
@@ -904,7 +902,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSelfDelegation(){
 		),
 	}
 
-	err=suite.database.SaveDelegationsShares(delegations)
+	err = suite.database.SaveDelegationsShares(delegations)
 	suite.Require().NoError(err)
 
 	//expected
@@ -926,16 +924,13 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSelfDelegation(){
 		),
 	}
 
-
 	//read data
 	var delegationrows []dbtypes.ValidatorDelegationSharesRow
 	err = suite.database.Sqlx.Select(&delegationrows, `SELECT * FROM validator_delegation_shares`)
 	suite.Require().NoError(err)
-
 
 	for index, row := range delegationrows {
 		suite.Require().True(row.Equal(delegationsExpected[index]))
 	}
 
 }
-

@@ -6,7 +6,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/exported"
-	"github.com/forbole/bdjuno/database/types"
 	dbtypes "github.com/forbole/bdjuno/database/types"
 	"github.com/lib/pq"
 )
@@ -22,7 +21,7 @@ func (db BigDipperDb) SaveAccount(account exported.Account, height int64, timest
 	balStmt := `INSERT INTO balance (address, coins, height, timestamp) 
 				VALUES ($1, $2::coin[], $3, $4) ON CONFLICT DO NOTHING`
 	_, err = db.Sql.Exec(balStmt,
-		account.GetAddress().String(), pq.Array(types.NewDbCoins(account.GetCoins())), height, timestamp)
+		account.GetAddress().String(), pq.Array(dbtypes.NewDbCoins(account.GetCoins())), height, timestamp)
 	return err
 }
 
@@ -48,7 +47,7 @@ func (db BigDipperDb) SaveAccounts(accounts []exported.Account, height int64, ti
 
 		balancesStmt += fmt.Sprintf("($%d,$%d,$%d,$%d),", b1+1, b1+2, b1+3, b1+4)
 		balanceParams = append(balanceParams,
-			account.GetAddress().String(), pq.Array(types.NewDbCoins(account.GetCoins())), height, timestamp)
+			account.GetAddress().String(), pq.Array(dbtypes.NewDbCoins(account.GetCoins())), height, timestamp)
 	}
 
 	// Store the accounts
