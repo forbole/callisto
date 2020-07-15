@@ -70,7 +70,7 @@ func SetupModules() {
 	worker.RegisterMsgHandler(staking.MsgHandler)
 
 	// Register other operations
-	parse.RegisterAdditionalOperation(consensus.ListeningOperation)
+	parse.RegisterAdditionalOperation(consensus.ListenOperation)
 
 	// Register periodic operations
 	scheduler := gocron.NewScheduler(time.UTC)

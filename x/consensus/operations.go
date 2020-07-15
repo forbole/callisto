@@ -5,51 +5,70 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/forbole/bdjuno/database"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/desmos-labs/juno/config"
 	"github.com/desmos-labs/juno/db"
 	"github.com/desmos-labs/juno/parse/client"
+	constypes "github.com/forbole/bdjuno/x/consensus/types"
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 	tmtypes "github.com/tendermint/tendermint/types"
 )
 
-func ListeningOperation(_ config.Config, _ *codec.Codec, cp client.ClientProxy, _ db.Database) error {
+// ListenOperation allows to start listening to new consensus events properly
+func ListenOperation(_ config.Config, _ *codec.Codec, cp client.ClientProxy, db db.Database) error {
+	bdDatabase, ok := db.(database.BigDipperDb)
+	if !ok {
+		return fmt.Errorf("given database instance is not a BigDipperDb")
+	}
+
 	events := []string{
-		//tmtypes.EventCompleteProposal,
-		//tmtypes.EventLock,
+		tmtypes.EventCompleteProposal,
 		tmtypes.EventNewRound,
 		tmtypes.EventNewRoundStep,
-		//tmtypes.EventPolka,
-		//tmtypes.EventRelock,
-		//tmtypes.EventTimeoutPropose,
-		//tmtypes.EventTimeoutWait,
-		//tmtypes.EventUnlock,
-		//tmtypes.EventValidBlock,
-		//tmtypes.EventVote,
+		tmtypes.EventPolka,
+		tmtypes.EventValidBlock,
+		tmtypes.EventVote,
 	}
 
 	var channels []<-chan tmctypes.ResultEvent
 	for index, event := range events {
-		channels = append(channels, SubscribeConsensusEvent(index, event, cp))
+		channels = append(channels, subscribeConsensusEvent(index, event, cp))
 	}
 
 	merged := merge(channels...)
 	go func() {
 		for event := range merged {
-			bz, err := json.Marshal(event)
+
+			// Serialize the event data as JSON to later de-serialize it into our custom object
+			bz, err := json.Marshal(event.Data)
 			if err != nil {
 				log.Fatal().Err(err).Send()
 			}
 
-			log.Debug().Msg(string(bz))
+			// De-serialize the data into our custom object
+			var consEvent constypes.ConsensusEvent
+			err = json.Unmarshal(bz, &consEvent)
+			if err != nil {
+				log.Fatal().Err(err).Send()
+			}
+
+			// Save the event
+			err = bdDatabase.SaveConsensus(consEvent)
+			if err != nil {
+				log.Fatal().Err(err).Send()
+			}
 		}
 	}()
 
 	return nil
 }
 
-func SubscribeConsensusEvent(index int, event string, cp client.ClientProxy) <-chan tmctypes.ResultEvent {
+// subscribeConsensusEvent allows to subscribe to the consensus event having the given name,
+// and returns a read-only channel emitting all the events
+func subscribeConsensusEvent(index int, event string, cp client.ClientProxy) <-chan tmctypes.ResultEvent {
 	query := fmt.Sprintf("tm.event = '%s'", event)
 	subscriber := fmt.Sprintf("juno-client-consensus-%d", index)
 
@@ -63,6 +82,7 @@ func SubscribeConsensusEvent(index int, event string, cp client.ClientProxy) <-c
 	return eventCh
 }
 
+// merge takes a list of read-only channels and merges them into a single read-only channel
 func merge(cs ...<-chan tmctypes.ResultEvent) <-chan tmctypes.ResultEvent {
 	out := make(chan tmctypes.ResultEvent)
 
