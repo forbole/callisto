@@ -30,7 +30,7 @@ The BDjuno is working as a backend for Big Dipper. The followings are the featur
 - [ ] [x/staking] Record all undelegatios (per day)
 - [ ] [x/staking] Record all redelegations (per day)
 - [ ] [x/gov] Get gov proposals (per 30 seconds)
-- [ ] [x/gox] Calculate the tally result (per 30 seconds)
+- [ ] [x/gov] Calculate the tally result (per 30 seconds)
 
 ## Not on Big Dipper now but we are considering to add
 - [ ] Validators signing-info (slashing)
