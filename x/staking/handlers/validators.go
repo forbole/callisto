@@ -4,6 +4,7 @@ import (
 	"time"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	jtypes "github.com/desmos-labs/juno/types"
+	sdktypes "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/staking/types"
 )
@@ -16,7 +17,9 @@ func HandleMsgCreateValidator(msg stakingtypes.MsgCreateValidator, db database.B
 		stakingValidator.GetConsAddr(),
 		stakingValidator.GetOperator(),
 		stakingValidator.GetConsPubKey(),
-		stakingValidator.Description))
+		stakingValidator.Description,
+		sdktypes.AccAddress(stakingValidator.GetConsAddr()),
+	))
 }
 
 //HandleEditValidator handles MsgEditValidator
@@ -34,7 +37,7 @@ func HandleEditValidator(msg stakingtypes.MsgEditValidator, tx jtypes.Tx, db dat
 	db.SaveEditCommission(types.NewValidatorCommission(msg.ValidatorAddress,msg.CommissionRate.Int64(),
 		msg.MinSelfDelegation.Int64(),tx.Height,timestamp))
 
-	db.UpdateValidatorInfo(types.NewValidator(validatorinfo.GetConsAddr(),validatorinfo.GetOperator() ,validatorinfo.GetConsPubKey(), msg.Description))
+	db.UpdateValidatorInfo(types.NewValidator(validatorinfo.GetConsAddr(),validatorinfo.GetOperator() ,validatorinfo.GetConsPubKey(), msg.Description,sdktypes.AccAddress(validatorinfo.GetOperator())))
 
 	return nil
 }

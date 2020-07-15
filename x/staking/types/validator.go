@@ -16,15 +16,18 @@ type Validator interface {
 	GetConsPubKey() crypto.PubKey
 	GetOperator() sdk.ValAddress
 	GetDescription() staking.Description
+	GetSelfDelegateAddress() sdk.AccAddress
 }
 
 // NewValidator allows to build a new Validator implementation having the given data
-func NewValidator(consAddr sdk.ConsAddress, opAddr sdk.ValAddress, consPubKey crypto.PubKey,description staking.Description) Validator {
+func NewValidator(consAddr sdk.ConsAddress, opAddr sdk.ValAddress, consPubKey crypto.PubKey, description staking.Description,
+	SelfDelegateAddress sdk.AccAddress) Validator {
 	return validator{
 		ConsensusAddr: consAddr,
 		ConsPubKey:    consPubKey,
 		OperatorAddr:  opAddr,
 		Description:   description,
+		SelfDelegateAddress:SelfDelegateAddress, 
 	}
 }
 
@@ -34,7 +37,8 @@ type validator struct {
 	ConsensusAddr sdk.ConsAddress
 	ConsPubKey    crypto.PubKey
 	OperatorAddr  sdk.ValAddress
-	Description    staking.Description
+	Description   staking.Description
+	SelfDelegateAddress  sdk.AccAddress
 }
 
 // GetConsAddr implements the Validator interface
@@ -51,17 +55,21 @@ func (v validator) GetOperator() sdk.ValAddress {
 	return v.OperatorAddr
 }
 
-func (v validator) GetDescription() staking.Description{
+func (v validator) GetDescription() staking.Description {
 	return v.Description
 }
 
+func (v validator) GetSelfDelegateAddress() sdk.AccAddress {
+	return v.SelfDelegateAddress
+}
+
 //Equals return the equality of two validator
-func (v validator) Equals(w validator) bool{
-	return v.ConsensusAddr.Equals(w.ConsensusAddr)&&
-	v.ConsPubKey.Equals(w.ConsPubKey)&&
-	v.OperatorAddr.Equals(w.OperatorAddr)&&
-	v.Description==w.Description
-} 
+func (v validator) Equals(w validator) bool {
+	return v.ConsensusAddr.Equals(w.ConsensusAddr) &&
+		v.ConsPubKey.Equals(w.ConsPubKey) &&
+		v.OperatorAddr.Equals(w.OperatorAddr) &&
+		v.Description == w.Description
+}
 
 // _________________________________________________________
 
@@ -107,34 +115,33 @@ type ValidatorDelegations struct {
 //-----------------------------------------------------
 
 //ValidatorCommission allow to build a validator commission instance
-type ValidatorCommission struct{
-	ValAddress sdk.ValAddress
-	Commission 			int64
+type ValidatorCommission struct {
+	ValAddress        sdk.ValAddress
+	Commission        int64
 	MinSelfDelegation int64
-	Height               int64
-	Timestamp            time.Time
+	Height            int64
+	Timestamp         time.Time
 }
 
 //NewValidatorCommission return a new validator commission instance
-func NewValidatorCommission(ValAddress sdk.ValAddress,Rate int64,
-	MinSelfDelegation int64,Height int64,Timestamp time.Time)(ValidatorCommission){
+func NewValidatorCommission(ValAddress sdk.ValAddress, Rate int64,
+	MinSelfDelegation int64, Height int64, Timestamp time.Time) ValidatorCommission {
 	return ValidatorCommission{
-		ValAddress    :ValAddress,
-		Commission 		:Rate,
-		MinSelfDelegation:MinSelfDelegation,
-        Height        :Height,
-        Timestamp     :Timestamp,
+		ValAddress:        ValAddress,
+		Commission:        Rate,
+		MinSelfDelegation: MinSelfDelegation,
+		Height:            Height,
+		Timestamp:         Timestamp,
 	}
 }
 
 //Equals return the equality of two validatorCommission
-func (v ValidatorCommission) Equals(w ValidatorCommission) bool{
+func (v ValidatorCommission) Equals(w ValidatorCommission) bool {
 	return v.ValAddress.Equals(w.ValAddress) &&
-	v.Commission == w.Commission&&
-	v.MinSelfDelegation == w.MinSelfDelegation&&
-	v.Height == w.Height&&
-	v.Timestamp.Equal(w.Timestamp)
+		v.Commission == w.Commission &&
+		v.MinSelfDelegation == w.MinSelfDelegation &&
+		v.Height == w.Height &&
+		v.Timestamp.Equal(w.Timestamp)
 }
 
 //--------------------------------------------
-

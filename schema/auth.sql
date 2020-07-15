@@ -16,4 +16,4 @@ CREATE TABLE balance
     height    BIGINT                      NOT NULL,
     timestamp TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     PRIMARY KEY (address, height)
-)
+);

@@ -21,7 +21,7 @@ func (db BigDipperDb) SaveStakingPool(pool stakingtypes.Pool, height int64, time
 
 //Insert into Validator Commission Database
 func (db BigDipperDb) SaveValidatorCommissions(validators []types.ValidatorCommission) error {
-	query := `INSERT INTO validator_commission(validator_address,timestamp,commission,min_self_delegation,height) VALUES`
+	query := `INSERT INTO validator_commission(validator_address,timestamp,commission,min_self_delegation,height) VALUES `
 	var param []interface{}
 	for i, validator := range validators {
 		vi := i * 5
@@ -30,7 +30,6 @@ func (db BigDipperDb) SaveValidatorCommissions(validators []types.ValidatorCommi
 			validator.MinSelfDelegation, validator.Height)
 	}
 	query = query[:len(query)-1] // Remove trailing ","
-	query += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(query, param...)
 	if err != nil {
 		return err
@@ -66,7 +65,7 @@ func (db BigDipperDb) SaveEditCommission(data types.ValidatorCommission) error {
 // GetValidatorsData returns the data of all the validators that are currently stored inside the database.
 func (db BigDipperDb) GetValidatorsData() ([]dbtypes.ValidatorData, error) {
 	sqlStmt := `SELECT DISTINCT ON (validator.consensus_address)
-				validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address 
+				validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address,validator_info.self_delegate_address
 				,validator_info.moniker,validator_info.identity,validator_info.website,validator_info.security_contact, validator_info.details
 				FROM validator 
 				INNER JOIN validator_info 
@@ -93,8 +92,8 @@ func (db BigDipperDb) SaveSingleValidatorData(validator types.Validator) error {
 // If no validator for such address can be found, an error is returned instead.
 func (db BigDipperDb) GetValidatorData(valAddress sdk.ValAddress) (types.Validator, error) {
 	var result []dbtypes.ValidatorData
-	stmt := `SELECT validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address 
-				,validator_info.moniker,validator_info.identity,validator_info.website,validator_info.security_contact, validator_info.details
+	stmt := `SELECT validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address, 
+	         validator_info.self_delegate_address ,validator_info.moniker,validator_info.identity,validator_info.website,validator_info.security_contact, validator_info.details
 			 FROM validator INNER JOIN validator_info 
     		 ON validator.consensus_address=validator_info.consensus_address 
 			 WHERE validator_info.operator_address = $1`
@@ -112,35 +111,47 @@ func (db BigDipperDb) GetValidatorData(valAddress sdk.ValAddress) (types.Validat
 
 // SaveValidatorsData allows the bulk saving of a list of validators
 func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
+
+	selfDelegationAccQuery := `INSERT INTO account (address) VALUES `
+	var selfDelegationParam []interface{}
+
 	validatorQuery := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES `
 	var validatorParams []interface{}
 
-	validatorInfoQuery := `INSERT INTO validator_info (consensus_address,operator_address,moniker,identity,website,security_contact, details) VALUES`
-
+	validatorInfoQuery := `INSERT INTO validator_info (consensus_address,operator_address,self_delegate_address,moniker,identity,website,security_contact, details) VALUES`
 	var validatorInfoParams []interface{}
+
 
 	for i, validator := range validators {
 		v1 := i * 2 // Starting position for validator params
-		vi := i * 7 // Starting position for validator info params
+		vi := i * 8 // Starting position for validator info params
 
 		publicKey, err := sdk.Bech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, validator.GetConsPubKey())
 		if err != nil {
 			return err
 		}
 
+		selfDelegationAccQuery += fmt.Sprintf("($%d),", i+1)
+		selfDelegationParam = append(selfDelegationParam, validator.GetSelfDelegateAddress().String())
+
 		validatorQuery += fmt.Sprintf("($%d,$%d),", v1+1, v1+2)
 		validatorParams = append(validatorParams,
 			validator.GetConsAddr().String(), publicKey)
 
-		validatorInfoQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7)
-		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr().String(), validator.GetOperator().String(), validator.GetDescription().Moniker,
+		validatorInfoQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8)
+		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr().String(), validator.GetOperator().String(), validator.GetSelfDelegateAddress().String(), validator.GetDescription().Moniker,
 			validator.GetDescription().Identity, validator.GetDescription().Website, validator.GetDescription().SecurityContact, validator.GetDescription().Details)
-
+	}
+	selfDelegationAccQuery = selfDelegationAccQuery[:len(selfDelegationAccQuery)-1] // Remove trailing ","
+	selfDelegationAccQuery += " ON CONFLICT DO NOTHING"
+	_, err := db.Sql.Exec(selfDelegationAccQuery, selfDelegationParam...)
+	if err != nil {
+		return err
 	}
 
 	validatorQuery = validatorQuery[:len(validatorQuery)-1] // Remove trailing ","
 	validatorQuery += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(validatorQuery, validatorParams...)
+	_, err = db.Sql.Exec(validatorQuery, validatorParams...)
 	if err != nil {
 		return err
 	}
@@ -161,8 +172,6 @@ func (db BigDipperDb) SaveValidatorUptime(uptime types.ValidatorUptime) error {
 		uptime.Height, uptime.ValidatorAddress.String(), uptime.SignedBlocksWindow, uptime.MissedBlocksCounter)
 	return err
 }
-
-// _________________________________________________________
 
 // SaveRedelegation saves the given delegation inside the database.
 // It assumes that the delegator address is already present inside the
@@ -438,4 +447,24 @@ func (db BigDipperDb) SaveRedelegations(redelegations []types.Redelegation) erro
 	redelQuery += " ON CONFLICT DO NOTHING"
 	_, err = db.Sql.Exec(redelQuery, redelParams...)
 	return err
+}
+
+//SaveDelegationsShare sve an array of delegation share
+func (db BigDipperDb) SaveDelegationsShares(shares []types.DelegationShare) error {
+	stmt := `INSERT INTO validator_delegation_shares (operator_address ,delegator_address,shares,height,timestamp) VALUES`
+	var delegationShareParam []interface{}
+	for i, share := range shares {
+		i1 := i * 5
+		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", i1+1, i1+2, i1+3, i1+4, i1+5)
+		delegationShareParam = append(delegationShareParam, share.ValidatorAddress.String(), share.DelegatorAddress.String(), share.Shares, share.Height, share.Timestamp)
+	}
+	stmt = stmt[:len(stmt)-1] // Remove the trailing ","
+	stmt += " ON CONFLICT DO NOTHING"
+	_, err := db.Sql.Exec(stmt, delegationShareParam...)
+	if err != nil {
+		return err
+	}
+
+	
+	return nil
 }

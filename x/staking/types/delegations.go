@@ -85,3 +85,28 @@ func NewRedelegation(
 		CompletionTime:   completionTime,
 	}
 }
+
+//DelegationShare save the self delegation ratio on that instance
+type DelegationShare struct{
+	ValidatorAddress sdk.ValAddress
+	DelegatorAddress sdk.AccAddress
+	Shares           int64
+	Height           int64
+	Timestamp        time.Time
+}
+
+//NewDelegationShare get a new instance of modifly self Delegation
+func NewDelegationShare (ValidatorAddress sdk.ValAddress,
+	DelegatorAddress sdk.AccAddress,
+	Shares           int64,
+	Height           int64,
+	Timestamp        time.Time) DelegationShare{
+		return DelegationShare{
+			ValidatorAddress:	ValidatorAddress,
+			DelegatorAddress:   DelegatorAddress,
+			Shares          :	Shares        ,
+			Height          :	Height        ,
+			Timestamp       :	Timestamp     ,
+		}
+	}
+

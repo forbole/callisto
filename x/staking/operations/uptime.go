@@ -5,6 +5,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	sdk "github.com/cosmos/cosmos-sdk/x/staking/types"
+	sdktypes"github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/juno/parse/client"
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/staking/types"
@@ -97,5 +98,6 @@ func updateValidators(height int64, cp client.ClientProxy, db database.BigDipper
 }
 
 func ConvertValidator(validator sdk.Validator) types.Validator {
-	return types.NewValidator(validator.ConsAddress(), validator.OperatorAddress, validator.ConsPubKey, validator.Description)
+	return types.NewValidator(validator.ConsAddress(), validator.GetOperator(), validator.GetConsPubKey(), validator.Description,
+								sdktypes.AccAddress(validator.OperatorAddress))
 }

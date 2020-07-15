@@ -15,7 +15,7 @@ import (
 )
 
 func GenesisHandler(codec *codec.Codec, genesisDoc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, w worker.Worker) error {
-	log.Debug().Str("module", "auth").Msg("parsing genesis")
+ 	log.Debug().Str("module", "staking").Msg("parsing genesis")
 
 	bigDipperDb, ok := w.Db.(database.BigDipperDb)
 	if !ok {
@@ -24,6 +24,14 @@ func GenesisHandler(codec *codec.Codec, genesisDoc *tmtypes.GenesisDoc, appState
 	// Read the genesis state
 	var genState staking.GenesisState
 	if err := codec.UnmarshalJSON(appState[staking.ModuleName], &genState); err != nil {
+		return err
+	}
+
+	if err := InitialInformation(genState, bigDipperDb); err != nil {
+		return err
+	}
+
+	if err := InitialCommission(genState, genesisDoc, bigDipperDb); err != nil {
 		return err
 	}
 
@@ -42,10 +50,6 @@ func GenesisHandler(codec *codec.Codec, genesisDoc *tmtypes.GenesisDoc, appState
 		return err
 	}
 
-	err := InitialCommission(genState, genesisDoc, bigDipperDb)
-	if err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -54,8 +58,8 @@ func InitialCommission(sgenState staking.GenesisState, genesisDoc *tmtypes.Genes
 	// Store the accounts
 	accounts := make([]types.ValidatorCommission, len(sgenState.Validators))
 	for index, account := range sgenState.Validators {
-		accounts[index] = types.NewValidatorCommission(account.GetOperator(),
-			account.Commission.Rate.Int64(), account.MinSelfDelegation.Int64(), 0,genesisDoc.GenesisTime)
+		accounts[index] = types.NewValidatorCommission(account.OperatorAddress,
+			account.Commission.Rate.Int64(), account.MinSelfDelegation.Int64(), 0, genesisDoc.GenesisTime)
 	}
 
 	err := db.SaveValidatorCommissions(accounts)
@@ -73,7 +77,9 @@ func InitialInformation(sgenState staking.GenesisState, db database.BigDipperDb)
 			account.ConsAddress(),
 			account.OperatorAddress,
 			account.ConsPubKey,
-			account.Description)
+			account.Description,
+			sdk.AccAddress(account.ConsAddress()),
+		)
 	}
 
 	err := db.SaveValidatorsData(accounts)
@@ -86,13 +92,13 @@ func InitialInformation(sgenState staking.GenesisState, db database.BigDipperDb)
 // saveDelegations stores the delegations data present inside the given genesis state
 func saveDelegations(genState staking.GenesisState, genesisDoc *tmtypes.GenesisDoc, db database.BigDipperDb) error {
 	var delegations []types.Delegation
+	var delegationShares []types.DelegationShare
 	for _, validator := range genState.Validators {
 		tokens := validator.Tokens
 		delegatorShares := validator.DelegatorShares
 
 		for _, delegation := range getDelegations(genState.Delegations, validator.OperatorAddress) {
 			delegationAmount := tokens.ToDec().Mul(delegation.Shares).Quo(delegatorShares).TruncateInt()
-
 			delegations = append(delegations, types.NewDelegation(
 				delegation.DelegatorAddress,
 				validator.OperatorAddress,
@@ -100,11 +106,26 @@ func saveDelegations(genState staking.GenesisState, genesisDoc *tmtypes.GenesisD
 				0,
 				genesisDoc.GenesisTime,
 			))
+			delegationShares = append(delegationShares,types.NewDelegationShare(
+				validator.OperatorAddress,
+				delegation.DelegatorAddress,
+				delegation.Shares.Int64(),
+				0,
+				genesisDoc.GenesisTime,
+			))
 		}
 	}
 
-	return db.SaveDelegations(delegations)
-}
+	if err := db.SaveDelegationsShares(delegationShares);err!=nil{
+		return err
+	}
+	if err := db.SaveDelegations(delegations);err != nil{
+		return err
+	}
+return nil}
+
+
+
 
 // saveUnbondingDelegations stores the unbonding delegations data present inside the given genesis state
 func saveUnbondingDelegations(genState staking.GenesisState, genesisDoc *tmtypes.GenesisDoc, db database.BigDipperDb) error {
@@ -172,3 +193,34 @@ func getUnbondingDelegations(genData staking.UnbondingDelegations, valAddr sdk.V
 	}
 	return unbondingDelegations
 }
+
+// saveValidators stores the validators data present inside the given genesis state
+func saveValidators(genState staking.GenesisState, db database.BigDipperDb) error {
+	validators := make([]types.Validator, len(genState.Validators))
+	for _, validator := range genState.Validators {
+		validators = append(validators, types.NewValidator(
+			validator.ConsAddress(),
+			validator.OperatorAddress,
+			validator.GetConsPubKey(),
+			validator.Description,
+			sdk.AccAddress(validator.ConsAddress()),
+		))
+		if err := db.SaveValidatorsData(validators); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+/*
+// Store the accounts
+	accounts := make([]exported.ValidatorI, len(stakingGenesisState.Validators))
+	for index, account := range stakingGenesisState.Validators {
+		accounts[index] = account.(exported.Account)
+		selfAddress := sdk.AccAddress(account[index].Bytes())
+		bstaking.NewSelfDelegation(validatorAddress,delegation.Shares.Int64(),
+					float64(delegation.Shares.Int64())/float64(validator.DelegatorShares.Int64()*100,
+					0,genDoc.GenesisTime)stakingGenesisState.Delegations
+		//find the self delegation address has delegated to someone?
+	}
+*/
