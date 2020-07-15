@@ -21,9 +21,9 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
-      - name: test & coverage report creation
+      - name: Test & Coverage report creation
         run: make install test-unit stop-docker-test
-      - name: filter out DONTCOVER
+      - name: Filter out DONTCOVER
         run: |
           excludelist="$(find ./ -type f -name '*.go' | xargs grep -l 'DONTCOVER')"
           excludelist+=" $(find ./ -type f -name '*.pb.go')"
@@ -33,8 +33,6 @@ jobs:
             echo "Excluding ${filename} from coverage report..."
             sed -i.bak "/$(echo $filename | sed 's/\//\\\//g')/d" coverage.txt
           done
-        if: "env.GIT_DIFF != ''"
       - uses: codecov/codecov-action@v1.0.7
         with:
           file: ./coverage.txt
-        if: "env.GIT_DIFF != ''"
