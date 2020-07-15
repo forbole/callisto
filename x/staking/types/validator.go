@@ -23,22 +23,22 @@ type Validator interface {
 func NewValidator(consAddr sdk.ConsAddress, opAddr sdk.ValAddress, consPubKey crypto.PubKey, description staking.Description,
 	SelfDelegateAddress sdk.AccAddress) Validator {
 	return validator{
-		ConsensusAddr: consAddr,
-		ConsPubKey:    consPubKey,
-		OperatorAddr:  opAddr,
-		Description:   description,
-		SelfDelegateAddress:SelfDelegateAddress, 
+		ConsensusAddr:       consAddr,
+		ConsPubKey:          consPubKey,
+		OperatorAddr:        opAddr,
+		Description:         description,
+		SelfDelegateAddress: SelfDelegateAddress,
 	}
 }
 
 // validator allows to easily implement the Validator interface
 //unexported
 type validator struct {
-	ConsensusAddr sdk.ConsAddress
-	ConsPubKey    crypto.PubKey
-	OperatorAddr  sdk.ValAddress
-	Description   staking.Description
-	SelfDelegateAddress  sdk.AccAddress
+	ConsensusAddr       sdk.ConsAddress
+	ConsPubKey          crypto.PubKey
+	OperatorAddr        sdk.ValAddress
+	Description         staking.Description
+	SelfDelegateAddress sdk.AccAddress
 }
 
 // GetConsAddr implements the Validator interface

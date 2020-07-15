@@ -15,7 +15,7 @@ import (
 )
 
 func GenesisHandler(codec *codec.Codec, genesisDoc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, w worker.Worker) error {
- 	log.Debug().Str("module", "staking").Msg("parsing genesis")
+	log.Debug().Str("module", "staking").Msg("parsing genesis")
 
 	bigDipperDb, ok := w.Db.(database.BigDipperDb)
 	if !ok {
@@ -106,7 +106,7 @@ func saveDelegations(genState staking.GenesisState, genesisDoc *tmtypes.GenesisD
 				0,
 				genesisDoc.GenesisTime,
 			))
-			delegationShares = append(delegationShares,types.NewDelegationShare(
+			delegationShares = append(delegationShares, types.NewDelegationShare(
 				validator.OperatorAddress,
 				delegation.DelegatorAddress,
 				delegation.Shares.Int64(),
@@ -116,16 +116,14 @@ func saveDelegations(genState staking.GenesisState, genesisDoc *tmtypes.GenesisD
 		}
 	}
 
-	if err := db.SaveDelegationsShares(delegationShares);err!=nil{
+	if err := db.SaveDelegationsShares(delegationShares); err != nil {
 		return err
 	}
-	if err := db.SaveDelegations(delegations);err != nil{
+	if err := db.SaveDelegations(delegations); err != nil {
 		return err
 	}
-return nil}
-
-
-
+	return nil
+}
 
 // saveUnbondingDelegations stores the unbonding delegations data present inside the given genesis state
 func saveUnbondingDelegations(genState staking.GenesisState, genesisDoc *tmtypes.GenesisDoc, db database.BigDipperDb) error {

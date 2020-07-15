@@ -121,7 +121,6 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 	validatorInfoQuery := `INSERT INTO validator_info (consensus_address,operator_address,self_delegate_address,moniker,identity,website,security_contact, details) VALUES`
 	var validatorInfoParams []interface{}
 
-
 	for i, validator := range validators {
 		v1 := i * 2 // Starting position for validator params
 		vi := i * 8 // Starting position for validator info params
@@ -465,6 +464,5 @@ func (db BigDipperDb) SaveDelegationsShares(shares []types.DelegationShare) erro
 		return err
 	}
 
-	
 	return nil
 }
