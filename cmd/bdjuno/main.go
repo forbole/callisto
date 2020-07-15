@@ -67,6 +67,7 @@ func SetupModules() {
 	// Register msg handlers
 	worker.RegisterMsgHandler(staking.MsgHandler)
 	worker.RegisterMsgHandler(bank.MsgHandler)
+	worker.RegisterMsgHandler(staking.MsgHandler)
 
 	// Register other operations
 	parse.RegisterAdditionalOperation(consensus.ListeningOperation)

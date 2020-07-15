@@ -32,13 +32,15 @@ func MsgHandler(tx types.Tx, index int, msg sdk.Msg, w worker.Worker) error {
 		return handlers.HandleMsgCreateValidator(cosmosMsg, bigDipperDb)
 
 	case staking.MsgDelegate:
-		return handlers.HandleMsgDelegate(tx, cosmosMsg, bigDipperDb)
+		return handlers.HandleMsgDelegate(tx, cosmosMsg, bigDipperDb, w.ClientProxy)
 
 	case staking.MsgBeginRedelegate:
 		return handlers.HandleMsgBeginRedelegate(tx, index, cosmosMsg, bigDipperDb)
 
 	case staking.MsgUndelegate:
 		return handlers.HandleMsgUndelegate(tx, index, cosmosMsg, bigDipperDb)
+	case staking.MsgEditValidator:
+		return handlers.HandleEditValidator(cosmosMsg, tx, bigDipperDb)
 	}
 
 	return nil
