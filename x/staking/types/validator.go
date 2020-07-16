@@ -20,14 +20,10 @@ type Validator interface {
 }
 
 // NewValidator allows to build a new Validator implementation having the given data
-<<<<<<< HEAD
-func NewValidator(consAddr sdk.ConsAddress, opAddr sdk.ValAddress, consPubKey crypto.PubKey, description staking.Description) Validator {
-=======
 func NewValidator(
 	consAddr sdk.ConsAddress, opAddr sdk.ValAddress, consPubKey crypto.PubKey, description staking.Description,
 	selfDelegateAddress sdk.AccAddress,
 ) Validator {
->>>>>>> master
 	return validator{
 		ConsensusAddr:       consAddr,
 		ConsPubKey:          consPubKey,
@@ -40,18 +36,11 @@ func NewValidator(
 // validator allows to easily implement the Validator interface
 //unexported
 type validator struct {
-<<<<<<< HEAD
-	ConsensusAddr sdk.ConsAddress
-	ConsPubKey    crypto.PubKey
-	OperatorAddr  sdk.ValAddress
-	Description   staking.Description
-=======
 	ConsensusAddr       sdk.ConsAddress
 	ConsPubKey          crypto.PubKey
 	OperatorAddr        sdk.ValAddress
 	Description         staking.Description
 	SelfDelegateAddress sdk.AccAddress
->>>>>>> master
 }
 
 // GetConsAddr implements the Validator interface

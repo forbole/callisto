@@ -447,7 +447,7 @@ func (db BigDipperDb) SaveRedelegations(redelegations []types.Redelegation) erro
 	return err
 }
 
-//SaveVoltingPower save volting power for validators
+//SaveVotingPowers save volting power for validators
 func (db BigDipperDb) SaveVotingPowers(votings []types.ValidatorVotingPower, totalVotingPower int64) error {
 
 	stmt := `INSERT INTO validator_voting_power (consensus_address,voting_power,height,percentage,total_power) VALUES`
@@ -466,8 +466,10 @@ func (db BigDipperDb) SaveVotingPowers(votings []types.ValidatorVotingPower, tot
 	if err != nil {
 		return err
 	}
-	
-//SaveDelegationsShare sve an array of delegation share
+	return nil
+}
+
+//SaveDelegationsShares save an array of delegation share
 func (db BigDipperDb) SaveDelegationsShares(shares []types.DelegationShare) error {
 	stmt := `INSERT INTO validator_delegation_shares (operator_address ,delegator_address,shares,height,timestamp) VALUES`
 	var delegationShareParam []interface{}
