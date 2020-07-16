@@ -10,13 +10,13 @@ The BDjuno is working as a backend for Big Dipper. The followings are the featur
 ### Custom BDJuno implementations
 - [x] Update miss block records
 - [ ] Read the latest consensus state
-- [ ] [x/staking] Update validator information 
+- [x] [x/staking] Update validator information 
 - [ ] [x/staking] Calculate validator voting power percentage 
-- [ ] [x/staking] Calculate validator self delegation ratio
-- [x] [x/staking] Update the total staked tokens (staking) 
-- [ ] [x/supply] Update the total supply (supply)
-- [x] [x/mint] Update the inflation (mint)
-- [ ] [x/distribution] Update community pool (distribution)
+- [x] [x/staking] Calculate validator self delegation ratio
+- [x] [x/staking] Update the total staked tokens 
+- [ ] [x/supply] Update the total supply
+- [x] [x/mint] Update the inflation
+- [ ] [x/distribution] Update community pool
 
 ### Achievable using GraphQL APIs
 - [x] Calculate the average block time
@@ -30,7 +30,7 @@ The BDjuno is working as a backend for Big Dipper. The followings are the featur
 - [ ] [x/staking] Record all undelegatios (per day)
 - [ ] [x/staking] Record all redelegations (per day)
 - [ ] [x/gov] Get gov proposals (per 30 seconds)
-- [ ] [x/gox] Calculate the tally result (per 30 seconds)
+- [ ] [x/gov] Calculate the tally result (per 30 seconds)
 
 ## Not on Big Dipper now but we are considering to add
 - [ ] Validators signing-info (slashing)
