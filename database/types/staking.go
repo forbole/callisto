@@ -384,8 +384,6 @@ type ValidatorVotingPowerRow struct {
 	ConsensusAddress string  `db:"consensus_address"`
 	VotingPower      int64   `db:"voting_power"`
 	Height           int64   `db:"height"`
-	TotalPower       int64   `db:"total_power"`
-	Percentage       float64 `db:"percentage"`
 }
 
 //Equal determain two validatorDelegation refer as same row
@@ -393,8 +391,6 @@ func (v ValidatorVotingPowerRow) Equal(w ValidatorVotingPowerRow) bool {
 	return v.ConsensusAddress == w.ConsensusAddress &&
 		v.VotingPower == w.VotingPower &&
 		v.Height == w.Height &&
-		v.TotalPower == w.TotalPower &&
-		v.Percentage == w.Percentage
 }
 
 // NewValidatorVotingPowerRow make a new instance of ValidatorVotingPowerRow
@@ -402,14 +398,10 @@ func NewValidatorVotingPowerRow(
 	ConsensusAddress string,
 	VotingPower int64,
 	Height int64,
-	TotalPower int64,
-	Percentage float64,
 ) ValidatorVotingPowerRow {
 	return ValidatorVotingPowerRow{
 		ConsensusAddress: ConsensusAddress,
 		VotingPower:      VotingPower,
 		Height:           Height,
-		TotalPower:       TotalPower,
-		Percentage:       Percentage,
 	}
 }

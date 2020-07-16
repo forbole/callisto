@@ -448,15 +448,15 @@ func (db BigDipperDb) SaveRedelegations(redelegations []types.Redelegation) erro
 }
 
 //SaveVotingPowers save volting power for validators
-func (db BigDipperDb) SaveVotingPowers(votings []types.ValidatorVotingPower, totalVotingPower int64) error {
+func (db BigDipperDb) SaveVotingPowers(votings []types.ValidatorVotingPower) error {
 
-	stmt := `INSERT INTO validator_voting_power (consensus_address,voting_power,height,percentage,total_power) VALUES`
+	stmt := `INSERT INTO validator_voting_power (consensus_address,voting_power,height) VALUES`
 	var params []interface{}
 
 	for i, voting := range votings {
-		a1 := i * 5 // Starting position for the  query
-		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", a1+1, a1+2, a1+3, a1+4, a1+5)
-		params = append(params, voting.ConsensusAddress.String(), voting.VotingPower, voting.Height, voting.VotingPower/totalVotingPower*100, totalVotingPower)
+		a1 := i * 3 // Starting position for the  query
+		stmt += fmt.Sprintf("($%d,$%d,$%d),", a1+1, a1+2, a1+3)
+		params = append(params, voting.ConsensusAddress.String(), voting.VotingPower, voting.Height)
 	}
 
 	// Insert the delegators

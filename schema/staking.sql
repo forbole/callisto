@@ -80,7 +80,5 @@ CREATE TABLE validator_voting_power
     consensus_address    TEXT                        NOT NULL REFERENCES validator (consensus_address),
     voting_power        BIGINT                      NOT NULL,
     height                BIGINT                NOT NULL,
-    percentage          decimal                NOT NULL,
-    total_power       BIGINT                  NOT NULL,
     PRIMARY KEY (consensus_address,height)
 );

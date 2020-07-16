@@ -957,7 +957,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVotingPower() {
 			100,
 		),
 	}
-	err := suite.database.SaveVotingPowers(VotingPowers, 3000)
+	err := suite.database.SaveVotingPowers(VotingPowers)
 	suite.Require().NoError(err)
 
 	expected := []dbtypes.ValidatorVotingPowerRow{
@@ -965,15 +965,11 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVotingPower() {
 			Validator1.GetConsAddr().String(),
 			1000,
 			100,
-			3000,
-			1000.0/3000.0,
 		),
 		dbtypes.NewValidatorVotingPowerRow(
 			Validator2.GetConsAddr().String(),
 			2000,
 			100,
-			3000,
-			2000.0/3000.0,
 		),
 	}
 
