@@ -75,7 +75,7 @@ CREATE TABLE validator_commission
     height              BIGINT                      NOT NULL
 );
 
-CREATE TABLE validaot_voting_power
+CREATE TABLE validator_voting_power
 (
     consensus_address    TEXT                        NOT NULL REFERENCES validator (consensus_address),
     voting_power        BIGINT                      NOT NULL,
