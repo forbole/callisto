@@ -36,7 +36,6 @@ func UpdateValidatorVotingPower(cp client.ClientProxy, db database.BigDipperDb) 
 		Str("module", "staking").
 		Str("operation", "uptime").
 		Msg("saving  voting percentage")
-	totalVotingPower = 0
 	var votings []types.ValidatorVotingPower
 	for _, validator := range validators {
 		if found, _ := db.HasValidator(validator.Address.String()); !found {
