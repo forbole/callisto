@@ -456,7 +456,7 @@ func (db BigDipperDb) SaveVotingPowers(votings []types.ValidatorVotingPower, tot
 	for i, voting := range votings {
 		a1 := i * 5 // Starting position for the  query
 		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", a1+1, a1+2, a1+3, a1+4, a1+5)
-		params = append(params, voting.ConsensusAddress, voting.VotingPower, voting.Height, voting.VotingPower/totalVotingPower*100, totalVotingPower)
+		params = append(params, voting.ConsensusAddress.String(), voting.VotingPower, voting.Height, voting.VotingPower/totalVotingPower*100, totalVotingPower)
 	}
 
 	// Insert the delegators
