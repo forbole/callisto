@@ -2,6 +2,7 @@ package operations
 
 import (
 	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/juno/parse/client"
 	"github.com/forbole/bdjuno/database"
@@ -12,7 +13,7 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 )
 
-//this fetch all
+//UpdateValidatorVotingPower fetch all voting power
 func UpdateValidatorVotingPower(cp client.ClientProxy, db database.BigDipperDb) error {
 	log.Debug().
 		Str("module", "staking").

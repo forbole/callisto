@@ -166,7 +166,7 @@ func NewValidatorVotingPower(
 		ConsensusAddress: consensusAddress,
 		VotingPower:      votingPower,
 		Height:           height,
-		}
+	}
 }
 
 //Equals return the equality of two ValidatorVotingPower
@@ -174,4 +174,4 @@ func (v ValidatorVotingPower) Equals(w ValidatorVotingPower) bool {
 	return v.ConsensusAddress.Equals(w.ConsensusAddress) &&
 		v.VotingPower == w.VotingPower &&
 		v.Height == w.Height
-		}
+}

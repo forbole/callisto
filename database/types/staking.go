@@ -395,13 +395,13 @@ func (v ValidatorVotingPowerRow) Equal(w ValidatorVotingPowerRow) bool {
 
 // NewValidatorVotingPowerRow make a new instance of ValidatorVotingPowerRow
 func NewValidatorVotingPowerRow(
-	ConsensusAddress string,
-	VotingPower int64,
-	Height int64,
+	consensusAddress string,
+	votingPower int64,
+	height int64,
 ) ValidatorVotingPowerRow {
 	return ValidatorVotingPowerRow{
-		ConsensusAddress: ConsensusAddress,
-		VotingPower:      VotingPower,
-		Height:           Height,
+		ConsensusAddress: consensusAddress,
+		VotingPower:      votingPower,
+		Height:           height,
 	}
 }
