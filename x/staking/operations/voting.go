@@ -20,7 +20,7 @@ func UpdateValidatorVotingPower(cp client.ClientProxy, db database.BigDipperDb) 
 		Str("operation", " voting percentage").
 		Msg("getting validators  voting percentage")
 
-	// First, the the latest block height
+	// First, get the latest block height
 	var block tmctypes.ResultBlock
 	if err := cp.QueryLCD("/blocks/latest", &block); err != nil {
 		return err
