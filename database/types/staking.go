@@ -393,7 +393,7 @@ func (v ValidatorVotingPowerRow) Equal(w ValidatorVotingPowerRow) bool {
 		v.Height == w.Height
 }
 
-// NewValidatorVotingPowerRow make a new instance of ValidatorVotingPowerRow
+// NewValidatorVotingPowerRow creates a new instance of ValidatorVotingPowerRow
 func NewValidatorVotingPowerRow(
 	consensusAddress string,
 	votingPower int64,
