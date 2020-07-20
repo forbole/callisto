@@ -459,7 +459,7 @@ func (db BigDipperDb) SaveVotingPowers(votings []types.ValidatorVotingPower) err
 		params = append(params, voting.ConsensusAddress.String(), voting.VotingPower, voting.Height)
 	}
 
-	// Insert the delegators
+	// Insert the voting powers
 	stmt = stmt[:len(stmt)-1] // Remove the trailing ","
 	stmt += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(stmt, params...)
