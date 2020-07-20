@@ -156,7 +156,7 @@ type ValidatorVotingPower struct {
 	Height           int64
 }
 
-//NewValidatorVotingPower return a new ValidatorVotingPower
+// NewValidatorVotingPower creates a new ValidatorVotingPower
 func NewValidatorVotingPower(
 	consensusAddress sdk.ConsAddress,
 	votingPower int64,
