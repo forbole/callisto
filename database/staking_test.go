@@ -935,39 +935,39 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSelfDelegation() {
 
 }
 func (suite *DbTestSuite) TestBigDipperDb_SaveVotingPower() {
-	Validator1 := suite.getValidator(
+	validator1 := suite.getValidator(
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
 		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
 	)
-	Validator2 := suite.getValidator(
+	validator2 := suite.getValidator(
 		"cosmosvalcons1qq92t2l4jz5pt67tmts8ptl4p0jhr6utx5xa8y",
 		"cosmosvaloper1000ya26q2cmh399q4c5aaacd9lmmdqp90kw2jn",
 		"cosmosvalconspub1zcjduepqe93asg05nlnj30ej2pe3r8rkeryyuflhtfw3clqjphxn4j3u27msrr63nk",
 	)
-	VotingPowers := []types.ValidatorVotingPower{
+	VvotingPowers := []types.ValidatorVotingPower{
 		types.NewValidatorVotingPower(
-			Validator1.GetConsAddr(),
+			validator1.GetConsAddr(),
 			1000,
 			100,
 		),
 		types.NewValidatorVotingPower(
-			Validator2.GetConsAddr(),
+			validator2.GetConsAddr(),
 			2000,
 			100,
 		),
 	}
-	err := suite.database.SaveVotingPowers(VotingPowers)
+	err := suite.database.SaveVotingPowers(votingPowers)
 	suite.Require().NoError(err)
 
 	expected := []dbtypes.ValidatorVotingPowerRow{
 		dbtypes.NewValidatorVotingPowerRow(
-			Validator1.GetConsAddr().String(),
+			validator1.GetConsAddr().String(),
 			1000,
 			100,
 		),
 		dbtypes.NewValidatorVotingPowerRow(
-			Validator2.GetConsAddr().String(),
+			validator2.GetConsAddr().String(),
 			2000,
 			100,
 		),
