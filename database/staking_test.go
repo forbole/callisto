@@ -945,7 +945,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVotingPower() {
 		"cosmosvaloper1000ya26q2cmh399q4c5aaacd9lmmdqp90kw2jn",
 		"cosmosvalconspub1zcjduepqe93asg05nlnj30ej2pe3r8rkeryyuflhtfw3clqjphxn4j3u27msrr63nk",
 	)
-	VvotingPowers := []types.ValidatorVotingPower{
+	votingPowers := []types.ValidatorVotingPower{
 		types.NewValidatorVotingPower(
 			validator1.GetConsAddr(),
 			1000,
