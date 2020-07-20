@@ -13,7 +13,7 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 )
 
-//UpdateValidatorVotingPower fetch all voting power
+// UpdateValidatorVotingPower fetches and stores into the database all the current validators' voting powers
 func UpdateValidatorVotingPower(cp client.ClientProxy, db database.BigDipperDb) error {
 	log.Debug().
 		Str("module", "staking").
