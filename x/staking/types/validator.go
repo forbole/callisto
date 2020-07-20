@@ -169,7 +169,7 @@ func NewValidatorVotingPower(
 	}
 }
 
-//Equals return the equality of two ValidatorVotingPower
+// Equals tells whether v and w are equals
 func (v ValidatorVotingPower) Equals(w ValidatorVotingPower) bool {
 	return v.ConsensusAddress.Equals(w.ConsensusAddress) &&
 		v.VotingPower == w.VotingPower &&
