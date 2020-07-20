@@ -379,7 +379,7 @@ func NewValidatorDelegationSharesRow(
 	}
 }
 
-//ValidatorVotingPowerRow represent a row in validator_Voting_Power
+// ValidatorVotingPowerRow represent a row inside the validator_voting_power database table
 type ValidatorVotingPowerRow struct {
 	ConsensusAddress string `db:"consensus_address"`
 	VotingPower      int64  `db:"voting_power"`
