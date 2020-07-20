@@ -74,3 +74,11 @@ CREATE TABLE validator_commission
     min_self_delegation decimal                     NOT NULL,
     height              BIGINT                      NOT NULL
 );
+
+CREATE TABLE validator_voting_power
+(
+    consensus_address    TEXT                        NOT NULL REFERENCES validator (consensus_address),
+    voting_power        BIGINT                      NOT NULL,
+    height                BIGINT                NOT NULL,
+    PRIMARY KEY (consensus_address,height)
+);

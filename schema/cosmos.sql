@@ -36,3 +36,4 @@ CREATE TABLE transaction
     signatures JSONB                       NOT NULL DEFAULT '[]'::JSONB,
     memo       TEXT
 );
+

@@ -148,3 +148,30 @@ func (v ValidatorCommission) Equals(w ValidatorCommission) bool {
 }
 
 //--------------------------------------------
+
+// ValidatorVotingPower represents the voting power of a validator at a specific block height
+type ValidatorVotingPower struct {
+	ConsensusAddress sdk.ConsAddress
+	VotingPower      int64
+	Height           int64
+}
+
+// NewValidatorVotingPower creates a new ValidatorVotingPower
+func NewValidatorVotingPower(
+	consensusAddress sdk.ConsAddress,
+	votingPower int64,
+	height int64,
+) ValidatorVotingPower {
+	return ValidatorVotingPower{
+		ConsensusAddress: consensusAddress,
+		VotingPower:      votingPower,
+		Height:           height,
+	}
+}
+
+// Equals tells whether v and w are equals
+func (v ValidatorVotingPower) Equals(w ValidatorVotingPower) bool {
+	return v.ConsensusAddress.Equals(w.ConsensusAddress) &&
+		v.VotingPower == w.VotingPower &&
+		v.Height == w.Height
+}
