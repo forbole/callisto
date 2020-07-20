@@ -447,7 +447,7 @@ func (db BigDipperDb) SaveRedelegations(redelegations []types.Redelegation) erro
 	return err
 }
 
-//SaveVotingPowers save volting power for validators
+// SaveVotingPowers saves the given validator voting powers
 func (db BigDipperDb) SaveVotingPowers(votings []types.ValidatorVotingPower) error {
 
 	stmt := `INSERT INTO validator_voting_power (consensus_address,voting_power,height) VALUES`

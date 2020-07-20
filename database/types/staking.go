@@ -379,21 +379,21 @@ func NewValidatorDelegationSharesRow(
 	}
 }
 
-//ValidatorVotingPowerRow represent a row in validator_Voting_Power
+// ValidatorVotingPowerRow represent a row inside the validator_voting_power database table
 type ValidatorVotingPowerRow struct {
 	ConsensusAddress string `db:"consensus_address"`
 	VotingPower      int64  `db:"voting_power"`
 	Height           int64  `db:"height"`
 }
 
-//Equal determain two validatorDelegation refer as same row
+// Equal determines whether v and w represent the same row
 func (v ValidatorVotingPowerRow) Equal(w ValidatorVotingPowerRow) bool {
 	return v.ConsensusAddress == w.ConsensusAddress &&
 		v.VotingPower == w.VotingPower &&
 		v.Height == w.Height
 }
 
-// NewValidatorVotingPowerRow make a new instance of ValidatorVotingPowerRow
+// NewValidatorVotingPowerRow creates a new instance of ValidatorVotingPowerRow
 func NewValidatorVotingPowerRow(
 	consensusAddress string,
 	votingPower int64,
