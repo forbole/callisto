@@ -386,7 +386,7 @@ type ValidatorVotingPowerRow struct {
 	Height           int64  `db:"height"`
 }
 
-//Equal determain two validatorDelegation refer as same row
+// Equal determines whether v and w represent the same row
 func (v ValidatorVotingPowerRow) Equal(w ValidatorVotingPowerRow) bool {
 	return v.ConsensusAddress == w.ConsensusAddress &&
 		v.VotingPower == w.VotingPower &&
