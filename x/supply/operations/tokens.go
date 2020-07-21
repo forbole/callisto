@@ -7,6 +7,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// UpdateTotalTokenSupply fetch total amount of coins in the system from RPC and store it into database
 func UpdateTotalTokenSupply(cp client.ClientProxy, db database.BigDipperDb) error {
 	log.Debug().
 		Str("module", "staking").
