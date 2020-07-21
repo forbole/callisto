@@ -75,6 +75,5 @@ func SetupModules() {
 	parse.RegisterAdditionalOperation(auth.PeriodicAuthOperations(scheduler))
 	parse.RegisterAdditionalOperation(supply.PeriodicSupplyOperations(scheduler))
 
-
 	scheduler.StartAsync()
 }

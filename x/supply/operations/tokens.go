@@ -24,7 +24,7 @@ func UpdateTotalTokenSupply(cp client.ClientProxy, db database.BigDipperDb) erro
 		return err
 	}
 	// Store the signing infos into the database
-	err=db.SaveSupplyToken(s,
+	err = db.SaveSupplyToken(s,
 		height,
 	)
 	if err != nil {
