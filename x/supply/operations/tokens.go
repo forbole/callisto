@@ -13,12 +13,6 @@ func UpdateTotalTokenSupply(cp client.ClientProxy, db database.BigDipperDb) erro
 		Str("module", "staking").
 		Str("operation", " tokens").
 		Msg("getting total token supply")
-	/*
-		type Supply struct {
-			Total []sdk.Coins `json:"total"`
-		}
-	*/
-	// Second, get the validators
 	var s sdk.Coins
 	height, err := cp.QueryLCDWithHeight("/supply/total", &s)
 	if err != nil {

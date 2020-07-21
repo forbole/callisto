@@ -18,9 +18,9 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTotalTokens() {
 		10,
 	)
 	var rows []dbtypes.TotalSupplyRow
-	err = suite.database.Sqlx.Select(&rows, `SELECT coins,height FROM total_coins`)
+	err = suite.database.Sqlx.Select(&rows, `SELECT coins,height FROM supply`)
 	suite.Require().NoError(err)
-	suite.Require().Len(rows, 1, "total_supply table should contain only one row")
+	suite.Require().Len(rows, 1, "supply table should contain only one row")
 
 	suite.Require().True(expected.Equals(rows[0]))
 
