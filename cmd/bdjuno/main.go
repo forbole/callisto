@@ -14,6 +14,7 @@ import (
 	"github.com/forbole/bdjuno/x/auth"
 	"github.com/forbole/bdjuno/x/bank"
 	"github.com/forbole/bdjuno/x/staking"
+	"github.com/forbole/bdjuno/x/supply"
 	"github.com/go-co-op/gocron"
 )
 
@@ -72,5 +73,7 @@ func SetupModules() {
 	scheduler := gocron.NewScheduler(time.UTC)
 	parse.RegisterAdditionalOperation(staking.PeriodicStakingOperations(scheduler))
 	parse.RegisterAdditionalOperation(auth.PeriodicAuthOperations(scheduler))
+	parse.RegisterAdditionalOperation(supply.PeriodicSupplyOperations(scheduler))
+
 	scheduler.StartAsync()
 }

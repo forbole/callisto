@@ -8,9 +8,9 @@ import (
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/staking/types"
 
+	"github.com/cosmos/cosmos-sdk/client/rpc"
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
-	tmtypes "github.com/tendermint/tendermint/types"
 )
 
 // UpdateValidatorVotingPower fetches and stores into the database all the current validators' voting powers
@@ -26,9 +26,9 @@ func UpdateValidatorVotingPower(cp client.ClientProxy, db database.BigDipperDb) 
 		return err
 	}
 	// Second, get the validators
-	var validators []tmtypes.Validator
-	endpoint := fmt.Sprintf("/validatorsets/latest?height=%d", block.Block.Height)
-	height, err := cp.QueryLCDWithHeight(endpoint, &validators)
+	var validators rpc.ResultValidatorsOutput
+	endpoint := fmt.Sprintf("/validatorsets/%d", block.Block.Height)
+	_, err := cp.QueryLCDWithHeight(endpoint, &validators)
 	if err != nil {
 		return err
 	}
@@ -38,7 +38,7 @@ func UpdateValidatorVotingPower(cp client.ClientProxy, db database.BigDipperDb) 
 		Str("operation", "uptime").
 		Msg("saving  voting percentage")
 	var votings []types.ValidatorVotingPower
-	for _, validator := range validators {
+	for _, validator := range validators.Validators {
 		if found, _ := db.HasValidator(validator.Address.String()); !found {
 			continue
 		}
@@ -49,7 +49,7 @@ func UpdateValidatorVotingPower(cp client.ClientProxy, db database.BigDipperDb) 
 		votings = append(votings, types.NewValidatorVotingPower(
 			consAddress,
 			validator.VotingPower,
-			height,
+			block.Block.Height,
 		))
 	}
 
