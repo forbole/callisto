@@ -1,25 +1,21 @@
 package types
 
-/*
-import (
-	"time"
-)
-
-// SupplyPoolRow represents a single row inside the staking_pool table
-type StakingPoolRow struct {
-	BondedTokens    int64     `db:"bonded_tokens"`
-	NotBondedTokens int64     `db:"not_bonded_tokens"`
-	Height          int64     `db:"height"`
-	Timestamp       time.Time `db:"timestamp"`
+// NewTotalSupplyRow represents a single row inside the total_supply table
+type TotalSupplyRow struct {
+	Coins     *DbCoins  `db:"coins"`
+	Height    int64     `db:"height"`
 }
 
-// NewStakingPoolRow allows to easily create a new StakingPoolRow
-func NewStakingPoolRow(bondedTokens, notBondedTokens int64, height int64, timestamp time.Time) StakingPoolRow {
-	return StakingPoolRow{
-		BondedTokens:    bondedTokens,
-		NotBondedTokens: notBondedTokens,
-		Height:          height,
-		Timestamp:       timestamp,
+// NewTotalSupplyRow allows to easily create a new NewTotalSupplyRow
+func NewTotalSupplyRow(coins DbCoins, height int64) TotalSupplyRow {
+	return TotalSupplyRow{
+		Coins:&coins,
+		Height:height,
 	}
 }
-*/
+
+// Equals return true if one totalSupplyRow representing the same row as the original one
+func (v TotalSupplyRow) Equals (w TotalSupplyRow) bool{
+	return v.Coins.Equal(w.Coins)&&
+	v.Height == w.Height
+}
