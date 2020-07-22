@@ -7,7 +7,7 @@ import (
 	"github.com/desmos-labs/juno/parse"
 	"github.com/desmos-labs/juno/parse/client"
 	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/x/supply/operations"
+	"github.com/forbole/bdjuno/x/distribution/operations"
 	"github.com/forbole/bdjuno/x/utils"
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
