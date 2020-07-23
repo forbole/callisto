@@ -447,7 +447,29 @@ func (db BigDipperDb) SaveRedelegations(redelegations []types.Redelegation) erro
 	return err
 }
 
-//SaveDelegationsShare sve an array of delegation share
+// SaveVotingPowers saves the given validator voting powers
+func (db BigDipperDb) SaveVotingPowers(votings []types.ValidatorVotingPower) error {
+
+	stmt := `INSERT INTO validator_voting_power (consensus_address,voting_power,height) VALUES`
+	var params []interface{}
+
+	for i, voting := range votings {
+		a1 := i * 3 // Starting position for the  query
+		stmt += fmt.Sprintf("($%d,$%d,$%d),", a1+1, a1+2, a1+3)
+		params = append(params, voting.ConsensusAddress.String(), voting.VotingPower, voting.Height)
+	}
+
+	// Insert the voting powers
+	stmt = stmt[:len(stmt)-1] // Remove the trailing ","
+	stmt += " ON CONFLICT DO NOTHING"
+	_, err := db.Sql.Exec(stmt, params...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+//SaveDelegationsShares save an array of delegation share
 func (db BigDipperDb) SaveDelegationsShares(shares []types.DelegationShare) error {
 	stmt := `INSERT INTO validator_delegation_shares (operator_address ,delegator_address,shares,height,timestamp) VALUES`
 	var delegationShareParam []interface{}

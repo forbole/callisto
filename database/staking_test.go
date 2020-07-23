@@ -934,3 +934,51 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSelfDelegation() {
 	}
 
 }
+func (suite *DbTestSuite) TestBigDipperDb_SaveVotingPower() {
+	validator1 := suite.getValidator(
+		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
+		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
+		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
+	)
+	validator2 := suite.getValidator(
+		"cosmosvalcons1qq92t2l4jz5pt67tmts8ptl4p0jhr6utx5xa8y",
+		"cosmosvaloper1000ya26q2cmh399q4c5aaacd9lmmdqp90kw2jn",
+		"cosmosvalconspub1zcjduepqe93asg05nlnj30ej2pe3r8rkeryyuflhtfw3clqjphxn4j3u27msrr63nk",
+	)
+	votingPowers := []types.ValidatorVotingPower{
+		types.NewValidatorVotingPower(
+			validator1.GetConsAddr(),
+			1000,
+			100,
+		),
+		types.NewValidatorVotingPower(
+			validator2.GetConsAddr(),
+			2000,
+			100,
+		),
+	}
+	err := suite.database.SaveVotingPowers(votingPowers)
+	suite.Require().NoError(err)
+
+	expected := []dbtypes.ValidatorVotingPowerRow{
+		dbtypes.NewValidatorVotingPowerRow(
+			validator1.GetConsAddr().String(),
+			1000,
+			100,
+		),
+		dbtypes.NewValidatorVotingPowerRow(
+			validator2.GetConsAddr().String(),
+			2000,
+			100,
+		),
+	}
+
+	var result []dbtypes.ValidatorVotingPowerRow
+	err = suite.database.Sqlx.Select(&result, "SELECT * FROM validator_voting_power")
+	suite.Require().NoError(err)
+
+	for index, row := range result {
+		suite.Require().True(row.Equal(expected[index]))
+	}
+
+}
