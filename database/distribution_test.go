@@ -6,9 +6,7 @@ import (
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveCommunityPool() {
-	coins := sdk.NewDecCoins(
-		sdk.NewDecCoin("uatom", sdk.NewInt(100)),
-	)
+	coins := sdk.NewDecCoins(sdk.NewDecCoin("uatom", sdk.NewInt(100)))
 	err := suite.database.SaveCommunityPool(coins, 10)
 	suite.Require().NoError(err)
 
