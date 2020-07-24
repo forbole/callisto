@@ -1,6 +1,7 @@
 package database_test
 
 import (
+	"strconv"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -489,13 +490,13 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommission() {
 	)
 
 	var height int64 = 1000
-	var commissionRate int64 = 10
+	var commissionRate float64 = 0.011
 	var minSelfDelegation int64 = 12
 
 	timestamp, err := time.Parse(time.RFC3339, "2020-01-01T10:00:00Z")
 	suite.Require().NoError(err)
 
-	commission := types.NewValidatorCommission(validator.GetOperator(), commissionRate, minSelfDelegation, height, timestamp)
+	commission := types.NewValidatorCommission(validator.GetOperator(), strconv.FormatFloat(commissionRate, 'f', 6, 64), minSelfDelegation, height, timestamp)
 
 	err = suite.database.SaveEditCommission(commission)
 	//get back commission
@@ -529,8 +530,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommissions() {
 	suite.Require().NoError(err)
 
 	commissions := []types.ValidatorCommission{
-		types.NewValidatorCommission(validator1.GetOperator(), 10, 30, 0, timestamp),
-		types.NewValidatorCommission(validator2.GetOperator(), 20, 40, 0, timestamp),
+		types.NewValidatorCommission(validator1.GetOperator(), "0.01", 30, 0, timestamp),
+		types.NewValidatorCommission(validator2.GetOperator(), "0.02", 40, 0, timestamp),
 	}
 
 	err = suite.database.SaveValidatorCommissions(commissions)
@@ -538,10 +539,10 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommissions() {
 
 	expected := []dbtypes.ValidatorCommission{
 		dbtypes.NewValidatorCommission(
-			validator1.GetOperator().String(), 10, 30, 0, timestamp,
+			validator1.GetOperator().String(), 0.01, 30, 0, timestamp,
 		),
 		dbtypes.NewValidatorCommission(
-			validator2.GetOperator().String(), 20, 40, 0, timestamp,
+			validator2.GetOperator().String(), 0.02, 40, 0, timestamp,
 		),
 	}
 
@@ -889,14 +890,14 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSelfDelegation() {
 			//self delegation
 			validator1.GetOperator(),
 			delegator1,
-			1000,
+			"1000.00001",
 			1000,
 			timestamp1,
 		),
 		types.NewDelegationShare(
 			validator1.GetOperator(),
 			delegator2,
-			1000,
+			"1000.0002",
 			1000,
 			timestamp1,
 		),
@@ -911,14 +912,14 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSelfDelegation() {
 			//self delegation
 			validator1.GetOperator().String(),
 			delegator1.String(),
-			1000,
+			1000.00001,
 			timestamp1,
 			1000,
 		),
 		dbtypes.NewValidatorDelegationSharesRow(
 			validator1.GetOperator().String(),
 			delegator2.String(),
-			1000,
+			1000.0002,
 			timestamp1,
 			1000,
 		),

@@ -58,7 +58,7 @@ func saveDelegatorsShares(
 		delegationsShares = append(delegationsShares, types.NewDelegationShare(
 			delegation.GetValidatorAddr(),
 			delegation.GetDelegatorAddr(),
-			delegation.Shares.Int64(),
+			delegation.Shares.String(),
 			height,
 			timestamp,
 		))

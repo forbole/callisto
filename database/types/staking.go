@@ -319,7 +319,7 @@ func (v ValidatorReDelegationRow) Equal(w ValidatorReDelegationRow) bool {
 type ValidatorCommission struct {
 	ValidatorAddress  string    `db:"validator_address"`
 	Timestamp         time.Time `db:"timestamp"`
-	Commission        int64     `db:"commission"`
+	Commission        float64   `db:"commission"`
 	MinSelfDelegation int64     `db:"min_self_delegation"`
 	Height            int64     `db:"height"`
 }
@@ -327,7 +327,7 @@ type ValidatorCommission struct {
 // NewValidatorCommission allows to easily build a new
 // ValidatorCommission instance
 func NewValidatorCommission(
-	validatorAddress string, commission int64, minSelfDelegation int64, height int64, timestamp time.Time,
+	validatorAddress string, commission float64, minSelfDelegation int64, height int64, timestamp time.Time,
 ) ValidatorCommission {
 	return ValidatorCommission{
 		ValidatorAddress:  validatorAddress,
@@ -351,7 +351,7 @@ func (v ValidatorCommission) Equal(w ValidatorCommission) bool {
 type ValidatorDelegationSharesRow struct {
 	OperatorAddress  string    `db:"operator_address"`
 	DelegatorAddress string    `db:"delegator_address"`
-	Shares           int64     `db:"shares"`
+	Shares           float64   `db:"shares"`
 	Timestamp        time.Time `db:"timestamp"`
 	Height           int64     `db:"height"`
 }
@@ -367,7 +367,7 @@ func (v ValidatorDelegationSharesRow) Equal(w ValidatorDelegationSharesRow) bool
 
 // NewValidatorDelegationSharesRow make a new instance of ValidatorDelegationSharesRow
 func NewValidatorDelegationSharesRow(
-	operatorAddress string, delegatorAddress string, shares int64,
+	operatorAddress string, delegatorAddress string, shares float64,
 	timestamp time.Time, height int64,
 ) ValidatorDelegationSharesRow {
 	return ValidatorDelegationSharesRow{

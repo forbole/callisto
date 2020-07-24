@@ -90,14 +90,14 @@ func NewRedelegation(
 type DelegationShare struct {
 	ValidatorAddress sdk.ValAddress
 	DelegatorAddress sdk.AccAddress
-	Shares           int64
+	Shares           string
 	Height           int64
 	Timestamp        time.Time
 }
 
 //NewDelegationShare get a new instance of modifly self Delegation
 func NewDelegationShare(
-	validatorAddress sdk.ValAddress, delegatorAddress sdk.AccAddress, shares int64,
+	validatorAddress sdk.ValAddress, delegatorAddress sdk.AccAddress, shares string,
 	height int64, timestamp time.Time,
 ) DelegationShare {
 	return DelegationShare{

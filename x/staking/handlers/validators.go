@@ -35,7 +35,7 @@ func HandleEditValidator(msg stakingtypes.MsgEditValidator, tx jtypes.Tx, db dat
 	if err != nil {
 		return err
 	}
-	db.SaveEditCommission(types.NewValidatorCommission(msg.ValidatorAddress, msg.CommissionRate.Int64(),
+	db.SaveEditCommission(types.NewValidatorCommission(msg.ValidatorAddress, msg.CommissionRate.String(),
 		msg.MinSelfDelegation.Int64(), tx.Height, timestamp))
 
 	db.UpdateValidatorInfo(types.NewValidator(validatorinfo.GetConsAddr(), validatorinfo.GetOperator(), validatorinfo.GetConsPubKey(), msg.Description, sdktypes.AccAddress(validatorinfo.GetOperator())))

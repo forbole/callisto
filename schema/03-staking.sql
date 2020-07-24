@@ -60,7 +60,7 @@ CREATE TABLE validator_delegation_shares
 (
     operator_address  TEXT                        NOT NULL REFERENCES validator_info (operator_address),
     delegator_address TEXT                        NOT NULL REFERENCES account (address),
-    shares            DECIMAL                     NOT NUll,
+    shares            NUMERIC                     NOT NUll,
     height            BIGINT                      NOT NULL,
     timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     PRIMARY KEY (operator_address, delegator_address, height)
@@ -70,7 +70,7 @@ CREATE TABLE validator_commission
 (
     validator_address   CHARACTER VARYING(52)       NOT NULL,
     timestamp           TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    commission          decimal                     NOT NULL,
+    commission          NUMERIC                     NOT NULL,
     min_self_delegation decimal                     NOT NULL,
     height              BIGINT                      NOT NULL
 );

@@ -78,7 +78,7 @@ func saveValidatorsCommissions(
 	for index, account := range validators {
 		accounts[index] = types.NewValidatorCommission(
 			account.OperatorAddress,
-			account.Commission.Rate.Int64(),
+			account.Commission.Rate.String(),
 			account.MinSelfDelegation.Int64(),
 			0, genesisDoc.GenesisTime,
 		)
@@ -111,7 +111,7 @@ func saveDelegations(genState staking.GenesisState, genesisDoc *tmtypes.GenesisD
 			delegationShares = append(delegationShares, types.NewDelegationShare(
 				validator.OperatorAddress,
 				delegation.DelegatorAddress,
-				delegation.Shares.Int64(),
+				delegation.Shares.String(),
 				0,
 				genesisDoc.GenesisTime,
 			))
