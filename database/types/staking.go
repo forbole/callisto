@@ -351,7 +351,7 @@ func (v ValidatorCommission) Equal(w ValidatorCommission) bool {
 type ValidatorDelegationSharesRow struct {
 	OperatorAddress  string    `db:"operator_address"`
 	DelegatorAddress string    `db:"delegator_address"`
-	Shares           int64     `db:"shares"`
+	Shares           float64   `db:"shares"`
 	Timestamp        time.Time `db:"timestamp"`
 	Height           int64     `db:"height"`
 }
@@ -367,7 +367,7 @@ func (v ValidatorDelegationSharesRow) Equal(w ValidatorDelegationSharesRow) bool
 
 // NewValidatorDelegationSharesRow make a new instance of ValidatorDelegationSharesRow
 func NewValidatorDelegationSharesRow(
-	operatorAddress string, delegatorAddress string, shares int64,
+	operatorAddress string, delegatorAddress string, shares float64,
 	timestamp time.Time, height int64,
 ) ValidatorDelegationSharesRow {
 	return ValidatorDelegationSharesRow{

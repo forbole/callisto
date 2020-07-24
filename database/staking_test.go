@@ -890,14 +890,14 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSelfDelegation() {
 			//self delegation
 			validator1.GetOperator(),
 			delegator1,
-			1000,
+			"1000.00001",
 			1000,
 			timestamp1,
 		),
 		types.NewDelegationShare(
 			validator1.GetOperator(),
 			delegator2,
-			1000,
+			"1000.0002",
 			1000,
 			timestamp1,
 		),
@@ -912,14 +912,14 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSelfDelegation() {
 			//self delegation
 			validator1.GetOperator().String(),
 			delegator1.String(),
-			1000,
+			1000.00001,
 			timestamp1,
 			1000,
 		),
 		dbtypes.NewValidatorDelegationSharesRow(
 			validator1.GetOperator().String(),
 			delegator2.String(),
-			1000,
+			1000.0002,
 			timestamp1,
 			1000,
 		),

@@ -111,7 +111,7 @@ func saveDelegations(genState staking.GenesisState, genesisDoc *tmtypes.GenesisD
 			delegationShares = append(delegationShares, types.NewDelegationShare(
 				validator.OperatorAddress,
 				delegation.DelegatorAddress,
-				delegation.Shares.Int64(),
+				delegation.Shares.String(),
 				0,
 				genesisDoc.GenesisTime,
 			))
