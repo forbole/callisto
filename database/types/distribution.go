@@ -3,7 +3,7 @@ package types
 // NewCommunityPoolRow represents a single row inside the total_supply table
 type CommunityPoolRow struct {
 	Coins  *DbDecCoins `db:"coins"`
-	Height int64    `db:"height"`
+	Height int64       `db:"height"`
 }
 
 // NewCommunityPoolRow allows to easily create a new NewCommunityPoolRow

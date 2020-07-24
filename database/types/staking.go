@@ -319,7 +319,7 @@ func (v ValidatorReDelegationRow) Equal(w ValidatorReDelegationRow) bool {
 type ValidatorCommission struct {
 	ValidatorAddress  string    `db:"validator_address"`
 	Timestamp         time.Time `db:"timestamp"`
-	Commission        int64     `db:"commission"`
+	Commission        float64     `db:"commission"`
 	MinSelfDelegation int64     `db:"min_self_delegation"`
 	Height            int64     `db:"height"`
 }
@@ -327,7 +327,7 @@ type ValidatorCommission struct {
 // NewValidatorCommission allows to easily build a new
 // ValidatorCommission instance
 func NewValidatorCommission(
-	validatorAddress string, commission int64, minSelfDelegation int64, height int64, timestamp time.Time,
+	validatorAddress string, commission float64, minSelfDelegation int64, height int64, timestamp time.Time,
 ) ValidatorCommission {
 	return ValidatorCommission{
 		ValidatorAddress:  validatorAddress,

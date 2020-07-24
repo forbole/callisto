@@ -25,6 +25,6 @@ func UpdateCommunityPool(cp client.ClientProxy, db database.BigDipperDb) error {
 	if err != nil {
 		return err
 	}
-	
+
 	return nil
 }
