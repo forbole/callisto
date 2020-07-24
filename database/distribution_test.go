@@ -12,10 +12,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveCommunityPool() {
 	err := suite.database.SaveCommunityPool(coins, 10)
 	suite.Require().NoError(err)
 
-	expected := dbtypes.NewCommunityPoolRow(
-		dbtypes.NewDbDecCoins(coins),
-		10,
-	)
+	expected := dbtypes.NewCommunityPoolRow(dbtypes.NewDbDecCoins(coins), 10)
 	var rows []dbtypes.CommunityPoolRow
 	err = suite.database.Sqlx.Select(&rows, `SELECT coins,height FROM community_pool`)
 	suite.Require().NoError(err)
