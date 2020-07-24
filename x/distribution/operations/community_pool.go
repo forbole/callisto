@@ -10,10 +10,10 @@ import (
 // UpdateCommunityPool fetch total amount of coins in the system from RPC and store it into database
 func UpdateCommunityPool(cp client.ClientProxy, db database.BigDipperDb) error {
 	log.Debug().
-		Str("module", "staking").
-		Str("operation", " tokens").
-		Msg("getting total token supply")
-	var s sdk.Coins
+		Str("module", "distribution").
+		Str("operation", " community pool").
+		Msg("getting community pool power")
+	var s sdk.DecCoins
 	height, err := cp.QueryLCDWithHeight("/distribution/community_pool", &s)
 	if err != nil {
 		return err
@@ -25,5 +25,6 @@ func UpdateCommunityPool(cp client.ClientProxy, db database.BigDipperDb) error {
 	if err != nil {
 		return err
 	}
+	
 	return nil
 }
