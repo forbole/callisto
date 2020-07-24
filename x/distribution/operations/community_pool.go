@@ -11,7 +11,7 @@ import (
 func UpdateCommunityPool(cp client.ClientProxy, db database.BigDipperDb) error {
 	log.Debug().
 		Str("module", "distribution").
-		Str("operation", " community pool").
+		Str("operation", "community pool").
 		Msg("getting community pool")
 	var s sdk.DecCoins
 	height, err := cp.QueryLCDWithHeight("/distribution/community_pool", &s)
