@@ -1,8 +1,9 @@
 package database_test
 
 import (
-	"time"
 	"strconv"
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	dbtypes "github.com/forbole/bdjuno/database/types"

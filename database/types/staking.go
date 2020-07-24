@@ -319,7 +319,7 @@ func (v ValidatorReDelegationRow) Equal(w ValidatorReDelegationRow) bool {
 type ValidatorCommission struct {
 	ValidatorAddress  string    `db:"validator_address"`
 	Timestamp         time.Time `db:"timestamp"`
-	Commission        float64     `db:"commission"`
+	Commission        float64   `db:"commission"`
 	MinSelfDelegation int64     `db:"min_self_delegation"`
 	Height            int64     `db:"height"`
 }
