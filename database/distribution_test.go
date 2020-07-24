@@ -5,7 +5,7 @@ import (
 	dbtypes "github.com/forbole/bdjuno/database/types"
 )
 
-func (suite *DbTestSuite) TestBigDipperDb_SaveTotalTokens() {
+func (suite *DbTestSuite) TestBigDipperDb_SaveCommunityPool() {
 	coins := sdk.NewDecCoins(
 		sdk.NewDecCoin("uatom", sdk.NewInt(100)),
 	)
