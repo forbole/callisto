@@ -19,9 +19,7 @@ func UpdateCommunityPool(cp client.ClientProxy, db database.BigDipperDb) error {
 		return err
 	}
 	// Store the signing infos into the database
-	err = db.SaveCommunityPool(s,
-		height,
-	)
+	err = db.SaveCommunityPool(s, height)
 	if err != nil {
 		return err
 	}
