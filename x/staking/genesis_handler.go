@@ -78,7 +78,7 @@ func saveValidatorsCommissions(
 	for index, account := range validators {
 		accounts[index] = types.NewValidatorCommission(
 			account.OperatorAddress,
-			account.Commission.Rate.Int64(),
+			account.Commission.Rate.String(),
 			account.MinSelfDelegation.Int64(),
 			0, genesisDoc.GenesisTime,
 		)
