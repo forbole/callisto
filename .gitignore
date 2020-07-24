@@ -6,4 +6,4 @@ build/
 *.json
 
 # coverage
-coverage.out
+coverage.*
