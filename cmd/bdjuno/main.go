@@ -13,6 +13,7 @@ import (
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/auth"
 	"github.com/forbole/bdjuno/x/bank"
+	"github.com/forbole/bdjuno/x/coingecko"
 	"github.com/forbole/bdjuno/x/consensus"
 	"github.com/forbole/bdjuno/x/distribution"
 	"github.com/forbole/bdjuno/x/staking"
@@ -80,6 +81,7 @@ func SetupModules() {
 	parse.RegisterAdditionalOperation(auth.PeriodicAuthOperations(scheduler))
 	parse.RegisterAdditionalOperation(supply.PeriodicSupplyOperations(scheduler))
 	parse.RegisterAdditionalOperation(distribution.PeriodicDistributionOperations(scheduler))
+	parse.RegisterAdditionalOperation(coingecko.PeriodicCoinGeckoOperations(scheduler))
 
 	scheduler.StartAsync()
 }
