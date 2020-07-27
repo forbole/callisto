@@ -8,7 +8,7 @@ import(
 	"io/ioutil"
 )
 
-func QueryCoinGeckoReqBody(endpoint string,ptr []interface{})error{
+func QueryCoinGecko(endpoint string,ptr []interface{})error{
 	url:="https://api.coingecko.com/api/v3/"
 	resp, err := http.Get(fmt.Sprintf("%s/%s", url, endpoint))
 	if err != nil {
