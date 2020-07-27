@@ -16,3 +16,17 @@ func (db BigDipperDb) SaveSupplyToken(coins sdk.Coins, height int64) error {
 	}
 	return nil
 }
+
+//GetTokenNames get names of the tokens that exist at the latest height
+func (db BigDipperDb) GetTokenNames()([]string, error){
+	var names []string
+	query :=`select (coin).denom from (
+        select unnest(coins) as coin from supply where height = (
+            select max(height) from supply
+            ) 
+		) as unnested`
+	if err := db.Sqlx.Select(&names,query);err!=nil{
+		return nil,err
+	}
+	return names,nil
+}

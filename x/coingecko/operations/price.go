@@ -21,6 +21,27 @@ func UpdatePrice(cp client.ClientProxy, db database.BigDipperDb) error {
 		return err
 	}
 
+	names,err:=db.GetTokenNames()
+	if err!=nil{
+		return err
+	}
+
+	//requiredCoin point out index that storing the coin we want in coins
+	var requiredCoin []int
+	//find the id of the coins
+	for index,coin := range(coins){
+		for _,name := range(names){
+			if coin.Name==name{
+				requiredCoin=append(requiredCoin,index)
+				break //not nesserary to do other check name
+			}
+		}
+		//to check if we find all the coin, then stop
+		if len(names)==len(requiredCoin){
+			break
+		}
+	}
+
 	
 	/*
 		var s sdk.Coins
