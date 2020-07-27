@@ -6,9 +6,8 @@ import (
 	"github.com/desmos-labs/juno/parse/client"
 	"github.com/forbole/bdjuno/database"
 	"github.com/rs/zerolog/log"
-	"github.com/forbole/bdjuno/coingecko"
-	"github.com/forbole/bdjuno/coingecko/apiTypes"
-
+	api "github.com/forbole/bdjuno/x/coingecko/apiTypes"
+	"github.com/forbole/bdjuno/x/utils"
 )
 
 // UpdatePrice fetch total amount of coins in the system from RPC and store it into database
@@ -19,8 +18,8 @@ func UpdatePrice(cp client.ClientProxy, db database.BigDipperDb) error {
 		Msg("getting token price and market cap")
 
 	//get token name	
-	type coins []apiTypes.Coin
-	if err :=coingecko.GetCoinGeckoReqBody("/coin/list",&coins);err!=nil{
+	type coins []api.Coin
+	if err :=utils.GetCoinGeckoReqBody("/coin/list",&coins);err!=nil{
 		return err
 	}
 
