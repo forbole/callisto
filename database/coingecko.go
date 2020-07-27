@@ -1,16 +1,23 @@
 package database
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	dbtypes "github.com/forbole/bdjuno/database/types"
 	"github.com/lib/pq"
+	"fmt"
+	api "github.com/forbole/bdjuno/x/coingecko/apiTypes"
 )
 
-// SaveSupplyTokenPool allows to save for the given height the given total amount of coins
-func (db BigDipperDb) SaveTokenPrice(coins sdk.Coins, height int64) error {
-	query := `INSERT INTO token_values(denom,price,market_cap,height) VALUES ($1,$2)`
-
-	_, err := db.Sql.Exec(query, pq.Array(dbtypes.NewDbCoins(coins)), height)
+// SaveTokensPrice allows to save for the given height the given total amount of coins
+func (db BigDipperDb) SaveTokensPrice(markets api.Markets, height int64) error {
+	query := `INSERT INTO token_values(denom,market_price,market_cap,height) VALUES`
+	var param []interface{}
+	for i, market := range markets {
+		vi := i * 4
+		query += fmt.Sprintf("($%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4)
+		param = append(param,market.Id,market.CurrentPrice,market.MarketCap)
+	}
+	query = query[:len(query)-1] // Remove trailing ","
+	_, err := db.Sql.Exec(query, param...)
 	if err != nil {
 		return err
 	}
