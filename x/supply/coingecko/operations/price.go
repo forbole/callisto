@@ -17,7 +17,7 @@ func UpdatePrice(cp client.ClientProxy, db database.BigDipperDb) error {
 		Str("operation", "coingecko").
 		Msg("getting token price and market cap")
 
-	//get token names
+	//get ids name referring in coingecko that watches in supply modules
 	var coins api.Coins
 	if err := utils.QueryCoinGecko("/coins/list", &coins); err != nil {
 		return err
@@ -26,9 +26,8 @@ func UpdatePrice(cp client.ClientProxy, db database.BigDipperDb) error {
 	if err != nil {
 		return err
 	}
-	//requiredCoin point out index that storing the coin we want in coins
 	var ids string
-	hitcount := 0
+	hitcount := 0 //to stop unnesery checking
 	//find the id of the coins
 	for _, coin := range coins {
 		for _, name := range names {
@@ -48,7 +47,6 @@ func UpdatePrice(cp client.ClientProxy, db database.BigDipperDb) error {
 	if err != nil {
 		return err
 	}
-
 
 	//query
 	var markets api.Markets
