@@ -2,10 +2,10 @@ package types
 
 // TokenPriceRow represent a row of the table tokenprice in the database
 type TokenPriceRow struct {
-	Denom        string
-	Currentprice float64
-	Marketcap    int64
-	Height       int64
+	Denom        string  `db:"denom"`
+	Currentprice float64 `db:"current_price"`
+	Marketcap    int64   `db:"market_cap"`
+	Height       int64   `db:"height"`
 }
 
 // NewTokenPriceRow allows to easily create a new NewTokenPriceRow
