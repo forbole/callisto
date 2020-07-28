@@ -31,7 +31,7 @@ func (db BigDipperDb) GetTokenNames() ([]string, error) {
 	return names, nil
 }
 
-//return the last latest height(has 30 second latency)
+//return the latest height(has 30 second latency because depend on supply module)
 func (db BigDipperDb) GetLatestHeight() (int64, error) {
 	var height []int64
 	query := `select max(height) FROM supply`
