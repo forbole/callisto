@@ -1,6 +1,8 @@
 package coingecko
 
 import (
+	"fmt"
+
 	"github.com/desmos-labs/juno/parse/client"
 	"github.com/forbole/bdjuno/database"
 	api "github.com/forbole/bdjuno/x/coingecko/apiTypes"
@@ -20,29 +22,45 @@ func UpdatePrice(cp client.ClientProxy, db database.BigDipperDb) error {
 	if err := utils.QueryCoinGecko("/coins/list", &coins); err != nil {
 		return err
 	}
-
-	names,err:=db.GetTokenNames()
-	if err!=nil{
+	names, err := db.GetTokenNames()
+	if err != nil {
 		return err
 	}
-
 	//requiredCoin point out index that storing the coin we want in coins
-	var requiredCoin []int
+	var ids string
+	hitcount := 0
 	//find the id of the coins
-	for index,coin := range(coins){
-		for _,name := range(names){
-			if coin.Name==name{
-				requiredCoin=append(requiredCoin,index)
+	for _, coin := range coins {
+		for _, name := range names {
+			if coin.Name == name {
+				ids += ids + coin.Id + "&"
+				hitcount++
 				break //not nesserary to do other check name
 			}
 		}
-		//to check if we find all the coin, then stop
-		if len(names)==len(requiredCoin){
+		if hitcount == len(names) {
 			break
 		}
 	}
+	ids = ids[:len(ids)-1] //get rid of tail "&"
 
-	
+	height, err := db.GetLatestHeight()
+	if err != nil {
+		return err
+	}
+
+
+	//query
+	var markets api.Markets
+	query := fmt.Sprintf("/coins/markets?vs_currency=usd&ids=%s", ids)
+	if err = utils.QueryCoinGecko(query, &markets); err != nil {
+		return err
+	}
+
+	if err = db.SaveTokensPrice(markets, height); err != nil {
+		return err
+	}
+
 	/*
 		var s sdk.Coins
 		height, err := cp.QueryLCDWithHeight("/supply/total", &s)
