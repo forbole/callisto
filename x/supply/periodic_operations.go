@@ -30,6 +30,11 @@ func PeriodicSupplyOperations(scheduler *gocron.Scheduler) parse.AdditionalOpera
 		}); err != nil {
 			return err
 		}
+		if _, err := scheduler.Every(30).Second().StartImmediately().Do(func() {
+			utils.WatchMethod(func() error { return operations.UpdatePrice(cp, bdDatabase) })
+		}); err != nil {
+			return err
+		}
 		return nil
 	}
 }

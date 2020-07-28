@@ -1,11 +1,11 @@
-package coingecko
+package operations
 
 import (
 	"fmt"
 
 	"github.com/desmos-labs/juno/parse/client"
 	"github.com/forbole/bdjuno/database"
-	api "github.com/forbole/bdjuno/x/coingecko/apiTypes"
+	api "github.com/forbole/bdjuno/x/supply/coinGeckoTypes"
 	"github.com/forbole/bdjuno/x/utils"
 	"github.com/rs/zerolog/log"
 )

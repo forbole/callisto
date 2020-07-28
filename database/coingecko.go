@@ -3,7 +3,7 @@ package database
 import (
 	"fmt"
 
-	api "github.com/forbole/bdjuno/x/coingecko/apiTypes"
+	api "github.com/forbole/bdjuno/x/supply/coinGeckoTypes"
 )
 
 // SaveTokensPrice allows to save for the given height the given total amount of coins
