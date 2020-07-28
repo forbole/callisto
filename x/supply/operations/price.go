@@ -32,7 +32,7 @@ func UpdatePrice(cp client.ClientProxy, db database.BigDipperDb) error {
 	for _, coin := range coins {
 		for _, name := range names {
 			if coin.Name == name {
-				ids += ids + coin.Id + "&"
+				ids += ids + coin.ID + "&"
 				hitcount++
 				break //not nesserary to do other check name
 			}

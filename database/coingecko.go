@@ -13,7 +13,7 @@ func (db BigDipperDb) SaveTokensPrice(markets api.Markets, height int64) error {
 	for i, market := range markets {
 		vi := i * 4
 		query += fmt.Sprintf("($%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4)
-		param = append(param, market.Id, market.CurrentPrice, market.MarketCap, height)
+		param = append(param, market.ID, market.CurrentPrice, market.MarketCap, height)
 	}
 	query = query[:len(query)-1] // Remove trailing ","
 	_, err := db.Sql.Exec(query, param...)

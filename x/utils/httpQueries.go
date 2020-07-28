@@ -8,8 +8,8 @@ import (
 	"net/http"
 )
 
-//queryFromApi is generic function that can query every api and endpoint
-func queryFromApi(url string, endpoint string, ptr interface{}) error {
+//queryFromAPI is generic function that can query every api and endpoint
+func queryFromAPI(url string, endpoint string, ptr interface{}) error {
 	resp, err := http.Get(fmt.Sprintf("%s/%s", url, endpoint))
 	if err != nil {
 		return err
@@ -33,7 +33,7 @@ func queryFromApi(url string, endpoint string, ptr interface{}) error {
 // QueryCoinGecko can query endpoint from coingecko
 func QueryCoinGecko(endpoint string, ptr interface{}) error {
 	url := "https://api.coingecko.com/api/v3"
-	if err := queryFromApi(url, endpoint, ptr); err != nil {
+	if err := queryFromAPI(url, endpoint, ptr); err != nil {
 		return err
 	}
 	return nil

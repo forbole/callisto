@@ -2,7 +2,7 @@ package coingecko
 
 // Coin this represent coingecko api's coins/list attributes
 type Coin struct {
-	Id     string `json:"id"`
+	ID     string `json:"id"`
 	Symbol string `json:"symbol"`
 	Name   string `json:"name"`
 }
@@ -10,7 +10,7 @@ type Coin struct {
 // NewCoin return a new coingecko coin instance
 func NewCoin(id string, symbol string, name string) Coin {
 	return Coin{
-		Id:     id,
+		ID:     id,
 		Symbol: symbol,
 		Name:   name,
 	}
@@ -23,7 +23,7 @@ type Coins []Coin
 
 // Market represent some of the attributes in coingecko api's coins/market
 type Market struct {
-	Id           string  `json:"id"`
+	ID           string  `json:"id"`
 	CurrentPrice float64 `json:"current_price"`
 	MarketCap    int64   `json:"market_cap"`
 }
@@ -31,7 +31,7 @@ type Market struct {
 // NewMarket return an instance of Market
 func NewMarket(id string, currentPrice float64, marketCap int64) Market {
 	return Market{
-		Id:           id,
+		ID:           id,
 		CurrentPrice: currentPrice,
 		MarketCap:    marketCap,
 	}
