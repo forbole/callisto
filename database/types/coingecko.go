@@ -1,6 +1,6 @@
 package types
 
-// TokenPriceRow represent a row of the table token_price in the database 
+// TokenPriceRow represent a row of the table token_price in the database
 type TokenPriceRow struct {
 	Denom         string
 	Current_price float64

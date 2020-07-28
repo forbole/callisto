@@ -4,7 +4,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	dbtypes "github.com/forbole/bdjuno/database/types"
 	"github.com/lib/pq"
-
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveTotalTokens() {
@@ -33,17 +32,16 @@ func (suite *DbTestSuite) TestBigDipperDb_GetTokenNames() {
 		sdk.NewCoin("desmos", sdk.NewInt(10000)),
 		sdk.NewCoin("uatom", sdk.NewInt(15)),
 	)
-	_,err := suite.database.Sql.Exec("INSERT INTO supply(coins,height) VALUES ($1,$2) ",pq.Array(dbtypes.NewDbCoins(coins)), 10)
+	_, err := suite.database.Sql.Exec("INSERT INTO supply(coins,height) VALUES ($1,$2) ", pq.Array(dbtypes.NewDbCoins(coins)), 10)
 	suite.Require().NoError(err)
-	expected :=[2]string{"desmos","uatom"}
-	result,err := suite.database.GetTokenNames()
-	
+	expected := [2]string{"desmos", "uatom"}
+	result, err := suite.database.GetTokenNames()
+
 	suite.Require().NoError(err)
-	for i,row :=range(expected){
-		suite.Require().True(row==(result[i]))
+	for i, row := range expected {
+		suite.Require().True(row == (result[i]))
 	}
 }
-
 
 func (suite *DbTestSuite) TestBigDipperDb_GetLatestHeight() {
 	var height int64 = 10
@@ -51,9 +49,9 @@ func (suite *DbTestSuite) TestBigDipperDb_GetLatestHeight() {
 		sdk.NewCoin("desmos", sdk.NewInt(10000)),
 		sdk.NewCoin("uatom", sdk.NewInt(15)),
 	)
-	_,err := suite.database.Sql.Exec("INSERT INTO supply(coins,height) VALUES ($1,$2) ",pq.Array(dbtypes.NewDbCoins(coins)), height)
+	_, err := suite.database.Sql.Exec("INSERT INTO supply(coins,height) VALUES ($1,$2) ", pq.Array(dbtypes.NewDbCoins(coins)), height)
 	suite.Require().NoError(err)
-	result,err := suite.database.GetLatestHeight()
+	result, err := suite.database.GetLatestHeight()
 	suite.Require().NoError(err)
-	suite.Require().True(height==result)
+	suite.Require().True(height == result)
 }
