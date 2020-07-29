@@ -13,15 +13,15 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// PeriodicCoinGeckoOperations returns the AdditionalOperation that periodically runs fetches from
+// PeriodicPriceFeedOperations returns the AdditionalOperation that periodically runs fetches from
 // CoinGecko to make sure that constantly changing data are synced properly.
-func PeriodicCoinGeckoOperations(scheduler *gocron.Scheduler) parse.AdditionalOperation {
-	log.Debug().Str("module", "coinGecko").Msg("setting up periodic tasks")
+func PeriodicPriceFeedOperations(scheduler *gocron.Scheduler) parse.AdditionalOperation {
+	log.Debug().Str("module", "PriceFeed").Msg("setting up periodic tasks")
 
 	return func(_ config.Config, _ *codec.Codec, cp client.ClientProxy, db db.Database) error {
 		bdDatabase, ok := db.(database.BigDipperDb)
 		if !ok {
-			log.Fatal().Str("module", "coinGecko").Msg("given database instance is not a BigDipperDb")
+			log.Fatal().Str("module", "PriceFeed").Msg("given database instance is not a BigDipperDb")
 		}
 
 		// Fetch total supply of token in 30 seconds each

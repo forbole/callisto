@@ -3,6 +3,7 @@ package pricefeed
 import (
 	"fmt"
 	"time"
+
 	"github.com/desmos-labs/juno/parse/client"
 	"github.com/forbole/bdjuno/database"
 	api "github.com/forbole/bdjuno/x/pricefeed/apiTypes"
@@ -11,7 +12,7 @@ import (
 )
 
 // UpdatePrice fetch total amount of coins in the system from RPC and store it into database
-func UpdatePrice(cp client.ClientProxy, db database.BigDipperDb ) error {
+func UpdatePrice(cp client.ClientProxy, db database.BigDipperDb) error {
 	log.Debug().
 		Str("module", "pricefeed").
 		Str("operation", "pricefeed").
@@ -19,7 +20,7 @@ func UpdatePrice(cp client.ClientProxy, db database.BigDipperDb ) error {
 
 	//get token names
 	var coins api.Coins
-	if err := utils.QueryCoinGecko("/coins/list", &coins); err != nil {
+	if err := queryCoinGecko("/coins/list", &coins); err != nil {
 		return err
 	}
 	names, err := db.GetTokenNames()
@@ -33,7 +34,7 @@ func UpdatePrice(cp client.ClientProxy, db database.BigDipperDb ) error {
 	for _, coin := range coins {
 		for _, name := range names {
 			if coin.Name == name {
-				ids += ids + coin.Id + "&"
+				ids += ids + coin.ID + "&"
 				hitcount++
 				break //not nesserary to do other check name
 			}
@@ -42,25 +43,25 @@ func UpdatePrice(cp client.ClientProxy, db database.BigDipperDb ) error {
 			break
 		}
 	}
-	ids = ids[:len(ids)-1] //get rid of tail "&"
-
+	if hitcount == 0 {
+		return fmt.Errorf("cannot find given ids from the API:%s", names)
+	}
+	ids = ids[:len(ids)-1] //get rid of tail "&""
 	timestamp := time.Now()
 	//query
 	var pricefeeds api.Pricefeeds
 	query := fmt.Sprintf("/coins/markets?vs_currency=usd&ids=%s", ids)
-	if err = utils.QueryCoinGecko(query, &pricefeeds); err != nil {
+	if err = queryCoinGecko(query, &pricefeeds); err != nil {
 		return err
 	}
 
-	return db.SaveTokensPrice(markets, timestamp); err != nil {
-	
+	return db.SaveTokensPrice(pricefeeds, timestamp)
 }
 
-
 // QueryCoinGecko can query endpoint from pricefeed
-func QueryCoinGecko(endpoint string,ptr interface{})error{
-	url:="https://api.pricefeed.com/api/v3"+endpoint
-	if err:= queryFromApi(url,ptr);err!=nil{
+func queryCoinGecko(endpoint string, ptr interface{}) error {
+	url := "https://api.coingecko.com/api/v3" + endpoint
+	if err := utils.QueryFromAPI(url, ptr); err != nil {
 		return err
 	}
 	return nil

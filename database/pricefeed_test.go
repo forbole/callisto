@@ -35,7 +35,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTokenPrice() {
 	var rows []dbtypes.TokenPriceRow
 	err = suite.database.Sqlx.Select(&rows, `SELECT denom,current_price,market_cap,height FROM token_values`)
 	suite.Require().NoError(err)
-	for i,row:=range(rows){
-	suite.Require().True(expected[i].Equals(row))
+	for i, row := range rows {
+		suite.Require().True(expected[i].Equals(row))
 	}
 }

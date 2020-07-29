@@ -13,9 +13,9 @@ import (
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/auth"
 	"github.com/forbole/bdjuno/x/bank"
-	"github.com/forbole/bdjuno/x/pricefeed"
 	"github.com/forbole/bdjuno/x/consensus"
 	"github.com/forbole/bdjuno/x/distribution"
+	"github.com/forbole/bdjuno/x/pricefeed"
 	"github.com/forbole/bdjuno/x/staking"
 	"github.com/forbole/bdjuno/x/supply"
 	"github.com/go-co-op/gocron"
@@ -81,7 +81,7 @@ func SetupModules() {
 	parse.RegisterAdditionalOperation(auth.PeriodicAuthOperations(scheduler))
 	parse.RegisterAdditionalOperation(supply.PeriodicSupplyOperations(scheduler))
 	parse.RegisterAdditionalOperation(distribution.PeriodicDistributionOperations(scheduler))
-	parse.RegisterAdditionalOperation(pricefeed.PeriodicCoinGeckoOperations(scheduler))
+	parse.RegisterAdditionalOperation(pricefeed.PeriodicPriceFeedOperations(scheduler))
 
 	scheduler.StartAsync()
 }

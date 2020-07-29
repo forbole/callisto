@@ -1,6 +1,6 @@
 CREATE TABLE token_price(
     denom TEXT,
-    current_price NUMERIC,
+    price NUMERIC,
     market_cap NUMERIC,
-    height TIMESTAMP
+    timestamp TIMESTAMP
 );
