@@ -44,16 +44,3 @@ func (suite *DbTestSuite) TestBigDipperDb_GetTokenNames() {
 	}
 }
 
-
-func (suite *DbTestSuite) TestBigDipperDb_GetLatestHeight() {
-	var height int64 = 10
-	coins := sdk.NewCoins(
-		sdk.NewCoin("desmos", sdk.NewInt(10000)),
-		sdk.NewCoin("uatom", sdk.NewInt(15)),
-	)
-	_,err := suite.database.Sql.Exec("INSERT INTO supply(coins,height) VALUES ($1,$2) ",pq.Array(dbtypes.NewDbCoins(coins)), height)
-	suite.Require().NoError(err)
-	result,err := suite.database.GetLatestHeight()
-	suite.Require().NoError(err)
-	suite.Require().True(height==result)
-}

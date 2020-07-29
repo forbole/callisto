@@ -17,7 +17,7 @@ func (db BigDipperDb) SaveSupplyToken(coins sdk.Coins, height int64) error {
 	return nil
 }
 
-//GetTokenNames get token name from  latest height
+//GetTokenNames returns the list of token names stored inside the supply table
 func (db BigDipperDb) GetTokenNames() ([]string, error) {
 	var names []string
 	query := `SELECT (coin).denom FROM (
@@ -29,14 +29,4 @@ func (db BigDipperDb) GetTokenNames() ([]string, error) {
 		return nil, err
 	}
 	return names, nil
-}
-
-//return the latest height(has 30 second latency because depend on supply module)
-func (db BigDipperDb) GetLatestHeight() (int64, error) {
-	var height []int64
-	query := `select max(height) FROM supply`
-	if err := db.Sqlx.Select(&height, query); err != nil {
-		return -1, err
-	}
-	return height[0], nil
 }

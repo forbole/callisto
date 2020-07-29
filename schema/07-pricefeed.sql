@@ -1,6 +1,6 @@
-CREATE TABLE token_values(
+CREATE TABLE token_price(
     denom TEXT,
     current_price NUMERIC,
     market_cap NUMERIC,
-    height INT
+    height TIMESTAMP
 );

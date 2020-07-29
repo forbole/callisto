@@ -2,11 +2,11 @@ package database_test
 
 import (
 	dbtypes "github.com/forbole/bdjuno/database/types"
-	api "github.com/forbole/bdjuno/x/coingecko/apiTypes"
+	api "github.com/forbole/bdjuno/x/pricefeed/apiTypes"
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveTokenPrice() {
-	market := []api.Market{
+	pricefeed := []api.MarketTicker{
 		api.NewMarket(
 			"udaric",
 			100.01,
@@ -18,7 +18,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTokenPrice() {
 			20,
 		),
 	}
-	err := suite.database.SaveTokensPrice(market, 30)
+	err := suite.database.SaveTokensPrice(pricefeed, 30)
 	suite.Require().NoError(err)
 
 	expected := []dbtypes.TokenPriceRow{

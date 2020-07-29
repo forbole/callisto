@@ -1,4 +1,4 @@
-package coingecko
+package pricefeed
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -7,7 +7,7 @@ import (
 	"github.com/desmos-labs/juno/parse"
 	"github.com/desmos-labs/juno/parse/client"
 	"github.com/forbole/bdjuno/database"
-	operations "github.com/forbole/bdjuno/x/coingecko/operations"
+	operations "github.com/forbole/bdjuno/x/pricefeed/operations"
 	"github.com/forbole/bdjuno/x/utils"
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
