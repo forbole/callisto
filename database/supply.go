@@ -17,7 +17,7 @@ func (db BigDipperDb) SaveSupplyToken(coins sdk.Coins, height int64) error {
 	return nil
 }
 
-//GetTokenNames get token name from  latest height
+// GetTokenNames returns the list of token names stored inside the supply table
 func (db BigDipperDb) GetTokenNames() ([]string, error) {
 	var names []string
 	query := `SELECT (coin).denom FROM (
