@@ -18,7 +18,7 @@ func NewTokenPriceRow(denom string, currentprice float64, marketcap int64, heigh
 	}
 }
 
-// Equals return true if one NewTokenPriceRow representing the same row as the original one
+// Equals return true if u and v represent the same row
 func (u TokenPriceRow) Equals(v TokenPriceRow) bool {
 	return u.Denom == v.Denom &&
 		u.Currentprice == v.Currentprice &&
