@@ -47,7 +47,10 @@ func UpdatePrice(cp client.ClientProxy, db database.BigDipperDb) error {
 		return fmt.Errorf("cannot find given ids from the API:%s", names)
 	}
 	ids = ids[:len(ids)-1] //get rid of tail "&""
-	timestamp := time.Now()
+	timestamp, err := time.Parse(time.RFC3339, time.Now().String())
+	if err != nil {
+		return err
+	}
 	//query
 	var pricefeeds api.Pricefeeds
 	query := fmt.Sprintf("/coins/markets?vs_currency=usd&ids=%s", ids)
