@@ -7,7 +7,7 @@ type TokenPriceRow struct {
 	Denom     string    `db:"denom"`
 	Price     float64   `db:"price"`
 	MarketCap int64     `db:"market_cap"`
-	Timestamp time.Time `db:"Timestamp"`
+	Timestamp time.Time `db:"timestamp"`
 }
 
 // NewTokenPriceRow allows to easily create a new NewTokenPriceRow
