@@ -16,3 +16,17 @@ func (db BigDipperDb) SaveSupplyToken(coins sdk.Coins, height int64) error {
 	}
 	return nil
 }
+
+//GetTokenNames returns the list of token names stored inside the supply table
+func (db BigDipperDb) GetTokenNames() ([]string, error) {
+	var names []string
+	query := `SELECT (coin).denom FROM (
+        SELECT unnest(coins) AS coin FROM supply WHERE height = (
+            SELECT max(height) FROM supply
+            ) 
+		) AS unnested`
+	if err := db.Sqlx.Select(&names, query); err != nil {
+		return nil, err
+	}
+	return names, nil
+}

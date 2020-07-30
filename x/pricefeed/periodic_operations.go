@@ -1,4 +1,4 @@
-package supply
+package pricefeed
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -7,26 +7,26 @@ import (
 	"github.com/desmos-labs/juno/parse"
 	"github.com/desmos-labs/juno/parse/client"
 	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/x/supply/operations"
+	operations "github.com/forbole/bdjuno/x/pricefeed/operations"
 	"github.com/forbole/bdjuno/x/utils"
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
 )
 
-// PeriodicSupplyOperations returns the AdditionalOperation that periodically runs fetches from
-// the LCD to make sure that constantly changing data are synced properly.
-func PeriodicSupplyOperations(scheduler *gocron.Scheduler) parse.AdditionalOperation {
-	log.Debug().Str("module", "supply").Msg("setting up periodic tasks")
+// PeriodicPriceFeedOperations returns the AdditionalOperation that periodically runs fetches from
+// CoinGecko to make sure that constantly changing data are synced properly.
+func PeriodicPriceFeedOperations(scheduler *gocron.Scheduler) parse.AdditionalOperation {
+	log.Debug().Str("module", "PriceFeed").Msg("setting up periodic tasks")
 
 	return func(_ config.Config, _ *codec.Codec, cp client.ClientProxy, db db.Database) error {
 		bdDatabase, ok := db.(database.BigDipperDb)
 		if !ok {
-			log.Fatal().Str("module", "supply").Msg("given database instance is not a BigDipperDb")
+			log.Fatal().Str("module", "PriceFeed").Msg("given database instance is not a BigDipperDb")
 		}
 
 		// Fetch total supply of token in 30 seconds each
 		if _, err := scheduler.Every(30).Second().StartImmediately().Do(func() {
-			utils.WatchMethod(func() error { return operations.UpdateTotalTokenSupply(cp, bdDatabase) })
+			utils.WatchMethod(func() error { return operations.UpdatePrice(cp, bdDatabase) })
 		}); err != nil {
 			return err
 		}
