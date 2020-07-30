@@ -3,7 +3,7 @@ package gov
 import (
 	"encoding/json"
 	"fmt"
-
+	"time"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/gov"
@@ -13,6 +13,7 @@ import (
 	"github.com/rs/zerolog/log"
 	tmtypes "github.com/tendermint/tendermint/types"
 )
+//genesisDoc.GenesisTime
 
 func GenesisHandler(codec *codec.Codec, genesisDoc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, w worker.Worker) error {
 	log.Debug().Str("module", "gov").Msg("parsing genesis")
@@ -34,5 +35,16 @@ func GenesisHandler(codec *codec.Codec, genesisDoc *tmtypes.GenesisDoc, appState
 }
 
 func saveProposals(proposals gov.Proposals, genesisDoc *tmtypes.GenesisDoc, db database.BigDipperDb)error {
+	bdproposals := make([]types.Proposal,len(proposals))
+	bdTallyResult := make([]types.TallyResult,len(proposals))
+	for _,proposal :=range(proposals){
+		submitTime,err := time.Parse(time.RFC3339,proposal.SubmitTime.String())
+		if err !=nil{
+			return err
+		}
+		
+		bdproposals = append(bdproposals,types.NewProposal(proposal.Content.String(),proposal.ProposalID,proposal.Status.String(),
+							submitTime,proposal.DepositEndTime,proposal.TotalDeposit,proposal.VotingStartTime,proposal.VotingEndTime))
+	}
 	return nil
 }
