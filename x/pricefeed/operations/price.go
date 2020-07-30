@@ -1,13 +1,15 @@
 package pricefeed
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"time"
 
 	"github.com/desmos-labs/juno/parse/client"
 	"github.com/forbole/bdjuno/database"
 	api "github.com/forbole/bdjuno/x/pricefeed/apiTypes"
-	"github.com/forbole/bdjuno/x/utils"
 	"github.com/rs/zerolog/log"
 )
 
@@ -52,7 +54,7 @@ func UpdatePrice(cp client.ClientProxy, db database.BigDipperDb) error {
 		return err
 	}
 	//query
-	var pricefeeds api.Pricefeeds
+	var pricefeeds api.MarketTickers
 	query := fmt.Sprintf("/coins/markets?vs_currency=usd&ids=%s", ids)
 	if err = queryCoinGecko(query, &pricefeeds); err != nil {
 		return err
@@ -63,8 +65,19 @@ func UpdatePrice(cp client.ClientProxy, db database.BigDipperDb) error {
 
 // QueryCoinGecko can query endpoint from pricefeed
 func queryCoinGecko(endpoint string, ptr interface{}) error {
-	url := "https://api.coingecko.com/api/v3" + endpoint
-	if err := utils.QueryFromAPI(url, ptr); err != nil {
+	resp, err := http.Get(fmt.Sprintf("%s/%s", "https://api.coingecko.com/api/v3", endpoint))
+	if err != nil {
+		return err
+	}
+
+	defer resp.Body.Close()
+
+	bz, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	if err := json.Unmarshal(bz, &ptr); err != nil {
 		return err
 	}
 	return nil

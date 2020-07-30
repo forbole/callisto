@@ -8,7 +8,7 @@ import (
 )
 
 // SaveTokensPrice allows to save for the given height the given total amount of coins
-func (db BigDipperDb) SaveTokensPrice(pricefeeds api.Pricefeeds, timestamp time.Time) error {
+func (db BigDipperDb) SaveTokensPrice(pricefeeds api.MarketTickers, timestamp time.Time) error {
 	query := `INSERT INTO token_price(denom,price,market_cap,timestamp) VALUES`
 	var param []interface{}
 	for i, pricefeed := range pricefeeds {

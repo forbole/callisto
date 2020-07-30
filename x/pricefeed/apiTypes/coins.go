@@ -28,8 +28,8 @@ type MarketTicker struct {
 	MarketCap    int64   `json:"market_cap"`
 }
 
-// NewMarket return an instance of MarketTicker
-func NewMarket(id string, currentPrice float64, marketCap int64) MarketTicker {
+// NewMarketTicker return an instance of MarketTicker
+func NewMarketTicker(id string, currentPrice float64, marketCap int64) MarketTicker {
 	return MarketTicker{
 		ID:           id,
 		CurrentPrice: currentPrice,
@@ -37,5 +37,5 @@ func NewMarket(id string, currentPrice float64, marketCap int64) MarketTicker {
 	}
 }
 
-// Pricefeeds is an array of MarketTicker
-type Pricefeeds []MarketTicker
+// MarketTickers is an array of MarketTicker
+type MarketTickers []MarketTicker
