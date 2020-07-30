@@ -5,7 +5,7 @@ import "time"
 // TokenPriceRow represent a row of the table token_price in the database
 type TokenPriceRow struct {
 	Denom     string    `db:"denom"`
-	Price     float64   `db:"current_price"`
+	Price     float64   `db:"price"`
 	MarketCap int64     `db:"market_cap"`
 	Timestamp time.Time `db:"Timestamp"`
 }
