@@ -15,7 +15,7 @@ type Proposal struct {
 	ProposalRoute   string
 	ProposalType    string
 	ProposalID      uint64
-	Status          string //ProposalStatusFromString()
+	Status          string 
 	SubmitTime      time.Time
 	DepositEndTime  time.Time
 	TotalDeposit    sdk.Coins
@@ -30,7 +30,7 @@ func NewProposal(
 	proposalRoute string,
 	proposalType string,
 	proposalID uint64,
-	status string, //ProposalStatusFromString()
+	status string, 
 	submitTime time.Time,
 	depositEndTime time.Time,
 	totalDeposit sdk.Coins,
