@@ -4,22 +4,21 @@ import (
 	"fmt"
 	"time"
 
-	api "github.com/forbole/bdjuno/x/pricefeed/apiTypes"
+	pricefeedtypes "github.com/forbole/bdjuno/x/pricefeed/types"
 )
 
-// SaveTokensPrice allows to save for the given height the given total amount of coins
-func (db BigDipperDb) SaveTokensPrice(pricefeeds api.MarketTickers, timestamp time.Time) error {
-	query := `INSERT INTO token_price(denom,price,market_cap,timestamp) VALUES`
+// SaveTokensPrices allows to save the given tickers associating them to the given timestamp
+func (db BigDipperDb) SaveTokensPrices(tickers pricefeedtypes.MarketTickers, timestamp time.Time) error {
+	query := `INSERT INTO token_price (denom, price, market_cap, timestamp) VALUES`
 	var param []interface{}
-	for i, pricefeed := range pricefeeds {
+
+	for i, ticker := range tickers {
 		vi := i * 4
 		query += fmt.Sprintf("($%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4)
-		param = append(param, pricefeed.ID, pricefeed.CurrentPrice, pricefeed.MarketCap, timestamp)
+		param = append(param, ticker.ID, ticker.CurrentPrice, ticker.MarketCap, timestamp)
 	}
+
 	query = query[:len(query)-1] // Remove trailing ","
 	_, err := db.Sql.Exec(query, param...)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }

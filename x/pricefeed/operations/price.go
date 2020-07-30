@@ -9,7 +9,7 @@ import (
 
 	"github.com/desmos-labs/juno/parse/client"
 	"github.com/forbole/bdjuno/database"
-	api "github.com/forbole/bdjuno/x/pricefeed/apiTypes"
+	api "github.com/forbole/bdjuno/x/pricefeed/types"
 	"github.com/rs/zerolog/log"
 )
 
@@ -60,7 +60,7 @@ func UpdatePrice(cp client.ClientProxy, db database.BigDipperDb) error {
 		return err
 	}
 
-	return db.SaveTokensPrice(pricefeeds, timestamp)
+	return db.SaveTokensPrices(pricefeeds, timestamp)
 }
 
 // QueryCoinGecko can query endpoint from pricefeed
