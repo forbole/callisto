@@ -1,4 +1,4 @@
-package staking
+package gov
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"github.com/desmos-labs/juno/parse/worker"
 	"github.com/desmos-labs/juno/types"
 	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/x/staking/handlers"
+	"github.com/forbole/bdjuno/x/gov/handlers"
 	"github.com/rs/zerolog/log"
 )
 /* 
@@ -43,13 +43,13 @@ func MsgHandler(tx types.Tx, index int, msg sdk.Msg, w worker.Worker) error {
 
 	switch cosmosMsg := msg.(type) {
 	case gov.MsgSubmitProposal:
-		return handlers.HandleMsgSubmitProposal(cosmosMsg, bigDipperDb)
+		return handlers.HandleMsgSubmitProposal(tx, cosmosMsg, bigDipperDb, w.ClientProxy)
 
 	case gov.MsgDeposit:
 		return handlers.HandleMsgDeposit(tx, cosmosMsg, bigDipperDb, w.ClientProxy)
 
 	case gov.MsgVote:
-		return handlers.HandleMsgVote(tx, index, cosmosMsg, bigDipperDb)
+		return handlers.HandleMsgVote(tx, cosmosMsg, bigDipperDb, w.ClientProxy)
 	}
 
 	return nil
