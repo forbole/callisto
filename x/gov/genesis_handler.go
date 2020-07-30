@@ -42,9 +42,25 @@ func saveProposals(proposals gov.Proposals, genesisDoc *tmtypes.GenesisDoc, db d
 		if err !=nil{
 			return err
 		}
+		depositEndTime,err := time.Parse(time.RFC3339,proposal.DepositEndTime.String())
+		if err !=nil{
+			return err
+		}
+		votingStartTime,err := time.Parse(time.RFC3339,proposal.VotingStartTime.String())
+		if err !=nil{
+			return err
+		}
+		votingEndTime,err := time.Parse(time.RFC3339,proposal.VotingEndTime.String())
+		if err!=nil{
+			return err
+		}
+
+		bdproposals = append(bdproposals,types.NewProposal(proposal.GetTitle(),proposal.GetDescription(),proposal.ProposalRoute(),proposal.ProposalType,proposal.ProposalID,proposal.Status.String(),
+							submitTime,depositEndTime,proposal.TotalDeposit,votingStartTime,votingEndTime))
+		//see if the current status of proposal 
 		
-		bdproposals = append(bdproposals,types.NewProposal(proposal.Content.String(),proposal.ProposalID,proposal.Status.String(),
-							submitTime,proposal.DepositEndTime,proposal.TotalDeposit,proposal.VotingStartTime,proposal.VotingEndTime))
+		bdTallyResult = append(bdTallyResult,types.NewTallyResult(proposal.ProposalID,proposal.FinalTallyResult.Yes.BigInt(),proposal.FinalTallyResult.Abstain.BigInt(),proposal.FinalTallyResult.No.BigInt(),
+								proposal.FinalTallyResult.NoWithVeto.BigInt(),"0",timestamp))
 	}
 	return nil
 }
