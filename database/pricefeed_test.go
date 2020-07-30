@@ -12,12 +12,12 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTokenPrice() {
 	suite.Require().NoError(err)
 
 	pricefeed := []api.MarketTicker{
-		api.NewMarket(
+		api.NewMarketTicker(
 			"udaric",
 			100.01,
 			10,
 		),
-		api.NewMarket(
+		api.NewMarketTicker(
 			"utopi",
 			200.01,
 			20,
