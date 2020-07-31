@@ -3,23 +3,41 @@ CREATE TABLE proposal(
 	description TEXT NOT NULL,
 	proposal_route TEXT NOT NULL,
 	proposal_type TEXT NOT NULL,
-	proposal_ID DECIMAL NOT NULL,
+	proposal_id DECIMAL NOT NULL,
 	status TEXT NOT NULL, 
 	submit_time TIMESTAMP,
 	deposit_end_time TIMESTAMP,
-	total_deposit COIN,
+	total_deposit []COIN,
 	voting_start_time TIMESTAMP,
 	voting_end_time TIMESTAMP,
-    PRIMARY KEY (proposalID)
+    PRIMARY KEY (proposal_id)
 );
 
 CREATE TABLE tally_result(
-    ProposalID INTEGER REFERENCES proposal (proposalID),
-    Yes        INTEGER,
-    Abstain    INTEGER,
-    No         INTEGER,
-    NoWithVeto INTEGER,
-    Height     INTEGER,
-    Timestamp  timestamp,
-    PRIMARY KEY (ProposalID,timestamp)
+    proposal_id INTEGER REFERENCES proposal (proposal_id),
+    yes        INTEGER NOT NULL,
+    abstain    INTEGER NOT NULL,
+    no         INTEGER NOT NULL,
+    no_with_veto INTEGER NOT NULL,
+    height     INTEGER NOT NULL,
+    timestamp  timestamp NOT NULL,
+    PRIMARY KEY (proposal_id,height)
+);
+
+CREATE TABLE vote(
+    proposal_id INTEGER REFERENCES proposal (proposal_id) NOT NULL,
+    voter TEXT REFERENCES account (address),
+    option TEXT NOT NULL,
+    height INTEGER NOT NULL,
+    timestamp TIMESTAMP NOT NULL,
+    PRIMARY KEY (proposal_id,voter,height)
+);
+
+CREATE TABLE deposit(
+    proposal_id INTEGER REFERENCES proposal (proposal_id) NOT NULL, 
+    depositor TEXT REFERENCES account (address),
+    amount []COIN
+    height INTEGER
+    timestamp TIMESTAMP,
+    PRIMARY KEY (proposal_id,depositor,height)
 );

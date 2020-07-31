@@ -2,17 +2,15 @@ package database
 
 import (
 	"fmt"
-	"time"
 
 	dbtypes "github.com/forbole/bdjuno/database/types"
 	types "github.com/forbole/bdjuno/x/gov/types"
-	api "github.com/forbole/bdjuno/x/pricefeed/apiTypes"
 	"github.com/lib/pq"
 )
 
 // SaveProposals allows to save for the given height the given total amount of coins
 func (db BigDipperDb) SaveProposals(proposals []types.Proposal) error {
-	query := `INSERT INTO proposal(title,description ,proposal_route ,proposal_type,proposal_ID,
+	query := `INSERT INTO proposal(title,description ,proposal_route ,proposal_type,proposal_id,
 		status,submit_time ,deposit_end_time ,total_deposit,voting_start_time,voting_end_time) VALUES`
 	var param []interface{}
 	for i, proposal := range proposals {
@@ -39,17 +37,95 @@ func (db BigDipperDb) SaveProposals(proposals []types.Proposal) error {
 	return nil
 }
 
-// SaveTallyResult allows to save for the given height the given total amount of coins
-func (db BigDipperDb) SaveTallyResults(pricefeeds api.MarketTickers, timestamp time.Time) error {
-	query := `INSERT INTO token_price(denom,price,market_cap,timestamp) VALUES`
+//SaveProposal save a single proposal
+func (db BigDipperDb) SaveProposal(proposal types.Proposal) error {
+	query := `INSERT INTO proposal(title,description ,proposal_route ,proposal_type,proposal_id,
+		status,submit_time ,deposit_end_time ,total_deposit,voting_start_time,voting_end_time)
+		 VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`
+
+	_, err := db.Sql.Exec(query, proposal.Title,
+		proposal.Description,
+		proposal.ProposalRoute,
+		proposal.ProposalType,
+		proposal.ProposalID,
+		proposal.Status,
+		proposal.SubmitTime,
+		proposal.DepositEndTime,
+		pq.Array(dbtypes.NewDbCoins(proposal.TotalDeposit)),
+		proposal.VotingStartTime,
+		proposal.VotingEndTime)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// SaveTallyResults allows to save for the given height the given total amount of coins
+func (db BigDipperDb) SaveTallyResults(tallys []types.TallyResult) error {
+	query := `INSERT INTO tally_result(proposal_id,yes,no_with_veto,height,timestamp) VALUES`
 	var param []interface{}
-	for i, pricefeed := range pricefeeds {
-		vi := i * 4
-		query += fmt.Sprintf("($%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4)
-		param = append(param, pricefeed.ID, pricefeed.CurrentPrice, pricefeed.MarketCap, timestamp)
+	for i, tally := range tallys {
+		vi := i * 7
+		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7)
+		param = append(param, tally.ProposalID,
+			tally.Yes,
+			tally.Abstain,
+			tally.No,
+			tally.NoWithVeto,
+			tally.Height,
+			tally.Timestamp)
 	}
 	query = query[:len(query)-1] // Remove trailing ","
 	_, err := db.Sql.Exec(query, param...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// SaveTallyResult insert a single row into tally_result table
+func (db BigDipperDb) SaveTallyResult(tally types.TallyResult) error {
+	query := `INSERT INTO tally_result(proposal_id,yes,no_with_veto,height,timestamp) VALUES
+	($1,$2,$3,$4,$5,$6,$7)`
+	_, err := db.Sql.Exec(query, tally.ProposalID,
+		tally.Yes,
+		tally.Abstain,
+		tally.No,
+		tally.NoWithVeto,
+		tally.Height,
+		tally.Timestamp)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// SaveVote allows to save for the given height and the message vote
+func (db BigDipperDb) SaveVote(vote types.Vote) error {
+	query := `INSERT INTO vote(proposal_id,voter,option,height,timestamp) VALUES
+	($1,$2,$3,$4,$5)`
+	_, err := db.Sql.Exec(query,
+		vote.ProposalID,
+		vote.Voter.String(),
+		vote.Option.String(),
+		vote.Height,
+		vote.Timestamp)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// SaveDeposit allows to save for the given message deposit and height
+func (db BigDipperDb) SaveDeposit(deposit types.Deposit)error{
+	query := `INSERT INTO deposit(proposal_id,depositor,amount,height,timestamp) VALUES
+	($1,$2,$3,$4,$5)`
+	_, err := db.Sql.Exec(query,
+		deposit.ProposalID,
+		deposit.Depositor.String() ,
+		pq.Array(dbtypes.NewDbCoins(deposit.Amount)),
+		deposit.Height    ,
+		deposit.Timestamp)
 	if err != nil {
 		return err
 	}

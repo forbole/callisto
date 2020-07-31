@@ -61,13 +61,13 @@ func saveProposals(proposals gov.Proposals, genesisDoc *tmtypes.GenesisDoc, db d
 
 		bdproposals = append(bdproposals,types.NewProposal(proposal.GetTitle(),proposal.GetDescription(),proposal.ProposalRoute(),proposal.ProposalType(),proposal.ProposalID,proposal.Status.String(),
 							submitTime,depositEndTime,proposal.TotalDeposit,votingStartTime,votingEndTime))
-		//see if the current status of proposal 
 		
-		bdTallyResult = append(bdTallyResult,types.NewTallyResult(proposal.ProposalID,*proposal.FinalTallyResult.Yes.BigInt(),*proposal.FinalTallyResult.Abstain.BigInt(),*proposal.FinalTallyResult.No.BigInt(),
-								*proposal.FinalTallyResult.NoWithVeto.BigInt(),0,genesisTime))
+		bdTallyResult = append(bdTallyResult,types.NewTallyResult(proposal.ProposalID,proposal.FinalTallyResult.Yes.Int64(),proposal.FinalTallyResult.Abstain.Int64(),proposal.FinalTallyResult.No.Int64(),
+								proposal.FinalTallyResult.NoWithVeto.Int64(),0,genesisTime))
 		
 	}
-	if err = db.SaveProposals()
-	if err = db.SaveTallyResult()
-	return nil
+	if err = db.SaveProposals(bdproposals) ;err!=nil {
+		return nil
+	}
+	return err = db.SaveTallyResults(bdTallyResult)
 }
