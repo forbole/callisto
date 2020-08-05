@@ -4,12 +4,13 @@ CREATE TABLE proposal(
 	proposal_route TEXT NOT NULL,
 	proposal_type TEXT NOT NULL,
 	proposal_id DECIMAL NOT NULL,
-	status TEXT NOT NULL, 
 	submit_time TIMESTAMP,
 	deposit_end_time TIMESTAMP,
 	total_deposit []COIN,
 	voting_start_time TIMESTAMP,
 	voting_end_time TIMESTAMP,
+    proposer TEXT,
+    status TEXT,
     PRIMARY KEY (proposal_id)
 );
 
@@ -40,4 +41,11 @@ CREATE TABLE deposit(
     height INTEGER
     timestamp TIMESTAMP,
     PRIMARY KEY (proposal_id,depositor,height)
+);
+
+CREATE TABLE status(
+    proposal_id INTEGER REFERENCES proposal (proposal_id) NOT NULL, 
+    status TEXT NOT NULL,
+    timestamp TIMESTAMP,
+    PRIMARY KEY (proposal_id,timestamp)
 );

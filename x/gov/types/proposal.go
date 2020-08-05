@@ -21,6 +21,7 @@ type Proposal struct {
 	TotalDeposit    sdk.Coins
 	VotingStartTime time.Time
 	VotingEndTime   time.Time
+	Proposer sdk.AccAddress
 }
 
 // NewProposal return a new Proposal instance
@@ -36,6 +37,8 @@ func NewProposal(
 	totalDeposit sdk.Coins,
 	votingStartTime time.Time,
 	votingEndTime time.Time,
+	proposer sdk.AccAddress,
+
 ) Proposal {
 	return Proposal{
 		Title:           title,
@@ -49,6 +52,7 @@ func NewProposal(
 		TotalDeposit:    totalDeposit,
 		VotingStartTime: votingStartTime,
 		VotingEndTime:   votingEndTime,
+		Proposer: proposer,
 	}
 }
 
@@ -135,3 +139,4 @@ func NewDeposit(
 		Timestamp:  timestamp,
 	}
 }
+
