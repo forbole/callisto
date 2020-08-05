@@ -42,10 +42,3 @@ CREATE TABLE deposit(
     timestamp TIMESTAMP,
     PRIMARY KEY (proposal_id,depositor,height)
 );
-
-CREATE TABLE status(
-    proposal_id INTEGER REFERENCES proposal (proposal_id) NOT NULL, 
-    status TEXT NOT NULL,
-    timestamp TIMESTAMP,
-    PRIMARY KEY (proposal_id,timestamp)
-);
