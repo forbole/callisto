@@ -22,10 +22,9 @@ func (db BigDipperDb) SaveProposals(proposals []types.Proposal) error {
 			proposal.ProposalRoute,
 			proposal.ProposalType,
 			proposal.ProposalID,
-			proposal.Status,
+			proposal.Status.String(),
 			proposal.SubmitTime,
 			proposal.DepositEndTime,
-			pq.Array(dbtypes.NewDbCoins(proposal.TotalDeposit)),
 			proposal.VotingStartTime,
 			proposal.VotingEndTime)
 	}
@@ -48,10 +47,9 @@ func (db BigDipperDb) SaveProposal(proposal types.Proposal) error {
 		proposal.ProposalRoute,
 		proposal.ProposalType,
 		proposal.ProposalID,
-		proposal.Status,
+		proposal.Status.String(),
 		proposal.SubmitTime,
 		proposal.DepositEndTime,
-		pq.Array(dbtypes.NewDbCoins(proposal.TotalDeposit)),
 		proposal.VotingStartTime,
 		proposal.VotingEndTime)
 	if err != nil {
@@ -117,15 +115,53 @@ func (db BigDipperDb) SaveVote(vote types.Vote) error {
 }
 
 // SaveDeposit allows to save for the given message deposit and height
-func (db BigDipperDb) SaveDeposit(deposit types.Deposit)error{
-	query := `INSERT INTO deposit(proposal_id,depositor,amount,height,timestamp) VALUES
-	($1,$2,$3,$4,$5)`
+func (db BigDipperDb) SaveDeposit(deposit types.Deposit) error {
+	query := `INSERT INTO deposit(proposal_id,depositor,amount,total_deposit,height,timestamp) VALUES
+	($1,$2,$3,$4,$5,$6)`
 	_, err := db.Sql.Exec(query,
 		deposit.ProposalID,
-		deposit.Depositor.String() ,
+		deposit.Depositor.String(),
 		pq.Array(dbtypes.NewDbCoins(deposit.Amount)),
-		deposit.Height    ,
+		pq.Array(dbtypes.NewDbCoins(deposit.TotalDeposit)),
+		deposit.Height,
 		deposit.Timestamp)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// SaveDeposits allows to save multiple deposits
+func (db BigDipperDb) SaveDeposits(deposits []types.Deposit) error {
+	query := `INSERT INTO deposit(proposal_id,depositor,amount,total_deposit,height,timestamp) VALUES`
+	var param []interface{}
+
+	for i,deposit := range deposits{
+		vi := i * 6
+		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6)
+		param = append(param,deposit.ProposalID,
+			deposit.Depositor.String(),
+			pq.Array(dbtypes.NewDbCoins(deposit.Amount)),
+			pq.Array(dbtypes.NewDbCoins(deposit.TotalDeposit)),
+			deposit.Height,
+			deposit.Timestamp)
+	}
+	_, err := db.Sql.Exec(query,param)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (db BigDipperDb) UpdateProposal(proposal types.Proposal) error {
+	query := `UPDATE proposal(status,voting_start_time,voting_end_time)
+		 VALUES($1,$2,$3) where proposal_id=$4`
+
+	_, err := db.Sql.Exec(query,
+		proposal.Status.String(),
+		proposal.VotingStartTime,
+		proposal.VotingEndTime,
+		proposal.ProposalID)
 	if err != nil {
 		return err
 	}

@@ -15,10 +15,9 @@ type Proposal struct {
 	ProposalRoute   string
 	ProposalType    string
 	ProposalID      uint64
-	Status          string
+	Status          gov.ProposalStatus
 	SubmitTime      time.Time
 	DepositEndTime  time.Time
-	TotalDeposit    sdk.Coins
 	VotingStartTime time.Time
 	VotingEndTime   time.Time
 	Proposer sdk.AccAddress
@@ -31,10 +30,9 @@ func NewProposal(
 	proposalRoute string,
 	proposalType string,
 	proposalID uint64,
-	status string,
+	status gov.ProposalStatus,
 	submitTime time.Time,
 	depositEndTime time.Time,
-	totalDeposit sdk.Coins,
 	votingStartTime time.Time,
 	votingEndTime time.Time,
 	proposer sdk.AccAddress,
@@ -46,10 +44,9 @@ func NewProposal(
 		ProposalRoute:   proposalRoute,
 		ProposalType:    proposalType,
 		ProposalID:      proposalID,
-		Status:          status, //ProposalStatusFromString()
+		Status:          status,
 		SubmitTime:      submitTime,
 		DepositEndTime:  depositEndTime,
-		TotalDeposit:    totalDeposit,
 		VotingStartTime: votingStartTime,
 		VotingEndTime:   votingEndTime,
 		Proposer: proposer,
@@ -114,13 +111,15 @@ func NewVote(
 	}
 }
 
-//Deposit represent a message that a user do deposit action
+// Deposit represent a message that a user do deposit action
+// Assume the entry with latest height get final total deposit
 type Deposit struct {
 	ProposalID uint64
 	Depositor  sdk.AccAddress
 	Amount     sdk.Coins
 	Height     int64
 	Timestamp  time.Time
+	TotalDeposit sdk.Coins
 }
 
 //NewDeposit return a new Deposit instance
@@ -128,6 +127,7 @@ func NewDeposit(
 	proposalID uint64,
 	depositor sdk.AccAddress,
 	amount sdk.Coins,
+	totalDeposit sdk.Coins,
 	height int64,
 	timestamp time.Time,
 ) Deposit {
@@ -137,6 +137,7 @@ func NewDeposit(
 		Amount:     amount,
 		Height:     height,
 		Timestamp:  timestamp,
+		TotalDeposit: 	totalDeposit,
 	}
 }
 

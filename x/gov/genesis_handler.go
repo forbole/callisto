@@ -8,6 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/gov"
+	"github.com/desmos-labs/juno/parse/client"
 	"github.com/desmos-labs/juno/parse/worker"
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/gov/types"
@@ -30,15 +31,16 @@ func GenesisHandler(codec *codec.Codec, genesisDoc *tmtypes.GenesisDoc, appState
 		return err
 	}
 
-	if err := saveProposals(genState.Proposals, genesisDoc, bigDipperDb); err != nil {
+	if err := saveProposals(genState.Proposals, genesisDoc, bigDipperDb, w.ClientProxy); err != nil {
 		return err
 	}
 	return nil
 }
 
-func saveProposals(proposals gov.Proposals, genesisDoc *tmtypes.GenesisDoc, db database.BigDipperDb) error {
+func saveProposals(proposals gov.Proposals, genesisDoc *tmtypes.GenesisDoc, db database.BigDipperDb, cp client.ClientProxy) error {
 	bdproposals := make([]types.Proposal, len(proposals))
 	bdTallyResult := make([]types.TallyResult, len(proposals))
+	bdDeposit := make([]types.Deposit, len(proposals))
 	for _, proposal := range proposals {
 		submitTime, err := time.Parse(time.RFC3339, proposal.SubmitTime.String())
 		if err != nil {
@@ -62,15 +64,65 @@ func saveProposals(proposals gov.Proposals, genesisDoc *tmtypes.GenesisDoc, db d
 		}
 
 		//since there is not possible to get the proposer, set it to nil
-		bdproposals = append(bdproposals, types.NewProposal(proposal.GetTitle(), proposal.GetDescription(), proposal.ProposalRoute(), proposal.ProposalType(), proposal.ProposalID, proposal.Status.String(),
-			submitTime, depositEndTime, proposal.TotalDeposit, votingStartTime, votingEndTime, sdk.AccAddress{}))
+		bdproposals = append(bdproposals, types.NewProposal(proposal.GetTitle(), proposal.GetDescription(), proposal.ProposalRoute(), proposal.ProposalType(), proposal.ProposalID, proposal.Status,
+			submitTime, depositEndTime, votingStartTime, votingEndTime, sdk.AccAddress{}))
 
 		bdTallyResult = append(bdTallyResult, types.NewTallyResult(proposal.ProposalID, proposal.FinalTallyResult.Yes.Int64(), proposal.FinalTallyResult.Abstain.Int64(), proposal.FinalTallyResult.No.Int64(),
 			proposal.FinalTallyResult.NoWithVeto.Int64(), 0, genesisTime))
 
+		bdDeposit = append(bdDeposit, types.NewDeposit(proposal.ProposalID, sdk.AccAddress{}, proposal.TotalDeposit, proposal.TotalDeposit, 0, genesisTime))
+
+		if proposal.Status.String() == "VotingPeriod" {
+			time.AfterFunc(time.Now().Sub(votingEndTime), func() { UpdateProposalStatuses(proposal.ProposalID, cp, db) })
+		}
 	}
 	if err := db.SaveProposals(bdproposals); err != nil {
 		return nil
 	}
+
+	if err := db.SaveDeposits(bdDeposit); err != nil {
+		return nil
+	}
+
 	return db.SaveTallyResults(bdTallyResult)
+}
+
+func UpdateProposalStatuses(id uint64, cp client.ClientProxy, db database.BigDipperDb) error {
+	//update status, voting start time, end time
+	var s gov.Proposals
+	_, err := cp.QueryLCDWithHeight(fmt.Sprintf("/gov/proposals/$s", string(id)), &s)
+	if err != nil {
+		return err
+	}
+
+	for _, proposal := range s {
+		submitTime, err := time.Parse(time.RFC3339, proposal.SubmitTime.String())
+		if err != nil {
+			return err
+		}
+		depositEndTime, err := time.Parse(time.RFC3339, proposal.DepositEndTime.String())
+		if err != nil {
+			return err
+		}
+
+		votingStartTime, err := time.Parse(time.RFC3339, proposal.VotingStartTime.String())
+		if err != nil {
+			return err
+		}
+		votingEndTime, err := time.Parse(time.RFC3339, proposal.VotingEndTime.String())
+		if err != nil {
+			return err
+		}
+
+		if proposal.Status.String() == "VotingPeriod" {
+			time.AfterFunc(time.Now().Sub(votingEndTime), func() { UpdateProposalStatuses(proposal.ProposalID, cp, db) })
+		}
+		//no metter votingEndTime or votingStarttime it need to update status
+		if err = db.UpdateProposal(types.NewProposal(proposal.GetTitle(), proposal.GetDescription(), proposal.ProposalRoute(), proposal.ProposalType(), proposal.ProposalID, proposal.Status,
+			submitTime, depositEndTime, votingStartTime, votingEndTime, sdk.AccAddress{})); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
