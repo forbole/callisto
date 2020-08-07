@@ -189,7 +189,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTallyResults() {
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
-	suite.getProposalRow(1)
+	proposal := suite.getProposalRow(1)
 	voter := suite.getDelegator("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	timestamp1, err := time.Parse(time.RFC3339, "2020-10-30T15:00:00Z")
 	suite.Require().NoError(err)
@@ -198,7 +198,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
 	err = suite.database.SaveVote(vote)
 	suite.Require().NoError(err)
 
-	expected := dbtypes.NewVoteRow(1, voter.String(), gov.OptionYes.String(), 1, timestamp1)
+	expected := dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), gov.OptionYes.String(), 1, timestamp1)
 
 	var result []dbtypes.VoteRow
 	err = suite.database.Sqlx.Select(&result, `SELECT * FROM vote`)
@@ -232,7 +232,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposit() {
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
-	suite.getProposalRow(1)
+	proposal := suite.getProposalRow(1)
 	depositor := suite.getDelegator("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	amount := sdk.NewCoins(
 		sdk.NewCoin("desmos", sdk.NewInt(10000)),
@@ -243,7 +243,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 	timestamp, err := time.Parse(time.RFC3339, "2020-10-30T15:00:00Z")
 	suite.Require().NoError(err)
 
-	depositor2 := suite.getDelegator("cosmos1d4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
+	depositor2 := suite.getDelegator("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 	amount2 := sdk.NewCoins(
 		sdk.NewCoin("desmos", sdk.NewInt(30000)),
 	)
@@ -252,8 +252,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 	)
 
 	deposit := []types.Deposit{
-		types.NewDeposit(1, depositor, amount, total, 10, timestamp),
-		types.NewDeposit(1, depositor2, amount2, total2, 10, timestamp),
+		types.NewDeposit(proposal.ProposalID, depositor, amount, total, 10, timestamp),
+		types.NewDeposit(proposal.ProposalID, depositor2, amount2, total2, 10, timestamp),
 	}
 
 	err = suite.database.SaveDeposits(deposit)

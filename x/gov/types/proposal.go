@@ -20,7 +20,7 @@ type Proposal struct {
 	DepositEndTime  time.Time
 	VotingStartTime time.Time
 	VotingEndTime   time.Time
-	Proposer sdk.AccAddress
+	Proposer        sdk.AccAddress
 }
 
 // NewProposal return a new Proposal instance
@@ -49,7 +49,7 @@ func NewProposal(
 		DepositEndTime:  depositEndTime,
 		VotingStartTime: votingStartTime,
 		VotingEndTime:   votingEndTime,
-		Proposer: proposer,
+		Proposer:        proposer,
 	}
 }
 
@@ -85,7 +85,7 @@ func NewTallyResult(
 	}
 }
 
-// Vote discribe a msgVote
+// Vote describe a msgVote
 type Vote struct {
 	ProposalID uint64
 	Voter      sdk.AccAddress
@@ -114,11 +114,11 @@ func NewVote(
 // Deposit represent a message that a user do deposit action
 // Assume the entry with latest height get final total deposit
 type Deposit struct {
-	ProposalID uint64
-	Depositor  sdk.AccAddress
-	Amount     sdk.Coins
-	Height     int64
-	Timestamp  time.Time
+	ProposalID   uint64
+	Depositor    sdk.AccAddress
+	Amount       sdk.Coins
+	Height       int64
+	Timestamp    time.Time
 	TotalDeposit sdk.Coins
 }
 
@@ -132,12 +132,11 @@ func NewDeposit(
 	timestamp time.Time,
 ) Deposit {
 	return Deposit{
-		ProposalID: proposalID,
-		Depositor:  depositor,
-		Amount:     amount,
-		Height:     height,
-		Timestamp:  timestamp,
-		TotalDeposit: 	totalDeposit,
+		ProposalID:   proposalID,
+		Depositor:    depositor,
+		Amount:       amount,
+		Height:       height,
+		Timestamp:    timestamp,
+		TotalDeposit: totalDeposit,
 	}
 }
-

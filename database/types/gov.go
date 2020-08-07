@@ -22,7 +22,7 @@ func NewProposalRow(title string,
 	description string,
 	proposalRoute string,
 	proposalType string,
-	ProposalID uint64,
+	proposalID uint64,
 	submitTime time.Time,
 	depositEndTime time.Time,
 	votingStartTime time.Time,
@@ -34,7 +34,7 @@ func NewProposalRow(title string,
 		Description:     description,
 		ProposalRoute:   proposalRoute,
 		ProposalType:    proposalType,
-		ProposalID:      ProposalID,
+		ProposalID:      proposalID,
 		SubmitTime:      submitTime,
 		DepositEndTime:  depositEndTime,
 		VotingStartTime: votingStartTime,
@@ -72,7 +72,7 @@ type TallyResultRow struct {
 
 // NewTallyResultRow return a new TallyResultRow instance
 func NewTallyResultRow(
-	ProposalID int64,
+	proposalID int64,
 	yes int64,
 	abstain int64,
 	no int64,
@@ -81,7 +81,7 @@ func NewTallyResultRow(
 	timestamp time.Time,
 ) TallyResultRow {
 	return TallyResultRow{
-		ProposalID: ProposalID,
+		ProposalID: proposalID,
 		Yes:        yes,
 		Abstain:    abstain,
 		No:         no,
@@ -113,14 +113,14 @@ type VoteRow struct {
 
 // NewVoteRow allows to easily create a new VoteRow
 func NewVoteRow(
-	ProposalID int64,
+	proposalID int64,
 	voter string,
 	option string,
 	height int64,
 	timestamp time.Time,
 ) VoteRow {
 	return VoteRow{
-		ProposalID: ProposalID,
+		ProposalID: proposalID,
 		Voter:      voter,
 		Option:     option,
 		Height:     height,
@@ -149,7 +149,7 @@ type DepositRow struct {
 
 // NewDepositRow allows to easily create a new NewDepositRow
 func NewDepositRow(
-	ProposalID int64,
+	proposalID int64,
 	depositor string,
 	amount DbCoins,
 	totalDeposit DbCoins,
@@ -157,7 +157,7 @@ func NewDepositRow(
 	timestamp time.Time,
 ) DepositRow {
 	return DepositRow{
-		ProposalID:   ProposalID,
+		ProposalID:   proposalID,
 		Depositor:    depositor,
 		Amount:       amount,
 		TotalDeposit: totalDeposit,

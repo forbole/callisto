@@ -10,15 +10,16 @@ import (
 
 // SaveProposals allows to save for the given height the given total amount of coins
 func (db BigDipperDb) SaveProposals(proposals []types.Proposal) error {
-	query := `INSERT INTO proposal(title,description ,proposal_route ,proposal_type,proposal_id,
-		status,submit_time ,deposit_end_time ,total_deposit,voting_start_time,voting_end_time) VALUES`
+	query := `INSERT INTO proposal(title,description ,proposer,proposal_route ,proposal_type,proposal_id,
+		status,submit_time ,deposit_end_time ,voting_start_time,voting_end_time) VALUES`
 	var param []interface{}
 	for i, proposal := range proposals {
-		vi := i * 11
-		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
-			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11)
+		vi := i * 10
+		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
+			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10)
 		param = append(param, proposal.Title,
 			proposal.Description,
+			proposal.Proposer.String(),
 			proposal.ProposalRoute,
 			proposal.ProposalType,
 			proposal.ProposalID,
@@ -60,7 +61,7 @@ func (db BigDipperDb) SaveProposal(proposal types.Proposal) error {
 
 // SaveTallyResults allows to save for the given height the given total amount of coins
 func (db BigDipperDb) SaveTallyResults(tallys []types.TallyResult) error {
-	query := `INSERT INTO tally_result(proposal_id,yes,no_with_veto,height,timestamp) VALUES`
+	query := `INSERT INTO tally_result(proposal_id,yes,abstain,no,no_with_veto,height,timestamp) VALUES`
 	var param []interface{}
 	for i, tally := range tallys {
 		vi := i * 7
@@ -83,7 +84,7 @@ func (db BigDipperDb) SaveTallyResults(tallys []types.TallyResult) error {
 
 // SaveTallyResult insert a single row into tally_result table
 func (db BigDipperDb) SaveTallyResult(tally types.TallyResult) error {
-	query := `INSERT INTO tally_result(proposal_id,yes,no_with_veto,height,timestamp) VALUES
+	query := `INSERT INTO tally_result(proposal_id,yes,abstain,no,no_with_veto,height,timestamp) VALUES
 	($1,$2,$3,$4,$5,$6,$7)`
 	_, err := db.Sql.Exec(query, tally.ProposalID,
 		tally.Yes,
@@ -136,17 +137,17 @@ func (db BigDipperDb) SaveDeposits(deposits []types.Deposit) error {
 	query := `INSERT INTO deposit(proposal_id,depositor,amount,total_deposit,height,timestamp) VALUES`
 	var param []interface{}
 
-	for i,deposit := range deposits{
+	for i, deposit := range deposits {
 		vi := i * 6
 		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6)
-		param = append(param,deposit.ProposalID,
+		param = append(param, deposit.ProposalID,
 			deposit.Depositor.String(),
 			pq.Array(dbtypes.NewDbCoins(deposit.Amount)),
 			pq.Array(dbtypes.NewDbCoins(deposit.TotalDeposit)),
 			deposit.Height,
 			deposit.Timestamp)
 	}
-	_, err := db.Sql.Exec(query,param)
+	_, err := db.Sql.Exec(query, param)
 	if err != nil {
 		return err
 	}

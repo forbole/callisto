@@ -11,7 +11,8 @@ import (
 	"github.com/forbole/bdjuno/x/gov/handlers"
 	"github.com/rs/zerolog/log"
 )
-/* 
+
+/*
 MsgSubmitProposal keep the
 GetInitialDeposit
 GetProposer

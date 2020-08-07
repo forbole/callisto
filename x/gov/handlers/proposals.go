@@ -10,6 +10,7 @@ import (
 	juno "github.com/desmos-labs/juno/types"
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/gov/types"
+	stakingops "github.com/forbole/bdjuno/x/staking/operations"
 )
 
 // HandleMsgSubmitProposal allows to properly handle a HandleMsgSubmitProposal
@@ -56,7 +57,7 @@ func HandleMsgSubmitProposal(tx juno.Tx, msg gov.MsgSubmitProposal, db database.
 	db.SaveDeposit(types.NewDeposit(proposal.ProposalID, msg.Proposer, msg.InitialDeposit, msg.InitialDeposit, tx.Height, timestamp))
 
 	//watch the proposal and renew the database when deposit end and voting end
-	time.AfterFunc(time.Now().Sub(votingEndTime), func() { updateProposalStatuses(proposal.ProposalID, cp, db) })
+	time.AfterFunc(time.Since(votingEndTime), func() { updateProposalStatuses(proposal.ProposalID, cp, db) })
 	return nil
 }
 
@@ -134,7 +135,10 @@ func updateProposalStatuses(id uint64, cp client.ClientProxy, db database.BigDip
 		}
 
 		if proposal.Status.String() == "VotingPeriod" {
-			time.AfterFunc(time.Now().Sub(votingEndTime), func() { updateProposalStatuses(proposal.ProposalID, cp, db) })
+			time.AfterFunc(time.Since(votingEndTime), func() { updateProposalStatuses(proposal.ProposalID, cp, db) })
+		}
+		if err = stakingops.UpdateValidatorVotingPower(cp, db); err != nil {
+			return err
 		}
 		//no metter votingEndTime or votingStarttime it need to update status
 		if err = db.UpdateProposal(types.NewProposal(proposal.GetTitle(), proposal.GetDescription(), proposal.ProposalRoute(), proposal.ProposalType(), proposal.ProposalID, proposal.Status,

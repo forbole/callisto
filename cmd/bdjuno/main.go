@@ -15,10 +15,10 @@ import (
 	"github.com/forbole/bdjuno/x/bank"
 	"github.com/forbole/bdjuno/x/consensus"
 	"github.com/forbole/bdjuno/x/distribution"
+	"github.com/forbole/bdjuno/x/gov"
 	"github.com/forbole/bdjuno/x/pricefeed"
 	"github.com/forbole/bdjuno/x/staking"
 	"github.com/forbole/bdjuno/x/supply"
-	"github.com/forbole/bdjuno/x/gov"
 	"github.com/go-co-op/gocron"
 )
 
@@ -65,7 +65,6 @@ func SetupModules() {
 	worker.RegisterGenesisHandler(auth.GenesisHandler)
 	worker.RegisterGenesisHandler(staking.GenesisHandler)
 	worker.RegisterGenesisHandler(gov.GenesisHandler)
-
 
 	// Register block handlers
 	worker.RegisterBlockHandler(staking.BlockHandler)
