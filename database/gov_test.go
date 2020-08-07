@@ -344,9 +344,20 @@ func (suite *DbTestSuite) getProposalRow(id int) dbtypes.ProposalRow {
 		proposer1.String(),
 		status1.String(),
 	)
-	_, err = suite.database.Sqlx.NamedExec(`INSERT INTO proposal(title,description ,proposer,proposal_route ,proposal_type,proposal_id,
-		status,submit_time ,deposit_end_time ,voting_start_time,voting_end_time) VALUES (:title, :description ,:proposer, :proposal_route , :proposal_type, :proposal_id,
-			:status, :submit_time , :deposit_end_time , :voting_start_time, :voting_end_time)`, proposal)
+	_, err = suite.database.Sqlx.Exec(`INSERT INTO proposal 
+	(title, description ,proposer,proposal_route ,proposal_type,proposal_id,
+		status,submit_time ,deposit_end_time ,voting_start_time,voting_end_time) VALUES 
+		($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11))`, title,
+		description,
+		proposalRoute,
+		proposalType,
+		uint64(id),
+		submitTime1,
+		depositEndTime1,
+		votingStartTime1,
+		votingEndTime1,
+		proposer1.String(),
+		status1.String())
 	suite.Require().NoError(err)
 
 	return proposal
