@@ -208,7 +208,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveDeposit() {
-	suite.getProposalRow(1)
+	proposal:=suite.getProposalRow(1)
 	depositor := suite.getDelegator("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	amount := sdk.NewCoins(
 		sdk.NewCoin("desmos", sdk.NewInt(10000)),
@@ -219,7 +219,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposit() {
 	timestamp, err := time.Parse(time.RFC3339, "2020-10-30T15:00:00Z")
 	suite.Require().NoError(err)
 
-	deposit := types.NewDeposit(1, depositor, amount, total, 10, timestamp)
+	deposit := types.NewDeposit(proposal.ProposalID, depositor, amount, total, 10, timestamp)
 	err = suite.database.SaveDeposit(deposit)
 	suite.Require().NoError(err)
 

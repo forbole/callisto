@@ -15,8 +15,8 @@ func (db BigDipperDb) SaveProposals(proposals []types.Proposal) error {
 	var param []interface{}
 	for i, proposal := range proposals {
 		vi := i * 10
-		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
-			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10)
+		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
+			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10,vi+11)
 		param = append(param, proposal.Title,
 			proposal.Description,
 			proposal.Proposer.String(),
@@ -39,12 +39,13 @@ func (db BigDipperDb) SaveProposals(proposals []types.Proposal) error {
 
 //SaveProposal save a single proposal
 func (db BigDipperDb) SaveProposal(proposal types.Proposal) error {
-	query := `INSERT INTO proposal(title,description ,proposal_route ,proposal_type,proposal_id,
-		status,submit_time ,deposit_end_time ,total_deposit,voting_start_time,voting_end_time)
+	query := `INSERT INTO proposal(title,description ,proposer,proposal_route ,proposal_type,proposal_id,
+		status,submit_time ,deposit_end_time,voting_start_time,voting_end_time)
 		 VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`
 
 	_, err := db.Sql.Exec(query, proposal.Title,
 		proposal.Description,
+		proposal.Proposer.String(),
 		proposal.ProposalRoute,
 		proposal.ProposalType,
 		proposal.ProposalID,
