@@ -349,15 +349,15 @@ func (suite *DbTestSuite) getProposalRow(id int) dbtypes.ProposalRow {
 		status,submit_time ,deposit_end_time ,voting_start_time,voting_end_time) VALUES 
 		($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`, title,
 		description,
+		proposer1.String(),
 		proposalRoute,
 		proposalType,
 		uint64(id),
+		status1.String(),
 		submitTime1,
 		depositEndTime1,
 		votingStartTime1,
-		votingEndTime1,
-		proposer1.String(),
-		status1.String())
+		votingEndTime1)
 	suite.Require().NoError(err)
 
 	return proposal
