@@ -148,6 +148,7 @@ func (db BigDipperDb) SaveDeposits(deposits []types.Deposit) error {
 			deposit.Height,
 			deposit.Timestamp)
 	}
+	query = query[:len(query)-1] // Remove trailing ","
 	_, err := db.Sql.Exec(query, param...)
 	if err != nil {
 		return err

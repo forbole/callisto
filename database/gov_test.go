@@ -49,7 +49,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 		"description1",
 		"proposalRoute1",
 		"proposalType1",
-		1,
+		2,
 		status2,
 		submitTime2,
 		depositEndTime2,
@@ -208,7 +208,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveDeposit() {
-	proposal:=suite.getProposalRow(1)
+	proposal := suite.getProposalRow(1)
 	depositor := suite.getDelegator("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	amount := sdk.NewCoins(
 		sdk.NewCoin("desmos", sdk.NewInt(10000)),
@@ -344,8 +344,10 @@ func (suite *DbTestSuite) getProposalRow(id int) dbtypes.ProposalRow {
 		proposer1.String(),
 		status1.String(),
 	)
-	_, err = suite.database.Sqlx.NamedExec(`INSERT INTO proposal(title,description ,proposal_route ,proposal_type,proposal_id,
-		status,submit_time ,deposit_end_time ,total_deposit,voting_start_time,voting_end_time) VALUES (:title, :description , :proposal_route , :proposal_type, :proposal_id,
-			:status, :submit_time , :deposit_end_time , :total_deposit, :voting_start_time, :voting_end_time)`, proposal)
+	_, err = suite.database.Sqlx.NamedExec(`INSERT INTO proposal(title,description ,proposer,proposal_route ,proposal_type,proposal_id,
+		status,submit_time ,deposit_end_time ,voting_start_time,voting_end_time) VALUES (:title, :description ,:proposer, :proposal_route , :proposal_type, :proposal_id,
+			:status, :submit_time , :deposit_end_time , :voting_start_time, :voting_end_time)`, proposal)
+	suite.Require().NoError(err)
+
 	return proposal
 }
