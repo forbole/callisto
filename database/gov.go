@@ -14,7 +14,7 @@ func (db BigDipperDb) SaveProposals(proposals []types.Proposal) error {
 		status,submit_time ,deposit_end_time ,voting_start_time,voting_end_time) VALUES`
 	var param []interface{}
 	for i, proposal := range proposals {
-		vi := i * 10
+		vi := i * 11
 		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
 			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10,vi+11)
 		param = append(param, proposal.Title,
@@ -135,7 +135,7 @@ func (db BigDipperDb) SaveDeposit(deposit types.Deposit) error {
 
 // SaveDeposits allows to save multiple deposits
 func (db BigDipperDb) SaveDeposits(deposits []types.Deposit) error {
-	query := `INSERT INTO deposit(proposal_id,depositor,amount,total_deposit,height,timestamp) VALUES`
+	query := `INSERT INTO deposit(proposal_id,depositor,amount,total_deposit,height,timestamp) VALUES `
 	var param []interface{}
 
 	for i, deposit := range deposits {
@@ -148,7 +148,7 @@ func (db BigDipperDb) SaveDeposits(deposits []types.Deposit) error {
 			deposit.Height,
 			deposit.Timestamp)
 	}
-	_, err := db.Sql.Exec(query, param)
+	_, err := db.Sql.Exec(query, param...)
 	if err != nil {
 		return err
 	}
