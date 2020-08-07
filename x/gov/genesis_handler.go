@@ -73,7 +73,9 @@ func saveProposals(proposals gov.Proposals, genesisDoc *tmtypes.GenesisDoc, db d
 		bdDeposit = append(bdDeposit, types.NewDeposit(proposal.ProposalID, sdk.AccAddress{}, proposal.TotalDeposit, proposal.TotalDeposit, 0, genesisTime))
 
 		if proposal.Status.String() == "VotingPeriod" {
-			time.AfterFunc(time.Now().Sub(votingEndTime), func() { UpdateProposalStatuses(proposal.ProposalID, cp, db) })
+			time.AfterFunc(time.Now().Sub(votingEndTime), func() { updateProposalStatuses(proposal.ProposalID, cp, db) })
+		} else if proposal.Status.String() == "DepositPeriod"{
+			time.AfterFunc(time.Now().Sub(depositEndTime), func() { updateProposalStatuses(proposal.ProposalID, cp, db) })
 		}
 	}
 	if err := db.SaveProposals(bdproposals); err != nil {
@@ -87,7 +89,7 @@ func saveProposals(proposals gov.Proposals, genesisDoc *tmtypes.GenesisDoc, db d
 	return db.SaveTallyResults(bdTallyResult)
 }
 
-func UpdateProposalStatuses(id uint64, cp client.ClientProxy, db database.BigDipperDb) error {
+func updateProposalStatuses(id uint64, cp client.ClientProxy, db database.BigDipperDb) error {
 	//update status, voting start time, end time
 	var s gov.Proposals
 	_, err := cp.QueryLCDWithHeight(fmt.Sprintf("/gov/proposals/$s", string(id)), &s)
@@ -115,7 +117,7 @@ func UpdateProposalStatuses(id uint64, cp client.ClientProxy, db database.BigDip
 		}
 
 		if proposal.Status.String() == "VotingPeriod" {
-			time.AfterFunc(time.Now().Sub(votingEndTime), func() { UpdateProposalStatuses(proposal.ProposalID, cp, db) })
+			time.AfterFunc(time.Now().Sub(votingEndTime), func() { updateProposalStatuses(proposal.ProposalID, cp, db) })
 		}
 		//no metter votingEndTime or votingStarttime it need to update status
 		if err = db.UpdateProposal(types.NewProposal(proposal.GetTitle(), proposal.GetDescription(), proposal.ProposalRoute(), proposal.ProposalType(), proposal.ProposalID, proposal.Status,

@@ -56,7 +56,7 @@ func HandleMsgSubmitProposal(tx juno.Tx, msg gov.MsgSubmitProposal, db database.
 	db.SaveDeposit(types.NewDeposit(proposal.ProposalID, msg.Proposer, msg.InitialDeposit, msg.InitialDeposit, tx.Height, timestamp))
 
 	//watch the proposal and renew the database when deposit end and voting end
-	time.AfterFunc(time.Now().Sub(votingEndTime), func() { UpdateProposalStatuses(proposal.ProposalID, cp, db) })
+	time.AfterFunc(time.Now().Sub(votingEndTime), func() { updateProposalStatuses(proposal.ProposalID, cp, db) })
 	return nil
 }
 
@@ -106,7 +106,7 @@ func HandleMsgVote(tx juno.Tx, msg gov.MsgVote, db database.BigDipperDb, cp clie
 		tx.Height, timestamp))
 }
 
-func UpdateProposalStatuses(id uint64, cp client.ClientProxy, db database.BigDipperDb) error {
+func updateProposalStatuses(id uint64, cp client.ClientProxy, db database.BigDipperDb) error {
 	//update status, voting start time, end time
 	var s gov.Proposals
 
@@ -134,7 +134,7 @@ func UpdateProposalStatuses(id uint64, cp client.ClientProxy, db database.BigDip
 		}
 
 		if proposal.Status.String() == "VotingPeriod" {
-			time.AfterFunc(time.Now().Sub(votingEndTime), func() { UpdateProposalStatuses(proposal.ProposalID, cp, db) })
+			time.AfterFunc(time.Now().Sub(votingEndTime), func() { updateProposalStatuses(proposal.ProposalID, cp, db) })
 		}
 		//no metter votingEndTime or votingStarttime it need to update status
 		if err = db.UpdateProposal(types.NewProposal(proposal.GetTitle(), proposal.GetDescription(), proposal.ProposalRoute(), proposal.ProposalType(), proposal.ProposalID, proposal.Status,

@@ -17,12 +17,12 @@ type ProposalRow struct {
 	Status          string    `db:"status"`
 }
 
-// NewCommunityPoolRow allows to easily create a new NewCommunityPoolRow
+// NewProposalRow allows to easily create a new ProposalRow
 func NewProposalRow(title string,
 	description string,
 	proposalRoute string,
 	proposalType string,
-	proposalID uint64,
+	ProposalID uint64,
 	submitTime time.Time,
 	depositEndTime time.Time,
 	votingStartTime time.Time,
@@ -34,7 +34,7 @@ func NewProposalRow(title string,
 		Description:     description,
 		ProposalRoute:   proposalRoute,
 		ProposalType:    proposalType,
-		ProposalID:      proposalID,
+		ProposalID:      ProposalID,
 		SubmitTime:      submitTime,
 		DepositEndTime:  depositEndTime,
 		VotingStartTime: votingStartTime,
@@ -59,6 +59,7 @@ func (w ProposalRow) Equals(v ProposalRow) bool {
 		w.Status == v.Status)
 }
 
+// TallyResultRow represents a single row inside the tally_result table
 type TallyResultRow struct {
 	ProposalID int64     `db:"proposal_id"`
 	Yes        int64     `db:"yes"`
@@ -69,8 +70,9 @@ type TallyResultRow struct {
 	Timestamp  time.Time `db:"timestamp"`
 }
 
+// NewTallyResultRow return a new TallyResultRow instance
 func NewTallyResultRow(
-	proposalID int64,
+	ProposalID int64,
 	yes int64,
 	abstain int64,
 	no int64,
@@ -79,7 +81,7 @@ func NewTallyResultRow(
 	timestamp time.Time,
 ) TallyResultRow {
 	return TallyResultRow{
-		ProposalID: proposalID,
+		ProposalID: ProposalID,
 		Yes:        yes,
 		Abstain:    abstain,
 		No:         no,
@@ -89,6 +91,7 @@ func NewTallyResultRow(
 	}
 }
 
+// Equals return true if two TallyResultRow are the same
 func (w TallyResultRow) Equals(v TallyResultRow) bool {
 	return w.ProposalID == v.ProposalID &&
 		w.Yes == v.Yes &&
@@ -99,23 +102,25 @@ func (w TallyResultRow) Equals(v TallyResultRow) bool {
 		w.Timestamp.Equal(v.Timestamp)
 }
 
+// VoteRow represents a single row inside the vote table
 type VoteRow struct {
-	ProposalId int64     `db:"proposal_id"`
+	ProposalID int64     `db:"proposal_id"`
 	Voter      string    `db:"voter"`
 	Option     string    `db:"option"`
 	Height     int64     `db:"height"`
 	Timestamp  time.Time `db:"timestamp"`
 }
 
+// NewVoteRow allows to easily create a new VoteRow
 func NewVoteRow(
-	proposalId int64,
+	ProposalID int64,
 	voter string,
 	option string,
 	height int64,
 	timestamp time.Time,
 ) VoteRow {
 	return VoteRow{
-		ProposalId: proposalId,
+		ProposalID: ProposalID,
 		Voter:      voter,
 		Option:     option,
 		Height:     height,
@@ -123,10 +128,50 @@ func NewVoteRow(
 	}
 }
 
+// Equals return true if two VoteRow are the same
 func (w VoteRow) Equals(v VoteRow) bool {
-	return w.ProposalId == v.ProposalId &&
+	return w.ProposalID == v.ProposalID &&
 		w.Voter == v.Voter &&
 		w.Option == v.Option &&
+		w.Height == v.Height &&
+		w.Timestamp.Equal(v.Timestamp)
+}
+
+// DepositRow represents a single row inside the deposit table
+type DepositRow struct {
+	ProposalID   int64
+	Depositor    string
+	Amount       DbCoins
+	TotalDeposit DbCoins
+	Height       int64
+	Timestamp    time.Time
+}
+
+// NewDepositRow allows to easily create a new NewDepositRow
+func NewDepositRow(
+	ProposalID int64,
+	depositor string,
+	amount DbCoins,
+	totalDeposit DbCoins,
+	height int64,
+	timestamp time.Time,
+) DepositRow {
+	return DepositRow{
+		ProposalID:   ProposalID,
+		Depositor:    depositor,
+		Amount:       amount,
+		TotalDeposit: totalDeposit,
+		Height:       height,
+		Timestamp:    timestamp,
+	}
+}
+
+// Equals return true if two VoteDepositRow are the same
+func (w DepositRow) Equals(v DepositRow) bool {
+	return w.ProposalID == v.ProposalID &&
+		w.Depositor == v.Depositor &&
+		w.Amount.Equal(&v.Amount) &&
+		w.TotalDeposit.Equal(&v.TotalDeposit) &&
 		w.Height == v.Height &&
 		w.Timestamp.Equal(v.Timestamp)
 }
