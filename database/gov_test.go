@@ -60,7 +60,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 	suite.Require().NoError(err)
 
 	var proposalRow []dbtypes.ProposalRow
-	err = suite.database.Sqlx.Select(&proposalRow, `SELECT * FROM proposal`)
+	err = suite.database.Sqlx.Select(&proposalRow, `SELECT * FROM proposal ORDER BY proposal_id ASC`)
 	suite.Require().NoError(err)
 
 	expected := []dbtypes.ProposalRow{dbtypes.NewProposalRow("title",
@@ -78,7 +78,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 		"description1",
 		"proposalRoute1",
 		"proposalType1",
-		1,
+		2,
 		submitTime2,
 		depositEndTime2,
 		votingStartTime2,
@@ -87,7 +87,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 		status2.String(),
 	)}
 	for i, expect := range expected {
-		suite.Require().True(expect.Equals(proposalRow[i]))
+		suite.Require().True(proposalRow[i].Equals(expect))
 	}
 }
 
@@ -259,18 +259,22 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 	err = suite.database.SaveDeposits(deposit)
 	suite.Require().NoError(err)
 
-	expected := dbtypes.NewDepositRow(1, depositor.String(), dbtypes.NewDbCoins(amount), dbtypes.NewDbCoins(total), 10, timestamp)
+	expected := []dbtypes.DepositRow{
+		dbtypes.NewDepositRow(1, depositor.String(), dbtypes.NewDbCoins(amount), dbtypes.NewDbCoins(total), 10, timestamp),
+		dbtypes.NewDepositRow(1, depositor2.String(), dbtypes.NewDbCoins(amount2), dbtypes.NewDbCoins(total2), 10, timestamp),
+	}
 	var result []dbtypes.DepositRow
 	err = suite.database.Sqlx.Select(&result, `SELECT * FROM deposit`)
 	suite.Require().NoError(err)
-	for _, r := range result {
-		suite.Require().True(expected.Equals(r))
+	for i, r := range result {
+		suite.Require().True(expected[i].Equals(r))
 	}
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_UpdateProposal() {
-	suite.getProposalRow(1)
-	proposer2 := suite.getDelegator("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
+	proposal := suite.getProposalRow(1)
+	proposer, err := sdk.AccAddressFromBech32(proposal.Proposer)
+	suite.Require().NoError(err)
 	submitTime2, err := time.Parse(time.RFC3339, "2020-12-10T15:00:00Z")
 	suite.Require().NoError(err)
 	depositEndTime2, err := time.Parse(time.RFC3339, "2020-12-15T15:00:00Z")
@@ -287,11 +291,11 @@ func (suite *DbTestSuite) TestBigDipperDb_UpdateProposal() {
 		"proposalType1",
 		1,
 		status2,
-		submitTime2,
-		depositEndTime2,
+		proposal.SubmitTime,
+		proposal.DepositEndTime,
 		votingStartTime2,
 		votingEndTime2,
-		proposer2)
+		proposer)
 
 	err = suite.database.UpdateProposal(update)
 	expected := dbtypes.NewProposalRow("title1",
@@ -299,15 +303,16 @@ func (suite *DbTestSuite) TestBigDipperDb_UpdateProposal() {
 		"proposalRoute1",
 		"proposalType1",
 		1,
-		submitTime2,
-		depositEndTime2,
+		proposal.SubmitTime,
+		proposal.DepositEndTime,
 		votingStartTime2,
 		votingEndTime2,
-		proposer2.String(),
+		proposer.String(),
 		status2.String())
 	var result []dbtypes.ProposalRow
 	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal`)
 	suite.Require().NoError(err)
+	suite.Require().Len(result, 1)
 	for _, r := range result {
 		suite.Require().True(expected.Equals(r))
 	}
