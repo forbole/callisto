@@ -281,11 +281,11 @@ func (suite *DbTestSuite) TestBigDipperDb_UpdateProposal() {
 	suite.Require().NoError(err)
 	status2, err := gov.ProposalStatusFromString("Passed")
 	suite.Require().NoError(err)
-	update := types.NewProposal("title1",
-		"description1",
-		"proposalRoute1",
-		"proposalType1",
-		1,
+	update := types.NewProposal(proposal.Title,
+		proposal.Description,
+		proposal.ProposalRoute,
+		proposal.ProposalType,
+		proposal.ProposalID,
 		status2,
 		proposal.SubmitTime,
 		proposal.DepositEndTime,
@@ -294,11 +294,11 @@ func (suite *DbTestSuite) TestBigDipperDb_UpdateProposal() {
 		proposer)
 
 	err = suite.database.UpdateProposal(update)
-	expected := dbtypes.NewProposalRow("title1",
-		"description1",
-		"proposalRoute1",
-		"proposalType1",
-		1,
+	expected := dbtypes.NewProposalRow(proposal.Title,
+		proposal.Description,
+		proposal.ProposalRoute,
+		proposal.ProposalType,
+		proposal.ProposalID,
 		proposal.SubmitTime,
 		proposal.DepositEndTime,
 		votingStartTime2,
