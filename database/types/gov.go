@@ -142,7 +142,7 @@ type DepositRow struct {
 	ProposalID   int64     `db:"proposal_id"`
 	Depositor    string    `db:"depositor"`
 	Amount       DbCoins   `db:"amount"`
-	TotalDeposit DbCoins   `db:"total_depost"`
+	TotalDeposit DbCoins   `db:"total_deposit"`
 	Height       int64     `db:"height"`
 	Timestamp    time.Time `db:"timestamp"`
 }
