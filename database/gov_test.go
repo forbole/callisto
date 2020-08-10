@@ -294,6 +294,7 @@ func (suite *DbTestSuite) TestBigDipperDb_UpdateProposal() {
 		proposer)
 
 	err = suite.database.UpdateProposal(update)
+	suite.Require().NoError(err)
 	expected := dbtypes.NewProposalRow(proposal.Title,
 		proposal.Description,
 		proposal.ProposalRoute,
