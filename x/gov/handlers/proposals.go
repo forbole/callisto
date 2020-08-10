@@ -56,8 +56,9 @@ func HandleMsgSubmitProposal(tx juno.Tx, msg gov.MsgSubmitProposal, db database.
 
 	db.SaveDeposit(types.NewDeposit(proposal.ProposalID, msg.Proposer, msg.InitialDeposit, msg.InitialDeposit, tx.Height, timestamp))
 
+	update := UpdateProposal(proposal.ProposalID, cp, db)
 	//watch the proposal and renew the database when deposit end and voting end
-	time.AfterFunc(time.Since(votingEndTime), func() { updateProposalStatuses(proposal.ProposalID, cp, db) })
+	time.AfterFunc(time.Since(votingEndTime), update)
 	return nil
 }
 
@@ -135,7 +136,8 @@ func updateProposalStatuses(id uint64, cp client.ClientProxy, db database.BigDip
 		}
 
 		if proposal.Status.String() == "VotingPeriod" {
-			time.AfterFunc(time.Since(votingEndTime), func() { updateProposalStatuses(proposal.ProposalID, cp, db) })
+			update := UpdateProposal(proposal.ProposalID, cp, db)
+			time.AfterFunc(time.Since(votingEndTime), update)
 		}
 		if err = stakingops.UpdateValidatorVotingPower(cp, db); err != nil {
 			return err
@@ -148,4 +150,8 @@ func updateProposalStatuses(id uint64, cp client.ClientProxy, db database.BigDip
 	}
 
 	return nil
+}
+
+func UpdateProposal(id uint64, cp client.ClientProxy, db database.BigDipperDb) func() {
+	return func() { updateProposalStatuses(id, cp, db) }
 }
