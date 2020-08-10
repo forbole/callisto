@@ -139,12 +139,12 @@ func (w VoteRow) Equals(v VoteRow) bool {
 
 // DepositRow represents a single row inside the deposit table
 type DepositRow struct {
-	ProposalID   int64
-	Depositor    string
-	Amount       DbCoins
-	TotalDeposit DbCoins
-	Height       int64
-	Timestamp    time.Time
+	ProposalID   int64     `db:"proposal_id"`
+	Depositor    string    `db:"depositor"`
+	Amount       DbCoins   `db:"amount"`
+	TotalDeposit DbCoins   `db:"total_depost"`
+	Height       int64     `db:"height"`
+	Timestamp    time.Time `db:"timestamp"`
 }
 
 // NewDepositRow allows to easily create a new NewDepositRow
