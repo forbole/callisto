@@ -16,7 +16,7 @@ func (db BigDipperDb) SaveProposals(proposals []types.Proposal) error {
 	for i, proposal := range proposals {
 		vi := i * 11
 		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
-			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10,vi+11)
+			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11)
 		param = append(param, proposal.Title,
 			proposal.Description,
 			proposal.Proposer.String(),
@@ -157,8 +157,8 @@ func (db BigDipperDb) SaveDeposits(deposits []types.Deposit) error {
 }
 
 func (db BigDipperDb) UpdateProposal(proposal types.Proposal) error {
-	query := `UPDATE proposal(status,voting_start_time,voting_end_time)
-		 VALUES($1,$2,$3) where proposal_id=$4`
+	query := `UPDATE proposal SET (status,voting_start_time,voting_end_time)
+		 = ($1,$2,$3) where proposal_id=$4`
 
 	_, err := db.Sql.Exec(query,
 		proposal.Status.String(),
