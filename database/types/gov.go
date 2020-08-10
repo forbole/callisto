@@ -65,7 +65,7 @@ type TallyResultRow struct {
 	Yes        int64     `db:"yes"`
 	Abstain    int64     `db:"abstain"`
 	No         int64     `db:"no"`
-	NoWithVeto int64     `db:"no_with_vet"`
+	NoWithVeto int64     `db:"no_with_veto"`
 	Height     int64     `db:"height"`
 	Timestamp  time.Time `db:"timestamp"`
 }

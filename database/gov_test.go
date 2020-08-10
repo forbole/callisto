@@ -225,7 +225,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposit() {
 
 	expected := dbtypes.NewDepositRow(1, depositor.String(), dbtypes.NewDbCoins(amount), dbtypes.NewDbCoins(total), 10, timestamp)
 	var result []dbtypes.DepositRow
-	err = suite.database.Sqlx.Select(&result, `SELECT * FROM vote`)
+	err = suite.database.Sqlx.Select(&result, `SELECT * FROM deposit`)
 	suite.Require().NoError(err)
 	suite.Require().Len(result, 1)
 	suite.Require().True(expected.Equals(result[0]))
@@ -261,7 +261,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 
 	expected := dbtypes.NewDepositRow(1, depositor.String(), dbtypes.NewDbCoins(amount), dbtypes.NewDbCoins(total), 10, timestamp)
 	var result []dbtypes.DepositRow
-	err = suite.database.Sqlx.Select(&result, `SELECT * FROM vote`)
+	err = suite.database.Sqlx.Select(&result, `SELECT * FROM deposit`)
 	suite.Require().NoError(err)
 	for _, r := range result {
 		suite.Require().True(expected.Equals(r))
