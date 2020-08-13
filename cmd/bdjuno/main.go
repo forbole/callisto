@@ -18,6 +18,8 @@ import (
 	"github.com/forbole/bdjuno/x/pricefeed"
 	"github.com/forbole/bdjuno/x/staking"
 	"github.com/forbole/bdjuno/x/supply"
+	"github.com/forbole/bdjuno/x/utils"
+
 	"github.com/go-co-op/gocron"
 )
 
@@ -82,6 +84,7 @@ func SetupModules() {
 	parse.RegisterAdditionalOperation(supply.PeriodicSupplyOperations(scheduler))
 	parse.RegisterAdditionalOperation(distribution.PeriodicDistributionOperations(scheduler))
 	parse.RegisterAdditionalOperation(pricefeed.PeriodicPriceFeedOperations(scheduler))
+	utils.WatchModules(scheduler)
 
 	scheduler.StartAsync()
 }

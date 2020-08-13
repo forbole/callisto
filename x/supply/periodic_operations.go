@@ -27,9 +27,11 @@ func PeriodicSupplyOperations(scheduler *gocron.Scheduler) parse.AdditionalOpera
 		// Fetch total supply of token in 30 seconds each
 		if _, err := scheduler.Every(30).Second().StartImmediately().Do(func() {
 			utils.WatchMethod(func() error { return operations.UpdateTotalTokenSupply(cp, bdDatabase) })
+
 		}); err != nil {
 			return err
 		}
 		return nil
 	}
+
 }
