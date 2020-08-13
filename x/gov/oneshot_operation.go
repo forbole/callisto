@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"time"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/gov"
 	"github.com/desmos-labs/juno/config"
 	"github.com/desmos-labs/juno/db"
 	"github.com/desmos-labs/juno/parse/client"
 	"github.com/forbole/bdjuno/database"
+	ops "github.com/forbole/bdjuno/x/gov/operations"
 	"github.com/forbole/bdjuno/x/gov/types"
 	"github.com/rs/zerolog/log"
 )
@@ -47,26 +48,20 @@ func getExistingProposal(cp client.ClientProxy, db database.BigDipperDb) error {
 	bdTallyResult := make([]types.TallyResult, len(proposals))
 	bdDeposit := make([]types.Deposit, len(proposals))
 	for _, proposal := range proposals {
-		submitTime := proposal.SubmitTime
-		
-		depositEndTime:=proposal.DepositEndTime
-		votingStartTime:= proposal.VotingStartTime
-		votingEndTime:=proposal.VotingEndTime
-		genesisTime:=time.Now()
 		//since there is not possible to get the proposer, set it to nil
 		bdproposals = append(bdproposals, types.NewProposal(proposal.GetTitle(), proposal.GetDescription(), proposal.ProposalRoute(), proposal.ProposalType(), proposal.ProposalID, proposal.Status,
-			submitTime, depositEndTime, votingStartTime, votingEndTime, sdk.AccAddress{}))
+			proposal.SubmitTime, proposal.DepositEndTime, proposal.VotingStartTime, proposal.VotingEndTime, sdk.AccAddress{}))
 
 		bdTallyResult = append(bdTallyResult, types.NewTallyResult(proposal.ProposalID, proposal.FinalTallyResult.Yes.Int64(), proposal.FinalTallyResult.Abstain.Int64(), proposal.FinalTallyResult.No.Int64(),
-			proposal.FinalTallyResult.NoWithVeto.Int64(), 0, genesisTime))
+			proposal.FinalTallyResult.NoWithVeto.Int64(), 0, time.Now()))
 
-		bdDeposit = append(bdDeposit, types.NewDeposit(proposal.ProposalID, sdk.AccAddress{}, proposal.TotalDeposit, proposal.TotalDeposit, 0, genesisTime))
+		bdDeposit = append(bdDeposit, types.NewDeposit(proposal.ProposalID, sdk.AccAddress{}, proposal.TotalDeposit, proposal.TotalDeposit, 0, time.Now()))
 
-		update := UpdateProposal(proposal.ProposalID, cp, db)
+		update := ops.UpdateProposal(proposal.ProposalID, cp, db)
 		if proposal.Status.String() == "VotingPeriod" {
-			time.AfterFunc(time.Since(votingEndTime), update)
+			time.AfterFunc(time.Since(proposal.VotingEndTime), update)
 		} else if proposal.Status.String() == "DepositPeriod" {
-			time.AfterFunc(time.Since(depositEndTime), update)
+			time.AfterFunc(time.Since(proposal.DepositEndTime), update)
 		}
 	}
 	if err := db.SaveProposals(bdproposals); err != nil {

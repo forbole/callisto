@@ -11,8 +11,8 @@ import (
 	"github.com/desmos-labs/juno/parse/client"
 	"github.com/desmos-labs/juno/parse/worker"
 	"github.com/forbole/bdjuno/database"
+	ops "github.com/forbole/bdjuno/x/gov/operations"
 	"github.com/forbole/bdjuno/x/gov/types"
-	stakingops "github.com/forbole/bdjuno/x/staking/operations"
 	"github.com/rs/zerolog/log"
 	tmtypes "github.com/tendermint/tendermint/types"
 )
@@ -73,7 +73,7 @@ func saveProposals(proposals gov.Proposals, genesisDoc *tmtypes.GenesisDoc, db d
 
 		bdDeposit = append(bdDeposit, types.NewDeposit(proposal.ProposalID, sdk.AccAddress{}, proposal.TotalDeposit, proposal.TotalDeposit, 0, genesisTime))
 
-		update := UpdateProposal(proposal.ProposalID, cp, db)
+		update := ops.UpdateProposal(proposal.ProposalID, cp, db)
 		if proposal.Status.String() == "VotingPeriod" {
 			time.AfterFunc(time.Since(votingEndTime), update)
 		} else if proposal.Status.String() == "DepositPeriod" {
@@ -89,53 +89,4 @@ func saveProposals(proposals gov.Proposals, genesisDoc *tmtypes.GenesisDoc, db d
 	}
 
 	return db.SaveTallyResults(bdTallyResult)
-}
-
-func UpdateProposal(id uint64, cp client.ClientProxy, db database.BigDipperDb) func() {
-	return func() { updateProposalStatuses(id, cp, db) }
-}
-
-func updateProposalStatuses(id uint64, cp client.ClientProxy, db database.BigDipperDb) error {
-	//update status, voting start time, end time
-	var s gov.Proposals
-	_, err := cp.QueryLCDWithHeight(fmt.Sprintf("/gov/proposals/%d", id), &s)
-	if err != nil {
-		return err
-	}
-
-	for _, proposal := range s {
-		submitTime, err := time.Parse(time.RFC3339, proposal.SubmitTime.String())
-		if err != nil {
-			return err
-		}
-		depositEndTime, err := time.Parse(time.RFC3339, proposal.DepositEndTime.String())
-		if err != nil {
-			return err
-		}
-
-		votingStartTime, err := time.Parse(time.RFC3339, proposal.VotingStartTime.String())
-		if err != nil {
-			return err
-		}
-		votingEndTime, err := time.Parse(time.RFC3339, proposal.VotingEndTime.String())
-		if err != nil {
-			return err
-		}
-
-		if proposal.Status.String() == "VotingPeriod" {
-			update := UpdateProposal(proposal.ProposalID, cp, db)
-			time.AfterFunc(time.Since(votingEndTime), update)
-		}
-		//get the voting power in each update
-		if err = stakingops.UpdateValidatorVotingPower(cp, db); err != nil {
-			return err
-		}
-		//no metter votingEndTime or votingStarttime it need to update status
-		if err = db.UpdateProposal(types.NewProposal(proposal.GetTitle(), proposal.GetDescription(), proposal.ProposalRoute(), proposal.ProposalType(), proposal.ProposalID, proposal.Status,
-			submitTime, depositEndTime, votingStartTime, votingEndTime, sdk.AccAddress{})); err != nil {
-			return err
-		}
-	}
-
-	return nil
 }

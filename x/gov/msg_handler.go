@@ -12,21 +12,6 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-/*
-MsgSubmitProposal keep the
-GetInitialDeposit
-GetProposer
-GetContent
-
-//for tolly
- MsgDeposit
-
- MsgVote
-
- tx=height
- cp=queryLCD
-*/
-
 // MsgHandler allows to handle the different messages related to the staking module
 func MsgHandler(tx types.Tx, index int, msg sdk.Msg, w worker.Worker) error {
 	if len(tx.Logs) == 0 {
@@ -37,9 +22,9 @@ func MsgHandler(tx types.Tx, index int, msg sdk.Msg, w worker.Worker) error {
 		return nil
 	}
 	log.Info().
-			Str("module", "gov").
-			Str("tx_hash", tx.TxHash).Int("msg_index", index).
-			Msg(msg.Type())
+		Str("module", "gov").
+		Str("tx_hash", tx.TxHash).Int("msg_index", index).
+		Msg(msg.Type())
 
 	bigDipperDb, ok := w.Db.(database.BigDipperDb)
 	if !ok {
