@@ -17,8 +17,6 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 )
 
-//genesisDoc.GenesisTime
-
 func GenesisHandler(codec *codec.Codec, genesisDoc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, w worker.Worker) error {
 	log.Debug().Str("module", "gov").Msg("parsing genesis")
 
@@ -38,6 +36,7 @@ func GenesisHandler(codec *codec.Codec, genesisDoc *tmtypes.GenesisDoc, appState
 	return nil
 }
 
+// saveProposals save proposals from genesis file
 func saveProposals(proposals gov.Proposals, genesisDoc *tmtypes.GenesisDoc, db database.BigDipperDb, cp client.ClientProxy) error {
 	bdproposals := make([]types.Proposal, len(proposals))
 	bdTallyResult := make([]types.TallyResult, len(proposals))

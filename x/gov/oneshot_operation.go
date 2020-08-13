@@ -23,7 +23,7 @@ func OneShotOperation(_ config.Config, _ *codec.Codec, cp client.ClientProxy, db
 		return fmt.Errorf("provided database is not a BigDipper database")
 	}
 
-	// Update the staking pool
+	// Update existing proposal from LCD
 	if err := getExistingProposal(cp, bigDipperDb); err != nil {
 		return err
 	}
@@ -31,7 +31,7 @@ func OneShotOperation(_ config.Config, _ *codec.Codec, cp client.ClientProxy, db
 	return nil
 }
 
-// updateStakingPool reads from the LCD the current staking pool and stores its value inside the database
+// getExistingProposal reads from the LCD the current proposals and stores its value inside the database
 func getExistingProposal(cp client.ClientProxy, db database.BigDipperDb) error {
 	log.Debug().
 		Str("module", "gov").

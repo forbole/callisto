@@ -12,6 +12,7 @@ import (
 	stakingops "github.com/forbole/bdjuno/x/staking/operations"
 )
 
+// UpdateProposal return a function for time.AfterFunc() to save the to update the proposal status in given time
 func UpdateProposal(id uint64, cp client.ClientProxy, db database.BigDipperDb) func() {
 	return func() { updateProposalStatuses(id, cp, db) }
 }
