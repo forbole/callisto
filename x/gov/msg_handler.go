@@ -31,11 +31,15 @@ GetContent
 func MsgHandler(tx types.Tx, index int, msg sdk.Msg, w worker.Worker) error {
 	if len(tx.Logs) == 0 {
 		log.Info().
-			Str("module", "staking").
+			Str("module", "gov").
 			Str("tx_hash", tx.TxHash).Int("msg_index", index).
 			Msg("skipping message as it was not successful")
 		return nil
 	}
+	log.Info().
+			Str("module", "gov").
+			Str("tx_hash", tx.TxHash).Int("msg_index", index).
+			Msg(msg.Type())
 
 	bigDipperDb, ok := w.Db.(database.BigDipperDb)
 	if !ok {

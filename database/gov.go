@@ -30,6 +30,7 @@ func (db BigDipperDb) SaveProposals(proposals []types.Proposal) error {
 			proposal.VotingEndTime)
 	}
 	query = query[:len(query)-1] // Remove trailing ","
+	query += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(query, param...)
 	if err != nil {
 		return err
@@ -41,7 +42,7 @@ func (db BigDipperDb) SaveProposals(proposals []types.Proposal) error {
 func (db BigDipperDb) SaveProposal(proposal types.Proposal) error {
 	query := `INSERT INTO proposal(title,description ,proposer,proposal_route ,proposal_type,proposal_id,
 		status,submit_time ,deposit_end_time,voting_start_time,voting_end_time)
-		 VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`
+		 VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) ON CONFLICT DO NOTHING`
 
 	_, err := db.Sql.Exec(query, proposal.Title,
 		proposal.Description,

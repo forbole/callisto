@@ -77,6 +77,7 @@ func SetupModules() {
 
 	// Register other operations
 	parse.RegisterAdditionalOperation(consensus.ListenOperation)
+	parse.RegisterAdditionalOperation(gov.OneShotOperation)
 
 	// Register periodic operations
 	scheduler := gocron.NewScheduler(time.UTC)
