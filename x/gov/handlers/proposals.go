@@ -33,31 +33,14 @@ func HandleMsgSubmitProposal(tx juno.Tx, msg gov.MsgSubmitProposal, db database.
 		}
 	}
 
-	submitTime, err := time.Parse(time.RFC3339, proposal.SubmitTime.String())
-	if err != nil {
-		return err
-	}
-	depositEndTime, err := time.Parse(time.RFC3339, proposal.DepositEndTime.String())
-	if err != nil {
-		return err
-	}
-	votingStartTime, err := time.Parse(time.RFC3339, proposal.VotingStartTime.String())
-	if err != nil {
-		return err
-	}
-	votingEndTime, err := time.Parse(time.RFC3339, proposal.VotingEndTime.String())
-	if err != nil {
-		return err
-	}
-
 	db.SaveProposal(types.NewProposal(proposal.GetTitle(), proposal.GetDescription(), proposal.ProposalRoute(), proposal.ProposalType(), proposal.ProposalID, proposal.Status,
-		submitTime, depositEndTime, votingStartTime, votingEndTime, msg.Proposer))
+		proposal.SubmitTime, proposal.DepositEndTime, proposal.VotingStartTime, proposal.VotingEndTime, msg.Proposer))
 
 	db.SaveDeposit(types.NewDeposit(proposal.ProposalID, msg.Proposer, msg.InitialDeposit, msg.InitialDeposit, tx.Height, timestamp))
 
 	update := ops.UpdateProposal(proposal.ProposalID, cp, db)
 	//watch the proposal and renew the database when deposit end and voting end
-	time.AfterFunc(time.Since(votingEndTime), update)
+	time.AfterFunc(time.Since(proposal.VotingEndTime), update)
 	return nil
 }
 
