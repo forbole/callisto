@@ -76,6 +76,7 @@ func SetupModules() {
 
 	// Register other operations
 	parse.RegisterAdditionalOperation(consensus.ListenOperation)
+	parse.RegisterAdditionalOperation(utils.WatchModules())
 
 	// Register periodic operations
 	scheduler := gocron.NewScheduler(time.UTC)
@@ -84,7 +85,6 @@ func SetupModules() {
 	parse.RegisterAdditionalOperation(supply.PeriodicSupplyOperations(scheduler))
 	parse.RegisterAdditionalOperation(distribution.PeriodicDistributionOperations(scheduler))
 	parse.RegisterAdditionalOperation(pricefeed.PeriodicPriceFeedOperations(scheduler))
-	parse.RegisterAdditionalOperation(utils.WatchModules(scheduler))
 
 	scheduler.StartAsync()
 }
