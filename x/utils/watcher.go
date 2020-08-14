@@ -4,6 +4,7 @@ package utils
 
 import (
 	"io/ioutil"
+	"os"
 	"path"
 	"path/filepath"
 	"runtime"
@@ -31,37 +32,52 @@ func WatchMethod(method func() error) {
 	}()
 }
 
+// WatchModules check goroutine and get the running enabled modules every 30 second
+// The list of module depends on bdjuno/x/... so that user only need to update schema of database
+// when adding a new module
 func WatchModules(scheduler *gocron.Scheduler) parse.AdditionalOperation {
-	_, b, _, _ := runtime.Caller(0)
-	root := filepath.Dir(path.Join(path.Dir(b)))
-	modules := make(map[string]bool)
 
-	files, err := ioutil.ReadDir(root)
-	if err != nil {
-		log.Fatal()
-	}
 	return func(_ config.Config, _ *codec.Codec, _ client.ClientProxy, db db.Database) error {
 		bdDatabase, ok := db.(database.BigDipperDb)
 		if !ok {
-			log.Fatal().Str("module", "utils").Msg("given database instance is not a BigDipperDb")
+			log.Fatal().Str("module", "util").Msg("given database instance is not a BigDipperDb")
 		}
+
+		_, b, _, _ := runtime.Caller(0)
+		root := filepath.Dir(path.Join(path.Dir(b)))
+		files, err := ioutil.ReadDir(root)
+		if err != nil {
+			log.Fatal()
+		}
+
 		if _, err := scheduler.Every(30).Second().StartImmediately().Do(func() {
-			var profilingBuffer strings.Builder
-			pprof.Lookup("goroutine").WriteTo(&profilingBuffer, 1)
-			s := profilingBuffer.String()
-			for _, name := range files {
-				modules[name.Name()] = strings.Contains(s, name.Name())
-			}
-
-			_, ok := modules[".DS_Store"]
-			if ok {
-				delete(modules, ".DS_Store") // delete system directory
-			}
-
-			bdDatabase.InsertEnableModules(modules)
+			WatchMethod(func() error { return watchModules(bdDatabase, files) })
 		}); err != nil {
 			return err
 		}
+
 		return nil
 	}
+}
+
+func watchModules(db db.Database, files []os.FileInfo) error {
+	modules := make(map[string]bool)
+	var profilingBuffer strings.Builder
+	pprof.Lookup("goroutine").WriteTo(&profilingBuffer, 1)
+	s := profilingBuffer.String()
+	for _, name := range files {
+		modules[name.Name()] = strings.Contains(s, name.Name())
+	}
+
+	_, ok := modules[".DS_Store"]
+	if ok {
+		delete(modules, ".DS_Store") // delete system directory
+	}
+
+	_, ok = modules["utils"]
+	if ok {
+		delete(modules, "utils") // delete system directory
+	}
+
+	return db.InsertEnableModules(modules)
 }
