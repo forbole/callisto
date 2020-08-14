@@ -84,7 +84,7 @@ func SetupModules() {
 	parse.RegisterAdditionalOperation(supply.PeriodicSupplyOperations(scheduler))
 	parse.RegisterAdditionalOperation(distribution.PeriodicDistributionOperations(scheduler))
 	parse.RegisterAdditionalOperation(pricefeed.PeriodicPriceFeedOperations(scheduler))
-	utils.WatchModules(scheduler)
+	parse.RegisterAdditionalOperation(utils.WatchModules(scheduler))
 
 	scheduler.StartAsync()
 }

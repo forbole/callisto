@@ -7,17 +7,27 @@ import (
 
 // UpdateEnableModules allows to save enabled module into the database
 func (db BigDipperDb) InsertEnableModules(modules map[string]bool) error {
-	stmt := `INSERT INTO enabled_modules values(`
-	var values string
+	stmt := `INSERT INTO modules (`
+	input := `(`
+	var values []interface{}
+	count := 1
 	for key, value := range modules {
 		stmt += fmt.Sprintf("%s,", key)
-		values += fmt.Sprintf("%t,", value)
+		input += fmt.Sprintf("$%d,", count)
+		values = append(values, value)
+		count++
 	}
-	stmt += "timestamp) VALUES ("
-	values += time.Now().String()
-	values += ")"
-	stmt += values
-	_, err := db.Sql.Exec(stmt)
+	stmt += "timestamp) VALUES "
+	input += fmt.Sprintf("$%d)", count)
+
+	now, err := time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+	if err != nil {
+		return err
+	}
+	values = append(values, now)
+	
+	stmt += input
+	_, err = db.Sql.Exec(stmt, values...)
 	if err != nil {
 		return err
 	}

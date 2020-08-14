@@ -4,7 +4,6 @@ package utils
 
 import (
 	"io/ioutil"
-	"os"
 	"path"
 	"path/filepath"
 	"runtime"
@@ -43,15 +42,8 @@ func WatchModules(scheduler *gocron.Scheduler) parse.AdditionalOperation {
 			log.Fatal().Str("module", "util").Msg("given database instance is not a BigDipperDb")
 		}
 
-		_, b, _, _ := runtime.Caller(0)
-		root := filepath.Dir(path.Join(path.Dir(b)))
-		files, err := ioutil.ReadDir(root)
-		if err != nil {
-			log.Fatal()
-		}
-
 		if _, err := scheduler.Every(30).Second().StartImmediately().Do(func() {
-			WatchMethod(func() error { return watchModules(bdDatabase, files) })
+			WatchMethod(func() error { return watchModules(bdDatabase) })
 		}); err != nil {
 			return err
 		}
@@ -60,7 +52,13 @@ func WatchModules(scheduler *gocron.Scheduler) parse.AdditionalOperation {
 	}
 }
 
-func watchModules(db db.Database, files []os.FileInfo) error {
+func watchModules(bdDatabase database.BigDipperDb) error {
+	_, b, _, _ := runtime.Caller(0)
+	root := filepath.Dir(path.Join(path.Dir(b)))
+	files, err := ioutil.ReadDir(root)
+	if err != nil {
+		log.Fatal()
+	}
 	modules := make(map[string]bool)
 	var profilingBuffer strings.Builder
 	pprof.Lookup("goroutine").WriteTo(&profilingBuffer, 1)
@@ -79,5 +77,5 @@ func watchModules(db db.Database, files []os.FileInfo) error {
 		delete(modules, "utils") // delete system directory
 	}
 
-	return db.InsertEnableModules(modules)
+	return bdDatabase.InsertEnableModules(modules)
 }
