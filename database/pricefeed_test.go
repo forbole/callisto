@@ -3,8 +3,9 @@ package database_test
 import (
 	"time"
 
-	dbtypes "github.com/forbole/bdjuno/database/types"
 	pricefeedtypes "github.com/forbole/bdjuno/x/pricefeed/types"
+
+	dbtypes "github.com/forbole/bdjuno/database/types"
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveTokenPrice() {
