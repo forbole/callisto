@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"time"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/desmos-labs/juno/parse/client"
 	juno "github.com/desmos-labs/juno/types"
 	"github.com/forbole/bdjuno/database"
+	"github.com/forbole/bdjuno/x/auth"
 	ops "github.com/forbole/bdjuno/x/gov/operations"
 	"github.com/forbole/bdjuno/x/gov/types"
 )
@@ -33,12 +35,21 @@ func HandleMsgSubmitProposal(tx juno.Tx, msg gov.MsgSubmitProposal, db database.
 		}
 	}
 
-	if err := db.SaveProposal(types.NewProposal(proposal.GetTitle(), proposal.GetDescription(), proposal.ProposalRoute(), proposal.ProposalType(), proposal.ProposalID, proposal.Status,
-		proposal.SubmitTime, proposal.DepositEndTime, proposal.VotingStartTime, proposal.VotingEndTime, msg.Proposer)); err!=nil{
-			return err
-		}
+	timestamp,err = time.Parse(time.RFC3339,tx.Timestamp)
+	if err!=nil{
+		return err
+	}
 
-	if err := db.SaveDeposit(types.NewDeposit(proposal.ProposalID, msg.Proposer, msg.InitialDeposit, msg.InitialDeposit, tx.Height, timestamp));err != nil{
+	if err = auth.RefreshAccounts([]sdk.AccAddress{msg.Proposer}, tx.Height, timestamp,cp,db); err != nil {
+		return err
+	}
+
+	if err = db.SaveProposal(types.NewProposal(proposal.GetTitle(), proposal.GetDescription(), proposal.ProposalRoute(), proposal.ProposalType(), proposal.ProposalID, proposal.Status,
+		proposal.SubmitTime, proposal.DepositEndTime, proposal.VotingStartTime, proposal.VotingEndTime, msg.Proposer)); err != nil {
+		return err
+	}
+
+	if err = db.SaveDeposit(types.NewDeposit(proposal.ProposalID, msg.Proposer, msg.InitialDeposit, msg.InitialDeposit, tx.Height, timestamp)); err != nil {
 		return err
 	}
 
@@ -47,7 +58,7 @@ func HandleMsgSubmitProposal(tx juno.Tx, msg gov.MsgSubmitProposal, db database.
 		time.AfterFunc(time.Since(proposal.VotingEndTime), ops.UpdateProposal(proposal.ProposalID, cp, db))
 	} else if proposal.Status.String() == "DepositPeriod" && proposal.DepositEndTime.After(time.Now()) {
 		time.AfterFunc(time.Since(proposal.DepositEndTime), ops.UpdateProposal(proposal.ProposalID, cp, db))
-	}	
+	}
 	return nil
 }
 
@@ -59,9 +70,18 @@ func HandleMsgDeposit(tx juno.Tx, msg gov.MsgDeposit, db database.BigDipperDb, c
 		return err
 	}
 
+	timestamp,err = time.Parse(time.RFC3339,tx.Timestamp)
+	if err!=nil{
+		return err
+	}
+
+	if err = auth.RefreshAccounts([]sdk.AccAddress{msg.Depositor}, tx.Height, timestamp,cp,db); err != nil {
+		return err
+	}
+
 	//getTotalDeposit
 	var s gov.Proposals
-	_, err = cp.QueryLCDWithHeight(fmt.Sprintf("/gov/proposals?height=%d/%d", tx.Height,msg.ProposalID), &s)
+	_, err = cp.QueryLCDWithHeight(fmt.Sprintf("/gov/proposals?height=%d/%d", tx.Height, msg.ProposalID), &s)
 	if err != nil {
 		return err
 	}
@@ -82,9 +102,18 @@ func HandleMsgVote(tx juno.Tx, msg gov.MsgVote, db database.BigDipperDb, cp clie
 		return err
 	}
 
+	timestamp,err = time.Parse(time.RFC3339,tx.Timestamp)
+	if err!=nil{
+		return err
+	}
+
+	if err = auth.RefreshAccounts([]sdk.AccAddress{msg.Voter}, tx.Height, timestamp,cp,db); err != nil {
+		return err
+	}
+
 	//fetch from lcd & store voter in specific time
 	var s gov.TallyResult
-	_, err = cp.QueryLCDWithHeight(fmt.Sprintf("/gov/proposals?height=%d/%d/tally",tx.Height, msg.ProposalID), &s)
+	_, err = cp.QueryLCDWithHeight(fmt.Sprintf("/gov/proposals?height=%d/%d/tally", tx.Height, msg.ProposalID), &s)
 	if err != nil {
 		return err
 	}
