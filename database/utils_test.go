@@ -23,10 +23,13 @@ func (suite *DbTestSuite) TestBigDipperDb_InsertEnableModules() {
 	err = suite.database.InsertEnableModules(modules, timestamp)
 	suite.Require().NoError(err)
 
-	var result []types.ModulesRow
-	err = suite.database.Sqlx.Select(&result, "SELECT * FROM modules")
+	var results []types.ModulesRow
+	err = suite.database.Sqlx.Select(&results, "SELECT * FROM modules")
+	suite.Require().Len(results, 1, "modules table should contain only one row")
 	suite.Require().NoError(err)
 
 	expected := types.NewModulesRow(true, true, true, true, true, true, true, false, timestamp)
-	suite.Require().True(result.Equals(expected))
+	for _, result := range results {
+		suite.Require().True(result.Equals(expected))
+	}
 }
