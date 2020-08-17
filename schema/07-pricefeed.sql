@@ -4,3 +4,4 @@ CREATE TABLE token_price(
     market_cap NUMERIC,
     timestamp TIMESTAMP
 );
+

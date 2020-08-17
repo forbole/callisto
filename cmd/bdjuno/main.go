@@ -15,6 +15,7 @@ import (
 	"github.com/forbole/bdjuno/x/bank"
 	"github.com/forbole/bdjuno/x/consensus"
 	"github.com/forbole/bdjuno/x/distribution"
+	"github.com/forbole/bdjuno/x/gov"
 	"github.com/forbole/bdjuno/x/pricefeed"
 	"github.com/forbole/bdjuno/x/staking"
 	"github.com/forbole/bdjuno/x/supply"
@@ -63,6 +64,7 @@ func SetupModules() {
 	// Register genesis handlers
 	worker.RegisterGenesisHandler(auth.GenesisHandler)
 	worker.RegisterGenesisHandler(staking.GenesisHandler)
+	worker.RegisterGenesisHandler(gov.GenesisHandler)
 
 	// Register block handlers
 	worker.RegisterBlockHandler(staking.BlockHandler)
@@ -71,9 +73,11 @@ func SetupModules() {
 	worker.RegisterMsgHandler(staking.MsgHandler)
 	worker.RegisterMsgHandler(bank.MsgHandler)
 	worker.RegisterMsgHandler(staking.MsgHandler)
+	worker.RegisterMsgHandler(gov.MsgHandler)
 
 	// Register other operations
 	parse.RegisterAdditionalOperation(consensus.ListenOperation)
+	parse.RegisterAdditionalOperation(gov.OneShotOperation)
 
 	// Register periodic operations
 	scheduler := gocron.NewScheduler(time.UTC)
