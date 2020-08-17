@@ -19,7 +19,6 @@ func BlockHandler(block *tmctypes.ResultBlock, _ []juno.Tx, _ *tmctypes.ResultVa
 	if !ok {
 		return fmt.Errorf("provided database is not a BigDipper database")
 	}
-
 	// Update the staking pool
 	if err := updateStakingPool(block.Block.Height, w.ClientProxy, bigDipperDb); err != nil {
 		return err
