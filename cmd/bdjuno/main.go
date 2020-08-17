@@ -70,6 +70,7 @@ func SetupModules() {
 
 	// Register block handlers
 	worker.RegisterBlockHandler(staking.BlockHandler)
+	worker.RegisterBlockHandler(gov.BlockHandler)
 
 	// Register msg handlers
 	worker.RegisterMsgHandler(staking.MsgHandler)
@@ -80,7 +81,6 @@ func SetupModules() {
 	// Register other operations
 	parse.RegisterAdditionalOperation(consensus.ListenOperation)
 	parse.RegisterAdditionalOperation(utils.WatchModules())
-	parse.RegisterAdditionalOperation(gov.OneShotOperation)
 
 	// Register periodic operations
 	scheduler := gocron.NewScheduler(time.UTC)
