@@ -23,10 +23,9 @@ func (suite *DbTestSuite) TestBigDipperDb_InsertEnableModules() {
 	err = suite.database.InsertEnableModules(modules, timestamp)
 	suite.Require().NoError(err)
 
-	var result types.ModulesRow
+	var result []types.ModulesRow
 	err = suite.database.Sqlx.Select(&result, "SELECT * FROM modules")
 	suite.Require().NoError(err)
-
 
 	expected := types.NewModulesRow(true, true, true, true, true, true, true, false, timestamp)
 	suite.Require().True(result.Equals(expected))
