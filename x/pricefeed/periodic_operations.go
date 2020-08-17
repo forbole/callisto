@@ -26,7 +26,7 @@ func PeriodicPriceFeedOperations(scheduler *gocron.Scheduler) parse.AdditionalOp
 
 		// Fetch total supply of token in 30 seconds each
 		if _, err := scheduler.Every(30).Second().StartImmediately().Do(func() {
-			utils.WatchMethod(func() error { return operations.UpdatePrice(cp, bdDatabase) })
+			utils.WatchMethod(func() error { return operations.UpdatePrice(bdDatabase) })
 		}); err != nil {
 			return err
 		}

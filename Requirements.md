@@ -24,7 +24,7 @@ The BDjuno is working as a backend for Big Dipper. The followings are the featur
 - [x] Calculate the average block time
 
 ## On intervals
-- [ ] Get token price and marketcap (per 30 seconds)
+- [x] Get token price and marketcap (per 30 seconds)
 - [x] [x/staking] Calculate average delegation ratio (per hour, per day) *
 - [x] [x/staking] Calculate voting power distribution (per hour) *
 - [x] [x/staking] Record all delegations (per day) *
