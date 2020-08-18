@@ -35,11 +35,6 @@ func HandleMsgSubmitProposal(tx juno.Tx, msg gov.MsgSubmitProposal, db database.
 		}
 	}
 
-	timestamp, err = time.Parse(time.RFC3339, tx.Timestamp)
-	if err != nil {
-		return err
-	}
-
 	if err = auth.RefreshAccounts([]sdk.AccAddress{msg.Proposer}, tx.Height, timestamp, cp, db); err != nil {
 		return err
 	}
@@ -70,11 +65,6 @@ func HandleMsgDeposit(tx juno.Tx, msg gov.MsgDeposit, db database.BigDipperDb, c
 		return err
 	}
 
-	timestamp, err = time.Parse(time.RFC3339, tx.Timestamp)
-	if err != nil {
-		return err
-	}
-
 	if err = auth.RefreshAccounts([]sdk.AccAddress{msg.Depositor}, tx.Height, timestamp, cp, db); err != nil {
 		return err
 	}
@@ -98,11 +88,6 @@ func HandleMsgDeposit(tx juno.Tx, msg gov.MsgDeposit, db database.BigDipperDb, c
 func HandleMsgVote(tx juno.Tx, msg gov.MsgVote, db database.BigDipperDb, cp client.ClientProxy) error {
 	//each vote voted
 	timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
-	if err != nil {
-		return err
-	}
-
-	timestamp, err = time.Parse(time.RFC3339, tx.Timestamp)
 	if err != nil {
 		return err
 	}

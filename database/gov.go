@@ -30,7 +30,7 @@ func (db BigDipperDb) SaveProposals(proposals []types.Proposal) error {
 			proposal.VotingEndTime)
 	}
 	query = query[:len(query)-1] // Remove trailing ","
-	query += " ON CONFLICT DO UPDATE"
+	query += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(query, param...)
 	if err != nil {
 		return err
@@ -77,7 +77,7 @@ func (db BigDipperDb) SaveTallyResults(tallys []types.TallyResult) error {
 			tally.Timestamp)
 	}
 	query = query[:len(query)-1] // Remove trailing ","
-	query += " ON CONFLICT DO UPDATE"
+	query += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(query, param...)
 	if err != nil {
 		return err
