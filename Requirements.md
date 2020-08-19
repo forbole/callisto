@@ -16,9 +16,9 @@ The BDjuno is working as a backend for Big Dipper. The followings are the featur
 - [x] [x/staking] Update the total staked tokens 
 - [x] [x/supply] Update the total supply
 - [x] [x/mint] Update the inflation
-- [ ] [x/distribution] Update community pool
-- [ ] [x/gov] Get gov proposals
-- [ ] [x/gov] Calculate the tally result
+- [x] [x/distribution] Update community pool
+- [x] [x/gov] Get gov proposals
+- [x] [x/gov] Calculate the tally result
 
 ### Achievable using GraphQL APIs
 - [x] Calculate the average block time
