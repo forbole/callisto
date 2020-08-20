@@ -11,7 +11,7 @@ func NewModuleRow(name string) ModuleRow {
 }
 
 // Equal return true if two moduleRow is equal
-func (v ModuleRow) Equal (w ModuleRow) bool{
+func (v ModuleRow) Equal(w ModuleRow) bool {
 	return v.Module == w.Module
 }
 
@@ -28,7 +28,7 @@ func NewModuleRows(names []string) ModuleRows {
 }
 
 // Equal return true if two ModulesRow is equal
-func (v ModuleRows) Equal (w *ModuleRows) bool{
+func (v ModuleRows) Equal(w *ModuleRows) bool {
 	if w == nil {
 		return false
 	}
@@ -37,7 +37,7 @@ func (v ModuleRows) Equal (w *ModuleRows) bool{
 		return false
 	}
 
-	for index,val :=range v{
+	for index, val := range v {
 		if !val.Equal(*(*w)[index]) {
 			return false
 		}
