@@ -1,46 +1,45 @@
 package staking
 
-
 import (
 	"github.com/desmos-labs/juno/parse"
 	juno "github.com/desmos-labs/juno/parse/worker"
-	"github.com/forbole/bdjuno/x/types"
+	x "github.com/forbole/bdjuno/x/types"
 )
 
-// StakingModule represent /x/Staking module
-type StakingModule struct {}
+// Module represent /x/Staking module
+type Module struct{}
 
 // Name return the name of the module
-func (m StakingModule) Name() string {
-  return "staking" 
-} 
+func (m Module) Name() string {
+	return "staking"
+}
 
 // BlockHandlers return a list of block handler of the module
-func (m StakingModule) BlockHandlers() []juno.BlockHandler {
-  return []juno.BlockHandler{BlockHandler}
-} 
+func (m Module) BlockHandlers() []juno.BlockHandler {
+	return []juno.BlockHandler{BlockHandler}
+}
 
 // TxHandlers return a list of TxHandlers of the module
-func (m StakingModule) TxHandlers() []juno.TxHandler{
+func (m Module) TxHandlers() []juno.TxHandler {
 	return []juno.TxHandler{}
 }
 
 // MsgHandlers return a list of MsgHandlers of the module
-func (m StakingModule)	MsgHandlers() []juno.MsgHandler{
+func (m Module) MsgHandlers() []juno.MsgHandler {
 	return []juno.MsgHandler{MsgHandler}
 }
 
 // AdditionalOperations return a list of AdditionalOperations of the module
-func (m StakingModule)AdditionalOperations() []parse.AdditionalOperation{
+func (m Module) AdditionalOperations() []parse.AdditionalOperation {
 	return []parse.AdditionalOperation{}
 }
 
 // PeriodicOperations return a list of PeriodicOperations of the module
-func (m StakingModule)PeriodicOperations() []x.PerodicOperation{
+func (m Module) PeriodicOperations() []x.PerodicOperation {
 	return []x.PerodicOperation{PeriodicStakingOperations}
 }
 
 // GenesisHandlers return a list of GenesisHandlers of the module
-func (m StakingModule) GenesisHandlers() []juno.GenesisHandler {
+func (m Module) GenesisHandlers() []juno.GenesisHandler {
 	return []juno.GenesisHandler{GenesisHandler}
 }
