@@ -26,8 +26,8 @@ func (m SupplyModule) TxHandlers() []juno.TxHandler{
 }
 
 // MsgHandlers return a list of MsgHandlers of the module
-func (m SupplyModule)	MsgHandlers() []juno.TxHandler{
-	return []juno.TxHandler{}
+func (m SupplyModule)	MsgHandlers() []juno.MsgHandler{
+	return []juno.MsgHandler{}
 }
 
 // AdditionalOperations return a list of AdditionalOperations of the module
@@ -38,4 +38,9 @@ func (m SupplyModule)AdditionalOperations() []parse.AdditionalOperation{
 // PeriodicOperations return a list of PeriodicOperations of the module
 func (m SupplyModule)PeriodicOperations() []x.PerodicOperation{
 	return []x.PerodicOperation{PeriodicSupplyOperations}
+}
+
+// GenesisHandlers return a list of GenesisHandlers of the module
+func (m SupplyModule) GenesisHandlers() []juno.GenesisHandler {
+	return []juno.GenesisHandler{}
 }

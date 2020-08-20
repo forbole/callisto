@@ -17,7 +17,7 @@ func (m StakingModule) Name() string {
 
 // BlockHandlers return a list of block handler of the module
 func (m StakingModule) BlockHandlers() []juno.BlockHandler {
-  return []juno.BlockHandler{}
+  return []juno.BlockHandler{BlockHandler}
 } 
 
 // TxHandlers return a list of TxHandlers of the module
@@ -26,8 +26,8 @@ func (m StakingModule) TxHandlers() []juno.TxHandler{
 }
 
 // MsgHandlers return a list of MsgHandlers of the module
-func (m StakingModule)	MsgHandlers() []juno.TxHandler{
-	return []juno.TxHandler{}
+func (m StakingModule)	MsgHandlers() []juno.MsgHandler{
+	return []juno.MsgHandler{MsgHandler}
 }
 
 // AdditionalOperations return a list of AdditionalOperations of the module
@@ -38,4 +38,9 @@ func (m StakingModule)AdditionalOperations() []parse.AdditionalOperation{
 // PeriodicOperations return a list of PeriodicOperations of the module
 func (m StakingModule)PeriodicOperations() []x.PerodicOperation{
 	return []x.PerodicOperation{PeriodicStakingOperations}
+}
+
+// GenesisHandlers return a list of GenesisHandlers of the module
+func (m StakingModule) GenesisHandlers() []juno.GenesisHandler {
+	return []juno.GenesisHandler{GenesisHandler}
 }

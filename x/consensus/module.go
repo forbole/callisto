@@ -26,16 +26,21 @@ func (m ConsensusModule) TxHandlers() []juno.TxHandler{
 }
 
 // MsgHandlers return a list of MsgHandlers of the module
-func (m ConsensusModule)	MsgHandlers() []juno.TxHandler{
-	return []juno.TxHandler{}
+func (m ConsensusModule)	MsgHandlers() []juno.MsgHandler{
+	return []juno.MsgHandler{}
 }
 
 // AdditionalOperations return a list of AdditionalOperations of the module
 func (m ConsensusModule)AdditionalOperations() []parse.AdditionalOperation{
-	return []parse.AdditionalOperation{}
+	return []parse.AdditionalOperation{ListenOperation}
 }
 
 // PeriodicOperations return a list of PeriodicOperations of the module
 func (m ConsensusModule)PeriodicOperations() []x.PerodicOperation{
-	return []x.PerodicOperation{PeriodicConsensusOperations}
+	return []x.PerodicOperation{}
+}
+
+// GenesisHandlers return a list of GenesisHandlers of the module
+func (m ConsensusModule) GenesisHandlers() []juno.GenesisHandler {
+	return []juno.GenesisHandler{}
 }

@@ -38,3 +38,8 @@ func (m AuthModule) AdditionalOperations() []parse.AdditionalOperation {
 func (m AuthModule) PeriodicOperations() []x.PerodicOperation {
 	return []x.PerodicOperation{PeriodicAuthOperations}
 }
+
+// GenesisHandlers return a list of GenesisHandlers of the module
+func (m AuthModule) GenesisHandlers() []juno.GenesisHandler {
+	return []juno.GenesisHandler{GenesisHandler}
+}

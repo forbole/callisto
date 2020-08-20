@@ -16,7 +16,8 @@ type Module interface {
 	Name() string
 	BlockHandlers() []juno.BlockHandler
 	TxHandlers() []juno.TxHandler
-	MsgHandlers() []juno.TxHandler
+	MsgHandlers() []juno.MsgHandler
 	AdditionalOperations() []parse.AdditionalOperation
 	PeriodicOperations() []PerodicOperation
+	GenesisHandlers() []juno.GenesisHandler
 }

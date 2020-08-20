@@ -26,8 +26,8 @@ func (m PriceFeedModule) TxHandlers() []juno.TxHandler{
 }
 
 // MsgHandlers return a list of MsgHandlers of the module
-func (m PriceFeedModule)	MsgHandlers() []juno.TxHandler{
-	return []juno.TxHandler{}
+func (m PriceFeedModule)	MsgHandlers() []juno.msgHandler{
+	return []juno.MsgHandler{}
 }
 
 // AdditionalOperations return a list of AdditionalOperations of the module
@@ -38,4 +38,9 @@ func (m PriceFeedModule)AdditionalOperations() []parse.AdditionalOperation{
 // PeriodicOperations return a list of PeriodicOperations of the module
 func (m PriceFeedModule)PeriodicOperations() []x.PerodicOperation{
 	return []x.PerodicOperation{PeriodicPriceFeedOperations}
+}
+
+// GenesisHandlers return a list of GenesisHandlers of the module
+func (m PriceFeedModule) GenesisHandlers() []juno.GenesisHandler {
+	return []juno.GenesisHandler{}
 }
