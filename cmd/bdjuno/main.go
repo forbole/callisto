@@ -1,34 +1,39 @@
 package main
 
 import (
-	"github.com/forbole/bdjuno/x/types"
-	"time"
+	"github.com/forbole/bdjuno/x/mint"
+	x "github.com/forbole/bdjuno/x/types"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/juno/config"
 	"github.com/desmos-labs/juno/executor"
 	"github.com/desmos-labs/juno/parse"
-	"github.com/desmos-labs/juno/parse/worker"
 	"github.com/desmos-labs/juno/version"
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/auth"
 	"github.com/forbole/bdjuno/x/bank"
 	"github.com/forbole/bdjuno/x/consensus"
-	x "github.com/forbole/bdjuno/x/type"
 	"github.com/forbole/bdjuno/x/distribution"
 	"github.com/forbole/bdjuno/x/gov"
 	"github.com/forbole/bdjuno/x/pricefeed"
 	"github.com/forbole/bdjuno/x/staking"
 	"github.com/forbole/bdjuno/x/supply"
-	"github.com/forbole/bdjuno/x/utils"
-
-	"github.com/go-co-op/gocron"
 )
 
-modules := x.Module{
-	auth.AuthModule,
-}
+var (
+	modules = []x.Module{
+		auth.Module{},
+		bank.Module{},
+		consensus.Module{},
+		distribution.Module{},
+		gov.Module{},
+		mint.Module{},
+		pricefeed.Module{},
+		staking.Module{},
+		supply.Module{},
+	}
+)
 
 func main() {
 	// Register all the modules to be handled
@@ -69,5 +74,5 @@ func SetupConfig(prefix string) func(cfg *sdk.Config) {
 }
 
 func SetupModules() {
-	x.RegisterModules()
+	x.RegisterModules(modules)
 }

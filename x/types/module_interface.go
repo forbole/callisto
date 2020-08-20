@@ -25,6 +25,7 @@ type Module interface {
 	GenesisHandlers() []juno.GenesisHandler
 }
 
+// RegisterModules register modules that enabled and pass that to juno handlers
 func RegisterModules(modules []Module) {
 	scheduler := gocron.NewScheduler(time.UTC)
 	var modulesName []string
@@ -51,5 +52,4 @@ func RegisterModules(modules []Module) {
 	}
 	parse.RegisterAdditionalOperation(utils.WatchModules(modulesName))
 	scheduler.StartAsync()
-
 }

@@ -20,12 +20,12 @@ func WatchModules(modules []string) parse.AdditionalOperation {
 			log.Fatal().Str("module", "util").Msg("given database instance is not a BigDipperDb")
 		}
 
-		WatchMethod(func() error { return watchModules(bdDatabase,modules) })
+		WatchMethod(func() error { return watchModules(bdDatabase, modules) })
 
 		return nil
 	}
 }
 
-func watchModules(bdDatabase database.BigDipperDb,modules []string) error {
+func watchModules(bdDatabase database.BigDipperDb, modules []string) error {
 	return bdDatabase.InsertEnableModules(modules)
 }

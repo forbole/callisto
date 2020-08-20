@@ -6,40 +6,40 @@ import (
 	x "github.com/forbole/bdjuno/x/types"
 )
 
-// AuthModule represent /x/Auth module
-type AuthModule struct{}
+// Module represent /x/Auth module
+type Module struct{}
 
 // Name return the name of the module
-func (m AuthModule) Name() string {
+func (m Module) Name() string {
 	return "auth"
 }
 
 // BlockHandlers return a list of block handler of the module
-func (m AuthModule) BlockHandlers() []juno.BlockHandler {
+func (m Module) BlockHandlers() []juno.BlockHandler {
 	return []juno.BlockHandler{}
 }
 
 // TxHandlers return a list of TxHandlers of the module
-func (m AuthModule) TxHandlers() []juno.TxHandler {
+func (m Module) TxHandlers() []juno.TxHandler {
 	return []juno.TxHandler{}
 }
 
 // MsgHandlers return a list of MsgHandlers of the module
-func (m AuthModule) MsgHandlers() []juno.TxHandler {
-	return []juno.TxHandler{}
+func (m Module) MsgHandlers() []juno.MsgHandler {
+	return []juno.MsgHandler{}
 }
 
 // AdditionalOperations return a list of AdditionalOperations of the module
-func (m AuthModule) AdditionalOperations() []parse.AdditionalOperation {
+func (m Module) AdditionalOperations() []parse.AdditionalOperation {
 	return []parse.AdditionalOperation{}
 }
 
 // PeriodicOperations return a list of PeriodicOperations of the module
-func (m AuthModule) PeriodicOperations() []x.PerodicOperation {
+func (m Module) PeriodicOperations() []x.PerodicOperation {
 	return []x.PerodicOperation{PeriodicAuthOperations}
 }
 
 // GenesisHandlers return a list of GenesisHandlers of the module
-func (m AuthModule) GenesisHandlers() []juno.GenesisHandler {
+func (m Module) GenesisHandlers() []juno.GenesisHandler {
 	return []juno.GenesisHandler{GenesisHandler}
 }
