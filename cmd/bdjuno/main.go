@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/forbole/bdjuno/x/types"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
@@ -14,6 +15,7 @@ import (
 	"github.com/forbole/bdjuno/x/auth"
 	"github.com/forbole/bdjuno/x/bank"
 	"github.com/forbole/bdjuno/x/consensus"
+	x "github.com/forbole/bdjuno/x/type"
 	"github.com/forbole/bdjuno/x/distribution"
 	"github.com/forbole/bdjuno/x/gov"
 	"github.com/forbole/bdjuno/x/pricefeed"
@@ -23,6 +25,10 @@ import (
 
 	"github.com/go-co-op/gocron"
 )
+
+modules := x.Module{
+	auth.AuthModule,
+}
 
 func main() {
 	// Register all the modules to be handled
@@ -63,32 +69,5 @@ func SetupConfig(prefix string) func(cfg *sdk.Config) {
 }
 
 func SetupModules() {
-	// Register genesis handlers
-	worker.RegisterGenesisHandler(auth.GenesisHandler)
-	worker.RegisterGenesisHandler(staking.GenesisHandler)
-	worker.RegisterGenesisHandler(gov.GenesisHandler)
-
-	// Register block handlers
-	worker.RegisterBlockHandler(staking.BlockHandler)
-	worker.RegisterBlockHandler(gov.BlockHandler)
-
-	// Register msg handlers
-	worker.RegisterMsgHandler(staking.MsgHandler)
-	worker.RegisterMsgHandler(bank.MsgHandler)
-	worker.RegisterMsgHandler(staking.MsgHandler)
-	worker.RegisterMsgHandler(gov.MsgHandler)
-
-	// Register other operations
-	parse.RegisterAdditionalOperation(consensus.ListenOperation)
-	parse.RegisterAdditionalOperation(utils.WatchModules())
-
-	// Register periodic operations
-	scheduler := gocron.NewScheduler(time.UTC)
-	parse.RegisterAdditionalOperation(staking.PeriodicStakingOperations(scheduler))
-	parse.RegisterAdditionalOperation(auth.PeriodicAuthOperations(scheduler))
-	parse.RegisterAdditionalOperation(supply.PeriodicSupplyOperations(scheduler))
-	parse.RegisterAdditionalOperation(distribution.PeriodicDistributionOperations(scheduler))
-	parse.RegisterAdditionalOperation(pricefeed.PeriodicPriceFeedOperations(scheduler))
-
-	scheduler.StartAsync()
+	x.RegisterModules()
 }
