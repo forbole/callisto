@@ -13,20 +13,19 @@ import (
 )
 
 // WatchModules is a one shot operation that save the operating modules into the database
-func WatchModules() parse.AdditionalOperation {
+func WatchModules(modules []string) parse.AdditionalOperation {
 	return func(_ config.Config, _ *codec.Codec, _ client.ClientProxy, db db.Database) error {
 		bdDatabase, ok := db.(database.BigDipperDb)
 		if !ok {
 			log.Fatal().Str("module", "util").Msg("given database instance is not a BigDipperDb")
 		}
 
-		WatchMethod(func() error { return watchModules(bdDatabase) })
+		WatchMethod(func() error { return watchModules(bdDatabase,modules) })
 
 		return nil
 	}
 }
 
-func watchModules(bdDatabase database.BigDipperDb) error {
-	modules := []string{"auth", "bank", "consensus", "distribution", "gov", "mint", "pricefeed", "staking", "supply"}
+func watchModules(bdDatabase database.BigDipperDb,modules []string) error {
 	return bdDatabase.InsertEnableModules(modules)
 }
