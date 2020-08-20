@@ -1,56 +1,46 @@
 package types
 
-import (
-	"time"
-)
-
-// ModulesRow represents a single row inside the modules table
-type ModulesRow struct {
-	Staking      bool      `db:"staking"`
-	Auth         bool      `db:"auth"`
-	Supply       bool      `db:"supply"`
-	Distribution bool      `db:"distribution"`
-	Pricefeed    bool      `db:"pricefeed"`
-	Bank         bool      `db:"bank"`
-	Consensus    bool      `db:"consensus"`
-	Mint         bool      `db:"mint"`
-	Timestamp    time.Time `db:"timestamp"`
+// ModuleRow represents a single row inside the modules table
+type ModuleRow struct {
+	Module string `db:"module_name"`
 }
 
-//NewModulesRow return a new instance of ModulesRow
-func NewModulesRow(
-	staking bool,
-	auth bool,
-	supply bool,
-	distribution bool,
-	pricefeed bool,
-	bank bool,
-	consensus bool,
-	mint bool,
-	timestamp time.Time,
-) ModulesRow {
-	return ModulesRow{
-		Staking:      staking,
-		Auth:         auth,
-		Supply:       supply,
-		Distribution: distribution,
-		Pricefeed:    pricefeed,
-		Bank:         bank,
-		Consensus:    consensus,
-		Mint:         mint,
-		Timestamp:    timestamp,
+//NewModuleRow return a new instance of ModuleRow
+func NewModuleRow(name string) ModuleRow {
+	return ModuleRow{Module: name}
+}
+
+// Equal return true if two moduleRow is equal
+func (v ModuleRow) Equal (w ModuleRow) bool{
+	return v.Module == w.Module
+}
+
+// ModuleRows represent an array of ModulerRow
+type ModuleRows []*ModuleRow
+
+//NewModuleRows return a new instance of ModuleRows
+func NewModuleRows(names []string) ModuleRows {
+	rows := make([]*ModuleRow, 0)
+	for _, name := range names {
+		rows = append(rows, &ModuleRow{Module: name})
 	}
+	return rows
 }
 
-// Equals returns true if two ModulesRow are the same
-func (w ModulesRow) Equals(v ModulesRow) bool {
-	return w.Staking == v.Staking &&
-		w.Auth == v.Auth &&
-		w.Supply == v.Supply &&
-		w.Distribution == v.Distribution &&
-		w.Pricefeed == v.Pricefeed &&
-		w.Bank == v.Bank &&
-		w.Consensus == v.Consensus &&
-		w.Mint == v.Mint &&
-		w.Timestamp.Equal(v.Timestamp)
+// Equal return true if two ModulesRow is equal
+func (v ModuleRows) Equal (w *ModuleRows) bool{
+	if w == nil {
+		return false
+	}
+
+	if len(v) != len(*w) {
+		return false
+	}
+
+	for index,val :=range v{
+		if !val.Equal(*(*w)[index]) {
+			return false
+		}
+	}
+	return true
 }

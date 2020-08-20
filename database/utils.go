@@ -2,28 +2,26 @@ package database
 
 import (
 	"fmt"
-	"time"
 )
 
 // UpdateEnableModules allows to save enabled module into the database
-func (db BigDipperDb) InsertEnableModules(modules map[string]bool, time time.Time) error {
-	stmt := `INSERT INTO modules (`
-	input := `(`
-	var values []interface{}
-	count := 1
-	for key, value := range modules {
-		stmt += fmt.Sprintf("%s,", key)
-		input += fmt.Sprintf("$%d,", count)
-		values = append(values, value)
-		count++
+func (db BigDipperDb) InsertEnableModules(modules []string) error {
+	//clear table first
+	stmt := "DELETE FROM modules"
+	_, err := db.Sql.Exec(stmt)
+	if err != nil {
+		return err
 	}
-	stmt += "timestamp) VALUES "
-	input += fmt.Sprintf("$%d)", count)
 
-	values = append(values, time)
-
-	stmt += input
-	_, err := db.Sql.Exec(stmt, values...)
+	var values []interface{}
+	stmt = `INSERT INTO modules (module_name) VALUES`
+	for key, value := range modules {
+		stmt += fmt.Sprintf("($%d),", key+1)
+		values = append(values, value)
+	}
+	stmt = stmt[:len(stmt)-1] //remove tailing ","
+	stmt += " ON CONFLICT DO NOTHING"
+	_, err = db.Sql.Exec(stmt, values...)
 	if err != nil {
 		return err
 	}

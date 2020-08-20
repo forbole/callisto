@@ -3,8 +3,6 @@ package utils
 // DONTCOVER
 
 import (
-	"time"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/desmos-labs/juno/config"
 	"github.com/desmos-labs/juno/db"
@@ -29,18 +27,6 @@ func WatchModules() parse.AdditionalOperation {
 }
 
 func watchModules(bdDatabase database.BigDipperDb) error {
-	modules := make(map[string]bool)
-	modules["staking"] = true
-	modules["auth"] = true
-	modules["supply"] = true
-	modules["distribution"] = true
-	modules["pricefeed"] = true
-	modules["bank"] = true
-	modules["consensus"] = true
-	modules["mint"] = true
-	now, err := time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
-	if err != nil {
-		return err
-	}
-	return bdDatabase.InsertEnableModules(modules, now)
+	modules := []string{"auth", "bank", "consensus", "distribution", "gov", "mint", "pricefeed", "staking", "supply"}
+	return bdDatabase.InsertEnableModules(modules)
 }
