@@ -6,6 +6,7 @@ require (
 	github.com/cosmos/cosmos-sdk v0.38.5
 	github.com/desmos-labs/juno v0.0.0-20200706074258-15a37786a810
 	github.com/go-co-op/gocron v0.2.0
+	github.com/gogo/protobuf v1.3.1
 	github.com/jmoiron/sqlx v1.2.1-0.20200324155115-ee514944af4b
 	github.com/lib/pq v1.3.0
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244

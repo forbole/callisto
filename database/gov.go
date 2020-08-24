@@ -77,6 +77,7 @@ func (db BigDipperDb) SaveTallyResults(tallys []types.TallyResult) error {
 			tally.Timestamp)
 	}
 	query = query[:len(query)-1] // Remove trailing ","
+	query += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(query, param...)
 	if err != nil {
 		return err
@@ -87,7 +88,7 @@ func (db BigDipperDb) SaveTallyResults(tallys []types.TallyResult) error {
 // SaveTallyResult insert a single row into tally_result table
 func (db BigDipperDb) SaveTallyResult(tally types.TallyResult) error {
 	query := `INSERT INTO tally_result(proposal_id,yes,abstain,no,no_with_veto,height,timestamp) VALUES
-	($1,$2,$3,$4,$5,$6,$7)`
+	($1,$2,$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(query, tally.ProposalID,
 		tally.Yes,
 		tally.Abstain,
@@ -104,7 +105,7 @@ func (db BigDipperDb) SaveTallyResult(tally types.TallyResult) error {
 // SaveVote allows to save for the given height and the message vote
 func (db BigDipperDb) SaveVote(vote types.Vote) error {
 	query := `INSERT INTO vote(proposal_id,voter,option,height,timestamp) VALUES
-	($1,$2,$3,$4,$5)`
+	($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(query,
 		vote.ProposalID,
 		vote.Voter.String(),
@@ -120,7 +121,7 @@ func (db BigDipperDb) SaveVote(vote types.Vote) error {
 // SaveDeposit allows to save for the given message deposit and height
 func (db BigDipperDb) SaveDeposit(deposit types.Deposit) error {
 	query := `INSERT INTO deposit(proposal_id,depositor,amount,total_deposit,height,timestamp) VALUES
-	($1,$2,$3,$4,$5,$6)`
+	($1,$2,$3,$4,$5,$6) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(query,
 		deposit.ProposalID,
 		deposit.Depositor.String(),
@@ -150,6 +151,7 @@ func (db BigDipperDb) SaveDeposits(deposits []types.Deposit) error {
 			deposit.Timestamp)
 	}
 	query = query[:len(query)-1] // Remove trailing ","
+	query += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(query, param...)
 	if err != nil {
 		return err

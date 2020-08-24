@@ -1,14 +1,14 @@
 package main
 
 import (
-	"time"
+	"github.com/forbole/bdjuno/x/mint"
+	x "github.com/forbole/bdjuno/x/types"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/juno/config"
 	"github.com/desmos-labs/juno/executor"
 	"github.com/desmos-labs/juno/parse"
-	"github.com/desmos-labs/juno/parse/worker"
 	"github.com/desmos-labs/juno/version"
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/auth"
@@ -19,7 +19,20 @@ import (
 	"github.com/forbole/bdjuno/x/pricefeed"
 	"github.com/forbole/bdjuno/x/staking"
 	"github.com/forbole/bdjuno/x/supply"
-	"github.com/go-co-op/gocron"
+)
+
+var (
+	modules = []x.Module{
+		auth.Module{},
+		bank.Module{},
+		consensus.Module{},
+		distribution.Module{},
+		gov.Module{},
+		mint.Module{},
+		pricefeed.Module{},
+		staking.Module{},
+		supply.Module{},
+	}
 )
 
 func main() {
@@ -61,31 +74,5 @@ func SetupConfig(prefix string) func(cfg *sdk.Config) {
 }
 
 func SetupModules() {
-	// Register genesis handlers
-	worker.RegisterGenesisHandler(auth.GenesisHandler)
-	worker.RegisterGenesisHandler(staking.GenesisHandler)
-	worker.RegisterGenesisHandler(gov.GenesisHandler)
-
-	// Register block handlers
-	worker.RegisterBlockHandler(staking.BlockHandler)
-
-	// Register msg handlers
-	worker.RegisterMsgHandler(staking.MsgHandler)
-	worker.RegisterMsgHandler(bank.MsgHandler)
-	worker.RegisterMsgHandler(staking.MsgHandler)
-	worker.RegisterMsgHandler(gov.MsgHandler)
-
-	// Register other operations
-	parse.RegisterAdditionalOperation(consensus.ListenOperation)
-	parse.RegisterAdditionalOperation(gov.OneShotOperation)
-
-	// Register periodic operations
-	scheduler := gocron.NewScheduler(time.UTC)
-	parse.RegisterAdditionalOperation(staking.PeriodicStakingOperations(scheduler))
-	parse.RegisterAdditionalOperation(auth.PeriodicAuthOperations(scheduler))
-	parse.RegisterAdditionalOperation(supply.PeriodicSupplyOperations(scheduler))
-	parse.RegisterAdditionalOperation(distribution.PeriodicDistributionOperations(scheduler))
-	parse.RegisterAdditionalOperation(pricefeed.PeriodicPriceFeedOperations(scheduler))
-
-	scheduler.StartAsync()
+	x.RegisterModules(modules)
 }
