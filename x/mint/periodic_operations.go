@@ -25,7 +25,7 @@ func PeriodicMintOperations(scheduler *gocron.Scheduler) parse.AdditionalOperati
 		}
 
 		// Setup a cron job to run every midnight
-		if _, err := scheduler.Every(1).Day().At("00:00").Do(func() {
+		if _, err := scheduler.Every(1).Day().At("00:00").StartImmediately().Do(func() {
 			utils.WatchMethod(func() error { return operations.UpdateInflation(cp, bdDatabase) })
 		}); err != nil {
 			return err
