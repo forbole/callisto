@@ -92,6 +92,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/desmos-labs/juno v0.0.0-20200828060224-63fea8763e75 h1:qAMUu7g0+2lTjFWTtnn9m46bD7bPeD5y67zVmGJvluo=
 github.com/desmos-labs/juno v0.0.0-20200828060224-63fea8763e75/go.mod h1:7hmZJizoc6VSrPCoXX4TZulNDDQoi6CI4NC1Ge/XzGU=
+github.com/desmos-labs/juno v0.0.0-20200828094814-5d8b76d9131e h1:w5ZqkVed7KKG5Q4i2j0DNQHB6EykKSsuhfocr1BTePI=
+github.com/desmos-labs/juno v0.0.0-20200828094814-5d8b76d9131e/go.mod h1:7hmZJizoc6VSrPCoXX4TZulNDDQoi6CI4NC1Ge/XzGU=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
 github.com/dgryski/go-sip13 v0.0.0-20181026042036-e10d5fee7954/go.mod h1:vAd38F8PWV+bWy6jNmig1y/TA+kYO4g3RSRF0IAv0no=
 github.com/dustin/go-humanize v0.0.0-20171111073723-bb3d318650d4/go.mod h1:HtrtbFcZ19U5GC7JDqmcUSB87Iq5E25KnS6fMYU6eOk=

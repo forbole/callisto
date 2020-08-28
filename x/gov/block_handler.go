@@ -16,9 +16,8 @@ import (
 func BlockHandler(block *tmctypes.ResultBlock, txs []juno.Tx, _ *tmctypes.ResultValidators, w worker.Worker) error {
 	log.Debug().
 		Str("module", "gov").
-		Str("operation", "Block Handler").
-		Str("block", string(block.Block.Height)).
-		Msg("Block Handler")
+		Int64("block", block.Block.Height).
+		Msg("handling block")
 	bigDipperDb, ok := w.Db.(database.BigDipperDb)
 	if !ok {
 		return fmt.Errorf("provided database is not a BigDipper database")
@@ -28,7 +27,6 @@ func BlockHandler(block *tmctypes.ResultBlock, txs []juno.Tx, _ *tmctypes.Result
 		for _, msg := range tx.Messages {
 			switch cosmosMsg := msg.(type) {
 			case gov.MsgSubmitProposal:
-				//when the proposal first submitted
 				return handlers.HandleMsgSubmitProposal(tx, cosmosMsg, bigDipperDb, w.ClientProxy)
 			case gov.MsgDeposit:
 				return handlers.HandleMsgDeposit(tx, cosmosMsg, bigDipperDb, w.ClientProxy)
