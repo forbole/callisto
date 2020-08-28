@@ -25,10 +25,10 @@ BUILD_FLAGS := -ldflags '$(LD_FLAGS)'
 build: go.sum
 ifeq ($(OS),Windows_NT)
 	@echo "building bdjuno binary..."
-	@go build -mod=readonly $(BUILD_FLAGS) -o build/bdjuno.exe ./cmd/bdjuno
+	@go build  $(BUILD_FLAGS) -o build/bdjuno.exe ./cmd/bdjuno
 else
 	@echo "building bdjuno binary..."
-	@go build -mod=readonly $(BUILD_FLAGS) -o build/bdjuno ./cmd/bdjuno
+	@go build $(BUILD_FLAGS) -o build/bdjuno ./cmd/bdjuno
 endif
 .PHONY: build
 
@@ -38,7 +38,7 @@ endif
 
 install: go.sum
 	@echo "installing bdjuno binary..."
-	@go install -mod=readonly $(BUILD_FLAGS) ./cmd/bdjuno
+	@go install $(BUILD_FLAGS) ./cmd/bdjuno
 .PHONY: install
 
 ###############################################################################

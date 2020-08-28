@@ -8,6 +8,8 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	dbtypes "github.com/forbole/bdjuno/database/types"
 	"github.com/forbole/bdjuno/x/staking/types"
+	"github.com/lib/pq"
+
 )
 
 // SaveStakingPool allows to save for the given height the given stakingtypes pool
@@ -185,18 +187,12 @@ func (db BigDipperDb) SaveDelegation(delegation types.Delegation) error {
 	validator, err := db.GetValidatorData(delegation.ValidatorAddress)
 	if err != nil {
 		return err
-	}
-
-	coin := dbtypes.NewDbCoin(delegation.Amount)
-	value, err := coin.Value()
-	if err != nil {
-		return err
-	}
+	}	
 
 	stmt := `INSERT INTO validator_delegation (consensus_address, delegator_address, amount, height, timestamp) 
 			 VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`
 	_, err = db.Sql.Exec(stmt,
-		validator.GetConsAddr().String(), delegation.DelegatorAddress.String(), value,
+		validator.GetConsAddr().String(), delegation.DelegatorAddress,pq.Array(dbtypes.NewDbCoin(delegation.Amount)) ,
 		delegation.Height, delegation.Timestamp,
 	)
 	return err
@@ -227,15 +223,9 @@ func (db BigDipperDb) SaveDelegations(delegations []types.Delegation) error {
 		}
 
 		// Convert the amount
-		coin := dbtypes.NewDbCoin(delegation.Amount)
-		value, err := coin.Value()
-		if err != nil {
-			return err
-		}
-
 		delegationsQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", d1+1, d1+2, d1+3, d1+4, d1+5)
 		delegationsParams = append(delegationsParams,
-			validator.GetConsAddr().String(), delegation.DelegatorAddress.String(), value,
+			validator.GetConsAddr().String(), delegation.DelegatorAddress.String(), pq.Array(dbtypes.NewDbCoin(delegation.Amount)),
 			delegation.Height, delegation.Timestamp,
 		)
 	}
@@ -487,3 +477,4 @@ func (db BigDipperDb) SaveDelegationsShares(shares []types.DelegationShare) erro
 
 	return nil
 }
+

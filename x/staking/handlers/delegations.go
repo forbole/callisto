@@ -10,6 +10,7 @@ import (
 	juno "github.com/desmos-labs/juno/types"
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/staking/types"
+	"github.com/forbole/bdjuno/x/auth"
 )
 
 // HandleMsgDelegate allows to properly handle a MsgDelegate
@@ -18,19 +19,14 @@ func HandleMsgDelegate(tx juno.Tx, msg staking.MsgDelegate, db database.BigDippe
 	if err != nil {
 		return err
 	}
-
-	if found, _ := db.HasValidator(msg.ValidatorAddress.String()); !found {
-		return nil
-	}
-
-	if found, _ := db.HasValidator(msg.DelegatorAddress.String()); !found {
-		return nil
+	//save validator and delegator if not exist 
+	if err = auth.RefreshAccounts([]sdk.AccAddress{msg.DelegatorAddress},tx.Height,timestamp,cp,db);err!=nil{
+		return err
 	}
 
 	if err = saveDelegatorsShares(msg.ValidatorAddress, cp, db, timestamp, tx.Height); err != nil {
 		return err
 	}
-
 	//for each delegate message it will eventually stored into database
 	return db.SaveDelegation(types.NewDelegation(
 		msg.DelegatorAddress,

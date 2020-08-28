@@ -17,9 +17,13 @@ type DbCoin struct {
 
 // NewCoin builds a DbCoin starting from an SDK Coin
 func NewDbCoin(coin sdk.Coin) DbCoin {
+	amount ,err:= strconv.ParseInt(coin.Amount.String(),10,64)
+		if err !=nil{
+			return DbCoin{}
+		}
 	return DbCoin{
 		Denom:  coin.Denom,
-		Amount: coin.Amount.Int64(),
+		Amount: amount,
 	}
 }
 
@@ -62,7 +66,12 @@ type DbCoins []*DbCoin
 func NewDbCoins(coins sdk.Coins) DbCoins {
 	dbCoins := make([]*DbCoin, 0)
 	for _, coin := range coins {
-		dbCoins = append(dbCoins, &DbCoin{Amount: coin.Amount.Int64(), Denom: coin.Denom})
+		println(coin.Amount.String())
+		amount ,err:= strconv.ParseInt(coin.Amount.String(),10,64)
+		if err !=nil{
+			return DbCoins{}
+		}
+		dbCoins = append(dbCoins, &DbCoin{Amount: amount, Denom: coin.Denom})
 	}
 	return dbCoins
 }
