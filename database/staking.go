@@ -117,11 +117,14 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 	validatorQuery := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES `
 	var validatorParams []interface{}
 
-	validatorInfoQuery := `INSERT INTO validator_info (consensus_address,operator_address,self_delegate_address,moniker,identity,website,security_contact, details) VALUES`
+	validatorInfoQuery := `
+	INSERT INTO validator_info (
+		consensus_address, operator_address, self_delegate_address, moniker, identity, website, security_contact, details
+	) VALUES`
 	var validatorInfoParams []interface{}
 
 	for i, validator := range validators {
-		v1 := i * 2 // Starting position for validator params
+		vp := i * 2 // Starting position for validator params
 		vi := i * 8 // Starting position for validator info params
 
 		publicKey, err := sdk.Bech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, validator.GetConsPubKey())
@@ -132,7 +135,7 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 		selfDelegationAccQuery += fmt.Sprintf("($%d),", i+1)
 		selfDelegationParam = append(selfDelegationParam, validator.GetSelfDelegateAddress().String())
 
-		validatorQuery += fmt.Sprintf("($%d,$%d),", v1+1, v1+2)
+		validatorQuery += fmt.Sprintf("($%d,$%d),", vp+1, vp+2)
 		validatorParams = append(validatorParams,
 			validator.GetConsAddr().String(), publicKey)
 
