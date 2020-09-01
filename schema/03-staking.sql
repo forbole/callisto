@@ -70,8 +70,8 @@ CREATE TABLE validator_commission
 (
     validator_address   CHARACTER VARYING(52)       NOT NULL,
     timestamp           TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    commission          NUMERIC                     NOT NULL,
-    min_self_delegation decimal                     NOT NULL,
+    commission          DECIMAL                     NOT NULL,
+    min_self_delegation BIGINT                      NOT NULL,
     height              BIGINT                      NOT NULL
 );
 

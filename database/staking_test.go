@@ -1,7 +1,6 @@
 package database_test
 
 import (
-	"strconv"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -320,6 +319,16 @@ VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl', 'cosmosvalconspu
 
 // _________________________________________________________
 
+func newDecPts(value int64, prec int64) *sdk.Dec {
+	dec := sdk.NewDecWithPrec(value, prec)
+	return &dec
+}
+
+func newIntPtr(value int64) *sdk.Int {
+	val := sdk.NewInt(value)
+	return &val
+}
+
 func (suite *DbTestSuite) getValidator(consAddr, valAddr, pubkey string) types.Validator {
 	selfDelegation := suite.getDelegator("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	valAddrObj, err := sdk.ValAddressFromBech32(valAddr)
@@ -490,25 +499,29 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommission() {
 	)
 
 	var height int64 = 1000
-	var commissionRate float64 = 0.011
-	var minSelfDelegation int64 = 12
 
 	timestamp, err := time.Parse(time.RFC3339, "2020-01-01T10:00:00Z")
 	suite.Require().NoError(err)
 
-	commission := types.NewValidatorCommission(validator.GetOperator(), strconv.FormatFloat(commissionRate, 'f', 6, 64), minSelfDelegation, height, timestamp)
+	commission := types.NewValidatorCommission(
+		validator.GetOperator(),
+		newDecPts(11, 3),
+		newIntPtr(12),
+		height,
+		timestamp,
+	)
 
 	err = suite.database.SaveEditCommission(commission)
-	//get back commission
 	suite.Require().NoError(err)
+
 	var rows []dbtypes.ValidatorCommission
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM validator_commission`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().True(rows[0].Equal(dbtypes.NewValidatorCommission(
 		validator.GetOperator().String(),
-		commissionRate,
-		minSelfDelegation,
+		"0.011000000000000000",
+		"12",
 		height,
 		timestamp,
 	)))
@@ -530,8 +543,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommissions() {
 	suite.Require().NoError(err)
 
 	commissions := []types.ValidatorCommission{
-		types.NewValidatorCommission(validator1.GetOperator(), "0.01", 30, 0, timestamp),
-		types.NewValidatorCommission(validator2.GetOperator(), "0.02", 40, 0, timestamp),
+		types.NewValidatorCommission(validator1.GetOperator(), newDecPts(1, 2), newIntPtr(30), 0, timestamp),
+		types.NewValidatorCommission(validator2.GetOperator(), newDecPts(2, 2), newIntPtr(40), 0, timestamp),
 	}
 
 	err = suite.database.SaveValidatorCommissions(commissions)
@@ -539,10 +552,10 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommissions() {
 
 	expected := []dbtypes.ValidatorCommission{
 		dbtypes.NewValidatorCommission(
-			validator1.GetOperator().String(), 0.01, 30, 0, timestamp,
+			validator1.GetOperator().String(), "0.010000000000000000", "30", 0, timestamp,
 		),
 		dbtypes.NewValidatorCommission(
-			validator2.GetOperator().String(), 0.02, 40, 0, timestamp,
+			validator2.GetOperator().String(), "0.020000000000000000", "40", 0, timestamp,
 		),
 	}
 

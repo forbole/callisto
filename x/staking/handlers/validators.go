@@ -23,8 +23,7 @@ func HandleMsgCreateValidator(msg stakingtypes.MsgCreateValidator, db database.B
 	))
 }
 
-//HandleEditValidator handles MsgEditValidator
-//save the message into the database
+// HandleEditValidator handles MsgEditValidator messages, updating the validator info
 func HandleEditValidator(msg stakingtypes.MsgEditValidator, tx jtypes.Tx, db database.BigDipperDb) error {
 	validatorinfo, err := db.GetValidatorData(msg.ValidatorAddress)
 	if err != nil {
@@ -35,10 +34,22 @@ func HandleEditValidator(msg stakingtypes.MsgEditValidator, tx jtypes.Tx, db dat
 	if err != nil {
 		return err
 	}
-	db.SaveEditCommission(types.NewValidatorCommission(msg.ValidatorAddress, msg.CommissionRate.String(),
-		msg.MinSelfDelegation.Int64(), tx.Height, timestamp))
 
-	db.UpdateValidatorInfo(types.NewValidator(validatorinfo.GetConsAddr(), validatorinfo.GetOperator(), validatorinfo.GetConsPubKey(), msg.Description, sdktypes.AccAddress(validatorinfo.GetOperator())))
+	if err := db.SaveEditCommission(types.NewValidatorCommission(
+		msg.ValidatorAddress,
+		msg.CommissionRate,
+		msg.MinSelfDelegation,
+		tx.Height,
+		timestamp,
+	)); err != nil {
+		return err
+	}
 
-	return nil
+	return db.UpdateValidatorInfo(types.NewValidator(
+		validatorinfo.GetConsAddr(),
+		validatorinfo.GetOperator(),
+		validatorinfo.GetConsPubKey(),
+		msg.Description,
+		sdktypes.AccAddress(validatorinfo.GetOperator()),
+	))
 }
