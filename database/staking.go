@@ -82,8 +82,8 @@ func (db BigDipperDb) GetValidatorsData() ([]dbtypes.ValidatorData, error) {
 }
 
 // SaveSingleValidatorData saves properly the information about the given validator
-func (db BigDipperDb) SaveSingleValidatorData(validator types.Validator) error {
-	return db.SaveValidatorsData([]types.Validator{validator})
+func (db BigDipperDb) SaveSingleValidatorData(validator types.Validator,time time.Time) error {
+	return db.SaveValidatorsData([]types.Validator{validator},time)
 }
 
 // GetValidatorData returns the validator having the given validator address.
@@ -109,7 +109,7 @@ func (db BigDipperDb) GetValidatorData(valAddress sdk.ValAddress) (types.Validat
 }
 
 // SaveValidatorsData allows the bulk saving of a list of validators
-func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
+func (db BigDipperDb) SaveValidatorsData(validators []types.Validator,timestamp time.Time) error {
 
 	selfDelegationAccQuery := `INSERT INTO account (address) VALUES `
 	var selfDelegationParam []interface{}

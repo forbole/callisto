@@ -24,7 +24,9 @@ CREATE TABLE validator_info
     identity              TEXT,
     website               TEXT,
     security_contact      TEXT,
-    details               TEXT
+    details               TEXT,
+    last_update           TIMESTAMP,
+    hex_pubkey            TEXT
 );
 
 CREATE TABLE validator_delegation

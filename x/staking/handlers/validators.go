@@ -12,15 +12,20 @@ import (
 
 // HandleMsgCreateValidator handles properly a MsgCreateValidator instance by
 // saving into the database all the data associated to such validator
-func HandleMsgCreateValidator(msg stakingtypes.MsgCreateValidator, db database.BigDipperDb) error {
+func HandleMsgCreateValidator( tx jtypes.Tx, msg stakingtypes.MsgCreateValidator, db database.BigDipperDb) error {
 	stakingValidator := stakingtypes.NewValidator(msg.ValidatorAddress, msg.PubKey, msg.Description)
+	time ,err := time.Parse(time.RFC3339, tx.Timestamp)
+	if err!=nil{
+		return err
+	}
 	return db.SaveSingleValidatorData(types.NewValidator(
 		stakingValidator.GetConsAddr(),
 		stakingValidator.GetOperator(),
 		stakingValidator.GetConsPubKey(),
 		stakingValidator.Description,
 		sdktypes.AccAddress(stakingValidator.GetConsAddr()),
-	))
+		
+	),time)
 }
 
 //HandleEditValidator handles MsgEditValidator
