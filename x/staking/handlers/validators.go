@@ -24,7 +24,6 @@ func HandleMsgCreateValidator( tx jtypes.Tx, msg stakingtypes.MsgCreateValidator
 		stakingValidator.GetConsPubKey(),
 		stakingValidator.Description,
 		sdktypes.AccAddress(stakingValidator.GetConsAddr()),
-		
 	),time)
 }
 
@@ -43,7 +42,7 @@ func HandleEditValidator(msg stakingtypes.MsgEditValidator, tx jtypes.Tx, db dat
 	db.SaveEditCommission(types.NewValidatorCommission(msg.ValidatorAddress, msg.CommissionRate.String(),
 		msg.MinSelfDelegation.Int64(), tx.Height, timestamp))
 
-	db.UpdateValidatorInfo(types.NewValidator(validatorinfo.GetConsAddr(), validatorinfo.GetOperator(), validatorinfo.GetConsPubKey(), msg.Description, sdktypes.AccAddress(validatorinfo.GetOperator())))
+	db.SaveSingleValidatorData(types.NewValidator(validatorinfo.GetConsAddr(), validatorinfo.GetOperator(), validatorinfo.GetConsPubKey(), msg.Description, sdktypes.AccAddress(validatorinfo.GetOperator())),timestamp)
 
 	return nil
 }
