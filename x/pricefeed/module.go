@@ -11,7 +11,7 @@ type Module struct{}
 
 // Name return the name of the module
 func (m Module) Name() string {
-	return "supply"
+	return "pricefeed"
 }
 
 // BlockHandlers return a list of block handler of the module

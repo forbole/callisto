@@ -16,12 +16,12 @@ import (
 // PeriodicStakingOperations returns the AdditionalOperation that periodically runs fetches from
 // the LCD to make sure that constantly changing data are synced properly.
 func PeriodicDistributionOperations(scheduler *gocron.Scheduler) parse.AdditionalOperation {
-	log.Debug().Str("module", "supply").Msg("setting up periodic tasks")
+	log.Debug().Str("module", "distribution").Msg("setting up periodic tasks")
 
 	return func(_ config.Config, _ *codec.Codec, cp client.ClientProxy, db db.Database) error {
 		bdDatabase, ok := db.(database.BigDipperDb)
 		if !ok {
-			log.Fatal().Str("module", "supply").Msg("given database instance is not a BigDipperDb")
+			log.Fatal().Str("module", "distribution").Msg("given database instance is not a BigDipperDb")
 		}
 
 		// Fetch community pool in 30 seconds each

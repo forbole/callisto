@@ -1,6 +1,7 @@
 package types
 
 import (
+	"database/sql"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -317,23 +318,23 @@ func (v ValidatorReDelegationRow) Equal(w ValidatorReDelegationRow) bool {
 // ValidatorCommission represents a single row of the
 // validator_commission database table
 type ValidatorCommission struct {
-	ValidatorAddress  string    `db:"validator_address"`
-	Timestamp         time.Time `db:"timestamp"`
-	Commission        float64   `db:"commission"`
-	MinSelfDelegation int64     `db:"min_self_delegation"`
-	Height            int64     `db:"height"`
+	ValidatorAddress  string         `db:"validator_address"`
+	Timestamp         time.Time      `db:"timestamp"`
+	Commission        sql.NullString `db:"commission"`
+	MinSelfDelegation sql.NullString `db:"min_self_delegation"`
+	Height            int64          `db:"height"`
 }
 
 // NewValidatorCommission allows to easily build a new
 // ValidatorCommission instance
 func NewValidatorCommission(
-	validatorAddress string, commission float64, minSelfDelegation int64, height int64, timestamp time.Time,
+	validatorAddress string, commission string, minSelfDelegation string, height int64, timestamp time.Time,
 ) ValidatorCommission {
 	return ValidatorCommission{
 		ValidatorAddress:  validatorAddress,
 		Timestamp:         timestamp,
-		Commission:        commission,
-		MinSelfDelegation: minSelfDelegation,
+		Commission:        sql.NullString{String: commission, Valid: true},
+		MinSelfDelegation: sql.NullString{String: minSelfDelegation, Valid: true},
 		Height:            height,
 	}
 }

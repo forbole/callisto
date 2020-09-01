@@ -12,10 +12,10 @@ import (
 
 // HandleMsgCreateValidator handles properly a MsgCreateValidator instance by
 // saving into the database all the data associated to such validator
-func HandleMsgCreateValidator( tx jtypes.Tx, msg stakingtypes.MsgCreateValidator, db database.BigDipperDb) error {
+func HandleMsgCreateValidator(tx jtypes.Tx, msg stakingtypes.MsgCreateValidator, db database.BigDipperDb) error {
 	stakingValidator := stakingtypes.NewValidator(msg.ValidatorAddress, msg.PubKey, msg.Description)
-	time ,err := time.Parse(time.RFC3339, tx.Timestamp)
-	if err!=nil{
+	time, err := time.Parse(time.RFC3339, tx.Timestamp)
+	if err != nil {
 		return err
 	}
 	return db.SaveSingleValidatorData(types.NewValidator(
@@ -24,11 +24,10 @@ func HandleMsgCreateValidator( tx jtypes.Tx, msg stakingtypes.MsgCreateValidator
 		stakingValidator.GetConsPubKey(),
 		stakingValidator.Description,
 		sdktypes.AccAddress(stakingValidator.GetConsAddr()),
-	),time)
+	), time)
 }
 
-//HandleEditValidator handles MsgEditValidator
-//save the message into the database
+// HandleEditValidator handles MsgEditValidator messages, updating the validator info
 func HandleEditValidator(msg stakingtypes.MsgEditValidator, tx jtypes.Tx, db database.BigDipperDb) error {
 	validatorinfo, err := db.GetValidatorData(msg.ValidatorAddress)
 	if err != nil {
@@ -39,10 +38,16 @@ func HandleEditValidator(msg stakingtypes.MsgEditValidator, tx jtypes.Tx, db dat
 	if err != nil {
 		return err
 	}
-	db.SaveEditCommission(types.NewValidatorCommission(msg.ValidatorAddress, msg.CommissionRate.String(),
-		msg.MinSelfDelegation.Int64(), tx.Height, timestamp))
 
-	db.SaveSingleValidatorData(types.NewValidator(validatorinfo.GetConsAddr(), validatorinfo.GetOperator(), validatorinfo.GetConsPubKey(), msg.Description, sdktypes.AccAddress(validatorinfo.GetOperator())),timestamp)
+	if err := db.SaveEditCommission(types.NewValidatorCommission(
+		msg.ValidatorAddress,
+		msg.CommissionRate,
+		msg.MinSelfDelegation,
+		tx.Height,
+		timestamp,
+	)); err != nil {
+		return err
+	}
 
-	return nil
+	return db.SaveSingleValidatorData(types.NewValidator(validatorinfo.GetConsAddr(), validatorinfo.GetOperator(), validatorinfo.GetConsPubKey(), msg.Description, sdktypes.AccAddress(validatorinfo.GetOperator())), timestamp)
 }
