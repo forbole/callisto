@@ -1000,11 +1000,11 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorsDescription() {
 
 	expected := []dbtypes.ValidatorDescriptionRow{
 		dbtypes.NewValidatorDescriptionRow(validator1.GetOperator().String(),
-			"moniker",
-			"identity",
+			"moniker1",
+			"identity1",
 			"", //test null value
-			"securityContact",
-			"details", height, timestamp),
+			"securityContact1",
+			"details1", height, timestamp),
 		dbtypes.NewValidatorDescriptionRow(validator2.GetOperator().String(),
 			"moniker2",
 			"identity2",
