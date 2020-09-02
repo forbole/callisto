@@ -48,21 +48,6 @@ func (db BigDipperDb) SaveValidatorCommissions(validators []types.ValidatorCommi
 	return nil
 }
 
-// UpdateValidatorInfo updates a single transaction of validator info
-func (db BigDipperDb) UpdateValidatorInfo(validator types.Validator) error {
-	query := `UPDATE validator_info 
-			  SET moniker = $1, identity = $2, website = $3, security_contact = $4, details = $5
-			  WHERE consensus_address=$6;`
-
-	_, err := db.Sql.Exec(query,
-		validator.GetDescription().Moniker, validator.GetDescription().Identity, validator.GetDescription().Website,
-		validator.GetDescription().SecurityContact, validator.GetDescription().Details, validator.GetConsAddr().String())
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 //SaveEditCommission save a single save edit commission operation
 func (db BigDipperDb) SaveEditCommission(data types.ValidatorCommission) error {
 	if data.MinSelfDelegation == nil && data.Commission == nil {
@@ -107,14 +92,38 @@ func (db BigDipperDb) SaveEditCommission(data types.ValidatorCommission) error {
 }
 
 // SaveValidatorDescription save a single validator description when description changed
-func (db BigDipperDb) SaveValidatorDescription(description types.ValidatorDescription)error{
-	des,err := description.Description.EnsureLength()
-	if err!=nil{
+func (db BigDipperDb) SaveValidatorDescription(description types.ValidatorDescription) error {
+	des, err := description.Description.EnsureLength()
+	if err != nil {
 		return err //safety
 	}
 	statement := `INSERT INTO validator_description(operator_address,moniker,identity,website,security_contact,details,height,timestamp)
 					VALUES($1,$2,$3,$4,$5,$6,$7,$8);`
-	_,err=db.Sql.Exec(statement,description.OpAddr.String(),des.Moniker,des.Identity,des.Website,des.SecurityContact,des.Details,description.Height,description.Timestamp)
+	_, err = db.Sql.Exec(statement, description.OpAddr.String(), des.Moniker, des.Identity, des.Website, des.SecurityContact, des.Details, description.Height, description.Timestamp)
+	return err
+}
+
+// SaveValidatorsDescription save descriptions for mutiple validators
+func (db BigDipperDb) SaveValidatorsDescription(descriptions []types.ValidatorDescription) error {
+	query := `INSERT INTO validator_description(operator_address,moniker,identity,website,security_contact,details,height,timestamp)
+	VALUES(`
+	var value []interface{}
+	for i, description := range descriptions {
+		des, err := description.Description.EnsureLength()
+		if err != nil {
+			return err //safety
+		}
+
+		vi := i * 8 // Starting position for validator params
+
+		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8)
+		value = append(value, description.OpAddr.String(), des.Moniker, des.Identity, des.Website, des.SecurityContact,
+			des.Details, description.Height, description.Timestamp)
+
+	}
+	query = query[:len(query)-1] // Remove the trailing ","
+	query += " ON CONFLICT DO NOTHING"
+	_, err := db.Sql.Exec(query, value...)
 	return err
 }
 
@@ -138,8 +147,8 @@ func (db BigDipperDb) GetValidatorsData() ([]dbtypes.ValidatorData, error) {
 }
 
 // SaveSingleValidatorData saves properly the information about the given validator
-func (db BigDipperDb) SaveSingleValidatorData(validator types.Validator,time time.Time) error {
-	return db.SaveValidatorsData([]types.Validator{validator},time)
+func (db BigDipperDb) SaveSingleValidatorData(validator types.Validator) error {
+	return db.SaveValidatorsData([]types.Validator{validator})
 }
 
 // GetValidatorData returns the validator having the given validator address.
@@ -164,7 +173,7 @@ func (db BigDipperDb) GetValidatorData(valAddress sdk.ValAddress) (types.Validat
 }
 
 // SaveValidatorsData allows the bulk saving of a list of validators
-func (db BigDipperDb) SaveValidatorsData(validators []types.Validator,timestamp time.Time) error {
+func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 
 	selfDelegationAccQuery := `INSERT INTO account (address) VALUES `
 	var selfDelegationParam []interface{}

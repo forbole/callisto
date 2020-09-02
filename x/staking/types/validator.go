@@ -62,7 +62,7 @@ func (v validator) GetSelfDelegateAddress() sdk.AccAddress {
 func (v validator) Equals(w validator) bool {
 	return v.ConsensusAddr.Equals(w.ConsensusAddr) &&
 		v.ConsPubKey.Equals(w.ConsPubKey) &&
-		v.OperatorAddr.Equals(w.OperatorAddr) &&
+		v.OperatorAddr.Equals(w.OperatorAddr)
 }
 
 // _________________________________________________________
@@ -94,7 +94,7 @@ func NewValidatorDescription(
 // Equals return true if two ValidatorDescriptionh are the same
 func (v ValidatorDescription) Equals(w ValidatorDescription) bool {
 	return v.OpAddr.Equals(w.OpAddr) &&
-		v.Description==w.Description &&
+		v.Description == w.Description &&
 		v.Timestamp.Equal(w.Timestamp) &&
 		v.Height == w.Height
 }
