@@ -26,7 +26,7 @@ CREATE TABLE validator_info
     security_contact      TEXT,
     details               TEXT,
     last_update           TIMESTAMP,
-    hex_pubkey            TEXT
+    PRIMARY KEY(consensus_address,last_update)
 );
 
 CREATE TABLE validator_delegation

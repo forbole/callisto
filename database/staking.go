@@ -167,7 +167,7 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator,timestamp 
 
 	for i, validator := range validators {
 		vp := i * 2 // Starting position for validator params
-		vi := i * 8 // Starting position for validator info params
+		vi := i * 9 // Starting position for validator info params
 
 		publicKey, err := sdk.Bech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, validator.GetConsPubKey())
 		if err != nil {
