@@ -21,6 +21,9 @@ func (db BigDipperDb) SaveStakingPool(pool stakingtypes.Pool, height int64, time
 
 //Insert into Validator Commission Database
 func (db BigDipperDb) SaveValidatorCommissions(validators []types.ValidatorCommission) error {
+	if len(validators) == 0 {
+		return nil
+	}
 	query := `INSERT INTO validator_commission (validator_address, timestamp, commission, min_self_delegation, height) VALUES `
 	var param []interface{}
 	for i, validator := range validators {
@@ -105,6 +108,9 @@ func (db BigDipperDb) SaveValidatorDescription(description types.ValidatorDescri
 
 // SaveValidatorsDescription save descriptions for mutiple validators
 func (db BigDipperDb) SaveValidatorsDescription(descriptions []types.ValidatorDescription) error {
+	if len(descriptions) == 0 {
+		return nil
+	}
 	query := `INSERT INTO validator_description(operator_address,moniker,identity,website,security_contact,details,height,timestamp)
 	VALUES`
 	var value []interface{}
@@ -173,7 +179,9 @@ func (db BigDipperDb) GetValidatorData(valAddress sdk.ValAddress) (types.Validat
 
 // SaveValidatorsData allows the bulk saving of a list of validators
 func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
-
+	if len(validators) == 0 {
+		return nil
+	}
 	selfDelegationAccQuery := `INSERT INTO account (address) VALUES `
 	var selfDelegationParam []interface{}
 
@@ -270,6 +278,9 @@ func (db BigDipperDb) SaveDelegation(delegation types.Delegation) error {
 // the proper database table.
 // TIP: To store the validators data call SaveValidators.
 func (db BigDipperDb) SaveDelegations(delegations []types.Delegation) error {
+	if len(delegations) == 0 {
+		return nil
+	}
 	accountsQuery := `INSERT INTO account (address) VALUES `
 	var accountsParams []interface{}
 
@@ -456,6 +467,10 @@ func (db BigDipperDb) SaveRedelegation(redelegation types.Redelegation) error {
 // To store the validators data call SaveValidator(s).
 // To store the account data call SaveAccount.
 func (db BigDipperDb) SaveRedelegations(redelegations []types.Redelegation) error {
+	if len(redelegations) == 0 {
+		return nil
+	}
+
 	accQuery := `INSERT INTO account (address) VALUES `
 	var accParams []interface{}
 
@@ -512,7 +527,9 @@ func (db BigDipperDb) SaveRedelegations(redelegations []types.Redelegation) erro
 
 // SaveVotingPowers saves the given validator voting powers
 func (db BigDipperDb) SaveVotingPowers(votings []types.ValidatorVotingPower) error {
-
+	if len(votings) == 0 {
+		return nil
+	}
 	stmt := `INSERT INTO validator_voting_power (consensus_address,voting_power,height) VALUES`
 	var params []interface{}
 
@@ -534,6 +551,9 @@ func (db BigDipperDb) SaveVotingPowers(votings []types.ValidatorVotingPower) err
 
 //SaveDelegationsShares save an array of delegation share
 func (db BigDipperDb) SaveDelegationsShares(shares []types.DelegationShare) error {
+	if len(shares) == 0 {
+		return nil
+	}
 	stmt := `INSERT INTO validator_delegation_shares (operator_address ,delegator_address,shares,height,timestamp) VALUES`
 	var delegationShareParam []interface{}
 	for i, share := range shares {
