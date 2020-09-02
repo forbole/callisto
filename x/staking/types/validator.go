@@ -75,6 +75,40 @@ func (v validator) Equals(w validator) bool {
 
 // _________________________________________________________
 
+// ValidatorDescription contains the description of a validator
+// and timestamp do the description get changed
+type ValidatorDescription struct {
+	OpAddr      sdk.ValAddress
+	Description staking.Description
+	Timestamp   time.Time
+	Height      int64
+}
+
+// NewValidatorDescription return a new ValidagtorDescription object
+func NewValidatorDescription(
+	opAddr sdk.ValAddress,
+	description staking.Description,
+	timestamp time.Time,
+	height int64,
+) ValidatorDescription {
+	return ValidatorDescription{
+		OpAddr:      opAddr,
+		Description: description,
+		Timestamp:   timestamp,
+		Height:      height,
+	}
+}
+
+// Equals return true if two ValidatorDescriptionh are the same
+func (v ValidatorDescription) Equals(w ValidatorDescription) bool {
+	return v.OpAddr.Equals(w.OpAddr) &&
+		v.Description==w.Description &&
+		v.Timestamp.Equal(w.Timestamp) &&
+		v.Height == w.Height
+}
+
+// _________________________________________________________
+
 // ValidatorUptime contains the uptime information of a single
 // validator for a specific height and point in time
 type ValidatorUptime struct {

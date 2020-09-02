@@ -406,3 +406,52 @@ func NewValidatorVotingPowerRow(
 		Height:           height,
 	}
 }
+
+//________________________________________________________________
+
+// ValidatorDescriptionRow represent a row in validator_description
+type ValidatorDescriptionRow struct {
+	ValAddress      string         `db:"operator_address"`
+	Moniker         sql.NullString `db:"moniker"`
+	Identity        sql.NullString `db:"identity"`
+	Website         sql.NullString `db:"website"`
+	SecurityContact sql.NullString `db:"security_contact"`
+	Details         sql.NullString `db:"details"`
+	Height          int64          `db:"height"`
+	Timestamp       time.Time      `db:"timestamp"`
+}
+
+// NewValidatorDescriptionRow return a row representing data structure in validator_description
+func NewValidatorDescriptionRow(
+	valAddress string,
+	moniker string,
+	identity string,
+	website string,
+	securityContact string,
+	details string,
+	height int64,
+	timestamp time.Time,
+) ValidatorDescriptionRow {
+	return ValidatorDescriptionRow{
+		ValAddress:      valAddress,
+		Moniker:         sql.NullString{String: moniker, Valid: true},
+		Identity:        sql.NullString{String: identity, Valid: true},
+		Website:         sql.NullString{String: website, Valid: true},
+		SecurityContact: sql.NullString{String: securityContact, Valid: true},
+		Details:         sql.NullString{String: details, Valid: true},
+		Height:          height,
+		Timestamp:       timestamp,
+	}
+}
+
+// Equals return true if two ValidatorDescriptionRow are equal
+func (w ValidatorDescriptionRow) Equals(v ValidatorDescriptionRow) bool {
+	return v.ValAddress == w.ValAddress &&
+		v.Moniker == w.Moniker &&
+		v.Identity == w.Identity &&
+		v.Website == w.Website &&
+		v.SecurityContact == w.SecurityContact &&
+		v.Details == w.Details &&
+		v.Height == w.Height &&
+		v.Timestamp.Equal(w.Timestamp)
+}

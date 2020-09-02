@@ -996,3 +996,39 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVotingPower() {
 	}
 
 }
+
+func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorDescription(){
+	validator1 := suite.getValidator(
+		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
+		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
+		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
+	)
+	timestamp1, err := time.Parse(time.RFC3339, "2020-01-01T15:00:00Z")
+	suite.Require().NoError(err)
+
+	var height int64 = 1
+	description := types.NewValidatorDescription(validator1.GetOperator(),stakingtypes.NewDescription(
+		"moniker",
+		"identity",
+		"",//test null value
+		"securityContact",
+		"details",
+	),timestamp, height)
+	err := suite.database.SaveValidatorDescription(description)
+	suite.Require().NoError(err)
+
+	expected := dbtypes.NewValidatorDescriptionRow(validator1.GetOperator().String(),
+	"moniker",
+	"identity",
+	"",//test null value
+	"securityContact",
+	"details",height,timestamp)
+
+	var result []dbtypes.ValidatorDescriptionRow
+	err = suite.database.Sqlx.Select(&result, "SELECT * FROM validator_description")
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	for index, row := range result {
+		suite.Require().True(row.Equal(expected[index]))
+	}
+}

@@ -106,6 +106,18 @@ func (db BigDipperDb) SaveEditCommission(data types.ValidatorCommission) error {
 	return err
 }
 
+// SaveValidatorDescription save a single validator description when description changed
+func (db BigDipperDb) SaveValidatorDescription(description types.ValidatorDescription)error{
+	des,err := description.Description.EnsureLength()
+	if err!=nil{
+		return err //safety
+	}
+	statement := `INSERT INTO validator_description(operator_address,moniker,identity,website,security_contact,details,height,timestamp)
+					VALUES($1,$2,$3,$4,$5,$6,$7,$8);`
+	_,err=db.Sql.Exec(statement,description.OpAddr.String(),des.Moniker,des.Identity,des.Website,des.SecurityContact,des.Details,description.Height,description.Timestamp)
+	return err
+}
+
 // GetValidatorsData returns the data of all the validators that are currently stored inside the database.
 func (db BigDipperDb) GetValidatorsData() ([]dbtypes.ValidatorData, error) {
 	sqlStmt := `SELECT DISTINCT ON (validator.consensus_address)
@@ -162,12 +174,12 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator,timestamp 
 	var validatorParams []interface{}
 
 	validatorInfoQuery := `INSERT INTO validator_info 
-		(consensus_address,operator_address,self_delegate_address,moniker,identity,website,security_contact, details,timestamp) VALUES`
+		(consensus_address,operator_address,self_delegate_address) VALUES`
 	var validatorInfoParams []interface{}
 
 	for i, validator := range validators {
 		vp := i * 2 // Starting position for validator params
-		vi := i * 9 // Starting position for validator info params
+		vi := i * 3 // Starting position for validator info params
 
 		publicKey, err := sdk.Bech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, validator.GetConsPubKey())
 		if err != nil {
@@ -181,9 +193,9 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator,timestamp 
 		validatorParams = append(validatorParams,
 			validator.GetConsAddr().String(), publicKey)
 
-		validatorInfoQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8,vi+9)
-		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr().String(), validator.GetOperator().String(), validator.GetSelfDelegateAddress().String(), validator.GetDescription().Moniker,
-			validator.GetDescription().Identity, validator.GetDescription().Website, validator.GetDescription().SecurityContact, validator.GetDescription().Details,timestamp)
+		validatorInfoQuery += fmt.Sprintf("($%d,$%d,$%d),", vi+1, vi+2, vi+3)
+		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr().String(), validator.GetOperator().String(), validator.GetSelfDelegateAddress().String())
+
 	}
 	selfDelegationAccQuery = selfDelegationAccQuery[:len(selfDelegationAccQuery)-1] // Remove trailing ","
 	selfDelegationAccQuery += " ON CONFLICT DO NOTHING"

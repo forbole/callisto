@@ -17,16 +17,9 @@ CREATE TABLE validator_uptime
 
 CREATE TABLE validator_info
 (
-    consensus_address     TEXT NOT NULL REFERENCES validator (consensus_address) UNIQUE PRIMARY KEY,
-    operator_address      TEXT NOT NULL UNIQUE,
-    self_delegate_address TEXT REFERENCES account (address),
-    moniker               TEXT,
-    identity              TEXT,
-    website               TEXT,
-    security_contact      TEXT,
-    details               TEXT,
-    last_update           TIMESTAMP,
-    PRIMARY KEY(consensus_address,last_update)
+    consensus_address     TEXT NOT NULL REFERENCES validator (consensus_address),
+    operator_address      TEXT NOT NULL,
+    self_delegate_address TEXT REFERENCES account (address)
 );
 
 CREATE TABLE validator_delegation
@@ -60,7 +53,7 @@ CREATE TABLE validator_redelegation
 
 CREATE TABLE validator_delegation_shares
 (
-    operator_address  TEXT                        NOT NULL REFERENCES validator_info (operator_address),
+    operator_address  TEXT                        NOT NULL REFERENCES validator (consensus_address),
     delegator_address TEXT                        NOT NULL REFERENCES account (address),
     shares            NUMERIC                     NOT NUll,
     height            BIGINT                      NOT NULL,
@@ -83,4 +76,16 @@ CREATE TABLE validator_voting_power
     voting_power      BIGINT NOT NULL,
     height            BIGINT NOT NULL,
     PRIMARY KEY (consensus_address, height)
+);
+
+CREATE TABLE validator_description
+(
+    operator_address      TEXT NOT NULL,
+    moniker               TEXT ,
+    identity              TEXT,
+    website               TEXT,
+    security_contact      TEXT,
+    details               TEXT,
+    height                BIGINT,
+    timestamp             TIMESTAMP,
 );
