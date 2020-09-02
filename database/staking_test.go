@@ -1014,7 +1014,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorsDescription() {
 	}
 
 	var rows []dbtypes.ValidatorDescriptionRow
-	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM validator_description order by moniker ASC")
+	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM validator_description order by moniker DESC")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 2)
 	for index, row := range rows {
