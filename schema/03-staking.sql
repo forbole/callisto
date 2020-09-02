@@ -53,7 +53,7 @@ CREATE TABLE validator_redelegation
 
 CREATE TABLE validator_delegation_shares
 (
-    operator_address  TEXT                        NOT NULL REFERENCES validator (consensus_address),
+    operator_address  TEXT                        NOT NULL REFERENCES validator (operator_address),
     delegator_address TEXT                        NOT NULL REFERENCES account (address),
     shares            NUMERIC                     NOT NUll,
     height            BIGINT                      NOT NULL,

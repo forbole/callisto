@@ -131,8 +131,7 @@ func (db BigDipperDb) SaveValidatorsDescription(descriptions []types.ValidatorDe
 func (db BigDipperDb) GetValidatorsData() ([]dbtypes.ValidatorData, error) {
 	sqlStmt := `SELECT DISTINCT ON (validator.consensus_address)
 					validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address,
-                    validator_info.self_delegate_address, validator_info.moniker, validator_info.identity,
-                    validator_info.website, validator_info.security_contact, validator_info.details
+                    validator_info.self_delegate_address
 				FROM validator 
 				INNER JOIN validator_info 
 				ON validator.consensus_address = validator_info.consensus_address
