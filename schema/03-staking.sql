@@ -87,5 +87,5 @@ CREATE TABLE validator_description
     security_contact      TEXT,
     details               TEXT,
     height                BIGINT,
-    timestamp             TIMESTAMP,
+    timestamp             TIMESTAMP
 );

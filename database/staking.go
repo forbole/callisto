@@ -181,8 +181,7 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 	validatorQuery := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES `
 	var validatorParams []interface{}
 
-	validatorInfoQuery := `INSERT INTO validator_info 
-		(consensus_address,operator_address,self_delegate_address) VALUES`
+	validatorInfoQuery := `INSERT INTO validator_info (consensus_address, operator_address, self_delegate_address) VALUES`
 	var validatorInfoParams []interface{}
 
 	for i, validator := range validators {
