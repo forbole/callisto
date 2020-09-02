@@ -106,7 +106,7 @@ func (db BigDipperDb) SaveValidatorDescription(description types.ValidatorDescri
 // SaveValidatorsDescription save descriptions for mutiple validators
 func (db BigDipperDb) SaveValidatorsDescription(descriptions []types.ValidatorDescription) error {
 	query := `INSERT INTO validator_description(operator_address,moniker,identity,website,security_contact,details,height,timestamp)
-	VALUES(`
+	VALUES`
 	var value []interface{}
 	for i, description := range descriptions {
 		des, err := description.Description.EnsureLength()

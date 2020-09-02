@@ -17,8 +17,8 @@ CREATE TABLE validator_uptime
 
 CREATE TABLE validator_info
 (
-    consensus_address     TEXT NOT NULL REFERENCES validator (consensus_address),
-    operator_address      TEXT NOT NULL,
+    consensus_address     TEXT NOT NULL REFERENCES validator (consensus_address) UNIQUE PRIMARY KEY,
+    operator_address      TEXT NOT NULL UNIQUE,
     self_delegate_address TEXT REFERENCES account (address)
 );
 
