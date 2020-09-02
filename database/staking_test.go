@@ -181,8 +181,8 @@ func (suite *DbTestSuite) TestBigDipperDb_GetValidatorsData() {
 	queries := []string{
 		`INSERT INTO validator (consensus_address, consensus_pubkey) VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl', 'cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8')`,
 		`INSERT INTO validator (consensus_address, consensus_pubkey) VALUES ('cosmosvalcons1qq92t2l4jz5pt67tmts8ptl4p0jhr6utx5xa8y', 'cosmosvalconspub1zcjduepqe93asg05nlnj30ej2pe3r8rkeryyuflhtfw3clqjphxn4j3u27msrr63nk')`,
-		`INSERT INTO validator_info (consensus_address, operator_address,self_delegate_address, moniker,identity,website,security_contact,details) VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl', 'cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl','cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs','ExampleMoniker1','ExampleIdentity1','ExampleWebsite1','ExampleSecurityContact1','ExampleDetails1')`,
-		`INSERT INTO validator_info (consensus_address, operator_address,self_delegate_address, moniker,identity,website,security_contact,details) VALUES ('cosmosvalcons1qq92t2l4jz5pt67tmts8ptl4p0jhr6utx5xa8y', 'cosmosvaloper1000ya26q2cmh399q4c5aaacd9lmmdqp90kw2jn','cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a','ExampleMoniker2','ExampleIdentity2','ExampleWebsite2','ExampleSecurityContact2','ExampleDetails2')`,
+		`INSERT INTO validator_info (consensus_address, operator_address,self_delegate_address) VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl', 'cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl','cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs')`,
+		`INSERT INTO validator_info (consensus_address, operator_address,self_delegate_address) VALUES ('cosmosvalcons1qq92t2l4jz5pt67tmts8ptl4p0jhr6utx5xa8y', 'cosmosvaloper1000ya26q2cmh399q4c5aaacd9lmmdqp90kw2jn','cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a')`,
 	}
 
 	for _, query := range queries {
@@ -1014,7 +1014,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorsDescription() {
 	}
 
 	var rows []dbtypes.ValidatorDescriptionRow
-	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM validator_description order by DESC")
+	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM validator_description order by moniker ASC")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 2)
 	for index, row := range rows {
