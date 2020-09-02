@@ -56,11 +56,6 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorData() {
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
 		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
 		"cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs",
-		"ExampleMoniker",
-		"ExampleIdentity",
-		"ExampleWebsite",
-		"ExampleSecurity",
-		"ExampleDetails",
 	)
 
 	// First inserting
@@ -86,11 +81,6 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorData() {
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
 		"cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs",
-		"ExampleMoniker",
-		"ExampleIdentity",
-		"ExampleWebsite",
-		"ExampleSecurity",
-		"ExampleDetails",
 	)))
 
 	//test for updating a existion row
@@ -99,11 +89,6 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorData() {
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
 		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
 		"cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs",
-		"UpdateExampleMoniker",
-		"UpdateExampleIdentity",
-		"UpdateExampleWebsite",
-		"UpdateExampleSecurity",
-		"UpdateExampleDetails",
 	)
 
 	err = suite.database.UpdateValidatorInfo(updateValidator)
@@ -116,11 +101,6 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorData() {
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
 		"cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs",
-		"UpdateExampleMoniker",
-		"UpdateExampleIdentity",
-		"UpdateExampleWebsite",
-		"UpdateExampleSecurity",
-		"UpdateExampleDetails",
 	)))
 
 }
@@ -132,8 +112,8 @@ func (suite *DbTestSuite) TestBigDipperDb_GetValidatorData() {
 VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl', 'cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8')`)
 	suite.Require().NoError(err)
 
-	_, err = suite.database.Sql.Exec(`INSERT INTO validator_info (consensus_address, operator_address,self_delegate_address,moniker,identity,website,security_contact, details) 
-VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl','cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl','cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a','ExampleMoniker1','ExampleIdentity1','ExampleWebsite1','ExampleSecurityContact1','ExampleDetails1')`)
+	_, err = suite.database.Sql.Exec(`INSERT INTO validator_info (consensus_address, operator_address,self_delegate_address) 
+VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl','cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl','cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a')`)
 	suite.Require().NoError(err)
 
 	// Get the data
@@ -340,7 +320,7 @@ func (suite *DbTestSuite) getValidator(consAddr, valAddr, pubkey string) types.V
 	pubKey, err := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeConsPub, pubkey)
 	suite.Require().NoError(err)
 
-	validator := types.NewValidator(constAddrObj, valAddrObj, pubKey, stakingtypes.NewDescription("moniker", "identity", "website", "security", "details"), selfDelegation)
+	validator := types.NewValidator(constAddrObj, valAddrObj, pubKey, selfDelegation)
 	err = suite.database.SaveSingleValidatorData(validator)
 	suite.Require().NoError(err)
 
@@ -997,7 +977,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVotingPower() {
 
 }
 
-func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorDescription(){
+func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorDescription() {
 	validator1 := suite.getValidator(
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
@@ -1007,22 +987,22 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorDescription(){
 	suite.Require().NoError(err)
 
 	var height int64 = 1
-	description := types.NewValidatorDescription(validator1.GetOperator(),stakingtypes.NewDescription(
+	description := types.NewValidatorDescription(validator1.GetOperator(), stakingtypes.NewDescription(
 		"moniker",
 		"identity",
-		"",//test null value
+		"", //test null value
 		"securityContact",
 		"details",
-	),timestamp, height)
+	), timestamp, height)
 	err := suite.database.SaveValidatorDescription(description)
 	suite.Require().NoError(err)
 
 	expected := dbtypes.NewValidatorDescriptionRow(validator1.GetOperator().String(),
-	"moniker",
-	"identity",
-	"",//test null value
-	"securityContact",
-	"details",height,timestamp)
+		"moniker",
+		"identity",
+		"", //test null value
+		"securityContact",
+		"details", height, timestamp)
 
 	var result []dbtypes.ValidatorDescriptionRow
 	err = suite.database.Sqlx.Select(&result, "SELECT * FROM validator_description")
