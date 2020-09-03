@@ -13,6 +13,10 @@ func (db BigDipperDb) InsertEnableModules(modules []string) error {
 		return err
 	}
 
+	if len(modules) == 0 {
+		return nil
+	}
+
 	var values []interface{}
 	stmt = `INSERT INTO modules (module_name) VALUES`
 	for key, value := range modules {
