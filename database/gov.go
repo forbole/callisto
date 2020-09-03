@@ -10,6 +10,11 @@ import (
 
 // SaveProposals allows to save for the given height the given total amount of coins
 func (db BigDipperDb) SaveProposals(proposals []types.Proposal) error {
+	//do nothing if empty
+	if len(proposals) == 0 {
+		return nil
+	}
+
 	query := `INSERT INTO proposal(title,description ,proposer,proposal_route ,proposal_type,proposal_id,
 		status,submit_time ,deposit_end_time ,voting_start_time,voting_end_time) VALUES`
 	var param []interface{}
@@ -63,6 +68,9 @@ func (db BigDipperDb) SaveProposal(proposal types.Proposal) error {
 
 // SaveTallyResults allows to save for the given height the given total amount of coins
 func (db BigDipperDb) SaveTallyResults(tallys []types.TallyResult) error {
+	if len(tallys) == 0 {
+		return nil
+	}
 	query := `INSERT INTO tally_result(proposal_id,yes,abstain,no,no_with_veto,height,timestamp) VALUES`
 	var param []interface{}
 	for i, tally := range tallys {
@@ -137,6 +145,9 @@ func (db BigDipperDb) SaveDeposit(deposit types.Deposit) error {
 
 // SaveDeposits allows to save multiple deposits
 func (db BigDipperDb) SaveDeposits(deposits []types.Deposit) error {
+	if len(deposits) == 0 {
+		return nil
+	}
 	query := `INSERT INTO deposit(proposal_id,depositor,amount,total_deposit,height,timestamp) VALUES `
 	var param []interface{}
 

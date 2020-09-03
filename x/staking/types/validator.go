@@ -15,20 +15,18 @@ type Validator interface {
 	GetConsAddr() sdk.ConsAddress
 	GetConsPubKey() crypto.PubKey
 	GetOperator() sdk.ValAddress
-	GetDescription() staking.Description
 	GetSelfDelegateAddress() sdk.AccAddress
 }
 
 // NewValidator allows to build a new Validator implementation having the given data
 func NewValidator(
-	consAddr sdk.ConsAddress, opAddr sdk.ValAddress, consPubKey crypto.PubKey, description staking.Description,
+	consAddr sdk.ConsAddress, opAddr sdk.ValAddress, consPubKey crypto.PubKey,
 	selfDelegateAddress sdk.AccAddress,
 ) Validator {
 	return validator{
 		ConsensusAddr:       consAddr,
 		ConsPubKey:          consPubKey,
 		OperatorAddr:        opAddr,
-		Description:         description,
 		SelfDelegateAddress: selfDelegateAddress,
 	}
 }
@@ -39,7 +37,6 @@ type validator struct {
 	ConsensusAddr       sdk.ConsAddress
 	ConsPubKey          crypto.PubKey
 	OperatorAddr        sdk.ValAddress
-	Description         staking.Description
 	SelfDelegateAddress sdk.AccAddress
 }
 
@@ -57,10 +54,6 @@ func (v validator) GetOperator() sdk.ValAddress {
 	return v.OperatorAddr
 }
 
-func (v validator) GetDescription() staking.Description {
-	return v.Description
-}
-
 func (v validator) GetSelfDelegateAddress() sdk.AccAddress {
 	return v.SelfDelegateAddress
 }
@@ -69,8 +62,41 @@ func (v validator) GetSelfDelegateAddress() sdk.AccAddress {
 func (v validator) Equals(w validator) bool {
 	return v.ConsensusAddr.Equals(w.ConsensusAddr) &&
 		v.ConsPubKey.Equals(w.ConsPubKey) &&
-		v.OperatorAddr.Equals(w.OperatorAddr) &&
-		v.Description == w.Description
+		v.OperatorAddr.Equals(w.OperatorAddr)
+}
+
+// _________________________________________________________
+
+// ValidatorDescription contains the description of a validator
+// and timestamp do the description get changed
+type ValidatorDescription struct {
+	OpAddr      sdk.ValAddress
+	Description staking.Description
+	Timestamp   time.Time
+	Height      int64
+}
+
+// NewValidatorDescription return a new ValidagtorDescription object
+func NewValidatorDescription(
+	opAddr sdk.ValAddress,
+	description staking.Description,
+	timestamp time.Time,
+	height int64,
+) ValidatorDescription {
+	return ValidatorDescription{
+		OpAddr:      opAddr,
+		Description: description,
+		Timestamp:   timestamp,
+		Height:      height,
+	}
+}
+
+// Equals return true if two ValidatorDescriptionh are the same
+func (v ValidatorDescription) Equals(w ValidatorDescription) bool {
+	return v.OpAddr.Equals(w.OpAddr) &&
+		v.Description == w.Description &&
+		v.Timestamp.Equal(w.Timestamp) &&
+		v.Height == w.Height
 }
 
 // _________________________________________________________

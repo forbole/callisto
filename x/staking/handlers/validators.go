@@ -12,23 +12,41 @@ import (
 
 // HandleMsgCreateValidator handles properly a MsgCreateValidator instance by
 // saving into the database all the data associated to such validator
-func HandleMsgCreateValidator(msg stakingtypes.MsgCreateValidator, db database.BigDipperDb) error {
+func HandleMsgCreateValidator(tx jtypes.Tx, msg stakingtypes.MsgCreateValidator, db database.BigDipperDb) error {
 	stakingValidator := stakingtypes.NewValidator(msg.ValidatorAddress, msg.PubKey, msg.Description)
+	timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
+	if err != nil {
+		return err
+	}
+	if err := db.SaveEditCommission(types.NewValidatorCommission(
+		msg.ValidatorAddress,
+		&msg.Commission.Rate,
+		&msg.MinSelfDelegation,
+		tx.Height,
+		timestamp,
+	)); err != nil {
+		return err
+	}
+
+	if err = db.SaveValidatorDescription(types.NewValidatorDescription(
+		msg.ValidatorAddress,
+		msg.Description,
+		timestamp,
+		tx.Height,
+	)); err != nil {
+		return err
+	}
+
 	return db.SaveSingleValidatorData(types.NewValidator(
 		stakingValidator.GetConsAddr(),
 		stakingValidator.GetOperator(),
 		stakingValidator.GetConsPubKey(),
-		stakingValidator.Description,
-		sdktypes.AccAddress(stakingValidator.GetConsAddr()),
-	))
+		sdktypes.AccAddress(stakingValidator.GetConsAddr())))
+
 }
 
-// HandleEditValidator handles MsgEditValidator messages, updating the validator info
+// HandleEditValidator handles MsgEditValidator messages, updating the validator info and commission
 func HandleEditValidator(msg stakingtypes.MsgEditValidator, tx jtypes.Tx, db database.BigDipperDb) error {
-	validatorinfo, err := db.GetValidatorData(msg.ValidatorAddress)
-	if err != nil {
-		return err
-	}
 
 	timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
 	if err != nil {
@@ -44,12 +62,10 @@ func HandleEditValidator(msg stakingtypes.MsgEditValidator, tx jtypes.Tx, db dat
 	)); err != nil {
 		return err
 	}
-
-	return db.UpdateValidatorInfo(types.NewValidator(
-		validatorinfo.GetConsAddr(),
-		validatorinfo.GetOperator(),
-		validatorinfo.GetConsPubKey(),
+	return db.SaveValidatorDescription(types.NewValidatorDescription(
+		msg.ValidatorAddress,
 		msg.Description,
-		sdktypes.AccAddress(validatorinfo.GetOperator()),
+		timestamp,
+		tx.Height,
 	))
 }

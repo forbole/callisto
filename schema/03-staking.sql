@@ -19,12 +19,7 @@ CREATE TABLE validator_info
 (
     consensus_address     TEXT NOT NULL REFERENCES validator (consensus_address) UNIQUE PRIMARY KEY,
     operator_address      TEXT NOT NULL UNIQUE,
-    self_delegate_address TEXT REFERENCES account (address),
-    moniker               TEXT,
-    identity              TEXT,
-    website               TEXT,
-    security_contact      TEXT,
-    details               TEXT
+    self_delegate_address TEXT REFERENCES account (address)
 );
 
 CREATE TABLE validator_delegation
@@ -81,4 +76,16 @@ CREATE TABLE validator_voting_power
     voting_power      BIGINT NOT NULL,
     height            BIGINT NOT NULL,
     PRIMARY KEY (consensus_address, height)
+);
+
+CREATE TABLE validator_description
+(
+    operator_address      TEXT NOT NULL REFERENCES validator_info(operator_address),
+    moniker               TEXT ,
+    identity              TEXT,
+    website               TEXT,
+    security_contact      TEXT,
+    details               TEXT,
+    height                BIGINT,
+    timestamp             TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );

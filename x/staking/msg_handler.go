@@ -29,7 +29,7 @@ func MsgHandler(tx types.Tx, index int, msg sdk.Msg, w worker.Worker) error {
 
 	switch cosmosMsg := msg.(type) {
 	case staking.MsgCreateValidator:
-		return handlers.HandleMsgCreateValidator(cosmosMsg, bigDipperDb)
+		return handlers.HandleMsgCreateValidator(tx, cosmosMsg, bigDipperDb)
 
 	case staking.MsgDelegate:
 		return handlers.HandleMsgDelegate(tx, cosmosMsg, bigDipperDb, w.ClientProxy)

@@ -5,7 +5,6 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/tendermint/tendermint/crypto"
 )
 
@@ -63,27 +62,16 @@ func (v ValidatorRow) Equal(w ValidatorRow) bool {
 type ValidatorInfoRow struct {
 	ConsAddress         string `db:"consensus_address"`
 	ValAddress          string `db:"operator_address"`
-	Moniker             string `db:"moniker"`
-	Identity            string `db:"identity"`
-	Website             string `db:"website"`
-	SecurityContact     string `db:"security_contact"`
-	Details             string `db:"details"`
 	SelfDelegateAddress string `db:"self_delegate_address"`
 }
 
 // NewValidatorInfoRow allows to build a new ValidatorInfoRow
 func NewValidatorInfoRow(
-	consAddress string, valAddress string, selfDelegateAddress string, moniker string, identity string,
-	website string, securityContact string, details string,
+	consAddress string, valAddress string, selfDelegateAddress string,
 ) ValidatorInfoRow {
 	return ValidatorInfoRow{
 		ConsAddress:         consAddress,
 		ValAddress:          valAddress,
-		Moniker:             moniker,
-		Identity:            identity,
-		Website:             website,
-		SecurityContact:     securityContact,
-		Details:             details,
 		SelfDelegateAddress: selfDelegateAddress,
 	}
 }
@@ -92,11 +80,6 @@ func NewValidatorInfoRow(
 func (v ValidatorInfoRow) Equal(w ValidatorInfoRow) bool {
 	return v.ConsAddress == w.ConsAddress &&
 		v.ValAddress == w.ValAddress &&
-		v.Moniker == w.Moniker &&
-		v.Identity == w.Identity &&
-		v.Website == w.Website &&
-		v.SecurityContact == w.SecurityContact &&
-		v.Details == w.Details &&
 		v.SelfDelegateAddress == w.SelfDelegateAddress
 }
 
@@ -109,28 +92,17 @@ type ValidatorData struct {
 	ValAddress          string `db:"operator_address"`
 	ConsPubKey          string `db:"consensus_pubkey"`
 	SelfDelegateAddress string `db:"self_delegate_address"`
-	Moniker             string `db:"moniker"`
-	Identity            string `db:"identity"`
-	Website             string `db:"website"`
-	SecurityContact     string `db:"security_contact"`
-	Details             string `db:"details"`
 }
 
 // NewValidatorData allows to build a new ValidatorData
 func NewValidatorData(
-	consAddress, valAddress, consPubKey string, selfDelegateAddress string, moniker string, identity string,
-	website string, securityContact string, details string,
+	consAddress, valAddress, consPubKey string, selfDelegateAddress string,
 ) ValidatorData {
 	return ValidatorData{
 		ConsAddress:         consAddress,
 		ValAddress:          valAddress,
 		ConsPubKey:          consPubKey,
 		SelfDelegateAddress: selfDelegateAddress,
-		Moniker:             moniker,
-		Identity:            identity,
-		Website:             website,
-		SecurityContact:     securityContact,
-		Details:             details,
 	}
 }
 
@@ -154,16 +126,6 @@ func (v ValidatorData) GetOperator() sdk.ValAddress {
 	}
 
 	return addr
-}
-
-func (v ValidatorData) GetDescription() staking.Description {
-	return staking.NewDescription(
-		v.Moniker,
-		v.Identity,
-		v.Website,
-		v.SecurityContact,
-		v.Details,
-	)
 }
 
 func (v ValidatorData) GetSelfDelegateAddress() sdk.AccAddress {
@@ -405,4 +367,53 @@ func NewValidatorVotingPowerRow(
 		VotingPower:      votingPower,
 		Height:           height,
 	}
+}
+
+//________________________________________________________________
+
+// ValidatorDescriptionRow represent a row in validator_description
+type ValidatorDescriptionRow struct {
+	ValAddress      string         `db:"operator_address"`
+	Moniker         sql.NullString `db:"moniker"`
+	Identity        sql.NullString `db:"identity"`
+	Website         sql.NullString `db:"website"`
+	SecurityContact sql.NullString `db:"security_contact"`
+	Details         sql.NullString `db:"details"`
+	Height          int64          `db:"height"`
+	Timestamp       time.Time      `db:"timestamp"`
+}
+
+// NewValidatorDescriptionRow return a row representing data structure in validator_description
+func NewValidatorDescriptionRow(
+	valAddress string,
+	moniker string,
+	identity string,
+	website string,
+	securityContact string,
+	details string,
+	height int64,
+	timestamp time.Time,
+) ValidatorDescriptionRow {
+	return ValidatorDescriptionRow{
+		ValAddress:      valAddress,
+		Moniker:         sql.NullString{String: moniker, Valid: true},
+		Identity:        sql.NullString{String: identity, Valid: true},
+		Website:         sql.NullString{String: website, Valid: true},
+		SecurityContact: sql.NullString{String: securityContact, Valid: true},
+		Details:         sql.NullString{String: details, Valid: true},
+		Height:          height,
+		Timestamp:       timestamp,
+	}
+}
+
+// Equals return true if two ValidatorDescriptionRow are equal
+func (w ValidatorDescriptionRow) Equals(v ValidatorDescriptionRow) bool {
+	return v.ValAddress == w.ValAddress &&
+		v.Moniker == w.Moniker &&
+		v.Identity == w.Identity &&
+		v.Website == w.Website &&
+		v.SecurityContact == w.SecurityContact &&
+		v.Details == w.Details &&
+		v.Height == w.Height &&
+		v.Timestamp.Equal(w.Timestamp)
 }
