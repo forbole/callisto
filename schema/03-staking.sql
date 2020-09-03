@@ -80,7 +80,7 @@ CREATE TABLE validator_voting_power
 
 CREATE TABLE validator_description
 (
-    operator_address      TEXT NOT NULL,
+    operator_address      TEXT NOT NULL REFERENCES validator_info(operator_address),
     moniker               TEXT ,
     identity              TEXT,
     website               TEXT,
