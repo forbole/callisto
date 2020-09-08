@@ -28,7 +28,7 @@ var (
 		consensus.Module{},
 		distribution.Module{},
 		gov.Module{},
-		mint.Module{},
+		//mint.Module{},
 		pricefeed.Module{},
 		staking.Module{},
 		supply.Module{},
