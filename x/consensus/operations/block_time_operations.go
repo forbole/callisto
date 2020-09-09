@@ -13,11 +13,20 @@ func UpdateBlockTime(blockTime time.Time, blockHeight int64, db database.BigDipp
 		Str("operation", " tokens").
 		Msg("getting total token supply")
 	
-	if blockTIme
-	minute, err := db.GetBlockHeightTimeMinuteAgo(blockTime)
-	if err != nil {
+	genesis,err := db.GetGenesisTime()
+	if err!=nil{
 		return err
 	}
+
+	if(blockTime.Sub(genesis).Minutes()>0){
+		minute, err := db.GetBlockHeightTimeMinuteAgo(blockTime)
+		if err != nil {
+			return err
+		}
+		minutesub := blockTime.Sub(minute.Timestamp).Seconds()
+		
+	}
+
 	/* minute, err := db.GetBlockHeightTimeMinuteAgo(blockTime)
 	if err!=nil{
 		return err
@@ -27,7 +36,6 @@ func UpdateBlockTime(blockTime time.Time, blockHeight int64, db database.BigDipp
 		return err
 	} */
 
-	minutesub := blockTime.Sub(minute.Timestamp).Seconds()
 
 	print(minutesub)
 
