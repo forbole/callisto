@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/forbole/bdjuno/x/mint"
 	x "github.com/forbole/bdjuno/x/types"
 
 	"github.com/cosmos/cosmos-sdk/simapp"

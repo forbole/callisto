@@ -280,7 +280,7 @@ func (v ValidatorReDelegationRow) Equal(w ValidatorReDelegationRow) bool {
 // ValidatorCommission represents a single row of the
 // validator_commission database table
 type ValidatorCommission struct {
-	OperatorAddress  string         `db:"operator_address"`
+	OperatorAddress   string         `db:"operator_address"`
 	Timestamp         time.Time      `db:"timestamp"`
 	Commission        sql.NullString `db:"commission"`
 	MinSelfDelegation sql.NullString `db:"min_self_delegation"`
@@ -293,7 +293,7 @@ func NewValidatorCommission(
 	operatorAddress string, commission string, minSelfDelegation string, height int64, timestamp time.Time,
 ) ValidatorCommission {
 	return ValidatorCommission{
-		OperatorAddress:  operatorAddress,
+		OperatorAddress:   operatorAddress,
 		Timestamp:         timestamp,
 		Commission:        sql.NullString{String: commission, Valid: true},
 		MinSelfDelegation: sql.NullString{String: minSelfDelegation, Valid: true},
