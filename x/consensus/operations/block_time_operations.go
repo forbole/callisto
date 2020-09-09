@@ -7,7 +7,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func UpdateBlockTime(blockTime time.Time, blockHeight int64, db database.BigDipperDb) error {
+func UpdateBlockTimeMinute(blockTime time.Time, blockHeight int64, db database.BigDipperDb) error {
 	log.Debug().
 		Str("module", "staking").
 		Str("operation", " tokens").
@@ -18,26 +18,16 @@ func UpdateBlockTime(blockTime time.Time, blockHeight int64, db database.BigDipp
 		return err
 	}
 
-	if(blockTime.Sub(genesis).Minutes()>0){
-		minute, err := db.GetBlockHeightTimeMinuteAgo(blockTime)
-		if err != nil {
-			return err
-		}
-		minutesub := blockTime.Sub(minute.Timestamp).Seconds()
-		
+	//check if chain is not created minutes ago
+	if(blockTime.Sub(genesis).Minutes()<0){
+		return nil
 	}
 
-	/* minute, err := db.GetBlockHeightTimeMinuteAgo(blockTime)
-	if err!=nil{
+	minute, err := db.GetBlockHeightTimeMinuteAgo(blockTime)
+	if err != nil {
 		return err
 	}
-	hour, err := db.GetBlockHeightTimeHourAgo(blockTime)
-	if err!=nil{
-		return err
-	} */
+	newBlockTime := blockTime.Sub(minute.Timestamp).Seconds()/float64((blockHeight-minute.Height))
 
-
-	print(minutesub)
-
-	return nil
+	return db.SaveAverageBlockTimePerMin(newBlockTime,blockTime,blockHeight)
 }

@@ -28,7 +28,7 @@ func (db BigDipperDb) SaveConsensus(event constypes.ConsensusEvent) error {
 	_, err := db.Sql.Exec(stmt, event.Height, event.Round, event.Step)
 	return err
 }
-/* 
+
 func (db BigDipperDb) getBlockHeightTime(pastTime time.Time) (dbtypes.BlockRow, error) {
 	stmt := `SELECT block.timestamp, block.height
 	FROM block
@@ -63,11 +63,12 @@ func (db BigDipperDb) GetBlockHeightTimeDayAgo(now time.Time) (dbtypes.BlockRow,
 	pastTime := now.Add(time.Hour * 24 * -1)
 	return db.getBlockHeightTime(pastTime)
 }
- */
 
-func (db BigDipperDb) SaveAverageBlockTimePerMin (average_time float64,timestamp time.Time,height)error{
+
+func (db BigDipperDb) SaveAverageBlockTimePerMin (average_time float64,timestamp time.Time,height int64)error{
 	stmt:=`INSERT INTO average_block_time_per_minute(average_time,timestamp,height) values ($1,$2)`
 	_,err := db.Sqlx.Exec(stmt,average_time,timestamp,height)
+	return err
 }
 
 
