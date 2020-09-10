@@ -64,24 +64,35 @@ func (db BigDipperDb) GetBlockHeightTimeDayAgo(now time.Time) (dbtypes.BlockRow,
 	return db.getBlockHeightTime(pastTime)
 }
 
-
-func (db BigDipperDb) SaveAverageBlockTimePerMin (average_time float64,timestamp time.Time,height int64)error{
-	stmt:=`INSERT INTO average_block_time_per_minute(average_time,timestamp,height) values ($1,$2)`
-	_,err := db.Sqlx.Exec(stmt,average_time,timestamp,height)
+// SaveAverageBlockTimePerMin save the average block time in average_block_time_per_minute table
+func (db BigDipperDb) SaveAverageBlockTimePerMin(averageTime float64, timestamp time.Time, height int64) error {
+	stmt := `INSERT INTO average_block_time_per_minute(average_time,timestamp,height) values ($1,$2,$3)`
+	_, err := db.Sqlx.Exec(stmt, averageTime, timestamp, height)
 	return err
 }
 
-
-// SaveGenesisHeight save the genesis height
-func (db BigDipperDb) SaveGenesisTime(genesisTime time.Time)error{
-	stmt := `INSERT INTO genesis(time) values ($1)`
-	_,err:= db.Sqlx.Exec(stmt, genesisTime)
-	if err != nil {
-		return err
-	}
-	return  nil
+// SaveAverageBlockTimePerHour save the average block time in average_block_time_per_hour table
+func (db BigDipperDb) SaveAverageBlockTimePerHour(averageTime float64, timestamp time.Time, height int64) error {
+	stmt := `INSERT INTO average_block_time_per_hour(average_time,timestamp,height) values ($1,$2,$3)`
+	_, err := db.Sqlx.Exec(stmt, averageTime, timestamp, height)
+	return err
 }
 
+// SaveAverageBlockTimePerDay save the average block time in average_block_time_per_day table
+func (db BigDipperDb) SaveAverageBlockTimePerDay(averageTime float64, timestamp time.Time, height int64) error {
+	stmt := `INSERT INTO average_block_time_per_day(average_time,timestamp,height) values ($1,$2,$3)`
+	_, err := db.Sqlx.Exec(stmt, averageTime, timestamp, height)
+	return err
+}
+
+// SaveGenesisHeight save the genesis height
+func (db BigDipperDb) SaveGenesisTime(genesisTime time.Time) error {
+	stmt := `INSERT INTO genesis(time) values ($1)`
+	_, err := db.Sqlx.Exec(stmt, genesisTime)
+	return err
+}
+
+// GetGenesisTime get genesis time of chain (only work if x/consensus enabled)
 func (db BigDipperDb) GetGenesisTime() (time.Time, error) {
 	stmt := `SELECT time from genesis;`
 	var val []time.Time
@@ -91,4 +102,3 @@ func (db BigDipperDb) GetGenesisTime() (time.Time, error) {
 	}
 	return val[0], nil
 }
-

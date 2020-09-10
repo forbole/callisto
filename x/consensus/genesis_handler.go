@@ -20,12 +20,12 @@ func GenesisHandler(codec *codec.Codec, genesisDoc *tmtypes.GenesisDoc, appState
 		return fmt.Errorf("given database instance is not a BigDipperDb")
 	}
 
-	if err := saveGenesisHeight(genesisDoc.GenesisTime, bigDipperDb); err != nil {
+	if err := saveGenesisTime(genesisDoc.GenesisTime, bigDipperDb); err != nil {
 		return err
 	}
 	return nil
 }
 
-func saveGenesisHeight(genesisTime time.Time, db database.BigDipperDb) error {
-	db.SaveGenesisHeight(genesisTime)
+func saveGenesisTime(genesisTime time.Time, db database.BigDipperDb) error {
+	return db.SaveGenesisTime(genesisTime)
 }

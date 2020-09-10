@@ -36,10 +36,10 @@ func (m Module) AdditionalOperations() []parse.AdditionalOperation {
 
 // PeriodicOperations return a list of PeriodicOperations of the module
 func (m Module) PeriodicOperations() []x.PerodicOperation {
-	return []x.PerodicOperation{}
+	return []x.PerodicOperation{PeriodicConcensusOperations}
 }
 
 // GenesisHandlers return a list of GenesisHandlers of the module
 func (m Module) GenesisHandlers() []juno.GenesisHandler {
-	return []juno.GenesisHandler{}
+	return []juno.GenesisHandler{GenesisHandler}
 }

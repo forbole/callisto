@@ -7,7 +7,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func UpdateBlockTimeMinute(blockTime time.Time, blockHeight int64, db database.BigDipperDb) error {
+func UpdateBlockTimeInMinute(blockTime time.Time, blockHeight int64, db database.BigDipperDb) error {
 	log.Debug().
 		Str("module", "staking").
 		Str("operation", " tokens").

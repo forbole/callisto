@@ -1,4 +1,4 @@
-package staking
+package consensus
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -13,7 +13,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// PeriodicStakingOperations returns the AdditionalOperation that periodically runs fetches from
+// PeriodicConcensusOperations returns the AdditionalOperation that periodically runs fetches from
 // the LCD to make sure that constantly changing data are synced properly.
 func PeriodicConcensusOperations(scheduler *gocron.Scheduler) parse.AdditionalOperation {
 	log.Debug().Str("module", "staking").Msg("setting up periodic tasks")
@@ -26,11 +26,11 @@ func PeriodicConcensusOperations(scheduler *gocron.Scheduler) parse.AdditionalOp
 
 		// Setup a cron job to run every 15 seconds
 		if _, err := scheduler.Every(1).Day().At("00:00").StartImmediately().Do(func() {
-			utils.WatchMethod(func() error { return operations.UpdateValidatorsUptime(cp, bdDatabase) })
+			utils.WatchMethod(func() error { return operations.UpdateBlockTimeInMinute(cp, bdDatabase) })
 		}); err != nil {
 			return err
 		}
-
+        /* 
 		if _, err := scheduler.Every(1).Minute().At("00:00").StartImmediately().Do(func() {
 			utils.WatchMethod(func() error { return operations.UpdateValidatorVotingPower(cp, bdDatabase) })
 		}); err != nil {
@@ -40,7 +40,8 @@ func PeriodicConcensusOperations(scheduler *gocron.Scheduler) parse.AdditionalOp
 			utils.WatchMethod(func() error { return operations.UpdateValidatorVotingPower(cp, bdDatabase) })
 		}); err != nil {
 			return err
-		}
+		} 
+		*/
 		return nil
 	}
 }
