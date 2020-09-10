@@ -97,7 +97,7 @@ func (db BigDipperDb) GetGenesisTime() (time.Time, error) {
 	stmt := `SELECT time from genesis;`
 	var val []time.Time
 	err := db.Sqlx.Select(&val, stmt)
-	if err != nil {
+	if err != nil || len(val)==0{
 		return time.Time{}, err
 	}
 	return val[0], nil

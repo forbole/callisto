@@ -12,8 +12,8 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 )
 
-func GenesisHandler(codec *codec.Codec, genesisDoc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, w worker.Worker) error {
-	log.Debug().Str("module", "gov").Msg("parsing genesis")
+func GenesisHandler(_ *codec.Codec, genesisDoc *tmtypes.GenesisDoc, _ map[string]json.RawMessage, w worker.Worker) error {
+	log.Debug().Str("module", "consensus").Msg("parsing genesis")
 
 	bigDipperDb, ok := w.Db.(database.BigDipperDb)
 	if !ok {

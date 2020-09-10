@@ -1,33 +1,39 @@
 package operations
 
 import (
-	"time"
-
+	"github.com/desmos-labs/juno/parse/client"
 	"github.com/forbole/bdjuno/database"
 	"github.com/rs/zerolog/log"
+	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
 
-func UpdateBlockTimeInMinute(blockTime time.Time, blockHeight int64, db database.BigDipperDb) error {
+func UpdateBlockTimeInMinute(cp client.ClientProxy, db database.BigDipperDb) error {
 	log.Debug().
 		Str("module", "staking").
 		Str("operation", " tokens").
 		Msg("getting total token supply")
-	
-	genesis,err := db.GetGenesisTime()
-	if err!=nil{
+
+	var block tmctypes.ResultBlock
+	err := cp.QueryLCD("/blocks/latest", &block)
+	if err != nil {
+		return err
+	}
+
+	genesis, err := db.GetGenesisTime()
+	if err != nil {
 		return err
 	}
 
 	//check if chain is not created minutes ago
-	if(blockTime.Sub(genesis).Minutes()<0){
+	if block.Block.Time.Sub(genesis).Minutes() < 0 {
 		return nil
 	}
 
-	minute, err := db.GetBlockHeightTimeMinuteAgo(blockTime)
+	minute, err := db.GetBlockHeightTimeMinuteAgo(block.Block.Time)
 	if err != nil {
 		return err
 	}
-	newBlockTime := blockTime.Sub(minute.Timestamp).Seconds()/float64((blockHeight-minute.Height))
+	newBlockTime := block.Block.Time.Sub(minute.Timestamp).Seconds() / float64((block.Block.Height - minute.Height))
 
-	return db.SaveAverageBlockTimePerMin(newBlockTime,blockTime,blockHeight)
+	return db.SaveAverageBlockTimePerMin(newBlockTime, block.Block.Time, block.Block.Height)
 }
