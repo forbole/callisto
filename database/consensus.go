@@ -102,3 +102,10 @@ func (db BigDipperDb) GetGenesisTime() (time.Time, error) {
 	}
 	return val[0], nil
 }
+
+// SaveAverageBlockTimeGenesis save the average block time in average_block_time_from_genesis table
+func (db BigDipperDb) SaveAverageBlockTimeGenesis(averageTime float64, timestamp time.Time, height int64) error {
+	stmt := `INSERT INTO average_block_time_from_genesis(average_time,timestamp,height) values ($1,$2,$3)`
+	_, err := db.Sqlx.Exec(stmt, averageTime, timestamp, height)
+	return err
+}

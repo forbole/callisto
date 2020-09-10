@@ -27,6 +27,15 @@ CREATE TABLE average_block_time_per_day
   height INTEGER NOT NULL
 );
 
+
+CREATE TABLE average_block_time_from_genesis 
+(
+  average_time DECIMAL NOT NULL, 
+  timestamp TIMESTAMP NOT NULL,
+  height INTEGER NOT NULL 
+);
+
 CREATE TABLE genesis ( 
   time TIMESTAMP NOT NULL
 );
+
