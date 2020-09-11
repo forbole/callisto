@@ -22,7 +22,7 @@ func (r ConsensusRow) Equal(s ConsensusRow) bool {
 type BlockTimeRow struct {
 	AverageTime float64   `db:"average_time"`
 	Timestamp   time.Time `db:"timestamp"`
-	Height      int64     `db:height`
+	Height      int64     `db:"height"`
 }
 
 func NewBlockTimeRow(averageTime float64, timestamp time.Time, height int64) BlockTimeRow {
