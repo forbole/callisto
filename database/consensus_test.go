@@ -1,6 +1,8 @@
 package database_test
 
 import (
+	time "time"
+
 	dbtypes "github.com/forbole/bdjuno/database/types"
 	constypes "github.com/forbole/bdjuno/x/consensus/types"
 )
@@ -29,3 +31,131 @@ func (suite *DbTestSuite) TestSaveConsensus() {
 		}))
 	}
 }
+
+func (suite *DbTestSuite) TestSaveConsensus_GetBlockHeightTimeMinuteAgo() {
+	timeAgo, err := time.Parse(time.RFC3339, "2020-08-25 07:03:19.954489")
+	suite.Require().NoError(err)
+
+	var height int64 = 1000
+
+	_, err = suite.database.Sql.Exec(`INSERT INTO block(height,hash,num_txs,total_gas,proposer_address,pre_commits,timestamp)
+	VALUES ($1,'5EF85F2251F656BA0FBFED9AEFCBC44A9CCBCFD8B96897E74426E07229D2ADE0','0','0','desmosvalcons1mxrd5cyjgpx5vfgltrdufq9wq4ynwc799ndrg8','8',$2)`, height, timeAgo)
+	suite.Require().NoError(err)
+
+	timeNow := timeAgo.Add(time.Minute)
+	result, err := suite.database.GetBlockHeightTimeMinuteAgo(timeNow)
+	suite.Require().NoError(err)
+
+	suite.Require().True(result.Timestamp.Equal(timeAgo))
+	suite.Require().Equal(height, result.Height)
+}
+
+func (suite *DbTestSuite) TestSaveConsensus_GetBlockHeightTimeHourAgo() {
+	timeAgo, err := time.Parse(time.RFC3339, "2020-08-25 07:03:19.954489")
+	suite.Require().NoError(err)
+
+	var height int64 = 1000
+
+	_, err = suite.database.Sql.Exec(`INSERT INTO block(height,hash,num_txs,total_gas,proposer_address,pre_commits,timestamp)
+	VALUES ($1,'5EF85F2251F656BA0FBFED9AEFCBC44A9CCBCFD8B96897E74426E07229D2ADE0','0','0','desmosvalcons1mxrd5cyjgpx5vfgltrdufq9wq4ynwc799ndrg8','8',$2)`, height, timeAgo)
+	suite.Require().NoError(err)
+
+	timeNow := timeAgo.Add(time.Hour)
+	result, err := suite.database.GetBlockHeightTimeMinuteAgo(timeNow)
+	suite.Require().NoError(err)
+
+	suite.Require().True(result.Timestamp.Equal(timeAgo))
+	suite.Require().Equal(height, result.Height)
+}
+
+func (suite *DbTestSuite) TestSaveConsensus_GetBlockHeightTimeDayAgo() {
+	timeAgo, err := time.Parse(time.RFC3339, "2020-08-25 07:03:19.954489")
+	suite.Require().NoError(err)
+
+	var height int64 = 1000
+
+	_, err = suite.database.Sql.Exec(`INSERT INTO block(height,hash,num_txs,total_gas,proposer_address,pre_commits,timestamp)
+	VALUES ($1,'5EF85F2251F656BA0FBFED9AEFCBC44A9CCBCFD8B96897E74426E07229D2ADE0','0','0','desmosvalcons1mxrd5cyjgpx5vfgltrdufq9wq4ynwc799ndrg8','8',$2)`, height, timeAgo)
+	suite.Require().NoError(err)
+
+	timeNow := timeAgo.Add(time.Hour * 24)
+	result, err := suite.database.GetBlockHeightTimeMinuteAgo(timeNow)
+	suite.Require().NoError(err)
+
+	suite.Require().True(result.Timestamp.Equal(timeAgo))
+	suite.Require().Equal(height, result.Height)
+}
+
+func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimePerMin() {
+	time, err := time.Parse(time.RFC3339, "2020-08-25 07:03:19.954489")
+	suite.Require().NoError(err)
+
+	var height int64 = 1000
+
+	var averageTime float64 = 5.05
+
+	err = suite.database.SaveAverageBlockTimePerMin(averageTime, time, height)
+	suite.Require().NoError(err)
+
+	expected := dbtypes.NewBlockTimeRow(averageTime, time, height)
+
+	var rows []dbtypes.BlockTimeRow
+	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM average_block_time_per_minute")
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	suite.Require().True(rows[0].Equal(expected))
+}
+
+func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimePerHour() {
+	time, err := time.Parse(time.RFC3339, "2020-08-25 07:03:19.954489")
+	suite.Require().NoError(err)
+
+	var height int64 = 1000
+
+	var averageTime float64 = 5.05
+
+	err = suite.database.SaveAverageBlockTimePerHour(averageTime, time, height)
+	suite.Require().NoError(err)
+
+	expected := dbtypes.NewBlockTimeRow(averageTime, time, height)
+
+	var rows []dbtypes.BlockTimeRow
+	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM average_block_time_per_hour")
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	suite.Require().True(rows[0].Equal(expected))
+}
+
+func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimePerDay() {
+	time, err := time.Parse(time.RFC3339, "2020-08-25 07:03:19.954489")
+	suite.Require().NoError(err)
+
+	var height int64 = 1000
+
+	var averageTime float64 = 5.05
+
+	err = suite.database.SaveAverageBlockTimePerDay(averageTime, time, height)
+	suite.Require().NoError(err)
+
+	expected := dbtypes.NewBlockTimeRow(averageTime, time, height)
+
+	var rows []dbtypes.BlockTimeRow
+	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM average_block_time_per_day")
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	suite.Require().True(rows[0].Equal(expected))
+}
+
+func (suite *DbTestSuite) TestSaveConsensus_SaveGenesisTime() {
+	timestamp, err := time.Parse(time.RFC3339, "2020-08-25 07:03:19.954489")
+	suite.Require().NoError(err)
+
+	err = suite.database.SaveGenesisTime(timestamp)
+	suite.Require().NoError(err)
+
+	var rows []time.Time
+	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM genesis")
+	suite.Require().Len(rows,1)
+	suite.Require().True(timestamp.Equal(rows[0]))
+}
+

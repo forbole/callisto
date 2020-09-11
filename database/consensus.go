@@ -60,7 +60,7 @@ func (db BigDipperDb) GetBlockHeightTimeHourAgo(now time.Time) (dbtypes.BlockRow
 // GetBlockHeightTimeDayAgo return block height and time that a block proposals
 // about a day (24hour) ago from imput date
 func (db BigDipperDb) GetBlockHeightTimeDayAgo(now time.Time) (dbtypes.BlockRow, error) {
-	pastTime := now.Add(time.Hour * 24 * -1)
+	pastTime := now.Add(time.Hour * -24)
 	return db.getBlockHeightTime(pastTime)
 }
 
@@ -87,8 +87,13 @@ func (db BigDipperDb) SaveAverageBlockTimePerDay(averageTime float64, timestamp 
 
 // SaveGenesisHeight save the genesis height
 func (db BigDipperDb) SaveGenesisTime(genesisTime time.Time) error {
-	stmt := `INSERT INTO genesis(time) values ($1)`
-	_, err := db.Sqlx.Exec(stmt, genesisTime)
+	stmt := `DELETE FROM genesis`
+	_, err := db.Sqlx.Exec(stmt)
+	if err!=nil{
+		return err
+	}
+	stmt = `INSERT INTO genesis(time) values ($1)`
+	_, err = db.Sqlx.Exec(stmt, genesisTime)
 	return err
 }
 
