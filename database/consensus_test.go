@@ -38,6 +38,10 @@ func (suite *DbTestSuite) TestSaveConsensus_GetBlockHeightTimeMinuteAgo() {
 
 	var height int64 = 1000
 
+	_, err = suite.database.Sql.Exec(`INSERT INTO validator (consensus_address, consensus_pubkey) 
+	VALUES ('desmosvalcons1mxrd5cyjgpx5vfgltrdufq9wq4ynwc799ndrg8', 'cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8')`)
+	suite.Require().NoError(err)
+
 	_, err = suite.database.Sql.Exec(`INSERT INTO block(height,hash,num_txs,total_gas,proposer_address,pre_commits,timestamp)
 	VALUES ($1,'5EF85F2251F656BA0FBFED9AEFCBC44A9CCBCFD8B96897E74426E07229D2ADE0','0','0','desmosvalcons1mxrd5cyjgpx5vfgltrdufq9wq4ynwc799ndrg8','8',$2)`, height, timeAgo)
 	suite.Require().NoError(err)
@@ -55,6 +59,9 @@ func (suite *DbTestSuite) TestSaveConsensus_GetBlockHeightTimeHourAgo() {
 	suite.Require().NoError(err)
 
 	var height int64 = 1000
+	_, err = suite.database.Sql.Exec(`INSERT INTO validator (consensus_address, consensus_pubkey) 
+	VALUES ('desmosvalcons1mxrd5cyjgpx5vfgltrdufq9wq4ynwc799ndrg8', 'cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8')`)
+	suite.Require().NoError(err)
 
 	_, err = suite.database.Sql.Exec(`INSERT INTO block(height,hash,num_txs,total_gas,proposer_address,pre_commits,timestamp)
 	VALUES ($1,'5EF85F2251F656BA0FBFED9AEFCBC44A9CCBCFD8B96897E74426E07229D2ADE0','0','0','desmosvalcons1mxrd5cyjgpx5vfgltrdufq9wq4ynwc799ndrg8','8',$2)`, height, timeAgo)
@@ -73,6 +80,10 @@ func (suite *DbTestSuite) TestSaveConsensus_GetBlockHeightTimeDayAgo() {
 	suite.Require().NoError(err)
 
 	var height int64 = 1000
+
+	_, err = suite.database.Sql.Exec(`INSERT INTO validator (consensus_address, consensus_pubkey) 
+	VALUES ('desmosvalcons1mxrd5cyjgpx5vfgltrdufq9wq4ynwc799ndrg8', 'cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8')`)
+	suite.Require().NoError(err)
 
 	_, err = suite.database.Sql.Exec(`INSERT INTO block(height,hash,num_txs,total_gas,proposer_address,pre_commits,timestamp)
 	VALUES ($1,'5EF85F2251F656BA0FBFED9AEFCBC44A9CCBCFD8B96897E74426E07229D2ADE0','0','0','desmosvalcons1mxrd5cyjgpx5vfgltrdufq9wq4ynwc799ndrg8','8',$2)`, height, timeAgo)
@@ -186,7 +197,7 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimeGenesis() {
 	err = suite.database.SaveAverageBlockTimeGenesis(averageTime, timestamp, height)
 	suite.Require().NoError(err)
 
-	var rows []time.Time
+	var rows []dbtypes.BlockTimeRow
 	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM average_block_time_from_genesis")
 	suite.Require().Len(rows, 1)
 	suite.Require().True(timestamp.Equal(rows[0]))
