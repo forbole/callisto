@@ -33,7 +33,7 @@ func (suite *DbTestSuite) TestSaveConsensus() {
 }
 
 func (suite *DbTestSuite) TestSaveConsensus_GetBlockHeightTimeMinuteAgo() {
-	timeAgo, err := time.Parse(time.RFC3339, "2020-08-25 07:03:19.954489")
+	timeAgo, err := time.Parse(time.RFC3339, "2020-01-01T15:00:00Z")
 	suite.Require().NoError(err)
 
 	var height int64 = 1000
@@ -51,7 +51,7 @@ func (suite *DbTestSuite) TestSaveConsensus_GetBlockHeightTimeMinuteAgo() {
 }
 
 func (suite *DbTestSuite) TestSaveConsensus_GetBlockHeightTimeHourAgo() {
-	timeAgo, err := time.Parse(time.RFC3339, "2020-08-25 07:03:19.954489")
+	timeAgo, err := time.Parse(time.RFC3339, "2020-01-01T15:00:00Z")
 	suite.Require().NoError(err)
 
 	var height int64 = 1000
@@ -69,7 +69,7 @@ func (suite *DbTestSuite) TestSaveConsensus_GetBlockHeightTimeHourAgo() {
 }
 
 func (suite *DbTestSuite) TestSaveConsensus_GetBlockHeightTimeDayAgo() {
-	timeAgo, err := time.Parse(time.RFC3339, "2020-08-25 07:03:19.954489")
+	timeAgo, err := time.Parse(time.RFC3339, "2020-01-01T15:00:00Z")
 	suite.Require().NoError(err)
 
 	var height int64 = 1000
@@ -87,7 +87,7 @@ func (suite *DbTestSuite) TestSaveConsensus_GetBlockHeightTimeDayAgo() {
 }
 
 func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimePerMin() {
-	time, err := time.Parse(time.RFC3339, "2020-08-25 07:03:19.954489")
+	time, err := time.Parse(time.RFC3339, "2020-01-01T15:00:00Z")
 	suite.Require().NoError(err)
 
 	var height int64 = 1000
@@ -107,7 +107,7 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimePerMin() {
 }
 
 func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimePerHour() {
-	time, err := time.Parse(time.RFC3339, "2020-08-25 07:03:19.954489")
+	time, err := time.Parse(time.RFC3339, "2020-01-01T15:00:00Z")
 	suite.Require().NoError(err)
 
 	var height int64 = 1000
@@ -127,7 +127,7 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimePerHour() {
 }
 
 func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimePerDay() {
-	time, err := time.Parse(time.RFC3339, "2020-08-25 07:03:19.954489")
+	time, err := time.Parse(time.RFC3339, "2020-01-01T15:00:00Z")
 	suite.Require().NoError(err)
 
 	var height int64 = 1000
@@ -147,10 +147,10 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimePerDay() {
 }
 
 func (suite *DbTestSuite) TestSaveConsensus_SaveGenesisTime() {
-	timestamp, err := time.Parse(time.RFC3339, "2020-08-25 07:03:19.954489")
+	timestamp, err := time.Parse(time.RFC3339, "2020-01-01T15:00:00Z")
 	suite.Require().NoError(err)
 
-	timestampOld, err := time.Parse(time.RFC3339, "2020-08-26 07:03:19.954489")
+	timestampOld, err := time.Parse(time.RFC3339, "2020-01-02T15:00:00Z")
 	suite.Require().NoError(err)
 
 	err = suite.database.SaveGenesisTime(timestampOld)
@@ -165,7 +165,7 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveGenesisTime() {
 }
 
 func (suite *DbTestSuite) TestSaveConsensus_GetGenesisTime() {
-	timestamp, err := time.Parse(time.RFC3339, "2020-08-25 07:03:19.954489")
+	timestamp, err := time.Parse(time.RFC3339, "2020-01-01T15:00:00Z")
 	suite.Require().NoError(err)
 
 	_, err = suite.database.Sqlx.Exec(`INSERT INTO genesis(time) VALUES ($1)`, timestamp)
@@ -176,7 +176,7 @@ func (suite *DbTestSuite) TestSaveConsensus_GetGenesisTime() {
 }
 
 func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimeGenesis() {
-	timestamp, err := time.Parse(time.RFC3339, "2020-08-25 07:03:19.954489")
+	timestamp, err := time.Parse(time.RFC3339, "2020-01-01T15:00:00Z")
 	suite.Require().NoError(err)
 
 	var height int64 = 1000
