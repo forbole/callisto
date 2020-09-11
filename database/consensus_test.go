@@ -68,7 +68,7 @@ func (suite *DbTestSuite) TestSaveConsensus_GetBlockHeightTimeHourAgo() {
 	suite.Require().NoError(err)
 
 	timeNow := timeAgo.Add(time.Hour)
-	result, err := suite.database.GetBlockHeightTimeMinuteAgo(timeNow)
+	result, err := suite.database.GetBlockHeightTimeHourAgo(timeNow)
 	suite.Require().NoError(err)
 
 	suite.Require().True(result.Timestamp.Equal(timeAgo))
@@ -90,7 +90,7 @@ func (suite *DbTestSuite) TestSaveConsensus_GetBlockHeightTimeDayAgo() {
 	suite.Require().NoError(err)
 
 	timeNow := timeAgo.Add(time.Hour * 24)
-	result, err := suite.database.GetBlockHeightTimeMinuteAgo(timeNow)
+	result, err := suite.database.GetBlockHeightTimeDayAgo(timeNow)
 	suite.Require().NoError(err)
 
 	suite.Require().True(result.Timestamp.Equal(timeAgo))

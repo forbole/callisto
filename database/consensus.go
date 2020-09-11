@@ -32,7 +32,7 @@ func (db BigDipperDb) SaveConsensus(event constypes.ConsensusEvent) error {
 func (db BigDipperDb) getBlockHeightTime(pastTime time.Time) (dbtypes.BlockRow, error) {
 	stmt := `SELECT block.timestamp, block.height
 	FROM block
-	WHERE block.timestamp < $1
+	WHERE block.timestamp <= $1
 	ORDER BY block.timestamp DESC
 	LIMIT 1;`
 	var val []dbtypes.BlockRow
