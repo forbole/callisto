@@ -150,12 +150,44 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveGenesisTime() {
 	timestamp, err := time.Parse(time.RFC3339, "2020-08-25 07:03:19.954489")
 	suite.Require().NoError(err)
 
-	err = suite.database.SaveGenesisTime(timestamp)
+	timestampOld, err := time.Parse(time.RFC3339, "2020-08-26 07:03:19.954489")
 	suite.Require().NoError(err)
 
+	err = suite.database.SaveGenesisTime(timestampOld)
+	suite.Require().NoError(err)
+
+	//should have only one row
+	err = suite.database.SaveGenesisTime(timestamp)
 	var rows []time.Time
 	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM genesis")
-	suite.Require().Len(rows,1)
+	suite.Require().Len(rows, 1)
 	suite.Require().True(timestamp.Equal(rows[0]))
 }
 
+func (suite *DbTestSuite) TestSaveConsensus_GetGenesisTime() {
+	timestamp, err := time.Parse(time.RFC3339, "2020-08-25 07:03:19.954489")
+	suite.Require().NoError(err)
+
+	_, err = suite.database.Sqlx.Exec(`INSERT INTO genesis(time) VALUES ($1)`, timestamp)
+
+	rows, err := suite.database.GetGenesisTime()
+	suite.Require().NoError(err)
+	suite.Require().True(timestamp.Equal(rows))
+}
+
+func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimeGenesis() {
+	timestamp, err := time.Parse(time.RFC3339, "2020-08-25 07:03:19.954489")
+	suite.Require().NoError(err)
+
+	var height int64 = 1000
+
+	var averageTime float64 = 5.05
+
+	err = suite.database.SaveAverageBlockTimeGenesis(averageTime, timestamp, height)
+	suite.Require().NoError(err)
+
+	var rows []time.Time
+	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM average_block_time_from_genesis")
+	suite.Require().Len(rows, 1)
+	suite.Require().True(timestamp.Equal(rows[0]))
+}

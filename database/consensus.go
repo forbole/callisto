@@ -89,7 +89,7 @@ func (db BigDipperDb) SaveAverageBlockTimePerDay(averageTime float64, timestamp 
 func (db BigDipperDb) SaveGenesisTime(genesisTime time.Time) error {
 	stmt := `DELETE FROM genesis`
 	_, err := db.Sqlx.Exec(stmt)
-	if err!=nil{
+	if err != nil {
 		return err
 	}
 	stmt = `INSERT INTO genesis(time) values ($1)`
@@ -102,7 +102,7 @@ func (db BigDipperDb) GetGenesisTime() (time.Time, error) {
 	stmt := `SELECT time from genesis;`
 	var val []time.Time
 	err := db.Sqlx.Select(&val, stmt)
-	if err != nil || len(val)==0{
+	if err != nil || len(val) == 0 {
 		return time.Time{}, err
 	}
 	return val[0], nil

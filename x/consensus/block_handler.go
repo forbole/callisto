@@ -21,7 +21,7 @@ func BlockHandler(block *tmctypes.ResultBlock, txs []juno.Tx, _ *tmctypes.Result
 	if !ok {
 		return fmt.Errorf("provided database is not a BigDipper database")
 	}
-	if err := operations.UpdateBlockTimeFromGenesis(block, bigDipperDb);err!=nil{
+	if err := operations.UpdateBlockTimeFromGenesis(block, bigDipperDb); err != nil {
 		return err
 	}
 
