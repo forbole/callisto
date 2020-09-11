@@ -68,9 +68,9 @@ func saveProposals(proposals gov.Proposals, genesisDoc *tmtypes.GenesisDoc, db d
 			submitTime, depositEndTime, votingStartTime, votingEndTime, sdk.AccAddress{}))
 
 		bdTallyResult = append(bdTallyResult, types.NewTallyResult(proposal.ProposalID, proposal.FinalTallyResult.Yes.Int64(), proposal.FinalTallyResult.Abstain.Int64(), proposal.FinalTallyResult.No.Int64(),
-			proposal.FinalTallyResult.NoWithVeto.Int64(), 0, genesisTime))
+			proposal.FinalTallyResult.NoWithVeto.Int64(), 1, genesisTime))
 
-		bdDeposit = append(bdDeposit, types.NewDeposit(proposal.ProposalID, sdk.AccAddress{}, proposal.TotalDeposit, proposal.TotalDeposit, 0, genesisTime))
+		bdDeposit = append(bdDeposit, types.NewDeposit(proposal.ProposalID, sdk.AccAddress{}, proposal.TotalDeposit, proposal.TotalDeposit, 1, genesisTime))
 
 		update := ops.UpdateProposal(proposal.ProposalID, cp, db)
 		if proposal.Status.String() == "VotingPeriod" {

@@ -197,8 +197,10 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimeGenesis() {
 	err = suite.database.SaveAverageBlockTimeGenesis(averageTime, timestamp, height)
 	suite.Require().NoError(err)
 
+	expected := dbtypes.NewBlockTimeRow(averageTime, timestamp, height)
+
 	var rows []dbtypes.BlockTimeRow
 	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM average_block_time_from_genesis")
 	suite.Require().Len(rows, 1)
-	suite.Require().True(timestamp.Equal(rows[0]))
+	suite.Require().True(expected.Equal(rows[0]))
 }

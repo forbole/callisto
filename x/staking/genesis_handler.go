@@ -84,7 +84,7 @@ func saveValidatorsCommissions(
 			account.OperatorAddress,
 			&account.Commission.Rate,
 			&account.MinSelfDelegation,
-			0, genesisDoc.GenesisTime,
+			1, genesisDoc.GenesisTime,
 		)
 	}
 
@@ -109,14 +109,14 @@ func saveDelegations(genState staking.GenesisState, genesisDoc *tmtypes.GenesisD
 				delegation.DelegatorAddress,
 				validator.OperatorAddress,
 				sdk.NewCoin(genState.Params.BondDenom, delegationAmount),
-				0,
+				1,
 				genesisDoc.GenesisTime,
 			))
 			delegationShares = append(delegationShares, types.NewDelegationShare(
 				validator.OperatorAddress,
 				delegation.DelegatorAddress,
 				delegation.Shares.String(),
-				0,
+				1,
 				genesisDoc.GenesisTime,
 			))
 		}
@@ -207,7 +207,7 @@ func saveDescription(
 		accounts[index] = types.NewValidatorDescription(
 			account.OperatorAddress,
 			account.Description,
-			genesisDoc.GenesisTime, 0,
+			genesisDoc.GenesisTime, 1,
 		)
 	}
 
