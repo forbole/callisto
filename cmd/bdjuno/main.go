@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/forbole/bdjuno/x/mint"
 	x "github.com/forbole/bdjuno/x/types"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
@@ -28,7 +27,7 @@ var (
 		consensus.Module{},
 		distribution.Module{},
 		gov.Module{},
-		mint.Module{},
+		//mint.Module{},
 		pricefeed.Module{},
 		staking.Module{},
 		supply.Module{},

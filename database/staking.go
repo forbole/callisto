@@ -24,7 +24,7 @@ func (db BigDipperDb) SaveValidatorCommissions(validators []types.ValidatorCommi
 	if len(validators) == 0 {
 		return nil
 	}
-	query := `INSERT INTO validator_commission (validator_address, timestamp, commission, min_self_delegation, height) VALUES `
+	query := `INSERT INTO validator_commission (operator_address, timestamp, commission, min_self_delegation, height) VALUES `
 	var param []interface{}
 	for i, validator := range validators {
 		vi := i * 5
@@ -60,7 +60,7 @@ func (db BigDipperDb) SaveEditCommission(data types.ValidatorCommission) error {
 
 	// Get the current data
 	var rows []dbtypes.ValidatorCommission
-	stmt := `SELECT * FROM validator_commission WHERE validator_address = $1`
+	stmt := `SELECT * FROM validator_commission WHERE operator_address = $1`
 	err := db.Sqlx.Select(&rows, stmt, data.ValAddress.String())
 	if err != nil {
 		return err
@@ -88,7 +88,7 @@ func (db BigDipperDb) SaveEditCommission(data types.ValidatorCommission) error {
 	}
 
 	statement := `INSERT INTO validator_commission 
-    (validator_address, commission, min_self_delegation, height, timestamp) 
+    (operator_address, commission, min_self_delegation, height, timestamp) 
     VALUES ($1,$2,$3,$4,$5);`
 	_, err = db.Sql.Exec(statement, data.ValAddress.String(), commission, minSelfDelegation, data.Height, data.Timestamp)
 	return err

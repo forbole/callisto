@@ -63,7 +63,7 @@ CREATE TABLE validator_delegation_shares
 
 CREATE TABLE validator_commission
 (
-    validator_address   CHARACTER VARYING(52)       NOT NULL,
+    operator_address    TEXT                        NOT NULL REFERENCES validator_info (operator_address) UNIQUE,
     timestamp           TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     commission          DECIMAL                     NOT NULL,
     min_self_delegation BIGINT                      NOT NULL,

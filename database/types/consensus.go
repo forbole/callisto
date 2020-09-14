@@ -1,5 +1,9 @@
 package types
 
+import (
+	"time"
+)
+
 // ConsensusRow represents a single row inside the consensus table
 type ConsensusRow struct {
 	Height int64  `db:"height"`
@@ -12,4 +16,31 @@ func (r ConsensusRow) Equal(s ConsensusRow) bool {
 	return r.Height == s.Height &&
 		r.Round == s.Round &&
 		r.Step == s.Step
+}
+
+// BlockTimeRow is the average block time each minute/hour/day
+type BlockTimeRow struct {
+	AverageTime float64   `db:"average_time"`
+	Timestamp   time.Time `db:"timestamp"`
+	Height      int64     `db:"height"`
+}
+
+func NewBlockTimeRow(averageTime float64, timestamp time.Time, height int64) BlockTimeRow {
+	return BlockTimeRow{
+		AverageTime: averageTime,
+		Timestamp:   timestamp,
+		Height:      height,
+	}
+}
+
+// Equal return true if two BlockTimeRow are true
+func (r BlockTimeRow) Equal(s BlockTimeRow) bool {
+	return r.AverageTime == s.AverageTime &&
+		r.Timestamp.Equal(s.Timestamp)
+}
+
+//Container to return block needed in certain height
+type BlockRow struct {
+	Height    int64     `db:"height"`
+	Timestamp time.Time `db:"timestamp"`
 }
