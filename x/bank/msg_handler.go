@@ -42,7 +42,7 @@ func MsgHandler(tx types.Tx, index int, msg sdk.Msg, w worker.Worker) error {
 
 	switch bankMSg := msg.(type) {
 	case bank.MsgSend:
-		accounts := []sdk.AccAddress{bankMSg.FromAddress, bankMSg.FromAddress}
+		accounts := []sdk.AccAddress{bankMSg.FromAddress, bankMSg.ToAddress}
 		return auth.RefreshAccounts(accounts, tx.Height, timestamp, w.ClientProxy, db)
 	case bank.MsgMultiSend:
 		var accounts []sdk.AccAddress
