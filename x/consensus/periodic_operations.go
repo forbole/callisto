@@ -30,18 +30,18 @@ func PeriodicConcensusOperations(scheduler *gocron.Scheduler) parse.AdditionalOp
 		}); err != nil {
 			return err
 		}
-		/*
-			if _, err := scheduler.Every(1).Minute().At("00:00").StartImmediately().Do(func() {
-				utils.WatchMethod(func() error { return operations.UpdateValidatorVotingPower(cp, bdDatabase) })
-			}); err != nil {
-				return err
-			}
-			if _, err := scheduler.Every(1).Hour().At("00:00").StartImmediately().Do(func() {
-				utils.WatchMethod(func() error { return operations.UpdateValidatorVotingPower(cp, bdDatabase) })
-			}); err != nil {
-				return err
-			}
-		*/
+
+		if _, err := scheduler.Every(1).Day().At("00:00").StartImmediately().Do(func() {
+			utils.WatchMethod(func() error { return operations.UpdateBlockTimeInDay(cp, bdDatabase) })
+		}); err != nil {
+			return err
+		}
+		if _, err := scheduler.Every(1).Hour().At("00:00").StartImmediately().Do(func() {
+			utils.WatchMethod(func() error { return operations.UpdateBlockTimeInHour(cp, bdDatabase) })
+		}); err != nil {
+			return err
+		}
+
 		return nil
 	}
 }
