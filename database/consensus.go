@@ -99,7 +99,7 @@ func (db BigDipperDb) SaveGenesisTime(genesisTime time.Time) error {
 
 // GetGenesisTime get genesis time of chain (only work if x/consensus enabled)
 func (db BigDipperDb) GetGenesisTime() (time.Time, error) {
-	stmt := `SELECT time from genesis;`
+	stmt := `SELECT * from genesis;`
 	var val []time.Time
 	err := db.Sqlx.Select(&val, stmt)
 	if err != nil || len(val) == 0 {
