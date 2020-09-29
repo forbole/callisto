@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	dbtypes "github.com/forbole/bdjuno/database/types"
-	types "github.com/forbole/bdjuno/x/gov/types"
+	"github.com/forbole/bdjuno/x/gov/types"
 	"github.com/lib/pq"
 )
 
