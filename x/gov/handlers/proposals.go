@@ -21,14 +21,15 @@ func HandleMsgSubmitProposal(tx juno.Tx, msg gov.MsgSubmitProposal, db database.
 		return err
 	}
 
-	//get proposal ID
-	var s gov.Proposals
-	_, err = cp.QueryLCDWithHeight(fmt.Sprintf("/gov/proposals?height=%d", tx.Height), &s)
+	// Get proposal ID
+	var restProposals gov.Proposals
+	_, err = cp.QueryLCDWithHeight(fmt.Sprintf("/gov/proposals?height=%d", tx.Height), &restProposals)
 	if err != nil {
 		return err
 	}
+
 	var proposal gov.Proposal
-	for _, p := range s {
+	for _, p := range restProposals {
 		if p.Content.GetTitle() == msg.Content.GetTitle() {
 			proposal = p
 			break
@@ -39,21 +40,29 @@ func HandleMsgSubmitProposal(tx juno.Tx, msg gov.MsgSubmitProposal, db database.
 		return err
 	}
 
-	if err = db.SaveProposal(types.NewProposal(proposal.GetTitle(), proposal.GetDescription(), proposal.ProposalRoute(), proposal.ProposalType(), proposal.ProposalID, proposal.Status,
-		proposal.SubmitTime, proposal.DepositEndTime, proposal.VotingStartTime, proposal.VotingEndTime, msg.Proposer)); err != nil {
+	proposalObj := types.NewProposal(
+		proposal.GetTitle(), proposal.GetDescription(), proposal.ProposalRoute(), proposal.ProposalType(),
+		proposal.ProposalID, proposal.Status, proposal.SubmitTime, proposal.DepositEndTime,
+		proposal.VotingStartTime, proposal.VotingEndTime, msg.Proposer,
+	)
+	if err = db.SaveProposal(proposalObj); err != nil {
 		return err
 	}
 
-	if err = db.SaveDeposit(types.NewDeposit(proposal.ProposalID, msg.Proposer, msg.InitialDeposit, msg.InitialDeposit, tx.Height, timestamp)); err != nil {
+	deposit := types.NewDeposit(
+		proposal.ProposalID, msg.Proposer, msg.InitialDeposit, msg.InitialDeposit, tx.Height, timestamp,
+	)
+	if err = db.SaveDeposit(deposit); err != nil {
 		return err
 	}
 
-	//watch the proposal and renew the database when deposit end and voting end in the future
+	// Watch the proposal and renew the database when deposit end and voting end in the future
 	if proposal.Status.String() == "VotingPeriod" && proposal.VotingEndTime.After(time.Now()) {
 		time.AfterFunc(time.Since(proposal.VotingEndTime), ops.UpdateProposal(proposal.ProposalID, cp, db))
 	} else if proposal.Status.String() == "DepositPeriod" && proposal.DepositEndTime.After(time.Now()) {
 		time.AfterFunc(time.Since(proposal.DepositEndTime), ops.UpdateProposal(proposal.ProposalID, cp, db))
 	}
+
 	return nil
 }
 

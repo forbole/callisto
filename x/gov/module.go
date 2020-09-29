@@ -16,7 +16,7 @@ func (m Module) Name() string {
 
 // BlockHandlers return a list of block handler of the module
 func (m Module) BlockHandlers() []juno.BlockHandler {
-	return []juno.BlockHandler{BlockHandler}
+	return []juno.BlockHandler{}
 }
 
 // TxHandlers return a list of TxHandlers of the module

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/cosmos/cosmos-sdk/codec"
 	x "github.com/forbole/bdjuno/x/types"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
@@ -43,7 +44,7 @@ func main() {
 	rootCmd := executor.BuildRootCmd("bdjuno", SetupConfig(prefix))
 	rootCmd.AddCommand(
 		version.GetVersionCmd(),
-		parse.GetParseCmd(simapp.MakeCodec(), database.Builder),
+		parse.GetParseCmd(MakeCodec(), database.Builder),
 	)
 
 	command := config.PrepareMainCmd(rootCmd)
@@ -70,6 +71,11 @@ func SetupConfig(prefix string) func(cfg *sdk.Config) {
 			prefix+sdk.PrefixValidator+sdk.PrefixConsensus+sdk.PrefixPublic,
 		)
 	}
+}
+
+func MakeCodec() *codec.Codec {
+	cdc := simapp.MakeCodec()
+	return cdc
 }
 
 func SetupModules() {
