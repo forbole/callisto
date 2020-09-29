@@ -6,9 +6,9 @@ CREATE TABLE proposal
     proposal_type     TEXT      NOT NULL,
     proposal_id       DECIMAL   NOT NULL PRIMARY KEY,
     submit_time       TIMESTAMP NOT NULL,
-    deposit_end_time  TIMESTAMP NOT NULL,
-    voting_start_time TIMESTAMP NOT NULL,
-    voting_end_time   TIMESTAMP NOT NULL,
+    deposit_end_time  TIMESTAMP,
+    voting_start_time TIMESTAMP,
+    voting_end_time   TIMESTAMP,
     proposer          TEXT      NOT NULL REFERENCES account (address),
     status            TEXT
 );
