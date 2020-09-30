@@ -66,7 +66,7 @@ func UpdateBlockTimeInHour(cp client.ClientProxy, db database.BigDipperDb) error
 	if err != nil {
 		return err
 	}
-	newBlockTime := block.Block.Time.Sub(hour.Timestamp).Seconds() / float64((block.Block.Height - hour.Height))
+	newBlockTime := block.Block.Time.Sub(hour.Timestamp).Seconds() / float64(block.Block.Height-hour.Height)
 
 	return db.SaveAverageBlockTimePerHour(newBlockTime, block.Block.Time, block.Block.Height)
 }
