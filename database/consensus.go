@@ -1,6 +1,7 @@
 package database
 
 import (
+	"fmt"
 	"time"
 
 	dbtypes "github.com/forbole/bdjuno/database/types"
@@ -35,11 +36,16 @@ func (db BigDipperDb) getBlockHeightTime(pastTime time.Time) (dbtypes.BlockRow, 
 	WHERE block.timestamp <= $1
 	ORDER BY block.timestamp DESC
 	LIMIT 1;`
+
 	var val []dbtypes.BlockRow
-	err := db.Sqlx.Select(&val, stmt, pastTime)
-	if err != nil {
+	if err := db.Sqlx.Select(&val, stmt, pastTime); err != nil {
 		return dbtypes.BlockRow{}, err
 	}
+
+	if len(val) == 0 {
+		return dbtypes.BlockRow{}, fmt.Errorf("cannot get block time, no blocks saved")
+	}
+
 	return val[0], nil
 }
 
