@@ -63,16 +63,20 @@ type ValidatorInfoRow struct {
 	ConsAddress         string `db:"consensus_address"`
 	ValAddress          string `db:"operator_address"`
 	SelfDelegateAddress string `db:"self_delegate_address"`
+	MaxChangeRate       string `db:"max_change_rate"`
+	MaxRate             string `db:"max_rate"`
 }
 
 // NewValidatorInfoRow allows to build a new ValidatorInfoRow
 func NewValidatorInfoRow(
-	consAddress string, valAddress string, selfDelegateAddress string,
+	consAddress string, valAddress string, selfDelegateAddress string, maxChangeRate string, maxRate string,
 ) ValidatorInfoRow {
 	return ValidatorInfoRow{
 		ConsAddress:         consAddress,
 		ValAddress:          valAddress,
 		SelfDelegateAddress: selfDelegateAddress,
+		MaxChangeRate:       maxChangeRate,
+		MaxRate:             maxRate,
 	}
 }
 
@@ -80,7 +84,9 @@ func NewValidatorInfoRow(
 func (v ValidatorInfoRow) Equal(w ValidatorInfoRow) bool {
 	return v.ConsAddress == w.ConsAddress &&
 		v.ValAddress == w.ValAddress &&
-		v.SelfDelegateAddress == w.SelfDelegateAddress
+		v.SelfDelegateAddress == w.SelfDelegateAddress &&
+		v.MaxRate == w.MaxRate &&
+		v.MaxChangeRate == w.MaxChangeRate
 }
 
 // ________________________________________________
@@ -92,6 +98,8 @@ type ValidatorData struct {
 	ValAddress          string `db:"operator_address"`
 	ConsPubKey          string `db:"consensus_pubkey"`
 	SelfDelegateAddress string `db:"self_delegate_address"`
+	MaxRate             string `db:"max_rate"`
+	MaxChangeRate       string `db:"max_change_rate"`
 }
 
 // NewValidatorData allows to build a new ValidatorData
@@ -135,6 +143,14 @@ func (v ValidatorData) GetSelfDelegateAddress() sdk.AccAddress {
 	}
 
 	return addr
+}
+
+func (v ValidatorData) GetMaxChangeRate() string {
+	return v.MaxChangeRate
+}
+
+func (v ValidatorData) GetMaxRate() string {
+	return v.MaxRate
 }
 
 // ________________________________________________

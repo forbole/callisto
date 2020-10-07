@@ -93,7 +93,7 @@ VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl', 'cosmosvalconspu
 	suite.Require().NoError(err)
 
 	_, err = suite.database.Sql.Exec(`INSERT INTO validator_info (consensus_address, operator_address,self_delegate_address) 
-VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl','cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl','cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a')`)
+VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl','cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl','cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a',3.0,4.0)`)
 	suite.Require().NoError(err)
 
 	// Get the data
@@ -271,7 +271,10 @@ func (suite *DbTestSuite) getValidator(consAddr, valAddr, pubkey string) types.V
 	pubKey, err := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeConsPub, pubkey)
 	suite.Require().NoError(err)
 
-	validator := types.NewValidator(constAddrObj, valAddrObj, pubKey, selfDelegation)
+	maxRate:=sdk.NewDec(10)
+	maxChangeRate:=sdk.NewDec(20)
+
+	validator := types.NewValidator(constAddrObj, valAddrObj, pubKey, selfDelegation,&maxRate,&maxChangeRate)
 	err = suite.database.SaveSingleValidatorData(validator)
 	suite.Require().NoError(err)
 

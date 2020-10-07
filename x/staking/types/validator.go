@@ -16,18 +16,23 @@ type Validator interface {
 	GetConsPubKey() crypto.PubKey
 	GetOperator() sdk.ValAddress
 	GetSelfDelegateAddress() sdk.AccAddress
+	GetMaxChangeRate() string
+	GetMaxRate() string
 }
 
 // NewValidator allows to build a new Validator implementation having the given data
 func NewValidator(
 	consAddr sdk.ConsAddress, opAddr sdk.ValAddress, consPubKey crypto.PubKey,
-	selfDelegateAddress sdk.AccAddress,
+	selfDelegateAddress sdk.AccAddress, maxChangeRate *sdk.Dec,
+	maxRate *sdk.Dec,
 ) Validator {
 	return validator{
 		ConsensusAddr:       consAddr,
 		ConsPubKey:          consPubKey,
 		OperatorAddr:        opAddr,
 		SelfDelegateAddress: selfDelegateAddress,
+		MaxChangeRate:       maxChangeRate.String(),
+		MaxRate:             maxRate.String(),
 	}
 }
 
@@ -38,6 +43,8 @@ type validator struct {
 	ConsPubKey          crypto.PubKey
 	OperatorAddr        sdk.ValAddress
 	SelfDelegateAddress sdk.AccAddress
+	MaxChangeRate       string
+	MaxRate             string
 }
 
 // GetConsAddr implements the Validator interface
@@ -63,6 +70,14 @@ func (v validator) Equals(w validator) bool {
 	return v.ConsensusAddr.Equals(w.ConsensusAddr) &&
 		v.ConsPubKey.Equals(w.ConsPubKey) &&
 		v.OperatorAddr.Equals(w.OperatorAddr)
+}
+
+func (v validator) GetMaxChangeRate() string{
+	return v.MaxChangeRate
+}
+
+func (v validator) GetMaxRate() string {
+	return v.MaxRate
 }
 
 // _________________________________________________________
@@ -153,7 +168,7 @@ type ValidatorCommission struct {
 
 // NewValidatorCommission return a new validator commission instance
 func NewValidatorCommission(
-	valAddress sdk.ValAddress, rate *sdk.Dec, minSelfDelegation *sdk.Int, height int64, timestamp time.Time, 
+	valAddress sdk.ValAddress, rate *sdk.Dec, minSelfDelegation *sdk.Int, height int64, timestamp time.Time,
 ) ValidatorCommission {
 	return ValidatorCommission{
 		ValAddress:        valAddress,
