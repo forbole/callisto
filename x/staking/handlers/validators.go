@@ -18,10 +18,15 @@ func HandleMsgCreateValidator(tx jtypes.Tx, msg stakingtypes.MsgCreateValidator,
 	if err != nil {
 		return err
 	}
+	if msg.Commission.Validate()!=nil {
+		return err
+	}
 	if err := db.SaveEditCommission(types.NewValidatorCommission(
 		msg.ValidatorAddress,
 		&msg.Commission.Rate,
 		&msg.MinSelfDelegation,
+		&msg.Commission.MaxRate,
+		&msg.Commission.MaxChangeRate,
 		tx.Height,
 		timestamp,
 	)); err != nil {

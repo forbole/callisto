@@ -153,7 +153,7 @@ type ValidatorCommission struct {
 
 // NewValidatorCommission return a new validator commission instance
 func NewValidatorCommission(
-	valAddress sdk.ValAddress, rate *sdk.Dec, minSelfDelegation *sdk.Int, height int64, timestamp time.Time,
+	valAddress sdk.ValAddress, rate *sdk.Dec, minSelfDelegation *sdk.Int, height int64, timestamp time.Time, 
 ) ValidatorCommission {
 	return ValidatorCommission{
 		ValAddress:        valAddress,
