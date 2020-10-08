@@ -82,7 +82,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorData() {
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
 		"cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs",
-		"1", "2",
+		"2", "1",
 	)))
 
 }
@@ -180,7 +180,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorsData() {
 		suite.Require().Equal(v.ConsPubKey, sdk.MustBech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, w.GetConsPubKey()))
 
 		wInfo := validatorInfoRows[index]
-		suite.Require().True(wInfo == expectedValidatorInfo[index])
+		suite.Require().True(wInfo.Equal(expectedValidatorInfo[index]))
 	}
 }
 
