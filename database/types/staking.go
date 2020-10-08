@@ -1,6 +1,7 @@
 package types
 
 import (
+	"strconv"
 	"database/sql"
 	"time"
 
@@ -145,12 +146,22 @@ func (v ValidatorData) GetSelfDelegateAddress() sdk.AccAddress {
 	return addr
 }
 
-func (v ValidatorData) GetMaxChangeRate() string {
-	return v.MaxChangeRate
+func (v ValidatorData) GetMaxChangeRate() *sdk.Dec {
+	n,err:=strconv.ParseInt(v.MaxChangeRate,10,64)
+	if err!=nil{
+		panic(err)
+	}
+	result:=sdk.NewDec(n)
+	return &result
 }
 
-func (v ValidatorData) GetMaxRate() string {
-	return v.MaxRate
+func (v ValidatorData) GetMaxRate() *sdk.Dec {
+	n,err:=strconv.ParseInt(v.MaxRate,10,64)
+	if err!=nil{
+		panic(err)
+	}
+	result:=sdk.NewDec(n)
+	return &result
 }
 
 // ________________________________________________

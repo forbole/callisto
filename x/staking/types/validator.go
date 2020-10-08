@@ -16,8 +16,8 @@ type Validator interface {
 	GetConsPubKey() crypto.PubKey
 	GetOperator() sdk.ValAddress
 	GetSelfDelegateAddress() sdk.AccAddress
-	GetMaxChangeRate() string
-	GetMaxRate() string
+	GetMaxChangeRate() *sdk.Dec
+	GetMaxRate() *sdk.Dec
 }
 
 // NewValidator allows to build a new Validator implementation having the given data
@@ -31,8 +31,8 @@ func NewValidator(
 		ConsPubKey:          consPubKey,
 		OperatorAddr:        opAddr,
 		SelfDelegateAddress: selfDelegateAddress,
-		MaxChangeRate:       maxChangeRate.String(),
-		MaxRate:             maxRate.String(),
+		MaxChangeRate:       maxChangeRate,
+		MaxRate:             maxRate,
 	}
 }
 
@@ -43,8 +43,8 @@ type validator struct {
 	ConsPubKey          crypto.PubKey
 	OperatorAddr        sdk.ValAddress
 	SelfDelegateAddress sdk.AccAddress
-	MaxChangeRate       string
-	MaxRate             string
+	MaxChangeRate       *sdk.Dec
+	MaxRate             *sdk.Dec
 }
 
 // GetConsAddr implements the Validator interface
@@ -72,11 +72,11 @@ func (v validator) Equals(w validator) bool {
 		v.OperatorAddr.Equals(w.OperatorAddr)
 }
 
-func (v validator) GetMaxChangeRate() string{
+func (v validator) GetMaxChangeRate() *sdk.Dec{
 	return v.MaxChangeRate
 }
 
-func (v validator) GetMaxRate() string {
+func (v validator) GetMaxRate() *sdk.Dec {
 	return v.MaxRate
 }
 

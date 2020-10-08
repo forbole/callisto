@@ -208,7 +208,7 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 			validator.GetConsAddr().String(), publicKey)
 
 		validatorInfoQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3,vi+4,vi+5)
-		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr().String(), validator.GetOperator().String(), validator.GetSelfDelegateAddress().String(), validator.GetMaxChangeRate(), validator.GetMaxRate())
+		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr().String(), validator.GetOperator().String(), validator.GetSelfDelegateAddress().String(), validator.GetMaxChangeRate().String(), validator.GetMaxRate().String())
 	}
 	selfDelegationAccQuery = selfDelegationAccQuery[:len(selfDelegationAccQuery)-1] // Remove trailing ","
 	selfDelegationAccQuery += " ON CONFLICT DO NOTHING"
