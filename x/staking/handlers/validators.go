@@ -45,8 +45,8 @@ func HandleMsgCreateValidator(tx jtypes.Tx, msg stakingtypes.MsgCreateValidator,
 		stakingValidator.GetOperator(),
 		stakingValidator.GetConsPubKey(),
 		sdktypes.AccAddress(stakingValidator.GetConsAddr()),
-		&msg.Commission.MaxRate,
-		&msg.Commission.MaxChangeRate))
+		&msg.Commission.MaxChangeRate,
+		&msg.Commission.MaxRate))
 }
 
 // HandleEditValidator handles MsgEditValidator messages, updating the validator info and commission

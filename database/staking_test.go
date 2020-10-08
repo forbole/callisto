@@ -274,7 +274,7 @@ func (suite *DbTestSuite) getValidator(consAddr, valAddr, pubkey string) types.V
 	maxRate:=sdk.NewDec(10)
 	maxChangeRate:=sdk.NewDec(20)
 
-	validator := types.NewValidator(constAddrObj, valAddrObj, pubKey, selfDelegation,&maxRate,&maxChangeRate)
+	validator := types.NewValidator(constAddrObj, valAddrObj, pubKey, selfDelegation,&maxChangeRate,&maxRate)
 	err = suite.database.SaveSingleValidatorData(validator)
 	suite.Require().NoError(err)
 
