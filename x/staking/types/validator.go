@@ -72,7 +72,7 @@ func (v validator) Equals(w validator) bool {
 		v.OperatorAddr.Equals(w.OperatorAddr)
 }
 
-func (v validator) GetMaxChangeRate() *sdk.Dec{
+func (v validator) GetMaxChangeRate() *sdk.Dec {
 	return v.MaxChangeRate
 }
 

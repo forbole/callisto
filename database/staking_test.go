@@ -271,10 +271,10 @@ func (suite *DbTestSuite) getValidator(consAddr, valAddr, pubkey string) types.V
 	pubKey, err := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeConsPub, pubkey)
 	suite.Require().NoError(err)
 
-	maxRate:=sdk.NewDec(10)
-	maxChangeRate:=sdk.NewDec(20)
+	maxRate := sdk.NewDec(10)
+	maxChangeRate := sdk.NewDec(20)
 
-	validator := types.NewValidator(constAddrObj, valAddrObj, pubKey, selfDelegation,&maxChangeRate,&maxRate)
+	validator := types.NewValidator(constAddrObj, valAddrObj, pubKey, selfDelegation, &maxChangeRate, &maxRate)
 	err = suite.database.SaveSingleValidatorData(validator)
 	suite.Require().NoError(err)
 
