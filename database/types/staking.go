@@ -105,15 +105,15 @@ type ValidatorData struct {
 
 // NewValidatorData allows to build a new ValidatorData
 func NewValidatorData(
-	consAddress, valAddress, consPubKey string, selfDelegateAddress string, maxRate string,maxChangeRate string
+	consAddress, valAddress, consPubKey string, selfDelegateAddress string, maxRate string, maxChangeRate string,
 ) ValidatorData {
 	return ValidatorData{
 		ConsAddress:         consAddress,
 		ValAddress:          valAddress,
 		ConsPubKey:          consPubKey,
 		SelfDelegateAddress: selfDelegateAddress,
-		MaxRate:maxRate,
-		MaxChangeRate:maxChangeRate,
+		MaxRate:             maxRate,
+		MaxChangeRate:       maxChangeRate,
 	}
 }
 
