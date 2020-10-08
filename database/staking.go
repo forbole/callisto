@@ -137,7 +137,7 @@ func (db BigDipperDb) SaveValidatorsDescription(descriptions []types.ValidatorDe
 func (db BigDipperDb) GetValidatorsData() ([]dbtypes.ValidatorData, error) {
 	sqlStmt := `SELECT DISTINCT ON (validator.consensus_address)
 					validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address,
-                    validator_info.self_delegate_address
+                    validator_info.self_delegate_address, validator_info.max_rate,validator_info.max_change_rate
 				FROM validator 
 				INNER JOIN validator_info 
 				ON validator.consensus_address = validator_info.consensus_address
@@ -160,7 +160,7 @@ func (db BigDipperDb) SaveSingleValidatorData(validator types.Validator) error {
 // If no validator for such address can be found, an error is returned instead.
 func (db BigDipperDb) GetValidatorData(valAddress sdk.ValAddress) (types.Validator, error) {
 	var result []dbtypes.ValidatorData
-	stmt := `SELECT validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address, validator_info.max_change_rate,validator_info.max_rate
+	stmt := `SELECT validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address, validator_info.max_change_rate,validator_info.max_rate,
 	         	    validator_info.self_delegate_address
 			 FROM validator INNER JOIN validator_info 
     		 ON validator.consensus_address=validator_info.consensus_address 
