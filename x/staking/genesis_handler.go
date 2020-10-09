@@ -68,6 +68,8 @@ func saveValidators(validators staking.Validators, db database.BigDipperDb) erro
 			validator.OperatorAddress,
 			validator.GetConsPubKey(),
 			sdk.AccAddress(validator.ConsAddress()),
+			&validator.Commission.MaxChangeRate,
+			&validator.Commission.MaxRate,
 		)
 	}
 

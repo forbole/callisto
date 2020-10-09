@@ -99,5 +99,5 @@ func updateValidators(height int64, cp client.ClientProxy, db database.BigDipper
 
 func ConvertValidator(validator sdk.Validator) types.Validator {
 	return types.NewValidator(validator.ConsAddress(), validator.GetOperator(), validator.GetConsPubKey(),
-		sdktypes.AccAddress(validator.OperatorAddress))
+		sdktypes.AccAddress(validator.OperatorAddress), &validator.Commission.MaxChangeRate, &validator.Commission.MaxRate)
 }

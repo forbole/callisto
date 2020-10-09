@@ -137,7 +137,7 @@ func (db BigDipperDb) SaveValidatorsDescription(descriptions []types.ValidatorDe
 func (db BigDipperDb) GetValidatorsData() ([]dbtypes.ValidatorData, error) {
 	sqlStmt := `SELECT DISTINCT ON (validator.consensus_address)
 					validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address,
-                    validator_info.self_delegate_address
+                    validator_info.self_delegate_address, validator_info.max_rate,validator_info.max_change_rate
 				FROM validator 
 				INNER JOIN validator_info 
 				ON validator.consensus_address = validator_info.consensus_address
@@ -160,7 +160,7 @@ func (db BigDipperDb) SaveSingleValidatorData(validator types.Validator) error {
 // If no validator for such address can be found, an error is returned instead.
 func (db BigDipperDb) GetValidatorData(valAddress sdk.ValAddress) (types.Validator, error) {
 	var result []dbtypes.ValidatorData
-	stmt := `SELECT validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address, 
+	stmt := `SELECT validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address, validator_info.max_change_rate,validator_info.max_rate,
 	         	    validator_info.self_delegate_address
 			 FROM validator INNER JOIN validator_info 
     		 ON validator.consensus_address=validator_info.consensus_address 
@@ -188,12 +188,12 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 	validatorQuery := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES `
 	var validatorParams []interface{}
 
-	validatorInfoQuery := `INSERT INTO validator_info (consensus_address, operator_address, self_delegate_address) VALUES`
+	validatorInfoQuery := `INSERT INTO validator_info (consensus_address, operator_address, self_delegate_address,max_change_rate,max_rate) VALUES`
 	var validatorInfoParams []interface{}
 
 	for i, validator := range validators {
 		vp := i * 2 // Starting position for validator params
-		vi := i * 3 // Starting position for validator info params
+		vi := i * 5 // Starting position for validator info params
 
 		publicKey, err := sdk.Bech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, validator.GetConsPubKey())
 		if err != nil {
@@ -207,9 +207,8 @@ func (db BigDipperDb) SaveValidatorsData(validators []types.Validator) error {
 		validatorParams = append(validatorParams,
 			validator.GetConsAddr().String(), publicKey)
 
-		validatorInfoQuery += fmt.Sprintf("($%d,$%d,$%d),", vi+1, vi+2, vi+3)
-		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr().String(), validator.GetOperator().String(), validator.GetSelfDelegateAddress().String())
-
+		validatorInfoQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5)
+		validatorInfoParams = append(validatorInfoParams, validator.GetConsAddr().String(), validator.GetOperator().String(), validator.GetSelfDelegateAddress().String(), validator.GetMaxChangeRate().String(), validator.GetMaxRate().String())
 	}
 	selfDelegationAccQuery = selfDelegationAccQuery[:len(selfDelegationAccQuery)-1] // Remove trailing ","
 	selfDelegationAccQuery += " ON CONFLICT DO NOTHING"

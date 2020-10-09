@@ -2,6 +2,7 @@ package types
 
 import (
 	"database/sql"
+	"strconv"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -63,16 +64,20 @@ type ValidatorInfoRow struct {
 	ConsAddress         string `db:"consensus_address"`
 	ValAddress          string `db:"operator_address"`
 	SelfDelegateAddress string `db:"self_delegate_address"`
+	MaxChangeRate       string `db:"max_change_rate"`
+	MaxRate             string `db:"max_rate"`
 }
 
 // NewValidatorInfoRow allows to build a new ValidatorInfoRow
 func NewValidatorInfoRow(
-	consAddress string, valAddress string, selfDelegateAddress string,
+	consAddress string, valAddress string, selfDelegateAddress string, maxChangeRate string, maxRate string,
 ) ValidatorInfoRow {
 	return ValidatorInfoRow{
 		ConsAddress:         consAddress,
 		ValAddress:          valAddress,
 		SelfDelegateAddress: selfDelegateAddress,
+		MaxChangeRate:       maxChangeRate,
+		MaxRate:             maxRate,
 	}
 }
 
@@ -80,7 +85,9 @@ func NewValidatorInfoRow(
 func (v ValidatorInfoRow) Equal(w ValidatorInfoRow) bool {
 	return v.ConsAddress == w.ConsAddress &&
 		v.ValAddress == w.ValAddress &&
-		v.SelfDelegateAddress == w.SelfDelegateAddress
+		v.SelfDelegateAddress == w.SelfDelegateAddress &&
+		v.MaxRate == w.MaxRate &&
+		v.MaxChangeRate == w.MaxChangeRate
 }
 
 // ________________________________________________
@@ -92,17 +99,21 @@ type ValidatorData struct {
 	ValAddress          string `db:"operator_address"`
 	ConsPubKey          string `db:"consensus_pubkey"`
 	SelfDelegateAddress string `db:"self_delegate_address"`
+	MaxRate             string `db:"max_rate"`
+	MaxChangeRate       string `db:"max_change_rate"`
 }
 
 // NewValidatorData allows to build a new ValidatorData
 func NewValidatorData(
-	consAddress, valAddress, consPubKey string, selfDelegateAddress string,
+	consAddress, valAddress, consPubKey string, selfDelegateAddress string, maxRate string, maxChangeRate string,
 ) ValidatorData {
 	return ValidatorData{
 		ConsAddress:         consAddress,
 		ValAddress:          valAddress,
 		ConsPubKey:          consPubKey,
 		SelfDelegateAddress: selfDelegateAddress,
+		MaxRate:             maxRate,
+		MaxChangeRate:       maxChangeRate,
 	}
 }
 
@@ -135,6 +146,24 @@ func (v ValidatorData) GetSelfDelegateAddress() sdk.AccAddress {
 	}
 
 	return addr
+}
+
+func (v ValidatorData) GetMaxChangeRate() *sdk.Dec {
+	n, err := strconv.ParseInt(v.MaxChangeRate, 10, 64)
+	if err != nil {
+		panic(err)
+	}
+	result := sdk.NewDec(n)
+	return &result
+}
+
+func (v ValidatorData) GetMaxRate() *sdk.Dec {
+	n, err := strconv.ParseInt(v.MaxRate, 10, 64)
+	if err != nil {
+		panic(err)
+	}
+	result := sdk.NewDec(n)
+	return &result
 }
 
 // ________________________________________________

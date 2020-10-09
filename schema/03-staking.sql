@@ -19,7 +19,9 @@ CREATE TABLE validator_info
 (
     consensus_address     TEXT NOT NULL REFERENCES validator (consensus_address) UNIQUE PRIMARY KEY,
     operator_address      TEXT NOT NULL UNIQUE,
-    self_delegate_address TEXT REFERENCES account (address)
+    self_delegate_address TEXT REFERENCES account (address),
+    max_change_rate       TEXT NOT NULL,
+	max_rate              TEXT NOT NULL
 );
 
 CREATE TABLE validator_delegation

@@ -18,6 +18,9 @@ func HandleMsgCreateValidator(tx jtypes.Tx, msg stakingtypes.MsgCreateValidator,
 	if err != nil {
 		return err
 	}
+	if msg.Commission.Validate() != nil {
+		return err
+	}
 	if err := db.SaveEditCommission(types.NewValidatorCommission(
 		msg.ValidatorAddress,
 		&msg.Commission.Rate,
@@ -41,8 +44,9 @@ func HandleMsgCreateValidator(tx jtypes.Tx, msg stakingtypes.MsgCreateValidator,
 		stakingValidator.GetConsAddr(),
 		stakingValidator.GetOperator(),
 		stakingValidator.GetConsPubKey(),
-		sdktypes.AccAddress(stakingValidator.GetConsAddr())))
-
+		sdktypes.AccAddress(stakingValidator.GetConsAddr()),
+		&msg.Commission.MaxChangeRate,
+		&msg.Commission.MaxRate))
 }
 
 // HandleEditValidator handles MsgEditValidator messages, updating the validator info and commission
