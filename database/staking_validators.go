@@ -208,7 +208,7 @@ WHERE validator_description.validator_address = $1
 	}
 
 	row := result[0]
-	addr, err := sdk.ValAddressFromBech32(row.ValAddress)
+	addr, _ := sdk.ValAddressFromBech32(row.ValAddress)
 	description := types.NewValidatorDescription(
 		addr,
 		staking.NewDescription(
