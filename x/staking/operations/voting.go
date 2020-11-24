@@ -50,10 +50,11 @@ func UpdateValidatorVotingPower(cp client.ClientProxy, db database.BigDipperDb) 
 			consAddress,
 			validator.VotingPower,
 			block.Block.Height,
+			block.Block.Time,
 		))
 	}
 
-	if err := db.SaveVotingPowers(votings); err != nil {
+	if err := db.SaveValidatorsVotingPowers(votings); err != nil {
 		return err
 	}
 	return nil

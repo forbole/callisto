@@ -1,6 +1,7 @@
 package database_test
 
 import (
+	"fmt"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -329,10 +330,10 @@ func (suite *DbTestSuite) getProposalRow(id int) dbtypes.ProposalRow {
 	status1, err := gov.ProposalStatusFromString("DepositPeriod")
 	suite.Require().NoError(err)
 
-	title := "title" + string(id)
-	description := "description" + string(id)
-	proposalRoute := "proposalRoute" + string(id)
-	proposalType := "proposalType" + string(id)
+	title := fmt.Sprintf("title%d", id)
+	description := fmt.Sprintf("description%d", id)
+	proposalRoute := fmt.Sprintf("proposalRoute%d", id)
+	proposalType := fmt.Sprintf("proposalType%d", id)
 
 	proposal := dbtypes.NewProposalRow(title,
 		description,

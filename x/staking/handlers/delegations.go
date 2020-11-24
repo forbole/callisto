@@ -19,52 +19,58 @@ func HandleMsgDelegate(tx juno.Tx, msg staking.MsgDelegate, db database.BigDippe
 		return err
 	}
 
-	if found, _ := db.HasValidator(msg.ValidatorAddress.String()); !found {
+	found, err := db.HasValidator(msg.ValidatorAddress.String())
+	if err != nil {
+		return err
+	}
+	if !found {
 		return nil
 	}
 
-	if found, _ := db.HasValidator(msg.DelegatorAddress.String()); !found {
+	found, err = db.HasValidator(msg.DelegatorAddress.String())
+	if err != nil {
+		return err
+	}
+	if !found {
 		return nil
 	}
 
-	if err = saveDelegatorsShares(msg.ValidatorAddress, cp, db, timestamp, tx.Height); err != nil {
+	// Get the delegations
+	delegations, err := getDelegations(msg.ValidatorAddress, tx.Height, timestamp, cp)
+	if err != nil {
 		return err
 	}
 
-	//for each delegate message it will eventually stored into database
-	return db.SaveDelegation(types.NewDelegation(
-		msg.DelegatorAddress,
-		msg.ValidatorAddress,
-		msg.Amount, tx.Height,
-		timestamp,
-	))
+	// Save the delegations
+	return db.SaveCurrentDelegations(delegations)
 }
 
-func saveDelegatorsShares(
-	validatorAddress sdk.ValAddress, cp client.ClientProxy, db database.BigDipperDb,
-	timestamp time.Time, height int64,
-) error {
+// getDelegations returns the list of all the delegations that the validator having the given address has
+// at the given block height (having the given timestamp)
+func getDelegations(
+	validatorAddress sdk.ValAddress, height int64, timestamp time.Time, cp client.ClientProxy,
+) ([]types.Delegation, error) {
 
 	// Handle self delegation
-	var delegations []staking.Delegation
-	var delegationsShares []types.DelegationShare
-
-	endpoint := fmt.Sprintf("/staking/validators/%s/delegations?height=%d", validatorAddress.String(), height)
-	if _, err := cp.QueryLCDWithHeight(endpoint, &delegations); err != nil {
-		return err
+	var responses []staking.DelegationResponse
+	endpoint := fmt.Sprintf("/staking/validators/%s/responses?height=%d", validatorAddress.String(), height)
+	if _, err := cp.QueryLCDWithHeight(endpoint, &responses); err != nil {
+		return nil, err
 	}
 
-	for _, delegation := range delegations {
-		delegationsShares = append(delegationsShares, types.NewDelegationShare(
-			delegation.GetValidatorAddr(),
+	delegations := make([]types.Delegation, len(responses))
+	for index, delegation := range responses {
+		delegations[index] = types.NewDelegation(
 			delegation.GetDelegatorAddr(),
+			delegation.GetValidatorAddr(),
+			delegation.Balance,
 			delegation.Shares.String(),
 			height,
 			timestamp,
-		))
+		)
 	}
 
-	return db.SaveDelegationsShares(delegationsShares)
+	return delegations, nil
 }
 
 // HandleMsgUndelegate handles properly a MsgUndelegate
@@ -90,7 +96,7 @@ func HandleMsgUndelegate(tx juno.Tx, index int, msg staking.MsgUndelegate, db da
 		return err
 	}
 
-	return db.SaveUnbondingDelegation(types.NewUnbondingDelegation(
+	return db.SaveHistoricalUnbondingDelegation(types.NewUnbondingDelegation(
 		msg.DelegatorAddress,
 		msg.ValidatorAddress,
 		msg.Amount,
@@ -119,15 +125,19 @@ func HandleMsgBeginRedelegate(tx juno.Tx, index int, msg staking.MsgBeginRedeleg
 	}
 
 	// Build the redelegation object
-	reDelegation := types.NewRedelegation(
+	timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
+	if err != nil {
+		return err
+	}
+
+	// Store the redelegation
+	return db.SaveHistoricalRedelegation(types.NewRedelegation(
 		msg.DelegatorAddress,
 		msg.ValidatorSrcAddress,
 		msg.ValidatorDstAddress,
 		msg.Amount,
 		completionTime,
 		tx.Height,
-	)
-
-	// Store the redelegation
-	return db.SaveRedelegation(reDelegation)
+		timestamp,
+	))
 }

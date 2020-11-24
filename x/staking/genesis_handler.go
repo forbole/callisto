@@ -3,6 +3,7 @@ package staking
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -21,38 +22,46 @@ func GenesisHandler(codec *codec.Codec, genesisDoc *tmtypes.GenesisDoc, appState
 	if !ok {
 		return fmt.Errorf("given database instance is not a BigDipperDb")
 	}
+
 	// Read the genesis state
 	var genState staking.GenesisState
-	if err := codec.UnmarshalJSON(appState[staking.ModuleName], &genState); err != nil {
+	err := codec.UnmarshalJSON(appState[staking.ModuleName], &genState)
+	if err != nil {
 		return err
 	}
 
 	// Save the validators
-	if err := saveValidators(genState.Validators, bigDipperDb); err != nil {
+	err = saveValidators(genState.Validators, bigDipperDb)
+	if err != nil {
 		return err
 	}
 
-	if err := saveValidatorsCommissions(genState.Validators, genesisDoc, bigDipperDb); err != nil {
+	err = saveValidatorsCommissions(genState.Validators, genesisDoc, bigDipperDb)
+	if err != nil {
 		return err
 	}
 
 	// Save the delegations
-	if err := saveDelegations(genState, genesisDoc, bigDipperDb); err != nil {
+	err = saveDelegations(genState, genesisDoc, bigDipperDb)
+	if err != nil {
 		return err
 	}
 
 	// Save the unbonding delegations
-	if err := saveUnbondingDelegations(genState, genesisDoc, bigDipperDb); err != nil {
+	err = saveUnbondingDelegations(genState, genesisDoc, bigDipperDb)
+	if err != nil {
 		return err
 	}
 
 	// Save the re-delegations
-	if err := saveRedelegations(genState, bigDipperDb); err != nil {
+	err = saveRedelegations(genesisDoc.GenesisTime, genState, bigDipperDb)
+	if err != nil {
 		return err
 	}
 
 	// Save the description
-	if err := saveDescription(genState.Validators, genesisDoc, bigDipperDb); err != nil {
+	err = saveDescription(genesisDoc.GenesisTime, genState.Validators, bigDipperDb)
+	if err != nil {
 		return err
 	}
 
@@ -73,34 +82,31 @@ func saveValidators(validators staking.Validators, db database.BigDipperDb) erro
 		)
 	}
 
-	return db.SaveValidatorsData(bdValidators)
+	return db.SaveValidators(bdValidators)
 }
 
 //saveValidatorsCommissions save initial commission for validators
 func saveValidatorsCommissions(
 	validators staking.Validators, genesisDoc *tmtypes.GenesisDoc, db database.BigDipperDb,
 ) error {
-	accounts := make([]types.ValidatorCommission, len(validators))
-	for index, account := range validators {
-		accounts[index] = types.NewValidatorCommission(
+	for _, account := range validators {
+		err := db.SaveValidatorCommission(types.NewValidatorCommission(
 			account.OperatorAddress,
 			&account.Commission.Rate,
 			&account.MinSelfDelegation,
 			1, genesisDoc.GenesisTime,
-		)
+		))
+		if err != nil {
+			return err
+		}
 	}
 
-	err := db.SaveValidatorCommissions(accounts)
-	if err != nil {
-		return err
-	}
 	return nil
 }
 
 // saveDelegations stores the delegations data present inside the given genesis state
 func saveDelegations(genState staking.GenesisState, genesisDoc *tmtypes.GenesisDoc, db database.BigDipperDb) error {
 	var delegations []types.Delegation
-	var delegationShares []types.DelegationShare
 	for _, validator := range genState.Validators {
 		tokens := validator.Tokens
 		delegatorShares := validator.DelegatorShares
@@ -111,12 +117,6 @@ func saveDelegations(genState staking.GenesisState, genesisDoc *tmtypes.GenesisD
 				delegation.DelegatorAddress,
 				validator.OperatorAddress,
 				sdk.NewCoin(genState.Params.BondDenom, delegationAmount),
-				1,
-				genesisDoc.GenesisTime,
-			))
-			delegationShares = append(delegationShares, types.NewDelegationShare(
-				validator.OperatorAddress,
-				delegation.DelegatorAddress,
 				delegation.Shares.String(),
 				1,
 				genesisDoc.GenesisTime,
@@ -124,10 +124,7 @@ func saveDelegations(genState staking.GenesisState, genesisDoc *tmtypes.GenesisD
 		}
 	}
 
-	if err := db.SaveDelegationsShares(delegationShares); err != nil {
-		return err
-	}
-	if err := db.SaveDelegations(delegations); err != nil {
+	if err := db.SaveCurrentDelegations(delegations); err != nil {
 		return err
 	}
 	return nil
@@ -152,11 +149,11 @@ func saveUnbondingDelegations(genState staking.GenesisState, genesisDoc *tmtypes
 		}
 	}
 
-	return db.SaveUnbondingDelegations(unbondingDelegations)
+	return db.SaveCurrentUnbondingDelegations(unbondingDelegations)
 }
 
 // saveRedelegations stores the redelegations data present inside the given genesis state
-func saveRedelegations(genState staking.GenesisState, db database.BigDipperDb) error {
+func saveRedelegations(genTime time.Time, genState staking.GenesisState, db database.BigDipperDb) error {
 	var redelegations []types.Redelegation
 	for _, redelegation := range genState.Redelegations {
 		for _, entry := range redelegation.Entries {
@@ -167,13 +164,12 @@ func saveRedelegations(genState staking.GenesisState, db database.BigDipperDb) e
 				sdk.NewCoin(genState.Params.BondDenom, entry.InitialBalance),
 				entry.CompletionTime,
 				entry.CreationHeight,
+				genTime,
 			))
 		}
 	}
-	if err := db.SaveRedelegations(redelegations); err != nil {
-		return err
-	}
-	return nil
+
+	return db.SaveCurrentRedelegations(redelegations)
 }
 
 // getDelegations returns the list of all the delegations that are
@@ -201,21 +197,18 @@ func getUnbondingDelegations(genData staking.UnbondingDelegations, valAddr sdk.V
 }
 
 //saveValidatorsCommissions save initial commission for validators
-func saveDescription(
-	validators staking.Validators, genesisDoc *tmtypes.GenesisDoc, db database.BigDipperDb,
-) error {
-	accounts := make([]types.ValidatorDescription, len(validators))
-	for index, account := range validators {
-		accounts[index] = types.NewValidatorDescription(
+func saveDescription(genTime time.Time, validators staking.Validators, db database.BigDipperDb) error {
+	for _, account := range validators {
+		err := db.SaveValidatorDescription(types.NewValidatorDescription(
 			account.OperatorAddress,
 			account.Description,
-			genesisDoc.GenesisTime, 1,
-		)
+			1,
+			genTime,
+		))
+		if err != nil {
+			return err
+		}
 	}
 
-	err := db.SaveValidatorsDescription(accounts)
-	if err != nil {
-		return err
-	}
 	return nil
 }

@@ -13,6 +13,7 @@ type Delegation struct {
 	DelegatorAddress sdk.AccAddress
 	ValidatorAddress sdk.ValAddress
 	Amount           sdk.Coin
+	Shares           string
 	Height           int64
 	Timestamp        time.Time
 }
@@ -20,13 +21,14 @@ type Delegation struct {
 // NewDelegation creates a new Delegation instance containing
 // the given data
 func NewDelegation(
-	delegator sdk.AccAddress, validatorAddress sdk.ValAddress, amount sdk.Coin,
+	delegator sdk.AccAddress, validatorAddress sdk.ValAddress, amount sdk.Coin, shares string,
 	height int64, timestamp time.Time,
 ) Delegation {
 	return Delegation{
 		DelegatorAddress: delegator,
 		ValidatorAddress: validatorAddress,
 		Amount:           amount,
+		Shares:           shares,
 		Height:           height,
 		Timestamp:        timestamp,
 	}
@@ -67,22 +69,24 @@ type Redelegation struct {
 	SrcValidator     sdk.ValAddress
 	DstValidator     sdk.ValAddress
 	Amount           sdk.Coin
-	CreationHeight   int64
 	CompletionTime   time.Time
+	CreationHeight   int64
+	CreationTime     time.Time
 }
 
 // NewRedelegation build a new Redelegation object
 func NewRedelegation(
-	delegator sdk.AccAddress, srcValidator, dstValidator sdk.ValAddress, amount sdk.Coin,
-	completionTime time.Time, height int64,
+	delegator sdk.AccAddress, srcValidator, dstValidator sdk.ValAddress, amount sdk.Coin, completionTime time.Time,
+	height int64, creationTime time.Time,
 ) Redelegation {
 	return Redelegation{
 		DelegatorAddress: delegator,
 		SrcValidator:     srcValidator,
 		DstValidator:     dstValidator,
 		Amount:           amount,
-		CreationHeight:   height,
 		CompletionTime:   completionTime,
+		CreationHeight:   height,
+		CreationTime:     creationTime,
 	}
 }
 
@@ -90,14 +94,14 @@ func NewRedelegation(
 type DelegationShare struct {
 	ValidatorAddress sdk.ValAddress
 	DelegatorAddress sdk.AccAddress
-	Shares           string
+	Shares           float64
 	Height           int64
 	Timestamp        time.Time
 }
 
-//NewDelegationShare get a new instance of modifly self Delegation
+//NewDelegationShare get a new instance of modify self Delegation
 func NewDelegationShare(
-	validatorAddress sdk.ValAddress, delegatorAddress sdk.AccAddress, shares string,
+	validatorAddress sdk.ValAddress, delegatorAddress sdk.AccAddress, shares float64,
 	height int64, timestamp time.Time,
 ) DelegationShare {
 	return DelegationShare{

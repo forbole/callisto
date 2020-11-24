@@ -21,7 +21,7 @@ func HandleMsgCreateValidator(tx jtypes.Tx, msg stakingtypes.MsgCreateValidator,
 	if msg.Commission.Validate() != nil {
 		return err
 	}
-	if err := db.SaveEditCommission(types.NewValidatorCommission(
+	if err := db.SaveValidatorCommission(types.NewValidatorCommission(
 		msg.ValidatorAddress,
 		&msg.Commission.Rate,
 		&msg.MinSelfDelegation,
@@ -34,13 +34,13 @@ func HandleMsgCreateValidator(tx jtypes.Tx, msg stakingtypes.MsgCreateValidator,
 	if err = db.SaveValidatorDescription(types.NewValidatorDescription(
 		msg.ValidatorAddress,
 		msg.Description,
-		timestamp,
 		tx.Height,
+		timestamp,
 	)); err != nil {
 		return err
 	}
 
-	return db.SaveSingleValidatorData(types.NewValidator(
+	return db.SaveValidatorData(types.NewValidator(
 		stakingValidator.GetConsAddr(),
 		stakingValidator.GetOperator(),
 		stakingValidator.GetConsPubKey(),
@@ -57,7 +57,7 @@ func HandleEditValidator(msg stakingtypes.MsgEditValidator, tx jtypes.Tx, db dat
 		return err
 	}
 
-	if err := db.SaveEditCommission(types.NewValidatorCommission(
+	if err := db.SaveValidatorCommission(types.NewValidatorCommission(
 		msg.ValidatorAddress,
 		msg.CommissionRate,
 		msg.MinSelfDelegation,
@@ -69,7 +69,7 @@ func HandleEditValidator(msg stakingtypes.MsgEditValidator, tx jtypes.Tx, db dat
 	return db.SaveValidatorDescription(types.NewValidatorDescription(
 		msg.ValidatorAddress,
 		msg.Description,
-		timestamp,
 		tx.Height,
+		timestamp,
 	))
 }
