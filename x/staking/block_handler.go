@@ -2,6 +2,7 @@ package staking
 
 import (
 	"fmt"
+	"github.com/forbole/bdjuno/x/staking/utils"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/x/staking"
@@ -21,7 +22,14 @@ func BlockHandler(block *tmctypes.ResultBlock, _ []juno.Tx, _ *tmctypes.ResultVa
 	}
 
 	// Update the staking pool
-	if err := updateStakingPool(block.Block.Height, w.ClientProxy, bigDipperDb); err != nil {
+	err := updateStakingPool(block.Block.Height, w.ClientProxy, bigDipperDb)
+	if err != nil {
+		return err
+	}
+
+	// Update the delegations
+	err = updateValidatorsDelegations(block.Block.Height, block.Block.Time, w.ClientProxy, bigDipperDb)
+	if err != nil {
 		return err
 	}
 
@@ -49,6 +57,52 @@ func updateStakingPool(height int64, cp client.ClientProxy, db database.BigDippe
 
 	if err := db.SaveStakingPool(pool, height, time.Now()); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// updateDelegations reads from the LCD the current delegations and stores them inside the database
+func updateValidatorsDelegations(height int64, timestamp time.Time, cp client.ClientProxy, db database.BigDipperDb) error {
+	log.Debug().
+		Str("module", "staking").
+		Str("operation", "delegations").
+		Msg("getting delegations")
+
+	// Get the params
+	params, err := db.GetStakingParams()
+	if err != nil {
+		return err
+	}
+
+	// Get the validators
+	validators, err := db.GetValidators()
+	if err != nil {
+		return err
+	}
+
+	for _, validator := range validators {
+		// Update the delegations
+		delegations, err := utils.GetDelegations(validator.GetOperator(), height, timestamp, cp)
+		if err != nil {
+			return err
+		}
+
+		err = db.SaveCurrentDelegations(delegations)
+		if err != nil {
+			return err
+		}
+
+		// Update the unbonding delegations
+		unDels, err := utils.GetUnbondingDelegations(validator.GetOperator(), params.BondName, height, timestamp, cp)
+		if err != nil {
+			return err
+		}
+
+		err = db.SaveCurrentUnbondingDelegations(unDels)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

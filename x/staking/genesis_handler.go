@@ -30,6 +30,12 @@ func GenesisHandler(codec *codec.Codec, genesisDoc *tmtypes.GenesisDoc, appState
 		return err
 	}
 
+	// Save the params
+	err = saveParams(genState.Params, bigDipperDb)
+	if err != nil {
+		return err
+	}
+
 	// Save the validators
 	err = saveValidators(genState.Validators, bigDipperDb)
 	if err != nil {
@@ -66,6 +72,13 @@ func GenesisHandler(codec *codec.Codec, genesisDoc *tmtypes.GenesisDoc, appState
 	}
 
 	return nil
+}
+
+// saveParams saves the given params into the database
+func saveParams(params staking.Params, db database.BigDipperDb) error {
+	return db.SaveStakingParams(types.NewStakingParams(
+		params.BondDenom,
+	))
 }
 
 // saveValidators stores the validators data present inside the given genesis state

@@ -1,3 +1,9 @@
+/* ---- PARAMS ---- */
+CREATE TABLE staking_params
+(
+    bond_denom TEXT NOT NULL
+);
+
 /* ---- POOL ---- */
 
 CREATE TABLE staking_pool_history
@@ -13,7 +19,7 @@ CREATE TABLE staking_pool_history
 
 CREATE TABLE validator_info
 (
-    consensus_address     TEXT NOT NULL UNIQUE PRIMARY KEY REFERENCES validator (consensus_address),
+    consensus_address     TEXT NOT NULL UNIQUE REFERENCES validator (consensus_address),
     operator_address      TEXT NOT NULL UNIQUE,
     self_delegate_address TEXT REFERENCES account (address),
     max_change_rate       TEXT NOT NULL,
@@ -22,7 +28,7 @@ CREATE TABLE validator_info
 
 CREATE TABLE validator_description
 (
-    validator_address TEXT NOT NULL UNIQUE PRIMARY KEY REFERENCES validator_info (consensus_address),
+    validator_address TEXT NOT NULL UNIQUE REFERENCES validator (consensus_address),
     moniker           TEXT,
     identity          TEXT,
     website           TEXT,
@@ -32,7 +38,7 @@ CREATE TABLE validator_description
 
 CREATE TABLE validator_description_history
 (
-    validator_address TEXT                        NOT NULL REFERENCES validator_info (consensus_address),
+    validator_address TEXT                        NOT NULL REFERENCES validator (consensus_address),
     moniker           TEXT,
     identity          TEXT,
     website           TEXT,
@@ -45,14 +51,14 @@ CREATE TABLE validator_description_history
 
 CREATE TABLE validator_commission
 (
-    validator_address   TEXT    NOT NULL UNIQUE PRIMARY KEY REFERENCES validator_info (consensus_address),
+    validator_address   TEXT    NOT NULL UNIQUE REFERENCES validator (consensus_address),
     commission          DECIMAL NOT NULL,
     min_self_delegation BIGINT  NOT NULL
 );
 
 CREATE TABLE validator_commission_history
 (
-    validator_address   TEXT                        NOT NULL REFERENCES validator_info (consensus_address),
+    validator_address   TEXT                        NOT NULL REFERENCES validator (consensus_address),
     commission          DECIMAL                     NOT NULL,
     min_self_delegation BIGINT                      NOT NULL,
     height              BIGINT                      NOT NULL,
@@ -62,7 +68,7 @@ CREATE TABLE validator_commission_history
 
 CREATE TABLE validator_voting_power
 (
-    validator_address TEXT   NOT NULL UNIQUE PRIMARY KEY REFERENCES validator (consensus_address),
+    validator_address TEXT   NOT NULL UNIQUE REFERENCES validator (consensus_address),
     voting_power      BIGINT NOT NULL
 );
 
@@ -77,7 +83,7 @@ CREATE TABLE validator_voting_power_history
 
 CREATE TABLE validator_uptime
 (
-    validator_address     TEXT   NOT NULL UNIQUE PRIMARY KEY REFERENCES validator (consensus_address),
+    validator_address     TEXT   NOT NULL UNIQUE REFERENCES validator (consensus_address),
     signed_blocks_window  BIGINT NOT NULL,
     missed_blocks_counter BIGINT NOT NULL
 );

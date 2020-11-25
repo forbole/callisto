@@ -37,7 +37,7 @@ var (
 
 func main() {
 	// Register all the modules to be handled
-	SetupModules()
+	x.RegisterModules(modules)
 
 	// Build the executor
 	prefix := "desmos" // TODO: Get this from a command
@@ -76,8 +76,4 @@ func SetupConfig(prefix string) func(cfg *sdk.Config) {
 func MakeCodec() *codec.Codec {
 	cdc := simapp.MakeCodec()
 	return cdc
-}
-
-func SetupModules() {
-	x.RegisterModules(modules)
 }

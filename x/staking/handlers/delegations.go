@@ -1,10 +1,9 @@
 package handlers
 
 import (
-	"fmt"
+	"github.com/forbole/bdjuno/x/staking/utils"
 	"time"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	staking "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/desmos-labs/juno/parse/client"
 	juno "github.com/desmos-labs/juno/types"
@@ -36,41 +35,15 @@ func HandleMsgDelegate(tx juno.Tx, msg staking.MsgDelegate, db database.BigDippe
 	}
 
 	// Get the delegations
-	delegations, err := getDelegations(msg.ValidatorAddress, tx.Height, timestamp, cp)
+	db.GetGenesisTime()
+
+	delegations, err := utils.GetDelegations(msg.ValidatorAddress, tx.Height, timestamp, cp)
 	if err != nil {
 		return err
 	}
 
 	// Save the delegations
 	return db.SaveCurrentDelegations(delegations)
-}
-
-// getDelegations returns the list of all the delegations that the validator having the given address has
-// at the given block height (having the given timestamp)
-func getDelegations(
-	validatorAddress sdk.ValAddress, height int64, timestamp time.Time, cp client.ClientProxy,
-) ([]types.Delegation, error) {
-
-	// Handle self delegation
-	var responses []staking.DelegationResponse
-	endpoint := fmt.Sprintf("/staking/validators/%s/responses?height=%d", validatorAddress.String(), height)
-	if _, err := cp.QueryLCDWithHeight(endpoint, &responses); err != nil {
-		return nil, err
-	}
-
-	delegations := make([]types.Delegation, len(responses))
-	for index, delegation := range responses {
-		delegations[index] = types.NewDelegation(
-			delegation.GetDelegatorAddr(),
-			delegation.GetValidatorAddr(),
-			delegation.Balance,
-			delegation.Shares.String(),
-			height,
-			timestamp,
-		)
-	}
-
-	return delegations, nil
 }
 
 // HandleMsgUndelegate handles properly a MsgUndelegate

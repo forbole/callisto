@@ -1,6 +1,6 @@
 module github.com/forbole/bdjuno
 
-go 1.14
+go 1.15
 
 require (
 	github.com/cosmos/cosmos-sdk v0.39.1

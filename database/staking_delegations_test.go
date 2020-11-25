@@ -9,7 +9,6 @@ import (
 )
 
 func (suite *DbTestSuite) TestSaveHistoricalDelegation() {
-	// Setup
 	validator := suite.getValidator(
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
@@ -20,37 +19,47 @@ func (suite *DbTestSuite) TestSaveHistoricalDelegation() {
 	amount := sdk.NewCoin("cosmos", sdk.NewInt(10000))
 	timestamp := time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC)
 
-	delegation := types.NewDelegation(
+	// ------------------------------
+	// --- Save the data
+	// ------------------------------
+
+	err := suite.database.SaveHistoricalDelegation(types.NewDelegation(
 		delegator,
 		validator.GetOperator(),
 		amount,
 		"100",
 		1000,
 		timestamp,
-	)
-
-	// Save data
-	err := suite.database.SaveHistoricalDelegation(delegation)
+	))
 	suite.Require().NoError(err, "saving a delegation should return no error")
 
+	// ------------------------------
+	// --- Verify the data
+	// ------------------------------
+
 	// Get data
-	var delegationRows []dbtypes.DelegationHistoryRow
-	err = suite.database.Sqlx.Select(&delegationRows, `SELECT * FROM delegation_history`)
+	var rows []dbtypes.DelegationHistoryRow
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM delegation_history`)
 	suite.Require().NoError(err)
 
-	suite.Require().Len(delegationRows, 1)
-	suite.Require().True(delegationRows[0].Equal(dbtypes.NewDelegationHistoryRow(
-		validator.GetConsAddr().String(),
-		delegator.String(),
-		dbtypes.NewDbCoin(amount),
-		100,
-		1000,
-		timestamp,
-	)))
+	expected := []dbtypes.DelegationHistoryRow{
+		dbtypes.NewDelegationHistoryRow(
+			validator.GetConsAddr().String(),
+			delegator.String(),
+			dbtypes.NewDbCoin(amount),
+			100,
+			1000,
+			timestamp,
+		),
+	}
+
+	suite.Require().Len(rows, len(expected))
+	for index, expected := range expected {
+		suite.Require().True(expected.Equal(rows[index]))
+	}
 }
 
 func (suite *DbTestSuite) TestSaveCurrentDelegations() {
-	// Setup
 	delegator1 := suite.getDelegator("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	delegator2 := suite.getDelegator("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 	validator1 := suite.getValidator(
@@ -70,7 +79,10 @@ func (suite *DbTestSuite) TestSaveCurrentDelegations() {
 	time2, err := time.Parse(time.RFC3339, "2020-05-05T18:00:00Z")
 	suite.Require().NoError(err)
 
-	// Save data
+	// ------------------------------
+	// --- Save the data
+	// ------------------------------
+
 	delegations := []types.Delegation{
 		types.NewDelegation(
 			delegator1,
@@ -105,16 +117,19 @@ func (suite *DbTestSuite) TestSaveCurrentDelegations() {
 			time2,
 		),
 	}
-
 	err = suite.database.SaveCurrentDelegations(delegations)
 	suite.Require().NoError(err, "inserting delegations should return no error")
 
-	// Verify the data
-	var rows []dbtypes.DelegationRow
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM delegation`)
+	// ------------------------------
+	// --- Verify the data
+	// ------------------------------
+
+	// Verify delegation rows
+	var delRows []dbtypes.DelegationRow
+	err = suite.database.Sqlx.Select(&delRows, `SELECT * FROM delegation`)
 	suite.Require().NoError(err)
 
-	expected := []dbtypes.DelegationRow{
+	expectedDelRows := []dbtypes.DelegationRow{
 		dbtypes.NewDelegationRow(
 			validator1.GetConsAddr().String(),
 			delegator1.String(),
@@ -141,16 +156,15 @@ func (suite *DbTestSuite) TestSaveCurrentDelegations() {
 		),
 	}
 
-	suite.Require().Len(rows, len(expected))
-	for index, delegation := range expected {
-		suite.Require().True(delegation.Equal(rows[index]))
+	suite.Require().Len(delRows, len(expectedDelRows))
+	for index, delegation := range expectedDelRows {
+		suite.Require().True(delegation.Equal(delRows[index]))
 	}
 }
 
 // ________________________________________________
 
 func (suite *DbTestSuite) TestSaveHistoricalUnbondingDelegation() {
-	// Setup
 	delegator := suite.getDelegator("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 	validator := suite.getValidator(
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
@@ -167,34 +181,45 @@ func (suite *DbTestSuite) TestSaveHistoricalUnbondingDelegation() {
 	timestamp, err := time.Parse(time.RFC3339, "2020-01-01T10:00:00Z")
 	suite.Require().NoError(err)
 
-	// Save data
-	unbondingDelegation := types.NewUnbondingDelegation(
+	// ------------------------------
+	// --- Save the data
+	// ------------------------------
+
+	err = suite.database.SaveHistoricalUnbondingDelegation(types.NewUnbondingDelegation(
 		delegator,
 		validator.GetOperator(),
 		amount,
 		completionTimestamp,
 		height,
 		timestamp,
-	)
-	err = suite.database.SaveHistoricalUnbondingDelegation(unbondingDelegation)
+	))
 	suite.Require().NoError(err)
 
-	// Get inserted data
+	// ------------------------------
+	// --- Verify the data
+	// ------------------------------
+
 	var rows []dbtypes.UnbondingDelegationHistoryRow
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM unbonding_delegation_history`)
 	suite.Require().NoError(err)
-	suite.Require().Len(rows, 1)
-	suite.Require().True(rows[0].Equal(dbtypes.NewUnbondingDelegationHistoryRow(
-		validator.GetConsAddr().String(),
-		delegator.String(),
-		dbtypes.NewDbCoin(amount),
-		completionTimestamp, height,
-		timestamp,
-	)))
+
+	expected := []dbtypes.UnbondingDelegationHistoryRow{
+		dbtypes.NewUnbondingDelegationHistoryRow(
+			validator.GetConsAddr().String(),
+			delegator.String(),
+			dbtypes.NewDbCoin(amount),
+			completionTimestamp, height,
+			timestamp,
+		),
+	}
+
+	suite.Require().Len(rows, len(expected))
+	for index, expected := range expected {
+		suite.Require().True(expected.Equal(rows[index]))
+	}
 }
 
 func (suite *DbTestSuite) TestSaveCurrentUnbondingDelegations() {
-	// Setup
 	delegator1 := suite.getDelegator("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	delegator2 := suite.getDelegator("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 	validator1 := suite.getValidator(
@@ -220,7 +245,10 @@ func (suite *DbTestSuite) TestSaveCurrentUnbondingDelegations() {
 	timestamp2, err := time.Parse(time.RFC3339, "2020-05-05T18:00:00Z")
 	suite.Require().NoError(err)
 
-	// Save data
+	// ------------------------------
+	// --- Save the data
+	// ------------------------------
+
 	delegations := []types.UnbondingDelegation{
 		types.NewUnbondingDelegation(
 			delegator1,
@@ -258,7 +286,10 @@ func (suite *DbTestSuite) TestSaveCurrentUnbondingDelegations() {
 	err = suite.database.SaveCurrentUnbondingDelegations(delegations)
 	suite.Require().NoError(err)
 
-	// Read the data
+	// ------------------------------
+	// --- Verify the data
+	// ------------------------------
+
 	var rows []dbtypes.UnbondingDelegationRow
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM unbonding_delegation`)
 	suite.Require().NoError(err)
@@ -320,7 +351,10 @@ func (suite *DbTestSuite) TestSaveHistoricalRedelegation() {
 
 	createdTime := time.Date(2020, 1, 1, 0, 00, 00, 000, time.UTC)
 
-	// Save data
+	// ------------------------------
+	// --- Save the data
+	// ------------------------------
+
 	reDelegation := types.NewRedelegation(
 		delegator,
 		srcValidator.GetOperator(),
@@ -333,24 +367,33 @@ func (suite *DbTestSuite) TestSaveHistoricalRedelegation() {
 	err = suite.database.SaveHistoricalRedelegation(reDelegation)
 	suite.Require().NoError(err)
 
-	// Get inserted data
+	// ------------------------------
+	// --- Verify the data
+	// ------------------------------
+
 	var rows []dbtypes.ReDelegationHistoryRow
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM redelegation_history`)
 	suite.Require().NoError(err)
-	suite.Require().Len(rows, 1)
-	suite.Require().True(rows[0].Equal(dbtypes.NewReDelegationHistoryRow(
-		delegator.String(),
-		srcValidator.GetConsAddr().String(),
-		dstValidator.GetConsAddr().String(),
-		dbtypes.NewDbCoin(amount),
-		completionTimestamp,
-		height,
-		createdTime,
-	)))
+
+	expected := []dbtypes.ReDelegationHistoryRow{
+		dbtypes.NewReDelegationHistoryRow(
+			delegator.String(),
+			srcValidator.GetConsAddr().String(),
+			dstValidator.GetConsAddr().String(),
+			dbtypes.NewDbCoin(amount),
+			completionTimestamp,
+			height,
+			createdTime,
+		),
+	}
+
+	suite.Require().Len(rows, len(expected))
+	for index, expected := range expected {
+		suite.Require().True(expected.Equal(rows[index]))
+	}
 }
 
 func (suite *DbTestSuite) TestSaveCurrentRedelegations() {
-	// Setup
 	delegator1 := suite.getDelegator("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	delegator2 := suite.getDelegator("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 	srcValidator1 := suite.getValidator(
@@ -383,7 +426,10 @@ func (suite *DbTestSuite) TestSaveCurrentRedelegations() {
 	createdTimestamp1 := time.Date(2020, 1, 1, 0, 00, 00, 000, time.UTC)
 	createdTimestamp2 := time.Date(2020, 1, 1, 0, 00, 00, 000, time.UTC)
 
-	// Save data
+	// ------------------------------
+	// --- Save the data
+	// ------------------------------
+
 	reDelegations := []types.Redelegation{
 		types.NewRedelegation(
 			delegator1,
@@ -425,7 +471,9 @@ func (suite *DbTestSuite) TestSaveCurrentRedelegations() {
 	err = suite.database.SaveCurrentRedelegations(reDelegations)
 	suite.Require().NoError(err)
 
-	// Read the data
+	// ------------------------------
+	// --- Verify the data
+	// ------------------------------
 	var rows []dbtypes.ReDelegationRow
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM redelegation`)
 	suite.Require().NoError(err)
