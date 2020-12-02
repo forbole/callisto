@@ -2,20 +2,18 @@ package auth
 
 import (
 	"fmt"
-	"time"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/exported"
-	"github.com/desmos-labs/juno/parse/client"
+	"github.com/desmos-labs/juno/client"
 	"github.com/forbole/bdjuno/database"
 	"github.com/rs/zerolog/log"
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+	"time"
 )
 
 // RefreshAccounts takes the given addresses and for each one queries the LCD
 // retrieving the latest balance storing it inside the database.
 func RefreshAccounts(
-	addresses []sdk.AccAddress, height int64, timestamp time.Time, cp client.ClientProxy, db database.BigDipperDb,
+	addresses []sdk.AccAddress, height int64, timestamp time.Time, cp *client.Proxy, db *database.BigDipperDb,
 ) error {
 	log.Debug().
 		Str("module", "auth").
@@ -41,22 +39,4 @@ func RefreshAccounts(
 		Str("operation", "accounts").
 		Msg("saving accounts data")
 	return db.SaveAccounts(accounts, height, timestamp)
-}
-
-// updateAccounts gets all the accounts stored inside the database, and refreshes their
-// balances by fetching the LCD endpoint.
-func updateAccounts(cp client.ClientProxy, db database.BigDipperDb) error {
-
-	var block tmctypes.ResultBlock
-	err := cp.QueryLCD("/blocks/latest", &block)
-	if err != nil {
-		return err
-	}
-
-	addresses, err := db.GetAccounts()
-	if err != nil {
-		return err
-	}
-
-	return RefreshAccounts(addresses, block.Block.Height, block.Block.Time, cp, db)
 }

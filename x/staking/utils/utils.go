@@ -4,7 +4,7 @@ import (
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
-	"github.com/desmos-labs/juno/parse/client"
+	"github.com/desmos-labs/juno/client"
 	"github.com/forbole/bdjuno/x/staking/types"
 	"time"
 )
@@ -12,7 +12,7 @@ import (
 // GetDelegations returns the list of all the delegations that the validator having the given address has
 // at the given block height (having the given timestamp)
 func GetDelegations(
-	validatorAddress sdk.ValAddress, height int64, timestamp time.Time, cp client.ClientProxy,
+	validatorAddress sdk.ValAddress, height int64, timestamp time.Time, cp *client.Proxy,
 ) ([]types.Delegation, error) {
 	var responses []staking.DelegationResponse
 	endpoint := fmt.Sprintf("/staking/validators/%s/delegations?height=%d", validatorAddress.String(), height)
@@ -38,7 +38,7 @@ func GetDelegations(
 // GetUnbondingDelegations returns the list of all the unbonding delegations that the validator having the
 // given address has at the given block height (having the given timestamp).
 func GetUnbondingDelegations(
-	validatorAddress sdk.ValAddress, bondDenom string, height int64, timestamp time.Time, cp client.ClientProxy,
+	validatorAddress sdk.ValAddress, bondDenom string, height int64, timestamp time.Time, cp *client.Proxy,
 ) ([]types.UnbondingDelegation, error) {
 	var responses []staking.UnbondingDelegation
 	endpoint := fmt.Sprintf("/staking/validators/%s/unbonding_delegations?height=%d", validatorAddress.String(), height)

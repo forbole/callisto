@@ -6,29 +6,22 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/x/staking"
-	"github.com/desmos-labs/juno/parse/client"
-	"github.com/desmos-labs/juno/parse/worker"
-	juno "github.com/desmos-labs/juno/types"
+	"github.com/desmos-labs/juno/client"
 	"github.com/forbole/bdjuno/database"
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
 
-// BlockHandler represents a method that is called each time a new block is created
-func BlockHandler(block *tmctypes.ResultBlock, _ []juno.Tx, _ *tmctypes.ResultValidators, w worker.Worker) error {
-	bigDipperDb, ok := w.Db.(database.BigDipperDb)
-	if !ok {
-		return fmt.Errorf("provided database is not a BigDipper database")
-	}
-
+// HandleBlock represents a method that is called each time a new block is created
+func HandleBlock(block *tmctypes.ResultBlock, cp *client.Proxy, db *database.BigDipperDb) error {
 	// Update the staking pool
-	err := updateStakingPool(block.Block.Height, w.ClientProxy, bigDipperDb)
+	err := updateStakingPool(block.Block.Height, cp, db)
 	if err != nil {
 		return err
 	}
 
 	// Update the delegations
-	err = updateValidatorsDelegations(block.Block.Height, block.Block.Time, w.ClientProxy, bigDipperDb)
+	err = updateValidatorsDelegations(block.Block.Height, block.Block.Time, cp, db)
 	if err != nil {
 		return err
 	}
@@ -37,7 +30,7 @@ func BlockHandler(block *tmctypes.ResultBlock, _ []juno.Tx, _ *tmctypes.ResultVa
 }
 
 // updateStakingPool reads from the LCD the current staking pool and stores its value inside the database
-func updateStakingPool(height int64, cp client.ClientProxy, db database.BigDipperDb) error {
+func updateStakingPool(height int64, cp *client.Proxy, db *database.BigDipperDb) error {
 	log.Debug().
 		Str("module", "staking").
 		Str("operation", "staking_pool").
@@ -63,7 +56,7 @@ func updateStakingPool(height int64, cp client.ClientProxy, db database.BigDippe
 }
 
 // updateDelegations reads from the LCD the current delegations and stores them inside the database
-func updateValidatorsDelegations(height int64, timestamp time.Time, cp client.ClientProxy, db database.BigDipperDb) error {
+func updateValidatorsDelegations(height int64, timestamp time.Time, cp *client.Proxy, db *database.BigDipperDb) error {
 	log.Debug().
 		Str("module", "staking").
 		Str("operation", "delegations").

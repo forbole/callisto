@@ -1,4 +1,4 @@
-package consensus
+package modules
 
 import (
 	"encoding/json"
@@ -17,42 +17,36 @@ import (
 
 var _ modules.Module = Module{}
 
-// Module implements the consensus operations
 type Module struct{}
 
 // Name implements modules.Module
 func (m Module) Name() string {
-	return "consensus"
+	return "modules"
 }
 
 // RegisterPeriodicOperations implements modules.Module
-func (m Module) RegisterPeriodicOperations(
-	scheduler *gocron.Scheduler, _ *codec.Codec, cp *client.Proxy, db db.Database,
-) error {
-	bdDatabase := database.Cast(db)
-	return Register(scheduler, cp, bdDatabase)
+func (m Module) RegisterPeriodicOperations(*gocron.Scheduler, *codec.Codec, *client.Proxy, db.Database) error {
+	return nil
 }
 
 // RunAdditionalOperations implements modules.Module
-func (m Module) RunAdditionalOperations(_ *config.Config, _ *codec.Codec, cp *client.Proxy, db db.Database) error {
+func (m Module) RunAdditionalOperations(cfg *config.Config, cdc *codec.Codec, cp *client.Proxy, db db.Database) error {
 	bdDatabase := database.Cast(db)
-	return ListenOperation(cp, bdDatabase)
+	return bdDatabase.InsertEnableModules(cfg.Modules)
 }
 
 // HandleGenesis implements modules.Module
 func (m Module) HandleGenesis(
-	doc *tmtypes.GenesisDoc, _ map[string]json.RawMessage, _ *codec.Codec, _ *client.Proxy, db db.Database,
+	*tmtypes.GenesisDoc, map[string]json.RawMessage, *codec.Codec, *client.Proxy, db.Database,
 ) error {
-	bdDatabase := database.Cast(db)
-	return HandleGenesis(doc, bdDatabase)
+	return nil
 }
 
 // HandleBlock implements modules.Module
 func (m Module) HandleBlock(
-	b *tmctypes.ResultBlock, _ []types.Tx, _ *tmctypes.ResultValidators, _ *codec.Codec, _ *client.Proxy, db db.Database,
+	*tmctypes.ResultBlock, []types.Tx, *tmctypes.ResultValidators, *codec.Codec, *client.Proxy, db.Database,
 ) error {
-	bdDatabase := database.Cast(db)
-	return HandleBlock(b, bdDatabase)
+	return nil
 }
 
 // HandleTx implements modules.Module

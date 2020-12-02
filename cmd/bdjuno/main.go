@@ -2,14 +2,12 @@ package main
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	x "github.com/forbole/bdjuno/x/types"
+	"github.com/desmos-labs/juno/cmd"
+	"github.com/desmos-labs/juno/modules/registrar"
+	"github.com/forbole/bdjuno/x/mint"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/juno/config"
-	"github.com/desmos-labs/juno/executor"
-	"github.com/desmos-labs/juno/parse"
-	"github.com/desmos-labs/juno/version"
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/auth"
 	"github.com/forbole/bdjuno/x/bank"
@@ -21,36 +19,26 @@ import (
 	"github.com/forbole/bdjuno/x/supply"
 )
 
-var (
-	modules = []x.Module{
+func main() {
+	// Register all the modules to be handled
+	registrar.RegisterModules(
 		auth.Module{},
 		bank.Module{},
 		consensus.Module{},
 		distribution.Module{},
 		gov.Module{},
-		//mint.Module{},
+		mint.Module{},
 		pricefeed.Module{},
 		staking.Module{},
 		supply.Module{},
-	}
-)
-
-func main() {
-	// Register all the modules to be handled
-	x.RegisterModules(modules)
+	)
 
 	// Build the executor
 	prefix := "desmos" // TODO: Get this from a command
-	rootCmd := executor.BuildRootCmd("bdjuno", SetupConfig(prefix))
-	rootCmd.AddCommand(
-		version.GetVersionCmd(),
-		parse.GetParseCmd(MakeCodec(), database.Builder),
-	)
-
-	command := config.PrepareMainCmd(rootCmd)
+	executor := cmd.BuildDefaultExecutor("bdjuno", SetupConfig(prefix), MakeCodec, database.Builder)
 
 	// Run the commands and panic on any error
-	err := command.Execute()
+	err := executor.Execute()
 	if err != nil {
 		panic(err)
 	}
