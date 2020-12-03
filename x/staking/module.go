@@ -50,7 +50,7 @@ func (m Module) HandleBlock(block *tmctypes.ResultBlock, txs []types.Tx, vals *t
 
 // HandleTx implements modules.Module
 func (m Module) HandleTx(tx types.Tx, cdc *codec.Codec, cp *client.Proxy, db db.Database) error {
-	panic("implement me")
+	return nil
 }
 
 // HandleMsg implements modules.Module

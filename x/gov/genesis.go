@@ -43,26 +43,6 @@ func saveProposals(genTime time.Time, p gov.Proposals, cp *client.Proxy, db *dat
 	deposits := make([]types.Deposit, len(p))
 
 	for index, proposal := range p {
-		submitTime, err := time.Parse(time.RFC3339, proposal.SubmitTime.String())
-		if err != nil {
-			return err
-		}
-
-		depositEndTime, err := time.Parse(time.RFC3339, proposal.DepositEndTime.String())
-		if err != nil {
-			return err
-		}
-
-		votingStartTime, err := time.Parse(time.RFC3339, proposal.VotingStartTime.String())
-		if err != nil {
-			return err
-		}
-
-		votingEndTime, err := time.Parse(time.RFC3339, proposal.VotingEndTime.String())
-		if err != nil {
-			return err
-		}
-
 		// Since it's not possible to get the proposer, set it to nil
 		proposals[index] = types.NewProposal(
 			proposal.GetTitle(),
@@ -71,10 +51,10 @@ func saveProposals(genTime time.Time, p gov.Proposals, cp *client.Proxy, db *dat
 			proposal.ProposalType(),
 			proposal.ProposalID,
 			proposal.Status,
-			submitTime,
-			depositEndTime,
-			votingStartTime,
-			votingEndTime,
+			proposal.SubmitTime,
+			proposal.DepositEndTime,
+			proposal.VotingStartTime,
+			proposal.VotingEndTime,
 			nil,
 		)
 
@@ -100,9 +80,9 @@ func saveProposals(genTime time.Time, p gov.Proposals, cp *client.Proxy, db *dat
 		// Update the proposal status when the voting period or deposit period ends
 		update := UpdateProposal(proposal.ProposalID, cp, db)
 		if proposal.Status.String() == "VotingPeriod" {
-			time.AfterFunc(time.Since(votingEndTime), update)
+			time.AfterFunc(time.Since(proposal.VotingEndTime), update)
 		} else if proposal.Status.String() == "DepositPeriod" {
-			time.AfterFunc(time.Since(depositEndTime), update)
+			time.AfterFunc(time.Since(proposal.DepositEndTime), update)
 		}
 	}
 

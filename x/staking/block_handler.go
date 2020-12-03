@@ -14,6 +14,8 @@ import (
 
 // HandleBlock represents a method that is called each time a new block is created
 func HandleBlock(block *tmctypes.ResultBlock, cp *client.Proxy, db *database.BigDipperDb) error {
+	log.Debug().Str("module", "staking").Msgf("handling block")
+
 	// Update the staking pool
 	err := updateStakingPool(block.Block.Height, cp, db)
 	if err != nil {
@@ -40,6 +42,7 @@ func updateStakingPool(height int64, cp *client.Proxy, db *database.BigDipperDb)
 	endpoint := fmt.Sprintf("/staking/pool?height=%d", height)
 	height, err := cp.QueryLCDWithHeight(endpoint, &pool)
 	if err != nil {
+		log.Err(err).Str("module", "staking").Msg("error while getting staking pool")
 		return err
 	}
 
@@ -48,7 +51,8 @@ func updateStakingPool(height int64, cp *client.Proxy, db *database.BigDipperDb)
 		Str("operation", "staking_pool").
 		Msg("saving staking pool")
 
-	if err := db.SaveStakingPool(pool, height, time.Now()); err != nil {
+	err = db.SaveStakingPool(pool, height, time.Now())
+	if err != nil {
 		return err
 	}
 

@@ -326,10 +326,7 @@ func (db BigDipperDb) SaveValidatorsVotingPowers(powers []types.ValidatorVotingP
 
 	// Insert the voting powers
 	pwrsQuery = pwrsQuery[:len(pwrsQuery)-1] // Remove the trailing ","
-	pwrsQuery += `
-ON CONFLICT (validator_address) DO UPDATE 
-	SET validator_address = excluded.validator_address, 
-	voting_power = excluded.voting_power`
+	pwrsQuery += `ON CONFLICT (validator_address) DO UPDATE SET voting_power = excluded.voting_power`
 	_, err := db.Sql.Exec(pwrsQuery, pswsValues...)
 	if err != nil {
 		return err

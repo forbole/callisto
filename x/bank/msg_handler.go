@@ -3,16 +3,20 @@ package bank
 import (
 	"github.com/desmos-labs/juno/client"
 	"github.com/forbole/bdjuno/x/auth"
+	"github.com/rs/zerolog/log"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/desmos-labs/juno/types"
 	"github.com/forbole/bdjuno/database"
-	"github.com/rs/zerolog/log"
 )
 
 func Handler(tx types.Tx, index int, msg sdk.Msg, cp *client.Proxy, db *database.BigDipperDb) error {
+	if len(tx.Logs) == 0 {
+		return nil
+	}
+
 	log.Info().
 		Str("module", "bank").
 		Str("tx_hash", tx.TxHash).
@@ -20,16 +24,7 @@ func Handler(tx types.Tx, index int, msg sdk.Msg, cp *client.Proxy, db *database
 		Str("msg_type", msg.Type()).
 		Msg("found message")
 
-	if len(tx.Logs) == 0 {
-		log.Info().
-			Str("module", "bank").
-			Str("tx_hash", tx.TxHash).
-			Int("msg_index", index).
-			Msg("skipping message as it was not successful")
-		return nil
-	}
-
-	timestamp, err := time.Parse("2006-01-02T15:04:05Z", tx.Timestamp)
+	timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
 	if err != nil {
 		return err
 	}

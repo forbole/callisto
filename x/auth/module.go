@@ -27,7 +27,7 @@ func (m Module) Name() string {
 
 // RunAdditionalOperations implements modules.Module
 func (m Module) RunAdditionalOperations(cfg *config.Config, cdc *codec.Codec, cp *client.Proxy, db db.Database) error {
-	panic("implement me")
+	return nil
 }
 
 // RegisterPeriodicOperations implements modules.Module

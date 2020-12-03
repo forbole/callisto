@@ -14,7 +14,7 @@ import (
 // BigDipperDb represents a PostgreSQL database with expanded features.
 // so that it can properly store custom BigDipper-related data.
 type BigDipperDb struct {
-	postgresql.Database
+	*postgresql.Database
 	Sqlx *sqlx.DB
 }
 
@@ -31,7 +31,11 @@ func Builder(cfg *config.Config, codec *codec.Codec) (db.Database, error) {
 		return nil, err
 	}
 
-	psqlDb, _ := (database).(postgresql.Database)
+	psqlDb, ok := (database).(*postgresql.Database)
+	if !ok {
+		return nil, fmt.Errorf("invalid configuration database, must be PostgreSQL")
+	}
+
 	return &BigDipperDb{
 		Database: psqlDb,
 		Sqlx:     sqlx.NewDb(psqlDb.Sql, "postgresql"),

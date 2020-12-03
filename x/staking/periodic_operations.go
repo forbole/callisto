@@ -148,7 +148,7 @@ func UpdateValidatorVotingPower(cp *client.Proxy, db *database.BigDipperDb) erro
 	log.Debug().
 		Str("module", "staking").
 		Str("operation", "uptime").
-		Msg("saving  voting percentage")
+		Msg("saving voting powers")
 
 	votings := make([]types.ValidatorVotingPower, len(validators.Validators))
 	for index, validator := range validators.Validators {

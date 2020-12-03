@@ -32,7 +32,7 @@ func (m Module) RegisterPeriodicOperations(*gocron.Scheduler, *codec.Codec, *cli
 // RunAdditionalOperations implements modules.Module
 func (m Module) RunAdditionalOperations(cfg *config.Config, cdc *codec.Codec, cp *client.Proxy, db db.Database) error {
 	bdDatabase := database.Cast(db)
-	return bdDatabase.InsertEnableModules(cfg.Modules)
+	return bdDatabase.InsertEnableModules(cfg.CosmosConfig.Modules)
 }
 
 // HandleGenesis implements modules.Module

@@ -28,10 +28,10 @@ func RegisterOps(scheduler *gocron.Scheduler, cp *client.Proxy, db *database.Big
 // updateAccounts gets all the accounts stored inside the database, and refreshes their
 // balances by fetching the LCD endpoint.
 func updateAccounts(cp *client.Proxy, db *database.BigDipperDb) error {
-
 	var block tmctypes.ResultBlock
 	err := cp.QueryLCD("/blocks/latest", &block)
 	if err != nil {
+		log.Err(err).Str("module", "auth").Msg("error getting latest block")
 		return err
 	}
 

@@ -28,6 +28,7 @@ func RefreshAccounts(
 		var account exported.Account
 		_, err := cp.QueryLCDWithHeight(endpoint, &account)
 		if err != nil {
+			log.Err(err).Str("module", "auth").Int64("height", height).Msg("error getting account")
 			return err
 		}
 
