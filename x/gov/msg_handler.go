@@ -2,10 +2,11 @@ package gov
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/desmos-labs/juno/client"
 	"github.com/forbole/bdjuno/x/auth"
 	govtypes "github.com/forbole/bdjuno/x/gov/types"
-	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/gov"

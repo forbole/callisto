@@ -2,6 +2,7 @@ package mint
 
 import (
 	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/juno/client"
 	"github.com/forbole/bdjuno/database"

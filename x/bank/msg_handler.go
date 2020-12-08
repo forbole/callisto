@@ -1,10 +1,11 @@
 package bank
 
 import (
+	"time"
+
 	"github.com/desmos-labs/juno/client"
 	"github.com/forbole/bdjuno/x/auth"
 	"github.com/rs/zerolog/log"
-	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/bank"

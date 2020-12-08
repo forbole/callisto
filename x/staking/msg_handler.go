@@ -1,11 +1,12 @@
 package staking
 
 import (
+	"time"
+
 	cosmosstakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/desmos-labs/juno/client"
 	stakingtypes "github.com/forbole/bdjuno/x/staking/types"
 	"github.com/forbole/bdjuno/x/staking/utils"
-	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"

@@ -2,9 +2,10 @@ package gov
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/forbole/bdjuno/x/staking"
 	"github.com/rs/zerolog/log"
-	"time"
 
 	"github.com/cosmos/cosmos-sdk/x/gov"
 	"github.com/desmos-labs/juno/client"

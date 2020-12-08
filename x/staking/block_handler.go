@@ -2,8 +2,9 @@ package staking
 
 import (
 	"fmt"
-	"github.com/forbole/bdjuno/x/staking/utils"
 	"time"
+
+	"github.com/forbole/bdjuno/x/staking/utils"
 
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/desmos-labs/juno/client"

@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+
 	"github.com/rs/zerolog/log"
 
 	"github.com/cosmos/cosmos-sdk/codec"

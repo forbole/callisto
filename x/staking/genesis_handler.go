@@ -2,8 +2,9 @@ package staking
 
 import (
 	"encoding/json"
-	"github.com/desmos-labs/juno/client"
 	"time"
+
+	"github.com/desmos-labs/juno/client"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"

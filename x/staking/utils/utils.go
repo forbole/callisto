@@ -2,11 +2,12 @@ package utils
 
 import (
 	"fmt"
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/desmos-labs/juno/client"
 	"github.com/forbole/bdjuno/x/staking/types"
-	"time"
 )
 
 // GetDelegations returns the list of all the delegations that the validator having the given address has

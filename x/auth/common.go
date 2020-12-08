@@ -2,12 +2,13 @@ package auth
 
 import (
 	"fmt"
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/exported"
 	"github.com/desmos-labs/juno/client"
 	"github.com/forbole/bdjuno/database"
 	"github.com/rs/zerolog/log"
-	"time"
 )
 
 // RefreshAccounts takes the given addresses and for each one queries the LCD

@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+
 	dbtypes "github.com/forbole/bdjuno/database/types"
 	"github.com/forbole/bdjuno/x/staking/types"
 )

@@ -2,13 +2,14 @@ package pricefeed
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/desmos-labs/juno/client"
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/pricefeed/coingecko"
 	"github.com/forbole/bdjuno/x/utils"
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
-	"time"
 )
 
 // RegisterPeriodicOps returns the AdditionalOperation that periodically runs fetches from

@@ -2,6 +2,7 @@ package staking
 
 import (
 	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/client/rpc"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
