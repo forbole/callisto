@@ -18,7 +18,7 @@ import (
 type DbTestSuite struct {
 	suite.Suite
 
-	database database.BigDipperDb
+	database *database.BigDipperDb
 }
 
 func (suite *DbTestSuite) SetupTest() {
@@ -26,7 +26,7 @@ func (suite *DbTestSuite) SetupTest() {
 	codec := simapp.MakeCodec()
 
 	// Build the database
-	config := jconfig.Config{
+	config := &jconfig.Config{
 		DatabaseConfig: jconfig.DatabaseConfig{
 			Type: "psql",
 			Config: &jconfig.PostgreSQLConfig{
@@ -42,7 +42,7 @@ func (suite *DbTestSuite) SetupTest() {
 	db, err := database.Builder(config, codec)
 	suite.Require().NoError(err)
 
-	bigDipperDb, ok := (*db).(database.BigDipperDb)
+	bigDipperDb, ok := (db).(*database.BigDipperDb)
 	suite.Require().True(ok)
 
 	// Delete the public schema
