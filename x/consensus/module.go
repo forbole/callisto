@@ -1,45 +1,67 @@
 package consensus
 
 import (
-	"github.com/desmos-labs/juno/parse"
-	juno "github.com/desmos-labs/juno/parse/worker"
-	x "github.com/forbole/bdjuno/x/types"
+	"encoding/json"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/desmos-labs/juno/client"
+	"github.com/desmos-labs/juno/config"
+	"github.com/desmos-labs/juno/db"
+	"github.com/desmos-labs/juno/modules"
+	"github.com/desmos-labs/juno/types"
+	"github.com/forbole/bdjuno/database"
+	"github.com/go-co-op/gocron"
+	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+	tmtypes "github.com/tendermint/tendermint/types"
 )
 
-// Module represent /x/Consensus module
+var _ modules.Module = Module{}
+
+// Module implements the consensus operations
 type Module struct{}
 
-// Name return the name of the module
+// Name implements modules.Module
 func (m Module) Name() string {
 	return "consensus"
 }
 
-// BlockHandlers return a list of block handler of the module
-func (m Module) BlockHandlers() []juno.BlockHandler {
-	return []juno.BlockHandler{BlockHandler}
+// RegisterPeriodicOperations implements modules.Module
+func (m Module) RegisterPeriodicOperations(
+	scheduler *gocron.Scheduler, _ *codec.Codec, cp *client.Proxy, db db.Database,
+) error {
+	bdDatabase := database.Cast(db)
+	return Register(scheduler, cp, bdDatabase)
 }
 
-// TxHandlers return a list of TxHandlers of the module
-func (m Module) TxHandlers() []juno.TxHandler {
-	return []juno.TxHandler{}
+// RunAdditionalOperations implements modules.Module
+func (m Module) RunAdditionalOperations(_ *config.Config, _ *codec.Codec, cp *client.Proxy, db db.Database) error {
+	bdDatabase := database.Cast(db)
+	return ListenOperation(cp, bdDatabase)
 }
 
-// MsgHandlers return a list of MsgHandlers of the module
-func (m Module) MsgHandlers() []juno.MsgHandler {
-	return []juno.MsgHandler{}
+// HandleGenesis implements modules.Module
+func (m Module) HandleGenesis(
+	doc *tmtypes.GenesisDoc, _ map[string]json.RawMessage, _ *codec.Codec, _ *client.Proxy, db db.Database,
+) error {
+	bdDatabase := database.Cast(db)
+	return HandleGenesis(doc, bdDatabase)
 }
 
-// AdditionalOperations return a list of AdditionalOperations of the module
-func (m Module) AdditionalOperations() []parse.AdditionalOperation {
-	return []parse.AdditionalOperation{ListenOperation}
+// HandleBlock implements modules.Module
+func (m Module) HandleBlock(
+	b *tmctypes.ResultBlock, _ []types.Tx, _ *tmctypes.ResultValidators, _ *codec.Codec, _ *client.Proxy, db db.Database,
+) error {
+	bdDatabase := database.Cast(db)
+	return HandleBlock(b, bdDatabase)
 }
 
-// PeriodicOperations return a list of PeriodicOperations of the module
-func (m Module) PeriodicOperations() []x.PerodicOperation {
-	return []x.PerodicOperation{PeriodicConcensusOperations}
+// HandleTx implements modules.Module
+func (m Module) HandleTx(types.Tx, *codec.Codec, *client.Proxy, db.Database) error {
+	return nil
 }
 
-// GenesisHandlers return a list of GenesisHandlers of the module
-func (m Module) GenesisHandlers() []juno.GenesisHandler {
-	return []juno.GenesisHandler{GenesisHandler}
+// HandleMsg implements modules.Module
+func (m Module) HandleMsg(int, sdk.Msg, types.Tx, *codec.Codec, *client.Proxy, db.Database) error {
+	return nil
 }

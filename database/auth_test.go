@@ -9,7 +9,7 @@ import (
 	dbtypes "github.com/forbole/bdjuno/database/types"
 )
 
-func (suite *DbTestSuite) TestBigDipperDb_SaveAccount() {
+func (suite *DbTestSuite) TestSaveAccount() {
 	address, err := sdk.AccAddressFromBech32("cosmos140xsjjg6pwkjp0xjz8zru7ytha60l5aee9nlf7")
 	suite.Require().NoError(err)
 
@@ -26,13 +26,21 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveAccount() {
 	account := auth.NewBaseAccountWithAddress(address)
 	suite.Require().NoError(account.SetCoins(coins))
 
+	// ------------------------------
+	// --- Save the data
+	// ------------------------------
+
 	err = suite.database.SaveAccount(&account, height, timestamp)
 	suite.Require().NoError(err)
 
 	err = suite.database.SaveAccount(&account, height, timestamp)
 	suite.Require().NoError(err, "double account insertion should not insert and returns no error")
 
-	// Verify the insertion
+	// ------------------------------
+	// --- Verify the data
+	// ------------------------------
+
+	// Accounts row
 	var accountRows []dbtypes.AccountRow
 	err = suite.database.Sqlx.Select(&accountRows, `SELECT * FROM account`)
 	suite.Require().NoError(err)
@@ -41,21 +49,42 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveAccount() {
 	expectedAccountRow := dbtypes.NewAccountRow("cosmos140xsjjg6pwkjp0xjz8zru7ytha60l5aee9nlf7")
 	suite.Require().True(expectedAccountRow.Equal(accountRows[0]))
 
-	var balancesRows []dbtypes.BalanceRow
-	err = suite.database.Sqlx.Select(&balancesRows, `SELECT address,coins,height,timestamp FROM balance`)
+	// Current balances
+	var balRows []dbtypes.AccountBalanceRow
+	err = suite.database.Sqlx.Select(&balRows, `SELECT * FROM account_balance ORDER BY address`)
 	suite.Require().NoError(err)
-	suite.Require().Len(balancesRows, 1, "balance table should contain only one row")
 
-	expectedBalanceRow := dbtypes.NewBalanceRow(
-		"cosmos140xsjjg6pwkjp0xjz8zru7ytha60l5aee9nlf7",
-		dbtypes.NewDbCoins(coins),
-		height,
-		timestamp,
-	)
-	suite.Require().True(expectedBalanceRow.Equal(balancesRows[0]))
+	expectedBalRows := []dbtypes.AccountBalanceRow{
+		dbtypes.NewAccountBalanceRow(
+			"cosmos140xsjjg6pwkjp0xjz8zru7ytha60l5aee9nlf7",
+			dbtypes.NewDbCoins(coins),
+		),
+	}
+	suite.Require().Len(balRows, len(expectedBalRows))
+	for index, expected := range expectedBalRows {
+		suite.Require().True(expected.Equal(balRows[index]))
+	}
+
+	// Balance histories
+	var balHisRows []dbtypes.AccountBalanceHistoryRow
+	err = suite.database.Sqlx.Select(&balHisRows, `SELECT * FROM account_balance_history ORDER BY address`)
+	suite.Require().NoError(err)
+
+	expectedBalHisRows := []dbtypes.AccountBalanceHistoryRow{
+		dbtypes.NewAccountBalanceHistoryRow(
+			"cosmos140xsjjg6pwkjp0xjz8zru7ytha60l5aee9nlf7",
+			dbtypes.NewDbCoins(coins),
+			height,
+			timestamp,
+		),
+	}
+	suite.Require().Len(balHisRows, len(expectedBalHisRows))
+	for index, expected := range expectedBalHisRows {
+		suite.Require().True(expected.Equal(balHisRows[index]))
+	}
 }
 
-func (suite *DbTestSuite) TestBigDipperDb_SaveAccounts() {
+func (suite *DbTestSuite) TestSaveAccounts() {
 	firstAddr, err := sdk.AccAddressFromBech32("cosmos150zkt7g7kf3ymnzl28dksqvhjuxs9newc9uaq4")
 	suite.Require().NoError(err)
 
@@ -75,37 +104,74 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveAccounts() {
 	timestamp, err := time.Parse(time.RFC3339, "2020-02-02T15:00:00Z")
 	suite.Require().NoError(err)
 
-	// Save the accounts
+	// ------------------------------
+	// --- Save the data
+	// ------------------------------
+
 	err = suite.database.SaveAccounts(accounts, height, timestamp)
 	suite.Require().NoError(err, "storing accounts should return no error")
 
-	// Verify the data
+	// ------------------------------
+	// --- Verify the data
+	// ------------------------------
+
+	// Accounts data
 	var accountsRows []dbtypes.AccountRow
 	err = suite.database.Sqlx.Select(&accountsRows, `SELECT * FROM account ORDER BY address`)
 	suite.Require().NoError(err)
-	suite.Require().Len(accountsRows, 2)
 
-	suite.Require().Equal("cosmos150zkt7g7kf3ymnzl28dksqvhjuxs9newc9uaq4", accountsRows[0].Address)
-	suite.Require().Equal("cosmos1ngpsastyerhhpj72lvy38kn56cmuspfdwu7lg2", accountsRows[1].Address)
+	expAccRows := []dbtypes.AccountRow{
+		dbtypes.NewAccountRow("cosmos150zkt7g7kf3ymnzl28dksqvhjuxs9newc9uaq4"),
+		dbtypes.NewAccountRow("cosmos1ngpsastyerhhpj72lvy38kn56cmuspfdwu7lg2"),
+	}
+	suite.Require().Len(accountsRows, len(expAccRows))
+	for index, expected := range expAccRows {
+		suite.Require().True(expected.Equal(accountsRows[index]))
+	}
 
-	var balancesRows []dbtypes.BalanceRow
-	err = suite.database.Sqlx.Select(&balancesRows, `SELECT * FROM balance ORDER BY address`)
+	// Current balances
+	var balRows []dbtypes.AccountBalanceRow
+	err = suite.database.Sqlx.Select(&balRows, `SELECT * FROM account_balance ORDER BY address`)
 	suite.Require().NoError(err)
-	suite.Require().Len(balancesRows, 2)
 
-	suite.Require().True(balancesRows[0].Equal(dbtypes.NewBalanceRow(
-		"cosmos150zkt7g7kf3ymnzl28dksqvhjuxs9newc9uaq4",
-		dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(10000)))),
-		height,
-		timestamp,
-	)))
+	expectedBalRows := []dbtypes.AccountBalanceRow{
+		dbtypes.NewAccountBalanceRow(
+			"cosmos150zkt7g7kf3ymnzl28dksqvhjuxs9newc9uaq4",
+			dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(10000)))),
+		),
+		dbtypes.NewAccountBalanceRow(
+			"cosmos1ngpsastyerhhpj72lvy38kn56cmuspfdwu7lg2",
+			dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(50000)))),
+		),
+	}
+	suite.Require().Len(balRows, len(expectedBalRows))
+	for index, expected := range expectedBalRows {
+		suite.Require().True(expected.Equal(balRows[index]))
+	}
 
-	suite.Require().True(balancesRows[1].Equal(dbtypes.NewBalanceRow(
-		"cosmos1ngpsastyerhhpj72lvy38kn56cmuspfdwu7lg2",
-		dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(50000)))),
-		height,
-		timestamp,
-	)))
+	// Balance histories
+	var balHisRows []dbtypes.AccountBalanceHistoryRow
+	err = suite.database.Sqlx.Select(&balHisRows, `SELECT * FROM account_balance_history ORDER BY address`)
+	suite.Require().NoError(err)
+
+	expectedBalHisRows := []dbtypes.AccountBalanceHistoryRow{
+		dbtypes.NewAccountBalanceHistoryRow(
+			"cosmos150zkt7g7kf3ymnzl28dksqvhjuxs9newc9uaq4",
+			dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(10000)))),
+			height,
+			timestamp,
+		),
+		dbtypes.NewAccountBalanceHistoryRow(
+			"cosmos1ngpsastyerhhpj72lvy38kn56cmuspfdwu7lg2",
+			dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(50000)))),
+			height,
+			timestamp,
+		),
+	}
+	suite.Require().Len(balHisRows, len(expectedBalHisRows))
+	for index, expected := range expectedBalHisRows {
+		suite.Require().True(expected.Equal(balHisRows[index]))
+	}
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_GetAccounts() {

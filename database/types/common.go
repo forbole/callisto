@@ -1,6 +1,7 @@
 package types
 
 import (
+	"database/sql"
 	"database/sql/driver"
 	"fmt"
 	"strconv"
@@ -8,6 +9,23 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
+
+func ToString(value sql.NullString) string {
+	if value.Valid {
+		return value.String
+	}
+	return ""
+}
+
+func ToNullString(value string) sql.NullString {
+	value = strings.TrimSpace(value)
+	return sql.NullString{
+		Valid:  value != "",
+		String: value,
+	}
+}
+
+// _________________________________________________________
 
 // DbCoin represents the information stored inside the database about a single coin
 type DbCoin struct {

@@ -1,35 +1,74 @@
 package pricefeed
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/desmos-labs/juno/config"
-	"github.com/desmos-labs/juno/db"
-	"github.com/desmos-labs/juno/parse"
-	"github.com/desmos-labs/juno/parse/client"
+	"fmt"
+	"time"
+
+	"github.com/desmos-labs/juno/client"
 	"github.com/forbole/bdjuno/database"
-	operations "github.com/forbole/bdjuno/x/pricefeed/operations"
+	"github.com/forbole/bdjuno/x/pricefeed/coingecko"
 	"github.com/forbole/bdjuno/x/utils"
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
 )
 
-// PeriodicPriceFeedOperations returns the AdditionalOperation that periodically runs fetches from
+// RegisterPeriodicOps returns the AdditionalOperation that periodically runs fetches from
 // CoinGecko to make sure that constantly changing data are synced properly.
-func PeriodicPriceFeedOperations(scheduler *gocron.Scheduler) parse.AdditionalOperation {
+func RegisterPeriodicOps(scheduler *gocron.Scheduler, cp *client.Proxy, db *database.BigDipperDb) error {
 	log.Debug().Str("module", "PriceFeed").Msg("setting up periodic tasks")
 
-	return func(_ config.Config, _ *codec.Codec, cp client.ClientProxy, db db.Database) error {
-		bdDatabase, ok := db.(database.BigDipperDb)
-		if !ok {
-			log.Fatal().Str("module", "PriceFeed").Msg("given database instance is not a BigDipperDb")
-		}
-
-		// Fetch total supply of token in 30 seconds each
-		if _, err := scheduler.Every(30).Second().StartImmediately().Do(func() {
-			utils.WatchMethod(func() error { return operations.UpdatePrice(bdDatabase) })
-		}); err != nil {
-			return err
-		}
-		return nil
+	// Fetch total supply of token in 30 seconds each
+	if _, err := scheduler.Every(30).Second().StartImmediately().Do(func() {
+		utils.WatchMethod(func() error { return updatePrice(db) })
+	}); err != nil {
+		return err
 	}
+
+	return nil
+}
+
+// updatePrice fetch total amount of coins in the system from RPC and store it into database
+func updatePrice(db *database.BigDipperDb) error {
+	log.Debug().
+		Str("module", "pricefeed").
+		Str("operation", "pricefeed").
+		Msg("getting token price and market cap")
+
+	// Get the list of coins
+	coins, err := coingecko.GetCoinsList()
+	if err != nil {
+		return err
+	}
+
+	// Get the list of token names to retrieve
+	names, err := db.GetTokenNames()
+	if err != nil {
+		return err
+	}
+
+	// Find the id of the coins
+	var ids = make([]string, len(names))
+	for i := 0; i < len(coins) && len(ids) < len(names); i++ {
+		coin := coins[i]
+
+		for _, name := range names {
+			if coin.Name == name {
+				ids = append(ids, coin.ID)
+				break
+			}
+		}
+	}
+
+	if len(ids) == 0 {
+		return fmt.Errorf("cannot find tokens from the API: %s", names)
+	}
+
+	// Get the tokens prices
+	prices, err := coingecko.GetTokensPrices(ids)
+	if err != nil {
+		return err
+	}
+
+	// Save the token prices
+	return db.SaveTokensPrices(prices, time.Now().UTC())
 }

@@ -20,6 +20,16 @@ type Validator interface {
 	GetMaxRate() *sdk.Dec
 }
 
+// validator allows to easily implement the Validator interface
+type validator struct {
+	ConsensusAddr       sdk.ConsAddress
+	ConsPubKey          crypto.PubKey
+	OperatorAddr        sdk.ValAddress
+	SelfDelegateAddress sdk.AccAddress
+	MaxChangeRate       *sdk.Dec
+	MaxRate             *sdk.Dec
+}
+
 // NewValidator allows to build a new Validator implementation having the given data
 func NewValidator(
 	consAddr sdk.ConsAddress, opAddr sdk.ValAddress, consPubKey crypto.PubKey,
@@ -34,17 +44,6 @@ func NewValidator(
 		MaxChangeRate:       maxChangeRate,
 		MaxRate:             maxRate,
 	}
-}
-
-// validator allows to easily implement the Validator interface
-//unexported
-type validator struct {
-	ConsensusAddr       sdk.ConsAddress
-	ConsPubKey          crypto.PubKey
-	OperatorAddr        sdk.ValAddress
-	SelfDelegateAddress sdk.AccAddress
-	MaxChangeRate       *sdk.Dec
-	MaxRate             *sdk.Dec
 }
 
 // GetConsAddr implements the Validator interface
@@ -85,30 +84,26 @@ func (v validator) GetMaxRate() *sdk.Dec {
 // ValidatorDescription contains the description of a validator
 // and timestamp do the description get changed
 type ValidatorDescription struct {
-	OpAddr      sdk.ValAddress
-	Description staking.Description
-	Timestamp   time.Time
-	Height      int64
+	OperatorAddress sdk.ValAddress
+	Description     staking.Description
+	Timestamp       time.Time
+	Height          int64
 }
 
-// NewValidatorDescription return a new ValidagtorDescription object
-func NewValidatorDescription(
-	opAddr sdk.ValAddress,
-	description staking.Description,
-	timestamp time.Time,
-	height int64,
+// NewValidatorDescription return a new ValidatorDescription object
+func NewValidatorDescription(opAddr sdk.ValAddress, description staking.Description, height int64, timestamp time.Time,
 ) ValidatorDescription {
 	return ValidatorDescription{
-		OpAddr:      opAddr,
-		Description: description,
-		Timestamp:   timestamp,
-		Height:      height,
+		OperatorAddress: opAddr,
+		Description:     description,
+		Timestamp:       timestamp,
+		Height:          height,
 	}
 }
 
-// Equals return true if two ValidatorDescriptionh are the same
+// Equal tells whether v and w contain the same data
 func (v ValidatorDescription) Equals(w ValidatorDescription) bool {
-	return v.OpAddr.Equals(w.OpAddr) &&
+	return v.OperatorAddress.Equals(w.OperatorAddress) &&
 		v.Description == w.Description &&
 		v.Timestamp.Equal(w.Timestamp) &&
 		v.Height == w.Height
@@ -123,24 +118,27 @@ type ValidatorUptime struct {
 	SignedBlocksWindow  int64
 	MissedBlocksCounter int64
 	Height              int64
+	Timestamp           time.Time
 }
 
 // NewValidatorUptime allows to build a new ValidatorUptime instance
-func NewValidatorUptime(valAddr sdk.ConsAddress, signedBlocWindow, missedBlocksCounter, height int64) ValidatorUptime {
+func NewValidatorUptime(valAddr sdk.ConsAddress, signedBlocWindow, missedBlocksCounter, height int64, timestamp time.Time) ValidatorUptime {
 	return ValidatorUptime{
 		ValidatorAddress:    valAddr,
 		SignedBlocksWindow:  signedBlocWindow,
 		MissedBlocksCounter: missedBlocksCounter,
 		Height:              height,
+		Timestamp:           timestamp,
 	}
 }
 
-// Equal tells whether v and w represent the same uptime
+// Equal tells whether v and w contain the same data
 func (v ValidatorUptime) Equal(w ValidatorUptime) bool {
 	return v.ValidatorAddress.Equals(w.ValidatorAddress) &&
 		v.SignedBlocksWindow == w.SignedBlocksWindow &&
 		v.MissedBlocksCounter == w.MissedBlocksCounter &&
-		v.Height == w.Height
+		v.Height == w.Height &&
+		v.Timestamp.Equal(w.Timestamp)
 }
 
 // _________________________________________________________
@@ -195,18 +193,16 @@ type ValidatorVotingPower struct {
 	ConsensusAddress sdk.ConsAddress
 	VotingPower      int64
 	Height           int64
+	Timestamp        time.Time
 }
 
 // NewValidatorVotingPower creates a new ValidatorVotingPower
-func NewValidatorVotingPower(
-	consensusAddress sdk.ConsAddress,
-	votingPower int64,
-	height int64,
-) ValidatorVotingPower {
+func NewValidatorVotingPower(address sdk.ConsAddress, votingPower int64, height int64, timestamp time.Time) ValidatorVotingPower {
 	return ValidatorVotingPower{
-		ConsensusAddress: consensusAddress,
+		ConsensusAddress: address,
 		VotingPower:      votingPower,
 		Height:           height,
+		Timestamp:        timestamp,
 	}
 }
 
@@ -214,5 +210,6 @@ func NewValidatorVotingPower(
 func (v ValidatorVotingPower) Equals(w ValidatorVotingPower) bool {
 	return v.ConsensusAddress.Equals(w.ConsensusAddress) &&
 		v.VotingPower == w.VotingPower &&
-		v.Height == w.Height
+		v.Height == w.Height &&
+		v.Timestamp.Equal(w.Timestamp)
 }

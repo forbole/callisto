@@ -1,45 +1,61 @@
 package staking
 
 import (
-	"github.com/desmos-labs/juno/parse"
-	juno "github.com/desmos-labs/juno/parse/worker"
-	x "github.com/forbole/bdjuno/x/types"
+	"encoding/json"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/desmos-labs/juno/client"
+	"github.com/desmos-labs/juno/config"
+	"github.com/desmos-labs/juno/db"
+	"github.com/desmos-labs/juno/modules"
+	"github.com/desmos-labs/juno/types"
+	"github.com/forbole/bdjuno/database"
+	"github.com/go-co-op/gocron"
+	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+	tmtypes "github.com/tendermint/tendermint/types"
 )
 
-// Module represent /x/Staking module
+var _ modules.Module = Module{}
+
+// Module represents the x/staking module
 type Module struct{}
 
-// Name return the name of the module
+// Name implements modules.Module
 func (m Module) Name() string {
 	return "staking"
 }
 
-// BlockHandlers return a list of block handler of the module
-func (m Module) BlockHandlers() []juno.BlockHandler {
-	return []juno.BlockHandler{BlockHandler}
+// RunAdditionalOperations implements modules.Module
+func (m Module) RunAdditionalOperations(cfg *config.Config, cdc *codec.Codec, cp *client.Proxy, db db.Database) error {
+	return nil
 }
 
-// TxHandlers return a list of TxHandlers of the module
-func (m Module) TxHandlers() []juno.TxHandler {
-	return []juno.TxHandler{}
+// RegisterPeriodicOperations implements modules.Module
+func (m Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler, cdc *codec.Codec, cp *client.Proxy, db db.Database) error {
+	bdDatabase := database.Cast(db)
+	return RegisterPeriodicOps(scheduler, cp, bdDatabase)
 }
 
-// MsgHandlers return a list of MsgHandlers of the module
-func (m Module) MsgHandlers() []juno.MsgHandler {
-	return []juno.MsgHandler{MsgHandler}
+// HandleGenesis implements modules.Module
+func (m Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, cdc *codec.Codec, cp *client.Proxy, db db.Database) error {
+	bdDatabase := database.Cast(db)
+	return HandleGenesis(doc, appState, cdc, cp, bdDatabase)
 }
 
-// AdditionalOperations return a list of AdditionalOperations of the module
-func (m Module) AdditionalOperations() []parse.AdditionalOperation {
-	return []parse.AdditionalOperation{}
+// HandleBlock implements modules.Module
+func (m Module) HandleBlock(block *tmctypes.ResultBlock, txs []types.Tx, vals *tmctypes.ResultValidators, cdc *codec.Codec, cp *client.Proxy, db db.Database) error {
+	bdDatabase := database.Cast(db)
+	return HandleBlock(block, cp, bdDatabase)
 }
 
-// PeriodicOperations return a list of PeriodicOperations of the module
-func (m Module) PeriodicOperations() []x.PerodicOperation {
-	return []x.PerodicOperation{PeriodicStakingOperations}
+// HandleTx implements modules.Module
+func (m Module) HandleTx(tx types.Tx, cdc *codec.Codec, cp *client.Proxy, db db.Database) error {
+	return nil
 }
 
-// GenesisHandlers return a list of GenesisHandlers of the module
-func (m Module) GenesisHandlers() []juno.GenesisHandler {
-	return []juno.GenesisHandler{GenesisHandler}
+// HandleMsg implements modules.Module
+func (m Module) HandleMsg(index int, msg sdk.Msg, tx types.Tx, cdc *codec.Codec, cp *client.Proxy, db db.Database) error {
+	bdDatabase := database.Cast(db)
+	return HandleMsg(tx, index, msg, cp, bdDatabase)
 }

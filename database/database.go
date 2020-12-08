@@ -3,6 +3,8 @@ package database
 import (
 	"fmt"
 
+	"github.com/rs/zerolog/log"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/desmos-labs/juno/config"
 	"github.com/desmos-labs/juno/db"
@@ -13,28 +15,38 @@ import (
 // BigDipperDb represents a PostgreSQL database with expanded features.
 // so that it can properly store custom BigDipper-related data.
 type BigDipperDb struct {
-	postgresql.Database
+	*postgresql.Database
 	Sqlx *sqlx.DB
 }
 
 // Builder allows to create a new BigDipperDb instance implementing the database.Builder type
-func Builder(cfg config.Config, codec *codec.Codec) (*db.Database, error) {
+func Builder(cfg *config.Config, codec *codec.Codec) (db.Database, error) {
 	psqlConfig, ok := cfg.DatabaseConfig.Config.(*config.PostgreSQLConfig)
 	if !ok {
 		// TODO: Support MongoDB
 		return nil, fmt.Errorf("MongoDB configuration is not supported on BigDipper")
 	}
 
-	database, err := postgresql.Builder(*psqlConfig, codec)
+	database, err := postgresql.Builder(psqlConfig, codec)
 	if err != nil {
 		return nil, err
 	}
 
-	psqlDb, _ := (*database).(postgresql.Database)
-	var bigDipperDb db.Database = BigDipperDb{
-		Database: psqlDb,
-		Sqlx:     sqlx.NewDb(psqlDb.Sql, "postgresql"),
+	psqlDb, ok := (database).(*postgresql.Database)
+	if !ok {
+		return nil, fmt.Errorf("invalid configuration database, must be PostgreSQL")
 	}
 
-	return &bigDipperDb, nil
+	return &BigDipperDb{
+		Database: psqlDb,
+		Sqlx:     sqlx.NewDb(psqlDb.Sql, "postgresql"),
+	}, nil
+}
+
+func Cast(db db.Database) *BigDipperDb {
+	bdDatabase, ok := db.(*BigDipperDb)
+	if !ok {
+		log.Fatal().Str("module", "supply").Msg("given database instance is not a BigDipperDb")
+	}
+	return bdDatabase
 }

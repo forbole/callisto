@@ -1,41 +1,152 @@
-CREATE TABLE staking_pool
+/* ---- PARAMS ---- */
+CREATE TABLE staking_params
 (
-    height            BIGINT                      NOT NULL PRIMARY KEY,
-    timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    bond_denom TEXT NOT NULL
+);
+
+/* ---- POOL ---- */
+
+CREATE TABLE staking_pool_history
+(
     bonded_tokens     BIGINT                      NOT NULL,
-    not_bonded_tokens BIGINT                      NOT NULL
+    not_bonded_tokens BIGINT                      NOT NULL,
+    height            BIGINT                      NOT NULL,
+    timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    PRIMARY KEY (height)
+);
+
+/* ---- VALIDATORS INFO ---- */
+
+CREATE TABLE validator_info
+(
+    consensus_address     TEXT NOT NULL UNIQUE REFERENCES validator (consensus_address),
+    operator_address      TEXT NOT NULL UNIQUE,
+    self_delegate_address TEXT REFERENCES account (address),
+    max_change_rate       TEXT NOT NULL,
+    max_rate              TEXT NOT NULL
+);
+
+CREATE TABLE validator_description
+(
+    validator_address TEXT NOT NULL UNIQUE REFERENCES validator (consensus_address),
+    moniker           TEXT,
+    identity          TEXT,
+    website           TEXT,
+    security_contact  TEXT,
+    details           TEXT
+);
+
+CREATE TABLE validator_description_history
+(
+    validator_address TEXT                        NOT NULL REFERENCES validator (consensus_address),
+    moniker           TEXT,
+    identity          TEXT,
+    website           TEXT,
+    security_contact  TEXT,
+    details           TEXT,
+    height            BIGINT,
+    timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    PRIMARY KEY (validator_address, height)
+);
+
+CREATE TABLE validator_commission
+(
+    validator_address   TEXT    NOT NULL UNIQUE REFERENCES validator (consensus_address),
+    commission          DECIMAL NOT NULL,
+    min_self_delegation BIGINT  NOT NULL
+);
+
+CREATE TABLE validator_commission_history
+(
+    validator_address   TEXT                        NOT NULL REFERENCES validator (consensus_address),
+    commission          DECIMAL                     NOT NULL,
+    min_self_delegation BIGINT                      NOT NULL,
+    height              BIGINT                      NOT NULL,
+    timestamp           TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    PRIMARY KEY (validator_address, height)
+);
+
+CREATE TABLE validator_voting_power
+(
+    validator_address TEXT   NOT NULL UNIQUE REFERENCES validator (consensus_address),
+    voting_power      BIGINT NOT NULL
+);
+
+CREATE TABLE validator_voting_power_history
+(
+    validator_address TEXT                        NOT NULL REFERENCES validator (consensus_address),
+    voting_power      BIGINT                      NOT NULL,
+    height            BIGINT                      NOT NULL,
+    timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    PRIMARY KEY (validator_address, height)
 );
 
 CREATE TABLE validator_uptime
 (
-    validator_address     TEXT   NOT NULL REFERENCES validator (consensus_address),
-    height                BIGINT NOT NULL,
+    validator_address     TEXT   NOT NULL UNIQUE REFERENCES validator (consensus_address),
     signed_blocks_window  BIGINT NOT NULL,
-    missed_blocks_counter BIGINT NOT NULL,
+    missed_blocks_counter BIGINT NOT NULL
+);
+
+CREATE TABLE validator_uptime_history
+(
+    validator_address     TEXT                        NOT NULL REFERENCES validator (consensus_address),
+    signed_blocks_window  BIGINT                      NOT NULL,
+    missed_blocks_counter BIGINT                      NOT NULL,
+    height                BIGINT                      NOT NULL,
+    timestamp             TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     PRIMARY KEY (validator_address, height)
 );
 
-CREATE TABLE validator_info
+/* ---- DELEGATIONS ---- */
+
+/*
+ * This table holds only the CURRENT delegations.
+ * It should be updated on a BLOCK basis, deleting all the
+ * existing data
+ */
+CREATE TABLE delegation
 (
-    consensus_address     TEXT NOT NULL REFERENCES validator (consensus_address) UNIQUE PRIMARY KEY,
-    operator_address      TEXT NOT NULL UNIQUE,
-    self_delegate_address TEXT REFERENCES account (address),
-    max_change_rate       TEXT NOT NULL,
-	max_rate              TEXT NOT NULL
+    validator_address TEXT    NOT NULL REFERENCES validator (consensus_address),
+    delegator_address TEXT    NOT NULL REFERENCES account (address),
+    amount            COIN    NOT NULL,
+    shares            NUMERIC NOT NUll
 );
 
-CREATE TABLE validator_delegation
+/*
+ * This table holds the HISTORICAL delegations.
+ * It should be updated on a MESSAGE basis, to avoid data duplication.
+ */
+CREATE TABLE delegation_history
 (
-    consensus_address TEXT                        NOT NULL REFERENCES validator (consensus_address),
+    validator_address TEXT                        NOT NULL REFERENCES validator (consensus_address),
     delegator_address TEXT                        NOT NULL REFERENCES account (address),
     amount            COIN                        NOT NULL,
+    shares            NUMERIC                     NOT NUll,
     height            BIGINT                      NOT NULL,
     timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
-CREATE TABLE validator_unbonding_delegation
+/*
+ * This table holds only the CURRENT unbonding delegations.
+ * It should be updated on a BLOCK basis, deleting all the
+ * existing data
+ */
+CREATE TABLE unbonding_delegation
 (
-    consensus_address    TEXT                        NOT NULL REFERENCES validator (consensus_address),
+    validator_address    TEXT                        NOT NULL REFERENCES validator (consensus_address),
+    delegator_address    TEXT                        NOT NULL REFERENCES account (address),
+    amount               COIN                        NOT NUll,
+    completion_timestamp TIMESTAMP WITHOUT TIME ZONE NOT NULL
+);
+
+/*
+ * This table holds the HISTORICAL unbonding delegations.
+ * It should be updated on a MESSAGE basis, to avoid data duplication.
+ */
+CREATE TABLE unbonding_delegation_history
+(
+    validator_address    TEXT                        NOT NULL REFERENCES validator (consensus_address),
     delegator_address    TEXT                        NOT NULL REFERENCES account (address),
     amount               COIN                        NOT NUll,
     completion_timestamp TIMESTAMP WITHOUT TIME ZONE NOT NULL,
@@ -43,51 +154,32 @@ CREATE TABLE validator_unbonding_delegation
     timestamp            TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
-CREATE TABLE validator_redelegation
+/*
+ * This table holds only the CURRENT redelegations.
+ * It should be updated on a BLOCK basis, deleting all the
+ * existing data
+ */
+CREATE TABLE redelegation
 (
     delegator_address     TEXT                        NOT NULL REFERENCES account (address),
     src_validator_address TEXT                        NOT NULL REFERENCES validator (consensus_address),
     dst_validator_address TEXT                        NOT NULL REFERENCES validator (consensus_address),
     amount                COIN                        NOT NULL,
-    height                BIGINT                      NOT NULL,
     completion_time       TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
-CREATE TABLE validator_delegation_shares
+/*
+ * This table holds the HISTORICAL redelegations.
+ * It should be updated on a MESSAGE basis, to avoid data duplication.
+ */
+CREATE TABLE redelegation_history
 (
-    operator_address  TEXT                        NOT NULL REFERENCES validator_info (operator_address),
-    delegator_address TEXT                        NOT NULL REFERENCES account (address),
-    shares            NUMERIC                     NOT NUll,
-    height            BIGINT                      NOT NULL,
-    timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    PRIMARY KEY (operator_address, delegator_address, height)
-);
-
-CREATE TABLE validator_commission
-(
-    operator_address    TEXT                        NOT NULL REFERENCES validator_info (operator_address) UNIQUE,
-    timestamp           TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    commission          DECIMAL                     NOT NULL,
-    min_self_delegation BIGINT                      NOT NULL,
-    height              BIGINT                      NOT NULL
-);
-
-CREATE TABLE validator_voting_power
-(
-    consensus_address TEXT   NOT NULL REFERENCES validator (consensus_address),
-    voting_power      BIGINT NOT NULL,
-    height            BIGINT NOT NULL,
-    PRIMARY KEY (consensus_address, height)
-);
-
-CREATE TABLE validator_description
-(
-    operator_address      TEXT NOT NULL REFERENCES validator_info(operator_address),
-    moniker               TEXT ,
-    identity              TEXT,
-    website               TEXT,
-    security_contact      TEXT,
-    details               TEXT,
-    height                BIGINT,
+    delegator_address     TEXT                        NOT NULL REFERENCES account (address),
+    src_validator_address TEXT                        NOT NULL REFERENCES validator (consensus_address),
+    dst_validator_address TEXT                        NOT NULL REFERENCES validator (consensus_address),
+    amount                COIN                        NOT NULL,
+    completion_time       TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    height                BIGINT                      NOT NULL,
     timestamp             TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
+

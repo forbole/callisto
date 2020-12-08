@@ -1,4 +1,4 @@
-package bank
+package modules
 
 import (
 	"encoding/json"
@@ -18,12 +18,11 @@ import (
 
 var _ modules.Module = Module{}
 
-// Module represents the x/bank module
 type Module struct{}
 
 // Name implements modules.Module
 func (m Module) Name() string {
-	return "bank"
+	return "modules"
 }
 
 // RegisterPeriodicOperations implements modules.Module
@@ -32,8 +31,9 @@ func (m Module) RegisterPeriodicOperations(*gocron.Scheduler, *codec.Codec, *cli
 }
 
 // RunAdditionalOperations implements modules.Module
-func (m Module) RunAdditionalOperations(*config.Config, *codec.Codec, *client.Proxy, db.Database) error {
-	return nil
+func (m Module) RunAdditionalOperations(cfg *config.Config, cdc *codec.Codec, cp *client.Proxy, db db.Database) error {
+	bdDatabase := database.Cast(db)
+	return bdDatabase.InsertEnableModules(cfg.CosmosConfig.Modules)
 }
 
 // HandleGenesis implements modules.Module
@@ -56,7 +56,6 @@ func (m Module) HandleTx(types.Tx, *codec.Codec, *client.Proxy, db.Database) err
 }
 
 // HandleMsg implements modules.Module
-func (m Module) HandleMsg(index int, sdkMsg sdk.Msg, tx types.Tx, _ *codec.Codec, cp *client.Proxy, db db.Database) error {
-	bdDatabase := database.Cast(db)
-	return Handler(tx, index, sdkMsg, cp, bdDatabase)
+func (m Module) HandleMsg(int, sdk.Msg, types.Tx, *codec.Codec, *client.Proxy, db.Database) error {
+	return nil
 }

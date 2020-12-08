@@ -12,16 +12,27 @@ import (
 
 // SaveAccount saves the given account information for the given block height and timestamp
 func (db BigDipperDb) SaveAccount(account exported.Account, height int64, timestamp time.Time) error {
-	accStmt := `INSERT INTO account (address) VALUES ($1) ON CONFLICT DO NOTHING`
-	_, err := db.Sql.Exec(accStmt, account.GetAddress().String())
+	stmt := `INSERT INTO account (address) VALUES ($1) ON CONFLICT DO NOTHING`
+	_, err := db.Sql.Exec(stmt, account.GetAddress().String())
 	if err != nil {
 		return err
 	}
 
-	balStmt := `INSERT INTO balance (address, coins, height, timestamp) 
-				VALUES ($1, $2::coin[], $3, $4) ON CONFLICT DO NOTHING`
-	_, err = db.Sql.Exec(balStmt,
-		account.GetAddress().String(), pq.Array(dbtypes.NewDbCoins(account.GetCoins())), height, timestamp)
+	coins := pq.Array(dbtypes.NewDbCoins(account.GetCoins()))
+
+	stmt = `
+INSERT INTO account_balance (address, coins) 
+VALUES ($1, $2) 
+ON CONFLICT (address) DO UPDATE SET coins = excluded.coins`
+	_, err = db.Sql.Exec(stmt, account.GetAddress().String(), coins)
+	if err != nil {
+		return err
+	}
+
+	stmt = `
+INSERT INTO account_balance_history (address, coins, height, timestamp) 
+VALUES ($1, $2::coin[], $3, $4) ON CONFLICT DO NOTHING`
+	_, err = db.Sql.Exec(stmt, account.GetAddress().String(), coins, height, timestamp)
 	return err
 }
 
@@ -32,36 +43,57 @@ func (db BigDipperDb) SaveAccounts(accounts []exported.Account, height int64, ti
 		return nil
 	}
 
-	accountsStmt := "INSERT INTO account (address) VALUES "
-	var accountParams []interface{}
+	accQry := `INSERT INTO account (address) VALUES `
+	var accParams []interface{}
 
-	balancesStmt := "INSERT INTO balance (address, coins, height, timestamp) VALUES "
-	var balanceParams []interface{}
+	balQry := `INSERT INTO account_balance (address, coins) VALUES `
+	var balParams []interface{}
+
+	balHisQry := `INSERT INTO account_balance_history (address, coins, height, timestamp) VALUES `
+	var bHisParams []interface{}
 
 	for i, account := range accounts {
-		a1 := i * 1 // Starting position for
-		b1 := i * 4 // Starting position for balances insertion
+		ai := i * 1
+		accQry += fmt.Sprintf("($%d),", ai+1)
+		accParams = append(accParams, account.GetAddress().String())
 
-		accountsStmt += fmt.Sprintf("($%d),", a1+1)
-		accountParams = append(accountParams, account.GetAddress().String())
+		coins := pq.Array(dbtypes.NewDbCoins(account.GetCoins()))
 
-		balancesStmt += fmt.Sprintf("($%d,$%d,$%d,$%d),", b1+1, b1+2, b1+3, b1+4)
-		balanceParams = append(balanceParams,
-			account.GetAddress().String(), pq.Array(dbtypes.NewDbCoins(account.GetCoins())), height, timestamp)
+		bi := i * 2
+		balQry += fmt.Sprintf("($%d, $%d),", bi+1, bi+2)
+		balParams = append(balParams, account.GetAddress().String(), coins)
+
+		bHi := i * 4
+		balHisQry += fmt.Sprintf("($%d,$%d,$%d,$%d),", bHi+1, bHi+2, bHi+3, bHi+4)
+		bHisParams = append(bHisParams, account.GetAddress().String(), coins, height, timestamp)
 	}
 
 	// Store the accounts
-	accountsStmt = accountsStmt[:len(accountsStmt)-1] // Remove trailing ","
-	accountsStmt += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(accountsStmt, accountParams...)
+	accQry = accQry[:len(accQry)-1] // Remove trailing ","
+	accQry += " ON CONFLICT (address) DO NOTHING"
+	_, err := db.Sql.Exec(accQry, accParams...)
 	if err != nil {
 		return err
 	}
 
-	// Store the balances
-	balancesStmt = balancesStmt[:len(balancesStmt)-1] // Remove trailing ","
-	balancesStmt += " ON CONFLICT DO NOTHING"
-	_, err = db.Sql.Exec(balancesStmt, balanceParams...)
+	// Remove all the existing balances
+	_, err = db.Sql.Exec(`DELETE FROM account_balance WHERE TRUE`)
+	if err != nil {
+		return err
+	}
+
+	// Insert the current balances
+	balQry = balQry[:len(balQry)-1] // Remove trailing ","
+	balQry += " ON CONFLICT (address) DO NOTHING"
+	_, err = db.Sql.Exec(balQry, balParams...)
+	if err != nil {
+		return err
+	}
+
+	// Store the balances histories
+	balHisQry = balHisQry[:len(balHisQry)-1] // Remove trailing ","
+	balHisQry += " ON CONFLICT (address, height) DO NOTHING"
+	_, err = db.Sql.Exec(balHisQry, bHisParams...)
 	return err
 }
 

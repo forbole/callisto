@@ -7,10 +7,7 @@ import (
 
 	"github.com/forbole/bdjuno/database"
 
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/desmos-labs/juno/config"
-	"github.com/desmos-labs/juno/db"
-	"github.com/desmos-labs/juno/parse/client"
+	"github.com/desmos-labs/juno/client"
 	constypes "github.com/forbole/bdjuno/x/consensus/types"
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
@@ -18,12 +15,7 @@ import (
 )
 
 // ListenOperation allows to start listening to new consensus events properly
-func ListenOperation(_ config.Config, _ *codec.Codec, cp client.ClientProxy, db db.Database) error {
-	bdDatabase, ok := db.(database.BigDipperDb)
-	if !ok {
-		return fmt.Errorf("given database instance is not a BigDipperDb")
-	}
-
+func ListenOperation(cp *client.Proxy, db *database.BigDipperDb) error {
 	events := []string{
 		tmtypes.EventCompleteProposal,
 		tmtypes.EventNewRound,
@@ -56,7 +48,7 @@ func ListenOperation(_ config.Config, _ *codec.Codec, cp client.ClientProxy, db 
 			}
 
 			// Save the event
-			err = bdDatabase.SaveConsensus(consEvent)
+			err = db.SaveConsensus(consEvent)
 			if err != nil {
 				log.Fatal().Err(err).Send()
 			}
@@ -68,7 +60,7 @@ func ListenOperation(_ config.Config, _ *codec.Codec, cp client.ClientProxy, db 
 
 // subscribeConsensusEvent allows to subscribe to the consensus event having the given name,
 // and returns a read-only channel emitting all the events
-func subscribeConsensusEvent(index int, event string, cp client.ClientProxy) <-chan tmctypes.ResultEvent {
+func subscribeConsensusEvent(index int, event string, cp *client.Proxy) <-chan tmctypes.ResultEvent {
 	query := fmt.Sprintf("tm.event = '%s'", event)
 	subscriber := fmt.Sprintf("juno-client-consensus-%d", index)
 

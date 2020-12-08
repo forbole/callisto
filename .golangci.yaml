@@ -10,7 +10,6 @@ linters:
     - deadcode
     - depguard
     - dogsled
-    # - errcheck
     - gocritic
     - gofmt
     - goimports
@@ -31,7 +30,6 @@ linters:
     - unused
     - unparam
     - misspell
-    # - wsl
     - nolintlint
 
 issues:
