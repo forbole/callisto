@@ -213,3 +213,33 @@ func (v ValidatorVotingPower) Equals(w ValidatorVotingPower) bool {
 		v.Height == w.Height &&
 		v.Timestamp.Equal(w.Timestamp)
 }
+
+//--------------------------------------------------------
+// ValidatorStatus represent status and jailed state for validator in specific height an timestamp
+type ValidatorStatus struct {
+	ConsensusAddress sdk.ConsAddress
+	Status      int64
+	Jailed      bool
+	Height           int64
+	Timestamp        time.Time
+}
+
+// NewValidatorVotingPower creates a new ValidatorVotingPower
+func NewValidatorStatus(address sdk.ConsAddress, status int64, jailed bool,height int64, timestamp time.Time) ValidatorStatus {
+	return ValidatorStatus{
+		ConsensusAddress: address,
+		Status:      status,
+		Jailed: jailed,
+		Height:           height,
+		Timestamp:        timestamp,
+	}
+}
+
+// Equals tells whether v and w are equals
+func (v ValidatorStatus) Equals(w ValidatorStatus) bool {
+	return v.ConsensusAddress.Equals(w.ConsensusAddress) &&
+		v.Jailed == w.Jailed &&
+		v.Status == w.Status &&
+		v.Height == w.Height &&
+		v.Timestamp.Equal(w.Timestamp)
+}

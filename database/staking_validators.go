@@ -367,3 +367,27 @@ VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`
 		uptime.ValidatorAddress.String(), uptime.SignedBlocksWindow, uptime.MissedBlocksCounter, uptime.Height, uptime.Timestamp)
 	return err
 }
+
+//---------------------------------------------------
+
+// UpdateValidatorStatus update current validator jail and status in the database
+func (db BigDipperDb) UpdateValidatorStatus(consAddress sdk.ConsAddress,status int64, jailed bool) error {
+	stmt := `UPDATE validator_status SET status = $1,jailed= $2 where validator_address = $3`
+	_, err := db.Sql.Exec(stmt,
+		status, jailed, consAddress.String())
+	return err
+}
+
+// SaveValidatorStatus save validator jail and status in the given height and timestamp
+func (db BigDipperDb) SaveValidatorStatus(validatorStatus types.ValidatorStatus) error {
+	stmt := `INSERT INTO validator_status_history (validator_address,status,jailed,height,timestamp) 
+	VALUES ($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING `
+	_, err := db.Sql.Exec(stmt,
+		validatorStatus.ConsensusAddress,
+		validatorStatus.Status,
+		validatorStatus.Jailed,
+		validatorStatus.Height,
+		validatorStatus.Timestamp)
+	return err
+}
+

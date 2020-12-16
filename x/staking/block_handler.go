@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/forbole/bdjuno/x/staking/utils"
-
+	"github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/desmos-labs/juno/client"
 	"github.com/forbole/bdjuno/database"
@@ -26,6 +26,11 @@ func HandleBlock(block *tmctypes.ResultBlock, cp *client.Proxy, db *database.Big
 	// Update the delegations
 	err = updateValidatorsDelegations(block.Block.Height, block.Block.Time, cp, db)
 	if err != nil {
+		return err
+	}
+
+	err = updateValidatorsStatus(block.Block.Height, block.Block.Time, cp, db)
+	if err!=nil{
 		return err
 	}
 
@@ -102,6 +107,44 @@ func updateValidatorsDelegations(height int64, timestamp time.Time, cp *client.P
 			return err
 		}
 	}
+
+	return nil
+}
+
+// updateValidatorsStatus  
+func updateValidatorsStatus(height int64, timestamp time.Time, cp *client.Proxy, db *database.BigDipperDb) error {
+	log.Debug().
+		Str("module", "staking").
+		Str("operation", "delegations").
+		Msg("getting delegations")
+
+		var objs staking.Validators
+		endpoint := fmt.Sprintf("/staking/validators")
+		height, err := cp.QueryLCDWithHeight(endpoint, &objs)
+		if err != nil {
+			log.Err(err).Str("module", "staking").Msg("error while getting validator pool")
+			return err
+		}
+	
+		log.Debug().
+			Str("module", "staking").
+			Str("operation", "staking_pool").
+			Msg("saving staking pool")
+		
+		for _,validator := range objs {
+			//for each block save 
+			err = db.UpdateValidatorStatus(validator.ConsAddress(),validator.GetStatus(),validator.IsJailed())
+			if err != nil{
+				return err
+			}
+			
+			err = db.SaveValidatorStatus(types.NewValidatorStatus(
+				validator.ConsAddress(),validator.GetStatus(),validator.IsJailed()))
+			if err != nil{
+				return err
+			}
+
+		}
 
 	return nil
 }

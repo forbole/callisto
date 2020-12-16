@@ -98,6 +98,23 @@ CREATE TABLE validator_uptime_history
     PRIMARY KEY (validator_address, height)
 );
 
+CREATE TABLE validator_status
+(
+    validator_address TEXT    NOT NULL REFERENCES validator (consensus_address),
+    status            INT     NOT NULL,
+    jailed            BOOLEAN NOT NULL
+);
+
+CREATE TABLE validator_status_history
+(
+    validator_address TEXT                        NOT NULL REFERENCES validator (consensus_address),
+    status            INT                         NOT NULL,
+    jailed            BOOLEAN                     NOT NULL,
+    height            BIGINT,
+    timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    PRIMARY KEY (validator_address, height)
+);
+
 /* ---- DELEGATIONS ---- */
 
 /*
