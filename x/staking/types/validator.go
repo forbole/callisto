@@ -218,14 +218,14 @@ func (v ValidatorVotingPower) Equals(w ValidatorVotingPower) bool {
 // ValidatorStatus represent status and jailed state for validator in specific height an timestamp
 type ValidatorStatus struct {
 	ConsensusAddress sdk.ConsAddress
-	Status      int64
+	Status      string
 	Jailed      bool
 	Height           int64
 	Timestamp        time.Time
 }
 
 // NewValidatorVotingPower creates a new ValidatorVotingPower
-func NewValidatorStatus(address sdk.ConsAddress, status int64, jailed bool,height int64, timestamp time.Time) ValidatorStatus {
+func NewValidatorStatus(address sdk.ConsAddress, status string, jailed bool,height int64, timestamp time.Time) ValidatorStatus {
 	return ValidatorStatus{
 		ConsensusAddress: address,
 		Status:      status,

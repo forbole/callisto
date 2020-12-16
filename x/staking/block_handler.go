@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	stakingtypes"github.com/forbole/bdjuno/x/staking/types"
 	"github.com/forbole/bdjuno/x/staking/utils"
 	"github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
@@ -132,14 +133,9 @@ func updateValidatorsStatus(height int64, timestamp time.Time, cp *client.Proxy,
 			Msg("saving staking pool")
 		
 		for _,validator := range objs {
-			//for each block save 
-			err = db.UpdateValidatorStatus(validator.ConsAddress(),validator.GetStatus(),validator.IsJailed())
-			if err != nil{
-				return err
-			}
 			
-			err = db.SaveValidatorStatus(types.NewValidatorStatus(
-				validator.ConsAddress(),validator.GetStatus(),validator.IsJailed()))
+			err = db.SaveValidatorStatus(stakingtypes.NewValidatorStatus(
+				validator.ConsAddress(),validator.GetStatus().String(),validator.IsJailed(),height,timestamp))
 			if err != nil{
 				return err
 			}

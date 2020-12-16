@@ -403,3 +403,93 @@ func (suite *DbTestSuite) TestSaveValidatorsVotingPowers() {
 	}
 
 }
+//-----------------------------------------------------------
+
+func (suite *DbTestSuite) SaveValidatorStatus() {
+	validator1 := suite.getValidator(
+		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
+		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
+		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
+	)
+
+	status1:=types.NewValidatorStatus(
+		validator1.GetConsAddr(),
+		"status1",
+		false,
+		10,
+		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+	)
+
+	status2:=types.NewValidatorStatus(
+		validator1.GetConsAddr(),
+		"status2",
+		true,
+		20,
+		time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+	)
+
+	status1db:=dbtypes.NewValidatorStatusRow(
+		"status1",
+		false,
+	)
+
+	status2db:=dbtypes.NewValidatorStatusRow(
+		"status2",
+		true,
+	)
+
+	history1:=dbtypes.NewValidatorStatusHistoryRow(
+		validator1.GetConsAddr(),
+		"status1",
+		false,
+		10,
+		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+	)
+
+	history2:=[]dbtypes.ValidatorStatusHistoryRow{
+		history1,
+		dbtypes.NewValidatorStatusHistoryRow(
+		validator1.GetConsAddr(),
+		"status2",
+		true,
+		20,
+		time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+	),
+}
+	err := suite.database.SaveValidatorStatus(status1)
+	suite.Require().NoError(err)
+
+	var result []dbtypes.ValidatorStatusRow
+	err = suite.database.Sqlx.Select(&result, "SELECT * FROM validator_status")
+	suite.Require().NoError(err)
+	suite.Require().Len(result,1)
+	suite.Require().True(row[0].Equal(status1db))
+
+
+	var result []dbtypes.ValidatorStatusRow
+	err = suite.database.Sqlx.Select(&result, "SELECT * FROM validator_status_history")
+	suite.Require().NoError(err)
+	suite.Require().Len(result,1)
+	suite.Require().True(row[0].Equal(history1))
+
+	// Second insert
+	err := suite.database.SaveValidatorStatus(status2)
+	suite.Require().NoError(err)
+
+	var result []dbtypes.ValidatorStatusRow
+	err = suite.database.Sqlx.Select(&result, "SELECT * FROM validator_status")
+	suite.Require().NoError(err)
+	suite.Require().Len(result,1)
+	suite.Require().True(row[0].Equal(status2db))
+
+
+	var result []dbtypes.ValidatorStatusRow
+	err = suite.database.Sqlx.Select(&result, "SELECT * FROM validator_status_history")
+	suite.Require().NoError(err)
+	suite.Require().Len(result,2)
+	for index,row := range result{
+		suite.Require().True(row.Equal(history2[index]))
+	}
+
+
+}
