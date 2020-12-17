@@ -6,7 +6,6 @@ import (
 
 	stakingtypes"github.com/forbole/bdjuno/x/staking/types"
 	"github.com/forbole/bdjuno/x/staking/utils"
-	"github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/desmos-labs/juno/client"
 	"github.com/forbole/bdjuno/database"
@@ -120,7 +119,7 @@ func updateValidatorsStatus(height int64, timestamp time.Time, cp *client.Proxy,
 		Msg("getting delegations")
 
 		var objs staking.Validators
-		endpoint := fmt.Sprintf("/staking/validators")
+		endpoint := fmt.Sprintf("staking/validators?height=%d",height)
 		height, err := cp.QueryLCDWithHeight(endpoint, &objs)
 		if err != nil {
 			log.Err(err).Str("module", "staking").Msg("error while getting validator pool")
