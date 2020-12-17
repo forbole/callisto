@@ -379,10 +379,10 @@ func (db BigDipperDb) SaveValidatorStatus(validatorStatus types.ValidatorStatus)
 		validatorStatus.Status,
 		validatorStatus.Jailed,
 		validatorStatus.ConsensusAddress.String())
-	if err !=nil{
+	if err != nil {
 		return err
 	}
-	
+
 	stmt = `INSERT INTO validator_status_history (validator_address,status,jailed,height,timestamp) 
 	VALUES ($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING `
 	_, err = db.Sql.Exec(stmt,
@@ -393,4 +393,3 @@ func (db BigDipperDb) SaveValidatorStatus(validatorStatus types.ValidatorStatus)
 		validatorStatus.Timestamp)
 	return err
 }
-

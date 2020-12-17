@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"time"
 
-	stakingtypes"github.com/forbole/bdjuno/x/staking/types"
-	"github.com/forbole/bdjuno/x/staking/utils"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/desmos-labs/juno/client"
 	"github.com/forbole/bdjuno/database"
+	stakingtypes "github.com/forbole/bdjuno/x/staking/types"
+	"github.com/forbole/bdjuno/x/staking/utils"
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
@@ -30,7 +30,7 @@ func HandleBlock(block *tmctypes.ResultBlock, cp *client.Proxy, db *database.Big
 	}
 
 	err = updateValidatorsStatus(block.Block.Height, block.Block.Time, cp, db)
-	if err!=nil{
+	if err != nil {
 		return err
 	}
 
@@ -111,35 +111,35 @@ func updateValidatorsDelegations(height int64, timestamp time.Time, cp *client.P
 	return nil
 }
 
-// updateValidatorsStatus  
+// updateValidatorsStatus
 func updateValidatorsStatus(height int64, timestamp time.Time, cp *client.Proxy, db *database.BigDipperDb) error {
 	log.Debug().
 		Str("module", "staking").
 		Str("operation", "delegations").
 		Msg("getting delegations")
 
-		var objs staking.Validators
-		endpoint := fmt.Sprintf("staking/validators?height=%d",height)
-		height, err := cp.QueryLCDWithHeight(endpoint, &objs)
+	var objs staking.Validators
+	endpoint := fmt.Sprintf("staking/validators?height=%d", height)
+	height, err := cp.QueryLCDWithHeight(endpoint, &objs)
+	if err != nil {
+		log.Err(err).Str("module", "staking").Msg("error while getting validator pool")
+		return err
+	}
+
+	log.Debug().
+		Str("module", "staking").
+		Str("operation", "staking_pool").
+		Msg("saving staking pool")
+
+	for _, validator := range objs {
+
+		err = db.SaveValidatorStatus(stakingtypes.NewValidatorStatus(
+			validator.ConsAddress(), validator.GetStatus().String(), validator.IsJailed(), height, timestamp))
 		if err != nil {
-			log.Err(err).Str("module", "staking").Msg("error while getting validator pool")
 			return err
 		}
-	
-		log.Debug().
-			Str("module", "staking").
-			Str("operation", "staking_pool").
-			Msg("saving staking pool")
-		
-		for _,validator := range objs {
-			
-			err = db.SaveValidatorStatus(stakingtypes.NewValidatorStatus(
-				validator.ConsAddress(),validator.GetStatus().String(),validator.IsJailed(),height,timestamp))
-			if err != nil{
-				return err
-			}
 
-		}
+	}
 
 	return nil
 }

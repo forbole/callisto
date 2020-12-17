@@ -369,8 +369,8 @@ func (v ValidatorUptimeHistoryRow) Equal(w ValidatorUptimeHistoryRow) bool {
 //------------------------------------------------------------
 // ValidatorStatus represents a single row of the validator_status table
 type ValidatorStatusRow struct {
-	Status  string     `db:"status"`
-	Jailed    bool     `db:"bool"`
+	Status string `db:"status"`
+	Jailed bool   `db:"bool"`
 }
 
 // NewValidatorUptimesHistoryRow builds a new ValidatorUptimeHistoryRow
@@ -378,35 +378,35 @@ func NewValidatorStatusRow(
 	status string, jailed bool,
 ) ValidatorStatusRow {
 	return ValidatorStatusRow{
-		Status:  status,
-		Jailed:    jailed,
+		Status: status,
+		Jailed: jailed,
 	}
 }
 
 // Equal tells whether v and w contain the same data
 func (v ValidatorStatusRow) Equal(w ValidatorStatusRow) bool {
 	return v.Status == w.Status &&
-		v.Jailed == w.Jailed 
+		v.Jailed == w.Jailed
 }
 
 //-------------------------------------------------------------
 
 // ValidatorStatusHistoryRow represents a single row of the validator_status_history table
 type ValidatorStatusHistoryRow struct {
-	Status  string     `db:"status"`
-	Jailed    bool     `db:"bool"`
-	Height int64 `db:"height"`
+	Status    string    `db:"status"`
+	Jailed    bool      `db:"bool"`
+	Height    int64     `db:"height"`
 	Timestamp time.Time `db:"timestamp"`
 }
 
 // NewValidatorStatusHistoryRow builds a new ValidatorUptimeHistoryRow
 func NewValidatorStatusHistoryRow(
-	status string, jailed bool,height int64, timestamp time.Time,
+	status string, jailed bool, height int64, timestamp time.Time,
 ) ValidatorStatusHistoryRow {
 	return ValidatorStatusHistoryRow{
-		Status:  status,
+		Status:    status,
 		Jailed:    jailed,
-		Height: height,
+		Height:    height,
 		Timestamp: timestamp,
 	}
 }
@@ -418,4 +418,3 @@ func (v ValidatorStatusHistoryRow) Equal(w ValidatorStatusHistoryRow) bool {
 		v.Height == w.Height &&
 		v.Timestamp == w.Timestamp
 }
-
