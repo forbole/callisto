@@ -440,7 +440,6 @@ func (suite *DbTestSuite) SaveValidatorStatus() {
 	)
 
 	history1 := dbtypes.NewValidatorStatusHistoryRow(
-		validator1.GetConsAddr(),
 		"status1",
 		false,
 		10,
@@ -450,7 +449,6 @@ func (suite *DbTestSuite) SaveValidatorStatus() {
 	history2 := []dbtypes.ValidatorStatusHistoryRow{
 		history1,
 		dbtypes.NewValidatorStatusHistoryRow(
-			validator1.GetConsAddr(),
 			"status2",
 			true,
 			20,
@@ -464,29 +462,29 @@ func (suite *DbTestSuite) SaveValidatorStatus() {
 	err = suite.database.Sqlx.Select(&result, "SELECT * FROM validator_status")
 	suite.Require().NoError(err)
 	suite.Require().Len(result, 1)
-	suite.Require().True(row[0].Equal(status1db))
+	suite.Require().True(result[0].Equal(status1db))
 
-	var result []dbtypes.ValidatorStatusRow
-	err = suite.database.Sqlx.Select(&result, "SELECT * FROM validator_status_history")
+	var result2 []dbtypes.ValidatorStatusHistoryRow
+	err = suite.database.Sqlx.Select(&result2, "SELECT * FROM validator_status_history")
 	suite.Require().NoError(err)
-	suite.Require().Len(result, 1)
-	suite.Require().True(row[0].Equal(history1))
+	suite.Require().Len(result2, 1)
+	suite.Require().True(result2[0].Equal(history1))
 
 	// Second insert
-	err := suite.database.SaveValidatorStatus(status2)
+	err = suite.database.SaveValidatorStatus(status2)
 	suite.Require().NoError(err)
 
-	var result []dbtypes.ValidatorStatusRow
-	err = suite.database.Sqlx.Select(&result, "SELECT * FROM validator_status")
+	var result3 []dbtypes.ValidatorStatusRow
+	err = suite.database.Sqlx.Select(&result3, "SELECT * FROM validator_status")
 	suite.Require().NoError(err)
-	suite.Require().Len(result, 1)
-	suite.Require().True(row[0].Equal(status2db))
+	suite.Require().Len(result3, 1)
+	suite.Require().True(result3[0].Equal(status2db))
 
-	var result []dbtypes.ValidatorStatusRow
-	err = suite.database.Sqlx.Select(&result, "SELECT * FROM validator_status_history")
+	var result4 []dbtypes.ValidatorStatusHistoryRow
+	err = suite.database.Sqlx.Select(&result4, "SELECT * FROM validator_status_history")
 	suite.Require().NoError(err)
-	suite.Require().Len(result, 2)
-	for index, row := range result {
+	suite.Require().Len(result4, 2)
+	for index, row := range result4 {
 		suite.Require().True(row.Equal(history2[index]))
 	}
 
