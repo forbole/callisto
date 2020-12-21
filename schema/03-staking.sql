@@ -200,3 +200,29 @@ CREATE TABLE redelegation_history
     timestamp             TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
+/*--------------------------------------------*/
+/**
+* This holds the HISTORICAL double_sign_evidence on BLOCK basis
+*/
+CREATE TABLE double_sign_evidence
+(
+    pubkey TEXT NOT NULL,
+    consensus_address     TEXT NOT NULL REFERENCES validator (consensus_address),
+    vote_a TEXT NOT NULL REFERENCES double_sin_vote(signiture),
+    vote_b text NOT NULL REFERENCES double_sin_vote(signiture),
+    height                BIGINT                      NOT NULL,
+    timestamp             TIMESTAMP WITHOUT TIME ZONE NOT NULL
+
+)
+
+/*
+* This hole the votes that is the evidence of a double sign. This update on BLOCK basis when there is a double sign happens
+*/
+CREATE TABLE double_sign_vote
+(
+    signiture TEXT NOT NULL UNIQUE,
+    hash TEXT NOT NULL,
+    part_header TEXT NOT NULL,
+    height                BIGINT                      NOT NULL,
+    timestamp             TIMESTAMP WITHOUT TIME ZONE NOT NULL
+);

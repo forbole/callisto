@@ -11,6 +11,9 @@ import (
 	"github.com/forbole/bdjuno/x/staking/utils"
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+	tmtypes "github.com/tendermint/tendermint/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 )
 
 // HandleBlock represents a method that is called each time a new block is created
@@ -34,6 +37,10 @@ func HandleBlock(block *tmctypes.ResultBlock, cp *client.Proxy, db *database.Big
 		return err
 	}
 
+	err=updateDoubleSignEvidence(block.Block.Height, block.Block.Time,block.Block.Evidence.Evidence,db)
+	if err!=nil{
+		return err
+	}
 	return nil
 }
 
@@ -141,5 +148,39 @@ func updateValidatorsStatus(height int64, timestamp time.Time, cp *client.Proxy,
 
 	}
 
+	return nil
+}
+
+func updateDoubleSignEvidence(height int64, timestamp time.Time,
+	evidenceList tmtypes.EvidenceList,db *database.BigDipperDb) error{
+	for _,ev := range evidenceList{
+		dve, ok := ev.(*tmtypes.DuplicateVoteEvidence)
+		if ok{
+			consAddress,err:=sdk.ConsAddressFromHex(dve.VoteA.ValidatorAddress)
+			if err!=nil{
+				return err
+			}
+			err=db.SaveDoubleSignEvidence(
+				stakingtypes.NewDoubleSignEvidence(
+					dve.PubKey.Address(),
+					consAddress,
+					stakingtypes.NewDoubleSignVote(dve.VoteA.Signature,
+						dve.VoteA.BlockID.Hash,
+						dve.VoteA.BlockID.PartsHeader.Hash,
+						dve.VoteA.Height,
+						dve.VoteA.Timestamp),
+					stakingtypes.NewDoubleSignVote(dve.VoteB.Signature,
+						dve.VoteB.BlockID.Hash,
+						dve.VoteB.BlockID.PartsHeader.Hash,
+						dve.VoteB.Height,
+						dve.VoteB.Timestamp),
+					height,
+					timestamp,
+				))
+			if err!=nil{
+				return err
+			}
+		}
+	}
 	return nil
 }

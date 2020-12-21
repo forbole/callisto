@@ -2,10 +2,13 @@ package types
 
 import (
 	"time"
+	"bytes"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/tendermint/tendermint/crypto"
+	tmbytes "github.com/tendermint/tendermint/libs/bytes"
+
 )
 
 // Validator represents a single validator.
@@ -242,4 +245,79 @@ func (v ValidatorStatus) Equals(w ValidatorStatus) bool {
 		v.Status == w.Status &&
 		v.Height == w.Height &&
 		v.Timestamp.Equal(w.Timestamp)
+}
+
+//---------------------------------------------------------------
+
+// DoubleSignEvidence represent double sign evidence on each tendermint blocks
+type DoubleSignEvidence struct{
+	Pubkey tmbytes.HexBytes
+	ConsensusAddress sdk.ConsAddress
+	VoteA DoubleSignVote
+	VoteB DoubleSignVote
+	Height int64
+	Timestamp time.Time
+}
+
+// NewDoubleSignEvidence return a new DoubleSignEvidence object
+func NewDoubleSignEvidence(
+	pubkey tmbytes.HexBytes,
+	consensusAddress sdk.ConsAddress,
+	voteA DoubleSignVote,
+	voteB DoubleSignVote,
+	height int64,
+	timestamp time.Time,
+)DoubleSignEvidence{
+	return DoubleSignEvidence{
+		Pubkey:pubkey,
+		ConsensusAddress:consensusAddress,
+		VoteA: voteA,
+		VoteB:voteB,
+		Height:height,
+		Timestamp: timestamp,
+	}
+}
+
+// Equals tells whether v and w are equals
+func (w DoubleSignEvidence)Equals(v DoubleSignEvidence)bool{
+	return w.Pubkey.String() == v.Pubkey.String() &&
+	w.ConsensusAddress.Equals(v.ConsensusAddress) &&
+	w.VoteA.Equals(v.VoteA)&&
+	w.VoteB.Equals(v.VoteB)&&
+	w.Height == v.Height&&
+	w.Timestamp == v.Timestamp
+}
+
+// DoubleSignVote
+type DoubleSignVote struct{
+	Signiture []byte
+	Hash tmbytes.HexBytes
+	PartHash tmbytes.HexBytes
+	Height int64
+    Timestamp time.Time
+}
+
+func NewDoubleSignVote(
+	signiture []byte,
+	hash tmbytes.HexBytes,
+	partHash tmbytes.HexBytes,
+	height int64,
+	timestamp time.Time,
+)DoubleSignVote{
+	return DoubleSignVote{
+		Signiture:signiture,
+		Hash:hash,
+		PartHash:hash,
+		Height: height,
+		Timestamp:timestamp,
+	}
+}
+
+
+func (w DoubleSignVote)Equals(v DoubleSignVote) bool{
+	return bytes.Equal(w.Signiture,v.Signiture)&&
+	w.Hash.String() == v.Hash.String() &&
+	w.PartHash.String() ==v.PartHash.String() &&
+	w.Height == v.Height &&
+	w.Timestamp.Equal(v.Timestamp)
 }

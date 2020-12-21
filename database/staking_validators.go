@@ -393,3 +393,35 @@ func (db BigDipperDb) SaveValidatorStatus(validatorStatus types.ValidatorStatus)
 		validatorStatus.Timestamp)
 	return err
 }
+
+func (db BigDipperDb) SaveDoubleSignEvidence(evidence types.DoubleSignEvidence)error{
+	stmt := `INSERT INTO double_sign_vote (signiture,hash,part_header,height,timestamp) 
+	VALUES ($1,$2,$3,$4,$5),($6,$7,$8,$9,$10) ON CONFLICT DO NOTHING`
+	_, err := db.Sql.Exec(stmt,
+		evidence.VoteA.Signiture,
+		evidence.VoteA.Hash.String(),
+		evidence.VoteA.PartHash.String(),
+		evidence.VoteA.Height,
+		evidence.VoteA.Timestamp,
+		evidence.VoteB.Signiture,
+		evidence.VoteB.Hash.String(),
+		evidence.VoteB.PartHash.String(),
+		evidence.VoteB.Height,
+		evidence.VoteB.Timestamp)
+	if err != nil {
+		return err
+	}
+
+	stmt = `INSERT INTO double_sign_evidence (pubkey,consensus_address,vote_a,vote_b,height,timestamp)
+			VALUES ($1,$2,$3,$4,$5,$6) ON CONFLICT DO NOTHING`
+	_,err = db.Sql.Exec(
+		stmt,
+		evidence.Pubkey.String(),
+		evidence.ConsensusAddress.String(),
+		evidence.VoteA.Signiture,
+		evidence.VoteB.Signiture,
+		evidence.Height,
+		evidence.Timestamp,
+	)
+	return err
+}
