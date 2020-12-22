@@ -398,12 +398,12 @@ func (db BigDipperDb) SaveDoubleSignEvidence(evidence types.DoubleSignEvidence) 
 	stmt := `INSERT INTO double_sign_vote (signiture,hash,part_header,height,timestamp) 
 	VALUES ($1,$2,$3,$4,$5),($6,$7,$8,$9,$10) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(stmt,
-		evidence.VoteA.Signiture,
+		string(evidence.VoteA.Signiture),
 		evidence.VoteA.Hash.String(),
 		evidence.VoteA.PartHash.String(),
 		evidence.VoteA.Height,
 		evidence.VoteA.Timestamp,
-		evidence.VoteB.Signiture,
+		string(evidence.VoteB.Signiture),
 		evidence.VoteB.Hash.String(),
 		evidence.VoteB.PartHash.String(),
 		evidence.VoteB.Height,
@@ -418,8 +418,8 @@ func (db BigDipperDb) SaveDoubleSignEvidence(evidence types.DoubleSignEvidence) 
 		stmt,
 		evidence.Pubkey.String(),
 		evidence.ConsensusAddress.String(),
-		evidence.VoteA.Signiture,
-		evidence.VoteB.Signiture,
+		string(evidence.VoteA.Signiture),
+		string(evidence.VoteB.Signiture),
 		evidence.Height,
 		evidence.Timestamp,
 	)
