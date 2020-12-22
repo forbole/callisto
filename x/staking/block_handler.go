@@ -161,7 +161,7 @@ func updateDoubleSignEvidence(height int64, timestamp time.Time,
 			}
 			err = db.SaveDoubleSignEvidence(
 				stakingtypes.NewDoubleSignEvidence(
-					dve.PubKey.Address(),
+					dve.PubKey.Address().Bytes(),
 					consAddress,
 					stakingtypes.NewDoubleSignVote(dve.VoteA.Signature,
 						dve.VoteA.BlockID.Hash,

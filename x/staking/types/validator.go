@@ -250,7 +250,7 @@ func (v ValidatorStatus) Equals(w ValidatorStatus) bool {
 
 // DoubleSignEvidence represent double sign evidence on each tendermint blocks
 type DoubleSignEvidence struct {
-	Pubkey           tmbytes.HexBytes
+	Pubkey           []byte
 	ConsensusAddress sdk.ConsAddress
 	VoteA            DoubleSignVote
 	VoteB            DoubleSignVote
@@ -260,7 +260,7 @@ type DoubleSignEvidence struct {
 
 // NewDoubleSignEvidence return a new DoubleSignEvidence object
 func NewDoubleSignEvidence(
-	pubkey tmbytes.HexBytes,
+	pubkey []byte,
 	consensusAddress sdk.ConsAddress,
 	voteA DoubleSignVote,
 	voteB DoubleSignVote,
@@ -279,7 +279,7 @@ func NewDoubleSignEvidence(
 
 // Equals tells whether v and w are equals
 func (w DoubleSignEvidence) Equals(v DoubleSignEvidence) bool {
-	return w.Pubkey.String() == v.Pubkey.String() &&
+	return bytes.Equal(w.Pubkey,v.Pubkey) &&
 		w.ConsensusAddress.Equals(v.ConsensusAddress) &&
 		w.VoteA.Equals(v.VoteA) &&
 		w.VoteB.Equals(v.VoteB) &&
