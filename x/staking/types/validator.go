@@ -279,7 +279,7 @@ func NewDoubleSignEvidence(
 
 // Equals tells whether v and w are equals
 func (w DoubleSignEvidence) Equals(v DoubleSignEvidence) bool {
-	return bytes.Equal(w.Pubkey,v.Pubkey) &&
+	return bytes.Equal(w.Pubkey, v.Pubkey) &&
 		w.ConsensusAddress.Equals(v.ConsensusAddress) &&
 		w.VoteA.Equals(v.VoteA) &&
 		w.VoteB.Equals(v.VoteB) &&

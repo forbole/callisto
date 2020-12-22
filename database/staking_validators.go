@@ -399,13 +399,13 @@ func (db BigDipperDb) SaveDoubleSignEvidence(evidence types.DoubleSignEvidence) 
 	VALUES ($1,$2,$3,$4,$5),($6,$7,$8,$9,$10) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(stmt,
 		string(evidence.VoteA.Signiture),
-		evidence.VoteA.Hash.String(),
-		evidence.VoteA.PartHash.String(),
+		string(evidence.VoteA.Hash),
+		string(evidence.VoteA.PartHash),
 		evidence.VoteA.Height,
 		evidence.VoteA.Timestamp,
 		string(evidence.VoteB.Signiture),
-		evidence.VoteB.Hash.String(),
-		evidence.VoteB.PartHash.String(),
+		string(evidence.VoteB.Hash),
+		string(evidence.VoteB.PartHash),
 		evidence.VoteB.Height,
 		evidence.VoteB.Timestamp)
 	if err != nil {
