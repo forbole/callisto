@@ -306,7 +306,7 @@ func NewDoubleSignVote(
 	return DoubleSignVote{
 		Signiture: signiture,
 		Hash:      hash,
-		PartHash:  hash,
+		PartHash:  partHash,
 		Height:    height,
 		Timestamp: timestamp,
 	}
