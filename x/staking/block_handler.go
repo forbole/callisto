@@ -155,7 +155,7 @@ func updateDoubleSignEvidence(height int64, timestamp time.Time,
 	for _, ev := range evidenceList {
 		dve, ok := ev.(*tmtypes.DuplicateVoteEvidence)
 		if ok {
-			consAddress, err := sdk.ConsAddressFromHex(dve.VoteA.ValidatorAddress)
+			consAddress, err := sdk.ConsAddressFromHex(dve.VoteA.ValidatorAddress.String())
 			if err != nil {
 				return err
 			}
