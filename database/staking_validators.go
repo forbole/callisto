@@ -416,7 +416,7 @@ func (db BigDipperDb) SaveDoubleSignEvidence(evidence types.DoubleSignEvidence) 
 			VALUES ($1,$2,$3,$4,$5,$6) ON CONFLICT DO NOTHING`
 	_, err = db.Sql.Exec(
 		stmt,
-		evidence.Pubkey.String(),
+		string(evidence.Pubkey),
 		evidence.ConsensusAddress.String(),
 		string(evidence.VoteA.Signiture),
 		string(evidence.VoteB.Signiture),
