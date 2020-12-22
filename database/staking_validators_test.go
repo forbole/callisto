@@ -9,7 +9,6 @@ import (
 	dbtypes "github.com/forbole/bdjuno/database/types"
 	"github.com/forbole/bdjuno/x/staking/types"
 	tmbytes "github.com/tendermint/tendermint/libs/bytes"
-
 )
 
 func newDecPts(value int64, prec int64) *sdk.Dec {
@@ -493,7 +492,7 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 }
 
 //--------------------------------------------
-func (suite *DbTestSuite) SaveDoubleVoteEvidence(){
+func (suite *DbTestSuite) SaveDoubleVoteEvidence() {
 	validator1 := suite.getValidator(
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
@@ -525,7 +524,7 @@ func (suite *DbTestSuite) SaveDoubleVoteEvidence(){
 		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 	)
 
-	err:=suite.database.SaveDoubleSignEvidence(evidence)
+	err := suite.database.SaveDoubleSignEvidence(evidence)
 	suite.Require().NoError(err)
 
 	expectEvidence := dbtypes.NewDoubleSignEvidenceRow(
@@ -546,11 +545,11 @@ func (suite *DbTestSuite) SaveDoubleVoteEvidence(){
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 		),
 		dbtypes.NewDoubleSignVoteRow(
-		"A5m7SVuvZ8YNXcUfBKLgkeV+Vy5ea+7rPfzlbkEvHOPPce6B7A2CwOIbCmPSVMKUarUdta+HiyTV+IELaOYyDA==",
-		"29D583DE786844F8FDE727EB5F9BEF9B73184BB0891BA3E279B751C527F4BB82",
-		"8C93F21EB7E580DC52D6F2EFF3515B5D458ADED40B97B414FF8435E47257694D",
-		10,
-		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC)),
+			"A5m7SVuvZ8YNXcUfBKLgkeV+Vy5ea+7rPfzlbkEvHOPPce6B7A2CwOIbCmPSVMKUarUdta+HiyTV+IELaOYyDA==",
+			"29D583DE786844F8FDE727EB5F9BEF9B73184BB0891BA3E279B751C527F4BB82",
+			"8C93F21EB7E580DC52D6F2EFF3515B5D458ADED40B97B414FF8435E47257694D",
+			10,
+			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC)),
 	}
 
 	var result1 []dbtypes.DoubleSignEvidenceRow
@@ -558,12 +557,12 @@ func (suite *DbTestSuite) SaveDoubleVoteEvidence(){
 	suite.Require().NoError(err)
 	suite.Require().Len(result1, 1)
 	suite.Require().True(result1[0].Equal(expectEvidence))
- ̰
-	var result2 []dbtypes.DoubleSignVoteRow ̰
+
+	var result2 []dbtypes.DoubleSignVoteRow
 	err = suite.database.Sqlx.Select(&result1, "SELECT * FROM double_sign_vote")
 	suite.Require().NoError(err)
 	suite.Require().Len(result2, 2)
-	for index,row := range result2{
+	for index, row := range result2 {
 		suite.Require().True(expectVotes[index].Equal(row))
 	}
 }
