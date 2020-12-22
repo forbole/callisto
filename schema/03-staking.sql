@@ -208,7 +208,7 @@ CREATE TABLE redelegation_history
 CREATE TABLE double_sign_vote
 (
     signiture TEXT NOT NULL UNIQUE,
-    hash TEXT NOT NULL,
+    hx TEXT NOT NULL,
     part_header TEXT NOT NULL,
     height                BIGINT                      NOT NULL,
     timestamp             TIMESTAMP WITHOUT TIME ZONE NOT NULL

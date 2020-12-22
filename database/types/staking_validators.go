@@ -466,7 +466,7 @@ func (v DoubleSignEvidenceRow) Equal(w DoubleSignEvidenceRow) bool {
 // DoubleSignVoteRow represents a single row of the double_sign_vote table
 type DoubleSignVoteRow struct {
 	Signiture  string    `db:"signiture"`
-	Hash       string    `db:"hash"`
+	Hash       string    `db:"hx"`
 	PartHeader string    `db:"part_header"`
 	Height     int64     `db:"height"`
 	Timestamp  time.Time `db:"timestamp"`
