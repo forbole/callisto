@@ -1,6 +1,8 @@
 package database_test
 
 import (
+	"encoding/json"
+	"github.com/rs/zerolog/log"
 	"fmt"
 	"time"
 
@@ -560,6 +562,9 @@ func (suite *DbTestSuite) TestSaveDoubleVoteEvidence() {
 	err = suite.database.Sqlx.Select(&result1, "SELECT * FROM double_sign_evidence")
 	suite.Require().NoError(err)
 	suite.Require().Len(result1, 1)
+	out,err:=json.Marshal(result1[0])
+	suite.Require().NoError(err)
+	log.Debug().Msg(string(out))
 	suite.Require().True(result1[0].Equal(expectEvidence))
 
 	var result2 []dbtypes.DoubleSignVoteRow
