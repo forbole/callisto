@@ -416,5 +416,77 @@ func (v ValidatorStatusHistoryRow) Equal(w ValidatorStatusHistoryRow) bool {
 	return v.Status == w.Status &&
 		v.Jailed == w.Jailed &&
 		v.Height == w.Height &&
-		v.Timestamp == w.Timestamp
+		v.Timestamp.Equal(w.Timestamp)
+}
+
+//--------------------------------------------------------
+// DoubleSignEvidenceRow represents a single row of the double_sign_evidence table
+type DoubleSignEvidenceRow struct {
+	Pubkey    string    `db:"pubkey"`
+	ConsAddr  string    `db:"consensus_address"`
+	VoteA     string    `db:"vote_a"`
+	VoteB     string    `db:"vote_b"`
+	Height    int64     `db:"height"`
+	Timestamp time.Time `db:"timestamp"`
+}
+
+// NewDoubleSignEvidenceRow allows to build a new NewDoubleSignEvidenceRow
+func NewDoubleSignEvidenceRow(pubkey string,
+	consAddr string,
+	voteA string,
+	voteB string,
+	height int64,
+	timestamp time.Time) DoubleSignEvidenceRow {
+	return DoubleSignEvidenceRow{
+		Pubkey:    pubkey,
+		ConsAddr:  consAddr,
+		VoteA:     voteA,
+		VoteB:     voteB,
+		Height:    height,
+		Timestamp: timestamp,
+	}
+}
+
+// Equal tells whether v and w represent the same rows
+func (v DoubleSignEvidenceRow) Equal(w DoubleSignEvidenceRow) bool {
+	return v.Pubkey == w.Pubkey &&
+		v.ConsAddr == w.ConsAddr &&
+		v.VoteA == w.VoteA &&
+		v.VoteB == w.VoteB &&
+		v.Height == w.Height &&
+		v.Timestamp.Equal(w.Timestamp)
+}
+
+//--------------------------------------------------------
+// DoubleSignVoteRow represents a single row of the double_sign_vote table
+type DoubleSignVoteRow struct {
+	Signiture  string    `db:"signiture"`
+	Hash       string    `db:"hash"`
+	PartHeader string    `db:"part_header"`
+	Height     int64     `db:"height"`
+	Timestamp  time.Time `db:"timestamp"`
+}
+
+// NewDoubleSignVoteRow allows to build a new NewDoubleSignVoteRow
+func NewDoubleSignVoteRow(signiture string,
+	hash string,
+	partHeader string,
+	height int64,
+	timestamp time.Time) DoubleSignVoteRow {
+	return DoubleSignVoteRow{
+		Signiture:  signiture,
+		Hash:       hash,
+		PartHeader: partHeader,
+		Height:     height,
+		Timestamp:  timestamp,
+	}
+}
+
+// Equal tells whether v and w represent the same rows
+func (v DoubleSignVoteRow) Equal(w DoubleSignVoteRow) bool {
+	return v.Signiture == w.Signiture &&
+		v.Hash == w.Hash &&
+		v.PartHeader == w.PartHeader &&
+		v.Height == w.Height &&
+		v.Timestamp.Equal(w.Timestamp)
 }

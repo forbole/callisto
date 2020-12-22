@@ -8,6 +8,8 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	dbtypes "github.com/forbole/bdjuno/database/types"
 	"github.com/forbole/bdjuno/x/staking/types"
+	tmbytes "github.com/tendermint/tendermint/libs/bytes"
+
 )
 
 func newDecPts(value int64, prec int64) *sdk.Dec {
@@ -406,7 +408,7 @@ func (suite *DbTestSuite) TestSaveValidatorsVotingPowers() {
 
 //-----------------------------------------------------------
 
-func (suite *DbTestSuite) SaveValidatorStatus() {
+func (suite *DbTestSuite) TestSaveValidatorStatus() {
 	validator1 := suite.getValidator(
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
@@ -488,4 +490,80 @@ func (suite *DbTestSuite) SaveValidatorStatus() {
 		suite.Require().True(row.Equal(history2[index]))
 	}
 
+}
+
+//--------------------------------------------
+func (suite *DbTestSuite) SaveDoubleVoteEvidence(){
+	validator1 := suite.getValidator(
+		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
+		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
+		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
+	)
+
+	voteA := types.NewDoubleSignVote(
+		[]byte("1qwPQjPrc7DH7+f6YAE3fOkq6phDAJ60dEyhmcZ7dx2ZgGvi9DbVLsn4leYqRNA/63ZeeH5kVly8zI1jCh4iBg=="),
+		tmbytes.HexBytes([]byte("A42C9492F5DE01BFA6117137102C3EF909F1A46C2F56915F542D12AC2D0A5BCA")),
+		tmbytes.HexBytes([]byte("418A20D12F45FC9340BE0CD2EDB0FFA1E4316176B8CE11E123EF6CBED23C8423")),
+		10,
+		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+	)
+
+	voteB := types.NewDoubleSignVote(
+		[]byte("A5m7SVuvZ8YNXcUfBKLgkeV+Vy5ea+7rPfzlbkEvHOPPce6B7A2CwOIbCmPSVMKUarUdta+HiyTV+IELaOYyDA=="),
+		tmbytes.HexBytes([]byte("29D583DE786844F8FDE727EB5F9BEF9B73184BB0891BA3E279B751C527F4BB82")),
+		tmbytes.HexBytes([]byte("8C93F21EB7E580DC52D6F2EFF3515B5D458ADED40B97B414FF8435E47257694D")),
+		10,
+		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+	)
+
+	evidence := types.NewDoubleSignEvidence(
+		[]byte("rPVOGBuNjQb17F21UBOKOvkl1AlcFBRm314IoUaBzFA"),
+		validator1.GetConsAddr(),
+		voteA,
+		voteB,
+		10,
+		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+	)
+
+	err:=suite.database.SaveDoubleSignEvidence(evidence)
+	suite.Require().NoError(err)
+
+	expectEvidence := dbtypes.NewDoubleSignEvidenceRow(
+		"rPVOGBuNjQb17F21UBOKOvkl1AlcFBRm314IoUaBzFA",
+		validator1.GetConsAddr().String(),
+		string(voteA.Signiture),
+		string(voteB.Signiture),
+		10,
+		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+	)
+
+	expectVotes := []dbtypes.DoubleSignVoteRow{
+		dbtypes.NewDoubleSignVoteRow(
+			"1qwPQjPrc7DH7+f6YAE3fOkq6phDAJ60dEyhmcZ7dx2ZgGvi9DbVLsn4leYqRNA/63ZeeH5kVly8zI1jCh4iBg==",
+			"A42C9492F5DE01BFA6117137102C3EF909F1A46C2F56915F542D12AC2D0A5BCA",
+			"418A20D12F45FC9340BE0CD2EDB0FFA1E4316176B8CE11E123EF6CBED23C8423",
+			10,
+			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+		),
+		dbtypes.NewDoubleSignVoteRow(
+		"A5m7SVuvZ8YNXcUfBKLgkeV+Vy5ea+7rPfzlbkEvHOPPce6B7A2CwOIbCmPSVMKUarUdta+HiyTV+IELaOYyDA==",
+		"29D583DE786844F8FDE727EB5F9BEF9B73184BB0891BA3E279B751C527F4BB82",
+		"8C93F21EB7E580DC52D6F2EFF3515B5D458ADED40B97B414FF8435E47257694D",
+		10,
+		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC)),
+	}
+
+	var result1 []dbtypes.DoubleSignEvidenceRow
+	err = suite.database.Sqlx.Select(&result1, "SELECT * FROM double_sign_evidence")
+	suite.Require().NoError(err)
+	suite.Require().Len(result1, 1)
+	suite.Require().True(result1[0].Equal(expectEvidence))
+ ̰
+	var result2 []dbtypes.DoubleSignVoteRow ̰
+	err = suite.database.Sqlx.Select(&result1, "SELECT * FROM double_sign_vote")
+	suite.Require().NoError(err)
+	suite.Require().Len(result2, 2)
+	for index,row := range result2{
+		suite.Require().True(expectVotes[index].Equal(row))
+	}
 }

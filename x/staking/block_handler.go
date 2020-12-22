@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/desmos-labs/juno/client"
 	"github.com/forbole/bdjuno/database"
@@ -12,8 +13,6 @@ import (
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 	tmtypes "github.com/tendermint/tendermint/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 )
 
 // HandleBlock represents a method that is called each time a new block is created
@@ -37,8 +36,8 @@ func HandleBlock(block *tmctypes.ResultBlock, cp *client.Proxy, db *database.Big
 		return err
 	}
 
-	err=updateDoubleSignEvidence(block.Block.Height, block.Block.Time,block.Block.Evidence.Evidence,db)
-	if err!=nil{
+	err = updateDoubleSignEvidence(block.Block.Height, block.Block.Time, block.Block.Evidence.Evidence, db)
+	if err != nil {
 		return err
 	}
 	return nil
@@ -152,15 +151,15 @@ func updateValidatorsStatus(height int64, timestamp time.Time, cp *client.Proxy,
 }
 
 func updateDoubleSignEvidence(height int64, timestamp time.Time,
-	evidenceList tmtypes.EvidenceList,db *database.BigDipperDb) error{
-	for _,ev := range evidenceList{
+	evidenceList tmtypes.EvidenceList, db *database.BigDipperDb) error {
+	for _, ev := range evidenceList {
 		dve, ok := ev.(*tmtypes.DuplicateVoteEvidence)
-		if ok{
-			consAddress,err:=sdk.ConsAddressFromHex(dve.VoteA.ValidatorAddress)
-			if err!=nil{
+		if ok {
+			consAddress, err := sdk.ConsAddressFromHex(dve.VoteA.ValidatorAddress)
+			if err != nil {
 				return err
 			}
-			err=db.SaveDoubleSignEvidence(
+			err = db.SaveDoubleSignEvidence(
 				stakingtypes.NewDoubleSignEvidence(
 					dve.PubKey.Address(),
 					consAddress,
@@ -177,7 +176,7 @@ func updateDoubleSignEvidence(height int64, timestamp time.Time,
 					height,
 					timestamp,
 				))
-			if err!=nil{
+			if err != nil {
 				return err
 			}
 		}
