@@ -140,7 +140,7 @@ func updateValidatorsStatus(height int64, timestamp time.Time, cp *client.Proxy,
 	for _, validator := range objs {
 
 		err = db.SaveValidatorStatus(stakingtypes.NewValidatorStatus(
-			validator.ConsAddress(), validator.GetStatus().String(), validator.IsJailed(), height, timestamp))
+			validator.ConsAddress(), int(validator.GetStatus()), validator.IsJailed(), height, timestamp))
 		if err != nil {
 			return err
 		}

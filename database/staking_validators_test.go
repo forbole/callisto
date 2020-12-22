@@ -416,7 +416,7 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 
 	status1 := types.NewValidatorStatus(
 		validator1.GetConsAddr(),
-		"status1",
+		1,
 		false,
 		10,
 		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
@@ -424,24 +424,24 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 
 	status2 := types.NewValidatorStatus(
 		validator1.GetConsAddr(),
-		"status2",
+		2,
 		true,
 		20,
 		time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 	)
 
 	status1db := dbtypes.NewValidatorStatusRow(
-		"status1",
+		1,
 		false,
 	)
 
 	status2db := dbtypes.NewValidatorStatusRow(
-		"status2",
+		2,
 		true,
 	)
 
 	history1 := dbtypes.NewValidatorStatusHistoryRow(
-		"status1",
+		1,
 		false,
 		10,
 		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
@@ -450,7 +450,7 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 	history2 := []dbtypes.ValidatorStatusHistoryRow{
 		history1,
 		dbtypes.NewValidatorStatusHistoryRow(
-			"status2",
+			2,
 			true,
 			20,
 			time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
