@@ -100,7 +100,7 @@ CREATE TABLE validator_uptime_history
 
 CREATE TABLE validator_status
 (
-    validator_address TEXT    NOT NULL REFERENCES validator (consensus_address),
+    validator_address TEXT    NOT NULL UNIQUE REFERENCES validator (consensus_address),
     status            INT     NOT NULL,
     jailed            BOOLEAN NOT NULL
 );
