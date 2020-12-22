@@ -372,8 +372,8 @@ VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`
 
 // SaveValidatorStatus save validator jail and status in the given height and timestamp
 func (db BigDipperDb) SaveValidatorStatus(validatorStatus types.ValidatorStatus) error {
-	stmt := `INSERT INTO validator_status (validator_address,status,jailed,height,timestamp) 
-	VALUES ($1,$2,$3,$4,$5) ON CONFLICT DO
+	stmt := `INSERT INTO validator_status (validator_address,status,jailed) 
+	VALUES ($1,$2,$3) ON CONFLICT DO
 	UPDATE validator_status SET status = $1,jailed= $2 where validator_address = $3`
 	_, err := db.Sql.Exec(stmt,
 		validatorStatus.Status,
