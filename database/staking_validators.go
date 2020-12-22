@@ -401,12 +401,12 @@ func (db BigDipperDb) SaveDoubleSignEvidence(evidence types.DoubleSignEvidence) 
 	_, err := db.Sql.Exec(stmt,
 		string(evidence.VoteA.Signiture),
 		string(evidence.VoteA.Hash),
-		string(evidence.VoteA.PartHash),
+		"string(evidence.VoteA.PartHash)",
 		evidence.VoteA.Height,
 		evidence.VoteA.Timestamp,
 		string(evidence.VoteB.Signiture),
 		string(evidence.VoteB.Hash),
-		string(evidence.VoteB.PartHash),
+		"string(evidence.VoteB.PartHash)",
 		evidence.VoteB.Height,
 		evidence.VoteB.Timestamp)
 	if err != nil {
