@@ -394,6 +394,7 @@ func (db BigDipperDb) SaveValidatorStatus(validatorStatus types.ValidatorStatus)
 	return err
 }
 
+// SaveDoubleSignEvidence save double sign evidence from tendermint to double_sign_vote and double_sign_evidence
 func (db BigDipperDb) SaveDoubleSignEvidence(evidence types.DoubleSignEvidence) error {
 	stmt := `INSERT INTO double_sign_vote (signiture,hash,part_header,height,timestamp) 
 	VALUES ($1,$2,$3,$4,$5),($6,$7,$8,$9,$10) ON CONFLICT DO NOTHING`
