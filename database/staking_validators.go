@@ -384,7 +384,7 @@ func (db BigDipperDb) SaveValidatorStatus(validatorStatus types.ValidatorStatus)
 	}
 
 	stmt = `INSERT INTO validator_status_history (validator_address,status,jailed,height,timestamp) 
-	VALUES ($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING `
+	VALUES ($1,$2,$3,$4,$5); `
 	_, err = db.Sql.Exec(stmt,
 		validatorStatus.ConsensusAddress.String(),
 		validatorStatus.Status,
