@@ -397,7 +397,7 @@ func (v ValidatorStatusRow) Equal(w ValidatorStatusRow) bool {
 // ValidatorStatusHistoryRow represents a single row of the validator_status_history table
 type ValidatorStatusHistoryRow struct {
 	Status      int       `db:"status"`
-	Jailed      bool      `db:"bool"`
+	Jailed      bool      `db:"jailed"`
 	Height      int64     `db:"height"`
 	Timestamp   time.Time `db:"timestamp"`
 	ConsAddress string    `db:"validator_address"`
