@@ -568,7 +568,7 @@ func (suite *DbTestSuite) TestSaveDoubleVoteEvidence() {
 	suite.Require().True(result1[0].Equal(expectEvidence))
 
 	var result2 []dbtypes.DoubleSignVoteRow
-	err = suite.database.Sqlx.Select(&result1, "SELECT * FROM double_sign_vote")
+	err = suite.database.Sqlx.Select(&result2, "SELECT * FROM double_sign_vote")
 	suite.Require().NoError(err)
 	suite.Require().Len(result2, 2)
 	for index, row := range result2 {
