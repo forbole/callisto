@@ -496,7 +496,7 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 }
 
 //--------------------------------------------
-func (suite *DbTestSuite) SaveDoubleVoteEvidence() {
+func (suite *DbTestSuite) TestSaveDoubleVoteEvidence() {
 	validator1 := suite.getValidator(
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
