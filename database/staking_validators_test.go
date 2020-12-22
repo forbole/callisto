@@ -572,6 +572,9 @@ func (suite *DbTestSuite) TestSaveDoubleVoteEvidence() {
 	suite.Require().NoError(err)
 	suite.Require().Len(result2, 2)
 	for index, row := range result2 {
+		out,err:=json.Marshal(result2[index])
+		suite.Require().NoError(err)
+		log.Debug().Msg(string(out))
 		suite.Require().True(expectVotes[index].Equal(row))
 	}
 }
