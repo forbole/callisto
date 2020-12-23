@@ -46,7 +46,7 @@ func updateSigningInfo(height int64, cp *client.Proxy, db *database.BigDipperDb)
 		Msg("saving staking pool")
 
 	for _, info := range pool {
-		err = db.SaveSigningInfos(slashingtypes.NewValidatorSigningInfo(
+		err = db.SaveValidatorSigningInfo(slashingtypes.NewValidatorSigningInfo(
 			info.Address,
 			info.StartHeight,
 			info.IndexOffset,
