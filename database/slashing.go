@@ -4,6 +4,7 @@ import (
 	"github.com/forbole/bdjuno/x/slashing/types"
 )
 
+// SaveValidatorSigningInfo allow to save signing info in the specific height and validator
 func (db BigDipperDb) SaveValidatorSigningInfo(t types.ValidatorSigningInfo) error {
 	stmt := `INSERT INTO validator_signing_info(validator_address,start_height,index_offset,jailed_until,tombstoned,missed_blocks_counter,height,timestamp) 
 	VALUES ($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT DO NOTHING`
