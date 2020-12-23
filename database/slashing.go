@@ -1,13 +1,12 @@
 package database
 
 import (
-	"github.com/forbole/bdjunog/x/slashing/types"
-	dbtypes "github.com/forbole/bdjuno/database/types"
-
+	"github.com/forbole/bdjuno/x/slashing/types"
 )
 
 func (db BigDipperDb) SaveValidatorSigningInfo(t types.ValidatorSigningInfo) error {
-	stmt = "INSERT INTO validator_signing_info(validator_address,start_height,index_offset,jailed_until,tombstoned,missed_blocks_counter,height,timestamp) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT DO NOTHING"
+	stmt := `INSERT INTO validator_signing_info(validator_address,start_height,index_offset,jailed_until,tombstoned,missed_blocks_counter,height,timestamp) 
+	VALUES ($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(stmt, t.ValidatorAddress.String(),
 		t.StartHeight,
 		t.IndexOffset,
@@ -19,4 +18,5 @@ func (db BigDipperDb) SaveValidatorSigningInfo(t types.ValidatorSigningInfo) err
 	if err != nil {
 		return err
 	}
+	return nil
 }
