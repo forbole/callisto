@@ -6,9 +6,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/exported"
-	"github.com/forbole/bdjuno/database"
 	"github.com/rs/zerolog/log"
 	"github.com/tendermint/tendermint/types"
+
+	"github.com/forbole/bdjuno/database"
 )
 
 // Handler handles the genesis state of the x/auth module in order to store the initial values

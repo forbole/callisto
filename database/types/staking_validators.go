@@ -365,3 +365,143 @@ func (v ValidatorUptimeHistoryRow) Equal(w ValidatorUptimeHistoryRow) bool {
 		v.Height == w.Height &&
 		v.Timestamp.Equal(w.Timestamp)
 }
+
+//------------------------------------------------------------
+// ValidatorStatus represents a single row of the validator_status table
+type ValidatorStatusRow struct {
+	Status      int    `db:"status"`
+	Jailed      bool   `db:"jailed"`
+	ConsAddress string `db:"validator_address"`
+}
+
+// NewValidatorUptimesHistoryRow builds a new ValidatorUptimeHistoryRow
+func NewValidatorStatusRow(
+	status int, jailed bool, consAddess string,
+) ValidatorStatusRow {
+	return ValidatorStatusRow{
+		Status:      status,
+		Jailed:      jailed,
+		ConsAddress: consAddess,
+	}
+}
+
+// Equal tells whether v and w contain the same data
+func (v ValidatorStatusRow) Equal(w ValidatorStatusRow) bool {
+	return v.Status == w.Status &&
+		v.Jailed == w.Jailed &&
+		v.ConsAddress == w.ConsAddress
+}
+
+//-------------------------------------------------------------
+
+// ValidatorStatusHistoryRow represents a single row of the validator_status_history table
+type ValidatorStatusHistoryRow struct {
+	Status      int       `db:"status"`
+	Jailed      bool      `db:"jailed"`
+	Height      int64     `db:"height"`
+	Timestamp   time.Time `db:"timestamp"`
+	ConsAddress string    `db:"validator_address"`
+}
+
+// NewValidatorStatusHistoryRow builds a new ValidatorUptimeHistoryRow
+func NewValidatorStatusHistoryRow(
+	status int, jailed bool, height int64, timestamp time.Time, consAddress string,
+) ValidatorStatusHistoryRow {
+	return ValidatorStatusHistoryRow{
+		Status:      status,
+		Jailed:      jailed,
+		Height:      height,
+		Timestamp:   timestamp,
+		ConsAddress: consAddress,
+	}
+}
+
+// Equal tells whether v and w contain the same data
+func (v ValidatorStatusHistoryRow) Equal(w ValidatorStatusHistoryRow) bool {
+	return v.Status == w.Status &&
+		v.Jailed == w.Jailed &&
+		v.Height == w.Height &&
+		v.Timestamp.Equal(w.Timestamp)
+}
+
+//--------------------------------------------------------
+
+// DoubleSignVoteRow represents a single row of the double_sign_vote table
+type DoubleSignVoteRow struct {
+	ID               int64     `db:"id"`
+	VoteType         int       `db:"type"`
+	Height           int64     `db:"height"`
+	Round            int       `db:"round"`
+	BlockID          string    `db:"block_id"`
+	Timestamp        time.Time `db:"timestamp"`
+	ValidatorAddress string    `db:"validator_address"`
+	ValidatorIndex   int       `db:"validator_index"`
+	Signature        string    `db:"signature"`
+}
+
+// NewDoubleSignVoteRow allows to build a new NewDoubleSignVoteRow
+func NewDoubleSignVoteRow(
+	id int64,
+	voteType int,
+	height int64,
+	round int,
+	blockID string,
+	timestamp time.Time,
+	validatorAddress string,
+	validatorIndex int,
+	signature string,
+) DoubleSignVoteRow {
+	return DoubleSignVoteRow{
+		ID:               id,
+		VoteType:         voteType,
+		Height:           height,
+		Round:            round,
+		BlockID:          blockID,
+		Timestamp:        timestamp,
+		ValidatorAddress: validatorAddress,
+		ValidatorIndex:   validatorIndex,
+		Signature:        signature,
+	}
+}
+
+// Equal tells whether v and w represent the same rows
+func (v DoubleSignVoteRow) Equal(w DoubleSignVoteRow) bool {
+	return v.ID == w.ID &&
+		v.VoteType == w.VoteType &&
+		v.Height == w.Height &&
+		v.Round == w.Round &&
+		v.BlockID == w.BlockID &&
+		v.Timestamp.Equal(w.Timestamp) &&
+		v.ValidatorAddress == w.ValidatorAddress &&
+		v.ValidatorIndex == w.ValidatorIndex &&
+		v.Signature == w.Signature
+}
+
+//--------------------------------------------------------
+
+// DoubleSignEvidenceRow represents a single row of the double_sign_evidence table
+type DoubleSignEvidenceRow struct {
+	PublicKey string `db:"public_key"`
+	VoteAID   int64  `db:"vote_a_id"`
+	VoteBID   int64  `db:"vote_b_id"`
+}
+
+// NewDoubleSignEvidenceRow allows to build a new NewDoubleSignEvidenceRow
+func NewDoubleSignEvidenceRow(
+	publicKey string,
+	voteAID int64,
+	voteBID int64,
+) DoubleSignEvidenceRow {
+	return DoubleSignEvidenceRow{
+		PublicKey: publicKey,
+		VoteAID:   voteAID,
+		VoteBID:   voteBID,
+	}
+}
+
+// Equal tells whether v and w represent the same rows
+func (v DoubleSignEvidenceRow) Equal(w DoubleSignEvidenceRow) bool {
+	return v.PublicKey == w.PublicKey &&
+		v.VoteAID == w.VoteAID &&
+		v.VoteBID == w.VoteBID
+}

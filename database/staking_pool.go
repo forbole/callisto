@@ -7,7 +7,7 @@ import (
 )
 
 // SaveStakingPool allows to save for the given height the given stakingtypes pool
-func (db BigDipperDb) SaveStakingPool(pool stakingtypes.Pool, height int64, timestamp time.Time) error {
+func (db *BigDipperDb) SaveStakingPool(pool stakingtypes.Pool, height int64, timestamp time.Time) error {
 	stmt := `
 INSERT INTO staking_pool_history (timestamp, height, bonded_tokens, not_bonded_tokens) 
 VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`

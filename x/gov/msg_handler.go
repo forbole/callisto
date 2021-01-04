@@ -5,14 +5,16 @@ import (
 	"time"
 
 	"github.com/desmos-labs/juno/client"
+
 	"github.com/forbole/bdjuno/x/auth"
 	govtypes "github.com/forbole/bdjuno/x/gov/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/gov"
 	juno "github.com/desmos-labs/juno/types"
-	"github.com/forbole/bdjuno/database"
 	"github.com/rs/zerolog/log"
+
+	"github.com/forbole/bdjuno/database"
 )
 
 // HandleMsg allows to handle the different messages related to the staking module

@@ -8,10 +8,11 @@ import (
 	"github.com/forbole/bdjuno/database"
 
 	"github.com/desmos-labs/juno/client"
-	constypes "github.com/forbole/bdjuno/x/consensus/types"
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 	tmtypes "github.com/tendermint/tendermint/types"
+
+	constypes "github.com/forbole/bdjuno/x/consensus/types"
 )
 
 // ListenOperation allows to start listening to new consensus events properly

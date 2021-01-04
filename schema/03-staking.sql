@@ -98,6 +98,23 @@ CREATE TABLE validator_uptime_history
     PRIMARY KEY (validator_address, height)
 );
 
+CREATE TABLE validator_status
+(
+    validator_address TEXT    NOT NULL UNIQUE REFERENCES validator (consensus_address),
+    status            INT     NOT NULL,
+    jailed            BOOLEAN NOT NULL
+);
+
+CREATE TABLE validator_status_history
+(
+    validator_address TEXT                        NOT NULL REFERENCES validator (consensus_address),
+    status            INT                         NOT NULL,
+    jailed            BOOLEAN                     NOT NULL,
+    height            BIGINT,
+    timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    PRIMARY KEY (validator_address, height)
+);
+
 /* ---- DELEGATIONS ---- */
 
 /*
@@ -183,3 +200,33 @@ CREATE TABLE redelegation_history
     timestamp             TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
+/*--------------------------------------------*/
+
+/*
+ * This holds the votes that is the evidence of a double sign.
+ * It should be updated on a BLOCK basis when a double sign occurs.
+ */
+CREATE TABLE double_sign_vote
+(
+    id                SERIAL PRIMARY KEY,
+    type              SMALLINT                    NOT NULL,
+    height            BIGINT                      NOT NULL,
+    round             INT                         NOT NULL,
+    block_id          TEXT                        NOT NULL,
+    timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    validator_address TEXT                        NOT NULL REFERENCES validator (consensus_address),
+    validator_index   INT                         NOT NULL,
+    signature         TEXT                        NOT NULL,
+    UNIQUE (block_id, validator_address)
+);
+
+/*
+ * This holds the HISTORICAL double_sign_evidence.
+ * It should be updated on a on BLOCK basis.
+ */
+CREATE TABLE double_sign_evidence
+(
+    public_key TEXT   NOT NULL,
+    vote_a_id  BIGINT NOT NULL REFERENCES double_sign_vote (id),
+    vote_b_id  BIGINT NOT NULL REFERENCES double_sign_vote (id)
+);

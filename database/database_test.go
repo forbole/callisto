@@ -9,8 +9,9 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/simapp"
 	jconfig "github.com/desmos-labs/juno/config"
-	"github.com/forbole/bdjuno/database"
 	"github.com/stretchr/testify/suite"
+
+	"github.com/forbole/bdjuno/database"
 
 	_ "github.com/proullon/ramsql/driver"
 )

@@ -1,6 +1,5 @@
 VERSION := $(shell echo $(shell git describe --tags) | sed 's/^v//')
 COMMIT  := $(shell git log -1 --format='%H')
-DOCKER := $(shell which docker)
 
 export GO111MODULE = on
 
@@ -62,16 +61,16 @@ test-unit: start-docker-test
 .PHONY: test-unit
 
 lint:
-	$(DOCKER) run --rm -v $(CURDIR):/app -w /app golangci/golangci-lint:v1.28.0 golangci-lint run --out-format=tab
+	golangci-lint run --out-format=tab
 
 lint-fix:
-	$(DOCKER) run --rm -v $(CURDIR):/app -w /app golangci/golangci-lint:v1.28.0 golangci-lint run --fix --out-format=tab --issues-exit-code=0
+	golangci-lint run --fix --out-format=tab --issues-exit-code=0
 .PHONY: lint lint-fix
 
 format:
 	find . -name '*.go' -type f -not -path "*.git*" | xargs gofmt -w -s
 	find . -name '*.go' -type f -not -path "*.git*" | xargs misspell -w
-	find . -name '*.go' -type f -not -path "*.git*" | xargs goimports -w -local github.com/hodlend/go-hodlend-core
+	find . -name '*.go' -type f -not -path "*.git*" | xargs goimports -w -local github.com/forbole/bdjuno
 .PHONY: format
 
 clean:

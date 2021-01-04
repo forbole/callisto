@@ -8,7 +8,7 @@ import (
 )
 
 // SaveTokensPrices allows to save the given tickers associating them to the given timestamp
-func (db BigDipperDb) SaveTokensPrices(tickers types.MarketTickers, timestamp time.Time) error {
+func (db *BigDipperDb) SaveTokensPrices(tickers types.MarketTickers, timestamp time.Time) error {
 	query := `INSERT INTO token_price (denom, price, market_cap, timestamp) VALUES`
 	var param []interface{}
 

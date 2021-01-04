@@ -1,4 +1,4 @@
-package consensus
+package slashing
 
 import (
 	"encoding/json"
@@ -19,50 +19,50 @@ import (
 
 var _ modules.Module = Module{}
 
-// Module implements the consensus operations
+// Module represent x/slashing module
 type Module struct{}
 
 // Name implements modules.Module
 func (m Module) Name() string {
-	return "consensus"
+	return "slashing"
+}
+
+// RunAdditionalOperations implements modules.Module
+func (m Module) RunAdditionalOperations(cfg *config.Config, cdc *codec.Codec, cp *client.Proxy, db db.Database) error {
+	return nil
 }
 
 // RegisterPeriodicOperations implements modules.Module
 func (m Module) RegisterPeriodicOperations(
-	scheduler *gocron.Scheduler, _ *codec.Codec, cp *client.Proxy, db db.Database,
+	scheduler *gocron.Scheduler, cdc *codec.Codec, cp *client.Proxy, db db.Database,
 ) error {
-	bdDatabase := database.Cast(db)
-	return Register(scheduler, cp, bdDatabase)
-}
-
-// RunAdditionalOperations implements modules.Module
-func (m Module) RunAdditionalOperations(_ *config.Config, _ *codec.Codec, cp *client.Proxy, db db.Database) error {
-	bdDatabase := database.Cast(db)
-	return ListenOperation(cp, bdDatabase)
+	return nil
 }
 
 // HandleGenesis implements modules.Module
 func (m Module) HandleGenesis(
-	doc *tmtypes.GenesisDoc, _ map[string]json.RawMessage, _ *codec.Codec, _ *client.Proxy, db db.Database,
+	doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, cdc *codec.Codec, cp *client.Proxy, db db.Database,
 ) error {
-	bdDatabase := database.Cast(db)
-	return HandleGenesis(doc, bdDatabase)
+	return nil
 }
 
 // HandleBlock implements modules.Module
 func (m Module) HandleBlock(
-	b *tmctypes.ResultBlock, _ []types.Tx, _ *tmctypes.ResultValidators, _ *codec.Codec, _ *client.Proxy, db db.Database,
+	block *tmctypes.ResultBlock, txs []types.Tx, vals *tmctypes.ResultValidators,
+	cdc *codec.Codec, cp *client.Proxy, db db.Database,
 ) error {
 	bdDatabase := database.Cast(db)
-	return HandleBlock(b, bdDatabase)
+	return HandleBlock(block, cp, bdDatabase)
 }
 
 // HandleTx implements modules.Module
-func (m Module) HandleTx(types.Tx, *codec.Codec, *client.Proxy, db.Database) error {
+func (m Module) HandleTx(tx types.Tx, cdc *codec.Codec, cp *client.Proxy, db db.Database) error {
 	return nil
 }
 
 // HandleMsg implements modules.Module
-func (m Module) HandleMsg(int, sdk.Msg, types.Tx, *codec.Codec, *client.Proxy, db.Database) error {
+func (m Module) HandleMsg(
+	index int, msg sdk.Msg, tx types.Tx, cdc *codec.Codec, cp *client.Proxy, db db.Database,
+) error {
 	return nil
 }

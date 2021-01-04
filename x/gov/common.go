@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/forbole/bdjuno/x/staking"
 	"github.com/rs/zerolog/log"
+
+	"github.com/forbole/bdjuno/x/staking"
 
 	"github.com/cosmos/cosmos-sdk/x/gov"
 	"github.com/desmos-labs/juno/client"
+
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/gov/types"
 )

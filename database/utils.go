@@ -5,7 +5,7 @@ import (
 )
 
 // UpdateEnableModules allows to save enabled module into the database
-func (db BigDipperDb) InsertEnableModules(modules []string) error {
+func (db *BigDipperDb) InsertEnableModules(modules []string) error {
 	//clear table first
 	stmt := "DELETE FROM modules"
 	_, err := db.Sql.Exec(stmt)

@@ -6,12 +6,13 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/exported"
-	dbtypes "github.com/forbole/bdjuno/database/types"
 	"github.com/lib/pq"
+
+	dbtypes "github.com/forbole/bdjuno/database/types"
 )
 
 // SaveAccount saves the given account information for the given block height and timestamp
-func (db BigDipperDb) SaveAccount(account exported.Account, height int64, timestamp time.Time) error {
+func (db *BigDipperDb) SaveAccount(account exported.Account, height int64, timestamp time.Time) error {
 	stmt := `INSERT INTO account (address) VALUES ($1) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(stmt, account.GetAddress().String())
 	if err != nil {
@@ -37,7 +38,7 @@ VALUES ($1, $2::coin[], $3, $4) ON CONFLICT DO NOTHING`
 }
 
 // SaveAccount saves the given accounts information for the given block height and timestamp
-func (db BigDipperDb) SaveAccounts(accounts []exported.Account, height int64, timestamp time.Time) error {
+func (db *BigDipperDb) SaveAccounts(accounts []exported.Account, height int64, timestamp time.Time) error {
 	// Do nothing with empty accounts
 	if len(accounts) == 0 {
 		return nil
@@ -98,7 +99,7 @@ func (db BigDipperDb) SaveAccounts(accounts []exported.Account, height int64, ti
 }
 
 // GetAccounts returns all the accounts that are currently stored inside the database.
-func (db BigDipperDb) GetAccounts() ([]sdk.AccAddress, error) {
+func (db *BigDipperDb) GetAccounts() ([]sdk.AccAddress, error) {
 	sqlStmt := `SELECT * FROM account`
 
 	var rows []dbtypes.AccountRow
