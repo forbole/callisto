@@ -41,5 +41,5 @@ func updateAccounts(cp *client.Proxy, db *database.BigDipperDb) error {
 		return err
 	}
 
-	return RefreshAccounts(addresses, block.Block.Height, block.Block.Time, cp, db)
+	return RefreshAccounts(addresses, block.Block.Height, cp, db)
 }

@@ -20,15 +20,13 @@ func (r ConsensusRow) Equal(s ConsensusRow) bool {
 
 // BlockTimeRow is the average block time each minute/hour/day
 type BlockTimeRow struct {
-	AverageTime float64   `db:"average_time"`
-	Timestamp   time.Time `db:"timestamp"`
-	Height      int64     `db:"height"`
+	AverageTime float64 `db:"average_time"`
+	Height      int64   `db:"height"`
 }
 
-func NewBlockTimeRow(averageTime float64, timestamp time.Time, height int64) BlockTimeRow {
+func NewBlockTimeRow(averageTime float64, height int64) BlockTimeRow {
 	return BlockTimeRow{
 		AverageTime: averageTime,
-		Timestamp:   timestamp,
 		Height:      height,
 	}
 }
@@ -36,7 +34,7 @@ func NewBlockTimeRow(averageTime float64, timestamp time.Time, height int64) Blo
 // Equal return true if two BlockTimeRow are true
 func (r BlockTimeRow) Equal(s BlockTimeRow) bool {
 	return r.AverageTime == s.AverageTime &&
-		r.Timestamp.Equal(s.Timestamp)
+		r.Height == s.Height
 }
 
 //Container to return block needed in certain height

@@ -2,7 +2,6 @@ package database_test
 
 import (
 	"fmt"
-	"time"
 
 	consensustypes "github.com/tendermint/tendermint/types"
 
@@ -26,12 +25,7 @@ func newIntPtr(value int64) *sdk.Int {
 // getValidator stores inside the database a validator having the given
 // consensus address, validator address and validator public key
 func (suite *DbTestSuite) getValidator(consAddr, valAddr, pubkey string) types.Validator {
-	selfDelegation := suite.getDelegator("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
-	valAddrObj, err := sdk.ValAddressFromBech32(valAddr)
-	suite.Require().NoError(err)
-
-	constAddrObj, err := sdk.ConsAddressFromBech32(consAddr)
-	suite.Require().NoError(err)
+	selfDelegation := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 
 	pubKey, err := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeConsPub, pubkey)
 	suite.Require().NoError(err)
@@ -39,15 +33,15 @@ func (suite *DbTestSuite) getValidator(consAddr, valAddr, pubkey string) types.V
 	maxRate := sdk.NewDec(10)
 	maxChangeRate := sdk.NewDec(20)
 
-	validator := types.NewValidator(constAddrObj, valAddrObj, pubKey, selfDelegation, &maxChangeRate, &maxRate)
+	validator := types.NewValidator(consAddr, valAddr, pubKey, selfDelegation.String(), &maxChangeRate, &maxRate)
 	err = suite.database.SaveValidatorData(validator)
 	suite.Require().NoError(err)
 
 	return validator
 }
 
-// getDelegator saves inside the database a delegator having the given address
-func (suite *DbTestSuite) getDelegator(addr string) sdk.AccAddress {
+// getAccount saves inside the database an account having the given address
+func (suite *DbTestSuite) getAccount(addr string) sdk.AccAddress {
 	delegator, err := sdk.AccAddressFromBech32(addr)
 	suite.Require().NoError(err)
 
@@ -63,7 +57,7 @@ func (suite *DbTestSuite) TestSaveValidator() {
 	expectedMaxRate := sdk.NewDec(int64(1))
 	expectedMaxChangeRate := sdk.NewDec(int64(2))
 
-	suite.getDelegator("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
+	suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	validator := dbtypes.NewValidatorData(
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
@@ -102,8 +96,8 @@ func (suite *DbTestSuite) TestSaveValidator() {
 }
 
 func (suite *DbTestSuite) TestSaveValidators() {
-	suite.getDelegator("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
-	suite.getDelegator("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
+	suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
+	suite.getAccount("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 	expectedMaxRate := sdk.NewDec(int64(1))
 	expectedMaxChangeRate := sdk.NewDec(int64(2))
 
@@ -155,7 +149,7 @@ func (suite *DbTestSuite) TestSaveValidators() {
 
 	for index, v := range validatorRows {
 		w := validators[index]
-		suite.Require().Equal(v.ConsAddress, w.GetConsAddr().String())
+		suite.Require().Equal(v.ConsAddress, w.GetConsAddr())
 		suite.Require().Equal(v.ConsPubKey, sdk.MustBech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, w.GetConsPubKey()))
 
 		wInfo := validatorInfoRows[index]
@@ -168,42 +162,46 @@ func (suite *DbTestSuite) TestGetValidator() {
 	var ii int64 = 2
 	maxRate := sdk.NewDec(i)
 	maxChangeRate := sdk.NewDec(ii)
-	suite.getDelegator("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
+	suite.getAccount("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 	// Insert test data
-	_, err := suite.database.Sql.Exec(`INSERT INTO validator (consensus_address, consensus_pubkey) 
-VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl', 'cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8')`)
+	_, err := suite.database.Sql.Exec(`
+INSERT INTO validator (consensus_address, consensus_pubkey) 
+VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl', 
+        'cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8')`)
 	suite.Require().NoError(err)
 
-	_, err = suite.database.Sql.Exec(`INSERT INTO validator_info (consensus_address, operator_address,self_delegate_address,max_change_rate,max_rate) 
-VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl','cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl','cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a','2','1')`)
+	_, err = suite.database.Sql.Exec(`
+INSERT INTO validator_info (consensus_address, operator_address,self_delegate_address,max_change_rate,max_rate) 
+VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl',
+        'cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl',
+        'cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a','2','1')`)
 	suite.Require().NoError(err)
 
 	// Get the data
-	valAddr, err := sdk.ValAddressFromBech32("cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl")
-	validator, err := suite.database.GetValidator(valAddr)
+	validator, err := suite.database.GetValidator("cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl")
 	suite.Require().NoError(err)
 	suite.Require().Equal(
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
-		validator.GetConsAddr().String(),
+		validator.GetConsAddr(),
 	)
 	suite.Require().Equal(
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
-		validator.GetOperator().String(),
+		validator.GetOperator(),
 	)
 	suite.Require().Equal(
 		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
 		sdk.MustBech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, validator.GetConsPubKey()),
 	)
 
-	suite.Require().Equal("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a", validator.GetSelfDelegateAddress().String())
+	suite.Require().Equal("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a", validator.GetSelfDelegateAddress())
 	suite.Require().True(validator.GetMaxChangeRate().Equal(maxChangeRate))
 	suite.Require().True(validator.GetMaxRate().Equal(maxRate))
 
 }
 
 func (suite *DbTestSuite) TestGetValidators() {
-	suite.getDelegator("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
-	suite.getDelegator("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
+	suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
+	suite.getAccount("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 	// Inser the test data
 	queries := []string{
 		`INSERT INTO validator (consensus_address, consensus_pubkey) VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl', 'cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8')`,
@@ -253,18 +251,20 @@ func (suite *DbTestSuite) TestSaveValidatorDescription() {
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
 		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
 	)
-	timestamp, err := time.Parse(time.RFC3339, "2020-01-01T15:00:00Z")
-	suite.Require().NoError(err)
 
 	var height int64 = 1
-	description := types.NewValidatorDescription(validator.GetOperator(), stakingtypes.NewDescription(
-		"moniker",
-		"identity",
-		"",
-		"securityContact",
-		"details",
-	), height, timestamp)
-	err = suite.database.SaveValidatorDescription(description)
+	description := types.NewValidatorDescription(
+		validator.GetOperator(),
+		stakingtypes.NewDescription(
+			"moniker",
+			"identity",
+			"",
+			"securityContact",
+			"details",
+		),
+		height,
+	)
+	err := suite.database.SaveValidatorDescription(description)
 	suite.Require().NoError(err)
 
 	var rows []dbtypes.ValidatorDescriptionRow
@@ -273,7 +273,7 @@ func (suite *DbTestSuite) TestSaveValidatorDescription() {
 
 	expectedRows := []dbtypes.ValidatorDescriptionRow{
 		dbtypes.NewValidatorDescriptionRow(
-			validator.GetConsAddr().String(),
+			validator.GetConsAddr(),
 			"moniker",
 			"identity",
 			"",
@@ -290,23 +290,18 @@ func (suite *DbTestSuite) TestSaveValidatorDescription() {
 // _________________________________________________________
 
 func (suite *DbTestSuite) TestSaveValidatorCommission() {
+	var height int64 = 1000
 	validator := suite.getValidator(
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
 		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
 	)
 
-	var height int64 = 1000
-
-	timestamp, err := time.Parse(time.RFC3339, "2020-01-01T10:00:00Z")
-	suite.Require().NoError(err)
-
-	err = suite.database.SaveValidatorCommission(types.NewValidatorCommission(
+	err := suite.database.SaveValidatorCommission(types.NewValidatorCommission(
 		validator.GetOperator(),
 		newDecPts(11, 3),
 		newIntPtr(12),
 		height,
-		timestamp,
 	))
 	suite.Require().NoError(err)
 
@@ -316,7 +311,7 @@ func (suite *DbTestSuite) TestSaveValidatorCommission() {
 
 	expectedRows := []dbtypes.ValidatorCommissionRow{
 		dbtypes.NewValidatorCommissionRow(
-			validator.GetConsAddr().String(),
+			validator.GetConsAddr(),
 			"0.011000000000000000",
 			"12",
 		),
@@ -332,13 +327,14 @@ func (suite *DbTestSuite) TestSaveValidatorUptime() {
 	valAddr, err := sdk.ConsAddressFromBech32("cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl")
 	suite.Require().NoError(err)
 
-	_, err = suite.database.Sql.Exec(`INSERT INTO validator (consensus_address, consensus_pubkey) 
-VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl', 'cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8')`)
+	_, err = suite.database.Sql.Exec(`
+INSERT INTO validator (consensus_address, consensus_pubkey) 
+VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl', 
+        'cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8')`)
 	suite.Require().NoError(err)
 
 	// Save the data
-	timestamp := time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC)
-	uptime := types.NewValidatorUptime(valAddr, 10, 100, 500, timestamp)
+	uptime := types.NewValidatorUptime(valAddr.String(), 10, 100, 500)
 
 	err = suite.database.SaveValidatorUptime(uptime)
 	suite.Require().NoError(err, "validator uptime should not error while inserting")
@@ -373,18 +369,8 @@ func (suite *DbTestSuite) TestSaveValidatorsVotingPowers() {
 	)
 
 	votingPowers := []types.ValidatorVotingPower{
-		types.NewValidatorVotingPower(
-			validator1.GetConsAddr(),
-			1000,
-			100,
-			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-		),
-		types.NewValidatorVotingPower(
-			validator2.GetConsAddr(),
-			2000,
-			100,
-			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-		),
+		types.NewValidatorVotingPower(validator1.GetConsAddr(), 1000, 100),
+		types.NewValidatorVotingPower(validator2.GetConsAddr(), 2000, 100),
 	}
 
 	for _, power := range votingPowers {
@@ -394,11 +380,11 @@ func (suite *DbTestSuite) TestSaveValidatorsVotingPowers() {
 
 	expected := []dbtypes.ValidatorVotingPowerRow{
 		dbtypes.NewValidatorVotingPowerRow(
-			validator1.GetConsAddr().String(),
+			validator1.GetConsAddr(),
 			1000,
 		),
 		dbtypes.NewValidatorVotingPowerRow(
-			validator2.GetConsAddr().String(),
+			validator2.GetConsAddr(),
 			2000,
 		),
 	}
@@ -422,40 +408,11 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
 	)
 
-	status1 := types.NewValidatorStatus(
-		validator1.GetConsAddr(),
-		1,
-		false,
-		10,
-		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-	)
-
-	status2 := types.NewValidatorStatus(
-		validator1.GetConsAddr(),
-		2,
-		true,
-		20,
-		time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-	)
-
-	status1db := dbtypes.NewValidatorStatusRow(
-		1,
-		false,
-		validator1.GetConsAddr().String(),
-	)
-
-	status2db := dbtypes.NewValidatorStatusRow(
-		2,
-		true,
-		validator1.GetConsAddr().String(),
-	)
-
 	history1 := dbtypes.NewValidatorStatusHistoryRow(
 		1,
 		false,
 		10,
-		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-		validator1.GetConsAddr().String(),
+		validator1.GetConsAddr(),
 	)
 
 	history2 := []dbtypes.ValidatorStatusHistoryRow{
@@ -464,18 +421,17 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 			2,
 			true,
 			20,
-			time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-			validator1.GetConsAddr().String(),
+			validator1.GetConsAddr(),
 		),
 	}
-	err := suite.database.SaveValidatorStatus(status1)
+	err := suite.database.SaveValidatorStatus(types.NewValidatorStatus(validator1.GetConsAddr(), 1, false, 10))
 	suite.Require().NoError(err)
 
 	var result []dbtypes.ValidatorStatusRow
 	err = suite.database.Sqlx.Select(&result, "SELECT * FROM validator_status")
 	suite.Require().NoError(err)
 	suite.Require().Len(result, 1)
-	suite.Require().True(result[0].Equal(status1db))
+	suite.Require().True(result[0].Equal(dbtypes.NewValidatorStatusRow(1, false, validator1.GetConsAddr())))
 
 	var result2 []dbtypes.ValidatorStatusHistoryRow
 	err = suite.database.Sqlx.Select(&result2, "SELECT * FROM validator_status_history")
@@ -484,14 +440,14 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 	suite.Require().True(result2[0].Equal(history1))
 
 	// Second insert
-	err = suite.database.SaveValidatorStatus(status2)
+	err = suite.database.SaveValidatorStatus(types.NewValidatorStatus(validator1.GetConsAddr(), 2, true, 20))
 	suite.Require().NoError(err)
 
 	var result3 []dbtypes.ValidatorStatusRow
 	err = suite.database.Sqlx.Select(&result3, "SELECT * FROM validator_status")
 	suite.Require().NoError(err)
 	suite.Require().Len(result3, 1)
-	suite.Require().True(result3[0].Equal(status2db))
+	suite.Require().True(result3[0].Equal(dbtypes.NewValidatorStatusRow(2, true, validator1.GetConsAddr())))
 
 	var result4 []dbtypes.ValidatorStatusHistoryRow
 	err = suite.database.Sqlx.Select(&result4, "SELECT * FROM validator_status_history")
@@ -505,8 +461,6 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 
 //--------------------------------------------
 func (suite *DbTestSuite) TestSaveDoubleVoteEvidence() {
-	timestamp := time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC)
-
 	// Insert the validator
 	validator := suite.getValidator(
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
@@ -522,8 +476,7 @@ func (suite *DbTestSuite) TestSaveDoubleVoteEvidence() {
 			10,
 			1,
 			"A42C9492F5DE01BFA6117137102C3EF909F1A46C2F56915F542D12AC2D0A5BCA",
-			timestamp,
-			validator.GetConsAddr().String(),
+			validator.GetConsAddr(),
 			1,
 			"1qwPQjPrc7DH7+f6YAE3fOkq6phDAJ60dEyhmcZ7dx2ZgGvi9DbVLsn4leYqRNA/63ZeeH5kVly8zI1jCh4iBg==",
 		),
@@ -532,8 +485,7 @@ func (suite *DbTestSuite) TestSaveDoubleVoteEvidence() {
 			10,
 			1,
 			"418A20D12F45FC9340BE0CD2EDB0FFA1E4316176B8CE11E123EF6CBED23C8423",
-			timestamp,
-			validator.GetConsAddr().String(),
+			validator.GetConsAddr(),
 			1,
 			"A5m7SVuvZ8YNXcUfBKLgkeV+Vy5ea+7rPfzlbkEvHOPPce6B7A2CwOIbCmPSVMKUarUdta+HiyTV+IELaOYyDA==",
 		),
@@ -559,8 +511,7 @@ func (suite *DbTestSuite) TestSaveDoubleVoteEvidence() {
 			10,
 			1,
 			"A42C9492F5DE01BFA6117137102C3EF909F1A46C2F56915F542D12AC2D0A5BCA",
-			timestamp,
-			validator.GetConsAddr().String(),
+			validator.GetConsAddr(),
 			1,
 			"1qwPQjPrc7DH7+f6YAE3fOkq6phDAJ60dEyhmcZ7dx2ZgGvi9DbVLsn4leYqRNA/63ZeeH5kVly8zI1jCh4iBg==",
 		),
@@ -570,8 +521,7 @@ func (suite *DbTestSuite) TestSaveDoubleVoteEvidence() {
 			10,
 			1,
 			"418A20D12F45FC9340BE0CD2EDB0FFA1E4316176B8CE11E123EF6CBED23C8423",
-			timestamp,
-			validator.GetConsAddr().String(),
+			validator.GetConsAddr(),
 			1,
 			"A5m7SVuvZ8YNXcUfBKLgkeV+Vy5ea+7rPfzlbkEvHOPPce6B7A2CwOIbCmPSVMKUarUdta+HiyTV+IELaOYyDA==",
 		),

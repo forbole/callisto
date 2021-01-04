@@ -2,7 +2,6 @@ package slashing
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/desmos-labs/juno/client"
@@ -16,7 +15,7 @@ import (
 // HandleBlock represents a method that is called each time a new block is created
 func HandleBlock(block *tmctypes.ResultBlock, cp *client.Proxy, db *database.BigDipperDb) error {
 	// Update the staking pool
-	err := updateSigningInfo(block.Block.Height, block.Block.Time, cp, db)
+	err := updateSigningInfo(block.Block.Height, cp, db)
 	if err != nil {
 		log.Error().Str("module", "slashing").Int64("height", block.Block.Height).
 			Err(err).Msg("error while updating signing info")
@@ -26,7 +25,7 @@ func HandleBlock(block *tmctypes.ResultBlock, cp *client.Proxy, db *database.Big
 }
 
 // updateSigningInfo reads from the LCD the current staking pool and stores its value inside the database
-func updateSigningInfo(height int64, timestamp time.Time, cp *client.Proxy, db *database.BigDipperDb) error {
+func updateSigningInfo(height int64, cp *client.Proxy, db *database.BigDipperDb) error {
 	log.Debug().Str("module", "slashing").Int64("height", height).
 		Str("operation", "signing info").Msg("getting signing info")
 
@@ -44,14 +43,13 @@ func updateSigningInfo(height int64, timestamp time.Time, cp *client.Proxy, db *
 	infos := make([]slashingtypes.ValidatorSigningInfo, len(pool))
 	for index, info := range pool {
 		infos[index] = slashingtypes.NewValidatorSigningInfo(
-			info.Address,
+			info.Address.String(),
 			info.StartHeight,
 			info.IndexOffset,
 			info.JailedUntil,
 			info.Tombstoned,
 			info.MissedBlocksCounter,
 			height,
-			timestamp,
 		)
 	}
 

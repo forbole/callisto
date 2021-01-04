@@ -72,12 +72,12 @@ func updateValidatorsUptime(cp *client.Proxy, db *database.BigDipperDb) error {
 		Msg("saving validators uptime")
 
 	for _, info := range signingInfo {
-		validatorUptime := types.ValidatorUptime{
-			Height:              height,
-			ValidatorAddress:    info.Address,
-			SignedBlocksWindow:  params.SignedBlocksWindow,
-			MissedBlocksCounter: info.MissedBlocksCounter,
-		}
+		validatorUptime := types.NewValidatorUptime(
+			info.Address.String(),
+			params.SignedBlocksWindow,
+			height,
+			info.MissedBlocksCounter,
+		)
 
 		// Skip non existing validators
 		if found, _ := db.HasValidator(info.Address.String()); !found {
@@ -112,10 +112,10 @@ func updateValidators(height int64, cp *client.Proxy, db *database.BigDipperDb) 
 
 		for _, validator := range validatorSet {
 			validators = append(validators, types.NewValidator(
-				validator.GetConsAddr(),
-				validator.GetOperator(),
+				validator.GetConsAddr().String(),
+				validator.GetOperator().String(),
 				validator.GetConsPubKey(),
-				sdk.AccAddress(validator.GetOperator()),
+				sdk.AccAddress(validator.GetOperator()).String(),
 				&validator.Commission.MaxChangeRate,
 				&validator.Commission.MaxRate,
 			))
@@ -156,16 +156,11 @@ func UpdateValidatorVotingPower(cp *client.Proxy, db *database.BigDipperDb) erro
 		if found, _ := db.HasValidator(validator.Address.String()); !found {
 			continue
 		}
-		consAddress, err := sdk.ConsAddressFromBech32(validator.Address.String())
-		if err != nil {
-			return err
-		}
 
 		err = db.SaveValidatorVotingPower(types.NewValidatorVotingPower(
-			consAddress,
+			validator.Address.String(),
 			validator.VotingPower,
 			block.Block.Height,
-			block.Block.Time,
 		))
 		if err != nil {
 			return err

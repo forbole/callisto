@@ -15,7 +15,7 @@ CREATE TABLE pre_commit
 
 CREATE TABLE block
 (
-    height           INTEGER                     NOT NULL UNIQUE PRIMARY KEY,
+    height           BIGINT                      NOT NULL UNIQUE PRIMARY KEY,
     hash             TEXT                        NOT NULL UNIQUE,
     num_txs          INTEGER DEFAULT 0,
     total_gas        INTEGER DEFAULT 0,
@@ -29,7 +29,7 @@ CREATE TABLE transaction
     timestamp  TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     gas_wanted INTEGER                              DEFAULT 0,
     gas_used   INTEGER                              DEFAULT 0,
-    height     INTEGER                     NOT NULL REFERENCES block (height),
+    height     INTEGER                     NOT NULL,
     hash       TEXT                        NOT NULL UNIQUE PRIMARY KEY,
     messages   JSONB                       NOT NULL DEFAULT '[]'::JSONB,
     fee        JSONB                       NOT NULL DEFAULT '{}'::JSONB,

@@ -33,13 +33,8 @@ func NewValidatorData(consAddress, valAddress, consPubKey, selfDelegateAddress, 
 }
 
 // GetConsAddr implements types.Validator
-func (v ValidatorData) GetConsAddr() sdk.ConsAddress {
-	addr, err := sdk.ConsAddressFromBech32(v.ConsAddress)
-	if err != nil {
-		panic(err)
-	}
-
-	return addr
+func (v ValidatorData) GetConsAddr() string {
+	return v.ConsAddress
 }
 
 // GetConsPubKey implements types.Validator
@@ -48,23 +43,13 @@ func (v ValidatorData) GetConsPubKey() crypto.PubKey {
 }
 
 // GetOperator implements types.Validator
-func (v ValidatorData) GetOperator() sdk.ValAddress {
-	addr, err := sdk.ValAddressFromBech32(v.ValAddress)
-	if err != nil {
-		panic(err)
-	}
-
-	return addr
+func (v ValidatorData) GetOperator() string {
+	return v.ValAddress
 }
 
 // GetSelfDelegateAddress implements types.Validator
-func (v ValidatorData) GetSelfDelegateAddress() sdk.AccAddress {
-	addr, err := sdk.AccAddressFromBech32(v.SelfDelegateAddress)
-	if err != nil {
-		panic(err)
-	}
-
-	return addr
+func (v ValidatorData) GetSelfDelegateAddress() string {
+	return v.SelfDelegateAddress
 }
 
 // GetMaxChangeRate implements types.Validator
@@ -396,22 +381,20 @@ func (v ValidatorStatusRow) Equal(w ValidatorStatusRow) bool {
 
 // ValidatorStatusHistoryRow represents a single row of the validator_status_history table
 type ValidatorStatusHistoryRow struct {
-	Status      int       `db:"status"`
-	Jailed      bool      `db:"jailed"`
-	Height      int64     `db:"height"`
-	Timestamp   time.Time `db:"timestamp"`
-	ConsAddress string    `db:"validator_address"`
+	Status      int    `db:"status"`
+	Jailed      bool   `db:"jailed"`
+	Height      int64  `db:"height"`
+	ConsAddress string `db:"validator_address"`
 }
 
 // NewValidatorStatusHistoryRow builds a new ValidatorUptimeHistoryRow
 func NewValidatorStatusHistoryRow(
-	status int, jailed bool, height int64, timestamp time.Time, consAddress string,
+	status int, jailed bool, height int64, consAddress string,
 ) ValidatorStatusHistoryRow {
 	return ValidatorStatusHistoryRow{
 		Status:      status,
 		Jailed:      jailed,
 		Height:      height,
-		Timestamp:   timestamp,
 		ConsAddress: consAddress,
 	}
 }
@@ -420,23 +403,21 @@ func NewValidatorStatusHistoryRow(
 func (v ValidatorStatusHistoryRow) Equal(w ValidatorStatusHistoryRow) bool {
 	return v.Status == w.Status &&
 		v.Jailed == w.Jailed &&
-		v.Height == w.Height &&
-		v.Timestamp.Equal(w.Timestamp)
+		v.Height == w.Height
 }
 
 //--------------------------------------------------------
 
 // DoubleSignVoteRow represents a single row of the double_sign_vote table
 type DoubleSignVoteRow struct {
-	ID               int64     `db:"id"`
-	VoteType         int       `db:"type"`
-	Height           int64     `db:"height"`
-	Round            int       `db:"round"`
-	BlockID          string    `db:"block_id"`
-	Timestamp        time.Time `db:"timestamp"`
-	ValidatorAddress string    `db:"validator_address"`
-	ValidatorIndex   int       `db:"validator_index"`
-	Signature        string    `db:"signature"`
+	ID               int64  `db:"id"`
+	VoteType         int    `db:"type"`
+	Height           int64  `db:"height"`
+	Round            int    `db:"round"`
+	BlockID          string `db:"block_id"`
+	ValidatorAddress string `db:"validator_address"`
+	ValidatorIndex   int    `db:"validator_index"`
+	Signature        string `db:"signature"`
 }
 
 // NewDoubleSignVoteRow allows to build a new NewDoubleSignVoteRow
@@ -446,7 +427,6 @@ func NewDoubleSignVoteRow(
 	height int64,
 	round int,
 	blockID string,
-	timestamp time.Time,
 	validatorAddress string,
 	validatorIndex int,
 	signature string,
@@ -457,7 +437,6 @@ func NewDoubleSignVoteRow(
 		Height:           height,
 		Round:            round,
 		BlockID:          blockID,
-		Timestamp:        timestamp,
 		ValidatorAddress: validatorAddress,
 		ValidatorIndex:   validatorIndex,
 		Signature:        signature,
@@ -471,7 +450,6 @@ func (v DoubleSignVoteRow) Equal(w DoubleSignVoteRow) bool {
 		v.Height == w.Height &&
 		v.Round == w.Round &&
 		v.BlockID == w.BlockID &&
-		v.Timestamp.Equal(w.Timestamp) &&
 		v.ValidatorAddress == w.ValidatorAddress &&
 		v.ValidatorIndex == w.ValidatorIndex &&
 		v.Signature == w.Signature

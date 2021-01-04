@@ -45,7 +45,7 @@ func updateProposalStatuses(id uint64, cp *client.Proxy, db *database.BigDipperD
 	}
 
 	// Update the proposal to update the status
-	err = db.UpdateProposal(types.NewProposal(
+	return db.UpdateProposal(types.NewProposal(
 		proposal.GetTitle(),
 		proposal.GetDescription(),
 		proposal.ProposalRoute(),
@@ -56,11 +56,6 @@ func updateProposalStatuses(id uint64, cp *client.Proxy, db *database.BigDipperD
 		proposal.DepositEndTime,
 		proposal.VotingStartTime,
 		proposal.VotingEndTime,
-		nil,
+		"",
 	))
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

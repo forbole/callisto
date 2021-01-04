@@ -20,7 +20,7 @@ type Proposal struct {
 	DepositEndTime  time.Time
 	VotingStartTime time.Time
 	VotingEndTime   time.Time
-	Proposer        sdk.AccAddress
+	Proposer        string
 }
 
 // NewProposal return a new Proposal instance
@@ -35,7 +35,7 @@ func NewProposal(
 	depositEndTime time.Time,
 	votingStartTime time.Time,
 	votingEndTime time.Time,
-	proposer sdk.AccAddress,
+	proposer string,
 
 ) Proposal {
 	return Proposal{
@@ -61,7 +61,6 @@ type TallyResult struct {
 	No         int64
 	NoWithVeto int64
 	Height     int64
-	Timestamp  time.Time
 }
 
 // NewTallyResult return a new TallyResult instance
@@ -72,7 +71,6 @@ func NewTallyResult(
 	no int64,
 	noWithVeto int64,
 	height int64,
-	timestamp time.Time,
 ) TallyResult {
 	return TallyResult{
 		ProposalID: proposalID,
@@ -81,33 +79,29 @@ func NewTallyResult(
 		No:         no,
 		NoWithVeto: noWithVeto,
 		Height:     height,
-		Timestamp:  timestamp,
 	}
 }
 
 // Vote describe a msgVote
 type Vote struct {
 	ProposalID uint64
-	Voter      sdk.AccAddress
+	Voter      string
 	Option     gov.VoteOption
 	Height     int64
-	Timestamp  time.Time
 }
 
 // NewVote return a new Vote instance
 func NewVote(
 	proposalID uint64,
-	voter sdk.AccAddress,
+	voter string,
 	option gov.VoteOption,
 	height int64,
-	timestamp time.Time,
 ) Vote {
 	return Vote{
 		ProposalID: proposalID,
 		Voter:      voter,
 		Option:     option,
 		Height:     height,
-		Timestamp:  timestamp,
 	}
 }
 
@@ -115,28 +109,25 @@ func NewVote(
 // Assume the entry with latest height get final total deposit
 type Deposit struct {
 	ProposalID   uint64
-	Depositor    sdk.AccAddress
+	Depositor    string
 	Amount       sdk.Coins
 	Height       int64
-	Timestamp    time.Time
 	TotalDeposit sdk.Coins
 }
 
 //NewDeposit return a new Deposit instance
 func NewDeposit(
 	proposalID uint64,
-	depositor sdk.AccAddress,
+	depositor string,
 	amount sdk.Coins,
 	totalDeposit sdk.Coins,
 	height int64,
-	timestamp time.Time,
 ) Deposit {
 	return Deposit{
 		ProposalID:   proposalID,
 		Depositor:    depositor,
 		Amount:       amount,
 		Height:       height,
-		Timestamp:    timestamp,
 		TotalDeposit: totalDeposit,
 	}
 }

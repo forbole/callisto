@@ -13,7 +13,7 @@ import (
 // TIP: To store the validator data call SaveValidatorData.
 func (db *BigDipperDb) SaveHistoricalDelegation(delegation types.Delegation) error {
 	accStmt := `INSERT INTO account (address) VALUES ($1) ON CONFLICT DO NOTHING`
-	_, err := db.Sql.Exec(accStmt, delegation.ValidatorAddress.String())
+	_, err := db.Sql.Exec(accStmt, delegation.ValidatorAddress)
 	if err != nil {
 		return err
 	}
@@ -30,11 +30,10 @@ func (db *BigDipperDb) SaveHistoricalDelegation(delegation types.Delegation) err
 	}
 
 	stmt := `
-INSERT INTO delegation_history (validator_address, delegator_address, amount, shares, height, timestamp) 
-VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT DO NOTHING`
+INSERT INTO delegation_history (validator_address, delegator_address, amount, shares, height) 
+VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`
 	_, err = db.Sql.Exec(stmt,
-		validator.GetConsAddr().String(), delegation.DelegatorAddress.String(), value, delegation.Shares,
-		delegation.Height, delegation.Timestamp,
+		validator.GetConsAddr(), delegation.DelegatorAddress, value, delegation.Shares, delegation.Height,
 	)
 	return err
 }
@@ -57,14 +56,14 @@ INSERT INTO delegation (validator_address, delegator_address, amount, shares) VA
 	var delParams []interface{}
 
 	delHistQry := `
-INSERT INTO delegation_history (validator_address, delegator_address, amount, shares, height, timestamp)
+INSERT INTO delegation_history (validator_address, delegator_address, amount, shares, height)
 VALUES `
 	var delHistParams []interface{}
 
 	for i, delegation := range delegations {
 		ai := i * 1
 		accQry += fmt.Sprintf("($%d),", ai+1)
-		accParams = append(accParams, delegation.DelegatorAddress.String())
+		accParams = append(accParams, delegation.DelegatorAddress)
 
 		validator, err := db.GetValidator(delegation.ValidatorAddress)
 		if err != nil {
@@ -82,14 +81,13 @@ VALUES `
 		di := i * 4
 		delQry += fmt.Sprintf("($%d,$%d,$%d,$%d),", di+1, di+2, di+3, di+4)
 		delParams = append(delParams,
-			validator.GetConsAddr().String(), delegation.DelegatorAddress.String(), value, delegation.Shares)
+			validator.GetConsAddr(), delegation.DelegatorAddress, value, delegation.Shares)
 
 		// Historical delegation query
-		dhi := i * 6
-		delHistQry += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d),", dhi+1, dhi+2, dhi+3, dhi+4, dhi+5, dhi+6)
+		dhi := i * 5
+		delHistQry += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d),", dhi+1, dhi+2, dhi+3, dhi+4, dhi+5)
 		delHistParams = append(delHistParams,
-			validator.GetConsAddr().String(), delegation.DelegatorAddress.String(), value, delegation.Shares,
-			delegation.Height, delegation.Timestamp)
+			validator.GetConsAddr(), delegation.DelegatorAddress, value, delegation.Shares, delegation.Height)
 	}
 
 	// Insert the accounts
@@ -129,7 +127,7 @@ VALUES `
 // TIP: To store the validators data call SaveValidatorData.
 func (db *BigDipperDb) SaveHistoricalUnbondingDelegation(delegation types.UnbondingDelegation) error {
 	accStmt := `INSERT INTO account(address) VALUES ($1) ON CONFLICT DO NOTHING`
-	_, err := db.Sql.Exec(accStmt, delegation.DelegatorAddress.String())
+	_, err := db.Sql.Exec(accStmt, delegation.DelegatorAddress)
 	if err != nil {
 		return err
 	}
@@ -139,9 +137,9 @@ func (db *BigDipperDb) SaveHistoricalUnbondingDelegation(delegation types.Unbond
 		return err
 	}
 
-	stmt := `INSERT INTO unbonding_delegation_history 
-    		 (validator_address, delegator_address, amount, completion_timestamp, height, timestamp) 
-    		 VALUES ($1, $2, $3, $4, $5, $6)`
+	stmt := `
+INSERT INTO unbonding_delegation_history (validator_address, delegator_address, amount, completion_timestamp, height) 
+VALUES ($1, $2, $3, $4, $5)`
 
 	coin := dbtypes.NewDbCoin(delegation.Amount)
 	value, err := coin.Value()
@@ -150,8 +148,8 @@ func (db *BigDipperDb) SaveHistoricalUnbondingDelegation(delegation types.Unbond
 	}
 
 	_, err = db.Sql.Exec(stmt,
-		validator.GetConsAddr().String(), delegation.DelegatorAddress.String(), value,
-		delegation.CompletionTimestamp, delegation.Height, delegation.Timestamp,
+		validator.GetConsAddr(), delegation.DelegatorAddress, value,
+		delegation.CompletionTimestamp, delegation.Height,
 	)
 	return err
 }
@@ -177,14 +175,14 @@ VALUES `
 	var udParams []interface{}
 
 	udHistQry := `
-INSERT INTO unbonding_delegation_history (validator_address, delegator_address, amount, completion_timestamp, height, timestamp)
+INSERT INTO unbonding_delegation_history (validator_address, delegator_address, amount, completion_timestamp, height)
 VALUES `
 	var udHistParams []interface{}
 
 	for i, delegation := range delegations {
 		ai := i * 1
 		accQry += fmt.Sprintf("($%d),", ai+1)
-		accParams = append(accParams, delegation.DelegatorAddress.String())
+		accParams = append(accParams, delegation.DelegatorAddress)
 
 		validator, err := db.GetValidator(delegation.ValidatorAddress)
 		if err != nil {
@@ -197,16 +195,17 @@ VALUES `
 			return err
 		}
 
-		uhi := i * 6
-		udHistQry += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d),", uhi+1, uhi+2, uhi+3, uhi+4, uhi+5, uhi+6)
+		uhi := i * 5
+		udHistQry += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", uhi+1, uhi+2, uhi+3, uhi+4, uhi+5)
 		udHistParams = append(udHistParams,
-			validator.GetConsAddr().String(), delegation.DelegatorAddress.String(), amount, delegation.CompletionTimestamp,
-			delegation.Height, delegation.Timestamp)
+			validator.GetConsAddr(), delegation.DelegatorAddress, amount,
+			delegation.CompletionTimestamp, delegation.Height,
+		)
 
 		udi := i * 4
 		udQry += fmt.Sprintf("($%d,$%d,$%d,$%d),", udi+1, udi+2, udi+3, udi+4)
 		udParams = append(udParams,
-			validator.GetConsAddr().String(), delegation.DelegatorAddress.String(), amount, delegation.CompletionTimestamp)
+			validator.GetConsAddr(), delegation.DelegatorAddress, amount, delegation.CompletionTimestamp)
 	}
 
 	// Insert the delegators
@@ -246,7 +245,7 @@ VALUES `
 // To store the validators data call SaveValidatorData(s).
 func (db *BigDipperDb) SaveHistoricalRedelegation(redelegation types.Redelegation) error {
 	accStmt := `INSERT INTO account (address) VALUES ($1) ON CONFLICT DO NOTHING`
-	_, err := db.Sql.Exec(accStmt, redelegation.DelegatorAddress.String())
+	_, err := db.Sql.Exec(accStmt, redelegation.DelegatorAddress)
 	if err != nil {
 		return err
 	}
@@ -272,12 +271,12 @@ func (db *BigDipperDb) SaveHistoricalRedelegation(redelegation types.Redelegatio
 	// Insert the data
 	stmt := `
 INSERT INTO redelegation_history 
-    (delegator_address, src_validator_address, dst_validator_address, amount, completion_time, height, timestamp) 
-VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT DO NOTHING`
+    (delegator_address, src_validator_address, dst_validator_address, amount, completion_time, height) 
+VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT DO NOTHING`
 
 	_, err = db.Sql.Exec(stmt,
-		redelegation.DelegatorAddress.String(), srcVal.GetConsAddr().String(), dstVal.GetConsAddr().String(),
-		amountValue, redelegation.CompletionTime, redelegation.CreationHeight, redelegation.CreationTime,
+		redelegation.DelegatorAddress, srcVal.GetConsAddr(), dstVal.GetConsAddr(),
+		amountValue, redelegation.CompletionTime, redelegation.CreationHeight,
 	)
 	return err
 }
@@ -303,14 +302,14 @@ VALUES `
 
 	rdHisQry := `
 INSERT INTO redelegation_history 
-	(delegator_address, src_validator_address, dst_validator_address, amount, completion_time, height, timestamp) 
+	(delegator_address, src_validator_address, dst_validator_address, amount, completion_time, height) 
 VALUES `
 	var rdHisParams []interface{}
 
 	for i, redelegation := range redelegations {
 		a1 := i * 1
 		accQry += fmt.Sprintf("($%d),", a1+1)
-		accParams = append(accParams, redelegation.DelegatorAddress.String())
+		accParams = append(accParams, redelegation.DelegatorAddress)
 
 		// Get the validators info
 		srcVal, err := db.GetValidator(redelegation.SrcValidator)
@@ -333,15 +332,15 @@ VALUES `
 		rdi := i * 5
 		rdQry += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", rdi+1, rdi+2, rdi+3, rdi+4, rdi+5)
 		rdParams = append(rdParams,
-			redelegation.DelegatorAddress.String(),
-			srcVal.GetConsAddr().String(), dstVal.GetConsAddr().String(), amountValue, redelegation.CompletionTime)
+			redelegation.DelegatorAddress,
+			srcVal.GetConsAddr(), dstVal.GetConsAddr(), amountValue, redelegation.CompletionTime)
 
-		rdHi := i * 7
-		rdHisQry += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d),",
-			rdHi+1, rdHi+2, rdHi+3, rdHi+4, rdHi+5, rdHi+6, rdHi+7)
+		rdHi := i * 6
+		rdHisQry += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d),",
+			rdHi+1, rdHi+2, rdHi+3, rdHi+4, rdHi+5, rdHi+6)
 		rdHisParams = append(rdHisParams,
-			redelegation.DelegatorAddress.String(), srcVal.GetConsAddr().String(), dstVal.GetConsAddr().String(),
-			amountValue, redelegation.CompletionTime, redelegation.CreationHeight, redelegation.CreationTime)
+			redelegation.DelegatorAddress, srcVal.GetConsAddr(), dstVal.GetConsAddr(),
+			amountValue, redelegation.CompletionTime, redelegation.CreationHeight)
 	}
 
 	// Insert the delegators

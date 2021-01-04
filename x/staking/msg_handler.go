@@ -12,18 +12,13 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/desmos-labs/juno/types"
-	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/bdjuno/database"
 )
 
 // HandleMsg allows to handle the different messages related to the staking module
-func HandleMsg(tx types.Tx, index int, msg sdk.Msg, cp *client.Proxy, db *database.BigDipperDb) error {
+func HandleMsg(tx *types.Tx, index int, msg sdk.Msg, cp *client.Proxy, db *database.BigDipperDb) error {
 	if len(tx.Logs) == 0 {
-		log.Info().
-			Str("module", "staking").
-			Str("tx_hash", tx.TxHash).Int("msg_index", index).
-			Msg("skipping message as it was not successful")
 		return nil
 	}
 
@@ -50,20 +45,15 @@ func HandleMsg(tx types.Tx, index int, msg sdk.Msg, cp *client.Proxy, db *databa
 
 // handleMsgCreateValidator handles properly a MsgCreateValidator instance by
 // saving into the database all the data associated to such validator
-func handleMsgCreateValidator(tx types.Tx, msg cosmosstakingtypes.MsgCreateValidator, db *database.BigDipperDb) error {
+func handleMsgCreateValidator(tx *types.Tx, msg cosmosstakingtypes.MsgCreateValidator, db *database.BigDipperDb) error {
 	stakingValidator := cosmosstakingtypes.NewValidator(msg.ValidatorAddress, msg.PubKey, msg.Description)
-	timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
-	if err != nil {
-		return err
-	}
 
 	// Save validator commission
-	err = db.SaveValidatorCommission(stakingtypes.NewValidatorCommission(
-		msg.ValidatorAddress,
+	err := db.SaveValidatorCommission(stakingtypes.NewValidatorCommission(
+		msg.ValidatorAddress.String(),
 		&msg.Commission.Rate,
 		&msg.MinSelfDelegation,
 		tx.Height,
-		timestamp,
 	))
 	if err != nil {
 		return err
@@ -71,10 +61,9 @@ func handleMsgCreateValidator(tx types.Tx, msg cosmosstakingtypes.MsgCreateValid
 
 	// Save validator description
 	err = db.SaveValidatorDescription(stakingtypes.NewValidatorDescription(
-		msg.ValidatorAddress,
+		msg.ValidatorAddress.String(),
 		msg.Description,
 		tx.Height,
-		timestamp,
 	))
 	if err != nil {
 		return err
@@ -82,29 +71,23 @@ func handleMsgCreateValidator(tx types.Tx, msg cosmosstakingtypes.MsgCreateValid
 
 	// Save validator
 	return db.SaveValidatorData(stakingtypes.NewValidator(
-		stakingValidator.GetConsAddr(),
-		stakingValidator.GetOperator(),
+		stakingValidator.GetConsAddr().String(),
+		stakingValidator.GetOperator().String(),
 		stakingValidator.GetConsPubKey(),
-		sdk.AccAddress(stakingValidator.GetConsAddr()),
+		sdk.AccAddress(stakingValidator.GetConsAddr()).String(),
 		&msg.Commission.MaxChangeRate,
 		&msg.Commission.MaxRate,
 	))
 }
 
 // handleEditValidator handles MsgEditValidator messages, updating the validator info and commission
-func handleEditValidator(tx types.Tx, msg cosmosstakingtypes.MsgEditValidator, db *database.BigDipperDb) error {
-	timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
-	if err != nil {
-		return err
-	}
-
+func handleEditValidator(tx *types.Tx, msg cosmosstakingtypes.MsgEditValidator, db *database.BigDipperDb) error {
 	// Save validator commission
-	err = db.SaveValidatorCommission(stakingtypes.NewValidatorCommission(
-		msg.ValidatorAddress,
+	err := db.SaveValidatorCommission(stakingtypes.NewValidatorCommission(
+		msg.ValidatorAddress.String(),
 		msg.CommissionRate,
 		msg.MinSelfDelegation,
 		tx.Height,
-		timestamp,
 	))
 	if err != nil {
 		return err
@@ -112,20 +95,14 @@ func handleEditValidator(tx types.Tx, msg cosmosstakingtypes.MsgEditValidator, d
 
 	// Save validator description
 	return db.SaveValidatorDescription(stakingtypes.NewValidatorDescription(
-		msg.ValidatorAddress,
+		msg.ValidatorAddress.String(),
 		msg.Description,
 		tx.Height,
-		timestamp,
 	))
 }
 
 // handleMsgDelegate allows to properly handle a MsgDelegate
-func handleMsgDelegate(tx types.Tx, msg staking.MsgDelegate, cp *client.Proxy, db *database.BigDipperDb) error {
-	timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
-	if err != nil {
-		return err
-	}
-
+func handleMsgDelegate(tx *types.Tx, msg staking.MsgDelegate, cp *client.Proxy, db *database.BigDipperDb) error {
 	found, err := db.HasValidator(msg.ValidatorAddress.String())
 	if err != nil {
 		return err
@@ -143,7 +120,7 @@ func handleMsgDelegate(tx types.Tx, msg staking.MsgDelegate, cp *client.Proxy, d
 	}
 
 	// Get the delegations
-	delegations, err := utils.GetDelegations(msg.ValidatorAddress, tx.Height, timestamp, cp)
+	delegations, err := utils.GetDelegations(msg.ValidatorAddress.String(), tx.Height, cp)
 	if err != nil {
 		return err
 	}
@@ -153,7 +130,7 @@ func handleMsgDelegate(tx types.Tx, msg staking.MsgDelegate, cp *client.Proxy, d
 }
 
 // handleMsgUndelegate handles properly a MsgUndelegate
-func handleMsgUndelegate(tx types.Tx, index int, msg staking.MsgUndelegate, db *database.BigDipperDb) error {
+func handleMsgUndelegate(tx *types.Tx, index int, msg staking.MsgUndelegate, db *database.BigDipperDb) error {
 	// Get completion time
 	event, err := tx.FindEventByType(index, cosmosstakingtypes.EventTypeUnbond)
 	if err != nil {
@@ -170,23 +147,17 @@ func handleMsgUndelegate(tx types.Tx, index int, msg staking.MsgUndelegate, db *
 		return err
 	}
 
-	timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
-	if err != nil {
-		return err
-	}
-
 	return db.SaveHistoricalUnbondingDelegation(stakingtypes.NewUnbondingDelegation(
-		msg.DelegatorAddress,
-		msg.ValidatorAddress,
+		msg.DelegatorAddress.String(),
+		msg.ValidatorAddress.String(),
 		msg.Amount,
 		completionTime,
 		tx.Height,
-		timestamp,
 	))
 }
 
 // handleMsgBeginRedelegate handles properly MsgBeginRedelegate objects
-func handleMsgBeginRedelegate(tx types.Tx, index int, msg staking.MsgBeginRedelegate, db *database.BigDipperDb) error {
+func handleMsgBeginRedelegate(tx *types.Tx, index int, msg staking.MsgBeginRedelegate, db *database.BigDipperDb) error {
 	// Get the completion time
 	event, err := tx.FindEventByType(index, cosmosstakingtypes.EventTypeRedelegate)
 	if err != nil {
@@ -203,20 +174,13 @@ func handleMsgBeginRedelegate(tx types.Tx, index int, msg staking.MsgBeginRedele
 		return err
 	}
 
-	// Build the redelegation object
-	timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
-	if err != nil {
-		return err
-	}
-
 	// Store the redelegation
 	return db.SaveHistoricalRedelegation(stakingtypes.NewRedelegation(
-		msg.DelegatorAddress,
-		msg.ValidatorSrcAddress,
-		msg.ValidatorDstAddress,
+		msg.DelegatorAddress.String(),
+		msg.ValidatorSrcAddress.String(),
+		msg.ValidatorDstAddress.String(),
 		msg.Amount,
 		completionTime,
 		tx.Height,
-		timestamp,
 	))
 }

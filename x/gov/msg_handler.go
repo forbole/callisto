@@ -12,18 +12,13 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/gov"
 	juno "github.com/desmos-labs/juno/types"
-	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/bdjuno/database"
 )
 
 // HandleMsg allows to handle the different messages related to the staking module
-func HandleMsg(tx juno.Tx, index int, msg sdk.Msg, cp *client.Proxy, db *database.BigDipperDb) error {
+func HandleMsg(tx *juno.Tx, msg sdk.Msg, cp *client.Proxy, db *database.BigDipperDb) error {
 	if len(tx.Logs) == 0 {
-		log.Info().
-			Str("module", "gov").
-			Str("tx_hash", tx.TxHash).Int("msg_index", index).
-			Msg("skipping message as it was not successful")
 		return nil
 	}
 
@@ -42,15 +37,10 @@ func HandleMsg(tx juno.Tx, index int, msg sdk.Msg, cp *client.Proxy, db *databas
 }
 
 // handleMsgSubmitProposal allows to properly handle a handleMsgSubmitProposal
-func handleMsgSubmitProposal(tx juno.Tx, msg gov.MsgSubmitProposal, db *database.BigDipperDb, cp *client.Proxy) error {
-	timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
-	if err != nil {
-		return err
-	}
-
+func handleMsgSubmitProposal(tx *juno.Tx, msg gov.MsgSubmitProposal, db *database.BigDipperDb, cp *client.Proxy) error {
 	// Get proposals
 	var restProposals gov.Proposals
-	_, err = cp.QueryLCDWithHeight(fmt.Sprintf("/gov/proposals?height=%d", tx.Height), &restProposals)
+	_, err := cp.QueryLCDWithHeight(fmt.Sprintf("/gov/proposals?height=%d", tx.Height), &restProposals)
 	if err != nil {
 		return err
 	}
@@ -65,7 +55,7 @@ func handleMsgSubmitProposal(tx juno.Tx, msg gov.MsgSubmitProposal, db *database
 	}
 
 	// Refresh the accounts
-	err = auth.RefreshAccounts([]sdk.AccAddress{msg.Proposer}, tx.Height, timestamp, cp, db)
+	err = auth.RefreshAccounts([]string{msg.Proposer.String()}, tx.Height, cp, db)
 	if err != nil {
 		return err
 	}
@@ -74,7 +64,7 @@ func handleMsgSubmitProposal(tx juno.Tx, msg gov.MsgSubmitProposal, db *database
 	proposalObj := govtypes.NewProposal(
 		proposal.GetTitle(), proposal.GetDescription(), proposal.ProposalRoute(), proposal.ProposalType(),
 		proposal.ProposalID, proposal.Status, proposal.SubmitTime, proposal.DepositEndTime,
-		proposal.VotingStartTime, proposal.VotingEndTime, msg.Proposer,
+		proposal.VotingStartTime, proposal.VotingEndTime, msg.Proposer.String(),
 	)
 	err = db.SaveProposal(proposalObj)
 	if err != nil {
@@ -83,7 +73,7 @@ func handleMsgSubmitProposal(tx juno.Tx, msg gov.MsgSubmitProposal, db *database
 
 	// Store the deposit
 	deposit := govtypes.NewDeposit(
-		proposal.ProposalID, msg.Proposer, msg.InitialDeposit, msg.InitialDeposit, tx.Height, timestamp,
+		proposal.ProposalID, msg.Proposer.String(), msg.InitialDeposit, msg.InitialDeposit, tx.Height,
 	)
 	err = db.SaveDeposit(deposit)
 	if err != nil {
@@ -101,14 +91,9 @@ func handleMsgSubmitProposal(tx juno.Tx, msg gov.MsgSubmitProposal, db *database
 }
 
 // handleMsgDeposit allows to properly handle a handleMsgDeposit
-func handleMsgDeposit(tx juno.Tx, msg gov.MsgDeposit, db *database.BigDipperDb, cp *client.Proxy) error {
-	timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
-	if err != nil {
-		return err
-	}
-
+func handleMsgDeposit(tx *juno.Tx, msg gov.MsgDeposit, db *database.BigDipperDb, cp *client.Proxy) error {
 	// Refresh the accounts
-	err = auth.RefreshAccounts([]sdk.AccAddress{msg.Depositor}, tx.Height, timestamp, cp, db)
+	err := auth.RefreshAccounts([]string{msg.Depositor.String()}, tx.Height, cp, db)
 	if err != nil {
 		return err
 	}
@@ -122,7 +107,9 @@ func handleMsgDeposit(tx juno.Tx, msg gov.MsgDeposit, db *database.BigDipperDb, 
 
 	// Save the deposits
 	for _, proposal := range s {
-		deposit := govtypes.NewDeposit(msg.ProposalID, msg.Depositor, msg.Amount, proposal.TotalDeposit, tx.Height, timestamp)
+		deposit := govtypes.NewDeposit(
+			msg.ProposalID, msg.Depositor.String(), msg.Amount, proposal.TotalDeposit, tx.Height,
+		)
 		if err = db.SaveDeposit(deposit); err != nil {
 			return err
 		}
@@ -132,14 +119,9 @@ func handleMsgDeposit(tx juno.Tx, msg gov.MsgDeposit, db *database.BigDipperDb, 
 }
 
 // handleMsgVote allows to properly handle a handleMsgVote
-func handleMsgVote(tx juno.Tx, msg gov.MsgVote, db *database.BigDipperDb, cp *client.Proxy) error {
-	timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
-	if err != nil {
-		return err
-	}
-
+func handleMsgVote(tx *juno.Tx, msg gov.MsgVote, db *database.BigDipperDb, cp *client.Proxy) error {
 	// Refresh accounts
-	err = auth.RefreshAccounts([]sdk.AccAddress{msg.Voter}, tx.Height, timestamp, cp, db)
+	err := auth.RefreshAccounts([]string{msg.Voter.String()}, tx.Height, cp, db)
 	if err != nil {
 		return err
 	}
@@ -151,7 +133,7 @@ func handleMsgVote(tx juno.Tx, msg gov.MsgVote, db *database.BigDipperDb, cp *cl
 		return err
 	}
 
-	vote := govtypes.NewVote(msg.ProposalID, msg.Voter, msg.Option, tx.Height, timestamp)
+	vote := govtypes.NewVote(msg.ProposalID, msg.Voter.String(), msg.Option, tx.Height)
 	err = db.SaveVote(vote)
 	if err != nil {
 		return err
@@ -159,7 +141,7 @@ func handleMsgVote(tx juno.Tx, msg gov.MsgVote, db *database.BigDipperDb, cp *cl
 
 	// Save tally result
 	tallyResult := govtypes.NewTallyResult(
-		msg.ProposalID, s.Yes.Int64(), s.Abstain.Int64(), s.No.Int64(), s.NoWithVeto.Int64(), tx.Height, timestamp,
+		msg.ProposalID, s.Yes.Int64(), s.Abstain.Int64(), s.No.Int64(), s.NoWithVeto.Int64(), tx.Height,
 	)
 	return db.SaveTallyResult(tallyResult)
 }

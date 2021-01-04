@@ -39,10 +39,8 @@ func Register(scheduler *gocron.Scheduler, cp *client.Proxy, db *database.BigDip
 
 // updateBlockTimeInMinute insert average block time in the latest minute
 func updateBlockTimeInMinute(cp *client.Proxy, db *database.BigDipperDb) error {
-	log.Debug().
-		Str("module", "staking").
-		Str("operation", " tokens").
-		Msg("getting total token supply")
+	log.Debug().Str("module", "consensus").Str("operation", "block time").
+		Msg("updating block time in minutes")
 
 	var block tmctypes.ResultBlock
 	err := cp.QueryLCD("/blocks/latest", &block)
@@ -66,15 +64,13 @@ func updateBlockTimeInMinute(cp *client.Proxy, db *database.BigDipperDb) error {
 	}
 	newBlockTime := block.Block.Time.Sub(minute.Timestamp).Seconds() / float64(block.Block.Height-minute.Height)
 
-	return db.SaveAverageBlockTimePerMin(newBlockTime, block.Block.Time, block.Block.Height)
+	return db.SaveAverageBlockTimePerMin(newBlockTime, block.Block.Height)
 }
 
 // updateBlockTimeInHour insert average block time in the latest hour
 func updateBlockTimeInHour(cp *client.Proxy, db *database.BigDipperDb) error {
-	log.Debug().
-		Str("module", "staking").
-		Str("operation", " tokens").
-		Msg("getting total token supply")
+	log.Debug().Str("module", "consensus").Str("operation", "block time").
+		Msg("updating block time in hours")
 
 	var block tmctypes.ResultBlock
 	err := cp.QueryLCD("/blocks/latest", &block)
@@ -98,15 +94,13 @@ func updateBlockTimeInHour(cp *client.Proxy, db *database.BigDipperDb) error {
 	}
 	newBlockTime := block.Block.Time.Sub(hour.Timestamp).Seconds() / float64(block.Block.Height-hour.Height)
 
-	return db.SaveAverageBlockTimePerHour(newBlockTime, block.Block.Time, block.Block.Height)
+	return db.SaveAverageBlockTimePerHour(newBlockTime, block.Block.Height)
 }
 
 // updateBlockTimeInDay insert average block time in the latest minute
 func updateBlockTimeInDay(cp *client.Proxy, db *database.BigDipperDb) error {
-	log.Debug().
-		Str("module", "staking").
-		Str("operation", " tokens").
-		Msg("getting total token supply")
+	log.Debug().Str("module", "consensus").Str("operation", "block time").
+		Msg("updating block time in days")
 
 	var block tmctypes.ResultBlock
 	err := cp.QueryLCD("/blocks/latest", &block)
@@ -128,7 +122,7 @@ func updateBlockTimeInDay(cp *client.Proxy, db *database.BigDipperDb) error {
 	if err != nil {
 		return err
 	}
-	newBlockTime := block.Block.Time.Sub(day.Timestamp).Seconds() / float64((block.Block.Height - day.Height))
+	newBlockTime := block.Block.Time.Sub(day.Timestamp).Seconds() / float64(block.Block.Height-day.Height)
 
-	return db.SaveAverageBlockTimePerDay(newBlockTime, block.Block.Time, block.Block.Height)
+	return db.SaveAverageBlockTimePerDay(newBlockTime, block.Block.Height)
 }

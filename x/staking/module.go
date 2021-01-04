@@ -33,30 +33,37 @@ func (m Module) RunAdditionalOperations(cfg *config.Config, cdc *codec.Codec, cp
 }
 
 // RegisterPeriodicOperations implements modules.Module
-func (m Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler, cdc *codec.Codec, cp *client.Proxy, db db.Database) error {
+func (m Module) RegisterPeriodicOperations(
+	scheduler *gocron.Scheduler, cdc *codec.Codec, cp *client.Proxy, db db.Database,
+) error {
 	bdDatabase := database.Cast(db)
 	return RegisterPeriodicOps(scheduler, cp, bdDatabase)
 }
 
 // HandleGenesis implements modules.Module
-func (m Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, cdc *codec.Codec, cp *client.Proxy, db db.Database) error {
+func (m Module) HandleGenesis(
+	doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, cdc *codec.Codec, cp *client.Proxy, db db.Database,
+) error {
 	bdDatabase := database.Cast(db)
-	return HandleGenesis(doc, appState, cdc, cp, bdDatabase)
+	return HandleGenesis(doc, appState, cdc, bdDatabase)
 }
 
 // HandleBlock implements modules.Module
-func (m Module) HandleBlock(block *tmctypes.ResultBlock, txs []types.Tx, vals *tmctypes.ResultValidators, cdc *codec.Codec, cp *client.Proxy, db db.Database) error {
+func (m Module) HandleBlock(
+	block *tmctypes.ResultBlock, txs []*types.Tx, vals *tmctypes.ResultValidators,
+	cdc *codec.Codec, cp *client.Proxy, db db.Database,
+) error {
 	bdDatabase := database.Cast(db)
 	return HandleBlock(block, cp, bdDatabase)
 }
 
 // HandleTx implements modules.Module
-func (m Module) HandleTx(tx types.Tx, cdc *codec.Codec, cp *client.Proxy, db db.Database) error {
+func (m Module) HandleTx(tx *types.Tx, cdc *codec.Codec, cp *client.Proxy, db db.Database) error {
 	return nil
 }
 
 // HandleMsg implements modules.Module
-func (m Module) HandleMsg(index int, msg sdk.Msg, tx types.Tx, cdc *codec.Codec, cp *client.Proxy, db db.Database) error {
+func (m Module) HandleMsg(index int, msg sdk.Msg, tx *types.Tx, cdc *codec.Codec, cp *client.Proxy, db db.Database) error {
 	bdDatabase := database.Cast(db)
 	return HandleMsg(tx, index, msg, cp, bdDatabase)
 }
