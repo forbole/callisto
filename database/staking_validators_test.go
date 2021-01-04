@@ -1,17 +1,16 @@
 package database_test
 
 import (
-	"encoding/json"
 	"fmt"
 	"time"
 
-	"github.com/rs/zerolog/log"
+	consensustypes "github.com/tendermint/tendermint/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+
 	dbtypes "github.com/forbole/bdjuno/database/types"
 	"github.com/forbole/bdjuno/x/staking/types"
-	tmbytes "github.com/tendermint/tendermint/libs/bytes"
 )
 
 func newDecPts(value int64, prec int64) *sdk.Dec {
@@ -24,6 +23,8 @@ func newIntPtr(value int64) *sdk.Int {
 	return &val
 }
 
+// getValidator stores inside the database a validator having the given
+// consensus address, validator address and validator public key
 func (suite *DbTestSuite) getValidator(consAddr, valAddr, pubkey string) types.Validator {
 	selfDelegation := suite.getDelegator("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	valAddrObj, err := sdk.ValAddressFromBech32(valAddr)
@@ -45,6 +46,7 @@ func (suite *DbTestSuite) getValidator(consAddr, valAddr, pubkey string) types.V
 	return validator
 }
 
+// getDelegator saves inside the database a delegator having the given address
 func (suite *DbTestSuite) getDelegator(addr string) sdk.AccAddress {
 	delegator, err := sdk.AccAddressFromBech32(addr)
 	suite.Require().NoError(err)
@@ -500,82 +502,84 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 
 //--------------------------------------------
 func (suite *DbTestSuite) TestSaveDoubleVoteEvidence() {
-	validator1 := suite.getValidator(
+	timestamp := time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC)
+
+	// Insert the validator
+	validator := suite.getValidator(
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
 		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
 	)
 
-	voteA := types.NewDoubleSignVote(
-		[]byte("1qwPQjPrc7DH7+f6YAE3fOkq6phDAJ60dEyhmcZ7dx2ZgGvi9DbVLsn4leYqRNA/63ZeeH5kVly8zI1jCh4iBg=="),
-		tmbytes.HexBytes([]byte("A42C9492F5DE01BFA6117137102C3EF909F1A46C2F56915F542D12AC2D0A5BCA")),
-		tmbytes.HexBytes([]byte("418A20D12F45FC9340BE0CD2EDB0FFA1E4316176B8CE11E123EF6CBED23C8423")),
-		10,
-		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-	)
-
-	voteB := types.NewDoubleSignVote(
-		[]byte("A5m7SVuvZ8YNXcUfBKLgkeV+Vy5ea+7rPfzlbkEvHOPPce6B7A2CwOIbCmPSVMKUarUdta+HiyTV+IELaOYyDA=="),
-		tmbytes.HexBytes([]byte("29D583DE786844F8FDE727EB5F9BEF9B73184BB0891BA3E279B751C527F4BB82")),
-		tmbytes.HexBytes([]byte("8C93F21EB7E580DC52D6F2EFF3515B5D458ADED40B97B414FF8435E47257694D")),
-		10,
-		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-	)
-
+	// Insert data
 	evidence := types.NewDoubleSignEvidence(
-		[]byte("rPVOGBuNjQb17F21UBOKOvkl1AlcFBRm314IoUaBzFA"),
-		validator1.GetConsAddr(),
-		voteA,
-		voteB,
-		10,
-		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
+		types.NewDoubleSignVote(
+			int(consensustypes.PrevoteType),
+			10,
+			1,
+			"A42C9492F5DE01BFA6117137102C3EF909F1A46C2F56915F542D12AC2D0A5BCA",
+			timestamp,
+			validator.GetConsAddr().String(),
+			1,
+			"1qwPQjPrc7DH7+f6YAE3fOkq6phDAJ60dEyhmcZ7dx2ZgGvi9DbVLsn4leYqRNA/63ZeeH5kVly8zI1jCh4iBg==",
+		),
+		types.NewDoubleSignVote(
+			int(consensustypes.PrevoteType),
+			10,
+			1,
+			"418A20D12F45FC9340BE0CD2EDB0FFA1E4316176B8CE11E123EF6CBED23C8423",
+			timestamp,
+			validator.GetConsAddr().String(),
+			1,
+			"A5m7SVuvZ8YNXcUfBKLgkeV+Vy5ea+7rPfzlbkEvHOPPce6B7A2CwOIbCmPSVMKUarUdta+HiyTV+IELaOYyDA==",
+		),
 	)
-
 	err := suite.database.SaveDoubleSignEvidence(evidence)
 	suite.Require().NoError(err)
 
-	expectEvidence := dbtypes.NewDoubleSignEvidenceRow(
-		"rPVOGBuNjQb17F21UBOKOvkl1AlcFBRm314IoUaBzFA",
-		validator1.GetConsAddr().String(),
-		string(voteA.Signiture),
-		string(voteB.Signiture),
-		10,
-		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-	)
+	// Verify insertion
+	var evidenceRows []dbtypes.DoubleSignEvidenceRow
+	err = suite.database.Sqlx.Select(&evidenceRows, "SELECT * FROM double_sign_evidence")
+	suite.Require().NoError(err)
+	suite.Require().Len(evidenceRows, 1)
+	suite.Require().Equal(dbtypes.NewDoubleSignEvidenceRow(
+		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
+		1,
+		2,
+	), evidenceRows[0])
 
 	expectVotes := []dbtypes.DoubleSignVoteRow{
 		dbtypes.NewDoubleSignVoteRow(
-			"1qwPQjPrc7DH7+f6YAE3fOkq6phDAJ60dEyhmcZ7dx2ZgGvi9DbVLsn4leYqRNA/63ZeeH5kVly8zI1jCh4iBg==",
-			"A42C9492F5DE01BFA6117137102C3EF909F1A46C2F56915F542D12AC2D0A5BCA",
-			"418A20D12F45FC9340BE0CD2EDB0FFA1E4316176B8CE11E123EF6CBED23C8423",
+			1,
+			int(consensustypes.PrevoteType),
 			10,
-			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			1,
+			"A42C9492F5DE01BFA6117137102C3EF909F1A46C2F56915F542D12AC2D0A5BCA",
+			timestamp,
+			validator.GetConsAddr().String(),
+			1,
+			"1qwPQjPrc7DH7+f6YAE3fOkq6phDAJ60dEyhmcZ7dx2ZgGvi9DbVLsn4leYqRNA/63ZeeH5kVly8zI1jCh4iBg==",
 		),
 		dbtypes.NewDoubleSignVoteRow(
-			"A5m7SVuvZ8YNXcUfBKLgkeV+Vy5ea+7rPfzlbkEvHOPPce6B7A2CwOIbCmPSVMKUarUdta+HiyTV+IELaOYyDA==",
-			"29D583DE786844F8FDE727EB5F9BEF9B73184BB0891BA3E279B751C527F4BB82",
-			"8C93F21EB7E580DC52D6F2EFF3515B5D458ADED40B97B414FF8435E47257694D",
+			2,
+			int(consensustypes.PrevoteType),
 			10,
-			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC)),
+			1,
+			"418A20D12F45FC9340BE0CD2EDB0FFA1E4316176B8CE11E123EF6CBED23C8423",
+			timestamp,
+			validator.GetConsAddr().String(),
+			1,
+			"A5m7SVuvZ8YNXcUfBKLgkeV+Vy5ea+7rPfzlbkEvHOPPce6B7A2CwOIbCmPSVMKUarUdta+HiyTV+IELaOYyDA==",
+		),
 	}
 
-	var result1 []dbtypes.DoubleSignEvidenceRow
-	err = suite.database.Sqlx.Select(&result1, "SELECT * FROM double_sign_evidence")
+	var votesRows []dbtypes.DoubleSignVoteRow
+	err = suite.database.Sqlx.Select(&votesRows, "SELECT * FROM double_sign_vote")
 	suite.Require().NoError(err)
-	suite.Require().Len(result1, 1)
-	out, err := json.Marshal(result1[0])
-	suite.Require().NoError(err)
-	log.Debug().Msg(string(out))
-	suite.Require().True(result1[0].Equal(expectEvidence))
 
-	var result2 []dbtypes.DoubleSignVoteRow
-	err = suite.database.Sqlx.Select(&result2, "SELECT * FROM double_sign_vote")
-	suite.Require().NoError(err)
-	suite.Require().Len(result2, 2)
-	for index, row := range result2 {
-		out, err = json.Marshal(result2)
-		suite.Require().NoError(err)
-		log.Debug().Msg(string(out))
+	suite.Require().Len(votesRows, len(expectVotes))
+	for index, row := range votesRows {
 		suite.Require().True(expectVotes[index].Equal(row))
 	}
 }

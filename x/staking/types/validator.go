@@ -1,13 +1,11 @@
 package types
 
 import (
-	"bytes"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/tendermint/tendermint/crypto"
-	tmbytes "github.com/tendermint/tendermint/libs/bytes"
 )
 
 // Validator represents a single validator.
@@ -248,74 +246,76 @@ func (v ValidatorStatus) Equals(w ValidatorStatus) bool {
 
 //---------------------------------------------------------------
 
-// DoubleSignEvidence represent double sign evidence on each tendermint blocks
+// DoubleSignEvidence represent a double sign evidence on each tendermint block
 type DoubleSignEvidence struct {
-	Pubkey           []byte
-	ConsensusAddress sdk.ConsAddress
-	VoteA            DoubleSignVote
-	VoteB            DoubleSignVote
-	Height           int64
-	Timestamp        time.Time
+	Pubkey string
+	VoteA  DoubleSignVote
+	VoteB  DoubleSignVote
 }
 
 // NewDoubleSignEvidence return a new DoubleSignEvidence object
 func NewDoubleSignEvidence(
-	pubkey []byte,
-	consensusAddress sdk.ConsAddress,
+	pubkey string,
 	voteA DoubleSignVote,
 	voteB DoubleSignVote,
-	height int64,
-	timestamp time.Time,
 ) DoubleSignEvidence {
 	return DoubleSignEvidence{
-		Pubkey:           pubkey,
-		ConsensusAddress: consensusAddress,
-		VoteA:            voteA,
-		VoteB:            voteB,
-		Height:           height,
-		Timestamp:        timestamp,
+		Pubkey: pubkey,
+		VoteA:  voteA,
+		VoteB:  voteB,
 	}
 }
 
-// Equals tells whether v and w are equals
+// Equals tells whether v and w contain the same data
 func (w DoubleSignEvidence) Equals(v DoubleSignEvidence) bool {
-	return bytes.Equal(w.Pubkey, v.Pubkey) &&
-		w.ConsensusAddress.Equals(v.ConsensusAddress) &&
+	return w.Pubkey == v.Pubkey &&
 		w.VoteA.Equals(v.VoteA) &&
-		w.VoteB.Equals(v.VoteB) &&
-		w.Height == v.Height &&
-		w.Timestamp == v.Timestamp
+		w.VoteB.Equals(v.VoteB)
 }
 
-// DoubleSignVote
+// DoubleSignVote represents a double vote which is included inside a DoubleSignEvidence
 type DoubleSignVote struct {
-	Signiture []byte
-	Hash      tmbytes.HexBytes
-	PartHash  tmbytes.HexBytes
-	Height    int64
-	Timestamp time.Time
+	Type             int
+	Height           int64
+	Round            int
+	BlockID          string
+	Timestamp        time.Time
+	ValidatorAddress string
+	ValidatorIndex   int
+	Signature        string
 }
 
+// NewDoubleSignVote allows to create a new DoubleSignVote instance
 func NewDoubleSignVote(
-	signiture []byte,
-	hash tmbytes.HexBytes,
-	partHash tmbytes.HexBytes,
+	roundType int,
 	height int64,
+	round int,
+	blockID string,
 	timestamp time.Time,
+	validatorAddress string,
+	validatorIndex int,
+	signature string,
 ) DoubleSignVote {
 	return DoubleSignVote{
-		Signiture: signiture,
-		Hash:      hash,
-		PartHash:  partHash,
-		Height:    height,
-		Timestamp: timestamp,
+		Type:             roundType,
+		Height:           height,
+		Round:            round,
+		BlockID:          blockID,
+		Timestamp:        timestamp,
+		ValidatorAddress: validatorAddress,
+		ValidatorIndex:   validatorIndex,
+		Signature:        signature,
 	}
 }
 
 func (w DoubleSignVote) Equals(v DoubleSignVote) bool {
-	return bytes.Equal(w.Signiture, v.Signiture) &&
-		w.Hash.String() == v.Hash.String() &&
-		w.PartHash.String() == v.PartHash.String() &&
+	return w.Type == v.Type &&
 		w.Height == v.Height &&
-		w.Timestamp.Equal(v.Timestamp)
+		w.Round == v.Round &&
+		w.BlockID == v.BlockID &&
+		w.Timestamp.Equal(v.Timestamp) &&
+		w.ValidatorAddress == v.ValidatorAddress &&
+		w.ValidatorIndex == v.ValidatorIndex &&
+		w.Signature == v.Signature
+
 }

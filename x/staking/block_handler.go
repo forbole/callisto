@@ -1,18 +1,22 @@
 package staking
 
 import (
+	"encoding/hex"
 	"fmt"
 	"time"
+
+	jutils "github.com/desmos-labs/juno/db/utils"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/desmos-labs/juno/client"
-	"github.com/forbole/bdjuno/database"
-	stakingtypes "github.com/forbole/bdjuno/x/staking/types"
-	"github.com/forbole/bdjuno/x/staking/utils"
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 	tmtypes "github.com/tendermint/tendermint/types"
+
+	"github.com/forbole/bdjuno/database"
+	stakingtypes "github.com/forbole/bdjuno/x/staking/types"
+	"github.com/forbole/bdjuno/x/staking/utils"
 )
 
 // HandleBlock represents a method that is called each time a new block is created
@@ -36,7 +40,7 @@ func HandleBlock(block *tmctypes.ResultBlock, cp *client.Proxy, db *database.Big
 		return err
 	}
 
-	err = updateDoubleSignEvidence(block.Block.Height, block.Block.Time, block.Block.Evidence.Evidence, db)
+	err = updateDoubleSignEvidence(block.Block.Evidence.Evidence, db)
 	if err != nil {
 		return err
 	}
@@ -150,36 +154,47 @@ func updateValidatorsStatus(height int64, timestamp time.Time, cp *client.Proxy,
 	return nil
 }
 
-func updateDoubleSignEvidence(height int64, timestamp time.Time,
-	evidenceList tmtypes.EvidenceList, db *database.BigDipperDb) error {
+func updateDoubleSignEvidence(evidenceList tmtypes.EvidenceList, db *database.BigDipperDb) error {
 	for _, ev := range evidenceList {
 		dve, ok := ev.(*tmtypes.DuplicateVoteEvidence)
-		if ok {
-			consAddress, err := sdk.ConsAddressFromHex(dve.VoteA.ValidatorAddress.String())
-			if err != nil {
-				return err
-			}
-			err = db.SaveDoubleSignEvidence(
-				stakingtypes.NewDoubleSignEvidence(
-					dve.PubKey.Address().Bytes(),
-					consAddress,
-					stakingtypes.NewDoubleSignVote(dve.VoteA.Signature,
-						dve.VoteA.BlockID.Hash,
-						dve.VoteA.BlockID.PartsHeader.Hash,
-						dve.VoteA.Height,
-						dve.VoteA.Timestamp),
-					stakingtypes.NewDoubleSignVote(dve.VoteB.Signature,
-						dve.VoteB.BlockID.Hash,
-						dve.VoteB.BlockID.PartsHeader.Hash,
-						dve.VoteB.Height,
-						dve.VoteB.Timestamp),
-					height,
-					timestamp,
-				))
-			if err != nil {
-				return err
-			}
+		if !ok {
+			continue
 		}
+
+		pubKey, err := sdk.Bech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, dve.PubKey)
+		if err != nil {
+			return err
+		}
+
+		evidence := stakingtypes.NewDoubleSignEvidence(
+			pubKey,
+			stakingtypes.NewDoubleSignVote(
+				int(dve.VoteA.Type),
+				dve.VoteA.Height,
+				dve.VoteA.Round,
+				dve.VoteA.BlockID.String(),
+				dve.VoteA.Timestamp,
+				jutils.ConvertValidatorAddressToString(dve.VoteA.ValidatorAddress),
+				dve.VoteA.ValidatorIndex,
+				hex.EncodeToString(dve.VoteA.Signature),
+			),
+			stakingtypes.NewDoubleSignVote(
+				int(dve.VoteB.Type),
+				dve.VoteB.Height,
+				dve.VoteB.Round,
+				dve.VoteB.BlockID.String(),
+				dve.VoteB.Timestamp,
+				jutils.ConvertValidatorAddressToString(dve.VoteB.ValidatorAddress),
+				dve.VoteB.ValidatorIndex,
+				hex.EncodeToString(dve.VoteB.Signature),
+			),
+		)
+
+		err = db.SaveDoubleSignEvidence(evidence)
+		if err != nil {
+			return err
+		}
+
 	}
 	return nil
 }

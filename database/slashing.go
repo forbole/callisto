@@ -1,23 +1,32 @@
 package database
 
 import (
+	"fmt"
+
 	"github.com/forbole/bdjuno/x/slashing/types"
 )
 
-// SaveValidatorSigningInfo allow to save signing info in the specific height and validator
-func (db BigDipperDb) SaveValidatorSigningInfo(t types.ValidatorSigningInfo) error {
-	stmt := `INSERT INTO validator_signing_info(validator_address,start_height,index_offset,jailed_until,tombstoned,missed_blocks_counter,height,timestamp) 
-	VALUES ($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT DO NOTHING`
-	_, err := db.Sql.Exec(stmt, t.ValidatorAddress.String(),
-		t.StartHeight,
-		t.IndexOffset,
-		t.JailedUntil,
-		t.Tombstoned,
-		t.MissedBlocksCounter,
-		t.Height,
-		t.Timestamp)
-	if err != nil {
-		return err
+// SaveValidatorsSigningInfos saves the given infos inside the database
+func (db *BigDipperDb) SaveValidatorsSigningInfos(infos []types.ValidatorSigningInfo) error {
+	stmt := `
+INSERT INTO validator_signing_info 
+    (validator_address, start_height, index_offset, jailed_until, tombstoned, missed_blocks_counter, height, timestamp) 
+VALUES `
+	var args []interface{}
+
+	for i, info := range infos {
+		ii := i * 8
+
+		stmt += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d),",
+			ii+1, ii+2, ii+3, ii+4, ii+5, ii+6, ii+7, ii+8)
+		args = append(args,
+			info.ValidatorAddress.String(), info.StartHeight, info.IndexOffset, info.JailedUntil, info.Tombstoned,
+			info.MissedBlocksCounter, info.Height, info.Timestamp,
+		)
 	}
-	return nil
+
+	stmt = stmt[:len(stmt)-1] // Remove trailing ","
+	stmt += ` ON CONFLICT DO NOTHING`
+	_, err := db.Sql.Exec(stmt, args...)
+	return err
 }

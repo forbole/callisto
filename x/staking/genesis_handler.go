@@ -9,10 +9,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
-	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/x/staking/types"
 	"github.com/rs/zerolog/log"
 	tmtypes "github.com/tendermint/tendermint/types"
+
+	"github.com/forbole/bdjuno/database"
+	"github.com/forbole/bdjuno/x/staking/types"
 )
 
 func HandleGenesis(

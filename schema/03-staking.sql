@@ -203,26 +203,30 @@ CREATE TABLE redelegation_history
 /*--------------------------------------------*/
 
 /*
-* This holds the votes that is the evidence of a double sign. This update on BLOCK basis when there is a double sign happens
-*/
+ * This holds the votes that is the evidence of a double sign.
+ * It should be updated on a BLOCK basis when a double sign occurs.
+ */
 CREATE TABLE double_sign_vote
 (
-    signiture TEXT NOT NULL UNIQUE,
-    hx TEXT NOT NULL,
-    part_header TEXT NOT NULL,
-    height                BIGINT                      NOT NULL,
-    timestamp             TIMESTAMP WITHOUT TIME ZONE NOT NULL
+    id                SERIAL PRIMARY KEY,
+    type              SMALLINT                    NOT NULL,
+    height            BIGINT                      NOT NULL,
+    round             INT                         NOT NULL,
+    block_id          TEXT                        NOT NULL,
+    timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    validator_address TEXT                        NOT NULL REFERENCES validator (consensus_address),
+    validator_index   INT                         NOT NULL,
+    signature         TEXT                        NOT NULL,
+    UNIQUE (block_id, validator_address)
 );
 
-/**
-* This holds the HISTORICAL double_sign_evidence on BLOCK basis
-*/
+/*
+ * This holds the HISTORICAL double_sign_evidence.
+ * It should be updated on a on BLOCK basis.
+ */
 CREATE TABLE double_sign_evidence
 (
-    pubkey TEXT NOT NULL,
-    consensus_address     TEXT NOT NULL REFERENCES validator (consensus_address),
-    vote_a TEXT NOT NULL REFERENCES double_sign_vote(signiture),
-    vote_b text NOT NULL REFERENCES double_sign_vote(signiture),
-    height                BIGINT                      NOT NULL,
-    timestamp             TIMESTAMP WITHOUT TIME ZONE NOT NULL
+    public_key TEXT   NOT NULL,
+    vote_a_id  BIGINT NOT NULL REFERENCES double_sign_vote (id),
+    vote_b_id  BIGINT NOT NULL REFERENCES double_sign_vote (id)
 );

@@ -6,18 +6,19 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/desmos-labs/juno/client"
-	"github.com/forbole/bdjuno/database"
-	slashingtypes "github.com/forbole/bdjuno/x/slashing/types"
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+
+	"github.com/forbole/bdjuno/database"
+	slashingtypes "github.com/forbole/bdjuno/x/slashing/types"
 )
 
 // HandleBlock represents a method that is called each time a new block is created
 func HandleBlock(block *tmctypes.ResultBlock, cp *client.Proxy, db *database.BigDipperDb) error {
-	log.Debug().Str("module", "staking").Msgf("handling block")
+	log.Debug().Str("module", "slashing").Msgf("handling block")
 
 	// Update the staking pool
-	err := updateSigningInfo(block.Block.Height, cp, db)
+	err := updateSigningInfo(block.Block.Height, block.Block.Time, cp, db)
 	if err != nil {
 		return err
 	}
@@ -26,7 +27,7 @@ func HandleBlock(block *tmctypes.ResultBlock, cp *client.Proxy, db *database.Big
 }
 
 // updateSigningInfo reads from the LCD the current staking pool and stores its value inside the database
-func updateSigningInfo(height int64, cp *client.Proxy, db *database.BigDipperDb) error {
+func updateSigningInfo(height int64, timestamp time.Time, cp *client.Proxy, db *database.BigDipperDb) error {
 	log.Debug().
 		Str("module", "slashing").
 		Str("operation", "signing info").
@@ -41,24 +42,23 @@ func updateSigningInfo(height int64, cp *client.Proxy, db *database.BigDipperDb)
 	}
 
 	log.Debug().
-		Str("module", "staking").
-		Str("operation", "staking_pool").
-		Msg("saving staking pool")
+		Str("module", "slashing").
+		Str("operation", "signing_info").
+		Msg("saving signing info")
 
-	for _, info := range pool {
-		err = db.SaveValidatorSigningInfo(slashingtypes.NewValidatorSigningInfo(
+	infos := make([]slashingtypes.ValidatorSigningInfo, len(pool))
+	for index, info := range pool {
+		infos[index] = slashingtypes.NewValidatorSigningInfo(
 			info.Address,
 			info.StartHeight,
 			info.IndexOffset,
 			info.JailedUntil,
 			info.Tombstoned,
 			info.MissedBlocksCounter,
-			height, time.Now(),
-		))
-		if err != nil {
-			return err
-		}
+			height,
+			timestamp,
+		)
 	}
 
-	return nil
+	return db.SaveValidatorsSigningInfos(infos)
 }

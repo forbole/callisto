@@ -10,10 +10,11 @@ import (
 	"github.com/desmos-labs/juno/db"
 	"github.com/desmos-labs/juno/modules"
 	"github.com/desmos-labs/juno/types"
-	"github.com/forbole/bdjuno/database"
 	"github.com/go-co-op/gocron"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 	tmtypes "github.com/tendermint/tendermint/types"
+
+	"github.com/forbole/bdjuno/database"
 )
 
 // Cast check to make sure it implements the interface

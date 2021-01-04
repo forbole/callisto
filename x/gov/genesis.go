@@ -8,10 +8,11 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/gov"
 	"github.com/desmos-labs/juno/client"
-	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/x/gov/types"
 	"github.com/rs/zerolog/log"
 	tmtypes "github.com/tendermint/tendermint/types"
+
+	"github.com/forbole/bdjuno/database"
+	"github.com/forbole/bdjuno/x/gov/types"
 )
 
 func HandleGenesis(

@@ -35,7 +35,8 @@ func NewValidatorSigningInfoRow(
 	tombstoned bool,
 	missedBlocksCounter int64,
 	height int64,
-	timestamp time.Time) ValidatorSigningInfoRow {
+	timestamp time.Time,
+) ValidatorSigningInfoRow {
 	return ValidatorSigningInfoRow{
 		ValidatorAddress:    validatorAddress,
 		StartHeight:         startHeight,

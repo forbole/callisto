@@ -425,73 +425,83 @@ func (v ValidatorStatusHistoryRow) Equal(w ValidatorStatusHistoryRow) bool {
 }
 
 //--------------------------------------------------------
-// DoubleSignEvidenceRow represents a single row of the double_sign_evidence table
-type DoubleSignEvidenceRow struct {
-	Pubkey    string    `db:"pubkey"`
-	ConsAddr  string    `db:"consensus_address"`
-	VoteA     string    `db:"vote_a"`
-	VoteB     string    `db:"vote_b"`
-	Height    int64     `db:"height"`
-	Timestamp time.Time `db:"timestamp"`
-}
 
-// NewDoubleSignEvidenceRow allows to build a new NewDoubleSignEvidenceRow
-func NewDoubleSignEvidenceRow(pubkey string,
-	consAddr string,
-	voteA string,
-	voteB string,
-	height int64,
-	timestamp time.Time) DoubleSignEvidenceRow {
-	return DoubleSignEvidenceRow{
-		Pubkey:    pubkey,
-		ConsAddr:  consAddr,
-		VoteA:     voteA,
-		VoteB:     voteB,
-		Height:    height,
-		Timestamp: timestamp,
-	}
-}
-
-// Equal tells whether v and w represent the same rows
-func (v DoubleSignEvidenceRow) Equal(w DoubleSignEvidenceRow) bool {
-	return v.Pubkey == w.Pubkey &&
-		v.ConsAddr == w.ConsAddr &&
-		v.VoteA == w.VoteA &&
-		v.VoteB == w.VoteB &&
-		v.Height == w.Height &&
-		v.Timestamp.Equal(w.Timestamp)
-}
-
-//--------------------------------------------------------
 // DoubleSignVoteRow represents a single row of the double_sign_vote table
 type DoubleSignVoteRow struct {
-	Signiture  string    `db:"signiture"`
-	Hash       string    `db:"hx"`
-	PartHeader string    `db:"part_header"`
-	Height     int64     `db:"height"`
-	Timestamp  time.Time `db:"timestamp"`
+	Id               int64     `db:"id"`
+	VoteType         int       `db:"type"`
+	Height           int64     `db:"height"`
+	Round            int       `db:"round"`
+	BlockID          string    `db:"block_id"`
+	Timestamp        time.Time `db:"timestamp"`
+	ValidatorAddress string    `db:"validator_address"`
+	ValidatorIndex   int       `db:"validator_index"`
+	Signature        string    `db:"signature"`
 }
 
 // NewDoubleSignVoteRow allows to build a new NewDoubleSignVoteRow
-func NewDoubleSignVoteRow(signiture string,
-	hash string,
-	partHeader string,
+func NewDoubleSignVoteRow(
+	id int64,
+	voteType int,
 	height int64,
-	timestamp time.Time) DoubleSignVoteRow {
+	round int,
+	blockID string,
+	timestamp time.Time,
+	validatorAddress string,
+	validatorIndex int,
+	signature string,
+) DoubleSignVoteRow {
 	return DoubleSignVoteRow{
-		Signiture:  signiture,
-		Hash:       hash,
-		PartHeader: partHeader,
-		Height:     height,
-		Timestamp:  timestamp,
+		Id:               id,
+		VoteType:         voteType,
+		Height:           height,
+		Round:            round,
+		BlockID:          blockID,
+		Timestamp:        timestamp,
+		ValidatorAddress: validatorAddress,
+		ValidatorIndex:   validatorIndex,
+		Signature:        signature,
 	}
 }
 
 // Equal tells whether v and w represent the same rows
 func (v DoubleSignVoteRow) Equal(w DoubleSignVoteRow) bool {
-	return v.Signiture == w.Signiture &&
-		v.Hash == w.Hash &&
-		v.PartHeader == w.PartHeader &&
+	return v.Id == w.Id &&
+		v.VoteType == w.VoteType &&
 		v.Height == w.Height &&
-		v.Timestamp.Equal(w.Timestamp)
+		v.Round == w.Round &&
+		v.BlockID == w.BlockID &&
+		v.Timestamp.Equal(w.Timestamp) &&
+		v.ValidatorAddress == w.ValidatorAddress &&
+		v.ValidatorIndex == w.ValidatorIndex &&
+		v.Signature == w.Signature
+}
+
+//--------------------------------------------------------
+
+// DoubleSignEvidenceRow represents a single row of the double_sign_evidence table
+type DoubleSignEvidenceRow struct {
+	PublicKey string `db:"public_key"`
+	VoteAID   int64  `db:"vote_a_id"`
+	VoteBID   int64  `db:"vote_b_id"`
+}
+
+// NewDoubleSignEvidenceRow allows to build a new NewDoubleSignEvidenceRow
+func NewDoubleSignEvidenceRow(
+	publicKey string,
+	voteAID int64,
+	voteBID int64,
+) DoubleSignEvidenceRow {
+	return DoubleSignEvidenceRow{
+		PublicKey: publicKey,
+		VoteAID:   voteAID,
+		VoteBID:   voteBID,
+	}
+}
+
+// Equal tells whether v and w represent the same rows
+func (v DoubleSignEvidenceRow) Equal(w DoubleSignEvidenceRow) bool {
+	return v.PublicKey == w.PublicKey &&
+		v.VoteAID == w.VoteAID &&
+		v.VoteBID == w.VoteBID
 }

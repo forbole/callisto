@@ -3,13 +3,14 @@ package database
 import (
 	"fmt"
 
+	"github.com/lib/pq"
+
 	dbtypes "github.com/forbole/bdjuno/database/types"
 	"github.com/forbole/bdjuno/x/gov/types"
-	"github.com/lib/pq"
 )
 
 // SaveProposals allows to save for the given height the given total amount of coins
-func (db BigDipperDb) SaveProposals(proposals []types.Proposal) error {
+func (db *BigDipperDb) SaveProposals(proposals []types.Proposal) error {
 	//do nothing if empty
 	if len(proposals) == 0 {
 		return nil
@@ -44,7 +45,7 @@ func (db BigDipperDb) SaveProposals(proposals []types.Proposal) error {
 }
 
 //SaveProposal save a single proposal
-func (db BigDipperDb) SaveProposal(proposal types.Proposal) error {
+func (db *BigDipperDb) SaveProposal(proposal types.Proposal) error {
 	query := `INSERT INTO proposal(title,description ,proposer,proposal_route ,proposal_type,proposal_id,
 		status,submit_time ,deposit_end_time,voting_start_time,voting_end_time)
 		 VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) ON CONFLICT DO NOTHING`
@@ -67,7 +68,7 @@ func (db BigDipperDb) SaveProposal(proposal types.Proposal) error {
 }
 
 // SaveTallyResults allows to save for the given height the given total amount of coins
-func (db BigDipperDb) SaveTallyResults(tallys []types.TallyResult) error {
+func (db *BigDipperDb) SaveTallyResults(tallys []types.TallyResult) error {
 	if len(tallys) == 0 {
 		return nil
 	}
@@ -94,7 +95,7 @@ func (db BigDipperDb) SaveTallyResults(tallys []types.TallyResult) error {
 }
 
 // SaveTallyResult insert a single row into tally_result table
-func (db BigDipperDb) SaveTallyResult(tally types.TallyResult) error {
+func (db *BigDipperDb) SaveTallyResult(tally types.TallyResult) error {
 	query := `INSERT INTO tally_result(proposal_id,yes,abstain,no,no_with_veto,height,timestamp) VALUES
 	($1,$2,$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(query, tally.ProposalID,
@@ -111,7 +112,7 @@ func (db BigDipperDb) SaveTallyResult(tally types.TallyResult) error {
 }
 
 // SaveVote allows to save for the given height and the message vote
-func (db BigDipperDb) SaveVote(vote types.Vote) error {
+func (db *BigDipperDb) SaveVote(vote types.Vote) error {
 	query := `INSERT INTO vote(proposal_id,voter,option,height,timestamp) VALUES
 	($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(query,
@@ -127,7 +128,7 @@ func (db BigDipperDb) SaveVote(vote types.Vote) error {
 }
 
 // SaveDeposit allows to save for the given message deposit and height
-func (db BigDipperDb) SaveDeposit(deposit types.Deposit) error {
+func (db *BigDipperDb) SaveDeposit(deposit types.Deposit) error {
 	query := `INSERT INTO deposit(proposal_id,depositor,amount,total_deposit,height,timestamp) VALUES
 	($1,$2,$3,$4,$5,$6) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(query,
@@ -144,7 +145,7 @@ func (db BigDipperDb) SaveDeposit(deposit types.Deposit) error {
 }
 
 // SaveDeposits allows to save multiple deposits
-func (db BigDipperDb) SaveDeposits(deposits []types.Deposit) error {
+func (db *BigDipperDb) SaveDeposits(deposits []types.Deposit) error {
 	if len(deposits) == 0 {
 		return nil
 	}
@@ -170,7 +171,7 @@ func (db BigDipperDb) SaveDeposits(deposits []types.Deposit) error {
 	return nil
 }
 
-func (db BigDipperDb) UpdateProposal(proposal types.Proposal) error {
+func (db *BigDipperDb) UpdateProposal(proposal types.Proposal) error {
 	query := `UPDATE proposal SET (status,voting_start_time,voting_end_time)
 		 = ($1,$2,$3) where proposal_id=$4`
 
