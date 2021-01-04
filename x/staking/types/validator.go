@@ -213,3 +213,109 @@ func (v ValidatorVotingPower) Equals(w ValidatorVotingPower) bool {
 		v.Height == w.Height &&
 		v.Timestamp.Equal(w.Timestamp)
 }
+
+//--------------------------------------------------------
+// ValidatorStatus represent status and jailed state for validator in specific height an timestamp
+type ValidatorStatus struct {
+	ConsensusAddress sdk.ConsAddress
+	Status           int
+	Jailed           bool
+	Height           int64
+	Timestamp        time.Time
+}
+
+// NewValidatorVotingPower creates a new ValidatorVotingPower
+func NewValidatorStatus(address sdk.ConsAddress, status int, jailed bool, height int64, timestamp time.Time) ValidatorStatus {
+	return ValidatorStatus{
+		ConsensusAddress: address,
+		Status:           status,
+		Jailed:           jailed,
+		Height:           height,
+		Timestamp:        timestamp,
+	}
+}
+
+// Equals tells whether v and w are equals
+func (v ValidatorStatus) Equals(w ValidatorStatus) bool {
+	return v.ConsensusAddress.Equals(w.ConsensusAddress) &&
+		v.Jailed == w.Jailed &&
+		v.Status == w.Status &&
+		v.Height == w.Height &&
+		v.Timestamp.Equal(w.Timestamp)
+}
+
+//---------------------------------------------------------------
+
+// DoubleSignEvidence represent a double sign evidence on each tendermint block
+type DoubleSignEvidence struct {
+	Pubkey string
+	VoteA  DoubleSignVote
+	VoteB  DoubleSignVote
+}
+
+// NewDoubleSignEvidence return a new DoubleSignEvidence object
+func NewDoubleSignEvidence(
+	pubkey string,
+	voteA DoubleSignVote,
+	voteB DoubleSignVote,
+) DoubleSignEvidence {
+	return DoubleSignEvidence{
+		Pubkey: pubkey,
+		VoteA:  voteA,
+		VoteB:  voteB,
+	}
+}
+
+// Equals tells whether v and w contain the same data
+func (w DoubleSignEvidence) Equals(v DoubleSignEvidence) bool {
+	return w.Pubkey == v.Pubkey &&
+		w.VoteA.Equals(v.VoteA) &&
+		w.VoteB.Equals(v.VoteB)
+}
+
+// DoubleSignVote represents a double vote which is included inside a DoubleSignEvidence
+type DoubleSignVote struct {
+	Type             int
+	Height           int64
+	Round            int
+	BlockID          string
+	Timestamp        time.Time
+	ValidatorAddress string
+	ValidatorIndex   int
+	Signature        string
+}
+
+// NewDoubleSignVote allows to create a new DoubleSignVote instance
+func NewDoubleSignVote(
+	roundType int,
+	height int64,
+	round int,
+	blockID string,
+	timestamp time.Time,
+	validatorAddress string,
+	validatorIndex int,
+	signature string,
+) DoubleSignVote {
+	return DoubleSignVote{
+		Type:             roundType,
+		Height:           height,
+		Round:            round,
+		BlockID:          blockID,
+		Timestamp:        timestamp,
+		ValidatorAddress: validatorAddress,
+		ValidatorIndex:   validatorIndex,
+		Signature:        signature,
+	}
+}
+
+func (w DoubleSignVote) Equals(v DoubleSignVote) bool {
+	return w.Type == v.Type &&
+		w.Height == v.Height &&
+		w.Round == v.Round &&
+		w.BlockID == v.BlockID &&
+		w.Timestamp.Equal(v.Timestamp) &&
+		w.ValidatorAddress == v.ValidatorAddress &&
+		w.ValidatorIndex == v.ValidatorIndex &&
+		w.Signature == v.Signature
+
+}

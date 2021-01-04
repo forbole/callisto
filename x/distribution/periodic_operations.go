@@ -3,10 +3,11 @@ package distribution
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/juno/client"
-	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/x/utils"
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
+
+	"github.com/forbole/bdjuno/database"
+	"github.com/forbole/bdjuno/x/utils"
 )
 
 // PeriodicStakingOperations returns the AdditionalOperation that periodically runs fetches from

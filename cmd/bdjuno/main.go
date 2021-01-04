@@ -4,10 +4,12 @@ import (
 	"github.com/desmos-labs/juno/cmd"
 	"github.com/desmos-labs/juno/config"
 	"github.com/desmos-labs/juno/modules/registrar"
+
 	"github.com/forbole/bdjuno/x/mint"
 	"github.com/forbole/bdjuno/x/modules"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
+
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/auth"
 	"github.com/forbole/bdjuno/x/bank"

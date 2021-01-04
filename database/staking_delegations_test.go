@@ -4,6 +4,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	dbtypes "github.com/forbole/bdjuno/database/types"
 	"github.com/forbole/bdjuno/x/staking/types"
 )

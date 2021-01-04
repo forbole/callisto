@@ -1,9 +1,10 @@
 package consensus
 
 import (
-	"github.com/forbole/bdjuno/database"
 	"github.com/rs/zerolog/log"
 	tmtypes "github.com/tendermint/tendermint/types"
+
+	"github.com/forbole/bdjuno/database"
 )
 
 func HandleGenesis(genesisDoc *tmtypes.GenesisDoc, db *database.BigDipperDb) error {

@@ -5,14 +5,16 @@ import (
 
 	cosmosstakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/desmos-labs/juno/client"
+
 	stakingtypes "github.com/forbole/bdjuno/x/staking/types"
 	"github.com/forbole/bdjuno/x/staking/utils"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/desmos-labs/juno/types"
-	"github.com/forbole/bdjuno/database"
 	"github.com/rs/zerolog/log"
+
+	"github.com/forbole/bdjuno/database"
 )
 
 // HandleMsg allows to handle the different messages related to the staking module

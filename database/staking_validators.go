@@ -5,17 +5,18 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	staking "github.com/cosmos/cosmos-sdk/x/staking/types"
+
 	dbtypes "github.com/forbole/bdjuno/database/types"
 	"github.com/forbole/bdjuno/x/staking/types"
 )
 
 // SaveValidatorData saves properly the information about the given validator.
-func (db BigDipperDb) SaveValidatorData(validator types.Validator) error {
+func (db *BigDipperDb) SaveValidatorData(validator types.Validator) error {
 	return db.SaveValidators([]types.Validator{validator})
 }
 
 // SaveValidators allows the bulk saving of a list of validators.
-func (db BigDipperDb) SaveValidators(validators []types.Validator) error {
+func (db *BigDipperDb) SaveValidators(validators []types.Validator) error {
 	if len(validators) == 0 {
 		return nil
 	}
@@ -72,7 +73,7 @@ INSERT INTO validator_info (consensus_address, operator_address, self_delegate_a
 }
 
 // GetValidatorConsensusAddress returns the consensus address of the validator having the given operator address
-func (db BigDipperDb) GetValidatorConsensusAddress(address sdk.ValAddress) (sdk.ConsAddress, error) {
+func (db *BigDipperDb) GetValidatorConsensusAddress(address sdk.ValAddress) (sdk.ConsAddress, error) {
 	var result []string
 	stmt := `SELECT consensus_address FROM validator_info WHERE operator_address = $1`
 	err := db.Sqlx.Select(&result, stmt, address.String())
@@ -89,7 +90,7 @@ func (db BigDipperDb) GetValidatorConsensusAddress(address sdk.ValAddress) (sdk.
 
 // GetValidator returns the validator having the given address.
 // If no validator for such address can be found, an error is returned instead.
-func (db BigDipperDb) GetValidator(valAddress sdk.ValAddress) (types.Validator, error) {
+func (db *BigDipperDb) GetValidator(valAddress sdk.ValAddress) (types.Validator, error) {
 	var result []dbtypes.ValidatorData
 	stmt := `
 SELECT validator.consensus_address, 
@@ -115,7 +116,7 @@ WHERE validator_info.operator_address = $1
 }
 
 // GetValidators returns all the validators that are currently stored inside the database.
-func (db BigDipperDb) GetValidators() ([]dbtypes.ValidatorData, error) {
+func (db *BigDipperDb) GetValidators() ([]dbtypes.ValidatorData, error) {
 	sqlStmt := `SELECT DISTINCT ON (validator.consensus_address)
 					validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address,
                     validator_info.self_delegate_address, validator_info.max_rate,validator_info.max_change_rate
@@ -138,7 +139,7 @@ func (db BigDipperDb) GetValidators() ([]dbtypes.ValidatorData, error) {
 // It assumes that the delegator address is already present inside the
 // proper database table.
 // TIP: To store the validator data call SaveValidatorData.
-func (db BigDipperDb) SaveValidatorDescription(description types.ValidatorDescription) error {
+func (db *BigDipperDb) SaveValidatorDescription(description types.ValidatorDescription) error {
 	consAddr, err := db.GetValidatorConsensusAddress(description.OperatorAddress)
 	if err != nil {
 		return err
@@ -191,7 +192,7 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
 
 // getValidatorDescription returns the description of the validator having the given address.
 // If no description could be found, returns false instead
-func (db BigDipperDb) getValidatorDescription(address sdk.ConsAddress) (*types.ValidatorDescription, bool) {
+func (db *BigDipperDb) getValidatorDescription(address sdk.ConsAddress) (*types.ValidatorDescription, bool) {
 	var result []dbtypes.ValidatorDescriptionHistoryRow
 	stmt := `
 SELECT * FROM validator_description 
@@ -230,7 +231,7 @@ WHERE validator_description.validator_address = $1
 // It assumes that the delegator address is already present inside the
 // proper database table.
 // TIP: To store the validator data call SaveValidatorData.
-func (db BigDipperDb) SaveValidatorCommission(data types.ValidatorCommission) error {
+func (db *BigDipperDb) SaveValidatorCommission(data types.ValidatorCommission) error {
 	if data.MinSelfDelegation == nil && data.Commission == nil {
 		// Nothing to update
 		return nil
@@ -285,7 +286,7 @@ ON CONFLICT DO NOTHING`
 
 // getValidatorCommission returns the commissions of the validator having the given address.
 // If no commissions could be found, returns false instead
-func (db BigDipperDb) getValidatorCommission(address sdk.ConsAddress) (*dbtypes.ValidatorCommissionRow, bool) {
+func (db *BigDipperDb) getValidatorCommission(address sdk.ConsAddress) (*dbtypes.ValidatorCommissionRow, bool) {
 	var rows []dbtypes.ValidatorCommissionRow
 	stmt := `SELECT * FROM validator_commission WHERE validator_address = $1`
 	err := db.Sqlx.Select(&rows, stmt, address.String())
@@ -302,7 +303,7 @@ func (db BigDipperDb) getValidatorCommission(address sdk.ConsAddress) (*dbtypes.
 // It assumes that the delegator address is already present inside the
 // proper database table.
 // TIP: To store the validator data call SaveValidatorData.
-func (db BigDipperDb) SaveValidatorsVotingPowers(powers []types.ValidatorVotingPower) error {
+func (db *BigDipperDb) SaveValidatorsVotingPowers(powers []types.ValidatorVotingPower) error {
 	if len(powers) == 0 {
 		return nil
 	}
@@ -345,7 +346,7 @@ func (db BigDipperDb) SaveValidatorsVotingPowers(powers []types.ValidatorVotingP
 // It assumes that the delegator address is already present inside the
 // proper database table.
 // TIP: To store the validator data call SaveValidatorData.
-func (db BigDipperDb) SaveValidatorUptime(uptime types.ValidatorUptime) error {
+func (db *BigDipperDb) SaveValidatorUptime(uptime types.ValidatorUptime) error {
 
 	// Insert the current validator uptime data
 	stmt := `
@@ -365,5 +366,70 @@ INSERT INTO validator_uptime_history (validator_address, signed_blocks_window, m
 VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`
 	_, err = db.Sql.Exec(stmt,
 		uptime.ValidatorAddress.String(), uptime.SignedBlocksWindow, uptime.MissedBlocksCounter, uptime.Height, uptime.Timestamp)
+	return err
+}
+
+//---------------------------------------------------
+
+// SaveValidatorStatus save validator jail and status in the given height and timestamp
+func (db *BigDipperDb) SaveValidatorStatus(validatorStatus types.ValidatorStatus) error {
+	stmt := `
+INSERT INTO validator_status (status, jailed, validator_address) 
+VALUES ($1,$2,$3) ON CONFLICT (validator_address) DO UPDATE
+    SET status = excluded.status,
+        jailed= excluded.jailed`
+	_, err := db.Sql.Exec(stmt,
+		validatorStatus.Status,
+		validatorStatus.Jailed,
+		validatorStatus.ConsensusAddress.String(),
+	)
+	if err != nil {
+		return err
+	}
+
+	stmt = `
+INSERT INTO validator_status_history (validator_address, status, jailed, height, timestamp) 
+VALUES ($1,$2,$3,$4,$5);`
+	_, err = db.Sql.Exec(stmt,
+		validatorStatus.ConsensusAddress.String(),
+		validatorStatus.Status,
+		validatorStatus.Jailed,
+		validatorStatus.Height,
+		validatorStatus.Timestamp,
+	)
+	return err
+}
+
+// saveDoubleSignVote saves the given vote inside the database, returning the row id
+func (db *BigDipperDb) saveDoubleSignVote(vote types.DoubleSignVote) (int64, error) {
+	stmt := `
+INSERT INTO double_sign_vote 
+    (type, height, round, block_id, timestamp, validator_address, validator_index, signature) 
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT DO NOTHING RETURNING id`
+
+	var id int64
+	err := db.Sql.QueryRow(stmt,
+		vote.Type, vote.Height, vote.Round, vote.BlockID, vote.Timestamp, vote.ValidatorAddress,
+		vote.ValidatorIndex, vote.Signature,
+	).Scan(&id)
+	return id, err
+}
+
+// SaveDoubleSignEvidence saves the given double sign evidence inside the proper tables
+func (db *BigDipperDb) SaveDoubleSignEvidence(evidence types.DoubleSignEvidence) error {
+	voteA, err := db.saveDoubleSignVote(evidence.VoteA)
+	if err != nil {
+		return err
+	}
+
+	voteB, err := db.saveDoubleSignVote(evidence.VoteB)
+	if err != nil {
+		return err
+	}
+
+	stmt := `
+INSERT INTO double_sign_evidence (public_key, vote_a_id, vote_b_id) 
+VALUES ($1, $2, $3) ON CONFLICT DO NOTHING`
+	_, err = db.Sql.Exec(stmt, evidence.Pubkey, voteA, voteB)
 	return err
 }

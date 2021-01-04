@@ -1,8 +1,9 @@
 package consensus
 
 import (
-	"github.com/forbole/bdjuno/database"
 	"github.com/rs/zerolog/log"
+
+	"github.com/forbole/bdjuno/database"
 
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 )

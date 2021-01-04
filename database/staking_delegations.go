@@ -11,7 +11,7 @@ import (
 // It assumes that the validator address is already present inside
 // the proper database table.
 // TIP: To store the validator data call SaveValidatorData.
-func (db BigDipperDb) SaveHistoricalDelegation(delegation types.Delegation) error {
+func (db *BigDipperDb) SaveHistoricalDelegation(delegation types.Delegation) error {
 	accStmt := `INSERT INTO account (address) VALUES ($1) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(accStmt, delegation.ValidatorAddress.String())
 	if err != nil {
@@ -43,7 +43,7 @@ VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT DO NOTHING`
 // It assumes that the validators addresses are already present inside
 // the proper database table.
 // TIP: To store the validators data call SaveValidators.
-func (db BigDipperDb) SaveCurrentDelegations(delegations []types.Delegation) error {
+func (db *BigDipperDb) SaveCurrentDelegations(delegations []types.Delegation) error {
 	if len(delegations) == 0 {
 		return nil
 	}
@@ -127,7 +127,7 @@ VALUES `
 // It assumes that the validator address is already present inside the proper
 // database table.
 // TIP: To store the validators data call SaveValidatorData.
-func (db BigDipperDb) SaveHistoricalUnbondingDelegation(delegation types.UnbondingDelegation) error {
+func (db *BigDipperDb) SaveHistoricalUnbondingDelegation(delegation types.UnbondingDelegation) error {
 	accStmt := `INSERT INTO account(address) VALUES ($1) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(accStmt, delegation.DelegatorAddress.String())
 	if err != nil {
@@ -161,7 +161,7 @@ func (db BigDipperDb) SaveHistoricalUnbondingDelegation(delegation types.Unbondi
 // already present inside the proper tables of the database.
 // To store the validators data call SaveValidatorData(s).
 // To store the account data call SaveAccount.
-func (db BigDipperDb) SaveCurrentUnbondingDelegations(delegations []types.UnbondingDelegation) error {
+func (db *BigDipperDb) SaveCurrentUnbondingDelegations(delegations []types.UnbondingDelegation) error {
 	// If the delegations are empty just return
 	if len(delegations) == 0 {
 		return nil
@@ -244,7 +244,7 @@ VALUES `
 // It assumes that the validator info are already present inside the
 // proper tables of the database.
 // To store the validators data call SaveValidatorData(s).
-func (db BigDipperDb) SaveHistoricalRedelegation(redelegation types.Redelegation) error {
+func (db *BigDipperDb) SaveHistoricalRedelegation(redelegation types.Redelegation) error {
 	accStmt := `INSERT INTO account (address) VALUES ($1) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(accStmt, redelegation.DelegatorAddress.String())
 	if err != nil {
@@ -287,7 +287,7 @@ VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT DO NOTHING`
 // already present inside the proper tables of the database.
 // To store the validators data call SaveValidatorData(s).
 // To store the account data call SaveAccount.
-func (db BigDipperDb) SaveCurrentRedelegations(redelegations []types.Redelegation) error {
+func (db *BigDipperDb) SaveCurrentRedelegations(redelegations []types.Redelegation) error {
 	if len(redelegations) == 0 {
 		return nil
 	}
