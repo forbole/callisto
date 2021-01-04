@@ -1,22 +1,18 @@
 package types
 
-import "time"
-
 // StakingPoolRow represents a single row inside the staking_pool table
 type StakingPoolRow struct {
-	BondedTokens    int64     `db:"bonded_tokens"`
-	NotBondedTokens int64     `db:"not_bonded_tokens"`
-	Height          int64     `db:"height"`
-	Timestamp       time.Time `db:"timestamp"`
+	BondedTokens    int64 `db:"bonded_tokens"`
+	NotBondedTokens int64 `db:"not_bonded_tokens"`
+	Height          int64 `db:"height"`
 }
 
 // NewStakingPoolRow allows to easily create a new StakingPoolRow
-func NewStakingPoolRow(bondedTokens, notBondedTokens int64, height int64, timestamp time.Time) StakingPoolRow {
+func NewStakingPoolRow(bondedTokens, notBondedTokens int64, height int64) StakingPoolRow {
 	return StakingPoolRow{
 		BondedTokens:    bondedTokens,
 		NotBondedTokens: notBondedTokens,
 		Height:          height,
-		Timestamp:       timestamp,
 	}
 }
 
@@ -24,6 +20,5 @@ func NewStakingPoolRow(bondedTokens, notBondedTokens int64, height int64, timest
 func (r StakingPoolRow) Equal(s StakingPoolRow) bool {
 	return r.BondedTokens == s.BondedTokens &&
 		r.NotBondedTokens == s.NotBondedTokens &&
-		r.Height == s.Height &&
-		r.Timestamp.Equal(s.Timestamp)
+		r.Height == s.Height
 }

@@ -1,9 +1,5 @@
 package types
 
-import (
-	"time"
-)
-
 // AccountRow represents a single row inside the account table
 type AccountRow struct {
 	Address string `db:"address"`
@@ -45,21 +41,17 @@ func (a AccountBalanceRow) Equal(b AccountBalanceRow) bool {
 
 // AccountBalanceHistoryRow represents a single row inside the account_balance_history table
 type AccountBalanceHistoryRow struct {
-	Address   string    `db:"address"`
-	Coins     *DbCoins  `db:"coins"`
-	Height    int64     `db:"height"`
-	Timestamp time.Time `db:"timestamp"`
+	Address string   `db:"address"`
+	Coins   *DbCoins `db:"coins"`
+	Height  int64    `db:"height"`
 }
 
 // NewAccountBalanceHistoryRow allows to build a new AccountBalanceHistoryRow instance
-func NewAccountBalanceHistoryRow(
-	address string, coins DbCoins, height int64, timestamp time.Time,
-) AccountBalanceHistoryRow {
+func NewAccountBalanceHistoryRow(address string, coins DbCoins, height int64) AccountBalanceHistoryRow {
 	return AccountBalanceHistoryRow{
-		Address:   address,
-		Coins:     &coins,
-		Height:    height,
-		Timestamp: timestamp,
+		Address: address,
+		Coins:   &coins,
+		Height:  height,
 	}
 }
 
@@ -67,6 +59,5 @@ func NewAccountBalanceHistoryRow(
 func (a AccountBalanceHistoryRow) Equal(b AccountBalanceHistoryRow) bool {
 	return a.Address == b.Address &&
 		a.Height == b.Height &&
-		a.Coins.Equal(b.Coins) &&
-		a.Timestamp.Equal(b.Timestamp)
+		a.Coins.Equal(b.Coins)
 }

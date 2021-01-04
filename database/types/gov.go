@@ -46,7 +46,7 @@ func NewProposalRow(title string,
 
 // Equals return true if two ProposalRow are the same
 func (w ProposalRow) Equals(v ProposalRow) bool {
-	return (w.Title == v.Title &&
+	return w.Title == v.Title &&
 		w.Description == v.Description &&
 		w.ProposalRoute == v.ProposalRoute &&
 		w.ProposalType == v.ProposalType &&
@@ -56,18 +56,17 @@ func (w ProposalRow) Equals(v ProposalRow) bool {
 		w.VotingStartTime.Equal(v.VotingStartTime) &&
 		w.VotingEndTime.Equal(v.VotingEndTime) &&
 		w.Proposer == v.Proposer &&
-		w.Status == v.Status)
+		w.Status == v.Status
 }
 
 // TallyResultRow represents a single row inside the tally_result table
 type TallyResultRow struct {
-	ProposalID int64     `db:"proposal_id"`
-	Yes        int64     `db:"yes"`
-	Abstain    int64     `db:"abstain"`
-	No         int64     `db:"no"`
-	NoWithVeto int64     `db:"no_with_veto"`
-	Height     int64     `db:"height"`
-	Timestamp  time.Time `db:"timestamp"`
+	ProposalID int64 `db:"proposal_id"`
+	Yes        int64 `db:"yes"`
+	Abstain    int64 `db:"abstain"`
+	No         int64 `db:"no"`
+	NoWithVeto int64 `db:"no_with_veto"`
+	Height     int64 `db:"height"`
 }
 
 // NewTallyResultRow return a new TallyResultRow instance
@@ -78,7 +77,6 @@ func NewTallyResultRow(
 	no int64,
 	noWithVeto int64,
 	height int64,
-	timestamp time.Time,
 ) TallyResultRow {
 	return TallyResultRow{
 		ProposalID: proposalID,
@@ -87,7 +85,6 @@ func NewTallyResultRow(
 		No:         no,
 		NoWithVeto: noWithVeto,
 		Height:     height,
-		Timestamp:  timestamp,
 	}
 }
 
@@ -98,17 +95,15 @@ func (w TallyResultRow) Equals(v TallyResultRow) bool {
 		w.Abstain == v.Abstain &&
 		w.No == v.No &&
 		w.NoWithVeto == v.NoWithVeto &&
-		w.Height == v.Height &&
-		w.Timestamp.Equal(v.Timestamp)
+		w.Height == v.Height
 }
 
 // VoteRow represents a single row inside the vote table
 type VoteRow struct {
-	ProposalID int64     `db:"proposal_id"`
-	Voter      string    `db:"voter"`
-	Option     string    `db:"option"`
-	Height     int64     `db:"height"`
-	Timestamp  time.Time `db:"timestamp"`
+	ProposalID int64  `db:"proposal_id"`
+	Voter      string `db:"voter"`
+	Option     string `db:"option"`
+	Height     int64  `db:"height"`
 }
 
 // NewVoteRow allows to easily create a new VoteRow
@@ -117,14 +112,12 @@ func NewVoteRow(
 	voter string,
 	option string,
 	height int64,
-	timestamp time.Time,
 ) VoteRow {
 	return VoteRow{
 		ProposalID: proposalID,
 		Voter:      voter,
 		Option:     option,
 		Height:     height,
-		Timestamp:  timestamp,
 	}
 }
 
@@ -133,18 +126,16 @@ func (w VoteRow) Equals(v VoteRow) bool {
 	return w.ProposalID == v.ProposalID &&
 		w.Voter == v.Voter &&
 		w.Option == v.Option &&
-		w.Height == v.Height &&
-		w.Timestamp.Equal(v.Timestamp)
+		w.Height == v.Height
 }
 
 // DepositRow represents a single row inside the deposit table
 type DepositRow struct {
-	ProposalID   int64     `db:"proposal_id"`
-	Depositor    string    `db:"depositor"`
-	Amount       DbCoins   `db:"amount"`
-	TotalDeposit DbCoins   `db:"total_deposit"`
-	Height       int64     `db:"height"`
-	Timestamp    time.Time `db:"timestamp"`
+	ProposalID   int64   `db:"proposal_id"`
+	Depositor    string  `db:"depositor"`
+	Amount       DbCoins `db:"amount"`
+	TotalDeposit DbCoins `db:"total_deposit"`
+	Height       int64   `db:"height"`
 }
 
 // NewDepositRow allows to easily create a new NewDepositRow
@@ -154,7 +145,6 @@ func NewDepositRow(
 	amount DbCoins,
 	totalDeposit DbCoins,
 	height int64,
-	timestamp time.Time,
 ) DepositRow {
 	return DepositRow{
 		ProposalID:   proposalID,
@@ -162,7 +152,6 @@ func NewDepositRow(
 		Amount:       amount,
 		TotalDeposit: totalDeposit,
 		Height:       height,
-		Timestamp:    timestamp,
 	}
 }
 
@@ -172,6 +161,5 @@ func (w DepositRow) Equals(v DepositRow) bool {
 		w.Depositor == v.Depositor &&
 		w.Amount.Equal(&v.Amount) &&
 		w.TotalDeposit.Equal(&v.TotalDeposit) &&
-		w.Height == v.Height &&
-		w.Timestamp.Equal(v.Timestamp)
+		w.Height == v.Height
 }

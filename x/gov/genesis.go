@@ -5,19 +5,16 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/gov"
 	"github.com/desmos-labs/juno/client"
 	"github.com/rs/zerolog/log"
-	tmtypes "github.com/tendermint/tendermint/types"
 
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/gov/types"
 )
 
 func HandleGenesis(
-	genesisDoc *tmtypes.GenesisDoc, appState map[string]json.RawMessage,
-	cdc *codec.Codec, cp *client.Proxy, db *database.BigDipperDb,
+	appState map[string]json.RawMessage, cdc *codec.Codec, cp *client.Proxy, db *database.BigDipperDb,
 ) error {
 	log.Debug().Str("module", "gov").Msg("parsing genesis")
 
@@ -29,7 +26,7 @@ func HandleGenesis(
 	}
 
 	// Save the proposals
-	err = saveProposals(genesisDoc.GenesisTime, genState.Proposals, cp, db)
+	err = saveProposals(genState.Proposals, cp, db)
 	if err != nil {
 		return err
 	}
@@ -38,7 +35,7 @@ func HandleGenesis(
 }
 
 // saveProposals save proposals from genesis file
-func saveProposals(genTime time.Time, p gov.Proposals, cp *client.Proxy, db *database.BigDipperDb) error {
+func saveProposals(p gov.Proposals, cp *client.Proxy, db *database.BigDipperDb) error {
 	proposals := make([]types.Proposal, len(p))
 	tallyResults := make([]types.TallyResult, len(p))
 	deposits := make([]types.Deposit, len(p))
@@ -56,7 +53,7 @@ func saveProposals(genTime time.Time, p gov.Proposals, cp *client.Proxy, db *dat
 			proposal.DepositEndTime,
 			proposal.VotingStartTime,
 			proposal.VotingEndTime,
-			nil,
+			"",
 		)
 
 		tallyResults[index] = types.NewTallyResult(
@@ -66,16 +63,14 @@ func saveProposals(genTime time.Time, p gov.Proposals, cp *client.Proxy, db *dat
 			proposal.FinalTallyResult.No.Int64(),
 			proposal.FinalTallyResult.NoWithVeto.Int64(),
 			1,
-			genTime,
 		)
 
 		deposits[index] = types.NewDeposit(
 			proposal.ProposalID,
-			sdk.AccAddress{},
+			"",
 			proposal.TotalDeposit,
 			proposal.TotalDeposit,
 			1,
-			genTime,
 		)
 
 		// Update the proposal status when the voting period or deposit period ends

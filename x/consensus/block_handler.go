@@ -11,7 +11,7 @@ import (
 func HandleBlock(block *tmctypes.ResultBlock, db *database.BigDipperDb) error {
 	err := updateBlockTimeFromGenesis(block, db)
 	if err != nil {
-		log.Error().Str("module", "gov").Int64("height", block.Block.Height).
+		log.Error().Str("module", "consensus").Int64("height", block.Block.Height).
 			Err(err).Msg("error while updating block time from genesis")
 	}
 
@@ -20,9 +20,7 @@ func HandleBlock(block *tmctypes.ResultBlock, db *database.BigDipperDb) error {
 
 // updateBlockTimeFromGenesis insert average block time from genesis
 func updateBlockTimeFromGenesis(block *tmctypes.ResultBlock, db *database.BigDipperDb) error {
-	log.Debug().
-		Str("module", "staking").
-		Str("operation", " tokens").
+	log.Debug().Str("module", "consensus").Str("operation", "tokens").
 		Msg("getting total token supply")
 
 	genesis, err := db.GetGenesisTime()
@@ -31,5 +29,5 @@ func updateBlockTimeFromGenesis(block *tmctypes.ResultBlock, db *database.BigDip
 	}
 
 	newBlockTime := block.Block.Time.Sub(genesis).Seconds() / float64(block.Block.Height)
-	return db.SaveAverageBlockTimeGenesis(newBlockTime, block.Block.Time, block.Block.Height)
+	return db.SaveAverageBlockTimeGenesis(newBlockTime, block.Block.Height)
 }

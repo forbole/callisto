@@ -27,9 +27,7 @@ func RegisterPeriodicOps(scheduler *gocron.Scheduler, cp *client.Proxy, db *data
 
 // updateCommunityPool fetch total amount of coins in the system from RPC and store it into database
 func updateCommunityPool(cp *client.Proxy, db *database.BigDipperDb) error {
-	log.Debug().
-		Str("module", "distribution").
-		Str("operation", "community pool").
+	log.Debug().Str("module", "distribution").Str("operation", "community pool").
 		Msg("getting community pool")
 
 	// Get the community pool
@@ -38,6 +36,9 @@ func updateCommunityPool(cp *client.Proxy, db *database.BigDipperDb) error {
 	if err != nil {
 		return err
 	}
+
+	log.Debug().Str("module", "distribution").Str("operation", "community pool").
+		Msg("saving community pool")
 
 	// Store the signing infos into the database
 	return db.SaveCommunityPool(s, height)

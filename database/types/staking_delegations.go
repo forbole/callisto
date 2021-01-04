@@ -32,17 +32,16 @@ func (v DelegationRow) Equal(w DelegationRow) bool {
 
 // DelegationHistoryRow represents a single row of the delegations_history table
 type DelegationHistoryRow struct {
-	ValidatorAddress string    `db:"validator_address"`
-	DelegatorAddress string    `db:"delegator_address"`
-	Amount           DbCoin    `db:"amount"`
-	Shares           float64   `db:"shares"`
-	Height           int64     `db:"height"`
-	Timestamp        time.Time `db:"timestamp"`
+	ValidatorAddress string  `db:"validator_address"`
+	DelegatorAddress string  `db:"delegator_address"`
+	Amount           DbCoin  `db:"amount"`
+	Shares           float64 `db:"shares"`
+	Height           int64   `db:"height"`
 }
 
 // NewDelegationHistoryRow allows to build a new DelegationHistoryRow
 func NewDelegationHistoryRow(
-	consAddr, delegator string, amount DbCoin, shares float64, height int64, timestamp time.Time,
+	consAddr, delegator string, amount DbCoin, shares float64, height int64,
 ) DelegationHistoryRow {
 	return DelegationHistoryRow{
 		ValidatorAddress: consAddr,
@@ -50,7 +49,6 @@ func NewDelegationHistoryRow(
 		Amount:           amount,
 		Shares:           shares,
 		Height:           height,
-		Timestamp:        timestamp,
 	}
 }
 
@@ -60,8 +58,7 @@ func (v DelegationHistoryRow) Equal(w DelegationHistoryRow) bool {
 		v.DelegatorAddress == w.DelegatorAddress &&
 		v.Amount.Equal(w.Amount) &&
 		v.Shares == w.Shares &&
-		v.Height == w.Height &&
-		v.Timestamp.Equal(w.Timestamp)
+		v.Height == w.Height
 }
 
 // ________________________________________________
@@ -99,12 +96,11 @@ type UnbondingDelegationHistoryRow struct {
 	Amount              DbCoin    `db:"amount"`
 	CompletionTimestamp time.Time `db:"completion_timestamp"`
 	Height              int64     `db:"height"`
-	Timestamp           time.Time `db:"timestamp"`
 }
 
 // NewUnbondingDelegationHistoryRow allows to build a new UnbondingDelegationHistoryRow instance
 func NewUnbondingDelegationHistoryRow(
-	consAddr, delegator string, amount DbCoin, completionTimestamp time.Time, height int64, timestamp time.Time,
+	consAddr, delegator string, amount DbCoin, completionTimestamp time.Time, height int64,
 ) UnbondingDelegationHistoryRow {
 	return UnbondingDelegationHistoryRow{
 		ConsensusAddress:    consAddr,
@@ -112,7 +108,6 @@ func NewUnbondingDelegationHistoryRow(
 		Amount:              amount,
 		CompletionTimestamp: completionTimestamp,
 		Height:              height,
-		Timestamp:           timestamp,
 	}
 }
 
@@ -122,8 +117,7 @@ func (v UnbondingDelegationHistoryRow) Equal(w UnbondingDelegationHistoryRow) bo
 		v.DelegatorAddress == w.DelegatorAddress &&
 		v.Amount.Equal(w.Amount) &&
 		v.CompletionTimestamp.Equal(w.CompletionTimestamp) &&
-		v.Height == w.Height &&
-		v.Timestamp.Equal(w.Timestamp)
+		v.Height == w.Height
 }
 
 // ________________________________________________
@@ -165,12 +159,11 @@ type ReDelegationHistoryRow struct {
 	Amount              DbCoin    `db:"amount"`
 	CompletionTime      time.Time `db:"completion_time"`
 	Height              int64     `db:"height"`
-	Timestamp           time.Time `db:"timestamp"`
 }
 
 // NewReDelegationHistoryRow allows to easily build a new ReDelegationHistoryRow instance
 func NewReDelegationHistoryRow(
-	delegator, srcConsAddr, dstConsAddr string, amount DbCoin, completionTime time.Time, height int64, timestamp time.Time,
+	delegator, srcConsAddr, dstConsAddr string, amount DbCoin, completionTime time.Time, height int64,
 ) ReDelegationHistoryRow {
 	return ReDelegationHistoryRow{
 		DelegatorAddress:    delegator,
@@ -179,7 +172,6 @@ func NewReDelegationHistoryRow(
 		Amount:              amount,
 		CompletionTime:      completionTime,
 		Height:              height,
-		Timestamp:           timestamp,
 	}
 }
 
@@ -190,6 +182,5 @@ func (v ReDelegationHistoryRow) Equal(w ReDelegationHistoryRow) bool {
 		v.DstValidatorAddress == w.DstValidatorAddress &&
 		v.Amount.Equal(w.Amount) &&
 		v.CompletionTime.Equal(w.CompletionTime) &&
-		v.Height == w.Height &&
-		v.Timestamp.Equal(w.Timestamp)
+		v.Height == w.Height
 }

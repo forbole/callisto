@@ -51,18 +51,18 @@ func (m Module) HandleGenesis(
 
 // HandleBlock implements modules.Module
 func (m Module) HandleBlock(
-	b *tmctypes.ResultBlock, _ []types.Tx, _ *tmctypes.ResultValidators, _ *codec.Codec, _ *client.Proxy, db db.Database,
+	b *tmctypes.ResultBlock, _ []*types.Tx, _ *tmctypes.ResultValidators, _ *codec.Codec, _ *client.Proxy, db db.Database,
 ) error {
 	bdDatabase := database.Cast(db)
 	return HandleBlock(b, bdDatabase)
 }
 
 // HandleTx implements modules.Module
-func (m Module) HandleTx(types.Tx, *codec.Codec, *client.Proxy, db.Database) error {
+func (m Module) HandleTx(*types.Tx, *codec.Codec, *client.Proxy, db.Database) error {
 	return nil
 }
 
 // HandleMsg implements modules.Module
-func (m Module) HandleMsg(int, sdk.Msg, types.Tx, *codec.Codec, *client.Proxy, db.Database) error {
+func (m Module) HandleMsg(int, sdk.Msg, *types.Tx, *codec.Codec, *client.Proxy, db.Database) error {
 	return nil
 }

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/desmos-labs/juno/client"
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
 
@@ -15,7 +14,7 @@ import (
 
 // RegisterPeriodicOps returns the AdditionalOperation that periodically runs fetches from
 // CoinGecko to make sure that constantly changing data are synced properly.
-func RegisterPeriodicOps(scheduler *gocron.Scheduler, cp *client.Proxy, db *database.BigDipperDb) error {
+func RegisterPeriodicOps(scheduler *gocron.Scheduler, db *database.BigDipperDb) error {
 	log.Debug().Str("module", "PriceFeed").Msg("setting up periodic tasks")
 
 	// Fetch total supply of token in 30 seconds each

@@ -50,17 +50,17 @@ func (m Module) HandleGenesis(
 
 // HandleBlock implements modules.Module
 func (m Module) HandleBlock(
-	*tmctypes.ResultBlock, []types.Tx, *tmctypes.ResultValidators, *codec.Codec, *client.Proxy, db.Database,
+	*tmctypes.ResultBlock, []*types.Tx, *tmctypes.ResultValidators, *codec.Codec, *client.Proxy, db.Database,
 ) error {
 	return nil
 }
 
 // HandleTx implements modules.Module
-func (m Module) HandleTx(types.Tx, *codec.Codec, *client.Proxy, db.Database) error {
+func (m Module) HandleTx(*types.Tx, *codec.Codec, *client.Proxy, db.Database) error {
 	return nil
 }
 
 // HandleMsg implements modules.Module
-func (m Module) HandleMsg(int, sdk.Msg, types.Tx, *codec.Codec, *client.Proxy, db.Database) error {
+func (m Module) HandleMsg(int, sdk.Msg, *types.Tx, *codec.Codec, *client.Proxy, db.Database) error {
 	return nil
 }

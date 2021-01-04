@@ -37,7 +37,7 @@ func (m Module) RegisterPeriodicOperations(
 	scheduler *gocron.Scheduler, cdc *codec.Codec, cp *client.Proxy, db db.Database,
 ) error {
 	bdDatabase := database.Cast(db)
-	return RegisterPeriodicOps(scheduler, cp, bdDatabase)
+	return RegisterPeriodicOps(scheduler, bdDatabase)
 }
 
 // HandleGenesis implements modules.Module
@@ -49,20 +49,20 @@ func (m Module) HandleGenesis(
 
 // HandleBlock implements modules.Module
 func (m Module) HandleBlock(
-	block *tmctypes.ResultBlock, txs []types.Tx, vals *tmctypes.ResultValidators,
+	block *tmctypes.ResultBlock, txs []*types.Tx, vals *tmctypes.ResultValidators,
 	cdc *codec.Codec, cp *client.Proxy, db db.Database,
 ) error {
 	return nil
 }
 
 // HandleTx implements modules.Module
-func (m Module) HandleTx(tx types.Tx, cdc *codec.Codec, cp *client.Proxy, db db.Database) error {
+func (m Module) HandleTx(tx *types.Tx, cdc *codec.Codec, cp *client.Proxy, db db.Database) error {
 	return nil
 }
 
 // HandleMsg implements modules.Module
 func (m Module) HandleMsg(
-	index int, msg sdk.Msg, tx types.Tx, cdc *codec.Codec, cp *client.Proxy, db db.Database,
+	index int, msg sdk.Msg, tx *types.Tx, cdc *codec.Codec, cp *client.Proxy, db db.Database,
 ) error {
 	return nil
 }

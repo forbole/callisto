@@ -3,7 +3,6 @@ package staking
 import (
 	"encoding/hex"
 	"fmt"
-	"time"
 
 	jutils "github.com/desmos-labs/juno/db/utils"
 
@@ -29,13 +28,13 @@ func HandleBlock(block *tmctypes.ResultBlock, cp *client.Proxy, db *database.Big
 	}
 
 	// Update the delegations
-	err = updateValidatorsDelegations(block.Block.Height, block.Block.Time, cp, db)
+	err = updateValidatorsDelegations(block.Block.Height, cp, db)
 	if err != nil {
 		log.Error().Str("module", "staking").Int64("height", block.Block.Height).
 			Err(err).Msg("error while updating validators delegations")
 	}
 
-	err = updateValidatorsStatus(block.Block.Height, block.Block.Time, cp, db)
+	err = updateValidatorsStatus(block.Block.Height, cp, db)
 	if err != nil {
 		log.Error().Str("module", "staking").Int64("height", block.Block.Height).
 			Err(err).Msg("error while updating validators status")
@@ -65,16 +64,11 @@ func updateStakingPool(height int64, cp *client.Proxy, db *database.BigDipperDb)
 	log.Debug().Str("module", "staking").Int64("height", height).
 		Str("operation", "staking pool").Msg("saving staking pool")
 
-	err = db.SaveStakingPool(pool, height, time.Now())
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return db.SaveStakingPool(pool, height)
 }
 
 // updateDelegations reads from the LCD the current delegations and stores them inside the database
-func updateValidatorsDelegations(height int64, timestamp time.Time, cp *client.Proxy, db *database.BigDipperDb) error {
+func updateValidatorsDelegations(height int64, cp *client.Proxy, db *database.BigDipperDb) error {
 	log.Debug().Str("module", "staking").Int64("height", height).
 		Str("operation", "delegations").Msg("getting delegations")
 
@@ -92,7 +86,7 @@ func updateValidatorsDelegations(height int64, timestamp time.Time, cp *client.P
 
 	for _, validator := range validators {
 		// Update the delegations
-		delegations, err := utils.GetDelegations(validator.GetOperator(), height, timestamp, cp)
+		delegations, err := utils.GetDelegations(validator.GetOperator(), height, cp)
 		if err != nil {
 			return err
 		}
@@ -103,7 +97,7 @@ func updateValidatorsDelegations(height int64, timestamp time.Time, cp *client.P
 		}
 
 		// Update the unbonding delegations
-		unDels, err := utils.GetUnbondingDelegations(validator.GetOperator(), params.BondName, height, timestamp, cp)
+		unDels, err := utils.GetUnbondingDelegations(validator.GetOperator(), params.BondName, height, cp)
 		if err != nil {
 			return err
 		}
@@ -118,7 +112,7 @@ func updateValidatorsDelegations(height int64, timestamp time.Time, cp *client.P
 }
 
 // updateValidatorsStatus
-func updateValidatorsStatus(height int64, timestamp time.Time, cp *client.Proxy, db *database.BigDipperDb) error {
+func updateValidatorsStatus(height int64, cp *client.Proxy, db *database.BigDipperDb) error {
 	log.Debug().Str("module", "staking").Int64("height", height).
 		Str("operation", "validators status").Msg("getting statuses")
 
@@ -134,11 +128,10 @@ func updateValidatorsStatus(height int64, timestamp time.Time, cp *client.Proxy,
 
 	for _, validator := range objs {
 		err = db.SaveValidatorStatus(stakingtypes.NewValidatorStatus(
-			validator.ConsAddress(),
+			validator.ConsAddress().String(),
 			int(validator.GetStatus()),
 			validator.IsJailed(),
 			height,
-			timestamp,
 		))
 		if err != nil {
 			return err
@@ -170,7 +163,6 @@ func updateDoubleSignEvidence(evidenceList tmtypes.EvidenceList, db *database.Bi
 				dve.VoteA.Height,
 				dve.VoteA.Round,
 				dve.VoteA.BlockID.String(),
-				dve.VoteA.Timestamp,
 				jutils.ConvertValidatorAddressToString(dve.VoteA.ValidatorAddress),
 				dve.VoteA.ValidatorIndex,
 				hex.EncodeToString(dve.VoteA.Signature),
@@ -180,7 +172,6 @@ func updateDoubleSignEvidence(evidenceList tmtypes.EvidenceList, db *database.Bi
 				dve.VoteB.Height,
 				dve.VoteB.Round,
 				dve.VoteB.BlockID.String(),
-				dve.VoteB.Timestamp,
 				jutils.ConvertValidatorAddressToString(dve.VoteB.ValidatorAddress),
 				dve.VoteB.ValidatorIndex,
 				hex.EncodeToString(dve.VoteB.Signature),

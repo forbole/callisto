@@ -7,7 +7,7 @@ import (
 // UpdateEnableModules allows to save enabled module into the database
 func (db *BigDipperDb) InsertEnableModules(modules []string) error {
 	//clear table first
-	stmt := "DELETE FROM modules"
+	stmt := "DELETE FROM modules WHERE TRUE"
 	_, err := db.Sql.Exec(stmt)
 	if err != nil {
 		return err

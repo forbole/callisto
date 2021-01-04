@@ -11,7 +11,6 @@ type ValidatorSigningInfoRow struct {
 	Tombstoned          bool      `db:"tombstoned"`
 	MissedBlocksCounter int64     `db:"missed_blocks_counter"`
 	Height              int64     `db:"height"`
-	Timestamp           time.Time `db:"timestamp"`
 }
 
 // Equal tells whether v and w represent the same rows
@@ -22,8 +21,7 @@ func (v ValidatorSigningInfoRow) Equal(w ValidatorSigningInfoRow) bool {
 		v.JailedUntil.Equal(w.JailedUntil) &&
 		v.Tombstoned == w.Tombstoned &&
 		v.MissedBlocksCounter == w.MissedBlocksCounter &&
-		v.Height == w.Height &&
-		v.Timestamp.Equal(w.Timestamp)
+		v.Height == w.Height
 }
 
 // ValidatorSigningInfoRow allows to build a new ValidatorSigningInfoRow
@@ -35,7 +33,6 @@ func NewValidatorSigningInfoRow(
 	tombstoned bool,
 	missedBlocksCounter int64,
 	height int64,
-	timestamp time.Time,
 ) ValidatorSigningInfoRow {
 	return ValidatorSigningInfoRow{
 		ValidatorAddress:    validatorAddress,
@@ -45,6 +42,5 @@ func NewValidatorSigningInfoRow(
 		Tombstoned:          tombstoned,
 		MissedBlocksCounter: missedBlocksCounter,
 		Height:              height,
-		Timestamp:           timestamp,
 	}
 }

@@ -1,8 +1,6 @@
 package database_test
 
 import (
-	"time"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
@@ -11,14 +9,10 @@ import (
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveStakingPool() {
 	height := int64(100)
-
-	timestamp, err := time.Parse(time.RFC3339, "2020-02-02T15:00:00Z")
-	suite.Require().NoError(err)
-
 	pool := stakingtypes.NewPool(sdk.NewInt(100), sdk.NewInt(50))
 
 	// Save the data
-	err = suite.database.SaveStakingPool(pool, height, timestamp)
+	err := suite.database.SaveStakingPool(pool, height)
 	suite.Require().NoError(err)
 
 	var count int
@@ -27,7 +21,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveStakingPool() {
 	suite.Require().Equal(1, count, "inserting a single staking pool row should return 1")
 
 	// Perform a double insertion
-	err = suite.database.SaveStakingPool(pool, height, timestamp)
+	err = suite.database.SaveStakingPool(pool, height)
 	suite.Require().NoError(err)
 
 	err = suite.database.Sqlx.QueryRow(`SELECT COUNT(*) FROM staking_pool_history`).Scan(&count)
@@ -43,6 +37,5 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveStakingPool() {
 		50,
 		100,
 		height,
-		timestamp,
 	)))
 }

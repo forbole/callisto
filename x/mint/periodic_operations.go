@@ -51,5 +51,5 @@ func updateInflation(cp *client.Proxy, db *database.BigDipperDb) error {
 		return err
 	}
 
-	return db.SaveInflation(inflation, height, block.Block.Time)
+	return db.SaveInflation(inflation, height)
 }
