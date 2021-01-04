@@ -428,7 +428,7 @@ func (v ValidatorStatusHistoryRow) Equal(w ValidatorStatusHistoryRow) bool {
 
 // DoubleSignVoteRow represents a single row of the double_sign_vote table
 type DoubleSignVoteRow struct {
-	Id               int64     `db:"id"`
+	ID               int64     `db:"id"`
 	VoteType         int       `db:"type"`
 	Height           int64     `db:"height"`
 	Round            int       `db:"round"`
@@ -452,7 +452,7 @@ func NewDoubleSignVoteRow(
 	signature string,
 ) DoubleSignVoteRow {
 	return DoubleSignVoteRow{
-		Id:               id,
+		ID:               id,
 		VoteType:         voteType,
 		Height:           height,
 		Round:            round,
@@ -466,7 +466,7 @@ func NewDoubleSignVoteRow(
 
 // Equal tells whether v and w represent the same rows
 func (v DoubleSignVoteRow) Equal(w DoubleSignVoteRow) bool {
-	return v.Id == w.Id &&
+	return v.ID == w.ID &&
 		v.VoteType == w.VoteType &&
 		v.Height == w.Height &&
 		v.Round == w.Round &&
