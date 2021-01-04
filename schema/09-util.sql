@@ -1,3 +1,4 @@
-CREATE TABLE modules(
+CREATE TABLE modules
+(
     module_name TEXT
 );

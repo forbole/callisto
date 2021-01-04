@@ -38,10 +38,7 @@ func (db *BigDipperDb) SaveProposals(proposals []types.Proposal) error {
 	query = query[:len(query)-1] // Remove trailing ","
 	query += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(query, param...)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 //SaveProposal save a single proposal
@@ -61,10 +58,7 @@ func (db *BigDipperDb) SaveProposal(proposal types.Proposal) error {
 		proposal.DepositEndTime,
 		proposal.VotingStartTime,
 		proposal.VotingEndTime)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 // SaveTallyResults allows to save for the given height the given total amount of coins
@@ -88,10 +82,7 @@ func (db *BigDipperDb) SaveTallyResults(tallys []types.TallyResult) error {
 	query = query[:len(query)-1] // Remove trailing ","
 	query += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(query, param...)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 // SaveTallyResult insert a single row into tally_result table
@@ -105,10 +96,7 @@ func (db *BigDipperDb) SaveTallyResult(tally types.TallyResult) error {
 		tally.NoWithVeto,
 		tally.Height,
 		tally.Timestamp)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 // SaveVote allows to save for the given height and the message vote
@@ -121,10 +109,7 @@ func (db *BigDipperDb) SaveVote(vote types.Vote) error {
 		vote.Option.String(),
 		vote.Height,
 		vote.Timestamp)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 // SaveDeposit allows to save for the given message deposit and height
@@ -138,10 +123,7 @@ func (db *BigDipperDb) SaveDeposit(deposit types.Deposit) error {
 		pq.Array(dbtypes.NewDbCoins(deposit.TotalDeposit)),
 		deposit.Height,
 		deposit.Timestamp)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 // SaveDeposits allows to save multiple deposits
@@ -165,10 +147,7 @@ func (db *BigDipperDb) SaveDeposits(deposits []types.Deposit) error {
 	query = query[:len(query)-1] // Remove trailing ","
 	query += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(query, param...)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 func (db *BigDipperDb) UpdateProposal(proposal types.Proposal) error {
@@ -180,8 +159,5 @@ func (db *BigDipperDb) UpdateProposal(proposal types.Proposal) error {
 		proposal.VotingStartTime,
 		proposal.VotingEndTime,
 		proposal.ProposalID)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
