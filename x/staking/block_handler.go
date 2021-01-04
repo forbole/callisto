@@ -21,51 +21,49 @@ import (
 
 // HandleBlock represents a method that is called each time a new block is created
 func HandleBlock(block *tmctypes.ResultBlock, cp *client.Proxy, db *database.BigDipperDb) error {
-	log.Debug().Str("module", "staking").Msgf("handling block")
-
 	// Update the staking pool
 	err := updateStakingPool(block.Block.Height, cp, db)
 	if err != nil {
-		return err
+		log.Error().Str("module", "staking").Int64("height", block.Block.Height).
+			Err(err).Msg("error while updating staking pool")
 	}
 
 	// Update the delegations
 	err = updateValidatorsDelegations(block.Block.Height, block.Block.Time, cp, db)
 	if err != nil {
-		return err
+		log.Error().Str("module", "staking").Int64("height", block.Block.Height).
+			Err(err).Msg("error while updating validators delegations")
 	}
 
 	err = updateValidatorsStatus(block.Block.Height, block.Block.Time, cp, db)
 	if err != nil {
-		return err
+		log.Error().Str("module", "staking").Int64("height", block.Block.Height).
+			Err(err).Msg("error while updating validators status")
 	}
 
 	err = updateDoubleSignEvidence(block.Block.Evidence.Evidence, db)
 	if err != nil {
-		return err
+		log.Error().Str("module", "staking").Int64("height", block.Block.Height).
+			Err(err).Msg("error while updating double sign evidences")
 	}
+
 	return nil
 }
 
 // updateStakingPool reads from the LCD the current staking pool and stores its value inside the database
 func updateStakingPool(height int64, cp *client.Proxy, db *database.BigDipperDb) error {
-	log.Debug().
-		Str("module", "staking").
-		Str("operation", "staking_pool").
-		Msg("getting staking pool")
+	log.Debug().Str("module", "staking").Int64("height", height).
+		Str("operation", "staking pool").Msg("getting staking pool")
 
 	var pool staking.Pool
 	endpoint := fmt.Sprintf("/staking/pool?height=%d", height)
 	height, err := cp.QueryLCDWithHeight(endpoint, &pool)
 	if err != nil {
-		log.Err(err).Str("module", "staking").Msg("error while getting staking pool")
 		return err
 	}
 
-	log.Debug().
-		Str("module", "staking").
-		Str("operation", "staking_pool").
-		Msg("saving staking pool")
+	log.Debug().Str("module", "staking").Int64("height", height).
+		Str("operation", "staking pool").Msg("saving staking pool")
 
 	err = db.SaveStakingPool(pool, height, time.Now())
 	if err != nil {
@@ -77,10 +75,8 @@ func updateStakingPool(height int64, cp *client.Proxy, db *database.BigDipperDb)
 
 // updateDelegations reads from the LCD the current delegations and stores them inside the database
 func updateValidatorsDelegations(height int64, timestamp time.Time, cp *client.Proxy, db *database.BigDipperDb) error {
-	log.Debug().
-		Str("module", "staking").
-		Str("operation", "delegations").
-		Msg("getting delegations")
+	log.Debug().Str("module", "staking").Int64("height", height).
+		Str("operation", "delegations").Msg("getting delegations")
 
 	// Get the params
 	params, err := db.GetStakingParams()
@@ -123,32 +119,30 @@ func updateValidatorsDelegations(height int64, timestamp time.Time, cp *client.P
 
 // updateValidatorsStatus
 func updateValidatorsStatus(height int64, timestamp time.Time, cp *client.Proxy, db *database.BigDipperDb) error {
-	log.Debug().
-		Str("module", "staking").
-		Str("operation", "delegations").
-		Msg("getting delegations")
+	log.Debug().Str("module", "staking").Int64("height", height).
+		Str("operation", "validators status").Msg("getting statuses")
 
 	var objs staking.Validators
 	endpoint := fmt.Sprintf("staking/validators?height=%d", height)
 	height, err := cp.QueryLCDWithHeight(endpoint, &objs)
 	if err != nil {
-		log.Err(err).Str("module", "staking").Msg("error while getting validator pool")
 		return err
 	}
 
-	log.Debug().
-		Str("module", "staking").
-		Str("operation", "staking_pool").
-		Msg("saving staking pool")
+	log.Debug().Str("module", "staking").Int64("height", height).
+		Str("operation", "validators status").Msg("saving statuses")
 
 	for _, validator := range objs {
-
 		err = db.SaveValidatorStatus(stakingtypes.NewValidatorStatus(
-			validator.ConsAddress(), int(validator.GetStatus()), validator.IsJailed(), height, timestamp))
+			validator.ConsAddress(),
+			int(validator.GetStatus()),
+			validator.IsJailed(),
+			height,
+			timestamp,
+		))
 		if err != nil {
 			return err
 		}
-
 	}
 
 	return nil
@@ -165,6 +159,9 @@ func updateDoubleSignEvidence(evidenceList tmtypes.EvidenceList, db *database.Bi
 		if err != nil {
 			return err
 		}
+
+		log.Debug().Str("module", "staking").
+			Str("operation", "double sign evidence").Msg("saving evidence")
 
 		evidence := stakingtypes.NewDoubleSignEvidence(
 			pubKey,

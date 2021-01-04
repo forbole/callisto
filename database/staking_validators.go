@@ -20,17 +20,18 @@ func (db *BigDipperDb) SaveValidators(validators []types.Validator) error {
 	if len(validators) == 0 {
 		return nil
 	}
-	selfDelegationAccQuery := `INSERT INTO account (address) VALUES `
+
+	selfDelegationAccQuery := `
+INSERT INTO account (address) VALUES `
 	var selfDelegationParam []interface{}
 
 	validatorQuery := `
-INSERT INTO validator (consensus_address, consensus_pubkey) VALUES 
-`
+INSERT INTO validator (consensus_address, consensus_pubkey) VALUES `
 	var validatorParams []interface{}
 
 	validatorInfoQuery := `
-INSERT INTO validator_info (consensus_address, operator_address, self_delegate_address, max_change_rate, max_rate) VALUES  
-`
+INSERT INTO validator_info (consensus_address, operator_address, self_delegate_address, max_change_rate, max_rate) 
+VALUES `
 	var validatorInfoParams []interface{}
 
 	for i, validator := range validators {
@@ -100,8 +101,7 @@ SELECT validator.consensus_address,
        validator_info.max_rate,
        validator_info.self_delegate_address
 FROM validator INNER JOIN validator_info ON validator.consensus_address=validator_info.consensus_address 
-WHERE validator_info.operator_address = $1
-`
+WHERE validator_info.operator_address = $1`
 
 	err := db.Sqlx.Select(&result, stmt, valAddress.String())
 	if err != nil {
@@ -180,7 +180,7 @@ ON CONFLICT (validator_address) DO UPDATE
 	// Insert the history row
 	stmt = `
 INSERT INTO validator_description_history (validator_address, moniker, identity, website, security_contact, details, height, timestamp) 
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT DO NOTHING`
 
 	_, err = db.Sql.Exec(stmt,
 		dbtypes.ToNullString(consAddr.String()),
@@ -194,10 +194,7 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
 // If no description could be found, returns false instead
 func (db *BigDipperDb) getValidatorDescription(address sdk.ConsAddress) (*types.ValidatorDescription, bool) {
 	var result []dbtypes.ValidatorDescriptionHistoryRow
-	stmt := `
-SELECT * FROM validator_description 
-WHERE validator_description.validator_address = $1
-`
+	stmt := `SELECT * FROM validator_description WHERE validator_description.validator_address = $1`
 
 	err := db.Sqlx.Select(&result, stmt, address.String())
 	if err != nil {
@@ -299,44 +296,28 @@ func (db *BigDipperDb) getValidatorCommission(address sdk.ConsAddress) (*dbtypes
 
 // ________________________________________________
 
-// SaveValidatorsVotingPowers saves the given validators voting powers.
+// SaveValidatorVotingPower saves the given validator voting powers.
 // It assumes that the delegator address is already present inside the
 // proper database table.
 // TIP: To store the validator data call SaveValidatorData.
-func (db *BigDipperDb) SaveValidatorsVotingPowers(powers []types.ValidatorVotingPower) error {
-	if len(powers) == 0 {
-		return nil
-	}
+func (db *BigDipperDb) SaveValidatorVotingPower(entry types.ValidatorVotingPower) error {
+	pwrQry := `
+INSERT INTO validator_voting_power (validator_address, voting_power)
+ VALUES ($1, $2) ON CONFLICT (validator_address) DO UPDATE 
+     SET voting_power = excluded.voting_power`
 
-	pwrsQuery := `INSERT INTO validator_voting_power (validator_address, voting_power) VALUES`
-	pwrsHstQry := `INSERT INTO validator_voting_power_history (validator_address, voting_power, height, timestamp) VALUES`
+	pqrHstQry := `
+INSERT INTO validator_voting_power_history (validator_address, voting_power, height, timestamp) 
+VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`
 
-	var pswsValues []interface{}
-	var pwrsHstValues []interface{}
-	for i, voting := range powers {
-		pi := i * 2
-		pwrsQuery += fmt.Sprintf("($%d, $%d),", pi+1, pi+2)
-		pswsValues = append(pswsValues,
-			voting.ConsensusAddress.String(), voting.VotingPower)
-
-		phi := i * 4
-		pwrsHstQry += fmt.Sprintf("($%d, $%d, $%d, $%d),", phi+1, phi+2, phi+3, phi+4)
-		pwrsHstValues = append(pwrsHstValues,
-			voting.ConsensusAddress.String(), voting.VotingPower, voting.Height, voting.Timestamp)
-	}
-
-	// Insert the voting powers
-	pwrsQuery = pwrsQuery[:len(pwrsQuery)-1] // Remove the trailing ","
-	pwrsQuery += `ON CONFLICT (validator_address) DO UPDATE SET voting_power = excluded.voting_power`
-	_, err := db.Sql.Exec(pwrsQuery, pswsValues...)
+	// Insert the voting power
+	_, err := db.Sql.Exec(pwrQry, entry.ConsensusAddress.String(), entry.VotingPower)
 	if err != nil {
 		return err
 	}
 
-	// Insert the voting power histories
-	pwrsHstQry = pwrsHstQry[:len(pwrsHstQry)-1] // Remove the trailing ","
-	pwrsHstQry += ` ON CONFLICT DO NOTHING`
-	_, err = db.Sql.Exec(pwrsHstQry, pwrsHstValues...)
+	// Insert the voting history entry
+	_, err = db.Sql.Exec(pqrHstQry, entry.ConsensusAddress.String(), entry.VotingPower, entry.Height, entry.Timestamp)
 	return err
 }
 

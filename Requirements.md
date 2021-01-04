@@ -34,7 +34,7 @@ The BDjuno is working as a backend for Big Dipper. The followings are the featur
 \* These should be duable using the `average` method inside GraphQL
 
 ## Not on Big Dipper now but we are considering to add
-- [ ] Validators signing-info (slashing)
+- [x] Validators signing-info (slashing)
 - [ ] All wallets activities
 - [ ] Alert on events: 
    - [ ] Proposal creation
@@ -44,7 +44,7 @@ The BDjuno is working as a backend for Big Dipper. The followings are the featur
    - [ ] Huge undelegation
    - [ ] Proposal start voting 
    - [ ] Proposal voting ends
-- [ ] Validators information update history
+- [x] Validators information update history
 - [ ] Validators rating
    - [ ] Self-delegation
    - [ ] Uptime

@@ -386,8 +386,11 @@ func (suite *DbTestSuite) TestSaveValidatorsVotingPowers() {
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 		),
 	}
-	err := suite.database.SaveValidatorsVotingPowers(votingPowers)
-	suite.Require().NoError(err)
+
+	for _, power := range votingPowers {
+		err := suite.database.SaveValidatorVotingPower(power)
+		suite.Require().NoError(err)
+	}
 
 	expected := []dbtypes.ValidatorVotingPowerRow{
 		dbtypes.NewValidatorVotingPowerRow(
@@ -401,7 +404,7 @@ func (suite *DbTestSuite) TestSaveValidatorsVotingPowers() {
 	}
 
 	var result []dbtypes.ValidatorVotingPowerRow
-	err = suite.database.Sqlx.Select(&result, "SELECT * FROM validator_voting_power")
+	err := suite.database.Sqlx.Select(&result, "SELECT * FROM validator_voting_power")
 	suite.Require().NoError(err)
 
 	for index, row := range result {

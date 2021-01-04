@@ -15,12 +15,11 @@ import (
 
 // HandleBlock represents a method that is called each time a new block is created
 func HandleBlock(block *tmctypes.ResultBlock, cp *client.Proxy, db *database.BigDipperDb) error {
-	log.Debug().Str("module", "slashing").Msgf("handling block")
-
 	// Update the staking pool
 	err := updateSigningInfo(block.Block.Height, block.Block.Time, cp, db)
 	if err != nil {
-		return err
+		log.Error().Str("module", "slashing").Int64("height", block.Block.Height).
+			Err(err).Msg("error while updating signing info")
 	}
 
 	return nil
@@ -28,10 +27,8 @@ func HandleBlock(block *tmctypes.ResultBlock, cp *client.Proxy, db *database.Big
 
 // updateSigningInfo reads from the LCD the current staking pool and stores its value inside the database
 func updateSigningInfo(height int64, timestamp time.Time, cp *client.Proxy, db *database.BigDipperDb) error {
-	log.Debug().
-		Str("module", "slashing").
-		Str("operation", "signing info").
-		Msg("getting signing info")
+	log.Debug().Str("module", "slashing").Int64("height", height).
+		Str("operation", "signing info").Msg("getting signing info")
 
 	var pool []slashing.ValidatorSigningInfo
 	endpoint := fmt.Sprintf("/slashing/signing_infos?height=%d", height)
@@ -41,10 +38,8 @@ func updateSigningInfo(height int64, timestamp time.Time, cp *client.Proxy, db *
 		return err
 	}
 
-	log.Debug().
-		Str("module", "slashing").
-		Str("operation", "signing_info").
-		Msg("saving signing info")
+	log.Debug().Str("module", "slashing").Int64("height", height).
+		Str("operation", "signing info").Msg("saving signing info")
 
 	infos := make([]slashingtypes.ValidatorSigningInfo, len(pool))
 	for index, info := range pool {
