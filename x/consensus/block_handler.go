@@ -9,14 +9,10 @@ import (
 )
 
 func HandleBlock(block *tmctypes.ResultBlock, db *database.BigDipperDb) error {
-	log.Debug().
-		Str("module", "gov").
-		Int64("block", block.Block.Height).
-		Msg("handling block")
-
 	err := updateBlockTimeFromGenesis(block, db)
 	if err != nil {
-		return err
+		log.Error().Str("module", "gov").Int64("height", block.Block.Height).
+			Err(err).Msg("error while updating block time from genesis")
 	}
 
 	return nil

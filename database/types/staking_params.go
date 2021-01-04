@@ -2,7 +2,7 @@ package types
 
 // StakingParamsRow represents a single row inside the staking_params table
 type StakingParamsRow struct {
-	BondName string `db:"bond_name"`
+	BondName string `db:"bond_denom"`
 }
 
 // NewStakingParamsRow allows to build a new StakingParamsRow object

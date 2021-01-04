@@ -152,8 +152,7 @@ func UpdateValidatorVotingPower(cp *client.Proxy, db *database.BigDipperDb) erro
 		Str("operation", "uptime").
 		Msg("saving voting powers")
 
-	votings := make([]types.ValidatorVotingPower, len(validators.Validators))
-	for index, validator := range validators.Validators {
+	for _, validator := range validators.Validators {
 		if found, _ := db.HasValidator(validator.Address.String()); !found {
 			continue
 		}
@@ -162,16 +161,16 @@ func UpdateValidatorVotingPower(cp *client.Proxy, db *database.BigDipperDb) erro
 			return err
 		}
 
-		votings[index] = types.NewValidatorVotingPower(
+		err = db.SaveValidatorVotingPower(types.NewValidatorVotingPower(
 			consAddress,
 			validator.VotingPower,
 			block.Block.Height,
 			block.Block.Time,
-		)
+		))
+		if err != nil {
+			return err
+		}
 	}
 
-	if err := db.SaveValidatorsVotingPowers(votings); err != nil {
-		return err
-	}
 	return nil
 }

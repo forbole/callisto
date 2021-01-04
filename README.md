@@ -53,7 +53,8 @@ port = 5432
 name = "<db-name>"
 user = "<db-user>"
 password = "<db-password>"
-ssl_mode = "<ssl-mode>"
+ssl_mode = "<ssl-mode (optional)>"
+schema = "<schema (optional)>"
 ```
 
 Example of a configuration to parse the chain state from a local Cosmos full-node:
