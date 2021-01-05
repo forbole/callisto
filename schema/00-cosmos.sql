@@ -9,7 +9,7 @@ CREATE TABLE pre_commit
     id                SERIAL PRIMARY KEY,
     validator_address TEXT                        NOT NULL REFERENCES validator (consensus_address),
     timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    voting_power      INTEGER                     NOT NULL,
+    voting_power      BIGINT                      NOT NULL,
     proposer_priority INTEGER                     NOT NULL
 );
 
@@ -29,7 +29,7 @@ CREATE TABLE transaction
     timestamp  TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     gas_wanted INTEGER                              DEFAULT 0,
     gas_used   INTEGER                              DEFAULT 0,
-    height     INTEGER                     NOT NULL,
+    height     BIGINT                      NOT NULL,
     hash       TEXT                        NOT NULL UNIQUE PRIMARY KEY,
     messages   JSONB                       NOT NULL DEFAULT '[]'::JSONB,
     fee        JSONB                       NOT NULL DEFAULT '{}'::JSONB,

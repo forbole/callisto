@@ -9,26 +9,26 @@ CREATE TABLE consensus
 CREATE TABLE average_block_time_per_minute
 (
     average_time DECIMAL NOT NULL,
-    height       INTEGER NOT NULL
+    height       BIGINT  NOT NULL
 );
 
 CREATE TABLE average_block_time_per_hour
 (
     average_time DECIMAL NOT NULL,
-    height       INTEGER NOT NULL
+    height       BIGINT  NOT NULL
 );
 
 CREATE TABLE average_block_time_per_day
 (
     average_time DECIMAL NOT NULL,
-    height       INTEGER NOT NULL
+    height       BIGINT  NOT NULL
 );
 
 
 CREATE TABLE average_block_time_from_genesis
 (
     average_time DECIMAL NOT NULL,
-    height       INTEGER NOT NULL
+    height       BIGINT  NOT NULL
 );
 
 CREATE TABLE genesis
