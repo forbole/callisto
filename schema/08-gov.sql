@@ -16,11 +16,11 @@ CREATE TABLE proposal
 CREATE TABLE tally_result
 (
     proposal_id  INTEGER REFERENCES proposal (proposal_id),
-    yes          INTEGER NOT NULL,
-    abstain      INTEGER NOT NULL,
-    no           INTEGER NOT NULL,
-    no_with_veto INTEGER NOT NULL,
-    height       INTEGER NOT NULL,
+    yes          BIGINT NOT NULL,
+    abstain      BIGINT NOT NULL,
+    no           BIGINT NOT NULL,
+    no_with_veto BIGINT NOT NULL,
+    height       BIGINT NOT NULL,
     PRIMARY KEY (proposal_id, height)
 );
 
@@ -29,7 +29,7 @@ CREATE TABLE vote
     proposal_id INTEGER REFERENCES proposal (proposal_id) NOT NULL,
     voter       TEXT REFERENCES account (address),
     option      TEXT                                      NOT NULL,
-    height      INTEGER                                   NOT NULL,
+    height      BIGINT                                    NOT NULL,
     PRIMARY KEY (proposal_id, voter, height)
 );
 
@@ -39,6 +39,6 @@ CREATE TABLE deposit
     depositor     TEXT REFERENCES account (address),
     amount        COIN[],
     total_deposit COIN[],
-    height        INTEGER,
+    height        BIGINT,
     PRIMARY KEY (proposal_id, depositor, height)
 );
