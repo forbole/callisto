@@ -34,6 +34,8 @@ CREATE TABLE transaction
     messages   JSONB                       NOT NULL DEFAULT '[]'::JSONB,
     fee        JSONB                       NOT NULL DEFAULT '{}'::JSONB,
     signatures JSONB                       NOT NULL DEFAULT '[]'::JSONB,
-    memo       TEXT
+    memo       TEXT,
+    raw_log    TEXT,
+    success    BOOLEAN                     NOT NULL DEFAULT true
 );
 

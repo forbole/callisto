@@ -10,7 +10,6 @@ import (
 	"github.com/desmos-labs/juno/client"
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/staking/types"
@@ -30,7 +29,7 @@ func RegisterPeriodicOps(scheduler *gocron.Scheduler, cp *client.Proxy, db *data
 	}
 
 	if _, err := scheduler.Every(1).Minute().StartImmediately().Do(func() {
-		utils.WatchMethod(func() error { return UpdateValidatorVotingPower(cp, db) })
+		utils.WatchMethod(func() error { return updateValidatorVotingPower(cp, db) })
 	}); err != nil {
 		return err
 	}
@@ -125,23 +124,23 @@ func updateValidators(height int64, cp *client.Proxy, db *database.BigDipperDb) 
 	return db.SaveValidators(validators)
 }
 
-// UpdateValidatorVotingPower fetches and stores into the database all the current validators' voting powers
-func UpdateValidatorVotingPower(cp *client.Proxy, db *database.BigDipperDb) error {
+// updateValidatorVotingPower fetches and stores into the database all the current validators' voting powers
+func updateValidatorVotingPower(cp *client.Proxy, db *database.BigDipperDb) error {
 	log.Debug().
 		Str("module", "staking").
 		Str("operation", " voting percentage").
 		Msg("getting validators voting percentage")
 
 	// First, get the latest block height
-	var block tmctypes.ResultBlock
-	if err := cp.QueryLCD("/blocks/latest", &block); err != nil {
+	height, err := db.GetLastBlockHeight()
+	if err != nil {
 		return err
 	}
 
 	// Second, get the validators
 	var validators rpc.ResultValidatorsOutput
-	endpoint := fmt.Sprintf("/validatorsets/%d", block.Block.Height)
-	_, err := cp.QueryLCDWithHeight(endpoint, &validators)
+	endpoint := fmt.Sprintf("/validatorsets/%d", height)
+	_, err = cp.QueryLCDWithHeight(endpoint, &validators)
 	if err != nil {
 		return err
 	}
@@ -160,7 +159,7 @@ func UpdateValidatorVotingPower(cp *client.Proxy, db *database.BigDipperDb) erro
 		err = db.SaveValidatorVotingPower(types.NewValidatorVotingPower(
 			validator.Address.String(),
 			validator.VotingPower,
-			block.Block.Height,
+			height,
 		))
 		if err != nil {
 			return err
