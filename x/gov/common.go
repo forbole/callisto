@@ -6,8 +6,6 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	"github.com/forbole/bdjuno/x/staking"
-
 	"github.com/cosmos/cosmos-sdk/x/gov"
 	"github.com/desmos-labs/juno/client"
 
@@ -36,12 +34,6 @@ func updateProposalStatuses(id uint64, cp *client.Proxy, db *database.BigDipperD
 	if proposal.Status.String() == "VotingPeriod" {
 		update := UpdateProposal(proposal.ProposalID, cp, db)
 		time.AfterFunc(time.Since(proposal.VotingEndTime), update)
-	}
-
-	// Update the validators voting powers
-	err = staking.UpdateValidatorVotingPower(cp, db)
-	if err != nil {
-		return err
 	}
 
 	// Update the proposal to update the status
