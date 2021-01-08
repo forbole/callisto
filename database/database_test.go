@@ -1,17 +1,19 @@
 package database_test
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	stakingtypes "github.com/forbole/bdjuno/x/staking/types"
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
-	tmtypes "github.com/tendermint/tendermint/types"
-	"github.com/tendermint/tendermint/version"
 	"io/ioutil"
 	"path/filepath"
 	"regexp"
 	"strings"
 	"testing"
 	"time"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+	tmtypes "github.com/tendermint/tendermint/types"
+	"github.com/tendermint/tendermint/version"
+
+	stakingtypes "github.com/forbole/bdjuno/x/staking/types"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
 	jconfig "github.com/desmos-labs/juno/config"
