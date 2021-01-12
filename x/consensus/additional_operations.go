@@ -3,6 +3,7 @@ package consensus
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/forbole/bdjuno/database"
 
 	"github.com/desmos-labs/juno/client"
@@ -70,11 +71,11 @@ func ListenOperation(cp *client.Proxy, db *database.BigDipperDb) error {
 // and returns a read-only channel emitting all the events
 func subscribeConsensusEvent(event string, cp *client.Proxy, out chan<- tmctypes.ResultEvent) error {
 	query := fmt.Sprintf("tm.event = '%s'", event)
-	subscriber := fmt.Sprintf("juno-client-consensus")
+	subscriber := fmt.Sprintf("juno-client-consensus-%s", event)
 
 	eventCh, cancel, err := cp.SubscribeEvents(subscriber, query)
 	if err != nil {
-		log.Fatal().Err(err)
+		return err
 	}
 	defer cancel()
 
