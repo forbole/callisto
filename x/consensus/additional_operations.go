@@ -3,7 +3,6 @@ package consensus
 import (
 	"encoding/json"
 	"fmt"
-	"sync"
 
 	"github.com/forbole/bdjuno/database"
 
@@ -26,14 +25,16 @@ func ListenOperation(cp *client.Proxy, db *database.BigDipperDb) error {
 		tmtypes.EventVote,
 	}
 
-	var channels []<-chan tmctypes.ResultEvent
-	for index, event := range events {
-		channels = append(channels, subscribeConsensusEvent(index, event, cp))
-	}
-
-	merged := merge(channels...)
 	go func() {
-		for event := range merged {
+		var out = make(chan tmctypes.ResultEvent)
+		for _, event := range events {
+			err := subscribeConsensusEvent(event, cp, out)
+			if err != nil {
+				log.Fatal().Err(err)
+			}
+		}
+
+		for event := range out {
 
 			// Serialize the event data as JSON to later de-serialize it into our custom object
 			bz, err := json.Marshal(event.Data)
@@ -48,6 +49,13 @@ func ListenOperation(cp *client.Proxy, db *database.BigDipperDb) error {
 				log.Fatal().Err(err).Send()
 			}
 
+			log.Debug().
+				Str("module", "consensus").
+				Int64("height", consEvent.Height).
+				Int("round", consEvent.Round).
+				Str("step", consEvent.Step).
+				Msg("saving consensus")
+
 			// Save the event
 			err = db.SaveConsensus(consEvent)
 			if err != nil {
@@ -61,40 +69,21 @@ func ListenOperation(cp *client.Proxy, db *database.BigDipperDb) error {
 
 // subscribeConsensusEvent allows to subscribe to the consensus event having the given name,
 // and returns a read-only channel emitting all the events
-func subscribeConsensusEvent(index int, event string, cp *client.Proxy) <-chan tmctypes.ResultEvent {
+func subscribeConsensusEvent(event string, cp *client.Proxy, out chan<- tmctypes.ResultEvent) error {
 	query := fmt.Sprintf("tm.event = '%s'", event)
-	subscriber := fmt.Sprintf("juno-client-consensus-%d", index)
+	subscriber := fmt.Sprintf("juno-client-consensus-%s", event)
 
 	eventCh, cancel, err := cp.SubscribeEvents(subscriber, query)
+	if err != nil {
+		return err
+	}
 	defer cancel()
 
-	if err != nil {
-		log.Fatal().Err(err).Send()
-	}
-
-	return eventCh
-}
-
-// merge takes a list of read-only channels and merges them into a single read-only channel
-func merge(cs ...<-chan tmctypes.ResultEvent) <-chan tmctypes.ResultEvent {
-	out := make(chan tmctypes.ResultEvent)
-
-	var wg sync.WaitGroup
-	wg.Add(len(cs))
-
-	for _, c := range cs {
-		go func(c <-chan tmctypes.ResultEvent) {
-			for v := range c {
-				out <- v
-			}
-			wg.Done()
-		}(c)
-	}
-
 	go func() {
-		wg.Wait()
-		close(out)
+		for event := range eventCh {
+			out <- event
+		}
 	}()
 
-	return out
+	return nil
 }

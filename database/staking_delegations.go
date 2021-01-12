@@ -70,6 +70,13 @@ VALUES `
 			return err
 		}
 
+		// Remove the current delegations for the validator
+		_, err = db.Sql.Exec(`DELETE  FROM delegation WHERE validator_address = $1`,
+			validator.GetConsAddr())
+		if err != nil {
+			return err
+		}
+
 		// Convert the amount
 		coin := dbtypes.NewDbCoin(delegation.Amount)
 		value, err := coin.Value()
@@ -94,12 +101,6 @@ VALUES `
 	accQry = accQry[:len(accQry)-1] // Remove the trailing ","
 	accQry += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(accQry, accParams...)
-	if err != nil {
-		return err
-	}
-
-	// Remove the current delegations
-	_, err = db.Sql.Exec(`DELETE  FROM delegation WHERE TRUE`)
 	if err != nil {
 		return err
 	}
@@ -189,6 +190,13 @@ VALUES `
 			return err
 		}
 
+		// Delete the current unbonding delegations for the validator
+		_, err = db.Sql.Exec(`DELETE FROM unbonding_delegation WHERE validator_address = $1`,
+			validator.GetConsAddr())
+		if err != nil {
+			return err
+		}
+
 		coin := dbtypes.NewDbCoin(delegation.Amount)
 		amount, err := coin.Value()
 		if err != nil {
@@ -212,12 +220,6 @@ VALUES `
 	accQry = accQry[:len(accQry)-1] // Remove the trailing ","
 	accQry += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(accQry, accParams...)
-	if err != nil {
-		return err
-	}
-
-	// Delete the current unbonding delegations
-	_, err = db.Sql.Exec(`DELETE FROM unbonding_delegation WHERE TRUE`)
 	if err != nil {
 		return err
 	}
@@ -322,6 +324,13 @@ VALUES `
 			return err
 		}
 
+		// Delete the current redelegations
+		_, err = db.Sql.Exec(`DELETE FROM redelegation WHERE src_validator_address = $1 AND dst_validator_address = $2`,
+			srcVal.GetConsAddr(), dstVal.GetConsAddr())
+		if err != nil {
+			return err
+		}
+
 		// Convert the amount value
 		coin := dbtypes.NewDbCoin(redelegation.Amount)
 		amountValue, err := coin.Value()
@@ -347,12 +356,6 @@ VALUES `
 	accQry = accQry[:len(accQry)-1] // Remove the trailing ","
 	accQry += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(accQry, accParams...)
-	if err != nil {
-		return err
-	}
-
-	// Delete the current redelegations
-	_, err = db.Sql.Exec(`DELETE FROM redelegation WHERE TRUE`)
 	if err != nil {
 		return err
 	}

@@ -6,6 +6,7 @@ import "time"
 
 // DelegationRow represents a single delegation table row
 type DelegationRow struct {
+	ID               string  `db:"id"`
 	ValidatorAddress string  `db:"validator_address"`
 	DelegatorAddress string  `db:"delegator_address"`
 	Amount           DbCoin  `db:"amount"`
@@ -32,6 +33,7 @@ func (v DelegationRow) Equal(w DelegationRow) bool {
 
 // DelegationHistoryRow represents a single row of the delegations_history table
 type DelegationHistoryRow struct {
+	ID               string  `db:"id"`
 	ValidatorAddress string  `db:"validator_address"`
 	DelegatorAddress string  `db:"delegator_address"`
 	Amount           DbCoin  `db:"amount"`
@@ -41,9 +43,10 @@ type DelegationHistoryRow struct {
 
 // NewDelegationHistoryRow allows to build a new DelegationHistoryRow
 func NewDelegationHistoryRow(
-	consAddr, delegator string, amount DbCoin, shares float64, height int64,
+	id, consAddr, delegator string, amount DbCoin, shares float64, height int64,
 ) DelegationHistoryRow {
 	return DelegationHistoryRow{
+		ID:               id,
 		ValidatorAddress: consAddr,
 		DelegatorAddress: delegator,
 		Amount:           amount,
