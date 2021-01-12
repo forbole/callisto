@@ -4,28 +4,29 @@
 
 ```json
 {
-  "type": "cosmos-sdk/MsgCreateValidator",
+  "@type": "/cosmos.staking.v1beta1.MsgCreateValidator",
+  "description": {
+    "moniker": "Validator moniker",
+    "identity": "",
+    "website": "",
+    "security_contact": "",
+    "details": ""
+  },
+  "commission": {
+    "rate": "0.100000000000000000",
+    "max_rate": "0.200000000000000000",
+    "max_change_rate": "0.010000000000000000"
+  },
+  "min_self_delegation": "1",
+  "delegator_address": "desmos13yp2fq3tslq6mmtq4628q38xzj75ethzela9uu",
+  "validator_address": "desmosvaloper13yp2fq3tslq6mmtq4628q38xzj75ethz8j43kw",
+  "pubkey": {
+    "@type": "/cosmos.crypto.ed25519.PubKey",
+    "key": "1pk2pQfffJGLUqoOKQpHz1qnil0ymzYPEdSMufr1vTw="
+  },
   "value": {
-    "description": {
-      "moniker": "Validator moniker",
-      "identity": "",
-      "website": "",
-      "security_contact": "",
-      "details": ""
-    },
-    "commission": {
-      "rate": "0.100000000000000000",
-      "max_rate": "0.200000000000000000",
-      "max_change_rate": "0.010000000000000000"
-    },
-    "min_self_delegation": "1",
-    "delegator_address": "desmos13yp2fq3tslq6mmtq4628q38xzj75ethzela9uu",
-    "validator_address": "desmosvaloper13yp2fq3tslq6mmtq4628q38xzj75ethz8j43kw",
-    "pubkey": "desmosvalconspub1zcjduepq66vndfg8ma7frz6j4g8zjzj8ead20zjax2dnvrc36jxtn7h4h57qszwhj2",
-    "value": {
-      "denom": "udaric",
-      "amount": "1000000"
-    }
+    "denom": "udaric",
+    "amount": "1000000"
   }
 }
 ```
