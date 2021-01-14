@@ -43,6 +43,7 @@ func Builder(cfg *config.Config, codec *codec.Codec) (db.Database, error) {
 	}, nil
 }
 
+// Cast allows to cast the given db to a BigDipperDb instance
 func Cast(db db.Database) *BigDipperDb {
 	bdDatabase, ok := db.(*BigDipperDb)
 	if !ok {

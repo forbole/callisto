@@ -29,10 +29,10 @@ func (m Module) Name() string {
 
 // RegisterPeriodicOperations implements modules.Module
 func (m Module) RegisterPeriodicOperations(
-	scheduler *gocron.Scheduler, _ *codec.Codec, cp *client.Proxy, db db.Database,
+	scheduler *gocron.Scheduler, _ *codec.Codec, _ *client.Proxy, db db.Database,
 ) error {
 	bdDatabase := database.Cast(db)
-	return Register(scheduler, cp, bdDatabase)
+	return Register(scheduler, bdDatabase)
 }
 
 // RunAdditionalOperations implements modules.Module

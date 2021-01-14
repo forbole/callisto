@@ -22,20 +22,29 @@ func (db *BigDipperDb) SaveConsensus(event constypes.ConsensusEvent) error {
 	return err
 }
 
-// GetLastBlockHeight returns the last block height stored inside the database
-func (db *BigDipperDb) GetLastBlockHeight() (int64, error) {
-	stmt := `SELECT height FROM block ORDER BY timestamp DESC LIMIT 1`
+// GetLastBlock returns the last block stored inside the database based on the heights
+func (db *BigDipperDb) GetLastBlock() (*dbtypes.BlockRow, error) {
+	stmt := `SELECT * FROM block ORDER BY height DESC LIMIT 1`
 
 	var blocks []dbtypes.BlockRow
 	if err := db.Sqlx.Select(&blocks, stmt); err != nil {
-		return 0, err
+		return nil, err
 	}
 
 	if len(blocks) == 0 {
-		return 0, fmt.Errorf("cannot get block, no blocks saved")
+		return nil, fmt.Errorf("cannot get block, no blocks saved")
 	}
 
-	return blocks[0].Height, nil
+	return &blocks[0], nil
+}
+
+// GetLastBlockHeight returns the last block height stored inside the database
+func (db *BigDipperDb) GetLastBlockHeight() (int64, error) {
+	block, err := db.GetLastBlock()
+	if err != nil {
+		return 0, err
+	}
+	return block.Height, nil
 }
 
 // getBlockHeightTime retrieves the block at the specific time
