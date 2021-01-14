@@ -2,12 +2,10 @@ package auth
 
 import (
 	"github.com/desmos-labs/juno/client"
-	"github.com/go-co-op/gocron"
-	"github.com/rs/zerolog/log"
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
-
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/utils"
+	"github.com/go-co-op/gocron"
+	"github.com/rs/zerolog/log"
 )
 
 // RegisterOps returns the AdditionalOperation that periodically runs fetches from
@@ -29,10 +27,8 @@ func RegisterOps(scheduler *gocron.Scheduler, cp *client.Proxy, db *database.Big
 // updateAccounts gets all the accounts stored inside the database, and refreshes their
 // balances by fetching the LCD endpoint.
 func updateAccounts(cp *client.Proxy, db *database.BigDipperDb) error {
-	var block tmctypes.ResultBlock
-	err := cp.QueryLCD("/blocks/latest", &block)
+	height, err := db.GetLastBlockHeight()
 	if err != nil {
-		log.Err(err).Str("module", "auth").Msg("error getting latest block")
 		return err
 	}
 
@@ -41,5 +37,5 @@ func updateAccounts(cp *client.Proxy, db *database.BigDipperDb) error {
 		return err
 	}
 
-	return RefreshAccounts(addresses, block.Block.Height, cp, db)
+	return RefreshAccounts(addresses, height, cp, db)
 }

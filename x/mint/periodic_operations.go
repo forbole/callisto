@@ -5,12 +5,10 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/juno/client"
-	"github.com/go-co-op/gocron"
-	"github.com/rs/zerolog/log"
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
-
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/utils"
+	"github.com/go-co-op/gocron"
+	"github.com/rs/zerolog/log"
 )
 
 // RegisterPeriodicOps returns the AdditionalOperation that periodically runs fetches from
@@ -36,17 +34,15 @@ func updateInflation(cp *client.Proxy, db *database.BigDipperDb) error {
 		Str("operation", "inflation").
 		Msg("getting inflation data")
 
-	// Get the latest block height
-	var block tmctypes.ResultBlock
-	err := cp.QueryLCD("/blocks/latest", &block)
+	height, err := db.GetLastBlockHeight()
 	if err != nil {
 		return err
 	}
 
 	// Get the inflation
 	var inflation sdk.Dec
-	endpoint := fmt.Sprintf("/mint/inflation?height=%d", block.Block.Height)
-	height, err := cp.QueryLCDWithHeight(endpoint, &inflation)
+	endpoint := fmt.Sprintf("/mint/inflation?height=%d", height)
+	_, err = cp.QueryLCDWithHeight(endpoint, &inflation)
 	if err != nil {
 		return err
 	}
