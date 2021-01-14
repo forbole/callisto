@@ -118,11 +118,43 @@ CREATE TABLE validator_status_history
  */
 CREATE TABLE delegation
 (
+    id                SERIAL  NOT NULL PRIMARY KEY,
     validator_address TEXT    NOT NULL REFERENCES validator (consensus_address),
     delegator_address TEXT    NOT NULL REFERENCES account (address),
     amount            COIN    NOT NULL,
     shares            NUMERIC NOT NUll
 );
+
+/**
+  * This function is used to have a Hasura compute field (https://hasura.io/docs/1.0/graphql/core/schema/computed-fields.html)
+  * inside the delegation table, so that it's easy to determine whether an entry represents a self delegation or not.
+ */
+CREATE FUNCTION is_delegation_self_delegate(delegation_row delegation)
+    RETURNS BOOLEAN AS
+$$
+SELECT (
+           SELECT self_delegate_address
+           FROM validator_info
+           WHERE validator_info.consensus_address = delegation_row.validator_address
+       ) = delegation_row.delegator_address
+$$ LANGUAGE sql STABLE;
+
+/**
+  * This function is used to add a self_delegations field to the validator table allowing to easily get all the
+  * self delegations related to a specific validator.
+ */
+CREATE FUNCTION self_delegations(validator_row validator) RETURNS SETOF delegation AS
+$$
+SELECT *
+FROM delegation
+WHERE delegator_address = (
+    SELECT self_delegate_address
+    FROM validator_info
+    WHERE validator_info.consensus_address = validator_row.consensus_address
+)
+$$
+    LANGUAGE sql
+    STABLE;
 
 /*
  * This table holds the HISTORICAL delegations.
@@ -130,12 +162,44 @@ CREATE TABLE delegation
  */
 CREATE TABLE delegation_history
 (
+    id                SERIAL  NOT NULL PRIMARY KEY,
     validator_address TEXT    NOT NULL REFERENCES validator (consensus_address),
     delegator_address TEXT    NOT NULL REFERENCES account (address),
     amount            COIN    NOT NULL,
     shares            NUMERIC NOT NUll,
     height            BIGINT  NOT NULL
 );
+
+/**
+  * This function is used to have a Hasura compute field (https://hasura.io/docs/1.0/graphql/core/schema/computed-fields.html)
+  * inside the delegation_history table, so that it's easy to determine whether an entry represents a self delegation or not.
+ */
+CREATE FUNCTION is_delegation_history_self_delegate(delegation_row delegation_history)
+    RETURNS BOOLEAN AS
+$$
+SELECT (
+           SELECT self_delegate_address
+           FROM validator_info
+           WHERE validator_info.consensus_address = delegation_row.validator_address
+       ) = delegation_row.delegator_address
+$$ LANGUAGE sql STABLE;
+
+/**
+  * This function is used to add a self_delegation_histories field to the validator table allowing to easily get all the
+  * self delegation histories related to a specific validator.
+ */
+CREATE FUNCTION self_delegation_histories(validator_row validator) RETURNS SETOF delegation_history AS
+$$
+SELECT *
+FROM delegation_history
+WHERE delegation_history.delegator_address = (
+    SELECT self_delegate_address
+    FROM validator_info
+    WHERE validator_info.consensus_address = validator_row.consensus_address
+)
+$$
+    LANGUAGE sql
+    STABLE;
 
 /*
  * This table holds only the CURRENT unbonding delegations.

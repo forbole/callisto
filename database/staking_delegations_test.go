@@ -43,6 +43,7 @@ func (suite *DbTestSuite) TestSaveHistoricalDelegation() {
 
 	expected := []dbtypes.DelegationHistoryRow{
 		dbtypes.NewDelegationHistoryRow(
+			"1",
 			validator.GetConsAddr(),
 			delegator.String(),
 			dbtypes.NewDbCoin(amount),
