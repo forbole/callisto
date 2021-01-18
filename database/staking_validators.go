@@ -38,18 +38,13 @@ VALUES `
 		vp := i * 2 // Starting position for validator params
 		vi := i * 5 // Starting position for validator info params
 
-		publicKey, err := sdk.Bech32ifyPubKey(sdk.Bech32PubKeyTypeConsPub, validator.GetConsPubKey())
-		if err != nil {
-			return err
-		}
-
 		selfDelegationAccQuery += fmt.Sprintf("($%d),", i+1)
 		selfDelegationParam = append(selfDelegationParam,
 			validator.GetSelfDelegateAddress())
 
 		validatorQuery += fmt.Sprintf("($%d,$%d),", vp+1, vp+2)
 		validatorParams = append(validatorParams,
-			validator.GetConsAddr(), publicKey)
+			validator.GetConsAddr(), validator.GetConsPubKey())
 
 		validatorInfoQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5)
 		validatorInfoParams = append(validatorInfoParams,
@@ -303,52 +298,12 @@ func (db *BigDipperDb) getValidatorCommission(address sdk.ConsAddress) (*dbtypes
 // proper database table.
 // TIP: To store the validator data call SaveValidatorData.
 func (db *BigDipperDb) SaveValidatorVotingPower(entry types.ValidatorVotingPower) error {
-	pwrQry := `
-INSERT INTO validator_voting_power (validator_address, voting_power)
- VALUES ($1, $2) ON CONFLICT (validator_address) DO UPDATE 
-     SET voting_power = excluded.voting_power`
-
 	pqrHstQry := `
 INSERT INTO validator_voting_power_history (validator_address, voting_power, height) 
 VALUES ($1, $2, $3) ON CONFLICT DO NOTHING`
 
-	// Insert the voting power
-	_, err := db.Sql.Exec(pwrQry, entry.ConsensusAddress, entry.VotingPower)
-	if err != nil {
-		return err
-	}
-
 	// Insert the voting history entry
-	_, err = db.Sql.Exec(pqrHstQry, entry.ConsensusAddress, entry.VotingPower, entry.Height)
-	return err
-}
-
-// ________________________________________________
-
-// SaveValidatorUptime stores into the database the given validator uptime information.
-// It assumes that the delegator address is already present inside the
-// proper database table.
-// TIP: To store the validator data call SaveValidatorData.
-func (db *BigDipperDb) SaveValidatorUptime(uptime types.ValidatorUptime) error {
-
-	// Insert the current validator uptime data
-	stmt := `
-INSERT INTO validator_uptime (validator_address, signed_blocks_window, missed_blocks_counter)
-VALUES ($1, $2, $3) ON CONFLICT (validator_address) DO UPDATE 
-    SET signed_blocks_window = excluded.signed_blocks_window, 
-        missed_blocks_counter = excluded.missed_blocks_counter`
-	_, err := db.Sql.Exec(stmt,
-		uptime.ValidatorAddress, uptime.SignedBlocksWindow, uptime.MissedBlocksCounter)
-	if err != nil {
-		return err
-	}
-
-	// Insert the historic data
-	stmt = `
-INSERT INTO validator_uptime_history (validator_address, signed_blocks_window, missed_blocks_counter, height) 
-VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`
-	_, err = db.Sql.Exec(stmt,
-		uptime.ValidatorAddress, uptime.SignedBlocksWindow, uptime.MissedBlocksCounter, uptime.Height)
+	_, err := db.Sql.Exec(pqrHstQry, entry.ConsensusAddress, entry.VotingPower, entry.Height)
 	return err
 }
 
@@ -357,23 +312,11 @@ VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`
 // SaveValidatorStatus save validator jail and status in the given height and timestamp
 func (db *BigDipperDb) SaveValidatorStatus(validatorStatus types.ValidatorStatus) error {
 	stmt := `
-INSERT INTO validator_status (status, jailed, validator_address) 
-VALUES ($1, $2, $3) ON CONFLICT (validator_address) DO UPDATE
+INSERT INTO validator_status (validator_address, status, jailed, height) 
+VALUES ($1, $2, $3, $4) ON CONFLICT (validator_address) DO UPDATE
     SET status = excluded.status,
         jailed= excluded.jailed`
 	_, err := db.Sql.Exec(stmt,
-		validatorStatus.Status,
-		validatorStatus.Jailed,
-		validatorStatus.ConsensusAddress,
-	)
-	if err != nil {
-		return err
-	}
-
-	stmt = `
-INSERT INTO validator_status_history (validator_address, status, jailed, height) 
-VALUES ($1, $2, $3, $4);`
-	_, err = db.Sql.Exec(stmt,
 		validatorStatus.ConsensusAddress,
 		validatorStatus.Status,
 		validatorStatus.Jailed,
@@ -409,8 +352,8 @@ func (db *BigDipperDb) SaveDoubleSignEvidence(evidence types.DoubleSignEvidence)
 	}
 
 	stmt := `
-INSERT INTO double_sign_evidence (public_key, vote_a_id, vote_b_id) 
-VALUES ($1, $2, $3) ON CONFLICT DO NOTHING`
-	_, err = db.Sql.Exec(stmt, evidence.Pubkey, voteA, voteB)
+INSERT INTO double_sign_evidence (vote_a_id, vote_b_id) 
+VALUES ($1, $2) ON CONFLICT DO NOTHING`
+	_, err = db.Sql.Exec(stmt, voteA, voteB)
 	return err
 }

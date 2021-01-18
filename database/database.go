@@ -1,11 +1,12 @@
 package database
 
 import (
+	"database/sql"
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/simapp/params"
 
 	"github.com/rs/zerolog/log"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/desmos-labs/juno/config"
 	"github.com/desmos-labs/juno/db"
 	"github.com/desmos-labs/juno/db/postgresql"
@@ -16,11 +17,12 @@ import (
 // so that it can properly store custom BigDipper-related data.
 type BigDipperDb struct {
 	*postgresql.Database
+	Sql  *sql.DB
 	Sqlx *sqlx.DB
 }
 
 // Builder allows to create a new BigDipperDb instance implementing the database.Builder type
-func Builder(cfg *config.Config, codec *codec.Codec) (db.Database, error) {
+func Builder(cfg *config.Config, codec *params.EncodingConfig) (db.Database, error) {
 	psqlConfig, ok := cfg.DatabaseConfig.Config.(*config.PostgreSQLConfig)
 	if !ok {
 		// TODO: Support MongoDB

@@ -27,16 +27,17 @@ CREATE TABLE block
 
 CREATE TABLE transaction
 (
-    timestamp  TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    gas_wanted INTEGER                              DEFAULT 0,
-    gas_used   INTEGER                              DEFAULT 0,
-    height     BIGINT                      NOT NULL,
-    hash       TEXT                        NOT NULL UNIQUE PRIMARY KEY,
-    messages   JSONB                       NOT NULL DEFAULT '[]'::JSONB,
-    fee        JSONB                       NOT NULL DEFAULT '{}'::JSONB,
-    signatures JSONB                       NOT NULL DEFAULT '[]'::JSONB,
-    memo       TEXT,
-    raw_log    TEXT,
-    success    BOOLEAN                     NOT NULL DEFAULT true
+    hash         TEXT    NOT NULL UNIQUE PRIMARY KEY,
+    height       BIGINT  NOT NULL REFERENCES block (height),
+    success      BOOLEAN NOT NULL,
+    messages     JSONB   NOT NULL DEFAULT '[]'::JSONB,
+    memo         TEXT,
+    signatures   TEXT[]  NOT NULL,
+    signer_infos JSONB   NOT NULL DEFAULT '[]'::JSONB,
+    fee          JSONB   NOT NULL DEFAULT '{}'::JSONB,
+    gas_wanted   INTEGER          DEFAULT 0,
+    gas_used     INTEGER          DEFAULT 0,
+    raw_log      TEXT,
+    logs         JSONB
 );
 

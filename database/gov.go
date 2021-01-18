@@ -120,13 +120,12 @@ func (db *BigDipperDb) SaveVote(vote types.Vote) error {
 // SaveDeposit allows to save for the given message deposit and height
 func (db *BigDipperDb) SaveDeposit(deposit types.Deposit) error {
 	query := `
-INSERT INTO deposit(proposal_id, depositor, amount, total_deposit, height) 
-VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`
+INSERT INTO deposit(proposal_id, depositor, amount, height) 
+VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(query,
 		deposit.ProposalID,
 		deposit.Depositor,
 		pq.Array(dbtypes.NewDbCoins(deposit.Amount)),
-		pq.Array(dbtypes.NewDbCoins(deposit.TotalDeposit)),
 		deposit.Height,
 	)
 	return err
@@ -137,16 +136,15 @@ func (db *BigDipperDb) SaveDeposits(deposits []types.Deposit) error {
 	if len(deposits) == 0 {
 		return nil
 	}
-	query := `INSERT INTO deposit(proposal_id, depositor, amount, total_deposit, height) VALUES `
+	query := `INSERT INTO deposit(proposal_id, depositor, amount, height) VALUES `
 	var param []interface{}
 
 	for i, deposit := range deposits {
-		vi := i * 5
-		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5)
+		vi := i * 4
+		query += fmt.Sprintf("($%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4)
 		param = append(param, deposit.ProposalID,
 			deposit.Depositor,
 			pq.Array(dbtypes.NewDbCoins(deposit.Amount)),
-			pq.Array(dbtypes.NewDbCoins(deposit.TotalDeposit)),
 			deposit.Height,
 		)
 	}

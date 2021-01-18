@@ -108,11 +108,10 @@ func NewVote(
 // Deposit represent a message that a user do deposit action
 // Assume the entry with latest height get final total deposit
 type Deposit struct {
-	ProposalID   uint64
-	Depositor    string
-	Amount       sdk.Coins
-	Height       int64
-	TotalDeposit sdk.Coins
+	ProposalID uint64
+	Depositor  string
+	Amount     sdk.Coins
+	Height     int64
 }
 
 //NewDeposit return a new Deposit instance
@@ -120,14 +119,12 @@ func NewDeposit(
 	proposalID uint64,
 	depositor string,
 	amount sdk.Coins,
-	totalDeposit sdk.Coins,
 	height int64,
 ) Deposit {
 	return Deposit{
-		ProposalID:   proposalID,
-		Depositor:    depositor,
-		Amount:       amount,
-		Height:       height,
-		TotalDeposit: totalDeposit,
+		ProposalID: proposalID,
+		Depositor:  depositor,
+		Amount:     amount,
+		Height:     height,
 	}
 }

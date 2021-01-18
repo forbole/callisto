@@ -6,7 +6,6 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/tendermint/tendermint/crypto"
 )
 
 // ValidatorData contains all the data of a single validator.
@@ -38,8 +37,8 @@ func (v ValidatorData) GetConsAddr() string {
 }
 
 // GetConsPubKey implements types.Validator
-func (v ValidatorData) GetConsPubKey() crypto.PubKey {
-	return sdk.MustGetPubKeyFromBech32(sdk.Bech32PubKeyTypeConsPub, v.ConsPubKey)
+func (v ValidatorData) GetConsPubKey() string {
+	return v.ConsPubKey
 }
 
 // GetOperator implements types.Validator

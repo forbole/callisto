@@ -106,7 +106,7 @@ func (suite *DbTestSuite) TestSaveCurrentDelegations() {
 			1500,
 		),
 	}
-	err := suite.database.SaveCurrentDelegations(delegations)
+	err := suite.database.SaveDelegations(delegations)
 	suite.Require().NoError(err, "inserting delegations should return no error")
 
 	// ------------------------------
@@ -257,7 +257,7 @@ func (suite *DbTestSuite) TestSaveCurrentUnbondingDelegations() {
 			1500,
 		),
 	}
-	err = suite.database.SaveCurrentUnbondingDelegations(delegations)
+	err = suite.database.SaveUnbondingDelegations(delegations)
 	suite.Require().NoError(err)
 
 	// ------------------------------
@@ -431,7 +431,7 @@ func (suite *DbTestSuite) TestSaveCurrentRedelegations() {
 			1500,
 		),
 	}
-	err = suite.database.SaveCurrentRedelegations(reDelegations)
+	err = suite.database.SaveRedelegations(reDelegations)
 	suite.Require().NoError(err)
 
 	// ------------------------------
