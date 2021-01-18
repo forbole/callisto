@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/cosmos/cosmos-sdk v0.39.2
-	github.com/desmos-labs/juno v0.0.0-20210112080646-9335c7c12e7d
+	github.com/desmos-labs/juno v0.0.0-20210114090225-ead810b0ed1e
 	github.com/go-co-op/gocron v0.3.3
 	github.com/jmoiron/sqlx v1.2.1-0.20200324155115-ee514944af4b
 	github.com/lib/pq v1.3.0

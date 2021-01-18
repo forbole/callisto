@@ -7,6 +7,7 @@ CREATE TABLE validator
 CREATE TABLE pre_commit
 (
     id                SERIAL PRIMARY KEY,
+    height            BIGINT                      NOT NULL,
     validator_address TEXT                        NOT NULL REFERENCES validator (consensus_address),
     timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     voting_power      BIGINT                      NOT NULL,

@@ -39,6 +39,11 @@ func (r BlockTimeRow) Equal(s BlockTimeRow) bool {
 
 //Container to return block needed in certain height
 type BlockRow struct {
-	Height    int64     `db:"height"`
-	Timestamp time.Time `db:"timestamp"`
+	Height          int64     `db:"height"`
+	Hash            string    `db:"hash"`
+	TxNum           int64     `db:"num_txs"`
+	TotalGas        int64     `db:"total_gas"`
+	ProposerAddress string    `db:"proposer_address"`
+	PreCommitsNum   int64     `db:"pre_commits"`
+	Timestamp       time.Time `db:"timestamp"`
 }
