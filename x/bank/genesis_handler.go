@@ -2,10 +2,12 @@ package bank
 
 import (
 	"encoding/json"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	"github.com/forbole/bdjuno/database"
 	"github.com/rs/zerolog/log"
+
+	"github.com/forbole/bdjuno/database"
 )
 
 // HandleGenesis handles the genesis state of the x/bank module in order to store the initial values

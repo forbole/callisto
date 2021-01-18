@@ -2,6 +2,7 @@ package pricefeed
 
 import (
 	"encoding/json"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/juno/modules"
 	"github.com/desmos-labs/juno/types"

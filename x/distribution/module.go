@@ -2,6 +2,7 @@ package distribution
 
 import (
 	"encoding/json"
+
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	"google.golang.org/grpc"
 

@@ -2,6 +2,7 @@ package gov
 
 import (
 	"encoding/json"
+
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"

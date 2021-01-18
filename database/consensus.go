@@ -13,12 +13,12 @@ import (
 func (db *BigDipperDb) SaveConsensus(event constypes.ConsensusEvent) error {
 	// Delete all the existing events
 	stmt := `DELETE FROM consensus WHERE true`
-	if _, err := db.Sql.Exec(stmt); err != nil {
+	if _, err := db.SQL.Exec(stmt); err != nil {
 		return err
 	}
 
 	stmt = `INSERT INTO consensus (height, round, step) VALUES ($1, $2, $3)`
-	_, err := db.Sql.Exec(stmt, event.Height, event.Round, event.Step)
+	_, err := db.SQL.Exec(stmt, event.Height, event.Round, event.Step)
 	return err
 }
 

@@ -15,7 +15,7 @@ func (db *BigDipperDb) SaveAccountBalance(address string, balance sdk.Coins, hei
 INSERT INTO account_balance (address, coins, height)
 VALUES ($1, $2, $3) ON CONFLICT (address, height) DO UPDATE 
     SET coins = excluded.coins`
-	_, err := db.Sql.Exec(stmt, address, coins, height)
+	_, err := db.SQL.Exec(stmt, address, coins, height)
 	return err
 }
 
@@ -23,7 +23,7 @@ VALUES ($1, $2, $3) ON CONFLICT (address, height) DO UPDATE
 func (db *BigDipperDb) SaveSupplyToken(coins sdk.Coins, height int64) error {
 	query := `INSERT INTO supply(coins, height) VALUES ($1,$2)`
 
-	_, err := db.Sql.Exec(query, pq.Array(dbtypes.NewDbCoins(coins)), height)
+	_, err := db.SQL.Exec(query, pq.Array(dbtypes.NewDbCoins(coins)), height)
 	if err != nil {
 		return err
 	}

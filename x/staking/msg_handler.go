@@ -1,11 +1,13 @@
 package staking
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/codec"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
+
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+
 	"github.com/forbole/bdjuno/x/staking/types"
 	"github.com/forbole/bdjuno/x/staking/utils"
 
@@ -214,12 +216,14 @@ func handleMsgBeginRedelegate(
 	}
 
 	// Store the redelegation
-	return db.SaveHistoricalRedelegation(types.NewRedelegation(
-		msg.DelegatorAddress,
-		msg.ValidatorSrcAddress,
-		msg.ValidatorDstAddress,
-		msg.Amount,
-		completionTime,
-		tx.Height,
-	))
+	return db.SaveRedelegations([]types.Redelegation{
+		types.NewRedelegation(
+			msg.DelegatorAddress,
+			msg.ValidatorSrcAddress,
+			msg.ValidatorDstAddress,
+			msg.Amount,
+			completionTime,
+			tx.Height,
+		),
+	})
 }

@@ -2,6 +2,7 @@ package staking
 
 import (
 	"encoding/json"
+
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"google.golang.org/grpc"

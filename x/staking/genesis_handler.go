@@ -2,13 +2,15 @@ package staking
 
 import (
 	"encoding/json"
+
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/rs/zerolog/log"
+
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/staking/types"
-	"github.com/rs/zerolog/log"
 )
 
 func HandleGenesis(

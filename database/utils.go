@@ -8,7 +8,7 @@ import (
 func (db *BigDipperDb) InsertEnableModules(modules []string) error {
 	//clear table first
 	stmt := "DELETE FROM modules WHERE TRUE"
-	_, err := db.Sql.Exec(stmt)
+	_, err := db.SQL.Exec(stmt)
 	if err != nil {
 		return err
 	}
@@ -25,7 +25,7 @@ func (db *BigDipperDb) InsertEnableModules(modules []string) error {
 	}
 	stmt = stmt[:len(stmt)-1] //remove tailing ","
 	stmt += " ON CONFLICT DO NOTHING"
-	_, err = db.Sql.Exec(stmt, values...)
+	_, err = db.SQL.Exec(stmt, values...)
 	if err != nil {
 		return err
 	}

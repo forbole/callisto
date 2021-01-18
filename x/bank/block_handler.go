@@ -2,9 +2,11 @@ package bank
 
 import (
 	"context"
+
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	"github.com/forbole/bdjuno/database"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+
+	"github.com/forbole/bdjuno/database"
 )
 
 // HandleBlock allows to handle a block properly

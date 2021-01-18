@@ -2,6 +2,7 @@ package auth
 
 import (
 	"encoding/json"
+
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"

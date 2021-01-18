@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 
 	"github.com/rs/zerolog/log"
@@ -17,7 +18,7 @@ import (
 // so that it can properly store custom BigDipper-related data.
 type BigDipperDb struct {
 	*postgresql.Database
-	Sql  *sql.DB
+	SQL  *sql.DB
 	Sqlx *sqlx.DB
 }
 

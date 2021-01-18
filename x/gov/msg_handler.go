@@ -2,10 +2,11 @@ package gov
 
 import (
 	"context"
+	"time"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	"time"
 
 	"github.com/forbole/bdjuno/x/auth"
 	bgov "github.com/forbole/bdjuno/x/gov/types"

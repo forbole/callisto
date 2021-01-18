@@ -2,6 +2,7 @@ package slashing
 
 import (
 	"encoding/json"
+
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	"google.golang.org/grpc"
 

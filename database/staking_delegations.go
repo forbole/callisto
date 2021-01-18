@@ -40,7 +40,7 @@ VALUES `
 		}
 
 		// Remove the current delegations for the validator
-		_, err = db.Sql.Exec(`DELETE  FROM delegation WHERE validator_address = $1`,
+		_, err = db.SQL.Exec(`DELETE  FROM delegation WHERE validator_address = $1`,
 			validator.GetConsAddr())
 		if err != nil {
 			return err
@@ -69,7 +69,7 @@ VALUES `
 	// Insert the accounts
 	accQry = accQry[:len(accQry)-1] // Remove the trailing ","
 	accQry += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(accQry, accParams...)
+	_, err := db.SQL.Exec(accQry, accParams...)
 	if err != nil {
 		return err
 	}
@@ -77,7 +77,7 @@ VALUES `
 	// Insert the delegations
 	delQry = delQry[:len(delQry)-1] // Remove the trailing ","
 	delQry += " ON CONFLICT DO NOTHING"
-	_, err = db.Sql.Exec(delQry, delParams...)
+	_, err = db.SQL.Exec(delQry, delParams...)
 	if err != nil {
 		return err
 	}
@@ -85,7 +85,7 @@ VALUES `
 	// Insert the delegations historical data
 	delHistQry = delHistQry[:len(delHistQry)-1] // Remove the trailing ","
 	delHistQry += " ON CONFLICT DO NOTHING"
-	_, err = db.Sql.Exec(delHistQry, delHistParams...)
+	_, err = db.SQL.Exec(delHistQry, delHistParams...)
 	return err
 }
 
@@ -127,7 +127,7 @@ VALUES `
 		}
 
 		// Delete the current unbonding delegations for the validator
-		_, err = db.Sql.Exec(`DELETE FROM unbonding_delegation WHERE validator_address = $1`,
+		_, err = db.SQL.Exec(`DELETE FROM unbonding_delegation WHERE validator_address = $1`,
 			validator.GetConsAddr())
 		if err != nil {
 			return err
@@ -156,7 +156,7 @@ VALUES `
 	// Insert the delegators
 	accQry = accQry[:len(accQry)-1] // Remove the trailing ","
 	accQry += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(accQry, accParams...)
+	_, err := db.SQL.Exec(accQry, accParams...)
 	if err != nil {
 		return err
 	}
@@ -164,7 +164,7 @@ VALUES `
 	// Insert the current unbonding delegations
 	udQry = udQry[:len(udQry)-1] // Remove the trailing ","
 	udQry += " ON CONFLICT DO NOTHING"
-	_, err = db.Sql.Exec(udQry, udParams...)
+	_, err = db.SQL.Exec(udQry, udParams...)
 	if err != nil {
 		return err
 	}
@@ -172,7 +172,7 @@ VALUES `
 	// Insert the historical unbonding delegations
 	udHistQry = udHistQry[:len(udHistQry)-1] // Remove the trailing ","
 	udHistQry += " ON CONFLICT DO NOTHING"
-	_, err = db.Sql.Exec(udHistQry, udHistParams...)
+	_, err = db.SQL.Exec(udHistQry, udHistParams...)
 	return err
 }
 
@@ -215,7 +215,7 @@ VALUES `
 		}
 
 		// Delete the current redelegations
-		_, err = db.Sql.Exec(`DELETE FROM redelegation WHERE src_validator_address = $1 AND dst_validator_address = $2`,
+		_, err = db.SQL.Exec(`DELETE FROM redelegation WHERE src_validator_address = $1 AND dst_validator_address = $2`,
 			srcVal.GetConsAddr(), dstVal.GetConsAddr())
 		if err != nil {
 			return err
@@ -238,7 +238,7 @@ VALUES `
 	// Insert the delegators
 	accQry = accQry[:len(accQry)-1] // Remove the trailing ","
 	accQry += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(accQry, accParams...)
+	_, err := db.SQL.Exec(accQry, accParams...)
 	if err != nil {
 		return err
 	}
@@ -246,6 +246,6 @@ VALUES `
 	// Insert the redelegations
 	rdQry = rdQry[:len(rdQry)-1] // Remove the trailing ","
 	rdQry += " ON CONFLICT DO NOTHING"
-	_, err = db.Sql.Exec(rdQry, rdParams...)
+	_, err = db.SQL.Exec(rdQry, rdParams...)
 	return err
 }

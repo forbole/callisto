@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 
 	"github.com/forbole/bdjuno/x/slashing/types"
@@ -13,7 +14,7 @@ func (db *BigDipperDb) SaveSlashingParams(params slashingtypes.Params, height in
 INSERT INTO slashing_params 
     (signed_block_window, min_signed_per_window, downtime_jail_duration, slash_fraction_double_sign, slash_fraction_downtime, height) 
 VALUES ($1, $2, $3, $4, $5, $6)`
-	_, err := db.Sql.Exec(stmt,
+	_, err := db.SQL.Exec(stmt,
 		params.SignedBlocksWindow, params.MinSignedPerWindow, params.DowntimeJailDuration,
 		params.SlashFractionDoubleSign, params.SlashFractionDowntime, height)
 	return err
@@ -41,6 +42,6 @@ VALUES `
 
 	stmt = stmt[:len(stmt)-1] // Remove trailing ","
 	stmt += ` ON CONFLICT DO NOTHING`
-	_, err := db.Sql.Exec(stmt, args...)
+	_, err := db.SQL.Exec(stmt, args...)
 	return err
 }

@@ -223,13 +223,13 @@ func (w DoubleSignEvidence) Equals(v DoubleSignEvidence) bool {
 
 // DoubleSignVote represents a double vote which is included inside a DoubleSignEvidence
 type DoubleSignVote struct {
+	BlockID          string
+	ValidatorAddress string
+	Signature        string
 	Type             int
 	Height           int64
 	Round            int32
-	BlockID          string
-	ValidatorAddress string
 	ValidatorIndex   int32
-	Signature        string
 }
 
 // NewDoubleSignVote allows to create a new DoubleSignVote instance

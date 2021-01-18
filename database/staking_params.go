@@ -11,13 +11,13 @@ import (
 func (db *BigDipperDb) SaveStakingParams(params types.StakingParams) error {
 	// Delete current params
 	stmt := `DELETE FROM staking_params WHERE TRUE`
-	_, err := db.Sql.Exec(stmt)
+	_, err := db.SQL.Exec(stmt)
 	if err != nil {
 		return err
 	}
 
 	stmt = `INSERT INTO staking_params (bond_denom) VALUES ($1)`
-	_, err = db.Sql.Exec(stmt, params.BondName)
+	_, err = db.SQL.Exec(stmt, params.BondName)
 	return err
 }
 

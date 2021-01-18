@@ -68,7 +68,6 @@ func saveProposals(p govtypes.Proposals, govClient govtypes.QueryClient, db *dat
 			proposal.ProposalId,
 			"",
 			proposal.TotalDeposit,
-			proposal.TotalDeposit,
 			1,
 		)
 

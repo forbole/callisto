@@ -2,10 +2,12 @@ package mint
 
 import (
 	"context"
+
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
 
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/utils"
 )

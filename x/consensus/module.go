@@ -2,6 +2,7 @@ package consensus
 
 import (
 	"encoding/json"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/juno/client"
 	"github.com/desmos-labs/juno/modules"

@@ -2,6 +2,7 @@ package distribution
 
 import (
 	"context"
+
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
