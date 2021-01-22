@@ -2,6 +2,7 @@ package consensus
 
 import (
 	"fmt"
+
 	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/bdjuno/database"
@@ -24,38 +25,51 @@ func ListenOperation(cp *client.Proxy, db *database.BigDipperDb) {
 		tmtypes.EventValidBlock,
 	}
 
+	// This channel will be used to gather all the events
+	var eventChan = make(chan tmctypes.ResultEvent, 10)
+
 	for _, event := range events {
-		go subscribeConsensusEvent(event, cp, db)
+		go subscribeConsensusEvent(event, cp, eventChan)
+	}
+
+	for event := range eventChan {
+		handleEvent(event, db)
 	}
 }
 
 // subscribeConsensusEvent allows to subscribe to the consensus event having the given name,
 // and returns a read-only channel emitting all the events
-func subscribeConsensusEvent(event string, cp *client.Proxy, db *database.BigDipperDb) {
+func subscribeConsensusEvent(event string, cp *client.Proxy, eventChan chan<- tmctypes.ResultEvent) {
 	query := fmt.Sprintf("tm.event = '%s'", event)
-	subscriber := fmt.Sprintf("juno-client-consensus-%s", event)
 
-	eventCh, cancel, err := cp.SubscribeEvents(subscriber, query)
+	eventCh, cancel, err := cp.SubscribeEvents("juno", query)
 	if err != nil {
 		log.Fatal().Err(err).Msg("error while subscribing to event")
 	}
 	defer cancel()
 
 	for event := range eventCh {
-		consEvent := mapEvent(event)
-		if consEvent == nil {
-			continue
-		}
+		eventChan <- event
+	}
 
-		log.Debug().Str("module", "consensus").
-			Int64("height", consEvent.Height).Int32("round", consEvent.Round).Str("step", consEvent.Step).
-			Msg("saving consensus")
+	return
+}
 
-		// Save the event
-		err = db.SaveConsensus(consEvent)
-		if err != nil {
-			log.Fatal().Err(err).Send()
-		}
+// handleEvent handles the given event storing its data inside the database properly
+func handleEvent(event tmctypes.ResultEvent, db *database.BigDipperDb) {
+	consEvent := mapEvent(event)
+	if consEvent == nil {
+		return
+	}
+
+	log.Debug().Str("module", "consensus").
+		Int64("height", consEvent.Height).Int32("round", consEvent.Round).Str("step", consEvent.Step).
+		Msg("saving consensus")
+
+	// Save the event
+	err := db.SaveConsensus(consEvent)
+	if err != nil {
+		log.Fatal().Err(err).Send()
 	}
 }
 
