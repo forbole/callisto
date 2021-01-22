@@ -10,6 +10,6 @@ func (db *BigDipperDb) SaveStakingPool(pool stakingtypes.Pool, height int64) err
 INSERT INTO staking_pool (height, bonded_tokens, not_bonded_tokens) 
 VALUES ($1, $2, $3) ON CONFLICT DO NOTHING`
 
-	_, err := db.SQL.Exec(stmt, height, pool.BondedTokens.Int64(), pool.NotBondedTokens.Int64())
+	_, err := db.Sql.Exec(stmt, height, pool.BondedTokens.Int64(), pool.NotBondedTokens.Int64())
 	return err
 }

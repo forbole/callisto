@@ -37,15 +37,26 @@ bdjuno parse <path/to/config.toml>
 The configuration must be a TOML file containing the following fields:
 
 ```toml
-rpc_node = "<rpc-ip/host>:<rpc-port>"
-client_node = "<client-ip/host>:<client-port>"
+[cosmos]
+prefix = "desmos"
+modules = []
+
+[rpc]
+address = "<rpc-ip/host>:<rpc-port>"
+
+[grpc]
+address = "<grpc-ip/host>:<grpc-port>"
+insecure = true
+
+[api]
+address = "<client-ip/host>:<client-port>"
 
 [cosmos]
-prefix = "<bech32-prefix>"
+prefix = "desmos"
 modules = []
 
 [database]
-type = "<db-type>"
+type = "postgresql"
 
 [database.config]
 host = "<db-host>"
@@ -53,8 +64,6 @@ port = 5432
 name = "<db-name>"
 user = "<db-user>"
 password = "<db-password>"
-ssl_mode = "<ssl-mode (optional)>"
-schema = "<schema (optional)>"
 ```
 
 Example of a configuration to parse the chain state from a local Cosmos full-node:
@@ -64,11 +73,22 @@ Example of a configuration to parse the chain state from a local Cosmos full-nod
 <summary>Open here</summary>
 
 ```toml
-rpc_node = "http://localhost:26657"
-client_node = "http://localhost:1317"
+[cosmos]
+prefix = "desmos"
+modules = []
+
+[rpc]
+address = "http://localhost:26657"
+
+[grpc]
+address = "localhost:9090"
+insecure = true
+
+[api]
+address = "http://localhost:1317"
 
 [cosmos]
-prefix = "cosmos"
+prefix = "desmos"
 modules = [
     "auth",
     "bank",
@@ -78,17 +98,17 @@ modules = [
     "mint",
     "modules",
     "pricefeed",
-    "staking",
-    "supply"
+    "slashing",
+    "staking"
 ]
 
 [database]
 type = "postgresql"
 
 [database.config]
-name = "bdjuno"
 host = "localhost"
 port = 5432
+name = "bdjuno"
 user = "user"
 password = "password"
 ```

@@ -20,7 +20,7 @@ func (suite *DbTestSuite) TestSaveStakingParams() {
 }
 
 func (suite *DbTestSuite) TestGetStakingParams() {
-	_, err := suite.database.SQL.Exec(`INSERT INTO staking_params (bond_denom) VALUES ($1)`, "uatom")
+	_, err := suite.database.Sql.Exec(`INSERT INTO staking_params (bond_denom) VALUES ($1)`, "uatom")
 	suite.Require().NoError(err)
 
 	params, err := suite.database.GetStakingParams()

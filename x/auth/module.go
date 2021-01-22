@@ -48,6 +48,10 @@ func (m *Module) RunAdditionalOperations() error {
 	return nil
 }
 
+// RunAsyncOperations implements modules.Module
+func (m *Module) RunAsyncOperations() {
+}
+
 // RegisterPeriodicOperations implements modules.Module
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	return RegisterOps(scheduler, m.authClient, m.bankClient, m.encodingConfig.Marshaler, m.db)

@@ -54,21 +54,21 @@ VALUES `
 	}
 	selfDelegationAccQuery = selfDelegationAccQuery[:len(selfDelegationAccQuery)-1] // Remove trailing ","
 	selfDelegationAccQuery += " ON CONFLICT DO NOTHING"
-	_, err := db.SQL.Exec(selfDelegationAccQuery, selfDelegationParam...)
+	_, err := db.Sql.Exec(selfDelegationAccQuery, selfDelegationParam...)
 	if err != nil {
 		return err
 	}
 
 	validatorQuery = validatorQuery[:len(validatorQuery)-1] // Remove trailing ","
 	validatorQuery += " ON CONFLICT DO NOTHING"
-	_, err = db.SQL.Exec(validatorQuery, validatorParams...)
+	_, err = db.Sql.Exec(validatorQuery, validatorParams...)
 	if err != nil {
 		return err
 	}
 
 	validatorInfoQuery = validatorInfoQuery[:len(validatorInfoQuery)-1] // Remove the trailing ","
 	validatorInfoQuery += " ON CONFLICT DO NOTHING"
-	_, err = db.SQL.Exec(validatorInfoQuery, validatorInfoParams...)
+	_, err = db.Sql.Exec(validatorInfoQuery, validatorInfoParams...)
 	return err
 }
 
@@ -169,7 +169,7 @@ ON CONFLICT (validator_address) DO UPDATE
         security_contact = excluded.security_contact, 
         details = excluded.details`
 
-	_, err = db.SQL.Exec(stmt,
+	_, err = db.Sql.Exec(stmt,
 		dbtypes.ToNullString(consAddr.String()),
 		dbtypes.ToNullString(des.Moniker), dbtypes.ToNullString(des.Identity), dbtypes.ToNullString(des.Website),
 		dbtypes.ToNullString(des.SecurityContact), dbtypes.ToNullString(des.Details))
@@ -182,7 +182,7 @@ ON CONFLICT (validator_address) DO UPDATE
 INSERT INTO validator_description_history (validator_address, moniker, identity, website, security_contact, details, height) 
 VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT DO NOTHING`
 
-	_, err = db.SQL.Exec(stmt,
+	_, err = db.Sql.Exec(stmt,
 		dbtypes.ToNullString(consAddr.String()),
 		dbtypes.ToNullString(des.Moniker), dbtypes.ToNullString(des.Identity), dbtypes.ToNullString(des.Website),
 		dbtypes.ToNullString(des.SecurityContact), dbtypes.ToNullString(des.Details),
@@ -264,7 +264,7 @@ VALUES ($1, $2, $3)
 ON CONFLICT (validator_address) DO UPDATE 
     SET commission = excluded.commission, 
         min_self_delegation = excluded.min_self_delegation;`
-	_, err = db.SQL.Exec(stmt, consAddr.String(), commission, minSelfDelegation)
+	_, err = db.Sql.Exec(stmt, consAddr.String(), commission, minSelfDelegation)
 	if err != nil {
 		return err
 	}
@@ -274,7 +274,7 @@ ON CONFLICT (validator_address) DO UPDATE
 INSERT INTO validator_commission_history (validator_address, commission, min_self_delegation, height) 
 VALUES ($1, $2, $3, $4)
 ON CONFLICT DO NOTHING`
-	_, err = db.SQL.Exec(stmt, consAddr.String(), commission, minSelfDelegation, data.Height)
+	_, err = db.Sql.Exec(stmt, consAddr.String(), commission, minSelfDelegation, data.Height)
 	return err
 }
 
@@ -303,7 +303,7 @@ INSERT INTO validator_voting_power_history (validator_address, voting_power, hei
 VALUES ($1, $2, $3) ON CONFLICT DO NOTHING`
 
 	// Insert the voting history entry
-	_, err := db.SQL.Exec(pqrHstQry, entry.ConsensusAddress, entry.VotingPower, entry.Height)
+	_, err := db.Sql.Exec(pqrHstQry, entry.ConsensusAddress, entry.VotingPower, entry.Height)
 	return err
 }
 
@@ -316,7 +316,7 @@ INSERT INTO validator_status (validator_address, status, jailed, height)
 VALUES ($1, $2, $3, $4) ON CONFLICT (validator_address) DO UPDATE
     SET status = excluded.status,
         jailed= excluded.jailed`
-	_, err := db.SQL.Exec(stmt,
+	_, err := db.Sql.Exec(stmt,
 		validatorStatus.ConsensusAddress,
 		validatorStatus.Status,
 		validatorStatus.Jailed,
@@ -333,7 +333,7 @@ INSERT INTO double_sign_vote
 VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT DO NOTHING RETURNING id`
 
 	var id int64
-	err := db.SQL.QueryRow(stmt,
+	err := db.Sql.QueryRow(stmt,
 		vote.Type, vote.Height, vote.Round, vote.BlockID, vote.ValidatorAddress, vote.ValidatorIndex, vote.Signature,
 	).Scan(&id)
 	return id, err
@@ -354,6 +354,6 @@ func (db *BigDipperDb) SaveDoubleSignEvidence(evidence types.DoubleSignEvidence)
 	stmt := `
 INSERT INTO double_sign_evidence (vote_a_id, vote_b_id) 
 VALUES ($1, $2) ON CONFLICT DO NOTHING`
-	_, err = db.SQL.Exec(stmt, voteA, voteB)
+	_, err = db.Sql.Exec(stmt, voteA, voteB)
 	return err
 }

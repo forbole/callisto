@@ -99,7 +99,14 @@ the `content.@type` field. Following you can find the most common ones.
         "amount": "20000000"
       }
     ]
-  }
+  },
+  "initial_deposit": [
+    {
+      "denom": "udaric",
+      "amount": "20000000"
+    }
+  ],
+  "proposer": "desmos13yp2fq3tslq6mmtq4628q38xzj75ethzela9uu"
 }
 ```
 

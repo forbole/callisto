@@ -19,6 +19,6 @@ func (db *BigDipperDb) SaveTokensPrices(tickers types.MarketTickers, timestamp t
 	}
 
 	query = query[:len(query)-1] // Remove trailing ","
-	_, err := db.SQL.Exec(query, param...)
+	_, err := db.Sql.Exec(query, param...)
 	return err
 }

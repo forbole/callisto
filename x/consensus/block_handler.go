@@ -21,7 +21,7 @@ func HandleBlock(block *tmctypes.ResultBlock, db *database.BigDipperDb) error {
 // updateBlockTimeFromGenesis insert average block time from genesis
 func updateBlockTimeFromGenesis(block *tmctypes.ResultBlock, db *database.BigDipperDb) error {
 	log.Debug().Str("module", "consensus").Str("operation", "tokens").
-		Msg("getting total token supply")
+		Msg("updating block time from genesis")
 
 	genesis, err := db.GetGenesisTime()
 	if err != nil {

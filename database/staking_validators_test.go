@@ -135,13 +135,13 @@ func (suite *DbTestSuite) TestGetValidator() {
 	maxChangeRate := sdk.NewDec(ii)
 	suite.getAccount("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 	// Insert test data
-	_, err := suite.database.SQL.Exec(`
+	_, err := suite.database.Sql.Exec(`
 INSERT INTO validator (consensus_address, consensus_pubkey) 
 VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl', 
         'cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8')`)
 	suite.Require().NoError(err)
 
-	_, err = suite.database.SQL.Exec(`
+	_, err = suite.database.Sql.Exec(`
 INSERT INTO validator_info (consensus_address, operator_address,self_delegate_address,max_change_rate,max_rate) 
 VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl',
         'cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl',
@@ -182,7 +182,7 @@ func (suite *DbTestSuite) TestGetValidators() {
 	}
 
 	for _, query := range queries {
-		_, err := suite.database.SQL.Exec(query)
+		_, err := suite.database.Sql.Exec(query)
 		suite.Require().NoError(err)
 	}
 
@@ -298,7 +298,7 @@ func (suite *DbTestSuite) TestSaveValidatorUptime() {
 	valAddr, err := sdk.ConsAddressFromBech32("cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl")
 	suite.Require().NoError(err)
 
-	_, err = suite.database.SQL.Exec(`
+	_, err = suite.database.Sql.Exec(`
 INSERT INTO validator (consensus_address, consensus_pubkey) 
 VALUES ('cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl', 
         'cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8')`)

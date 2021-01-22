@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/hex"
 
+	"github.com/forbole/bdjuno/x/utils"
+
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	jutils "github.com/desmos-labs/juno/db/utils"
@@ -14,7 +16,7 @@ import (
 
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/staking/types"
-	"github.com/forbole/bdjuno/x/staking/utils"
+	stakingutils "github.com/forbole/bdjuno/x/staking/utils"
 )
 
 // HandleBlock represents a method that is called each time a new block is created
@@ -84,7 +86,11 @@ func updateStakingPool(height int64, stakingClient stakingtypes.QueryClient, db 
 	log.Debug().Str("module", "staking").Int64("height", height).
 		Str("operation", "staking pool").Msg("getting staking pool")
 
-	res, err := stakingClient.Pool(context.Background(), &stakingtypes.QueryPoolRequest{})
+	res, err := stakingClient.Pool(
+		context.Background(),
+		&stakingtypes.QueryPoolRequest{},
+		utils.GetHeightRequestHeader(height),
+	)
 	if err != nil {
 		return err
 	}
@@ -114,7 +120,7 @@ func updateValidatorsDelegations(height int64, stakingClient stakingtypes.QueryC
 
 	for _, validator := range validators {
 		// Update the delegations
-		delegations, err := utils.GetDelegations(validator.GetOperator(), height, stakingClient)
+		delegations, err := stakingutils.GetDelegations(validator.GetOperator(), height, stakingClient)
 		if err != nil {
 			return err
 		}
@@ -125,7 +131,7 @@ func updateValidatorsDelegations(height int64, stakingClient stakingtypes.QueryC
 		}
 
 		// Update the unbonding delegations
-		unDels, err := utils.GetUnbondingDelegations(validator.GetOperator(), params.BondName, height, stakingClient)
+		unDels, err := stakingutils.GetUnbondingDelegations(validator.GetOperator(), params.BondName, height, stakingClient)
 		if err != nil {
 			return err
 		}
@@ -144,7 +150,11 @@ func updateValidatorsStatus(height int64, stakingClient stakingtypes.QueryClient
 	log.Debug().Str("module", "staking").Int64("height", height).
 		Str("operation", "validators status").Msg("getting statuses")
 
-	res, err := stakingClient.Validators(context.Background(), &stakingtypes.QueryValidatorsRequest{})
+	res, err := stakingClient.Validators(
+		context.Background(),
+		&stakingtypes.QueryValidatorsRequest{},
+		utils.GetHeightRequestHeader(height),
+	)
 	if err != nil {
 		return err
 	}

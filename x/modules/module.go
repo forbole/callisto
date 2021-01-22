@@ -39,6 +39,10 @@ func (m *Module) RegisterPeriodicOperations(*gocron.Scheduler) error {
 	return nil
 }
 
+// RunAsyncOperations implements modules.Module
+func (m *Module) RunAsyncOperations() {
+}
+
 // RunAdditionalOperations implements modules.Module
 func (m *Module) RunAdditionalOperations() error {
 	return m.db.InsertEnableModules(m.cfg.CosmosConfig.Modules)

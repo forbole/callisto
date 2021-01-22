@@ -53,6 +53,10 @@ func (m *Module) RunAdditionalOperations() error {
 	return nil
 }
 
+// RunAsyncOperations implements modules.Module
+func (m *Module) RunAsyncOperations() {
+}
+
 // HandleGenesis implements modules.Module
 func (m *Module) HandleGenesis(_ *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
 	return HandleGenesis(appState, m.encodingConfig.Marshaler, m.db)

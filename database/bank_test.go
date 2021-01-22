@@ -67,7 +67,7 @@ func (suite *DbTestSuite) TestBigDipperDb_GetTokenNames() {
 		sdk.NewCoin("desmos", sdk.NewInt(10000)),
 		sdk.NewCoin("uatom", sdk.NewInt(15)),
 	)
-	_, err := suite.database.SQL.Exec("INSERT INTO supply(coins,height) VALUES ($1,$2) ", pq.Array(dbtypes.NewDbCoins(coins)), 10)
+	_, err := suite.database.Sql.Exec("INSERT INTO supply(coins,height) VALUES ($1,$2) ", pq.Array(dbtypes.NewDbCoins(coins)), 10)
 	suite.Require().NoError(err)
 	expected := [2]string{"desmos", "uatom"}
 	result, err := suite.database.GetTokenNames()

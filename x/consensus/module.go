@@ -42,7 +42,12 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 
 // RunAdditionalOperations implements modules.Module
 func (m *Module) RunAdditionalOperations() error {
-	return ListenOperation(m.cp, m.db)
+	return nil
+}
+
+// RunAsyncOperations implements modules.Module
+func (m *Module) RunAsyncOperations() {
+	ListenOperation(m.cp, m.db)
 }
 
 // HandleGenesis implements modules.Module

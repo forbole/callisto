@@ -1,7 +1,6 @@
 package database
 
 import (
-	"database/sql"
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
@@ -18,7 +17,6 @@ import (
 // so that it can properly store custom BigDipper-related data.
 type BigDipperDb struct {
 	*postgresql.Database
-	SQL  *sql.DB
 	Sqlx *sqlx.DB
 }
 
@@ -26,7 +24,6 @@ type BigDipperDb struct {
 func Builder(cfg *config.Config, codec *params.EncodingConfig) (db.Database, error) {
 	psqlConfig, ok := cfg.DatabaseConfig.Config.(*config.PostgreSQLConfig)
 	if !ok {
-		// TODO: Support MongoDB
 		return nil, fmt.Errorf("MongoDB configuration is not supported on BigDipper")
 	}
 

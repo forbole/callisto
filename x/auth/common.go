@@ -8,6 +8,8 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/rs/zerolog/log"
 
+	"github.com/forbole/bdjuno/x/utils"
+
 	"github.com/forbole/bdjuno/database"
 )
 
@@ -19,10 +21,15 @@ func RefreshAccounts(
 	db *database.BigDipperDb,
 ) error {
 	log.Debug().Str("module", "auth").Str("operation", "accounts").Msg("getting accounts data")
+	header := utils.GetHeightRequestHeader(height)
 
 	// Get all the accounts information
 	for _, address := range addresses {
-		accRes, err := authClient.Account(context.Background(), &authtypes.QueryAccountRequest{Address: address})
+		accRes, err := authClient.Account(
+			context.Background(),
+			&authtypes.QueryAccountRequest{Address: address},
+			header,
+		)
 		if err != nil {
 			return err
 		}
@@ -33,7 +40,11 @@ func RefreshAccounts(
 			return err
 		}
 
-		balRes, err := bankClient.AllBalances(context.Background(), &banktypes.QueryAllBalancesRequest{Address: address})
+		balRes, err := bankClient.AllBalances(
+			context.Background(),
+			&banktypes.QueryAllBalancesRequest{Address: address},
+			header,
+		)
 		if err != nil {
 			return err
 		}

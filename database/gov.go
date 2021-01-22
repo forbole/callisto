@@ -40,7 +40,7 @@ INSERT INTO proposal(
 	}
 	query = query[:len(query)-1] // Remove trailing ","
 	query += " ON CONFLICT DO NOTHING"
-	_, err := db.SQL.Exec(query, param...)
+	_, err := db.Sql.Exec(query, param...)
 	return err
 }
 
@@ -52,7 +52,7 @@ INSERT INTO proposal(
     submit_time, deposit_end_time, voting_start_time, voting_end_time
 ) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) ON CONFLICT DO NOTHING`
 
-	_, err := db.SQL.Exec(query, proposal.Title,
+	_, err := db.Sql.Exec(query, proposal.Title,
 		proposal.Description,
 		proposal.Proposer,
 		proposal.ProposalRoute,
@@ -86,7 +86,7 @@ func (db *BigDipperDb) SaveTallyResults(tallys []types.TallyResult) error {
 	}
 	query = query[:len(query)-1] // Remove trailing ","
 	query += " ON CONFLICT DO NOTHING"
-	_, err := db.SQL.Exec(query, param...)
+	_, err := db.Sql.Exec(query, param...)
 	return err
 }
 
@@ -95,7 +95,7 @@ func (db *BigDipperDb) SaveTallyResult(tally types.TallyResult) error {
 	query := `
 INSERT INTO tally_result(proposal_id, yes, abstain, no, no_with_veto, height)
 VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT DO NOTHING`
-	_, err := db.SQL.Exec(query, tally.ProposalID,
+	_, err := db.Sql.Exec(query, tally.ProposalID,
 		tally.Yes,
 		tally.Abstain,
 		tally.No,
@@ -108,7 +108,7 @@ VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT DO NOTHING`
 // SaveVote allows to save for the given height and the message vote
 func (db *BigDipperDb) SaveVote(vote types.Vote) error {
 	query := `INSERT INTO vote(proposal_id, voter, option, height) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`
-	_, err := db.SQL.Exec(query,
+	_, err := db.Sql.Exec(query,
 		vote.ProposalID,
 		vote.Voter,
 		vote.Option.String(),
@@ -122,7 +122,7 @@ func (db *BigDipperDb) SaveDeposit(deposit types.Deposit) error {
 	query := `
 INSERT INTO deposit(proposal_id, depositor, amount, height) 
 VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`
-	_, err := db.SQL.Exec(query,
+	_, err := db.Sql.Exec(query,
 		deposit.ProposalID,
 		deposit.Depositor,
 		pq.Array(dbtypes.NewDbCoins(deposit.Amount)),
@@ -150,13 +150,13 @@ func (db *BigDipperDb) SaveDeposits(deposits []types.Deposit) error {
 	}
 	query = query[:len(query)-1] // Remove trailing ","
 	query += " ON CONFLICT DO NOTHING"
-	_, err := db.SQL.Exec(query, param...)
+	_, err := db.Sql.Exec(query, param...)
 	return err
 }
 
 func (db *BigDipperDb) UpdateProposal(proposal types.Proposal) error {
 	query := `UPDATE proposal SET status = $1, voting_start_time = $2, voting_end_time = $3 where proposal_id = $4`
-	_, err := db.SQL.Exec(query,
+	_, err := db.Sql.Exec(query,
 		proposal.Status.String(),
 		proposal.VotingStartTime,
 		proposal.VotingEndTime,

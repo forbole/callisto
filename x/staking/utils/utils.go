@@ -3,6 +3,8 @@ package utils
 import (
 	"context"
 
+	"github.com/forbole/bdjuno/x/utils"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
@@ -17,6 +19,7 @@ func GetDelegations(
 	res, err := stakingClient.ValidatorDelegations(
 		context.Background(),
 		&stakingtypes.QueryValidatorDelegationsRequest{ValidatorAddr: validatorAddress},
+		utils.GetHeightRequestHeader(height),
 	)
 	if err != nil {
 		return nil, err
@@ -44,6 +47,7 @@ func GetUnbondingDelegations(
 	res, err := stakingClient.ValidatorUnbondingDelegations(
 		context.Background(),
 		&stakingtypes.QueryValidatorUnbondingDelegationsRequest{ValidatorAddr: validatorAddress},
+		utils.GetHeightRequestHeader(height),
 	)
 	if err != nil {
 		return nil, err
