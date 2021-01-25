@@ -19,9 +19,9 @@ CREATE TABLE block
     height           BIGINT                      NOT NULL UNIQUE PRIMARY KEY,
     hash             TEXT                        NOT NULL UNIQUE,
     num_txs          INTEGER DEFAULT 0,
-    total_gas        INTEGER DEFAULT 0,
+    total_gas        BIGINT  DEFAULT 0,
     proposer_address TEXT                        NOT NULL REFERENCES validator (consensus_address),
-    pre_commits      INTEGER                     NOT NULL,
+    pre_commits      BIGINT                      NOT NULL,
     timestamp        TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
@@ -35,8 +35,8 @@ CREATE TABLE transaction
     signatures   TEXT[]  NOT NULL,
     signer_infos JSONB   NOT NULL DEFAULT '[]'::JSONB,
     fee          JSONB   NOT NULL DEFAULT '{}'::JSONB,
-    gas_wanted   INTEGER          DEFAULT 0,
-    gas_used     INTEGER          DEFAULT 0,
+    gas_wanted   BIGINT           DEFAULT 0,
+    gas_used     BIGINT           DEFAULT 0,
     raw_log      TEXT,
     logs         JSONB
 );

@@ -17,10 +17,10 @@ func (suite *DbTestSuite) TestSaveAccount() {
 	// --- Save the data
 	// ------------------------------
 
-	err = suite.database.SaveAccount(account)
+	err = suite.database.SaveAccounts([]authtypes.AccountI{account})
 	suite.Require().NoError(err)
 
-	err = suite.database.SaveAccount(account)
+	err = suite.database.SaveAccounts([]authtypes.AccountI{account})
 	suite.Require().NoError(err, "double account insertion should not insert and returns no error")
 
 	// ------------------------------

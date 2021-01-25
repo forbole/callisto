@@ -1,6 +1,8 @@
 package consensus
 
 import (
+	"fmt"
+
 	"github.com/rs/zerolog/log"
 	tmtypes "github.com/tendermint/tendermint/types"
 
@@ -13,7 +15,7 @@ func HandleGenesis(genesisDoc *tmtypes.GenesisDoc, db *database.BigDipperDb) err
 	// Save the genesis time
 	err := db.SaveGenesisTime(genesisDoc.GenesisTime)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while storing genesis time: %s", err)
 	}
 
 	return nil

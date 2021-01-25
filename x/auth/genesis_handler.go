@@ -2,6 +2,7 @@ package auth
 
 import (
 	"encoding/json"
+	"fmt"
 
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
@@ -22,17 +23,20 @@ func Handler(appState map[string]json.RawMessage, cdc codec.Marshaler, db *datab
 	}
 
 	// Store the accounts
-	for _, account := range authState.Accounts {
+	accounts := make([]authtypes.AccountI, len(authState.Accounts))
+	for index, account := range authState.Accounts {
 		var accountI authtypes.AccountI
 		err := cdc.UnpackAny(account, &accountI)
 		if err != nil {
 			return err
 		}
 
-		err = db.SaveAccount(accountI)
-		if err != nil {
-			return err
-		}
+		accounts[index] = accountI
+	}
+
+	err := db.SaveAccounts(accounts)
+	if err != nil {
+		return fmt.Errorf("error while storing genesis accounts: %s", err)
 	}
 
 	return nil

@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/hex"
 
+	"github.com/cosmos/cosmos-sdk/codec"
+
 	"github.com/forbole/bdjuno/x/utils"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -23,7 +25,7 @@ import (
 func HandleBlock(
 	block *tmctypes.ResultBlock, vals *tmctypes.ResultValidators,
 	stakingClient stakingtypes.QueryClient,
-	db *database.BigDipperDb,
+	cdc codec.Marshaler, db *database.BigDipperDb,
 ) error {
 	// Update the staking pool
 	err := updateStakingPool(block.Block.Height, stakingClient, db)
@@ -39,14 +41,14 @@ func HandleBlock(
 	}
 
 	// Update the delegations
-	err = updateValidatorsDelegations(block.Block.Height, stakingClient, db)
-	if err != nil {
-		log.Error().Str("module", "staking").Int64("height", block.Block.Height).
-			Err(err).Msg("error while updating validators delegations")
-	}
+	//err = updateValidatorsDelegations(block.Block.Height, stakingClient, db)
+	//if err != nil {
+	//	log.Error().Str("module", "staking").Int64("height", block.Block.Height).
+	//		Err(err).Msg("error while updating validators delegations")
+	//}
 
 	// Update the validators statuses
-	err = updateValidatorsStatus(block.Block.Height, stakingClient, db)
+	err = updateValidatorsStatus(cdc, block.Block.Height, stakingClient, db)
 	if err != nil {
 		log.Error().Str("module", "staking").Int64("height", block.Block.Height).
 			Err(err).Msg("error while updating validators status")
@@ -66,19 +68,18 @@ func HandleBlock(
 func updateValidatorVotingPower(height int64, vals *tmctypes.ResultValidators, db *database.BigDipperDb) error {
 	// Store the signing infos into the database
 	log.Debug().Str("module", "staking").Int64("height", height).Msg("saving validators voting percentage")
-	for _, validator := range vals.Validators {
+
+	votingPowers := make([]types.ValidatorVotingPower, len(vals.Validators))
+	for index, validator := range vals.Validators {
 		consAddr := jutils.ConvertValidatorAddressToBech32String(validator.Address)
 		if found, _ := db.HasValidator(consAddr); !found {
 			continue
 		}
 
-		err := db.SaveValidatorVotingPower(types.NewValidatorVotingPower(consAddr, validator.VotingPower, height))
-		if err != nil {
-			return err
-		}
+		votingPowers[index] = types.NewValidatorVotingPower(consAddr, validator.VotingPower, height)
 	}
 
-	return nil
+	return db.SaveValidatorsVotingPowers(votingPowers)
 }
 
 // updateStakingPool reads from the LCD the current staking pool and stores its value inside the database
@@ -101,52 +102,10 @@ func updateStakingPool(height int64, stakingClient stakingtypes.QueryClient, db 
 	return db.SaveStakingPool(res.Pool, height)
 }
 
-// updateValidatorsDelegations updates the current validators delegations and stores them inside the database
-func updateValidatorsDelegations(height int64, stakingClient stakingtypes.QueryClient, db *database.BigDipperDb) error {
-	log.Debug().Str("module", "staking").Int64("height", height).
-		Str("operation", "delegations").Msg("getting delegations")
-
-	// Get the params
-	params, err := db.GetStakingParams()
-	if err != nil {
-		return err
-	}
-
-	// Get the validators
-	validators, err := db.GetValidators()
-	if err != nil {
-		return err
-	}
-
-	for _, validator := range validators {
-		// Update the delegations
-		delegations, err := stakingutils.GetDelegations(validator.GetOperator(), height, stakingClient)
-		if err != nil {
-			return err
-		}
-
-		err = db.SaveDelegations(delegations)
-		if err != nil {
-			return err
-		}
-
-		// Update the unbonding delegations
-		unDels, err := stakingutils.GetUnbondingDelegations(validator.GetOperator(), params.BondName, height, stakingClient)
-		if err != nil {
-			return err
-		}
-
-		err = db.SaveUnbondingDelegations(unDels)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
 // updateValidatorsStatus updates all validators' statuses
-func updateValidatorsStatus(height int64, stakingClient stakingtypes.QueryClient, db *database.BigDipperDb) error {
+func updateValidatorsStatus(
+	cdc codec.Marshaler, height int64, stakingClient stakingtypes.QueryClient, db *database.BigDipperDb,
+) error {
 	log.Debug().Str("module", "staking").Int64("height", height).
 		Str("operation", "validators status").Msg("getting statuses")
 
@@ -162,24 +121,28 @@ func updateValidatorsStatus(height int64, stakingClient stakingtypes.QueryClient
 	log.Debug().Str("module", "staking").Int64("height", height).
 		Str("operation", "validators status").Msg("saving statuses")
 
-	for _, validator := range res.Validators {
-		consAddr, err := validator.GetConsAddr()
+	statuses := make([]types.ValidatorStatus, len(res.Validators))
+	for index, validator := range res.Validators {
+		consAddr, err := stakingutils.GetValidatorConsAddr(cdc, validator)
 		if err != nil {
 			return err
 		}
 
-		err = db.SaveValidatorStatus(types.NewValidatorStatus(
+		consPubKey, err := stakingutils.GetValidatorConsPubKey(cdc, validator)
+		if err != nil {
+			return err
+		}
+
+		statuses[index] = types.NewValidatorStatus(
 			consAddr.String(),
+			consPubKey.String(),
 			int(validator.GetStatus()),
 			validator.IsJailed(),
 			height,
-		))
-		if err != nil {
-			return err
-		}
+		)
 	}
 
-	return nil
+	return db.SaveValidatorsStatuses(statuses)
 }
 
 // updateDoubleSignEvidence updates the double sign evidence of all validators

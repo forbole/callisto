@@ -1,22 +1,65 @@
 package database
 
 import (
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/lib/pq"
 
 	dbtypes "github.com/forbole/bdjuno/database/types"
+	bbanktypes "github.com/forbole/bdjuno/x/bank/types"
 )
 
-// SaveAccountBalance allows to store the balance for the given account associating it to the given height
-func (db *BigDipperDb) SaveAccountBalance(address string, balance sdk.Coins, height int64) error {
-	coins := pq.Array(dbtypes.NewDbCoins(balance))
+// SaveAccountBalances allows to store the balance for the given account associating it to the given height
+func (db *BigDipperDb) SaveAccountBalances(balances []bbanktypes.AccountBalance) error {
+	paramsNumber := 3
+	slices := db.splitBalances(balances, paramsNumber)
 
-	stmt := `
-INSERT INTO account_balance (address, coins, height)
-VALUES ($1, $2, $3) ON CONFLICT (address, height) DO UPDATE 
-    SET coins = excluded.coins`
-	_, err := db.Sql.Exec(stmt, address, coins, height)
-	return err
+	for _, balances := range slices {
+		if len(balances) == 0 {
+			continue
+		}
+
+		stmt := `INSERT INTO account_balance (address, coins, height) VALUES `
+		var params []interface{}
+
+		for i, bal := range balances {
+			bi := i * paramsNumber
+			stmt += fmt.Sprintf("($%d, $%d, $%d),", bi+1, bi+2, bi+3)
+
+			coins := pq.Array(dbtypes.NewDbCoins(bal.Balance))
+			params = append(params, bal.Address, coins, bal.Height)
+		}
+
+		stmt = stmt[:len(stmt)-1]
+		stmt += " ON CONFLICT DO NOTHING"
+		_, err := db.Sql.Exec(stmt, params...)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (db BigDipperDb) splitBalances(
+	balances []bbanktypes.AccountBalance, paramsNumber int,
+) [][]bbanktypes.AccountBalance {
+	maxPostgreSQLParams := 65535
+	maxBalancesPerSlice := maxPostgreSQLParams / paramsNumber
+
+	slices := make([][]bbanktypes.AccountBalance, len(balances)/maxBalancesPerSlice+1)
+
+	sliceIndex := 0
+	for index, balance := range balances {
+		slices[sliceIndex] = append(slices[sliceIndex], balance)
+
+		if index > 0 && index%(maxBalancesPerSlice-1) == 0 {
+			sliceIndex++
+		}
+	}
+
+	return slices
 }
 
 // SaveSupplyTokenPool allows to save for the given height the given total amount of coins

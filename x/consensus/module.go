@@ -37,8 +37,7 @@ func (m *Module) Name() string {
 
 // RegisterPeriodicOperations implements modules.Module
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
-	return nil
-	// return Register(scheduler, m.db)
+	return Register(scheduler, m.db)
 }
 
 // RunAdditionalOperations implements modules.Module
@@ -48,19 +47,17 @@ func (m *Module) RunAdditionalOperations() error {
 
 // RunAsyncOperations implements modules.Module
 func (m *Module) RunAsyncOperations() {
-	ListenOperation(m.cp, m.db)
+	go ListenOperation(m.cp, m.db)
 }
 
 // HandleGenesis implements modules.Module
 func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, _ map[string]json.RawMessage) error {
-	return nil
-	//return HandleGenesis(doc, m.db)
+	return HandleGenesis(doc, m.db)
 }
 
 // HandleBlock implements modules.Module
 func (m *Module) HandleBlock(b *tmctypes.ResultBlock, _ []*types.Tx, _ *tmctypes.ResultValidators) error {
-	return nil
-	// return HandleBlock(b, m.db)
+	return HandleBlock(b, m.db)
 }
 
 // HandleTx implements modules.Module

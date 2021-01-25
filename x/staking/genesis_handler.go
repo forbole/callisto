@@ -2,6 +2,9 @@ package staking
 
 import (
 	"encoding/json"
+	"fmt"
+
+	bstakingutils "github.com/forbole/bdjuno/x/staking/utils"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
@@ -28,42 +31,42 @@ func HandleGenesis(
 	// Save the params
 	err = saveParams(genState.Params, db)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while storing staking genesis params: %s", err)
 	}
 
 	// Save the validators
-	err = saveValidators(genState.Validators, db)
+	err = saveValidators(genState.Validators, cdc, db)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while storing staking genesis validators: %s", err)
+	}
+
+	// Save the description
+	err = saveValidatorDescription(genState.Validators, db)
+	if err != nil {
+		return fmt.Errorf("error while storing staking genesis validator descriptions: %s", err)
 	}
 
 	err = saveValidatorsCommissions(genState.Validators, db)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while storing staking genesis validators commissions: %s", err)
 	}
 
 	// Save the delegations
 	err = saveDelegations(genState, db)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while storing staking genesis delegations: %s", err)
 	}
 
 	// Save the unbonding delegations
 	err = saveUnbondingDelegations(genState, db)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while storing staking genesis unbonding delegations: %s", err)
 	}
 
 	// Save the re-delegations
 	err = saveRedelegations(genState, db)
 	if err != nil {
-		return err
-	}
-
-	// Save the description
-	err = saveDescription(genState.Validators, db)
-	if err != nil {
-		return err
+		return fmt.Errorf("error while storing staking genesis redelegations: %s", err)
 	}
 
 	return nil
@@ -77,15 +80,15 @@ func saveParams(params stakingtypes.Params, db *database.BigDipperDb) error {
 }
 
 // saveValidators stores the validators data present inside the given genesis state
-func saveValidators(validators stakingtypes.Validators, db *database.BigDipperDb) error {
+func saveValidators(validators stakingtypes.Validators, cdc codec.Marshaler, db *database.BigDipperDb) error {
 	bdValidators := make([]types.Validator, len(validators))
 	for i, validator := range validators {
-		consAddr, err := validator.GetConsAddr()
+		consAddr, err := bstakingutils.GetValidatorConsAddr(cdc, validator)
 		if err != nil {
 			return err
 		}
 
-		consPubKey, err := validator.ConsPubKey()
+		consPubKey, err := bstakingutils.GetValidatorConsPubKey(cdc, validator)
 		if err != nil {
 			return err
 		}
@@ -103,7 +106,7 @@ func saveValidators(validators stakingtypes.Validators, db *database.BigDipperDb
 	return db.SaveValidators(bdValidators)
 }
 
-//saveValidatorsCommissions save initial commission for validators
+// saveValidatorsCommissions save the initial commission for each validator
 func saveValidatorsCommissions(validators stakingtypes.Validators, db *database.BigDipperDb) error {
 	for _, account := range validators {
 		err := db.SaveValidatorCommission(types.NewValidatorCommission(
@@ -209,8 +212,8 @@ func getUnbondingDelegations(genData stakingtypes.UnbondingDelegations, valAddr 
 	return unbondingDelegations
 }
 
-//saveValidatorsCommissions save initial commission for validators
-func saveDescription(validators stakingtypes.Validators, db *database.BigDipperDb) error {
+// saveValidatorDescription saves the description for the given validators
+func saveValidatorDescription(validators stakingtypes.Validators, db *database.BigDipperDb) error {
 	for _, account := range validators {
 		err := db.SaveValidatorDescription(types.NewValidatorDescription(
 			account.OperatorAddress,

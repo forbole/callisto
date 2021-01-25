@@ -60,10 +60,6 @@ func handleEvent(event tmctypes.ResultEvent, db *database.BigDipperDb) {
 		return
 	}
 
-	log.Debug().Str("module", "consensus").
-		Int64("height", consEvent.Height).Int32("round", consEvent.Round).Str("step", consEvent.Step).
-		Msg("saving consensus")
-
 	// Save the event
 	err := db.SaveConsensus(consEvent)
 	if err != nil {

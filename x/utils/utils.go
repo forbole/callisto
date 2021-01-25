@@ -3,6 +3,9 @@ package utils
 import (
 	"strconv"
 
+	"github.com/desmos-labs/juno/client"
+	"github.com/desmos-labs/juno/config"
+
 	grpctypes "github.com/cosmos/cosmos-sdk/types/grpc"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
@@ -26,4 +29,12 @@ func GetHeightRequestHeader(height int64) grpc.CallOption {
 		grpctypes.GRPCBlockHeightHeader: strconv.FormatInt(height, 10),
 	})
 	return grpc.Header(&header)
+}
+
+func MustCreateGrpcConnection(cfg *config.Config) *grpc.ClientConn {
+	grpConnection, err := client.CreateGrpcConnection(cfg)
+	if err != nil {
+		panic(err)
+	}
+	return grpConnection
 }

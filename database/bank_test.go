@@ -4,6 +4,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/lib/pq"
 
+	bbanktypes "github.com/forbole/bdjuno/x/bank/types"
+
 	dbtypes "github.com/forbole/bdjuno/database/types"
 )
 
@@ -16,7 +18,9 @@ func (suite *DbTestSuite) TestSaveAccountBalance() {
 	)
 
 	// Save the balance
-	err := suite.database.SaveAccountBalance(address.String(), coins, height)
+	err := suite.database.SaveAccountBalances([]bbanktypes.AccountBalance{
+		bbanktypes.NewAccountBalance(address.String(), coins, height),
+	})
 	suite.Require().NoError(err)
 
 	// Current balances

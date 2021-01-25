@@ -52,6 +52,7 @@ VALUES `
 			validator.GetMaxChangeRate().String(), validator.GetMaxRate().String(),
 		)
 	}
+
 	selfDelegationAccQuery = selfDelegationAccQuery[:len(selfDelegationAccQuery)-1] // Remove trailing ","
 	selfDelegationAccQuery += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(selfDelegationAccQuery, selfDelegationParam...)
@@ -270,36 +271,56 @@ func (db *BigDipperDb) getValidatorCommission(address sdk.ConsAddress) (*dbtypes
 
 // ________________________________________________
 
-// SaveValidatorVotingPower saves the given validator voting powers.
+// SaveValidatorsVotingPowers saves the given validator voting powers.
 // It assumes that the delegator address is already present inside the
 // proper database table.
 // TIP: To store the validator data call SaveValidatorData.
-func (db *BigDipperDb) SaveValidatorVotingPower(entry types.ValidatorVotingPower) error {
-	pqrHstQry := `
-INSERT INTO validator_voting_power (validator_address, voting_power, height) 
-VALUES ($1, $2, $3) ON CONFLICT (validator_address, height) DO UPDATE SET 
-	voting_power = excluded.voting_power`
+func (db *BigDipperDb) SaveValidatorsVotingPowers(entries []types.ValidatorVotingPower) error {
+	stmt := `INSERT INTO validator_voting_power (validator_address, voting_power, height) VALUES `
+	var params []interface{}
 
-	// Insert the voting history entry
-	_, err := db.Sql.Exec(pqrHstQry, entry.ConsensusAddress, entry.VotingPower, entry.Height)
+	for i, entry := range entries {
+		pi := i * 3
+		stmt += fmt.Sprintf("($%d, $%d, $%d),", pi+1, pi+2, pi+3)
+		params = append(params, entry.ConsensusAddress, entry.VotingPower, entry.Height)
+	}
+
+	stmt = stmt[:len(stmt)-1]
+	stmt += "ON CONFLICT DO NOTHING"
+	_, err := db.Sql.Exec(stmt, params...)
 	return err
 }
 
 //---------------------------------------------------
 
-// SaveValidatorStatus save validator jail and status in the given height and timestamp
-func (db *BigDipperDb) SaveValidatorStatus(validatorStatus types.ValidatorStatus) error {
-	stmt := `
-INSERT INTO validator_status (validator_address, status, jailed, height) 
-VALUES ($1, $2, $3, $4) ON CONFLICT (validator_address, height) DO UPDATE
-    SET status = excluded.status,
-        jailed= excluded.jailed`
-	_, err := db.Sql.Exec(stmt,
-		validatorStatus.ConsensusAddress,
-		validatorStatus.Status,
-		validatorStatus.Jailed,
-		validatorStatus.Height,
-	)
+// SaveValidatorsStatuses save validator jail and status in the given height and timestamp
+func (db *BigDipperDb) SaveValidatorsStatuses(statuses []types.ValidatorStatus) error {
+	validatorStmt := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES`
+	var valParams []interface{}
+
+	statusStmt := `INSERT INTO validator_status (validator_address, status, jailed, height) VALUES `
+	var statusParams []interface{}
+
+	for i, status := range statuses {
+		vi := i * 2
+		validatorStmt += fmt.Sprintf("($%d, $%d),", vi+1, vi+2)
+		valParams = append(valParams, status.ConsensusAddress, status.ConsensusPubKey)
+
+		si := i * 4
+		statusStmt += fmt.Sprintf("($%d, $%d, $%d, $%d),", si+1, si+2, si+3, si+4)
+		statusParams = append(statusParams, status.ConsensusAddress, status.Status, status.Jailed, status.Height)
+	}
+
+	validatorStmt = validatorStmt[:len(validatorStmt)-1]
+	validatorStmt += "ON CONFLICT DO NOTHING"
+	_, err := db.Sql.Exec(validatorStmt, valParams...)
+	if err != nil {
+		return err
+	}
+
+	statusStmt = statusStmt[:len(statusStmt)-1]
+	statusStmt += "ON CONFLICT DO NOTHING"
+	_, err = db.Sql.Exec(statusStmt, statusParams...)
 	return err
 }
 

@@ -10,6 +10,7 @@ import (
 	"github.com/desmos-labs/juno/modules"
 
 	"github.com/forbole/bdjuno/x/slashing"
+	"github.com/forbole/bdjuno/x/utils"
 
 	"github.com/forbole/bdjuno/x/mint"
 	bmodules "github.com/forbole/bdjuno/x/modules"
@@ -47,15 +48,15 @@ func (*ModulesRegistrar) BuildModules(
 ) modules.Modules {
 	bigDipperBd := database.Cast(db)
 	return []modules.Module{
-		auth.NewModule(encodingConfig, cp.GrpcConnection(), bigDipperBd),
-		bank.NewModule(encodingConfig, cp.GrpcConnection(), bigDipperBd),
+		auth.NewModule(encodingConfig, utils.MustCreateGrpcConnection(cfg), bigDipperBd),
+		bank.NewModule(encodingConfig, utils.MustCreateGrpcConnection(cfg), bigDipperBd),
 		consensus.NewModule(cp, bigDipperBd),
-		distribution.NewModule(cp.GrpcConnection(), bigDipperBd),
-		gov.NewModule(encodingConfig, cp.GrpcConnection(), bigDipperBd),
-		mint.NewModule(cp.GrpcConnection(), bigDipperBd),
+		distribution.NewModule(utils.MustCreateGrpcConnection(cfg), bigDipperBd),
+		gov.NewModule(encodingConfig, utils.MustCreateGrpcConnection(cfg), bigDipperBd),
+		mint.NewModule(utils.MustCreateGrpcConnection(cfg), bigDipperBd),
 		bmodules.NewModule(cfg, bigDipperBd),
 		pricefeed.NewModule(bigDipperBd),
-		slashing.NewModule(cp.GrpcConnection(), bigDipperBd),
-		staking.NewModule(encodingConfig, cp.GrpcConnection(), bigDipperBd),
+		slashing.NewModule(utils.MustCreateGrpcConnection(cfg), bigDipperBd),
+		staking.NewModule(encodingConfig, utils.MustCreateGrpcConnection(cfg), bigDipperBd),
 	}
 }

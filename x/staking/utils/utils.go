@@ -3,6 +3,9 @@ package utils
 import (
 	"context"
 
+	"github.com/cosmos/cosmos-sdk/codec"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
+
 	"github.com/forbole/bdjuno/x/utils"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -10,6 +13,21 @@ import (
 
 	"github.com/forbole/bdjuno/x/staking/types"
 )
+
+func GetValidatorConsAddr(cdc codec.Marshaler, validator stakingtypes.Validator) (sdk.ConsAddress, error) {
+	pubKey, err := GetValidatorConsPubKey(cdc, validator)
+	if err != nil {
+		return nil, err
+	}
+
+	return sdk.ConsAddress(pubKey.Address()), err
+}
+
+func GetValidatorConsPubKey(cdc codec.Marshaler, validator stakingtypes.Validator) (cryptotypes.PubKey, error) {
+	var pubKey cryptotypes.PubKey
+	err := cdc.UnpackAny(validator.ConsensusPubkey, &pubKey)
+	return pubKey, err
+}
 
 // GetDelegations returns the list of all the delegations that the validator having the given address has
 // at the given block height (having the given timestamp)

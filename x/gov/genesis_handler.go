@@ -2,6 +2,7 @@ package gov
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -21,13 +22,13 @@ func HandleGenesis(
 	var genState govtypes.GenesisState
 	err := cdc.UnmarshalJSON(appState[govtypes.ModuleName], &genState)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while reading gov genesis data: %s", err)
 	}
 
 	// Save the proposals
 	err = saveProposals(genState.Proposals, govClient, db)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while storing genesis governance proposals: %s", err)
 	}
 
 	return nil

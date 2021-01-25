@@ -15,12 +15,10 @@ INSERT INTO slashing_params
     (signed_block_window, min_signed_per_window, downtime_jail_duration, slash_fraction_double_sign, slash_fraction_downtime, height) 
 VALUES ($1, $2, $3, $4, $5, $6)`
 	_, err := db.Sql.Exec(stmt,
-		params.SignedBlocksWindow, params.MinSignedPerWindow, params.DowntimeJailDuration,
-		params.SlashFractionDoubleSign, params.SlashFractionDowntime, height)
+		params.SignedBlocksWindow, params.MinSignedPerWindow.String(), params.DowntimeJailDuration,
+		params.SlashFractionDoubleSign.String(), params.SlashFractionDowntime.String(), height)
 	return err
 }
-
-// ----------------------------------------------------------------------------------------------------------------
 
 // SaveValidatorsSigningInfos saves the given infos inside the database
 func (db *BigDipperDb) SaveValidatorsSigningInfos(infos []types.ValidatorSigningInfo) error {

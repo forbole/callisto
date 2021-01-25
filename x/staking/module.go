@@ -61,7 +61,7 @@ func (m *Module) HandleGenesis(_ *tmtypes.GenesisDoc, appState map[string]json.R
 
 // HandleBlock implements modules.Module
 func (m *Module) HandleBlock(block *tmctypes.ResultBlock, _ []*types.Tx, vals *tmctypes.ResultValidators) error {
-	return HandleBlock(block, vals, m.stakingClient, m.db)
+	return HandleBlock(block, vals, m.stakingClient, m.encodingConfig.Marshaler, m.db)
 }
 
 // HandleTx implements modules.Module

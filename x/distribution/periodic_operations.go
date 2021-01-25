@@ -18,8 +18,8 @@ func RegisterPeriodicOps(
 ) error {
 	log.Debug().Str("module", "distribution").Msg("setting up periodic tasks")
 
-	// Fetch community pool in 30 seconds each
-	if _, err := scheduler.Every(30).Second().StartImmediately().Do(func() {
+	// Update the community pool every 5 minutes
+	if _, err := scheduler.Every(5).Minute().StartImmediately().Do(func() {
 		utils.WatchMethod(func() error { return updateCommunityPool(distrClient, db) })
 	}); err != nil {
 		return err

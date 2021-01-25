@@ -311,15 +311,11 @@ func (suite *DbTestSuite) TestSaveValidatorsVotingPowers() {
 		"cosmosvalconspub1zcjduepqe93asg05nlnj30ej2pe3r8rkeryyuflhtfw3clqjphxn4j3u27msrr63nk",
 	)
 
-	votingPowers := []types.ValidatorVotingPower{
+	err := suite.database.SaveValidatorsVotingPowers([]types.ValidatorVotingPower{
 		types.NewValidatorVotingPower(validator1.GetConsAddr(), 1000, block.Block.Height),
 		types.NewValidatorVotingPower(validator2.GetConsAddr(), 2000, block.Block.Height),
-	}
-
-	for _, power := range votingPowers {
-		err := suite.database.SaveValidatorVotingPower(power)
-		suite.Require().NoError(err)
-	}
+	})
+	suite.Require().NoError(err)
 
 	expected := []dbtypes.ValidatorVotingPowerRow{
 		dbtypes.NewValidatorVotingPowerRow(
@@ -335,7 +331,7 @@ func (suite *DbTestSuite) TestSaveValidatorsVotingPowers() {
 	}
 
 	var result []dbtypes.ValidatorVotingPowerRow
-	err := suite.database.Sqlx.Select(&result, "SELECT * FROM validator_voting_power")
+	err = suite.database.Sqlx.Select(&result, "SELECT * FROM validator_voting_power")
 	suite.Require().NoError(err)
 
 	for index, row := range result {
@@ -357,21 +353,22 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 	)
 
 	// First insert
-	err := suite.database.SaveValidatorStatus(types.NewValidatorStatus(
-		validator.GetConsAddr(),
-		1,
-		false,
-		block1.Block.Height,
-	))
-	suite.Require().NoError(err)
-
-	// Second insert
-	err = suite.database.SaveValidatorStatus(types.NewValidatorStatus(
-		validator.GetConsAddr(),
-		2,
-		true,
-		block2.Block.Height,
-	))
+	err := suite.database.SaveValidatorsStatuses([]types.ValidatorStatus{
+		types.NewValidatorStatus(
+			validator.GetConsAddr(),
+			validator.GetConsPubKey(),
+			1,
+			false,
+			block1.Block.Height,
+		),
+		types.NewValidatorStatus(
+			validator.GetConsAddr(),
+			validator.GetConsPubKey(),
+			2,
+			true,
+			block2.Block.Height,
+		),
+	})
 	suite.Require().NoError(err)
 
 	var stored []dbtypes.ValidatorStatusRow
