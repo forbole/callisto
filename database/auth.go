@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+
 	authttypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	dbtypes "github.com/forbole/bdjuno/database/types"

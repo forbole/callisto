@@ -3,6 +3,7 @@ package staking
 import (
 	"encoding/json"
 	"fmt"
+
 	bstakingutils "github.com/forbole/bdjuno/x/staking/utils"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"

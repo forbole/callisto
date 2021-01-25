@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+
 	bbanktypes "github.com/forbole/bdjuno/x/bank/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"

@@ -1,9 +1,10 @@
 package utils
 
 import (
+	"strconv"
+
 	"github.com/desmos-labs/juno/client"
 	"github.com/desmos-labs/juno/config"
-	"strconv"
 
 	grpctypes "github.com/cosmos/cosmos-sdk/types/grpc"
 	"github.com/rs/zerolog/log"

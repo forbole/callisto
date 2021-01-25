@@ -3,6 +3,7 @@ package bank
 import (
 	"encoding/json"
 	"fmt"
+
 	bbanktypes "github.com/forbole/bdjuno/x/bank/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"

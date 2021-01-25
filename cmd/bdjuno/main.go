@@ -8,6 +8,7 @@ import (
 	"github.com/desmos-labs/juno/config"
 	"github.com/desmos-labs/juno/db"
 	"github.com/desmos-labs/juno/modules"
+
 	"github.com/forbole/bdjuno/x/slashing"
 	"github.com/forbole/bdjuno/x/utils"
 

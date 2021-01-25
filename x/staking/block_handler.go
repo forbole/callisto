@@ -3,6 +3,7 @@ package staking
 import (
 	"context"
 	"encoding/hex"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/forbole/bdjuno/x/utils"

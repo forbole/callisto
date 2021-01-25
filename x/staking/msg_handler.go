@@ -11,7 +11,6 @@ import (
 	bstakingutils "github.com/forbole/bdjuno/x/staking/utils"
 
 	"github.com/forbole/bdjuno/x/staking/types"
-	"github.com/forbole/bdjuno/x/staking/utils"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	juno "github.com/desmos-labs/juno/types"
@@ -157,7 +156,7 @@ func handleMsgDelegate(
 	}
 
 	// Get the delegations
-	delegations, err := utils.GetDelegations(msg.ValidatorAddress, tx.Height, stakingClient)
+	delegations, err := bstakingutils.GetDelegations(msg.ValidatorAddress, tx.Height, stakingClient)
 	if err != nil {
 		return err
 	}

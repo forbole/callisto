@@ -314,6 +314,9 @@ func (db *BigDipperDb) SaveValidatorsStatuses(statuses []types.ValidatorStatus) 
 	validatorStmt = validatorStmt[:len(validatorStmt)-1]
 	validatorStmt += "ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(validatorStmt, valParams...)
+	if err != nil {
+		return err
+	}
 
 	statusStmt = statusStmt[:len(statusStmt)-1]
 	statusStmt += "ON CONFLICT DO NOTHING"

@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/lib/pq"
 
@@ -51,8 +52,7 @@ func (db BigDipperDb) splitBalances(
 
 	sliceIndex := 0
 	for index, balance := range balances {
-		slice := slices[sliceIndex]
-		slice = append(slice, balance)
+		slices[sliceIndex] = append(slices[sliceIndex], balance)
 
 		if index > 0 && index%(maxBalancesPerSlice-1) == 0 {
 			sliceIndex++
