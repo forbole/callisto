@@ -51,8 +51,6 @@ func subscribeConsensusEvent(event string, cp *client.Proxy, eventChan chan<- tm
 	for event := range eventCh {
 		eventChan <- event
 	}
-
-	return
 }
 
 // handleEvent handles the given event storing its data inside the database properly

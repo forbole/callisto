@@ -16,7 +16,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 	suite.Require().NoError(err, "double inflation insertion should return no error")
 
 	var value []dbtypes.InflationRow
-	err = suite.database.Sqlx.Select(&value, `SELECT * FROM inflation_history`)
+	err = suite.database.Sqlx.Select(&value, `SELECT * FROM inflation`)
 	suite.Require().NoError(err)
 	suite.Require().Len(value, 1, "no duplicated inflation rows should be inserted")
 

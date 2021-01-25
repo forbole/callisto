@@ -2,7 +2,7 @@ package database_test
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	dbtypes "github.com/forbole/bdjuno/database/types"
 )
@@ -11,16 +11,16 @@ func (suite *DbTestSuite) TestSaveAccount() {
 	address, err := sdk.AccAddressFromBech32("cosmos140xsjjg6pwkjp0xjz8zru7ytha60l5aee9nlf7")
 	suite.Require().NoError(err)
 
-	account := auth.NewBaseAccountWithAddress(address)
+	account := authtypes.NewBaseAccountWithAddress(address)
 
 	// ------------------------------
 	// --- Save the data
 	// ------------------------------
 
-	err = suite.database.SaveAccount(&account)
+	err = suite.database.SaveAccount(account)
 	suite.Require().NoError(err)
 
-	err = suite.database.SaveAccount(&account)
+	err = suite.database.SaveAccount(account)
 	suite.Require().NoError(err, "double account insertion should not insert and returns no error")
 
 	// ------------------------------

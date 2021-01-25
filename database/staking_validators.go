@@ -160,27 +160,14 @@ func (db *BigDipperDb) SaveValidatorDescription(description types.ValidatorDescr
 
 	// Insert the description
 	stmt := `
-INSERT INTO validator_description (validator_address, moniker, identity, website, security_contact, details)
-VALUES($1, $2, $3, $4, $5, $6)
-ON CONFLICT (validator_address) DO UPDATE
+INSERT INTO validator_description (validator_address, moniker, identity, website, security_contact, details, height)
+VALUES($1, $2, $3, $4, $5, $6, $7)
+ON CONFLICT (validator_address, height) DO UPDATE
     SET moniker = excluded.moniker, 
         identity = excluded.identity, 
         website = excluded.website, 
         security_contact = excluded.security_contact, 
         details = excluded.details`
-
-	_, err = db.Sql.Exec(stmt,
-		dbtypes.ToNullString(consAddr.String()),
-		dbtypes.ToNullString(des.Moniker), dbtypes.ToNullString(des.Identity), dbtypes.ToNullString(des.Website),
-		dbtypes.ToNullString(des.SecurityContact), dbtypes.ToNullString(des.Details))
-	if err != nil {
-		return err
-	}
-
-	// Insert the history row
-	stmt = `
-INSERT INTO validator_description_history (validator_address, moniker, identity, website, security_contact, details, height) 
-VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT DO NOTHING`
 
 	_, err = db.Sql.Exec(stmt,
 		dbtypes.ToNullString(consAddr.String()),
@@ -259,21 +246,11 @@ func (db *BigDipperDb) SaveValidatorCommission(data types.ValidatorCommission) e
 
 	// Update the current value
 	stmt := `
-INSERT INTO validator_commission (validator_address, commission, min_self_delegation) 
-VALUES ($1, $2, $3)
-ON CONFLICT (validator_address) DO UPDATE 
+INSERT INTO validator_commission (validator_address, commission, min_self_delegation, height) 
+VALUES ($1, $2, $3, $4)
+ON CONFLICT (validator_address, height) DO UPDATE 
     SET commission = excluded.commission, 
         min_self_delegation = excluded.min_self_delegation;`
-	_, err = db.Sql.Exec(stmt, consAddr.String(), commission, minSelfDelegation)
-	if err != nil {
-		return err
-	}
-
-	// Store the historical data
-	stmt = `
-INSERT INTO validator_commission_history (validator_address, commission, min_self_delegation, height) 
-VALUES ($1, $2, $3, $4)
-ON CONFLICT DO NOTHING`
 	_, err = db.Sql.Exec(stmt, consAddr.String(), commission, minSelfDelegation, data.Height)
 	return err
 }
@@ -299,8 +276,9 @@ func (db *BigDipperDb) getValidatorCommission(address sdk.ConsAddress) (*dbtypes
 // TIP: To store the validator data call SaveValidatorData.
 func (db *BigDipperDb) SaveValidatorVotingPower(entry types.ValidatorVotingPower) error {
 	pqrHstQry := `
-INSERT INTO validator_voting_power_history (validator_address, voting_power, height) 
-VALUES ($1, $2, $3) ON CONFLICT DO NOTHING`
+INSERT INTO validator_voting_power (validator_address, voting_power, height) 
+VALUES ($1, $2, $3) ON CONFLICT (validator_address, height) DO UPDATE SET 
+	voting_power = excluded.voting_power`
 
 	// Insert the voting history entry
 	_, err := db.Sql.Exec(pqrHstQry, entry.ConsensusAddress, entry.VotingPower, entry.Height)
@@ -313,7 +291,7 @@ VALUES ($1, $2, $3) ON CONFLICT DO NOTHING`
 func (db *BigDipperDb) SaveValidatorStatus(validatorStatus types.ValidatorStatus) error {
 	stmt := `
 INSERT INTO validator_status (validator_address, status, jailed, height) 
-VALUES ($1, $2, $3, $4) ON CONFLICT (validator_address) DO UPDATE
+VALUES ($1, $2, $3, $4) ON CONFLICT (validator_address, height) DO UPDATE
     SET status = excluded.status,
         jailed= excluded.jailed`
 	_, err := db.Sql.Exec(stmt,

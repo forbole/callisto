@@ -131,11 +131,10 @@ func (w VoteRow) Equals(v VoteRow) bool {
 
 // DepositRow represents a single row inside the deposit table
 type DepositRow struct {
-	ProposalID   int64   `db:"proposal_id"`
-	Depositor    string  `db:"depositor"`
-	Amount       DbCoins `db:"amount"`
-	TotalDeposit DbCoins `db:"total_deposit"`
-	Height       int64   `db:"height"`
+	ProposalID int64   `db:"proposal_id"`
+	Depositor  string  `db:"depositor"`
+	Amount     DbCoins `db:"amount"`
+	Height     int64   `db:"height"`
 }
 
 // NewDepositRow allows to easily create a new NewDepositRow
@@ -143,15 +142,13 @@ func NewDepositRow(
 	proposalID int64,
 	depositor string,
 	amount DbCoins,
-	totalDeposit DbCoins,
 	height int64,
 ) DepositRow {
 	return DepositRow{
-		ProposalID:   proposalID,
-		Depositor:    depositor,
-		Amount:       amount,
-		TotalDeposit: totalDeposit,
-		Height:       height,
+		ProposalID: proposalID,
+		Depositor:  depositor,
+		Amount:     amount,
+		Height:     height,
 	}
 }
 
@@ -160,6 +157,5 @@ func (w DepositRow) Equals(v DepositRow) bool {
 	return w.ProposalID == v.ProposalID &&
 		w.Depositor == v.Depositor &&
 		w.Amount.Equal(&v.Amount) &&
-		w.TotalDeposit.Equal(&v.TotalDeposit) &&
 		w.Height == v.Height
 }

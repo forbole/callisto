@@ -6,7 +6,7 @@ CREATE TABLE validator_signing_info
     jailed_until          TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     tombstoned            BOOLEAN                     NOT NULL,
     missed_blocks_counter BIGINT                      NOT NULL,
-    height                BIGINT                      NOT NULL,
+    height                BIGINT                      NOT NULL REFERENCES block (height)
 );
 
 CREATE TABLE slashing_params
@@ -16,5 +16,5 @@ CREATE TABLE slashing_params
     downtime_jail_duration     TIMESTAMP WITHOUT TIME ZONE,
     slash_fraction_double_sign DECIMAL NOT NULL,
     slash_fraction_downtime    DECIMAL NOT NULL,
-    height                     BIGINT  NOT NULL
+    height                     BIGINT  NOT NULL REFERENCES block (height)
 );

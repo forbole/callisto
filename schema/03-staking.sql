@@ -65,6 +65,20 @@ CREATE TABLE validator_status
 
 /* ---- DELEGATIONS ---- */
 
+/*
+ * This table holds the HISTORICAL delegations.
+ * It should be updated on a MESSAGE basis, to avoid data duplication.
+ */
+CREATE TABLE delegation
+(
+    id                SERIAL  NOT NULL PRIMARY KEY,
+    validator_address TEXT    NOT NULL REFERENCES validator (consensus_address),
+    delegator_address TEXT    NOT NULL REFERENCES account (address),
+    amount            COIN    NOT NULL,
+    shares            NUMERIC NOT NUll,
+    height            BIGINT  NOT NULL
+);
+
 /**
   * This function is used to add a self_delegations field to the validator table allowing to easily get all the
   * self delegations related to a specific validator.
@@ -81,20 +95,6 @@ WHERE delegator_address = (
 $$
     LANGUAGE sql
     STABLE;
-
-/*
- * This table holds the HISTORICAL delegations.
- * It should be updated on a MESSAGE basis, to avoid data duplication.
- */
-CREATE TABLE delegation
-(
-    id                SERIAL  NOT NULL PRIMARY KEY,
-    validator_address TEXT    NOT NULL REFERENCES validator (consensus_address),
-    delegator_address TEXT    NOT NULL REFERENCES account (address),
-    amount            COIN    NOT NULL,
-    shares            NUMERIC NOT NUll,
-    height            BIGINT  NOT NULL
-);
 
 /**
   * This function is used to have a Hasura compute field (https://hasura.io/docs/1.0/graphql/core/schema/computed-fields.html)

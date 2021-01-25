@@ -24,11 +24,6 @@ INSERT INTO account (address) VALUES `
 INSERT INTO delegation (validator_address, delegator_address, amount, shares, height) VALUES `
 	var delParams []interface{}
 
-	delHistQry := `
-INSERT INTO delegation_history (validator_address, delegator_address, amount, shares, height)
-VALUES `
-	var delHistParams []interface{}
-
 	for i, delegation := range delegations {
 		ai := i * 1
 		accQry += fmt.Sprintf("($%d),", ai+1)
@@ -58,12 +53,6 @@ VALUES `
 		delQry += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", di+1, di+2, di+3, di+4, di+5)
 		delParams = append(delParams,
 			validator.GetConsAddr(), delegation.DelegatorAddress, value, delegation.Shares, delegation.Height)
-
-		// Historical delegation query
-		dhi := i * 5
-		delHistQry += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d),", dhi+1, dhi+2, dhi+3, dhi+4, dhi+5)
-		delHistParams = append(delHistParams,
-			validator.GetConsAddr(), delegation.DelegatorAddress, value, delegation.Shares, delegation.Height)
 	}
 
 	// Insert the accounts
@@ -78,14 +67,6 @@ VALUES `
 	delQry = delQry[:len(delQry)-1] // Remove the trailing ","
 	delQry += " ON CONFLICT DO NOTHING"
 	_, err = db.Sql.Exec(delQry, delParams...)
-	if err != nil {
-		return err
-	}
-
-	// Insert the delegations historical data
-	delHistQry = delHistQry[:len(delHistQry)-1] // Remove the trailing ","
-	delHistQry += " ON CONFLICT DO NOTHING"
-	_, err = db.Sql.Exec(delHistQry, delHistParams...)
 	return err
 }
 
@@ -111,11 +92,6 @@ INSERT INTO unbonding_delegation (validator_address, delegator_address, amount, 
 VALUES `
 	var udParams []interface{}
 
-	udHistQry := `
-INSERT INTO unbonding_delegation_history (validator_address, delegator_address, amount, completion_timestamp, height)
-VALUES `
-	var udHistParams []interface{}
-
 	for i, delegation := range delegations {
 		ai := i * 1
 		accQry += fmt.Sprintf("($%d),", ai+1)
@@ -139,13 +115,6 @@ VALUES `
 			return err
 		}
 
-		uhi := i * 5
-		udHistQry += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", uhi+1, uhi+2, uhi+3, uhi+4, uhi+5)
-		udHistParams = append(udHistParams,
-			validator.GetConsAddr(), delegation.DelegatorAddress, amount,
-			delegation.CompletionTimestamp, delegation.Height,
-		)
-
 		udi := i * 5
 		udQry += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", udi+1, udi+2, udi+3, udi+4, udi+5)
 		udParams = append(udParams,
@@ -165,14 +134,6 @@ VALUES `
 	udQry = udQry[:len(udQry)-1] // Remove the trailing ","
 	udQry += " ON CONFLICT DO NOTHING"
 	_, err = db.Sql.Exec(udQry, udParams...)
-	if err != nil {
-		return err
-	}
-
-	// Insert the historical unbonding delegations
-	udHistQry = udHistQry[:len(udHistQry)-1] // Remove the trailing ","
-	udHistQry += " ON CONFLICT DO NOTHING"
-	_, err = db.Sql.Exec(udHistQry, udHistParams...)
 	return err
 }
 

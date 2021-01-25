@@ -16,7 +16,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveStakingPool() {
 	suite.Require().NoError(err)
 
 	var count int
-	err = suite.database.Sqlx.QueryRow(`SELECT COUNT(*) FROM staking_pool_history`).Scan(&count)
+	err = suite.database.Sqlx.QueryRow(`SELECT COUNT(*) FROM staking_pool`).Scan(&count)
 	suite.Require().NoError(err)
 	suite.Require().Equal(1, count, "inserting a single staking pool row should return 1")
 
@@ -24,13 +24,13 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveStakingPool() {
 	err = suite.database.SaveStakingPool(pool, height)
 	suite.Require().NoError(err)
 
-	err = suite.database.Sqlx.QueryRow(`SELECT COUNT(*) FROM staking_pool_history`).Scan(&count)
+	err = suite.database.Sqlx.QueryRow(`SELECT COUNT(*) FROM staking_pool`).Scan(&count)
 	suite.Require().NoError(err)
 	suite.Require().Equal(1, count, "double inserting the same staking pool should return 1 row")
 
 	// Verify the data
 	var rows []dbtypes.StakingPoolRow
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM staking_pool_history`)
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM staking_pool`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().True(rows[0].Equal(dbtypes.NewStakingPoolRow(
