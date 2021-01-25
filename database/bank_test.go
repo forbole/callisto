@@ -16,7 +16,7 @@ func (suite *DbTestSuite) TestSaveAccountBalance() {
 	)
 
 	// Save the balance
-	err := suite.database.SaveAccountBalance(address.String(), coins, height)
+	err := suite.database.SaveAccountBalances(address.String(), coins, height)
 	suite.Require().NoError(err)
 
 	// Current balances

@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	bbanktypes "github.com/forbole/bdjuno/x/bank/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -24,6 +25,9 @@ func RefreshAccounts(
 	header := utils.GetHeightRequestHeader(height)
 
 	// Get all the accounts information
+	var accounts []authtypes.AccountI
+	var balances []bbanktypes.AccountBalance
+
 	for _, address := range addresses {
 		accRes, err := authClient.Account(
 			context.Background(),
@@ -40,6 +44,8 @@ func RefreshAccounts(
 			return err
 		}
 
+		accounts = append(accounts, account)
+
 		balRes, err := bankClient.AllBalances(
 			context.Background(),
 			&banktypes.QueryAllBalancesRequest{Address: address},
@@ -49,16 +55,17 @@ func RefreshAccounts(
 			return err
 		}
 
-		err = db.SaveAccount(account)
-		if err != nil {
-			return err
-		}
-
-		err = db.SaveAccountBalance(account.GetAddress().String(), balRes.Balances, height)
-		if err != nil {
-			return err
-		}
+		balances = append(balances, bbanktypes.NewAccountBalance(
+			account.GetAddress().String(),
+			balRes.Balances,
+			height,
+		))
 	}
 
-	return nil
+	err := db.SaveAccounts(accounts)
+	if err != nil {
+		return err
+	}
+
+	return db.SaveAccountBalances(balances)
 }

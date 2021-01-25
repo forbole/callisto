@@ -317,7 +317,7 @@ func (suite *DbTestSuite) TestSaveValidatorsVotingPowers() {
 	}
 
 	for _, power := range votingPowers {
-		err := suite.database.SaveValidatorVotingPower(power)
+		err := suite.database.SaveValidatorsVotingPowers(power)
 		suite.Require().NoError(err)
 	}
 
@@ -357,7 +357,7 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 	)
 
 	// First insert
-	err := suite.database.SaveValidatorStatus(types.NewValidatorStatus(
+	err := suite.database.SaveValidatorsStatuses(types.NewValidatorStatus(
 		validator.GetConsAddr(),
 		1,
 		false,
@@ -366,7 +366,7 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 	suite.Require().NoError(err)
 
 	// Second insert
-	err = suite.database.SaveValidatorStatus(types.NewValidatorStatus(
+	err = suite.database.SaveValidatorsStatuses(types.NewValidatorStatus(
 		validator.GetConsAddr(),
 		2,
 		true,

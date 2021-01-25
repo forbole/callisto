@@ -8,6 +8,8 @@ import (
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
+	bstakingutils "github.com/forbole/bdjuno/x/staking/utils"
+
 	"github.com/forbole/bdjuno/x/staking/types"
 	"github.com/forbole/bdjuno/x/staking/utils"
 
@@ -90,12 +92,12 @@ func handleMsgCreateValidator(
 		return err
 	}
 
-	consAddr, err := stakingValidator.GetConsAddr()
+	consAddr, err := bstakingutils.GetValidatorConsAddr(cdc, stakingValidator)
 	if err != nil {
 		return err
 	}
 
-	consPubKey, err := stakingValidator.ConsPubKey()
+	consPubKey, err := bstakingutils.GetValidatorConsPubKey(cdc, stakingValidator)
 	if err != nil {
 		return err
 	}

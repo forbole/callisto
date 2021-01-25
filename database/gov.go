@@ -90,21 +90,6 @@ func (db *BigDipperDb) SaveTallyResults(tallys []types.TallyResult) error {
 	return err
 }
 
-// SaveTallyResult insert a single row into tally_result table
-func (db *BigDipperDb) SaveTallyResult(tally types.TallyResult) error {
-	query := `
-INSERT INTO tally_result(proposal_id, yes, abstain, no, no_with_veto, height)
-VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT DO NOTHING`
-	_, err := db.Sql.Exec(query, tally.ProposalID,
-		tally.Yes,
-		tally.Abstain,
-		tally.No,
-		tally.NoWithVeto,
-		tally.Height,
-	)
-	return err
-}
-
 // SaveVote allows to save for the given height and the message vote
 func (db *BigDipperDb) SaveVote(vote types.Vote) error {
 	query := `INSERT INTO vote(proposal_id, voter, option, height) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`
@@ -154,6 +139,7 @@ func (db *BigDipperDb) SaveDeposits(deposits []types.Deposit) error {
 	return err
 }
 
+// UpdateProposal updates a proposal stored inside the database
 func (db *BigDipperDb) UpdateProposal(proposal types.Proposal) error {
 	query := `UPDATE proposal SET status = $1, voting_start_time = $2, voting_end_time = $3 where proposal_id = $4`
 	_, err := db.Sql.Exec(query,
