@@ -1,13 +1,13 @@
 package database
 
 import (
-	"github.com/cosmos/cosmos-sdk/x/auth/exported"
+	authttypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	dbtypes "github.com/forbole/bdjuno/database/types"
 )
 
 // SaveAccount saves the given account information for the given block height and timestamp
-func (db *BigDipperDb) SaveAccount(account exported.Account) error {
+func (db *BigDipperDb) SaveAccount(account authttypes.AccountI) error {
 	stmt := `INSERT INTO account (address) VALUES ($1) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(stmt, account.GetAddress().String())
 	return err

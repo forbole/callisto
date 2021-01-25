@@ -2,8 +2,7 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/staking"
-	"github.com/tendermint/tendermint/crypto"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
 // Validator represents a single validator.
@@ -11,7 +10,7 @@ import (
 // as well as database types properly.
 type Validator interface {
 	GetConsAddr() string
-	GetConsPubKey() crypto.PubKey
+	GetConsPubKey() string
 	GetOperator() string
 	GetSelfDelegateAddress() string
 	GetMaxChangeRate() *sdk.Dec
@@ -21,7 +20,7 @@ type Validator interface {
 // validator allows to easily implement the Validator interface
 type validator struct {
 	ConsensusAddr       string
-	ConsPubKey          crypto.PubKey
+	ConsPubKey          string
 	OperatorAddr        string
 	SelfDelegateAddress string
 	MaxChangeRate       *sdk.Dec
@@ -30,7 +29,7 @@ type validator struct {
 
 // NewValidator allows to build a new Validator implementation having the given data
 func NewValidator(
-	consAddr string, opAddr string, consPubKey crypto.PubKey,
+	consAddr string, opAddr string, consPubKey string,
 	selfDelegateAddress string, maxChangeRate *sdk.Dec,
 	maxRate *sdk.Dec,
 ) Validator {
@@ -50,7 +49,7 @@ func (v validator) GetConsAddr() string {
 }
 
 // GetConsPubKey implements the Validator interface
-func (v validator) GetConsPubKey() crypto.PubKey {
+func (v validator) GetConsPubKey() string {
 	return v.ConsPubKey
 }
 
@@ -65,7 +64,7 @@ func (v validator) GetSelfDelegateAddress() string {
 //Equals return the equality of two validator
 func (v validator) Equals(w validator) bool {
 	return v.ConsensusAddr == w.ConsensusAddr &&
-		v.ConsPubKey.Equals(w.ConsPubKey) &&
+		v.ConsPubKey == w.ConsPubKey &&
 		v.OperatorAddr == w.OperatorAddr
 }
 
@@ -83,12 +82,12 @@ func (v validator) GetMaxRate() *sdk.Dec {
 // and timestamp do the description get changed
 type ValidatorDescription struct {
 	OperatorAddress string
-	Description     staking.Description
+	Description     stakingtypes.Description
 	Height          int64
 }
 
 // NewValidatorDescription return a new ValidatorDescription object
-func NewValidatorDescription(opAddr string, description staking.Description, height int64,
+func NewValidatorDescription(opAddr string, description stakingtypes.Description, height int64,
 ) ValidatorDescription {
 	return ValidatorDescription{
 		OperatorAddress: opAddr,
@@ -106,41 +105,12 @@ func (v ValidatorDescription) Equals(w ValidatorDescription) bool {
 
 // _________________________________________________________
 
-// ValidatorUptime contains the uptime information of a single
-// validator for a specific height and point in time
-type ValidatorUptime struct {
-	ValidatorAddress    string
-	SignedBlocksWindow  int64
-	MissedBlocksCounter int64
-	Height              int64
-}
-
-// NewValidatorUptime allows to build a new ValidatorUptime instance
-func NewValidatorUptime(valAddr string, signedBlocWindow, missedBlocksCounter, height int64) ValidatorUptime {
-	return ValidatorUptime{
-		ValidatorAddress:    valAddr,
-		SignedBlocksWindow:  signedBlocWindow,
-		MissedBlocksCounter: missedBlocksCounter,
-		Height:              height,
-	}
-}
-
-// Equal tells whether v and w contain the same data
-func (v ValidatorUptime) Equal(w ValidatorUptime) bool {
-	return v.ValidatorAddress == w.ValidatorAddress &&
-		v.SignedBlocksWindow == w.SignedBlocksWindow &&
-		v.MissedBlocksCounter == w.MissedBlocksCounter &&
-		v.Height == w.Height
-}
-
-// _________________________________________________________
-
 // ValidatorDelegations contains both a validator delegations as
 // well as its unbonding delegations
 type ValidatorDelegations struct {
 	ConsAddress          string
-	Delegations          staking.Delegations
-	UnbondingDelegations staking.UnbondingDelegations
+	Delegations          stakingtypes.Delegations
+	UnbondingDelegations stakingtypes.UnbondingDelegations
 	Height               int64
 }
 
@@ -230,50 +200,46 @@ func (v ValidatorStatus) Equals(w ValidatorStatus) bool {
 
 // DoubleSignEvidence represent a double sign evidence on each tendermint block
 type DoubleSignEvidence struct {
-	Pubkey string
-	VoteA  DoubleSignVote
-	VoteB  DoubleSignVote
+	VoteA DoubleSignVote
+	VoteB DoubleSignVote
 }
 
 // NewDoubleSignEvidence return a new DoubleSignEvidence object
 func NewDoubleSignEvidence(
-	pubkey string,
 	voteA DoubleSignVote,
 	voteB DoubleSignVote,
 ) DoubleSignEvidence {
 	return DoubleSignEvidence{
-		Pubkey: pubkey,
-		VoteA:  voteA,
-		VoteB:  voteB,
+		VoteA: voteA,
+		VoteB: voteB,
 	}
 }
 
 // Equals tells whether v and w contain the same data
 func (w DoubleSignEvidence) Equals(v DoubleSignEvidence) bool {
-	return w.Pubkey == v.Pubkey &&
-		w.VoteA.Equals(v.VoteA) &&
+	return w.VoteA.Equals(v.VoteA) &&
 		w.VoteB.Equals(v.VoteB)
 }
 
 // DoubleSignVote represents a double vote which is included inside a DoubleSignEvidence
 type DoubleSignVote struct {
-	Type             int
-	Height           int64
-	Round            int
 	BlockID          string
 	ValidatorAddress string
-	ValidatorIndex   int
 	Signature        string
+	Type             int
+	Height           int64
+	Round            int32
+	ValidatorIndex   int32
 }
 
 // NewDoubleSignVote allows to create a new DoubleSignVote instance
 func NewDoubleSignVote(
 	roundType int,
 	height int64,
-	round int,
+	round int32,
 	blockID string,
 	validatorAddress string,
-	validatorIndex int,
+	validatorIndex int32,
 	signature string,
 ) DoubleSignVote {
 	return DoubleSignVote{

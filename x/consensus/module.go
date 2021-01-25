@@ -3,11 +3,8 @@ package consensus
 import (
 	"encoding/json"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/juno/client"
-	"github.com/desmos-labs/juno/config"
-	"github.com/desmos-labs/juno/db"
 	"github.com/desmos-labs/juno/modules"
 	"github.com/desmos-labs/juno/types"
 	"github.com/go-co-op/gocron"
@@ -17,52 +14,61 @@ import (
 	"github.com/forbole/bdjuno/database"
 )
 
-var _ modules.Module = Module{}
+var _ modules.Module = &Module{}
 
 // Module implements the consensus operations
-type Module struct{}
+type Module struct {
+	cp *client.Proxy
+	db *database.BigDipperDb
+}
+
+// NewModule builds a new Module instance
+func NewModule(cp *client.Proxy, db *database.BigDipperDb) *Module {
+	return &Module{
+		cp: cp,
+		db: db,
+	}
+}
 
 // Name implements modules.Module
-func (m Module) Name() string {
+func (m *Module) Name() string {
 	return "consensus"
 }
 
 // RegisterPeriodicOperations implements modules.Module
-func (m Module) RegisterPeriodicOperations(
-	scheduler *gocron.Scheduler, _ *codec.Codec, _ *client.Proxy, db db.Database,
-) error {
-	bdDatabase := database.Cast(db)
-	return Register(scheduler, bdDatabase)
+func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
+	return nil
+	// return Register(scheduler, m.db)
 }
 
 // RunAdditionalOperations implements modules.Module
-func (m Module) RunAdditionalOperations(_ *config.Config, _ *codec.Codec, cp *client.Proxy, db db.Database) error {
-	bdDatabase := database.Cast(db)
-	return ListenOperation(cp, bdDatabase)
+func (m *Module) RunAdditionalOperations() error {
+	return nil
+}
+
+// RunAsyncOperations implements modules.Module
+func (m *Module) RunAsyncOperations() {
+	ListenOperation(m.cp, m.db)
 }
 
 // HandleGenesis implements modules.Module
-func (m Module) HandleGenesis(
-	doc *tmtypes.GenesisDoc, _ map[string]json.RawMessage, _ *codec.Codec, _ *client.Proxy, db db.Database,
-) error {
-	bdDatabase := database.Cast(db)
-	return HandleGenesis(doc, bdDatabase)
+func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, _ map[string]json.RawMessage) error {
+	return nil
+	//return HandleGenesis(doc, m.db)
 }
 
 // HandleBlock implements modules.Module
-func (m Module) HandleBlock(
-	b *tmctypes.ResultBlock, _ []*types.Tx, _ *tmctypes.ResultValidators, _ *codec.Codec, _ *client.Proxy, db db.Database,
-) error {
-	bdDatabase := database.Cast(db)
-	return HandleBlock(b, bdDatabase)
+func (m *Module) HandleBlock(b *tmctypes.ResultBlock, _ []*types.Tx, _ *tmctypes.ResultValidators) error {
+	return nil
+	// return HandleBlock(b, m.db)
 }
 
 // HandleTx implements modules.Module
-func (m Module) HandleTx(*types.Tx, *codec.Codec, *client.Proxy, db.Database) error {
+func (m *Module) HandleTx(*types.Tx) error {
 	return nil
 }
 
 // HandleMsg implements modules.Module
-func (m Module) HandleMsg(int, sdk.Msg, *types.Tx, *codec.Codec, *client.Proxy, db.Database) error {
+func (m *Module) HandleMsg(int, sdk.Msg, *types.Tx) error {
 	return nil
 }

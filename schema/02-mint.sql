@@ -1,4 +1,4 @@
-CREATE TABLE inflation_history
+CREATE TABLE inflation
 (
     value  DECIMAL NOT NULL,
     height BIGINT  NOT NULL,

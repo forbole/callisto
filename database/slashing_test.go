@@ -11,9 +11,6 @@ import (
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_ValidatorSigningInfo() {
-	jailedUntil, err := time.Parse(time.RFC3339, "2020-10-10T15:00:00Z")
-	suite.Require().NoError(err)
-
 	validator1 := suite.getValidator(
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
@@ -37,7 +34,7 @@ func (suite *DbTestSuite) TestBigDipperDb_ValidatorSigningInfo() {
 					validator1.GetConsAddr(),
 					10,
 					10,
-					jailedUntil,
+					time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
 					true,
 					10,
 					10,
@@ -46,7 +43,7 @@ func (suite *DbTestSuite) TestBigDipperDb_ValidatorSigningInfo() {
 					validator2.GetConsAddr(),
 					10,
 					10,
-					jailedUntil,
+					time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
 					true,
 					10,
 					10,
@@ -57,7 +54,7 @@ func (suite *DbTestSuite) TestBigDipperDb_ValidatorSigningInfo() {
 					validator1.GetConsAddr(),
 					10,
 					10,
-					jailedUntil,
+					time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
 					true,
 					10,
 					10,
@@ -66,7 +63,7 @@ func (suite *DbTestSuite) TestBigDipperDb_ValidatorSigningInfo() {
 					validator2.GetConsAddr(),
 					10,
 					10,
-					jailedUntil,
+					time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
 					true,
 					10,
 					10,
@@ -80,7 +77,7 @@ func (suite *DbTestSuite) TestBigDipperDb_ValidatorSigningInfo() {
 					validator1.GetConsAddr(),
 					10,
 					10,
-					jailedUntil,
+					time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
 					true,
 					10,
 					10,
@@ -89,7 +86,7 @@ func (suite *DbTestSuite) TestBigDipperDb_ValidatorSigningInfo() {
 					validator1.GetConsAddr(),
 					11,
 					15,
-					jailedUntil,
+					time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
 					false,
 					500,
 					10,
@@ -100,7 +97,7 @@ func (suite *DbTestSuite) TestBigDipperDb_ValidatorSigningInfo() {
 					validator1.GetConsAddr(),
 					10,
 					10,
-					jailedUntil,
+					time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
 					true,
 					10,
 					10,
@@ -114,7 +111,11 @@ func (suite *DbTestSuite) TestBigDipperDb_ValidatorSigningInfo() {
 		suite.Run(uc.name, func() {
 			suite.SetupTest()
 
-			err = suite.database.SaveValidators([]stakingtypes.Validator{validator1, validator2})
+			for _, input := range uc.input {
+				suite.getBlock(input.Height)
+			}
+
+			err := suite.database.SaveValidators([]stakingtypes.Validator{validator1, validator2})
 			suite.Require().NoError(err)
 
 			err = suite.database.SaveValidatorsSigningInfos(uc.input)

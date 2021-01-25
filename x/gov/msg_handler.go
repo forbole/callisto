@@ -1,70 +1,87 @@
 package gov
 
 import (
-	"fmt"
+	"context"
 	"time"
 
-	"github.com/desmos-labs/juno/client"
+	"github.com/cosmos/cosmos-sdk/codec"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
 	"github.com/forbole/bdjuno/x/auth"
-	govtypes "github.com/forbole/bdjuno/x/gov/types"
+	bgov "github.com/forbole/bdjuno/x/gov/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/gov"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	juno "github.com/desmos-labs/juno/types"
 
 	"github.com/forbole/bdjuno/database"
 )
 
 // HandleMsg allows to handle the different messages related to the staking module
-func HandleMsg(tx *juno.Tx, msg sdk.Msg, cp *client.Proxy, db *database.BigDipperDb) error {
+func HandleMsg(
+	tx *juno.Tx, msg sdk.Msg,
+	govClient govtypes.QueryClient, authClient authtypes.QueryClient, bankClient banktypes.QueryClient,
+	cdc codec.Marshaler, db *database.BigDipperDb,
+) error {
 	if len(tx.Logs) == 0 {
 		return nil
 	}
 
 	switch cosmosMsg := msg.(type) {
-	case gov.MsgSubmitProposal:
-		return handleMsgSubmitProposal(tx, cosmosMsg, db, cp)
+	case *govtypes.MsgSubmitProposal:
+		return handleMsgSubmitProposal(tx, cosmosMsg, govClient, authClient, bankClient, cdc, db)
 
-	case gov.MsgDeposit:
-		return handleMsgDeposit(tx, cosmosMsg, db, cp)
+	case *govtypes.MsgDeposit:
+		return handleMsgDeposit(tx, cosmosMsg, authClient, bankClient, cdc, db)
 
-	case gov.MsgVote:
-		return handleMsgVote(tx, cosmosMsg, db, cp)
+	case *govtypes.MsgVote:
+		return handleMsgVote(tx, cosmosMsg, authClient, bankClient, cdc, db)
 	}
 
 	return nil
 }
 
 // handleMsgSubmitProposal allows to properly handle a handleMsgSubmitProposal
-func handleMsgSubmitProposal(tx *juno.Tx, msg gov.MsgSubmitProposal, db *database.BigDipperDb, cp *client.Proxy) error {
+func handleMsgSubmitProposal(
+	tx *juno.Tx, msg *govtypes.MsgSubmitProposal,
+	govClient govtypes.QueryClient, authClient authtypes.QueryClient, bankClient banktypes.QueryClient,
+	cdc codec.Marshaler, db *database.BigDipperDb,
+) error {
 	// Get proposals
-	var restProposals gov.Proposals
-	_, err := cp.QueryLCDWithHeight(fmt.Sprintf("/gov/proposals?height=%d", tx.Height), &restProposals)
+	res, err := govClient.Proposals(context.Background(), &govtypes.QueryProposalsRequest{})
 	if err != nil {
 		return err
 	}
 
 	// Get the specific proposal
-	var proposal gov.Proposal
-	for _, p := range restProposals {
-		if p.Content.GetTitle() == msg.Content.GetTitle() {
+	var proposal govtypes.Proposal
+	for _, p := range res.Proposals {
+		if p.GetContent().GetTitle() == msg.GetContent().GetTitle() {
 			proposal = p
 			break
 		}
 	}
 
 	// Refresh the accounts
-	err = auth.RefreshAccounts([]string{msg.Proposer.String()}, tx.Height, cp, db)
+	err = auth.RefreshAccounts([]string{msg.Proposer}, tx.Height, authClient, bankClient, cdc, db)
 	if err != nil {
 		return err
 	}
 
 	// Store the proposal
-	proposalObj := govtypes.NewProposal(
-		proposal.GetTitle(), proposal.GetDescription(), proposal.ProposalRoute(), proposal.ProposalType(),
-		proposal.ProposalID, proposal.Status, proposal.SubmitTime, proposal.DepositEndTime,
-		proposal.VotingStartTime, proposal.VotingEndTime, msg.Proposer.String(),
+	proposalObj := bgov.NewProposal(
+		proposal.GetTitle(),
+		proposal.GetContent().GetDescription(),
+		proposal.ProposalRoute(),
+		proposal.ProposalType(),
+		proposal.ProposalId,
+		proposal.Status,
+		proposal.SubmitTime,
+		proposal.DepositEndTime,
+		proposal.VotingStartTime,
+		proposal.VotingEndTime,
+		msg.Proposer,
 	)
 	err = db.SaveProposal(proposalObj)
 	if err != nil {
@@ -72,8 +89,11 @@ func handleMsgSubmitProposal(tx *juno.Tx, msg gov.MsgSubmitProposal, db *databas
 	}
 
 	// Store the deposit
-	deposit := govtypes.NewDeposit(
-		proposal.ProposalID, msg.Proposer.String(), msg.InitialDeposit, msg.InitialDeposit, tx.Height,
+	deposit := bgov.NewDeposit(
+		proposal.ProposalId,
+		msg.Proposer,
+		msg.InitialDeposit,
+		tx.Height,
 	)
 	err = db.SaveDeposit(deposit)
 	if err != nil {
@@ -81,67 +101,45 @@ func handleMsgSubmitProposal(tx *juno.Tx, msg gov.MsgSubmitProposal, db *databas
 	}
 
 	// Watch the proposal and renew the database when deposit end and voting end in the future
-	if proposal.Status.String() == "VotingPeriod" && proposal.VotingEndTime.After(time.Now()) {
-		time.AfterFunc(time.Since(proposal.VotingEndTime), UpdateProposal(proposal.ProposalID, cp, db))
-	} else if proposal.Status.String() == "DepositPeriod" && proposal.DepositEndTime.After(time.Now()) {
-		time.AfterFunc(time.Since(proposal.DepositEndTime), UpdateProposal(proposal.ProposalID, cp, db))
+	if proposal.Status == govtypes.StatusVotingPeriod && proposal.VotingEndTime.After(time.Now()) {
+		time.AfterFunc(time.Since(proposal.VotingEndTime), UpdateProposal(proposal.ProposalId, govClient, db))
+	} else if proposal.Status == govtypes.StatusDepositPeriod && proposal.DepositEndTime.After(time.Now()) {
+		time.AfterFunc(time.Since(proposal.DepositEndTime), UpdateProposal(proposal.ProposalId, govClient, db))
 	}
 
 	return nil
 }
 
 // handleMsgDeposit allows to properly handle a handleMsgDeposit
-func handleMsgDeposit(tx *juno.Tx, msg gov.MsgDeposit, db *database.BigDipperDb, cp *client.Proxy) error {
+func handleMsgDeposit(
+	tx *juno.Tx, msg *govtypes.MsgDeposit,
+	authClient authtypes.QueryClient, bankClient banktypes.QueryClient,
+	cdc codec.Marshaler, db *database.BigDipperDb,
+) error {
 	// Refresh the accounts
-	err := auth.RefreshAccounts([]string{msg.Depositor.String()}, tx.Height, cp, db)
-	if err != nil {
-		return err
-	}
-
-	// Get proposals
-	var s gov.Proposals
-	_, err = cp.QueryLCDWithHeight(fmt.Sprintf("/gov/proposals?height=%d/%d", tx.Height, msg.ProposalID), &s)
+	err := auth.RefreshAccounts([]string{msg.Depositor}, tx.Height, authClient, bankClient, cdc, db)
 	if err != nil {
 		return err
 	}
 
 	// Save the deposits
-	for _, proposal := range s {
-		deposit := govtypes.NewDeposit(
-			msg.ProposalID, msg.Depositor.String(), msg.Amount, proposal.TotalDeposit, tx.Height,
-		)
-		if err = db.SaveDeposit(deposit); err != nil {
-			return err
-		}
-	}
-
-	return nil
+	deposit := bgov.NewDeposit(msg.ProposalId, msg.Depositor, msg.Amount, tx.Height)
+	return db.SaveDeposit(deposit)
 }
 
 // handleMsgVote allows to properly handle a handleMsgVote
-func handleMsgVote(tx *juno.Tx, msg gov.MsgVote, db *database.BigDipperDb, cp *client.Proxy) error {
+func handleMsgVote(
+	tx *juno.Tx, msg *govtypes.MsgVote,
+	authClient authtypes.QueryClient, bankClient banktypes.QueryClient,
+	cdc codec.Marshaler, db *database.BigDipperDb,
+) error {
 	// Refresh accounts
-	err := auth.RefreshAccounts([]string{msg.Voter.String()}, tx.Height, cp, db)
+	err := auth.RefreshAccounts([]string{msg.Voter}, tx.Height, authClient, bankClient, cdc, db)
 	if err != nil {
 		return err
 	}
 
-	// Get the rally result
-	var s gov.TallyResult
-	_, err = cp.QueryLCDWithHeight(fmt.Sprintf("/gov/proposals?height=%d/%d/tally", tx.Height, msg.ProposalID), &s)
-	if err != nil {
-		return err
-	}
-
-	vote := govtypes.NewVote(msg.ProposalID, msg.Voter.String(), msg.Option, tx.Height)
-	err = db.SaveVote(vote)
-	if err != nil {
-		return err
-	}
-
-	// Save tally result
-	tallyResult := govtypes.NewTallyResult(
-		msg.ProposalID, s.Yes.Int64(), s.Abstain.Int64(), s.No.Int64(), s.NoWithVeto.Int64(), tx.Height,
-	)
-	return db.SaveTallyResult(tallyResult)
+	// Save the vote
+	vote := bgov.NewVote(msg.ProposalId, msg.Voter, msg.Option, tx.Height)
+	return db.SaveVote(vote)
 }

@@ -9,56 +9,7 @@ import (
 	"github.com/forbole/bdjuno/x/staking/types"
 )
 
-func (suite *DbTestSuite) TestSaveHistoricalDelegation() {
-	validator := suite.getValidator(
-		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
-		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
-		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
-	)
-	delegator := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
-
-	amount := sdk.NewCoin("cosmos", sdk.NewInt(10000))
-
-	// ------------------------------
-	// --- Save the data
-	// ------------------------------
-
-	err := suite.database.SaveHistoricalDelegation(types.NewDelegation(
-		delegator.String(),
-		validator.GetOperator(),
-		amount,
-		"100",
-		1000,
-	))
-	suite.Require().NoError(err, "saving a delegation should return no error")
-
-	// ------------------------------
-	// --- Verify the data
-	// ------------------------------
-
-	// Get data
-	var rows []dbtypes.DelegationHistoryRow
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM delegation_history`)
-	suite.Require().NoError(err)
-
-	expected := []dbtypes.DelegationHistoryRow{
-		dbtypes.NewDelegationHistoryRow(
-			"1",
-			validator.GetConsAddr(),
-			delegator.String(),
-			dbtypes.NewDbCoin(amount),
-			100,
-			1000,
-		),
-	}
-
-	suite.Require().Len(rows, len(expected))
-	for index, expected := range expected {
-		suite.Require().True(expected.Equal(rows[index]))
-	}
-}
-
-func (suite *DbTestSuite) TestSaveCurrentDelegations() {
+func (suite *DbTestSuite) TestDelegations() {
 	delegator1 := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	delegator2 := suite.getAccount("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 	validator1 := suite.getValidator(
@@ -106,7 +57,7 @@ func (suite *DbTestSuite) TestSaveCurrentDelegations() {
 			1500,
 		),
 	}
-	err := suite.database.SaveCurrentDelegations(delegations)
+	err := suite.database.SaveDelegations(delegations)
 	suite.Require().NoError(err, "inserting delegations should return no error")
 
 	// ------------------------------
@@ -124,11 +75,13 @@ func (suite *DbTestSuite) TestSaveCurrentDelegations() {
 			delegator1.String(),
 			dbtypes.NewDbCoin(sdk.NewCoin("desmos", sdk.NewInt(100))),
 			1000,
+			1000,
 		),
 		dbtypes.NewDelegationRow(
 			validator1.GetConsAddr(),
 			delegator1.String(),
 			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(100))),
+			1000,
 			1000,
 		),
 		dbtypes.NewDelegationRow(
@@ -136,11 +89,13 @@ func (suite *DbTestSuite) TestSaveCurrentDelegations() {
 			delegator1.String(),
 			dbtypes.NewDbCoin(sdk.NewCoin("desmos", sdk.NewInt(100))),
 			1001,
+			1001,
 		),
 		dbtypes.NewDelegationRow(
 			validator2.GetConsAddr(),
 			delegator2.String(),
 			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(200))),
+			1500,
 			1500,
 		),
 	}
@@ -153,57 +108,7 @@ func (suite *DbTestSuite) TestSaveCurrentDelegations() {
 
 // ________________________________________________
 
-func (suite *DbTestSuite) TestSaveHistoricalUnbondingDelegation() {
-	delegator := suite.getAccount("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
-	validator := suite.getValidator(
-		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
-		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
-		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
-	)
-
-	var height int64 = 1000
-	amount := sdk.NewCoin("udesmos", sdk.NewInt(1000))
-
-	completionTimestamp, err := time.Parse(time.RFC3339, "2020-08-10T16:00:00Z")
-	suite.Require().NoError(err)
-
-	// ------------------------------
-	// --- Save the data
-	// ------------------------------
-
-	err = suite.database.SaveHistoricalUnbondingDelegation(types.NewUnbondingDelegation(
-		delegator.String(),
-		validator.GetOperator(),
-		amount,
-		completionTimestamp,
-		height,
-	))
-	suite.Require().NoError(err)
-
-	// ------------------------------
-	// --- Verify the data
-	// ------------------------------
-
-	var rows []dbtypes.UnbondingDelegationHistoryRow
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM unbonding_delegation_history`)
-	suite.Require().NoError(err)
-
-	expected := []dbtypes.UnbondingDelegationHistoryRow{
-		dbtypes.NewUnbondingDelegationHistoryRow(
-			validator.GetConsAddr(),
-			delegator.String(),
-			dbtypes.NewDbCoin(amount),
-			completionTimestamp, height,
-		),
-	}
-
-	suite.Require().Len(rows, len(expected))
-	for index, expected := range expected {
-		suite.Require().True(expected.Equal(rows[index]))
-	}
-}
-
-func (suite *DbTestSuite) TestSaveCurrentUnbondingDelegations() {
+func (suite *DbTestSuite) TestSaveUnbondingDelegations() {
 	delegator1 := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	delegator2 := suite.getAccount("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 	validator1 := suite.getValidator(
@@ -257,7 +162,7 @@ func (suite *DbTestSuite) TestSaveCurrentUnbondingDelegations() {
 			1500,
 		),
 	}
-	err = suite.database.SaveCurrentUnbondingDelegations(delegations)
+	err = suite.database.SaveUnbondingDelegations(delegations)
 	suite.Require().NoError(err)
 
 	// ------------------------------
@@ -274,24 +179,28 @@ func (suite *DbTestSuite) TestSaveCurrentUnbondingDelegations() {
 			delegator1.String(),
 			dbtypes.NewDbCoin(sdk.NewCoin("desmos", sdk.NewInt(100))),
 			completionTimestamp1,
+			1000,
 		),
 		dbtypes.NewUnbondingDelegationRow(
 			validator1.GetConsAddr(),
 			delegator1.String(),
 			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(100))),
 			completionTimestamp1,
+			1000,
 		),
 		dbtypes.NewUnbondingDelegationRow(
 			validator1.GetConsAddr(),
 			delegator1.String(),
 			dbtypes.NewDbCoin(sdk.NewCoin("desmos", sdk.NewInt(100))),
 			completionTimestamp2,
+			1001,
 		),
 		dbtypes.NewUnbondingDelegationRow(
 			validator2.GetConsAddr(),
 			delegator2.String(),
 			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(200))),
 			completionTimestamp2,
+			1500,
 		),
 	}
 
@@ -303,67 +212,7 @@ func (suite *DbTestSuite) TestSaveCurrentUnbondingDelegations() {
 
 // ________________________________________________
 
-func (suite *DbTestSuite) TestSaveHistoricalRedelegation() {
-	// Setup
-	delegator := suite.getAccount("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
-	srcValidator := suite.getValidator(
-		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
-		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
-		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
-	)
-	dstValidator := suite.getValidator(
-		"cosmosvalcons1qq92t2l4jz5pt67tmts8ptl4p0jhr6utx5xa8y",
-		"cosmosvaloper1000ya26q2cmh399q4c5aaacd9lmmdqp90kw2jn",
-		"cosmosvalconspub1zcjduepqe93asg05nlnj30ej2pe3r8rkeryyuflhtfw3clqjphxn4j3u27msrr63nk",
-	)
-
-	var height int64 = 1000
-	amount := sdk.NewCoin("udesmos", sdk.NewInt(1000))
-
-	completionTimestamp, err := time.Parse(time.RFC3339, "2020-08-10T16:00:00Z")
-	suite.Require().NoError(err)
-
-	// ------------------------------
-	// --- Save the data
-	// ------------------------------
-
-	reDelegation := types.NewRedelegation(
-		delegator.String(),
-		srcValidator.GetOperator(),
-		dstValidator.GetOperator(),
-		amount,
-		completionTimestamp,
-		height,
-	)
-	err = suite.database.SaveHistoricalRedelegation(reDelegation)
-	suite.Require().NoError(err)
-
-	// ------------------------------
-	// --- Verify the data
-	// ------------------------------
-
-	var rows []dbtypes.ReDelegationHistoryRow
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM redelegation_history`)
-	suite.Require().NoError(err)
-
-	expected := []dbtypes.ReDelegationHistoryRow{
-		dbtypes.NewReDelegationHistoryRow(
-			delegator.String(),
-			srcValidator.GetConsAddr(),
-			dstValidator.GetConsAddr(),
-			dbtypes.NewDbCoin(amount),
-			completionTimestamp,
-			height,
-		),
-	}
-
-	suite.Require().Len(rows, len(expected))
-	for index, expected := range expected {
-		suite.Require().True(expected.Equal(rows[index]))
-	}
-}
-
-func (suite *DbTestSuite) TestSaveCurrentRedelegations() {
+func (suite *DbTestSuite) TestSaveRedelegations() {
 	delegator1 := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	delegator2 := suite.getAccount("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 	srcValidator1 := suite.getValidator(
@@ -431,7 +280,7 @@ func (suite *DbTestSuite) TestSaveCurrentRedelegations() {
 			1500,
 		),
 	}
-	err = suite.database.SaveCurrentRedelegations(reDelegations)
+	err = suite.database.SaveRedelegations(reDelegations)
 	suite.Require().NoError(err)
 
 	// ------------------------------
@@ -448,6 +297,7 @@ func (suite *DbTestSuite) TestSaveCurrentRedelegations() {
 			dstValidator1.GetConsAddr(),
 			dbtypes.NewDbCoin(sdk.NewCoin("desmos", sdk.NewInt(100))),
 			completionTimestamp1,
+			1000,
 		),
 		dbtypes.NewReDelegationRow(
 			delegator1.String(),
@@ -455,6 +305,7 @@ func (suite *DbTestSuite) TestSaveCurrentRedelegations() {
 			dstValidator1.GetConsAddr(),
 			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(100))),
 			completionTimestamp1,
+			1000,
 		),
 		dbtypes.NewReDelegationRow(
 			delegator1.String(),
@@ -462,6 +313,7 @@ func (suite *DbTestSuite) TestSaveCurrentRedelegations() {
 			dstValidator1.GetConsAddr(),
 			dbtypes.NewDbCoin(sdk.NewCoin("desmos", sdk.NewInt(100))),
 			completionTimestamp2,
+			1001,
 		),
 		dbtypes.NewReDelegationRow(
 			delegator2.String(),
@@ -469,6 +321,7 @@ func (suite *DbTestSuite) TestSaveCurrentRedelegations() {
 			dstValidator2.GetConsAddr(),
 			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(200))),
 			completionTimestamp2,
+			1500,
 		),
 	}
 

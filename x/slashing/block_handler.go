@@ -1,49 +1,58 @@
 package slashing
 
 import (
-	"fmt"
+	"context"
 
-	"github.com/cosmos/cosmos-sdk/x/slashing"
-	"github.com/desmos-labs/juno/client"
+	"github.com/forbole/bdjuno/x/utils"
+
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
+	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
+
 	"github.com/forbole/bdjuno/database"
-	slashingtypes "github.com/forbole/bdjuno/x/slashing/types"
+	"github.com/forbole/bdjuno/x/slashing/types"
 )
 
 // HandleBlock represents a method that is called each time a new block is created
-func HandleBlock(block *tmctypes.ResultBlock, cp *client.Proxy, db *database.BigDipperDb) error {
-	// Update the staking pool
-	err := updateSigningInfo(block.Block.Height, cp, db)
+func HandleBlock(block *tmctypes.ResultBlock, slashingClient slashingtypes.QueryClient, db *database.BigDipperDb) error {
+	// Update the signing infos
+	err := updateSigningInfo(block.Block.Height, slashingClient, db)
 	if err != nil {
 		log.Error().Str("module", "slashing").Int64("height", block.Block.Height).
 			Err(err).Msg("error while updating signing info")
+	}
+
+	err = updateSlashingParams(block.Block.Height, slashingClient, db)
+	if err != nil {
+		log.Error().Str("module", "slashing").Int64("height", block.Block.Height).
+			Err(err).Msg("error while updating params")
 	}
 
 	return nil
 }
 
 // updateSigningInfo reads from the LCD the current staking pool and stores its value inside the database
-func updateSigningInfo(height int64, cp *client.Proxy, db *database.BigDipperDb) error {
+func updateSigningInfo(height int64, slashingClient slashingtypes.QueryClient, db *database.BigDipperDb) error {
 	log.Debug().Str("module", "slashing").Int64("height", height).
 		Str("operation", "signing info").Msg("getting signing info")
 
-	var pool []slashing.ValidatorSigningInfo
-	endpoint := fmt.Sprintf("/slashing/signing_infos?height=%d", height)
-	height, err := cp.QueryLCDWithHeight(endpoint, &pool)
+	res, err := slashingClient.SigningInfos(
+		context.Background(),
+		&slashingtypes.QuerySigningInfosRequest{},
+		utils.GetHeightRequestHeader(height),
+	)
 	if err != nil {
-		log.Err(err).Str("module", "slashing").Msg("error while getting signing info")
 		return err
 	}
 
 	log.Debug().Str("module", "slashing").Int64("height", height).
 		Str("operation", "signing info").Msg("saving signing info")
 
-	infos := make([]slashingtypes.ValidatorSigningInfo, len(pool))
-	for index, info := range pool {
-		infos[index] = slashingtypes.NewValidatorSigningInfo(
-			info.Address.String(),
+	infos := make([]types.ValidatorSigningInfo, len(res.Info))
+	for index, info := range res.Info {
+		infos[index] = types.NewValidatorSigningInfo(
+			info.Address,
 			info.StartHeight,
 			info.IndexOffset,
 			info.JailedUntil,
@@ -54,4 +63,21 @@ func updateSigningInfo(height int64, cp *client.Proxy, db *database.BigDipperDb)
 	}
 
 	return db.SaveValidatorsSigningInfos(infos)
+}
+
+// updateSlashingParams gets the slashing params for the given height, and stores them inside the database
+func updateSlashingParams(height int64, slashingClient slashingtypes.QueryClient, db *database.BigDipperDb) error {
+	log.Debug().Str("module", "slashing").Int64("height", height).
+		Str("operation", "params").Msg("getting slashing params")
+
+	res, err := slashingClient.Params(
+		context.Background(),
+		&slashingtypes.QueryParamsRequest{},
+		utils.GetHeightRequestHeader(height),
+	)
+	if err != nil {
+		return err
+	}
+
+	return db.SaveSlashingParams(res.Params, height)
 }

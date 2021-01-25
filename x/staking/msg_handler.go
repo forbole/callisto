@@ -3,39 +3,44 @@ package staking
 import (
 	"time"
 
-	cosmosstakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/desmos-labs/juno/client"
+	"github.com/cosmos/cosmos-sdk/codec"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 
-	stakingtypes "github.com/forbole/bdjuno/x/staking/types"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+
+	"github.com/forbole/bdjuno/x/staking/types"
 	"github.com/forbole/bdjuno/x/staking/utils"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/staking"
-	"github.com/desmos-labs/juno/types"
+	juno "github.com/desmos-labs/juno/types"
 
 	"github.com/forbole/bdjuno/database"
 )
 
 // HandleMsg allows to handle the different messages related to the staking module
-func HandleMsg(tx *types.Tx, index int, msg sdk.Msg, cp *client.Proxy, db *database.BigDipperDb) error {
+func HandleMsg(
+	tx *juno.Tx, index int, msg sdk.Msg,
+	stakingClient stakingtypes.QueryClient,
+	cdc codec.Marshaler, db *database.BigDipperDb,
+) error {
 	if len(tx.Logs) == 0 {
 		return nil
 	}
 
 	switch cosmosMsg := msg.(type) {
-	case staking.MsgCreateValidator:
-		return handleMsgCreateValidator(tx, cosmosMsg, db)
+	case *stakingtypes.MsgCreateValidator:
+		return handleMsgCreateValidator(tx, cosmosMsg, cdc, db)
 
-	case staking.MsgDelegate:
-		return handleMsgDelegate(tx, cosmosMsg, cp, db)
+	case *stakingtypes.MsgDelegate:
+		return handleMsgDelegate(tx, cosmosMsg, stakingClient, db)
 
-	case staking.MsgBeginRedelegate:
+	case *stakingtypes.MsgBeginRedelegate:
 		return handleMsgBeginRedelegate(tx, index, cosmosMsg, db)
 
-	case staking.MsgUndelegate:
+	case *stakingtypes.MsgUndelegate:
 		return handleMsgUndelegate(tx, index, cosmosMsg, db)
 
-	case staking.MsgEditValidator:
+	case *stakingtypes.MsgEditValidator:
 		return handleEditValidator(tx, cosmosMsg, db)
 
 	}
@@ -45,12 +50,28 @@ func HandleMsg(tx *types.Tx, index int, msg sdk.Msg, cp *client.Proxy, db *datab
 
 // handleMsgCreateValidator handles properly a MsgCreateValidator instance by
 // saving into the database all the data associated to such validator
-func handleMsgCreateValidator(tx *types.Tx, msg cosmosstakingtypes.MsgCreateValidator, db *database.BigDipperDb) error {
-	stakingValidator := cosmosstakingtypes.NewValidator(msg.ValidatorAddress, msg.PubKey, msg.Description)
+func handleMsgCreateValidator(
+	tx *juno.Tx, msg *stakingtypes.MsgCreateValidator, cdc codec.Marshaler, db *database.BigDipperDb,
+) error {
+	var pubKey cryptotypes.PubKey
+	err := cdc.UnpackAny(msg.Pubkey, &pubKey)
+	if err != nil {
+		return err
+	}
+
+	operatorAddr, err := sdk.ValAddressFromBech32(msg.ValidatorAddress)
+	if err != nil {
+		return err
+	}
+
+	stakingValidator, err := stakingtypes.NewValidator(operatorAddr, pubKey, msg.Description)
+	if err != nil {
+		return err
+	}
 
 	// Save validator commission
-	err := db.SaveValidatorCommission(stakingtypes.NewValidatorCommission(
-		msg.ValidatorAddress.String(),
+	err = db.SaveValidatorCommission(types.NewValidatorCommission(
+		msg.ValidatorAddress,
 		&msg.Commission.Rate,
 		&msg.MinSelfDelegation,
 		tx.Height,
@@ -60,8 +81,8 @@ func handleMsgCreateValidator(tx *types.Tx, msg cosmosstakingtypes.MsgCreateVali
 	}
 
 	// Save validator description
-	err = db.SaveValidatorDescription(stakingtypes.NewValidatorDescription(
-		msg.ValidatorAddress.String(),
+	err = db.SaveValidatorDescription(types.NewValidatorDescription(
+		msg.ValidatorAddress,
 		msg.Description,
 		tx.Height,
 	))
@@ -69,22 +90,34 @@ func handleMsgCreateValidator(tx *types.Tx, msg cosmosstakingtypes.MsgCreateVali
 		return err
 	}
 
+	consAddr, err := stakingValidator.GetConsAddr()
+	if err != nil {
+		return err
+	}
+
+	consPubKey, err := stakingValidator.ConsPubKey()
+	if err != nil {
+		return err
+	}
+
 	// Save validator
-	return db.SaveValidatorData(stakingtypes.NewValidator(
-		stakingValidator.GetConsAddr().String(),
+	return db.SaveValidatorData(types.NewValidator(
+		consAddr.String(),
 		stakingValidator.GetOperator().String(),
-		stakingValidator.GetConsPubKey(),
-		sdk.AccAddress(stakingValidator.GetConsAddr()).String(),
+		consPubKey.String(),
+		msg.DelegatorAddress,
 		&msg.Commission.MaxChangeRate,
 		&msg.Commission.MaxRate,
 	))
 }
 
 // handleEditValidator handles MsgEditValidator messages, updating the validator info and commission
-func handleEditValidator(tx *types.Tx, msg cosmosstakingtypes.MsgEditValidator, db *database.BigDipperDb) error {
+func handleEditValidator(
+	tx *juno.Tx, msg *stakingtypes.MsgEditValidator, db *database.BigDipperDb,
+) error {
 	// Save validator commission
-	err := db.SaveValidatorCommission(stakingtypes.NewValidatorCommission(
-		msg.ValidatorAddress.String(),
+	err := db.SaveValidatorCommission(types.NewValidatorCommission(
+		msg.ValidatorAddress,
 		msg.CommissionRate,
 		msg.MinSelfDelegation,
 		tx.Height,
@@ -94,16 +127,18 @@ func handleEditValidator(tx *types.Tx, msg cosmosstakingtypes.MsgEditValidator, 
 	}
 
 	// Save validator description
-	return db.SaveValidatorDescription(stakingtypes.NewValidatorDescription(
-		msg.ValidatorAddress.String(),
+	return db.SaveValidatorDescription(types.NewValidatorDescription(
+		msg.ValidatorAddress,
 		msg.Description,
 		tx.Height,
 	))
 }
 
 // handleMsgDelegate allows to properly handle a MsgDelegate
-func handleMsgDelegate(tx *types.Tx, msg staking.MsgDelegate, cp *client.Proxy, db *database.BigDipperDb) error {
-	found, err := db.HasValidator(msg.ValidatorAddress.String())
+func handleMsgDelegate(
+	tx *juno.Tx, msg *stakingtypes.MsgDelegate, stakingClient stakingtypes.QueryClient, db *database.BigDipperDb,
+) error {
+	found, err := db.HasValidator(msg.ValidatorAddress)
 	if err != nil {
 		return err
 	}
@@ -111,7 +146,7 @@ func handleMsgDelegate(tx *types.Tx, msg staking.MsgDelegate, cp *client.Proxy, 
 		return nil
 	}
 
-	found, err = db.HasValidator(msg.DelegatorAddress.String())
+	found, err = db.HasValidator(msg.DelegatorAddress)
 	if err != nil {
 		return err
 	}
@@ -120,24 +155,26 @@ func handleMsgDelegate(tx *types.Tx, msg staking.MsgDelegate, cp *client.Proxy, 
 	}
 
 	// Get the delegations
-	delegations, err := utils.GetDelegations(msg.ValidatorAddress.String(), tx.Height, cp)
+	delegations, err := utils.GetDelegations(msg.ValidatorAddress, tx.Height, stakingClient)
 	if err != nil {
 		return err
 	}
 
 	// Save the delegations
-	return db.SaveCurrentDelegations(delegations)
+	return db.SaveDelegations(delegations)
 }
 
 // handleMsgUndelegate handles properly a MsgUndelegate
-func handleMsgUndelegate(tx *types.Tx, index int, msg staking.MsgUndelegate, db *database.BigDipperDb) error {
+func handleMsgUndelegate(
+	tx *juno.Tx, index int, msg *stakingtypes.MsgUndelegate, db *database.BigDipperDb,
+) error {
 	// Get completion time
-	event, err := tx.FindEventByType(index, cosmosstakingtypes.EventTypeUnbond)
+	event, err := tx.FindEventByType(index, stakingtypes.EventTypeUnbond)
 	if err != nil {
 		return err
 	}
 
-	completionTimeStr, err := tx.FindAttributeByKey(event, cosmosstakingtypes.AttributeKeyCompletionTime)
+	completionTimeStr, err := tx.FindAttributeByKey(event, stakingtypes.AttributeKeyCompletionTime)
 	if err != nil {
 		return err
 	}
@@ -147,24 +184,28 @@ func handleMsgUndelegate(tx *types.Tx, index int, msg staking.MsgUndelegate, db 
 		return err
 	}
 
-	return db.SaveHistoricalUnbondingDelegation(stakingtypes.NewUnbondingDelegation(
-		msg.DelegatorAddress.String(),
-		msg.ValidatorAddress.String(),
-		msg.Amount,
-		completionTime,
-		tx.Height,
-	))
+	return db.SaveUnbondingDelegations([]types.UnbondingDelegation{
+		types.NewUnbondingDelegation(
+			msg.DelegatorAddress,
+			msg.ValidatorAddress,
+			msg.Amount,
+			completionTime,
+			tx.Height,
+		),
+	})
 }
 
 // handleMsgBeginRedelegate handles properly MsgBeginRedelegate objects
-func handleMsgBeginRedelegate(tx *types.Tx, index int, msg staking.MsgBeginRedelegate, db *database.BigDipperDb) error {
+func handleMsgBeginRedelegate(
+	tx *juno.Tx, index int, msg *stakingtypes.MsgBeginRedelegate, db *database.BigDipperDb,
+) error {
 	// Get the completion time
-	event, err := tx.FindEventByType(index, cosmosstakingtypes.EventTypeRedelegate)
+	event, err := tx.FindEventByType(index, stakingtypes.EventTypeRedelegate)
 	if err != nil {
 		return err
 	}
 
-	completionTimeStr, err := tx.FindAttributeByKey(event, cosmosstakingtypes.AttributeKeyCompletionTime)
+	completionTimeStr, err := tx.FindAttributeByKey(event, stakingtypes.AttributeKeyCompletionTime)
 	if err != nil {
 		return err
 	}
@@ -175,12 +216,14 @@ func handleMsgBeginRedelegate(tx *types.Tx, index int, msg staking.MsgBeginRedel
 	}
 
 	// Store the redelegation
-	return db.SaveHistoricalRedelegation(stakingtypes.NewRedelegation(
-		msg.DelegatorAddress.String(),
-		msg.ValidatorSrcAddress.String(),
-		msg.ValidatorDstAddress.String(),
-		msg.Amount,
-		completionTime,
-		tx.Height,
-	))
+	return db.SaveRedelegations([]types.Redelegation{
+		types.NewRedelegation(
+			msg.DelegatorAddress,
+			msg.ValidatorSrcAddress,
+			msg.ValidatorDstAddress,
+			msg.Amount,
+			completionTime,
+			tx.Height,
+		),
+	})
 }

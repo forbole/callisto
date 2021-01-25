@@ -9,9 +9,9 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	tmversion "github.com/tendermint/tendermint/proto/tendermint/version"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 	tmtypes "github.com/tendermint/tendermint/types"
-	"github.com/tendermint/tendermint/version"
 
 	stakingtypes "github.com/forbole/bdjuno/x/staking/types"
 
@@ -36,11 +36,11 @@ type DbTestSuite struct {
 
 func (suite *DbTestSuite) SetupTest() {
 	// Create the codec
-	codec := simapp.MakeCodec()
+	codec := simapp.MakeTestEncodingConfig()
 
 	// Build the database
 	config := &jconfig.Config{
-		DatabaseConfig: jconfig.DatabaseConfig{
+		DatabaseConfig: &jconfig.DatabaseConfig{
 			Type: "psql",
 			Config: &jconfig.PostgreSQLConfig{
 				Name:     "bdjuno",
@@ -52,7 +52,7 @@ func (suite *DbTestSuite) SetupTest() {
 		},
 	}
 
-	db, err := database.Builder(config, codec)
+	db, err := database.Builder(config, &codec)
 	suite.Require().NoError(err)
 
 	bigDipperDb, ok := (db).(*database.BigDipperDb)
@@ -98,7 +98,7 @@ func (suite *DbTestSuite) getBlock(height int64) *tmctypes.ResultBlock {
 		BlockID: tmtypes.BlockID{},
 		Block: &tmtypes.Block{
 			Header: tmtypes.Header{
-				Version:            version.Consensus{},
+				Version:            tmversion.Consensus{},
 				ChainID:            "",
 				Height:             height,
 				Time:               time.Now(),
@@ -134,14 +134,11 @@ func (suite *DbTestSuite) getBlock(height int64) *tmctypes.ResultBlock {
 func (suite *DbTestSuite) getValidator(consAddr, valAddr, pubkey string) stakingtypes.Validator {
 	selfDelegation := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 
-	pubKey, err := sdk.GetPubKeyFromBech32(sdk.Bech32PubKeyTypeConsPub, pubkey)
-	suite.Require().NoError(err)
-
 	maxRate := sdk.NewDec(10)
 	maxChangeRate := sdk.NewDec(20)
 
-	validator := stakingtypes.NewValidator(consAddr, valAddr, pubKey, selfDelegation.String(), &maxChangeRate, &maxRate)
-	err = suite.database.SaveValidatorData(validator)
+	validator := stakingtypes.NewValidator(consAddr, valAddr, pubkey, selfDelegation.String(), &maxChangeRate, &maxRate)
+	err := suite.database.SaveValidatorData(validator)
 	suite.Require().NoError(err)
 
 	return validator

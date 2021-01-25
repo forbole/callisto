@@ -180,9 +180,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposit() {
 	proposal := suite.getProposalRow(1)
 	depositor := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	amount := sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(10000)))
-	total := sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(20000)))
 
-	deposit := types.NewDeposit(proposal.ProposalID, depositor.String(), amount, total, 10)
+	deposit := types.NewDeposit(proposal.ProposalID, depositor.String(), amount, 10)
 	err := suite.database.SaveDeposit(deposit)
 	suite.Require().NoError(err)
 
@@ -194,32 +193,30 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposit() {
 		1,
 		depositor.String(),
 		dbtypes.NewDbCoins(amount),
-		dbtypes.NewDbCoins(total),
 		10,
 	)))
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 	proposal := suite.getProposalRow(1)
+
 	depositor := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	amount := sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(10000)))
-	total := sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(20000)))
 
 	depositor2 := suite.getAccount("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 	amount2 := sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(30000)))
-	total2 := sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(60000)))
 
 	deposit := []types.Deposit{
-		types.NewDeposit(proposal.ProposalID, depositor.String(), amount, total, 10),
-		types.NewDeposit(proposal.ProposalID, depositor2.String(), amount2, total2, 10),
+		types.NewDeposit(proposal.ProposalID, depositor.String(), amount, 10),
+		types.NewDeposit(proposal.ProposalID, depositor2.String(), amount2, 10),
 	}
 
 	err := suite.database.SaveDeposits(deposit)
 	suite.Require().NoError(err)
 
 	expected := []dbtypes.DepositRow{
-		dbtypes.NewDepositRow(1, depositor.String(), dbtypes.NewDbCoins(amount), dbtypes.NewDbCoins(total), 10),
-		dbtypes.NewDepositRow(1, depositor2.String(), dbtypes.NewDbCoins(amount2), dbtypes.NewDbCoins(total2), 10),
+		dbtypes.NewDepositRow(1, depositor.String(), dbtypes.NewDbCoins(amount), 10),
+		dbtypes.NewDepositRow(1, depositor2.String(), dbtypes.NewDbCoins(amount2), 10),
 	}
 	var result []dbtypes.DepositRow
 	err = suite.database.Sqlx.Select(&result, `SELECT * FROM deposit`)

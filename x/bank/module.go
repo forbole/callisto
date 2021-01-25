@@ -3,11 +3,12 @@ package bank
 import (
 	"encoding/json"
 
-	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/juno/client"
-	"github.com/desmos-labs/juno/config"
-	"github.com/desmos-labs/juno/db"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	"google.golang.org/grpc"
+
 	"github.com/desmos-labs/juno/modules"
 	"github.com/desmos-labs/juno/types"
 	"github.com/go-co-op/gocron"
@@ -17,49 +18,61 @@ import (
 	"github.com/forbole/bdjuno/database"
 )
 
-var _ modules.Module = Module{}
+var _ modules.Module = &Module{}
 
 // Module represents the x/bank module
-type Module struct{}
+type Module struct {
+	encodingConfig *params.EncodingConfig
+	authClient     authtypes.QueryClient
+	bankClient     banktypes.QueryClient
+	db             *database.BigDipperDb
+}
+
+// NewModule returns a new Module instance
+func NewModule(encodingConfig *params.EncodingConfig, grpcConnection *grpc.ClientConn, db *database.BigDipperDb) *Module {
+	return &Module{
+		encodingConfig: encodingConfig,
+		authClient:     authtypes.NewQueryClient(grpcConnection),
+		bankClient:     banktypes.NewQueryClient(grpcConnection),
+		db:             db,
+	}
+}
 
 // Name implements modules.Module
-func (m Module) Name() string {
+func (m *Module) Name() string {
 	return "bank"
 }
 
 // RegisterPeriodicOperations implements modules.Module
-func (m Module) RegisterPeriodicOperations(*gocron.Scheduler, *codec.Codec, *client.Proxy, db.Database) error {
+func (m *Module) RegisterPeriodicOperations(*gocron.Scheduler) error {
 	return nil
 }
 
 // RunAdditionalOperations implements modules.Module
-func (m Module) RunAdditionalOperations(*config.Config, *codec.Codec, *client.Proxy, db.Database) error {
+func (m *Module) RunAdditionalOperations() error {
 	return nil
+}
+
+// RunAsyncOperations implements modules.Module
+func (m *Module) RunAsyncOperations() {
 }
 
 // HandleGenesis implements modules.Module
-func (m Module) HandleGenesis(
-	*tmtypes.GenesisDoc, map[string]json.RawMessage, *codec.Codec, *client.Proxy, db.Database,
-) error {
-	return nil
+func (m *Module) HandleGenesis(_ *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
+	return HandleGenesis(appState, m.encodingConfig.Marshaler, m.db)
 }
 
 // HandleBlock implements modules.Module
-func (m Module) HandleBlock(
-	*tmctypes.ResultBlock, []*types.Tx, *tmctypes.ResultValidators, *codec.Codec, *client.Proxy, db.Database,
-) error {
-	return nil
+func (m *Module) HandleBlock(block *tmctypes.ResultBlock, _ []*types.Tx, _ *tmctypes.ResultValidators) error {
+	return HandleBlock(block, m.bankClient, m.db)
 }
 
 // HandleTx implements modules.Module
-func (m Module) HandleTx(*types.Tx, *codec.Codec, *client.Proxy, db.Database) error {
+func (m *Module) HandleTx(*types.Tx) error {
 	return nil
 }
 
 // HandleMsg implements modules.Module
-func (m Module) HandleMsg(
-	index int, sdkMsg sdk.Msg, tx *types.Tx, _ *codec.Codec, cp *client.Proxy, db db.Database,
-) error {
-	bdDatabase := database.Cast(db)
-	return Handler(tx, index, sdkMsg, cp, bdDatabase)
+func (m *Module) HandleMsg(_ int, sdkMsg sdk.Msg, tx *types.Tx) error {
+	return HandleMsg(tx, sdkMsg, m.authClient, m.bankClient, m.encodingConfig.Marshaler, m.db)
 }

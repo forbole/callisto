@@ -8,7 +8,7 @@ import (
 )
 
 func (suite *DbTestSuite) TestSaveConsensus() {
-	events := []constypes.ConsensusEvent{
+	events := []*constypes.ConsensusEvent{
 		constypes.NewConsensusEvent(1, 0, "First"),
 		constypes.NewConsensusEvent(2, 0, "Second - Round 0 "),
 		constypes.NewConsensusEvent(2, 1, "Second - Round 1"),

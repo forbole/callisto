@@ -1,28 +1,51 @@
 package auth
 
 import (
-	"fmt"
+	"context"
 
-	"github.com/cosmos/cosmos-sdk/x/auth/exported"
-	"github.com/desmos-labs/juno/client"
+	"github.com/cosmos/cosmos-sdk/codec"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/rs/zerolog/log"
+
+	"github.com/forbole/bdjuno/x/utils"
 
 	"github.com/forbole/bdjuno/database"
 )
 
-// RefreshAccounts takes the given addresses and for each one queries the LCD
-// retrieving the latest balance storing it inside the database.
-func RefreshAccounts(addresses []string, height int64, cp *client.Proxy, db *database.BigDipperDb) error {
+// RefreshAccounts takes the given addresses and for each one queries the chain
+// retrieving the latest balance and stores it inside the database.
+func RefreshAccounts(
+	addresses []string, height int64,
+	authClient authtypes.QueryClient, bankClient banktypes.QueryClient, marshaler codec.Marshaler,
+	db *database.BigDipperDb,
+) error {
 	log.Debug().Str("module", "auth").Str("operation", "accounts").Msg("getting accounts data")
+	header := utils.GetHeightRequestHeader(height)
 
 	// Get all the accounts information
 	for _, address := range addresses {
-		endpoint := fmt.Sprintf("/auth/accounts/%s?height=%d", address, height)
-
-		var account exported.Account
-		_, err := cp.QueryLCDWithHeight(endpoint, &account)
+		accRes, err := authClient.Account(
+			context.Background(),
+			&authtypes.QueryAccountRequest{Address: address},
+			header,
+		)
 		if err != nil {
-			log.Err(err).Str("module", "auth").Int64("height", height).Msg("error getting account")
+			return err
+		}
+
+		var account authtypes.AccountI
+		err = marshaler.UnpackAny(accRes.Account, &account)
+		if err != nil {
+			return err
+		}
+
+		balRes, err := bankClient.AllBalances(
+			context.Background(),
+			&banktypes.QueryAllBalancesRequest{Address: address},
+			header,
+		)
+		if err != nil {
 			return err
 		}
 
@@ -31,7 +54,7 @@ func RefreshAccounts(addresses []string, height int64, cp *client.Proxy, db *dat
 			return err
 		}
 
-		err = db.SaveAccountBalance(account.GetAddress().String(), account.GetCoins(), height)
+		err = db.SaveAccountBalance(account.GetAddress().String(), balRes.Balances, height)
 		if err != nil {
 			return err
 		}

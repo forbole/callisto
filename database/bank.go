@@ -12,15 +12,35 @@ func (db *BigDipperDb) SaveAccountBalance(address string, balance sdk.Coins, hei
 	coins := pq.Array(dbtypes.NewDbCoins(balance))
 
 	stmt := `
-INSERT INTO account_balance (address, coins)
-VALUES ($1, $2) ON CONFLICT (address) DO UPDATE 
+INSERT INTO account_balance (address, coins, height)
+VALUES ($1, $2, $3) ON CONFLICT (address, height) DO UPDATE 
     SET coins = excluded.coins`
-	_, err := db.Sql.Exec(stmt, address, coins)
+	_, err := db.Sql.Exec(stmt, address, coins, height)
+	return err
+}
+
+// SaveSupplyTokenPool allows to save for the given height the given total amount of coins
+func (db *BigDipperDb) SaveSupplyToken(coins sdk.Coins, height int64) error {
+	query := `INSERT INTO supply(coins, height) VALUES ($1,$2)`
+
+	_, err := db.Sql.Exec(query, pq.Array(dbtypes.NewDbCoins(coins)), height)
 	if err != nil {
 		return err
 	}
+	return nil
+}
 
-	stmt = `INSERT INTO account_balance_history (address, coins, height) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING`
-	_, err = db.Sql.Exec(stmt, address, coins, height)
-	return err
+//GetTokenNames returns the list of token names stored inside the supply table
+func (db *BigDipperDb) GetTokenNames() ([]string, error) {
+	var names []string
+	query := `
+SELECT (coin).denom FROM (
+    SELECT unnest(coins) AS coin FROM supply WHERE height = (
+        SELECT max(height) FROM supply
+	) 
+) AS unnested`
+	if err := db.Sqlx.Select(&names, query); err != nil {
+		return nil, err
+	}
+	return names, nil
 }

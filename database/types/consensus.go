@@ -7,7 +7,7 @@ import (
 // ConsensusRow represents a single row inside the consensus table
 type ConsensusRow struct {
 	Height int64  `db:"height"`
-	Round  int    `db:"round"`
+	Round  int32  `db:"round"`
 	Step   string `db:"step"`
 }
 

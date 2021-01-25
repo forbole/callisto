@@ -1,12 +1,18 @@
 package main
 
 import (
+	"github.com/cosmos/cosmos-sdk/simapp/params"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/desmos-labs/juno/client"
 	"github.com/desmos-labs/juno/cmd"
 	"github.com/desmos-labs/juno/config"
-	"github.com/desmos-labs/juno/modules/registrar"
+	"github.com/desmos-labs/juno/db"
+	"github.com/desmos-labs/juno/modules"
+
+	"github.com/forbole/bdjuno/x/slashing"
 
 	"github.com/forbole/bdjuno/x/mint"
-	"github.com/forbole/bdjuno/x/modules"
+	bmodules "github.com/forbole/bdjuno/x/modules"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
 
@@ -18,27 +24,38 @@ import (
 	"github.com/forbole/bdjuno/x/gov"
 	"github.com/forbole/bdjuno/x/pricefeed"
 	"github.com/forbole/bdjuno/x/staking"
-	"github.com/forbole/bdjuno/x/supply"
 )
 
 func main() {
-	// Register all the modules to be handled
-	registrar.RegisterModules(
-		auth.Module{},
-		bank.Module{},
-		consensus.Module{},
-		distribution.Module{},
-		gov.Module{},
-		mint.Module{},
-		modules.Module{},
-		pricefeed.Module{},
-		staking.Module{},
-		supply.Module{},
+	executor := cmd.BuildDefaultExecutor(
+		"bdjuno",
+		&ModulesRegistrar{},
+		config.DefaultSetup,
+		simapp.MakeTestEncodingConfig,
+		database.Builder,
 	)
-
-	executor := cmd.BuildDefaultExecutor("bdjuno", config.DefaultSetup, simapp.MakeCodec, database.Builder)
 	err := executor.Execute()
 	if err != nil {
 		panic(err)
+	}
+}
+
+type ModulesRegistrar struct{}
+
+func (*ModulesRegistrar) BuildModules(
+	cfg *config.Config, encodingConfig *params.EncodingConfig, _ *sdk.Config, db db.Database, cp *client.Proxy,
+) modules.Modules {
+	bigDipperBd := database.Cast(db)
+	return []modules.Module{
+		auth.NewModule(encodingConfig, cp.GrpcConnection(), bigDipperBd),
+		bank.NewModule(encodingConfig, cp.GrpcConnection(), bigDipperBd),
+		consensus.NewModule(cp, bigDipperBd),
+		distribution.NewModule(cp.GrpcConnection(), bigDipperBd),
+		gov.NewModule(encodingConfig, cp.GrpcConnection(), bigDipperBd),
+		mint.NewModule(cp.GrpcConnection(), bigDipperBd),
+		bmodules.NewModule(cfg, bigDipperBd),
+		pricefeed.NewModule(bigDipperBd),
+		slashing.NewModule(cp.GrpcConnection(), bigDipperBd),
+		staking.NewModule(encodingConfig, cp.GrpcConnection(), bigDipperBd),
 	}
 }

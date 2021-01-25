@@ -3,11 +3,8 @@ package modules
 import (
 	"encoding/json"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/juno/client"
 	"github.com/desmos-labs/juno/config"
-	"github.com/desmos-labs/juno/db"
 	"github.com/desmos-labs/juno/modules"
 	"github.com/desmos-labs/juno/types"
 	"github.com/go-co-op/gocron"
@@ -17,46 +14,56 @@ import (
 	"github.com/forbole/bdjuno/database"
 )
 
-var _ modules.Module = Module{}
+var _ modules.Module = &Module{}
 
-type Module struct{}
+type Module struct {
+	cfg *config.Config
+	db  *database.BigDipperDb
+}
+
+// NewModule returns a new Module instance
+func NewModule(cfg *config.Config, db *database.BigDipperDb) *Module {
+	return &Module{
+		cfg: cfg,
+		db:  db,
+	}
+}
 
 // Name implements modules.Module
-func (m Module) Name() string {
+func (m *Module) Name() string {
 	return "modules"
 }
 
 // RegisterPeriodicOperations implements modules.Module
-func (m Module) RegisterPeriodicOperations(*gocron.Scheduler, *codec.Codec, *client.Proxy, db.Database) error {
+func (m *Module) RegisterPeriodicOperations(*gocron.Scheduler) error {
 	return nil
 }
 
+// RunAsyncOperations implements modules.Module
+func (m *Module) RunAsyncOperations() {
+}
+
 // RunAdditionalOperations implements modules.Module
-func (m Module) RunAdditionalOperations(cfg *config.Config, cdc *codec.Codec, cp *client.Proxy, db db.Database) error {
-	bdDatabase := database.Cast(db)
-	return bdDatabase.InsertEnableModules(cfg.CosmosConfig.Modules)
+func (m *Module) RunAdditionalOperations() error {
+	return m.db.InsertEnableModules(m.cfg.CosmosConfig.Modules)
 }
 
 // HandleGenesis implements modules.Module
-func (m Module) HandleGenesis(
-	*tmtypes.GenesisDoc, map[string]json.RawMessage, *codec.Codec, *client.Proxy, db.Database,
-) error {
+func (m *Module) HandleGenesis(*tmtypes.GenesisDoc, map[string]json.RawMessage) error {
 	return nil
 }
 
 // HandleBlock implements modules.Module
-func (m Module) HandleBlock(
-	*tmctypes.ResultBlock, []*types.Tx, *tmctypes.ResultValidators, *codec.Codec, *client.Proxy, db.Database,
-) error {
+func (m Module) HandleBlock(*tmctypes.ResultBlock, []*types.Tx, *tmctypes.ResultValidators) error {
 	return nil
 }
 
 // HandleTx implements modules.Module
-func (m Module) HandleTx(*types.Tx, *codec.Codec, *client.Proxy, db.Database) error {
+func (m *Module) HandleTx(*types.Tx) error {
 	return nil
 }
 
 // HandleMsg implements modules.Module
-func (m Module) HandleMsg(int, sdk.Msg, *types.Tx, *codec.Codec, *client.Proxy, db.Database) error {
+func (m *Module) HandleMsg(int, sdk.Msg, *types.Tx) error {
 	return nil
 }

@@ -1,48 +1,47 @@
 package gov
 
 import (
-	"fmt"
+	"context"
 	"time"
 
-	"github.com/rs/zerolog/log"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 
-	"github.com/cosmos/cosmos-sdk/x/gov"
-	"github.com/desmos-labs/juno/client"
+	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/gov/types"
 )
 
 // UpdateProposal return a function for time.AfterFunc() to update the proposal status on a given time
-func UpdateProposal(id uint64, cp *client.Proxy, db *database.BigDipperDb) func() {
+func UpdateProposal(id uint64, govClient govtypes.QueryClient, db *database.BigDipperDb) func() {
 	return func() {
-		err := updateProposalStatuses(id, cp, db)
+		err := updateProposalStatuses(id, govClient, db)
 		if err != nil {
 			log.Fatal().Err(err).Send()
 		}
 	}
 }
 
-func updateProposalStatuses(id uint64, cp *client.Proxy, db *database.BigDipperDb) error {
+func updateProposalStatuses(id uint64, govClient govtypes.QueryClient, db *database.BigDipperDb) error {
 	// Get the proposal
-	var proposal gov.Proposal
-	_, err := cp.QueryLCDWithHeight(fmt.Sprintf("/gov/proposals/%d", id), &proposal)
+	res, err := govClient.Proposal(context.Background(), &govtypes.QueryProposalRequest{ProposalId: id})
 	if err != nil {
 		return err
 	}
 
-	if proposal.Status.String() == "VotingPeriod" {
-		update := UpdateProposal(proposal.ProposalID, cp, db)
+	proposal := res.Proposal
+	if proposal.Status == govtypes.StatusVotingPeriod {
+		update := UpdateProposal(proposal.ProposalId, govClient, db)
 		time.AfterFunc(time.Since(proposal.VotingEndTime), update)
 	}
 
 	// Update the proposal to update the status
 	return db.UpdateProposal(types.NewProposal(
 		proposal.GetTitle(),
-		proposal.GetDescription(),
+		proposal.GetContent().GetDescription(),
 		proposal.ProposalRoute(),
 		proposal.ProposalType(),
-		proposal.ProposalID,
+		proposal.ProposalId,
 		proposal.Status,
 		proposal.SubmitTime,
 		proposal.DepositEndTime,

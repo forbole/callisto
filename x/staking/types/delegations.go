@@ -65,7 +65,7 @@ type Redelegation struct {
 	DstValidator     string
 	Amount           sdk.Coin
 	CompletionTime   time.Time
-	CreationHeight   int64
+	Height           int64
 }
 
 // NewRedelegation build a new Redelegation object
@@ -78,7 +78,7 @@ func NewRedelegation(
 		DstValidator:     dstValidator,
 		Amount:           amount,
 		CompletionTime:   completionTime,
-		CreationHeight:   height,
+		Height:           height,
 	}
 }
 

@@ -3,24 +3,24 @@ package staking
 import (
 	"encoding/json"
 
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/rs/zerolog/log"
-	tmtypes "github.com/tendermint/tendermint/types"
 
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/staking/types"
 )
 
 func HandleGenesis(
-	genDoc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, cdc *codec.Codec, db *database.BigDipperDb,
+	appState map[string]json.RawMessage, cdc codec.Marshaler, db *database.BigDipperDb,
 ) error {
 	log.Debug().Str("module", "staking").Msg("parsing genesis")
 
 	// Read the genesis state
-	var genState staking.GenesisState
-	err := cdc.UnmarshalJSON(appState[staking.ModuleName], &genState)
+	var genState stakingtypes.GenesisState
+	err := cdc.UnmarshalJSON(appState[stakingtypes.ModuleName], &genState)
 	if err != nil {
 		return err
 	}
@@ -70,21 +70,31 @@ func HandleGenesis(
 }
 
 // saveParams saves the given params into the database
-func saveParams(params staking.Params, db *database.BigDipperDb) error {
+func saveParams(params stakingtypes.Params, db *database.BigDipperDb) error {
 	return db.SaveStakingParams(types.NewStakingParams(
 		params.BondDenom,
 	))
 }
 
 // saveValidators stores the validators data present inside the given genesis state
-func saveValidators(validators staking.Validators, db *database.BigDipperDb) error {
+func saveValidators(validators stakingtypes.Validators, db *database.BigDipperDb) error {
 	bdValidators := make([]types.Validator, len(validators))
 	for i, validator := range validators {
+		consAddr, err := validator.GetConsAddr()
+		if err != nil {
+			return err
+		}
+
+		consPubKey, err := validator.ConsPubKey()
+		if err != nil {
+			return err
+		}
+
 		bdValidators[i] = types.NewValidator(
-			validator.ConsAddress().String(),
-			validator.OperatorAddress.String(),
-			validator.GetConsPubKey(),
-			sdk.AccAddress(validator.ConsAddress()).String(),
+			consAddr.String(),
+			validator.OperatorAddress,
+			consPubKey.String(),
+			sdk.AccAddress(consAddr).String(),
 			&validator.Commission.MaxChangeRate,
 			&validator.Commission.MaxRate,
 		)
@@ -94,10 +104,10 @@ func saveValidators(validators staking.Validators, db *database.BigDipperDb) err
 }
 
 //saveValidatorsCommissions save initial commission for validators
-func saveValidatorsCommissions(validators staking.Validators, db *database.BigDipperDb) error {
+func saveValidatorsCommissions(validators stakingtypes.Validators, db *database.BigDipperDb) error {
 	for _, account := range validators {
 		err := db.SaveValidatorCommission(types.NewValidatorCommission(
-			account.OperatorAddress.String(),
+			account.OperatorAddress,
 			&account.Commission.Rate,
 			&account.MinSelfDelegation,
 			1,
@@ -111,7 +121,7 @@ func saveValidatorsCommissions(validators staking.Validators, db *database.BigDi
 }
 
 // saveDelegations stores the delegations data present inside the given genesis state
-func saveDelegations(genState staking.GenesisState, db *database.BigDipperDb) error {
+func saveDelegations(genState stakingtypes.GenesisState, db *database.BigDipperDb) error {
 	var delegations []types.Delegation
 	for _, validator := range genState.Validators {
 		tokens := validator.Tokens
@@ -120,8 +130,8 @@ func saveDelegations(genState staking.GenesisState, db *database.BigDipperDb) er
 		for _, delegation := range getDelegations(genState.Delegations, validator.OperatorAddress) {
 			delegationAmount := tokens.ToDec().Mul(delegation.Shares).Quo(delegatorShares).TruncateInt()
 			delegations = append(delegations, types.NewDelegation(
-				delegation.DelegatorAddress.String(),
-				validator.OperatorAddress.String(),
+				delegation.DelegatorAddress,
+				validator.OperatorAddress,
 				sdk.NewCoin(genState.Params.BondDenom, delegationAmount),
 				delegation.Shares.String(),
 				1,
@@ -129,22 +139,22 @@ func saveDelegations(genState staking.GenesisState, db *database.BigDipperDb) er
 		}
 	}
 
-	if err := db.SaveCurrentDelegations(delegations); err != nil {
+	if err := db.SaveDelegations(delegations); err != nil {
 		return err
 	}
 	return nil
 }
 
 // saveUnbondingDelegations stores the unbonding delegations data present inside the given genesis state
-func saveUnbondingDelegations(genState staking.GenesisState, db *database.BigDipperDb) error {
+func saveUnbondingDelegations(genState stakingtypes.GenesisState, db *database.BigDipperDb) error {
 	var unbondingDelegations []types.UnbondingDelegation
 	for _, validator := range genState.Validators {
 		valUD := getUnbondingDelegations(genState.UnbondingDelegations, validator.OperatorAddress)
 		for _, ud := range valUD {
 			for _, entry := range ud.Entries {
 				unbondingDelegations = append(unbondingDelegations, types.NewUnbondingDelegation(
-					ud.DelegatorAddress.String(),
-					validator.OperatorAddress.String(),
+					ud.DelegatorAddress,
+					validator.OperatorAddress,
 					sdk.NewCoin(genState.Params.BondDenom, entry.InitialBalance),
 					entry.CompletionTime,
 					entry.CreationHeight,
@@ -153,18 +163,18 @@ func saveUnbondingDelegations(genState staking.GenesisState, db *database.BigDip
 		}
 	}
 
-	return db.SaveCurrentUnbondingDelegations(unbondingDelegations)
+	return db.SaveUnbondingDelegations(unbondingDelegations)
 }
 
 // saveRedelegations stores the redelegations data present inside the given genesis state
-func saveRedelegations(genState staking.GenesisState, db *database.BigDipperDb) error {
+func saveRedelegations(genState stakingtypes.GenesisState, db *database.BigDipperDb) error {
 	var redelegations []types.Redelegation
 	for _, redelegation := range genState.Redelegations {
 		for _, entry := range redelegation.Entries {
 			redelegations = append(redelegations, types.NewRedelegation(
-				redelegation.DelegatorAddress.String(),
-				redelegation.ValidatorSrcAddress.String(),
-				redelegation.ValidatorDstAddress.String(),
+				redelegation.DelegatorAddress,
+				redelegation.ValidatorSrcAddress,
+				redelegation.ValidatorDstAddress,
 				sdk.NewCoin(genState.Params.BondDenom, entry.InitialBalance),
 				entry.CompletionTime,
 				entry.CreationHeight,
@@ -172,15 +182,15 @@ func saveRedelegations(genState staking.GenesisState, db *database.BigDipperDb) 
 		}
 	}
 
-	return db.SaveCurrentRedelegations(redelegations)
+	return db.SaveRedelegations(redelegations)
 }
 
 // getDelegations returns the list of all the delegations that are
 // related to the validator having the given validator address
-func getDelegations(genData staking.Delegations, valAddr sdk.ValAddress) staking.Delegations {
-	var delegations staking.Delegations
+func getDelegations(genData stakingtypes.Delegations, valAddr string) stakingtypes.Delegations {
+	var delegations stakingtypes.Delegations
 	for _, delegation := range genData {
-		if delegation.ValidatorAddress.Equals(valAddr) {
+		if delegation.ValidatorAddress == valAddr {
 			delegations = append(delegations, delegation)
 		}
 	}
@@ -189,10 +199,10 @@ func getDelegations(genData staking.Delegations, valAddr sdk.ValAddress) staking
 
 // getUnbondingDelegations returns the list of all the unbonding delegations
 // that are related to the validator having the given validator address
-func getUnbondingDelegations(genData staking.UnbondingDelegations, valAddr sdk.ValAddress) staking.UnbondingDelegations {
-	var unbondingDelegations staking.UnbondingDelegations
+func getUnbondingDelegations(genData stakingtypes.UnbondingDelegations, valAddr string) stakingtypes.UnbondingDelegations {
+	var unbondingDelegations stakingtypes.UnbondingDelegations
 	for _, unbondingDelegation := range genData {
-		if unbondingDelegation.ValidatorAddress.Equals(valAddr) {
+		if unbondingDelegation.ValidatorAddress == valAddr {
 			unbondingDelegations = append(unbondingDelegations, unbondingDelegation)
 		}
 	}
@@ -200,10 +210,10 @@ func getUnbondingDelegations(genData staking.UnbondingDelegations, valAddr sdk.V
 }
 
 //saveValidatorsCommissions save initial commission for validators
-func saveDescription(validators staking.Validators, db *database.BigDipperDb) error {
+func saveDescription(validators stakingtypes.Validators, db *database.BigDipperDb) error {
 	for _, account := range validators {
 		err := db.SaveValidatorDescription(types.NewValidatorDescription(
-			account.OperatorAddress.String(),
+			account.OperatorAddress,
 			account.Description,
 			1,
 		))

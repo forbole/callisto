@@ -35,10 +35,9 @@ CREATE TABLE vote
 
 CREATE TABLE deposit
 (
-    proposal_id   INTEGER REFERENCES proposal (proposal_id) NOT NULL,
-    depositor     TEXT REFERENCES account (address),
-    amount        COIN[],
-    total_deposit COIN[],
-    height        BIGINT,
+    proposal_id INTEGER REFERENCES proposal (proposal_id) NOT NULL,
+    depositor   TEXT REFERENCES account (address),
+    amount      COIN[],
+    height      BIGINT,
     PRIMARY KEY (proposal_id, depositor, height)
 );

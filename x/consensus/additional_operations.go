@@ -1,13 +1,13 @@
 package consensus
 
 import (
-	"encoding/json"
 	"fmt"
+
+	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/bdjuno/database"
 
 	"github.com/desmos-labs/juno/client"
-	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 	tmtypes "github.com/tendermint/tendermint/types"
 
@@ -15,75 +15,78 @@ import (
 )
 
 // ListenOperation allows to start listening to new consensus events properly
-func ListenOperation(cp *client.Proxy, db *database.BigDipperDb) error {
+func ListenOperation(cp *client.Proxy, db *database.BigDipperDb) {
 	events := []string{
-		tmtypes.EventCompleteProposal,
 		tmtypes.EventNewRound,
 		tmtypes.EventNewRoundStep,
+		tmtypes.EventCompleteProposal,
+		tmtypes.EventVote,
 		tmtypes.EventPolka,
 		tmtypes.EventValidBlock,
-		tmtypes.EventVote,
 	}
 
-	go func() {
-		var out = make(chan tmctypes.ResultEvent)
-		for _, event := range events {
-			err := subscribeConsensusEvent(event, cp, out)
-			if err != nil {
-				log.Fatal().Err(err)
-			}
-		}
+	// This channel will be used to gather all the events
+	var eventChan = make(chan tmctypes.ResultEvent, 10)
 
-		for event := range out {
+	for _, event := range events {
+		go subscribeConsensusEvent(event, cp, eventChan)
+	}
 
-			// Serialize the event data as JSON to later de-serialize it into our custom object
-			bz, err := json.Marshal(event.Data)
-			if err != nil {
-				log.Fatal().Err(err).Send()
-			}
-
-			// De-serialize the data into our custom object
-			var consEvent constypes.ConsensusEvent
-			err = json.Unmarshal(bz, &consEvent)
-			if err != nil {
-				log.Fatal().Err(err).Send()
-			}
-
-			log.Debug().
-				Str("module", "consensus").
-				Int64("height", consEvent.Height).
-				Int("round", consEvent.Round).
-				Str("step", consEvent.Step).
-				Msg("saving consensus")
-
-			// Save the event
-			err = db.SaveConsensus(consEvent)
-			if err != nil {
-				log.Fatal().Err(err).Send()
-			}
-		}
-	}()
-
-	return nil
+	for event := range eventChan {
+		handleEvent(event, db)
+	}
 }
 
 // subscribeConsensusEvent allows to subscribe to the consensus event having the given name,
 // and returns a read-only channel emitting all the events
-func subscribeConsensusEvent(event string, cp *client.Proxy, out chan<- tmctypes.ResultEvent) error {
+func subscribeConsensusEvent(event string, cp *client.Proxy, eventChan chan<- tmctypes.ResultEvent) {
 	query := fmt.Sprintf("tm.event = '%s'", event)
-	subscriber := fmt.Sprintf("juno-client-consensus-%s", event)
 
-	eventCh, cancel, err := cp.SubscribeEvents(subscriber, query)
+	eventCh, cancel, err := cp.SubscribeEvents("juno", query)
 	if err != nil {
-		return err
+		log.Fatal().Err(err).Msg("error while subscribing to event")
 	}
 	defer cancel()
 
-	go func() {
-		for event := range eventCh {
-			out <- event
-		}
-	}()
+	for event := range eventCh {
+		eventChan <- event
+	}
+}
 
-	return nil
+// handleEvent handles the given event storing its data inside the database properly
+func handleEvent(event tmctypes.ResultEvent, db *database.BigDipperDb) {
+	consEvent := mapEvent(event)
+	if consEvent == nil {
+		return
+	}
+
+	log.Debug().Str("module", "consensus").
+		Int64("height", consEvent.Height).Int32("round", consEvent.Round).Str("step", consEvent.Step).
+		Msg("saving consensus")
+
+	// Save the event
+	err := db.SaveConsensus(consEvent)
+	if err != nil {
+		log.Fatal().Err(err).Send()
+	}
+}
+
+// mapEvent converts the given ResultEvent to a ConsensusEvent instance
+func mapEvent(event tmctypes.ResultEvent) *constypes.ConsensusEvent {
+	switch data := event.Data.(type) {
+	case tmtypes.EventDataNewRound:
+		return constypes.NewConsensusEvent(data.Height, data.Round, data.Step)
+
+	case tmtypes.EventDataRoundState:
+		return constypes.NewConsensusEvent(data.Height, data.Round, data.Step)
+
+	case tmtypes.EventDataCompleteProposal:
+		return constypes.NewConsensusEvent(data.Height, data.Round, data.Step)
+
+	case tmtypes.EventDataVote:
+		return constypes.NewConsensusEvent(data.Vote.Height, data.Vote.Round, tmtypes.EventVote)
+
+	default:
+		return nil
+	}
 }

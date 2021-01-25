@@ -23,32 +23,12 @@ func (a AccountRow) Equal(b AccountRow) bool {
 type AccountBalanceRow struct {
 	Address string   `db:"address"`
 	Coins   *DbCoins `db:"coins"`
-}
-
-// NewAccountBalanceRow allows to build a new AccountBalanceRow instance
-func NewAccountBalanceRow(address string, coins DbCoins) AccountBalanceRow {
-	return AccountBalanceRow{
-		Address: address,
-		Coins:   &coins,
-	}
-}
-
-// Equal tells whether a and b contain the same data
-func (a AccountBalanceRow) Equal(b AccountBalanceRow) bool {
-	return a.Address == b.Address &&
-		a.Coins.Equal(b.Coins)
-}
-
-// AccountBalanceHistoryRow represents a single row inside the account_balance_history table
-type AccountBalanceHistoryRow struct {
-	Address string   `db:"address"`
-	Coins   *DbCoins `db:"coins"`
 	Height  int64    `db:"height"`
 }
 
-// NewAccountBalanceHistoryRow allows to build a new AccountBalanceHistoryRow instance
-func NewAccountBalanceHistoryRow(address string, coins DbCoins, height int64) AccountBalanceHistoryRow {
-	return AccountBalanceHistoryRow{
+// NewAccountBalanceRow allows to build a new AccountBalanceRow instance
+func NewAccountBalanceRow(address string, coins DbCoins, height int64) AccountBalanceRow {
+	return AccountBalanceRow{
 		Address: address,
 		Coins:   &coins,
 		Height:  height,
@@ -56,8 +36,8 @@ func NewAccountBalanceHistoryRow(address string, coins DbCoins, height int64) Ac
 }
 
 // Equal tells whether a and b contain the same data
-func (a AccountBalanceHistoryRow) Equal(b AccountBalanceHistoryRow) bool {
+func (a AccountBalanceRow) Equal(b AccountBalanceRow) bool {
 	return a.Address == b.Address &&
-		a.Height == b.Height &&
-		a.Coins.Equal(b.Coins)
+		a.Coins.Equal(b.Coins) &&
+		a.Height == b.Height
 }

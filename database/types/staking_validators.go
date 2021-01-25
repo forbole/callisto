@@ -6,7 +6,6 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/tendermint/tendermint/crypto"
 )
 
 // ValidatorData contains all the data of a single validator.
@@ -38,8 +37,8 @@ func (v ValidatorData) GetConsAddr() string {
 }
 
 // GetConsPubKey implements types.Validator
-func (v ValidatorData) GetConsPubKey() crypto.PubKey {
-	return sdk.MustGetPubKeyFromBech32(sdk.Bech32PubKeyTypeConsPub, v.ConsPubKey)
+func (v ValidatorData) GetConsPubKey() string {
+	return v.ConsPubKey
 }
 
 // GetOperator implements types.Validator
@@ -135,10 +134,13 @@ type ValidatorDescriptionRow struct {
 	Website         sql.NullString `db:"website"`
 	SecurityContact sql.NullString `db:"security_contact"`
 	Details         sql.NullString `db:"details"`
+	Height          int64          `db:"height"`
 }
 
 // NewValidatorDescriptionRow return a row representing data structure in validator_description
-func NewValidatorDescriptionRow(valAddress, moniker, identity, website, securityContact, details string) ValidatorDescriptionRow {
+func NewValidatorDescriptionRow(
+	valAddress, moniker, identity, website, securityContact, details string, height int64,
+) ValidatorDescriptionRow {
 	return ValidatorDescriptionRow{
 		ValAddress:      valAddress,
 		Moniker:         ToNullString(moniker),
@@ -146,6 +148,7 @@ func NewValidatorDescriptionRow(valAddress, moniker, identity, website, security
 		Website:         ToNullString(website),
 		SecurityContact: ToNullString(securityContact),
 		Details:         ToNullString(details),
+		Height:          height,
 	}
 }
 
@@ -156,7 +159,8 @@ func (w ValidatorDescriptionRow) Equals(v ValidatorDescriptionRow) bool {
 		v.Identity == w.Identity &&
 		v.Website == w.Website &&
 		v.SecurityContact == w.SecurityContact &&
-		v.Details == w.Details
+		v.Details == w.Details &&
+		v.Height == w.Height
 }
 
 // ValidatorDescriptionHistoryRow represents a single row inside the validator_description_history table
@@ -207,14 +211,18 @@ type ValidatorCommissionRow struct {
 	OperatorAddress   string         `db:"validator_address"`
 	Commission        sql.NullString `db:"commission"`
 	MinSelfDelegation sql.NullString `db:"min_self_delegation"`
+	Height            int64          `db:"height"`
 }
 
 // NewValidatorCommissionRow allows to easily build a new ValidatorCommissionRow instance
-func NewValidatorCommissionRow(operatorAddress string, commission string, minSelfDelegation string) ValidatorCommissionRow {
+func NewValidatorCommissionRow(
+	operatorAddress string, commission string, minSelfDelegation string, height int64,
+) ValidatorCommissionRow {
 	return ValidatorCommissionRow{
 		OperatorAddress:   operatorAddress,
 		Commission:        sql.NullString{String: commission, Valid: true},
 		MinSelfDelegation: sql.NullString{String: minSelfDelegation, Valid: true},
+		Height:            height,
 	}
 }
 
@@ -222,7 +230,8 @@ func NewValidatorCommissionRow(operatorAddress string, commission string, minSel
 func (v ValidatorCommissionRow) Equal(w ValidatorCommissionRow) bool {
 	return v.OperatorAddress == w.OperatorAddress &&
 		v.Commission == w.Commission &&
-		v.MinSelfDelegation == w.MinSelfDelegation
+		v.MinSelfDelegation == w.MinSelfDelegation &&
+		v.Height == w.Height
 }
 
 // ValidatorCommissionHistoryRow represents a single row of the validator_commission_history table
@@ -256,20 +265,25 @@ func (v ValidatorCommissionHistoryRow) Equal(w ValidatorCommissionHistoryRow) bo
 type ValidatorVotingPowerRow struct {
 	ValidatorAddress string `db:"validator_address"`
 	VotingPower      int64  `db:"voting_power"`
+	Height           int64  `db:"height"`
 }
 
 // NewValidatorVotingPowerRow allows to easily build a new ValidatorVotingPowerRow instance
-func NewValidatorVotingPowerRow(address string, votingPower int64) ValidatorVotingPowerRow {
+func NewValidatorVotingPowerRow(
+	address string, votingPower int64, height int64,
+) ValidatorVotingPowerRow {
 	return ValidatorVotingPowerRow{
 		ValidatorAddress: address,
 		VotingPower:      votingPower,
+		Height:           height,
 	}
 }
 
 // Equal tells whether v and w represent the same rows
 func (v ValidatorVotingPowerRow) Equal(w ValidatorVotingPowerRow) bool {
 	return v.ValidatorAddress == w.ValidatorAddress &&
-		v.VotingPower == w.VotingPower
+		v.VotingPower == w.VotingPower &&
+		v.Height == w.Height
 }
 
 // ValidatorVotingPowerHistoryRow represents a single row of the validator_voting_power_history database table
@@ -357,16 +371,18 @@ type ValidatorStatusRow struct {
 	Status      int    `db:"status"`
 	Jailed      bool   `db:"jailed"`
 	ConsAddress string `db:"validator_address"`
+	Height      int64  `db:"height"`
 }
 
 // NewValidatorUptimesHistoryRow builds a new ValidatorUptimeHistoryRow
 func NewValidatorStatusRow(
-	status int, jailed bool, consAddess string,
+	status int, jailed bool, consAddess string, height int64,
 ) ValidatorStatusRow {
 	return ValidatorStatusRow{
 		Status:      status,
 		Jailed:      jailed,
 		ConsAddress: consAddess,
+		Height:      height,
 	}
 }
 
@@ -374,35 +390,7 @@ func NewValidatorStatusRow(
 func (v ValidatorStatusRow) Equal(w ValidatorStatusRow) bool {
 	return v.Status == w.Status &&
 		v.Jailed == w.Jailed &&
-		v.ConsAddress == w.ConsAddress
-}
-
-//-------------------------------------------------------------
-
-// ValidatorStatusHistoryRow represents a single row of the validator_status_history table
-type ValidatorStatusHistoryRow struct {
-	Status      int    `db:"status"`
-	Jailed      bool   `db:"jailed"`
-	Height      int64  `db:"height"`
-	ConsAddress string `db:"validator_address"`
-}
-
-// NewValidatorStatusHistoryRow builds a new ValidatorUptimeHistoryRow
-func NewValidatorStatusHistoryRow(
-	status int, jailed bool, height int64, consAddress string,
-) ValidatorStatusHistoryRow {
-	return ValidatorStatusHistoryRow{
-		Status:      status,
-		Jailed:      jailed,
-		Height:      height,
-		ConsAddress: consAddress,
-	}
-}
-
-// Equal tells whether v and w contain the same data
-func (v ValidatorStatusHistoryRow) Equal(w ValidatorStatusHistoryRow) bool {
-	return v.Status == w.Status &&
-		v.Jailed == w.Jailed &&
+		v.ConsAddress == w.ConsAddress &&
 		v.Height == w.Height
 }
 
@@ -459,27 +447,23 @@ func (v DoubleSignVoteRow) Equal(w DoubleSignVoteRow) bool {
 
 // DoubleSignEvidenceRow represents a single row of the double_sign_evidence table
 type DoubleSignEvidenceRow struct {
-	PublicKey string `db:"public_key"`
-	VoteAID   int64  `db:"vote_a_id"`
-	VoteBID   int64  `db:"vote_b_id"`
+	VoteAID int64 `db:"vote_a_id"`
+	VoteBID int64 `db:"vote_b_id"`
 }
 
 // NewDoubleSignEvidenceRow allows to build a new NewDoubleSignEvidenceRow
 func NewDoubleSignEvidenceRow(
-	publicKey string,
 	voteAID int64,
 	voteBID int64,
 ) DoubleSignEvidenceRow {
 	return DoubleSignEvidenceRow{
-		PublicKey: publicKey,
-		VoteAID:   voteAID,
-		VoteBID:   voteBID,
+		VoteAID: voteAID,
+		VoteBID: voteBID,
 	}
 }
 
 // Equal tells whether v and w represent the same rows
 func (v DoubleSignEvidenceRow) Equal(w DoubleSignEvidenceRow) bool {
-	return v.PublicKey == w.PublicKey &&
-		v.VoteAID == w.VoteAID &&
+	return v.VoteAID == w.VoteAID &&
 		v.VoteBID == w.VoteBID
 }

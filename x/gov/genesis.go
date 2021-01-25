@@ -5,8 +5,7 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/x/gov"
-	"github.com/desmos-labs/juno/client"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/bdjuno/database"
@@ -14,19 +13,19 @@ import (
 )
 
 func HandleGenesis(
-	appState map[string]json.RawMessage, cdc *codec.Codec, cp *client.Proxy, db *database.BigDipperDb,
+	appState map[string]json.RawMessage, cdc codec.Marshaler, govClient govtypes.QueryClient, db *database.BigDipperDb,
 ) error {
 	log.Debug().Str("module", "gov").Msg("parsing genesis")
 
 	// Read the genesis state
-	var genState gov.GenesisState
-	err := cdc.UnmarshalJSON(appState[gov.ModuleName], &genState)
+	var genState govtypes.GenesisState
+	err := cdc.UnmarshalJSON(appState[govtypes.ModuleName], &genState)
 	if err != nil {
 		return err
 	}
 
 	// Save the proposals
-	err = saveProposals(genState.Proposals, cp, db)
+	err = saveProposals(genState.Proposals, govClient, db)
 	if err != nil {
 		return err
 	}
@@ -35,7 +34,7 @@ func HandleGenesis(
 }
 
 // saveProposals save proposals from genesis file
-func saveProposals(p gov.Proposals, cp *client.Proxy, db *database.BigDipperDb) error {
+func saveProposals(p govtypes.Proposals, govClient govtypes.QueryClient, db *database.BigDipperDb) error {
 	proposals := make([]types.Proposal, len(p))
 	tallyResults := make([]types.TallyResult, len(p))
 	deposits := make([]types.Deposit, len(p))
@@ -44,10 +43,10 @@ func saveProposals(p gov.Proposals, cp *client.Proxy, db *database.BigDipperDb) 
 		// Since it's not possible to get the proposer, set it to nil
 		proposals[index] = types.NewProposal(
 			proposal.GetTitle(),
-			proposal.GetDescription(),
+			proposal.GetContent().GetDescription(),
 			proposal.ProposalRoute(),
 			proposal.ProposalType(),
-			proposal.ProposalID,
+			proposal.ProposalId,
 			proposal.Status,
 			proposal.SubmitTime,
 			proposal.DepositEndTime,
@@ -57,7 +56,7 @@ func saveProposals(p gov.Proposals, cp *client.Proxy, db *database.BigDipperDb) 
 		)
 
 		tallyResults[index] = types.NewTallyResult(
-			proposal.ProposalID,
+			proposal.ProposalId,
 			proposal.FinalTallyResult.Yes.Int64(),
 			proposal.FinalTallyResult.Abstain.Int64(),
 			proposal.FinalTallyResult.No.Int64(),
@@ -66,18 +65,17 @@ func saveProposals(p gov.Proposals, cp *client.Proxy, db *database.BigDipperDb) 
 		)
 
 		deposits[index] = types.NewDeposit(
-			proposal.ProposalID,
+			proposal.ProposalId,
 			"",
-			proposal.TotalDeposit,
 			proposal.TotalDeposit,
 			1,
 		)
 
 		// Update the proposal status when the voting period or deposit period ends
-		update := UpdateProposal(proposal.ProposalID, cp, db)
-		if proposal.Status.String() == "VotingPeriod" {
+		update := UpdateProposal(proposal.ProposalId, govClient, db)
+		if proposal.Status == govtypes.StatusVotingPeriod {
 			time.AfterFunc(time.Since(proposal.VotingEndTime), update)
-		} else if proposal.Status.String() == "DepositPeriod" {
+		} else if proposal.Status == govtypes.StatusDepositPeriod {
 			time.AfterFunc(time.Since(proposal.DepositEndTime), update)
 		}
 	}

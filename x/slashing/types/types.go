@@ -4,6 +4,7 @@ import (
 	"time"
 )
 
+// ValidatorSigningInfo contains the signing info of a validator at a given height
 type ValidatorSigningInfo struct {
 	ValidatorAddress    string
 	StartHeight         int64
