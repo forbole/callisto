@@ -117,22 +117,6 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposal() {
 	suite.Require().True(expect.Equals(proposalRow[0]))
 }
 
-func (suite *DbTestSuite) TestBigDipperDb_SaveTallyResult() {
-	suite.getProposalRow(1)
-
-	tally := types.NewTallyResult(1, 1, 1, 1, 1, 1)
-	err := suite.database.SaveTallyResult(tally)
-	suite.Require().NoError(err)
-
-	expected := dbtypes.NewTallyResultRow(1, 1, 1, 1, 1, 1)
-
-	var result []dbtypes.TallyResultRow
-	err = suite.database.Sqlx.Select(&result, `SELECT * FROM tally_result`)
-	suite.Require().NoError(err)
-	suite.Require().Len(result, 1)
-	suite.Require().True(expected.Equals(result[0]))
-}
-
 func (suite *DbTestSuite) TestBigDipperDb_SaveTallyResults() {
 	suite.getProposalRow(1)
 	suite.getProposalRow(2)
