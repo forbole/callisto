@@ -21,7 +21,7 @@ CREATE TABLE validator_commission_amount
 
 CREATE INDEX validator_commission_amount_height_index ON validator_commission_amount (height);
 
-CREATE TABLE delegation_amount
+CREATE TABLE delegation_reward
 (
     validator_address TEXT       NOT NULL REFERENCES validator (consensus_address),
     delegator_address TEXT       NOT NULL REFERENCES account (address),
@@ -30,4 +30,4 @@ CREATE TABLE delegation_amount
     UNIQUE (validator_address, delegator_address, height)
 );
 
-CREATE INDEX delegator_reward_amount_height_index ON delegation_amount (height);
+CREATE INDEX delegator_reward_amount_height_index ON delegation_reward (height);

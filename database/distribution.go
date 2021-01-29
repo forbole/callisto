@@ -36,7 +36,7 @@ func (db *BigDipperDb) SaveValidatorCommissionAmounts(amounts []bdistrtypes.Vali
 
 // SaveDelegatorsCommissionAmounts saves the given delegator commission amounts for the provided height
 func (db *BigDipperDb) SaveDelegatorsCommissionAmounts(amounts []bdistrtypes.DelegatorCommissionAmount, height int64) error {
-	stmt := `INSERT INTO delegation_amount(validator_address, delegator_address, amount, height) VALUES `
+	stmt := `INSERT INTO delegation_reward(validator_address, delegator_address, amount, height) VALUES `
 	var params []interface{}
 
 	for i, amount := range amounts {
