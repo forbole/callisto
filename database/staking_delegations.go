@@ -70,6 +70,22 @@ INSERT INTO delegation (validator_address, delegator_address, amount, shares, he
 	return err
 }
 
+// GetDelegatorsForHeight returns the delegators addresses for the given height
+func (db *BigDipperDb) GetDelegatorsForHeight(height int64) ([]string, error) {
+	var rows []dbtypes.DelegationRow
+	err := db.Sqlx.Select(&rows, `SELECT * FROM delegation WHERE height = $1`, height)
+	if err != nil {
+		return nil, err
+	}
+
+	var delegators = make([]string, len(rows))
+	for index, delegation := range rows {
+		delegators[index] = delegation.DelegatorAddress
+	}
+
+	return delegators, nil
+}
+
 // ________________________________________________
 
 // SaveUnbondingDelegations saves the given unbonding delegations into the database.

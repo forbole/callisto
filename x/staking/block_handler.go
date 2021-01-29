@@ -37,15 +37,9 @@ func HandleBlock(
 	// Update the voting powers
 	err = updateValidatorVotingPower(block.Block.Height, vals, db)
 	if err != nil {
-		return err
+		log.Error().Str("module", "staking").Int64("height", block.Block.Height).
+			Err(err).Msg("error while updating validators voting powers")
 	}
-
-	// Update the delegations
-	//err = updateValidatorsDelegations(block.Block.Height, stakingClient, db)
-	//if err != nil {
-	//	log.Error().Str("module", "staking").Int64("height", block.Block.Height).
-	//		Err(err).Msg("error while updating validators delegations")
-	//}
 
 	// Update the validators statuses
 	err = updateValidatorsStatus(cdc, block.Block.Height, stakingClient, db)

@@ -57,8 +57,8 @@ func (m *Module) HandleGenesis(*tmtypes.GenesisDoc, map[string]json.RawMessage) 
 }
 
 // HandleBlock implements modules.Module
-func (m *Module) HandleBlock(*tmctypes.ResultBlock, []*types.Tx, *tmctypes.ResultValidators) error {
-	return nil
+func (m *Module) HandleBlock(b *tmctypes.ResultBlock, _ []*types.Tx, vals *tmctypes.ResultValidators) error {
+	return HandleBlock(b, m.distrClient, m.db)
 }
 
 // HandleTx implements modules.Module
