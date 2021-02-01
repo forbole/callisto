@@ -124,7 +124,7 @@ func (suite *DbTestSuite) getBlock(height int64) *tmctypes.ResultBlock {
 		},
 	}
 
-	err = suite.database.SaveBlock(block, 10000, 100)
+	err = suite.database.SaveBlock(block, 10000)
 	suite.Require().NoError(err)
 	return block
 }
