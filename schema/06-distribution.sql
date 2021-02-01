@@ -30,4 +30,4 @@ CREATE TABLE delegation_reward
     UNIQUE (validator_address, delegator_address, height)
 );
 
-CREATE INDEX delegator_reward_amount_height_index ON delegation_reward (height);
+CREATE INDEX delegation_reward_height_index ON delegation_reward (height);

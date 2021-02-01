@@ -4,13 +4,13 @@ import (
 	"context"
 	"encoding/hex"
 
+	juno "github.com/desmos-labs/juno/types"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/forbole/bdjuno/x/utils"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-
-	jutils "github.com/desmos-labs/juno/db/utils"
 
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
@@ -65,7 +65,7 @@ func updateValidatorVotingPower(height int64, vals *tmctypes.ResultValidators, d
 
 	votingPowers := make([]types.ValidatorVotingPower, len(vals.Validators))
 	for index, validator := range vals.Validators {
-		consAddr := jutils.ConvertValidatorAddressToBech32String(validator.Address)
+		consAddr := juno.ConvertValidatorAddressToBech32String(validator.Address)
 		if found, _ := db.HasValidator(consAddr); !found {
 			continue
 		}
@@ -156,7 +156,7 @@ func updateDoubleSignEvidence(evidenceList tmtypes.EvidenceList, db *database.Bi
 				dve.VoteA.Height,
 				dve.VoteA.Round,
 				dve.VoteA.BlockID.String(),
-				jutils.ConvertValidatorAddressToBech32String(dve.VoteA.ValidatorAddress),
+				juno.ConvertValidatorAddressToBech32String(dve.VoteA.ValidatorAddress),
 				dve.VoteA.ValidatorIndex,
 				hex.EncodeToString(dve.VoteA.Signature),
 			),
@@ -165,7 +165,7 @@ func updateDoubleSignEvidence(evidenceList tmtypes.EvidenceList, db *database.Bi
 				dve.VoteB.Height,
 				dve.VoteB.Round,
 				dve.VoteB.BlockID.String(),
-				jutils.ConvertValidatorAddressToBech32String(dve.VoteB.ValidatorAddress),
+				juno.ConvertValidatorAddressToBech32String(dve.VoteB.ValidatorAddress),
 				dve.VoteB.ValidatorIndex,
 				hex.EncodeToString(dve.VoteB.Signature),
 			),
