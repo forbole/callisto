@@ -3,6 +3,8 @@ package slashing
 import (
 	"context"
 
+	"github.com/cosmos/cosmos-sdk/types/query"
+
 	"github.com/forbole/bdjuno/x/utils"
 
 	"github.com/rs/zerolog/log"
@@ -39,7 +41,11 @@ func updateSigningInfo(height int64, slashingClient slashingtypes.QueryClient, d
 
 	res, err := slashingClient.SigningInfos(
 		context.Background(),
-		&slashingtypes.QuerySigningInfosRequest{},
+		&slashingtypes.QuerySigningInfosRequest{
+			Pagination: &query.PageRequest{
+				Limit: 100000, // Query 1000000 validators
+			},
+		},
 		utils.GetHeightRequestHeader(height),
 	)
 	if err != nil {

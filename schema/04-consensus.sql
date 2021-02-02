@@ -1,3 +1,9 @@
+CREATE TABLE genesis
+(
+    chain_id TEXT      NOT NULL,
+    time     TIMESTAMP NOT NULL
+);
+
 CREATE TABLE consensus
 (
     height BIGINT NOT NULL,
@@ -31,8 +37,4 @@ CREATE TABLE average_block_time_from_genesis
     height       BIGINT  NOT NULL
 );
 
-CREATE TABLE genesis
-(
-    time TIMESTAMP NOT NULL
-);
 

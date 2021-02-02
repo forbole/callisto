@@ -3,6 +3,8 @@ package database_test
 import (
 	time "time"
 
+	tmtypes "github.com/tendermint/tendermint/types"
+
 	dbtypes "github.com/forbole/bdjuno/database/types"
 	constypes "github.com/forbole/bdjuno/x/consensus/types"
 )
@@ -146,32 +148,39 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimePerDay() {
 }
 
 func (suite *DbTestSuite) TestSaveConsensus_SaveGenesisTime() {
-	timestamp, err := time.Parse(time.RFC3339, "2020-01-01T15:00:00Z")
+	err := suite.database.SaveGenesisData(&tmtypes.GenesisDoc{
+		ChainID:     "testnet-1",
+		GenesisTime: time.Date(2020, 1, 02, 15, 00, 00, 000, time.UTC),
+	})
 	suite.Require().NoError(err)
 
-	timestampOld, err := time.Parse(time.RFC3339, "2020-01-02T15:00:00Z")
-	suite.Require().NoError(err)
+	// Should have only one row
+	err = suite.database.SaveGenesisData(&tmtypes.GenesisDoc{
+		ChainID:     "testnet-2",
+		GenesisTime: time.Date(2020, 1, 1, 15, 00, 00, 000, time.UTC),
+	})
 
-	err = suite.database.SaveGenesisTime(timestampOld)
-	suite.Require().NoError(err)
-
-	//should have only one row
-	err = suite.database.SaveGenesisTime(timestamp)
-	var rows []time.Time
+	var rows []*dbtypes.GenesisRow
 	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM genesis")
 	suite.Require().Len(rows, 1)
-	suite.Require().True(timestamp.Equal(rows[0]))
+	suite.Require().True(rows[0].Equal(dbtypes.NewGenesisRow(
+		"testnet-2",
+		time.Date(2020, 1, 1, 15, 00, 00, 000, time.UTC),
+	)))
 }
 
 func (suite *DbTestSuite) TestSaveConsensus_GetGenesisTime() {
-	timestamp, err := time.Parse(time.RFC3339, "2020-01-01T15:00:00Z")
-	suite.Require().NoError(err)
+	_, err := suite.database.Sqlx.Exec(
+		`INSERT INTO genesis(chain_id, time) VALUES ($1, $2)`,
+		"testnet-1",
+		time.Date(2020, 1, 1, 15, 00, 00, 000, time.UTC),
+	)
 
-	_, err = suite.database.Sqlx.Exec(`INSERT INTO genesis(time) VALUES ($1)`, timestamp)
-
-	rows, err := suite.database.GetGenesisTime()
+	genTime, err := suite.database.GetGenesisTime()
 	suite.Require().NoError(err)
-	suite.Require().True(timestamp.Equal(rows))
+	suite.Require().True(genTime.Equal(
+		time.Date(2020, 1, 1, 15, 00, 00, 000, time.UTC),
+	))
 }
 
 func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimeGenesis() {

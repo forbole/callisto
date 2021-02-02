@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	tmtypes "github.com/tendermint/tendermint/types"
+
 	dbtypes "github.com/forbole/bdjuno/database/types"
 	constypes "github.com/forbole/bdjuno/x/consensus/types"
 )
@@ -110,26 +112,25 @@ func (db *BigDipperDb) SaveAverageBlockTimePerDay(averageTime float64, height in
 }
 
 // SaveGenesisHeight save the genesis height
-func (db *BigDipperDb) SaveGenesisTime(genesisTime time.Time) error {
+func (db *BigDipperDb) SaveGenesisData(genesis *tmtypes.GenesisDoc) error {
 	stmt := `DELETE FROM genesis WHERE TRUE`
 	_, err := db.Sqlx.Exec(stmt)
 	if err != nil {
 		return err
 	}
-	stmt = `INSERT INTO genesis(time) values ($1)`
-	_, err = db.Sqlx.Exec(stmt, genesisTime)
+	stmt = `INSERT INTO genesis(time, chain_id) values ($1, $2)`
+	_, err = db.Sqlx.Exec(stmt, genesis.GenesisTime, genesis.ChainID)
 	return err
 }
 
 // GetGenesisTime get genesis time of chain (only work if x/consensus enabled)
 func (db *BigDipperDb) GetGenesisTime() (time.Time, error) {
-	stmt := `SELECT * FROM genesis;`
-	var val []time.Time
-	err := db.Sqlx.Select(&val, stmt)
-	if err != nil || len(val) == 0 {
+	var rows []*dbtypes.GenesisRow
+	err := db.Sqlx.Select(&rows, `SELECT * FROM genesis;`)
+	if err != nil || len(rows) == 0 {
 		return time.Time{}, err
 	}
-	return val[0], nil
+	return rows[0].Time, nil
 }
 
 // SaveAverageBlockTimeGenesis save the average block time in average_block_time_from_genesis table

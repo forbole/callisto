@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/hex"
 
+	"github.com/cosmos/cosmos-sdk/types/query"
+
 	juno "github.com/desmos-labs/juno/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -105,7 +107,12 @@ func updateValidatorsStatus(
 
 	res, err := stakingClient.Validators(
 		context.Background(),
-		&stakingtypes.QueryValidatorsRequest{},
+		&stakingtypes.QueryValidatorsRequest{
+			Status: "", // Query all the statues
+			Pagination: &query.PageRequest{
+				Limit: 10000, // Query 10.000 validators at time
+			},
+		},
 		utils.GetHeightRequestHeader(height),
 	)
 	if err != nil {

@@ -4,6 +4,25 @@ import (
 	"time"
 )
 
+type GenesisRow struct {
+	ChainID string    `db:"chain_id"`
+	Time    time.Time `db:"time"`
+}
+
+func NewGenesisRow(chainID string, time time.Time) GenesisRow {
+	return GenesisRow{
+		ChainID: chainID,
+		Time:    time,
+	}
+}
+
+func (r GenesisRow) Equal(s GenesisRow) bool {
+	return r.Time.Equal(s.Time) &&
+		r.ChainID == s.ChainID
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
 // ConsensusRow represents a single row inside the consensus table
 type ConsensusRow struct {
 	Height int64  `db:"height"`
@@ -36,6 +55,8 @@ func (r BlockTimeRow) Equal(s BlockTimeRow) bool {
 	return r.AverageTime == s.AverageTime &&
 		r.Height == s.Height
 }
+
+// -------------------------------------------------------------------------------------------------------------------
 
 //Container to return block needed in certain height
 type BlockRow struct {

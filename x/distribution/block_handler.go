@@ -41,6 +41,11 @@ func updateValidatorsCommissionAmounts(height int64, client distrtypes.QueryClie
 		return err
 	}
 
+	if len(validators) == 0 {
+		// No validators, just skip
+		return nil
+	}
+
 	heightHeader := utils.GetHeightRequestHeader(height)
 
 	// Get all the commissions

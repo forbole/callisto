@@ -13,7 +13,7 @@ func HandleGenesis(genesisDoc *tmtypes.GenesisDoc, db *database.BigDipperDb) err
 	log.Debug().Str("module", "consensus").Msg("parsing genesis")
 
 	// Save the genesis time
-	err := db.SaveGenesisTime(genesisDoc.GenesisTime)
+	err := db.SaveGenesisData(genesisDoc)
 	if err != nil {
 		return fmt.Errorf("error while storing genesis time: %s", err)
 	}
