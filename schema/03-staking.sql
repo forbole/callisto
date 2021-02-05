@@ -8,10 +8,9 @@ CREATE TABLE staking_params
 
 CREATE TABLE staking_pool
 (
+    height            BIGINT NOT NULL UNIQUE PRIMARY KEY ,
     bonded_tokens     BIGINT NOT NULL,
-    not_bonded_tokens BIGINT NOT NULL,
-    height            BIGINT NOT NULL,
-    PRIMARY KEY (height)
+    not_bonded_tokens BIGINT NOT NULL
 );
 
 /* ---- VALIDATORS INFO ---- */

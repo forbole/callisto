@@ -203,25 +203,25 @@ func (v ValidatorStatus) Equals(w ValidatorStatus) bool {
 
 // DoubleSignEvidence represent a double sign evidence on each tendermint block
 type DoubleSignEvidence struct {
-	VoteA DoubleSignVote
-	VoteB DoubleSignVote
+	VoteA  DoubleSignVote
+	VoteB  DoubleSignVote
+	Height int64
 }
 
 // NewDoubleSignEvidence return a new DoubleSignEvidence object
-func NewDoubleSignEvidence(
-	voteA DoubleSignVote,
-	voteB DoubleSignVote,
-) DoubleSignEvidence {
+func NewDoubleSignEvidence(height int64, voteA DoubleSignVote, voteB DoubleSignVote) DoubleSignEvidence {
 	return DoubleSignEvidence{
-		VoteA: voteA,
-		VoteB: voteB,
+		VoteA:  voteA,
+		VoteB:  voteB,
+		Height: height,
 	}
 }
 
 // Equals tells whether v and w contain the same data
 func (w DoubleSignEvidence) Equals(v DoubleSignEvidence) bool {
 	return w.VoteA.Equals(v.VoteA) &&
-		w.VoteB.Equals(v.VoteB)
+		w.VoteB.Equals(v.VoteB) &&
+		w.Height == v.Height
 }
 
 // DoubleSignVote represents a double vote which is included inside a DoubleSignEvidence

@@ -3,8 +3,8 @@ package main
 import (
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/desmos-labs/juno/cmd"
-	"github.com/desmos-labs/juno/config"
 	"github.com/desmos-labs/juno/modules/messages"
+	juno "github.com/desmos-labs/juno/types"
 
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x"
@@ -17,7 +17,7 @@ func main() {
 		x.NewModulesRegistrar(
 			messages.CosmosMessageAddressesParser,
 		),
-		config.DefaultSetup,
+		juno.DefaultSetup,
 		simapp.MakeTestEncodingConfig,
 		database.Builder,
 	)

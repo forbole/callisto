@@ -22,12 +22,7 @@ type BigDipperDb struct {
 
 // Builder allows to create a new BigDipperDb instance implementing the database.Builder type
 func Builder(cfg *config.Config, codec *params.EncodingConfig) (db.Database, error) {
-	psqlConfig, ok := cfg.DatabaseConfig.Config.(*config.PostgreSQLConfig)
-	if !ok {
-		return nil, fmt.Errorf("MongoDB configuration is not supported on BigDipper")
-	}
-
-	database, err := postgresql.Builder(psqlConfig, codec)
+	database, err := postgresql.Builder(cfg.Database, codec)
 	if err != nil {
 		return nil, err
 	}

@@ -3,6 +3,8 @@ package utils
 import (
 	"context"
 
+	"github.com/cosmos/cosmos-sdk/types/query"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 
@@ -14,6 +16,14 @@ import (
 	"github.com/forbole/bdjuno/x/staking/types"
 )
 
+// GetValidatorConsPubKey returns the consensus public key of the given validator
+func GetValidatorConsPubKey(cdc codec.Marshaler, validator stakingtypes.Validator) (cryptotypes.PubKey, error) {
+	var pubKey cryptotypes.PubKey
+	err := cdc.UnpackAny(validator.ConsensusPubkey, &pubKey)
+	return pubKey, err
+}
+
+// GetValidatorConsAddr returns the consensus address of the given validator
 func GetValidatorConsAddr(cdc codec.Marshaler, validator stakingtypes.Validator) (sdk.ConsAddress, error) {
 	pubKey, err := GetValidatorConsPubKey(cdc, validator)
 	if err != nil {
@@ -23,35 +33,77 @@ func GetValidatorConsAddr(cdc codec.Marshaler, validator stakingtypes.Validator)
 	return sdk.ConsAddress(pubKey.Address()), err
 }
 
-func GetValidatorConsPubKey(cdc codec.Marshaler, validator stakingtypes.Validator) (cryptotypes.PubKey, error) {
-	var pubKey cryptotypes.PubKey
-	err := cdc.UnpackAny(validator.ConsensusPubkey, &pubKey)
-	return pubKey, err
+// GetValidators returns the validators list at the given height
+func GetValidators(height int64, client stakingtypes.QueryClient) ([]stakingtypes.Validator, error) {
+	header := utils.GetHeightRequestHeader(height)
+
+	var validators []stakingtypes.Validator
+	var nextKey []byte
+	var stop = false
+	for !stop {
+		res, err := client.Validators(
+			context.Background(),
+			&stakingtypes.QueryValidatorsRequest{
+				Status: "", // Query all the statues
+				Pagination: &query.PageRequest{
+					Key:   nextKey,
+					Limit: 100, // Query 100 validators at time
+				},
+			},
+			header,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		nextKey = res.Pagination.NextKey
+		stop = len(res.Pagination.NextKey) == 0
+		validators = append(validators, res.Validators...)
+	}
+
+	return validators, nil
 }
 
 // GetDelegations returns the list of all the delegations that the validator having the given address has
 // at the given block height (having the given timestamp)
 func GetDelegations(
-	validatorAddress string, height int64, stakingClient stakingtypes.QueryClient,
+	validatorAddress string, height int64, client stakingtypes.QueryClient,
 ) ([]types.Delegation, error) {
-	res, err := stakingClient.ValidatorDelegations(
-		context.Background(),
-		&stakingtypes.QueryValidatorDelegationsRequest{ValidatorAddr: validatorAddress},
-		utils.GetHeightRequestHeader(height),
-	)
-	if err != nil {
-		return nil, err
+	header := utils.GetHeightRequestHeader(height)
+
+	var responses []stakingtypes.DelegationResponse
+	var nextKey []byte
+	var stop = false
+	for !stop {
+		res, err := client.ValidatorDelegations(
+			context.Background(),
+			&stakingtypes.QueryValidatorDelegationsRequest{
+				ValidatorAddr: validatorAddress,
+				Pagination: &query.PageRequest{
+					Key:   nextKey,
+					Limit: 100, // Query 100 delegations at time
+				},
+			},
+			header,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		responses = append(responses, res.DelegationResponses...)
+		nextKey = res.Pagination.NextKey
+		stop = len(res.Pagination.NextKey) == 0
 	}
 
-	delegations := make([]types.Delegation, len(res.DelegationResponses))
-	for index, delegation := range res.DelegationResponses {
-		delegations[index] = types.NewDelegation(
+	var delegations = make([]types.Delegation, len(responses))
+	for _, delegation := range responses {
+		delegations = append(delegations, types.NewDelegation(
 			delegation.Delegation.DelegatorAddress,
 			delegation.Delegation.ValidatorAddress,
 			delegation.Balance,
 			delegation.Delegation.Shares.String(),
 			height,
-		)
+		))
 	}
 
 	return delegations, nil
@@ -60,19 +112,36 @@ func GetDelegations(
 // GetUnbondingDelegations returns the list of all the unbonding delegations that the validator having the
 // given address has at the given block height (having the given timestamp).
 func GetUnbondingDelegations(
-	validatorAddress string, bondDenom string, height int64, stakingClient stakingtypes.QueryClient,
+	validatorAddress string, bondDenom string, height int64, client stakingtypes.QueryClient,
 ) ([]types.UnbondingDelegation, error) {
-	res, err := stakingClient.ValidatorUnbondingDelegations(
-		context.Background(),
-		&stakingtypes.QueryValidatorUnbondingDelegationsRequest{ValidatorAddr: validatorAddress},
-		utils.GetHeightRequestHeader(height),
-	)
-	if err != nil {
-		return nil, err
+	header := utils.GetHeightRequestHeader(height)
+
+	var responses []stakingtypes.UnbondingDelegation
+	var nextKey []byte
+	var stop = false
+	for !stop {
+		res, err := client.ValidatorUnbondingDelegations(
+			context.Background(),
+			&stakingtypes.QueryValidatorUnbondingDelegationsRequest{
+				ValidatorAddr: validatorAddress,
+				Pagination: &query.PageRequest{
+					Key:   nextKey,
+					Limit: 100, // Query 100 unbonding delegations at a time
+				},
+			},
+			header,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		responses = append(responses, res.UnbondingResponses...)
+		nextKey = res.Pagination.NextKey
+		stop = len(res.Pagination.NextKey) == 0
 	}
 
 	var unbondingDelegations []types.UnbondingDelegation
-	for _, delegation := range res.UnbondingResponses {
+	for _, delegation := range responses {
 		for _, entry := range delegation.Entries {
 			unbondingDelegations = append(unbondingDelegations, types.NewUnbondingDelegation(
 				delegation.DelegatorAddress,

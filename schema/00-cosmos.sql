@@ -11,7 +11,8 @@ CREATE TABLE pre_commit
     height            BIGINT                      NOT NULL,
     timestamp         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     voting_power      BIGINT                      NOT NULL,
-    proposer_priority INTEGER                     NOT NULL
+    proposer_priority INTEGER                     NOT NULL,
+    UNIQUE (validator_address, height)
 );
 
 CREATE INDEX pre_commit_validator_address_index ON pre_commit (validator_address);
