@@ -34,13 +34,6 @@ INSERT INTO delegation (validator_address, delegator_address, amount, shares, he
 			return err
 		}
 
-		// Remove the current delegations for the validator
-		_, err = db.Sql.Exec(`DELETE  FROM delegation WHERE validator_address = $1`,
-			validator.GetConsAddr())
-		if err != nil {
-			return err
-		}
-
 		// Convert the amount
 		coin := dbtypes.NewDbCoin(delegation.Amount)
 		value, err := coin.Value()
@@ -118,13 +111,6 @@ VALUES `
 			return err
 		}
 
-		// Delete the current unbonding delegations for the validator
-		_, err = db.Sql.Exec(`DELETE FROM unbonding_delegation WHERE validator_address = $1`,
-			validator.GetConsAddr())
-		if err != nil {
-			return err
-		}
-
 		coin := dbtypes.NewDbCoin(delegation.Amount)
 		amount, err := coin.Value()
 		if err != nil {
@@ -187,13 +173,6 @@ VALUES `
 		}
 
 		dstVal, err := db.GetValidator(redelegation.DstValidator)
-		if err != nil {
-			return err
-		}
-
-		// Delete the current redelegations
-		_, err = db.Sql.Exec(`DELETE FROM redelegation WHERE src_validator_address = $1 AND dst_validator_address = $2`,
-			srcVal.GetConsAddr(), dstVal.GetConsAddr())
 		if err != nil {
 			return err
 		}

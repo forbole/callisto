@@ -93,8 +93,13 @@ func updateDelegatorsCommissionsAmounts(height int64, client distrtypes.QueryCli
 		}
 
 		for _, reward := range res.Rewards {
+			consAddr, err := db.GetValidatorConsensusAddress(reward.ValidatorAddress)
+			if err != nil {
+				return err
+			}
+
 			rewards = append(rewards, bdistrtypes.NewDelegatorCommissionAmount(
-				reward.ValidatorAddress,
+				consAddr.String(),
 				delegator,
 				reward.Reward,
 			))
@@ -102,5 +107,5 @@ func updateDelegatorsCommissionsAmounts(height int64, client distrtypes.QueryCli
 	}
 
 	// Save the rewards
-	return db.SaveDelegatorsCommissionAmounts(rewards, height)
+	return db.SaveDelegatorsRewardsAmounts(rewards, height)
 }

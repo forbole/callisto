@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"fmt"
-	"strconv"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -30,14 +29,14 @@ func ToNullString(value string) sql.NullString {
 // DbCoin represents the information stored inside the database about a single coin
 type DbCoin struct {
 	Denom  string
-	Amount int64
+	Amount string
 }
 
 // NewCoin builds a DbCoin starting from an SDK Coin
 func NewDbCoin(coin sdk.Coin) DbCoin {
 	return DbCoin{
 		Denom:  coin.Denom,
-		Amount: coin.Amount.Int64(),
+		Amount: coin.Amount.String(),
 	}
 }
 
@@ -48,7 +47,7 @@ func (coin DbCoin) Equal(d DbCoin) bool {
 
 // Value implements driver.Valuer
 func (coin *DbCoin) Value() (driver.Value, error) {
-	return fmt.Sprintf("(%s,%d)", coin.Denom, coin.Amount), nil
+	return fmt.Sprintf("(%s,%s)", coin.Denom, coin.Amount), nil
 }
 
 // Scan implements sql.Scanner
@@ -62,12 +61,7 @@ func (coin *DbCoin) Scan(src interface{}) error {
 
 	values := strings.Split(strValue, ",")
 
-	amt, err := strconv.ParseInt(values[1], 10, 64)
-	if err != nil {
-		return err
-	}
-
-	*coin = DbCoin{Denom: values[0], Amount: amt}
+	*coin = DbCoin{Denom: values[0], Amount: values[1]}
 	return nil
 }
 
@@ -80,7 +74,7 @@ type DbCoins []*DbCoin
 func NewDbCoins(coins sdk.Coins) DbCoins {
 	dbCoins := make([]*DbCoin, 0)
 	for _, coin := range coins {
-		dbCoins = append(dbCoins, &DbCoin{Amount: coin.Amount.Int64(), Denom: coin.Denom})
+		dbCoins = append(dbCoins, &DbCoin{Amount: coin.Amount.String(), Denom: coin.Denom})
 	}
 	return dbCoins
 }
@@ -120,12 +114,7 @@ func (coins *DbCoins) Scan(src interface{}) error {
 	for index, value := range values {
 		v := strings.Split(value, ",") // Split the values
 
-		am, err := strconv.ParseInt(v[1], 10, 64) // Get the value
-		if err != nil {
-			return err
-		}
-
-		coin := DbCoin{Denom: v[0], Amount: am}
+		coin := DbCoin{Denom: v[0], Amount: v[1]}
 		coinsV[index] = &coin
 	}
 

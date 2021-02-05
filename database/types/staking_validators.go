@@ -447,16 +447,15 @@ func (v DoubleSignVoteRow) Equal(w DoubleSignVoteRow) bool {
 
 // DoubleSignEvidenceRow represents a single row of the double_sign_evidence table
 type DoubleSignEvidenceRow struct {
+	Height  int64 `db:"height"`
 	VoteAID int64 `db:"vote_a_id"`
 	VoteBID int64 `db:"vote_b_id"`
 }
 
 // NewDoubleSignEvidenceRow allows to build a new NewDoubleSignEvidenceRow
-func NewDoubleSignEvidenceRow(
-	voteAID int64,
-	voteBID int64,
-) DoubleSignEvidenceRow {
+func NewDoubleSignEvidenceRow(height int64, voteAID int64, voteBID int64) DoubleSignEvidenceRow {
 	return DoubleSignEvidenceRow{
+		Height:  height,
 		VoteAID: voteAID,
 		VoteBID: voteBID,
 	}
@@ -465,5 +464,6 @@ func NewDoubleSignEvidenceRow(
 // Equal tells whether v and w represent the same rows
 func (v DoubleSignEvidenceRow) Equal(w DoubleSignEvidenceRow) bool {
 	return v.VoteAID == w.VoteAID &&
-		v.VoteBID == w.VoteBID
+		v.VoteBID == w.VoteBID &&
+		v.Height == w.Height
 }

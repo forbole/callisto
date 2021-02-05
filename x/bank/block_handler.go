@@ -3,6 +3,8 @@ package bank
 import (
 	"context"
 
+	"github.com/rs/zerolog/log"
+
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
@@ -13,7 +15,8 @@ import (
 func HandleBlock(block *tmctypes.ResultBlock, bankClient banktypes.QueryClient, db *database.BigDipperDb) error {
 	err := updateSupply(block.Block.Height, bankClient, db)
 	if err != nil {
-		return err
+		log.Error().Str("module", "bank").Int64("height", block.Block.Height).
+			Err(err).Msg("error while updating supply")
 	}
 
 	return nil

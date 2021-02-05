@@ -9,7 +9,6 @@ CREATE TABLE validator_signing_info
     height                BIGINT                      NOT NULL REFERENCES block (height),
     UNIQUE (validator_address, height)
 );
-
 CREATE INDEX validator_signing_info_validator_address_index ON validator_signing_info (validator_address);
 
 CREATE TABLE slashing_params
@@ -21,5 +20,4 @@ CREATE TABLE slashing_params
     slash_fraction_downtime    DECIMAL NOT NULL,
     height                     BIGINT  NOT NULL REFERENCES block (height)
 );
-
 CREATE INDEX slashing_params_height_index ON slashing_params (height);

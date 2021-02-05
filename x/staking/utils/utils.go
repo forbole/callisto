@@ -96,14 +96,14 @@ func GetDelegations(
 	}
 
 	var delegations = make([]types.Delegation, len(responses))
-	for _, delegation := range responses {
-		delegations = append(delegations, types.NewDelegation(
+	for index, delegation := range responses {
+		delegations[index] = types.NewDelegation(
 			delegation.Delegation.DelegatorAddress,
 			delegation.Delegation.ValidatorAddress,
 			delegation.Balance,
 			delegation.Delegation.Shares.String(),
 			height,
-		))
+		)
 	}
 
 	return delegations, nil

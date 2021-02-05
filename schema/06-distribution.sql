@@ -1,7 +1,7 @@
 CREATE TYPE DEC_COIN AS
 (
     denom  TEXT,
-    amount NUMERIC
+    amount TEXT
 );
 
 CREATE TABLE community_pool

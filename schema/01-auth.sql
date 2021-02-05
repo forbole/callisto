@@ -1,7 +1,7 @@
 CREATE TYPE COIN AS
 (
     denom  TEXT,
-    amount BIGINT
+    amount TEXT
 );
 
 CREATE TABLE account
