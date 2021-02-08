@@ -1,8 +1,6 @@
 package database_test
 
 import (
-	"fmt"
-
 	tmtypes "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -56,14 +54,12 @@ func (suite *DbTestSuite) TestSaveValidator() {
 	var valInfoRows []dbtypes.ValidatorInfoRow
 	err = suite.database.Sqlx.Select(&valInfoRows, `SELECT * FROM validator_info`)
 	suite.Require().Len(valInfoRows, 1)
-	fmt.Print(valInfoRows[0])
 	suite.Require().True(valInfoRows[0].Equal(dbtypes.NewValidatorInfoRow(
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
 		"cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs",
 		expectedMaxChangeRate.String(), expectedMaxRate.String(),
 	)))
-
 }
 
 func (suite *DbTestSuite) TestSaveValidators() {

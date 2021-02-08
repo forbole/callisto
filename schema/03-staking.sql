@@ -158,10 +158,10 @@ CREATE TABLE double_sign_vote
     signature         TEXT     NOT NULL,
     UNIQUE (block_id, validator_address)
 );
-CREATE INDEX double_sign_vote_height_index ON double_sign_evidence (height);
+CREATE INDEX double_sign_vote_height_index ON double_sign_vote (height);
 
 /*
- * This holds the HISTORICAL double_sign_evidence.
+ * This holds the double sign evidences.
  * It should be updated on a on BLOCK basis.
  */
 CREATE TABLE double_sign_evidence
@@ -170,3 +170,4 @@ CREATE TABLE double_sign_evidence
     vote_a_id BIGINT NOT NULL REFERENCES double_sign_vote (id),
     vote_b_id BIGINT NOT NULL REFERENCES double_sign_vote (id)
 );
+CREATE INDEX double_sign_evidence_height_index ON double_sign_evidence (height);
