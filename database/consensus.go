@@ -66,21 +66,21 @@ func (db *BigDipperDb) getBlockHeightTime(pastTime time.Time) (dbtypes.BlockRow,
 }
 
 // GetBlockHeightTimeMinuteAgo return block height and time that a block proposals
-// about a minute ago from imput date
+// about a minute ago from input date
 func (db *BigDipperDb) GetBlockHeightTimeMinuteAgo(now time.Time) (dbtypes.BlockRow, error) {
 	pastTime := now.Add(time.Minute * -1)
 	return db.getBlockHeightTime(pastTime)
 }
 
 // GetBlockHeightTimeHourAgo return block height and time that a block proposals
-// about a hour ago from imput date
+// about a hour ago from input date
 func (db *BigDipperDb) GetBlockHeightTimeHourAgo(now time.Time) (dbtypes.BlockRow, error) {
 	pastTime := now.Add(time.Hour * -1)
 	return db.getBlockHeightTime(pastTime)
 }
 
 // GetBlockHeightTimeDayAgo return block height and time that a block proposals
-// about a day (24hour) ago from imput date
+// about a day (24hour) ago from input date
 func (db *BigDipperDb) GetBlockHeightTimeDayAgo(now time.Time) (dbtypes.BlockRow, error) {
 	pastTime := now.Add(time.Hour * -24)
 	return db.getBlockHeightTime(pastTime)
