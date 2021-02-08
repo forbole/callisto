@@ -7,7 +7,7 @@ import (
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	bstakingutils "github.com/forbole/bdjuno/x/staking/utils"
+	bstakingutils "github.com/forbole/bdjuno/x/staking/common"
 
 	"github.com/forbole/bdjuno/x/staking/types"
 

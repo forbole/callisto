@@ -5,8 +5,6 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 
-	"github.com/rs/zerolog/log"
-
 	"github.com/desmos-labs/juno/config"
 	"github.com/desmos-labs/juno/db"
 	"github.com/desmos-labs/juno/db/postgresql"
@@ -42,7 +40,7 @@ func Builder(cfg *config.Config, codec *params.EncodingConfig) (db.Database, err
 func Cast(db db.Database) *BigDipperDb {
 	bdDatabase, ok := db.(*BigDipperDb)
 	if !ok {
-		log.Fatal().Str("module", "supply").Msg("given database instance is not a BigDipperDb")
+		panic(fmt.Errorf("given database instance is not a BigDipperDb"))
 	}
 	return bdDatabase
 }

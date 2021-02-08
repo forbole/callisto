@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	bstakingutils "github.com/forbole/bdjuno/x/staking/utils"
+	bstakingutils "github.com/forbole/bdjuno/x/staking/common"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 

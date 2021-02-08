@@ -5,6 +5,8 @@ import (
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
 
+	"github.com/forbole/bdjuno/x/distribution/common"
+
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/utils"
 )
@@ -33,5 +35,5 @@ func getLatestCommunityPool(distrClient distrtypes.QueryClient, db *database.Big
 		return err
 	}
 
-	return updateCommunityPool(height, distrClient, db)
+	return common.UpdateCommunityPool(height, distrClient, db)
 }

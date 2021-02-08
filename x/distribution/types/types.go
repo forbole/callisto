@@ -16,16 +16,16 @@ func NewValidatorCommissionAmount(address string, amount sdk.DecCoins) Validator
 	}
 }
 
-// DelegatorCommissionAmount contains the data of a delegator commission amount
-type DelegatorCommissionAmount struct {
+// DelegatorRewardAmount contains the data of a delegator commission amount
+type DelegatorRewardAmount struct {
 	ValidatorAddress string
 	DelegatorAddress string
 	Amount           []sdk.DecCoin
 }
 
-// NewDelegatorCommissionAmount allows to build a new DelegatorCommissionAmount instance
-func NewDelegatorCommissionAmount(validator, delegator string, amount sdk.DecCoins) DelegatorCommissionAmount {
-	return DelegatorCommissionAmount{
+// NewDelegatorRewardAmount allows to build a new DelegatorRewardAmount instance
+func NewDelegatorRewardAmount(validator, delegator string, amount sdk.DecCoins) DelegatorRewardAmount {
+	return DelegatorRewardAmount{
 		ValidatorAddress: validator,
 		DelegatorAddress: delegator,
 		Amount:           amount,

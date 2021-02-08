@@ -4,10 +4,9 @@ import (
 	"context"
 	"encoding/hex"
 
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	juno "github.com/desmos-labs/juno/types"
-
-	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/forbole/bdjuno/x/utils"
 
@@ -18,8 +17,8 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 
 	"github.com/forbole/bdjuno/database"
+	"github.com/forbole/bdjuno/x/staking/common"
 	"github.com/forbole/bdjuno/x/staking/types"
-	stakingutils "github.com/forbole/bdjuno/x/staking/utils"
 )
 
 // HandleBlock represents a method that is called each time a new block is created
@@ -35,14 +34,14 @@ func HandleBlock(
 	}
 
 	// Update the delegations
-	err = updateValidatorDelegations(block.Block.Height, validators, stakingClient, db)
+	err = common.UpdateValidatorDelegations(block.Block.Height, validators, stakingClient, db)
 	if err != nil {
 		log.Error().Str("module", "staking").Int64("height", block.Block.Height).
 			Err(err).Msg("error while updating validators delegations")
 	}
 
 	// Update the unbonding delegations
-	err = updateValidatorUnbondingDelegations(block.Block.Height, validators, stakingClient, db)
+	err = common.UpdateValidatorUnbondingDelegations(block.Block.Height, validators, stakingClient, db)
 	if err != nil {
 		log.Error().Str("module", "staking").Int64("height", block.Block.Height).
 			Err(err).Msg("error while updating validators unbonding delegations")
@@ -83,19 +82,19 @@ func HandleBlock(
 func updateValidators(
 	height int64, client stakingtypes.QueryClient, cdc codec.Marshaler, db *database.BigDipperDb,
 ) ([]stakingtypes.Validator, error) {
-	validators, err := stakingutils.GetValidators(height, client)
+	validators, err := common.GetValidators(height, client)
 	if err != nil {
 		return nil, err
 	}
 
 	var vals = make([]types.Validator, len(validators))
 	for index, val := range validators {
-		consAddr, err := stakingutils.GetValidatorConsAddr(cdc, val)
+		consAddr, err := common.GetValidatorConsAddr(cdc, val)
 		if err != nil {
 			return nil, err
 		}
 
-		consPubKey, err := stakingutils.GetValidatorConsPubKey(cdc, val)
+		consPubKey, err := common.GetValidatorConsPubKey(cdc, val)
 		if err != nil {
 			return nil, err
 		}
@@ -118,69 +117,6 @@ func updateValidators(
 	return validators, err
 }
 
-// updateValidatorDelegations updates the delegations for all the given validators at the provided height
-func updateValidatorDelegations(
-	height int64, validators []stakingtypes.Validator, client stakingtypes.QueryClient, db *database.BigDipperDb,
-) error {
-	log.Debug().Str("module", "staking").Int64("height", height).
-		Msg("updating validators delegations")
-
-	var delegations []types.Delegation
-	for _, val := range validators {
-		dels, err := stakingutils.GetDelegations(val.OperatorAddress, height, client)
-		if err != nil {
-			return err
-		}
-
-		delegations = append(delegations, dels...)
-	}
-
-	return db.SaveDelegations(delegations)
-}
-
-// updateValidatorUnbondingDelegations
-func updateValidatorUnbondingDelegations(
-	height int64, validators []stakingtypes.Validator, client stakingtypes.QueryClient, db *database.BigDipperDb,
-) error {
-	log.Debug().Str("module", "staking").Int64("height", height).
-		Msg("updating validators unbonding delegations")
-
-	params, err := db.GetStakingParams()
-	if err != nil {
-		return err
-	}
-
-	var delegations []types.UnbondingDelegation
-	for _, val := range validators {
-		dels, err := stakingutils.GetUnbondingDelegations(val.OperatorAddress, params.BondName, height, client)
-		if err != nil {
-			return err
-		}
-
-		delegations = append(delegations, dels...)
-	}
-
-	return db.SaveUnbondingDelegations(delegations)
-}
-
-// updateValidatorVotingPower fetches and stores into the database all the current validators' voting powers
-func updateValidatorVotingPower(height int64, vals *tmctypes.ResultValidators, db *database.BigDipperDb) error {
-	log.Debug().Str("module", "staking").Int64("height", height).
-		Msg("updating validators voting powers")
-
-	votingPowers := make([]types.ValidatorVotingPower, len(vals.Validators))
-	for index, validator := range vals.Validators {
-		consAddr := juno.ConvertValidatorAddressToBech32String(validator.Address)
-		if found, _ := db.HasValidator(consAddr); !found {
-			continue
-		}
-
-		votingPowers[index] = types.NewValidatorVotingPower(consAddr, validator.VotingPower, height)
-	}
-
-	return db.SaveValidatorsVotingPowers(votingPowers)
-}
-
 // updateValidatorsStatus updates all validators' statuses
 func updateValidatorsStatus(
 	height int64, validators []stakingtypes.Validator, cdc codec.Marshaler, db *database.BigDipperDb,
@@ -189,12 +125,12 @@ func updateValidatorsStatus(
 
 	statuses := make([]types.ValidatorStatus, len(validators))
 	for index, validator := range validators {
-		consAddr, err := stakingutils.GetValidatorConsAddr(cdc, validator)
+		consAddr, err := common.GetValidatorConsAddr(cdc, validator)
 		if err != nil {
 			return err
 		}
 
-		consPubKey, err := stakingutils.GetValidatorConsPubKey(cdc, validator)
+		consPubKey, err := common.GetValidatorConsPubKey(cdc, validator)
 		if err != nil {
 			return err
 		}
@@ -209,6 +145,26 @@ func updateValidatorsStatus(
 	}
 
 	return db.SaveValidatorsStatuses(statuses)
+}
+
+// updateValidatorVotingPower fetches and stores into the database all the current validators' voting powers
+func updateValidatorVotingPower(
+	height int64, vals *tmctypes.ResultValidators, db *database.BigDipperDb,
+) error {
+	log.Debug().Str("module", "staking").Int64("height", height).
+		Msg("updating validators voting powers")
+
+	votingPowers := make([]types.ValidatorVotingPower, len(vals.Validators))
+	for index, validator := range vals.Validators {
+		consAddr := juno.ConvertValidatorAddressToBech32String(validator.Address)
+		if found, _ := db.HasValidator(consAddr); !found {
+			continue
+		}
+
+		votingPowers[index] = types.NewValidatorVotingPower(consAddr, validator.VotingPower, height)
+	}
+
+	return db.SaveValidatorsVotingPowers(votingPowers)
 }
 
 // updateDoubleSignEvidence updates the double sign evidence of all validators
