@@ -34,17 +34,24 @@ func HandleBlock(
 	}
 
 	// Update the delegations
-	err = common.UpdateValidatorDelegations(block.Block.Height, validators, stakingClient, db)
+	err = common.UpdateValidatorsDelegations(block.Block.Height, validators, stakingClient, db)
 	if err != nil {
 		log.Error().Str("module", "staking").Int64("height", block.Block.Height).
 			Err(err).Msg("error while updating validators delegations")
 	}
 
 	// Update the unbonding delegations
-	err = common.UpdateValidatorUnbondingDelegations(block.Block.Height, validators, stakingClient, db)
+	err = common.UpdateValidatorsUnbondingDelegations(block.Block.Height, validators, stakingClient, db)
 	if err != nil {
 		log.Error().Str("module", "staking").Int64("height", block.Block.Height).
 			Err(err).Msg("error while updating validators unbonding delegations")
+	}
+
+	// Update the redelegations
+	err = common.UpdateValidatorsRedelegations(block.Block.Height, validators, stakingClient, db)
+	if err != nil {
+		log.Error().Str("module", "staking").Int64("height", block.Block.Height).
+			Err(err).Msg("error while updating validators redelegations")
 	}
 
 	// Update the voting powers
@@ -82,6 +89,9 @@ func HandleBlock(
 func updateValidators(
 	height int64, client stakingtypes.QueryClient, cdc codec.Marshaler, db *database.BigDipperDb,
 ) ([]stakingtypes.Validator, error) {
+	log.Debug().Str("module", "staking").Int64("height", height).
+		Msg("updating validators")
+
 	validators, err := common.GetValidators(height, client)
 	if err != nil {
 		return nil, err
@@ -121,7 +131,8 @@ func updateValidators(
 func updateValidatorsStatus(
 	height int64, validators []stakingtypes.Validator, cdc codec.Marshaler, db *database.BigDipperDb,
 ) error {
-	log.Debug().Str("module", "staking").Int64("height", height).Msg("updating validators statuses")
+	log.Debug().Str("module", "staking").Int64("height", height).
+		Msg("updating validators statuses")
 
 	statuses := make([]types.ValidatorStatus, len(validators))
 	for index, validator := range validators {

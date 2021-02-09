@@ -13,8 +13,8 @@ import (
 	"github.com/forbole/bdjuno/x/utils"
 )
 
-// UpdateValidatorDelegations updates the delegations for all the given validators at the provided height
-func UpdateValidatorDelegations(
+// UpdateValidatorsDelegations updates the delegations for all the given validators at the provided height
+func UpdateValidatorsDelegations(
 	height int64, validators []stakingtypes.Validator, client stakingtypes.QueryClient, db *database.BigDipperDb,
 ) error {
 	log.Debug().Str("module", "staking").Int64("height", height).
@@ -42,8 +42,9 @@ func UpdateValidatorDelegations(
 	return db.SaveDelegations(delegations)
 }
 
-// getDelegations returns the list of all the delegations that the validator having the given address has
-// at the given block height (having the given timestamp)
+// getDelegations gets the list of all the delegations that the validator having the given address has
+// at the given block height (having the given timestamp).
+// All the delegations will be sent to the out channel, and wg.Done() will be called at the end.
 func getDelegations(
 	validatorAddress string, height int64, client stakingtypes.QueryClient,
 	out chan<- types.Delegation, wg *sync.WaitGroup,

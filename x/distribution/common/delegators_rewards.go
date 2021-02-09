@@ -14,7 +14,8 @@ import (
 
 // UpdateDelegatorsRewardsAmounts updates the delegators commission amounts
 func UpdateDelegatorsRewardsAmounts(height int64, client distrtypes.QueryClient, db *database.BigDipperDb) error {
-	log.Debug().Str("module", "distribution").Int64("height", height).Msg("updating delegators rewards")
+	log.Debug().Str("module", "distribution").Int64("height", height).
+		Msg("updating delegators rewards")
 
 	// Get the delegators
 	delegators, err := db.GetDelegatorsForHeight(height)

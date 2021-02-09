@@ -15,7 +15,8 @@ import (
 
 // UpdateValidatorsCommissionAmounts updates the validators commissions amounts
 func UpdateValidatorsCommissionAmounts(height int64, client distrtypes.QueryClient, db *database.BigDipperDb) error {
-	log.Debug().Str("module", "distribution").Int64("height", height).Msg("updating validators commissions")
+	log.Debug().Str("module", "distribution").Int64("height", height).
+		Msg("updating validators commissions")
 
 	validators, err := db.GetValidators()
 	if err != nil {

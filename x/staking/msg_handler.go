@@ -1,8 +1,6 @@
 package staking
 
 import (
-	"time"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -18,7 +16,7 @@ import (
 )
 
 // HandleMsg allows to handle the different messages related to the staking module
-func HandleMsg(tx *juno.Tx, index int, msg sdk.Msg, cdc codec.Marshaler, db *database.BigDipperDb) error {
+func HandleMsg(tx *juno.Tx, msg sdk.Msg, cdc codec.Marshaler, db *database.BigDipperDb) error {
 	if len(tx.Logs) == 0 {
 		return nil
 	}
@@ -27,9 +25,6 @@ func HandleMsg(tx *juno.Tx, index int, msg sdk.Msg, cdc codec.Marshaler, db *dat
 	switch cosmosMsg := msg.(type) {
 	case *stakingtypes.MsgCreateValidator:
 		return handleMsgCreateValidator(tx, cosmosMsg, cdc, db)
-
-	case *stakingtypes.MsgBeginRedelegate:
-		return handleMsgBeginRedelegate(tx, index, cosmosMsg, db)
 
 	case *stakingtypes.MsgEditValidator:
 		return handleEditValidator(tx, cosmosMsg, db)
@@ -122,37 +117,4 @@ func handleEditValidator(
 		msg.Description,
 		tx.Height,
 	))
-}
-
-// handleMsgBeginRedelegate handles properly MsgBeginRedelegate objects
-func handleMsgBeginRedelegate(
-	tx *juno.Tx, index int, msg *stakingtypes.MsgBeginRedelegate, db *database.BigDipperDb,
-) error {
-	// Get the completion time
-	event, err := tx.FindEventByType(index, stakingtypes.EventTypeRedelegate)
-	if err != nil {
-		return err
-	}
-
-	completionTimeStr, err := tx.FindAttributeByKey(event, stakingtypes.AttributeKeyCompletionTime)
-	if err != nil {
-		return err
-	}
-
-	completionTime, err := time.Parse(time.RFC3339, completionTimeStr)
-	if err != nil {
-		return err
-	}
-
-	// Store the redelegation
-	return db.SaveRedelegations([]types.Redelegation{
-		types.NewRedelegation(
-			msg.DelegatorAddress,
-			msg.ValidatorSrcAddress,
-			msg.ValidatorDstAddress,
-			msg.Amount,
-			completionTime,
-			tx.Height,
-		),
-	})
 }

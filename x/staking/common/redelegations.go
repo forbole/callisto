@@ -14,12 +14,12 @@ import (
 	"github.com/forbole/bdjuno/x/utils"
 )
 
-// UpdateValidatorsUnbondingDelegations updates the unbonding delegations for all the validators provided
-func UpdateValidatorsUnbondingDelegations(
+// UpdateValidatorsUnbondingDelegations updates the redelegations for all the validators provided
+func UpdateValidatorsRedelegations(
 	height int64, validators []stakingtypes.Validator, client stakingtypes.QueryClient, db *database.BigDipperDb,
 ) error {
 	log.Debug().Str("module", "staking").Int64("height", height).
-		Msg("updating validators unbonding delegations")
+		Msg("updating validators redelegations")
 
 	params, err := db.GetStakingParams()
 	if err != nil {
@@ -27,10 +27,10 @@ func UpdateValidatorsUnbondingDelegations(
 	}
 
 	var wg sync.WaitGroup
-	var out = make(chan types.UnbondingDelegation)
+	var out = make(chan types.Redelegation)
 	for _, val := range validators {
 		wg.Add(1)
-		go getUnbondingDelegations(val.OperatorAddress, params.BondName, height, client, out, &wg)
+		go getRedelegations(val.OperatorAddress, params.BondName, height, client, out, &wg)
 	}
 
 	// We need to call wg.Wait inside another goroutine in order to solve the hanging bug that's described here:
@@ -40,20 +40,17 @@ func UpdateValidatorsUnbondingDelegations(
 		close(out)
 	}()
 
-	var delegations []types.UnbondingDelegation
+	var redelegations []types.Redelegation
 	for del := range out {
-		delegations = append(delegations, del)
+		redelegations = append(redelegations, del)
 	}
 
-	return db.SaveUnbondingDelegations(delegations)
+	return db.SaveRedelegations(redelegations)
 }
 
-// getUnbondingDelegations gets all the unbonding delegations referring to the validator having the
-// given address at the given block height (having the given timestamp).
-// All the unbonding delegations will be sent to the out channel, and wg.Done() will be called at the end.
-func getUnbondingDelegations(
+func getRedelegations(
 	validatorAddress string, bondDenom string, height int64, client stakingtypes.QueryClient,
-	out chan<- types.UnbondingDelegation, wg *sync.WaitGroup,
+	out chan<- types.Redelegation, wg *sync.WaitGroup,
 ) {
 	defer wg.Done()
 
@@ -62,10 +59,10 @@ func getUnbondingDelegations(
 	var nextKey []byte
 	var stop = false
 	for !stop {
-		res, err := client.ValidatorUnbondingDelegations(
+		res, err := client.Redelegations(
 			context.Background(),
-			&stakingtypes.QueryValidatorUnbondingDelegationsRequest{
-				ValidatorAddr: validatorAddress,
+			&stakingtypes.QueryRedelegationsRequest{
+				SrcValidatorAddr: validatorAddress,
 				Pagination: &query.PageRequest{
 					Key:   nextKey,
 					Limit: 100, // Query 100 unbonding delegations at a time
@@ -75,19 +72,19 @@ func getUnbondingDelegations(
 		)
 		if err != nil {
 			log.Error().Str("module", "staking").Err(err).
-				Int64("height", height).Str("validator", validatorAddress).
-				Msg("error while getting validator delegations")
+				Msg("error while getting validators redelegations")
 			return
 		}
 
-		for _, delegation := range res.UnbondingResponses {
+		for _, delegation := range res.RedelegationResponses {
 			for _, entry := range delegation.Entries {
-				out <- types.NewUnbondingDelegation(
-					delegation.DelegatorAddress,
-					delegation.ValidatorAddress,
+				out <- types.NewRedelegation(
+					delegation.Redelegation.DelegatorAddress,
+					delegation.Redelegation.ValidatorSrcAddress,
+					delegation.Redelegation.ValidatorDstAddress,
 					sdk.NewCoin(bondDenom, entry.Balance),
-					entry.CompletionTime,
-					height,
+					entry.RedelegationEntry.CompletionTime,
+					entry.RedelegationEntry.CreationHeight,
 				)
 			}
 		}

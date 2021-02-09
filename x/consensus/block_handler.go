@@ -20,7 +20,7 @@ func HandleBlock(block *tmctypes.ResultBlock, db *database.BigDipperDb) error {
 
 // updateBlockTimeFromGenesis insert average block time from genesis
 func updateBlockTimeFromGenesis(block *tmctypes.ResultBlock, db *database.BigDipperDb) error {
-	log.Debug().Str("module", "consensus").Str("operation", "tokens").
+	log.Debug().Str("module", "consensus").Int64("height", block.Block.Height).
 		Msg("updating block time from genesis")
 
 	genesis, err := db.GetGenesisTime()

@@ -3,6 +3,8 @@ package bank
 import (
 	"context"
 
+	"github.com/forbole/bdjuno/x/utils"
+
 	"github.com/rs/zerolog/log"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -24,7 +26,14 @@ func HandleBlock(block *tmctypes.ResultBlock, bankClient banktypes.QueryClient, 
 
 // updateSupply updates the supply of all the tokens for the given height
 func updateSupply(height int64, bankClient banktypes.QueryClient, db *database.BigDipperDb) error {
-	res, err := bankClient.TotalSupply(context.Background(), &banktypes.QueryTotalSupplyRequest{})
+	log.Debug().Str("module", "bank").Int64("height", height).
+		Msg("updating supply")
+
+	res, err := bankClient.TotalSupply(
+		context.Background(),
+		&banktypes.QueryTotalSupplyRequest{},
+		utils.GetHeightRequestHeader(height),
+	)
 	if err != nil {
 		return err
 	}
