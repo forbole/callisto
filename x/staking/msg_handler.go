@@ -1,14 +1,11 @@
 package staking
 
 import (
-	"time"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	bstakingutils "github.com/forbole/bdjuno/x/staking/utils"
+	bstakingutils "github.com/forbole/bdjuno/x/staking/common"
 
 	"github.com/forbole/bdjuno/x/staking/types"
 
@@ -19,31 +16,18 @@ import (
 )
 
 // HandleMsg allows to handle the different messages related to the staking module
-func HandleMsg(
-	tx *juno.Tx, index int, msg sdk.Msg,
-	stakingClient stakingtypes.QueryClient,
-	cdc codec.Marshaler, db *database.BigDipperDb,
-) error {
+func HandleMsg(tx *juno.Tx, msg sdk.Msg, cdc codec.Marshaler, db *database.BigDipperDb) error {
 	if len(tx.Logs) == 0 {
 		return nil
 	}
 
+	// Delegations are handled inside the block handler
 	switch cosmosMsg := msg.(type) {
 	case *stakingtypes.MsgCreateValidator:
 		return handleMsgCreateValidator(tx, cosmosMsg, cdc, db)
 
-	case *stakingtypes.MsgDelegate:
-		return handleMsgDelegate(tx, cosmosMsg, stakingClient, db)
-
-	case *stakingtypes.MsgBeginRedelegate:
-		return handleMsgBeginRedelegate(tx, index, cosmosMsg, db)
-
-	case *stakingtypes.MsgUndelegate:
-		return handleMsgUndelegate(tx, index, cosmosMsg, db)
-
 	case *stakingtypes.MsgEditValidator:
 		return handleEditValidator(tx, cosmosMsg, db)
-
 	}
 
 	return nil
@@ -133,98 +117,4 @@ func handleEditValidator(
 		msg.Description,
 		tx.Height,
 	))
-}
-
-// handleMsgDelegate allows to properly handle a MsgDelegate
-func handleMsgDelegate(
-	tx *juno.Tx, msg *stakingtypes.MsgDelegate, stakingClient stakingtypes.QueryClient, db *database.BigDipperDb,
-) error {
-	found, err := db.HasValidator(msg.ValidatorAddress)
-	if err != nil {
-		return err
-	}
-	if !found {
-		return nil
-	}
-
-	found, err = db.HasValidator(msg.DelegatorAddress)
-	if err != nil {
-		return err
-	}
-	if !found {
-		return nil
-	}
-
-	// Get the delegations
-	delegations, err := bstakingutils.GetDelegations(msg.ValidatorAddress, tx.Height, stakingClient)
-	if err != nil {
-		return err
-	}
-
-	// Save the delegations
-	return db.SaveDelegations(delegations)
-}
-
-// handleMsgUndelegate handles properly a MsgUndelegate
-func handleMsgUndelegate(
-	tx *juno.Tx, index int, msg *stakingtypes.MsgUndelegate, db *database.BigDipperDb,
-) error {
-	// Get completion time
-	event, err := tx.FindEventByType(index, stakingtypes.EventTypeUnbond)
-	if err != nil {
-		return err
-	}
-
-	completionTimeStr, err := tx.FindAttributeByKey(event, stakingtypes.AttributeKeyCompletionTime)
-	if err != nil {
-		return err
-	}
-
-	completionTime, err := time.Parse(time.RFC3339, completionTimeStr)
-	if err != nil {
-		return err
-	}
-
-	return db.SaveUnbondingDelegations([]types.UnbondingDelegation{
-		types.NewUnbondingDelegation(
-			msg.DelegatorAddress,
-			msg.ValidatorAddress,
-			msg.Amount,
-			completionTime,
-			tx.Height,
-		),
-	})
-}
-
-// handleMsgBeginRedelegate handles properly MsgBeginRedelegate objects
-func handleMsgBeginRedelegate(
-	tx *juno.Tx, index int, msg *stakingtypes.MsgBeginRedelegate, db *database.BigDipperDb,
-) error {
-	// Get the completion time
-	event, err := tx.FindEventByType(index, stakingtypes.EventTypeRedelegate)
-	if err != nil {
-		return err
-	}
-
-	completionTimeStr, err := tx.FindAttributeByKey(event, stakingtypes.AttributeKeyCompletionTime)
-	if err != nil {
-		return err
-	}
-
-	completionTime, err := time.Parse(time.RFC3339, completionTimeStr)
-	if err != nil {
-		return err
-	}
-
-	// Store the redelegation
-	return db.SaveRedelegations([]types.Redelegation{
-		types.NewRedelegation(
-			msg.DelegatorAddress,
-			msg.ValidatorSrcAddress,
-			msg.ValidatorDstAddress,
-			msg.Amount,
-			completionTime,
-			tx.Height,
-		),
-	})
 }

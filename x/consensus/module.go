@@ -3,7 +3,6 @@ package consensus
 import (
 	"encoding/json"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/juno/client"
 	"github.com/desmos-labs/juno/modules"
 	"github.com/desmos-labs/juno/types"
@@ -40,11 +39,6 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	return Register(scheduler, m.db)
 }
 
-// RunAdditionalOperations implements modules.Module
-func (m *Module) RunAdditionalOperations() error {
-	return nil
-}
-
 // RunAsyncOperations implements modules.Module
 func (m *Module) RunAsyncOperations() {
 	go ListenOperation(m.cp, m.db)
@@ -58,14 +52,4 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, _ map[string]json.RawMes
 // HandleBlock implements modules.Module
 func (m *Module) HandleBlock(b *tmctypes.ResultBlock, _ []*types.Tx, _ *tmctypes.ResultValidators) error {
 	return HandleBlock(b, m.db)
-}
-
-// HandleTx implements modules.Module
-func (m *Module) HandleTx(*types.Tx) error {
-	return nil
-}
-
-// HandleMsg implements modules.Module
-func (m *Module) HandleMsg(int, sdk.Msg, *types.Tx) error {
-	return nil
 }

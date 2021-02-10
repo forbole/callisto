@@ -17,7 +17,8 @@ func UpdateProposal(id uint64, govClient govtypes.QueryClient, db *database.BigD
 	return func() {
 		err := updateProposalStatuses(id, govClient, db)
 		if err != nil {
-			log.Fatal().Err(err).Send()
+			log.Error().Str("module", "gov").Err(err).Uint64("proposal_id", id).
+				Msg("error while updating proposal")
 		}
 	}
 }

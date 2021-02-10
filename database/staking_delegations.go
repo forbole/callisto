@@ -34,13 +34,6 @@ INSERT INTO delegation (validator_address, delegator_address, amount, shares, he
 			return err
 		}
 
-		// Remove the current delegations for the validator
-		_, err = db.Sql.Exec(`DELETE  FROM delegation WHERE validator_address = $1`,
-			validator.GetConsAddr())
-		if err != nil {
-			return err
-		}
-
 		// Convert the amount
 		coin := dbtypes.NewDbCoin(delegation.Amount)
 		value, err := coin.Value()
@@ -68,6 +61,22 @@ INSERT INTO delegation (validator_address, delegator_address, amount, shares, he
 	delQry += " ON CONFLICT DO NOTHING"
 	_, err = db.Sql.Exec(delQry, delParams...)
 	return err
+}
+
+// GetDelegatorsForHeight returns the delegators addresses for the given height
+func (db *BigDipperDb) GetDelegatorsForHeight(height int64) ([]string, error) {
+	var rows []dbtypes.DelegationRow
+	err := db.Sqlx.Select(&rows, `SELECT * FROM delegation WHERE height = $1`, height)
+	if err != nil {
+		return nil, err
+	}
+
+	var delegators = make([]string, len(rows))
+	for index, delegation := range rows {
+		delegators[index] = delegation.DelegatorAddress
+	}
+
+	return delegators, nil
 }
 
 // ________________________________________________
@@ -98,13 +107,6 @@ VALUES `
 		accParams = append(accParams, delegation.DelegatorAddress)
 
 		validator, err := db.GetValidator(delegation.ValidatorAddress)
-		if err != nil {
-			return err
-		}
-
-		// Delete the current unbonding delegations for the validator
-		_, err = db.Sql.Exec(`DELETE FROM unbonding_delegation WHERE validator_address = $1`,
-			validator.GetConsAddr())
 		if err != nil {
 			return err
 		}
@@ -171,13 +173,6 @@ VALUES `
 		}
 
 		dstVal, err := db.GetValidator(redelegation.DstValidator)
-		if err != nil {
-			return err
-		}
-
-		// Delete the current redelegations
-		_, err = db.Sql.Exec(`DELETE FROM redelegation WHERE src_validator_address = $1 AND dst_validator_address = $2`,
-			srcVal.GetConsAddr(), dstVal.GetConsAddr())
 		if err != nil {
 			return err
 		}

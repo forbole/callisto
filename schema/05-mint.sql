@@ -4,3 +4,4 @@ CREATE TABLE inflation
     height BIGINT  NOT NULL,
     PRIMARY KEY (value, height)
 );
+CREATE INDEX inflation_height_index ON inflation (height);

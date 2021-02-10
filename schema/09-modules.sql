@@ -1,4 +1,4 @@
 CREATE TABLE modules
 (
-    module_name TEXT
+    module_name TEXT NOT NULL UNIQUE PRIMARY KEY
 );

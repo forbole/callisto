@@ -40,15 +40,12 @@ func (suite *DbTestSuite) SetupTest() {
 
 	// Build the database
 	config := &jconfig.Config{
-		DatabaseConfig: &jconfig.DatabaseConfig{
-			Type: "psql",
-			Config: &jconfig.PostgreSQLConfig{
-				Name:     "bdjuno",
-				Host:     "localhost",
-				Port:     5433,
-				User:     "bdjuno",
-				Password: "password",
-			},
+		Database: &jconfig.DatabaseConfig{
+			Name:     "bdjuno",
+			Host:     "localhost",
+			Port:     5433,
+			User:     "bdjuno",
+			Password: "password",
 		},
 	}
 
@@ -124,7 +121,7 @@ func (suite *DbTestSuite) getBlock(height int64) *tmctypes.ResultBlock {
 		},
 	}
 
-	err = suite.database.SaveBlock(block, 10000, 100)
+	err = suite.database.SaveBlock(block, 10000)
 	suite.Require().NoError(err)
 	return block
 }

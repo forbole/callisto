@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/types/query"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -49,7 +51,14 @@ func handleMsgSubmitProposal(
 	cdc codec.Marshaler, db *database.BigDipperDb,
 ) error {
 	// Get proposals
-	res, err := govClient.Proposals(context.Background(), &govtypes.QueryProposalsRequest{})
+	res, err := govClient.Proposals(
+		context.Background(),
+		&govtypes.QueryProposalsRequest{
+			Pagination: &query.PageRequest{
+				Limit: 10000, // Query 10.000 proposals
+			},
+		},
+	)
 	if err != nil {
 		return err
 	}

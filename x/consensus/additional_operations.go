@@ -44,7 +44,8 @@ func subscribeConsensusEvent(event string, cp *client.Proxy, eventChan chan<- tm
 
 	eventCh, cancel, err := cp.SubscribeEvents("juno", query)
 	if err != nil {
-		log.Fatal().Err(err).Msg("error while subscribing to event")
+		log.Error().Str("module", "consensus").Err(err).Msg("error while subscribing to event")
+		return
 	}
 	defer cancel()
 
@@ -61,9 +62,15 @@ func handleEvent(event tmctypes.ResultEvent, db *database.BigDipperDb) {
 	}
 
 	// Save the event
+	log.Debug().Str("module", "consensus").
+		Int64("height", consEvent.Height).
+		Int32("round", consEvent.Round).
+		Str("step", consEvent.Step).
+		Msg("saving consensus event")
+
 	err := db.SaveConsensus(consEvent)
 	if err != nil {
-		log.Fatal().Err(err).Send()
+		log.Error().Str("module", "consensus").Err(err).Msg("error while saving consensus event")
 	}
 }
 

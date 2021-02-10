@@ -46,7 +46,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 	suite.Require().NoError(err)
 
 	var proposalRow []dbtypes.ProposalRow
-	err = suite.database.Sqlx.Select(&proposalRow, `SELECT * FROM proposal ORDER BY proposal_id ASC`)
+	err = suite.database.Sqlx.Select(&proposalRow, `SELECT * FROM proposal ORDER BY proposal_id`)
 	suite.Require().NoError(err)
 
 	expected := []dbtypes.ProposalRow{dbtypes.NewProposalRow("title",
@@ -130,7 +130,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTallyResults() {
 	suite.Require().NoError(err)
 
 	var result []dbtypes.TallyResultRow
-	err = suite.database.Sqlx.Select(&result, `SELECT * FROM tally_result`)
+	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_tally_result`)
 	suite.Require().NoError(err)
 
 	expected := []dbtypes.TallyResultRow{
@@ -154,7 +154,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
 	expected := dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), gov.OptionYes.String(), 1)
 
 	var result []dbtypes.VoteRow
-	err = suite.database.Sqlx.Select(&result, `SELECT * FROM vote`)
+	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_vote`)
 	suite.Require().NoError(err)
 	suite.Require().Len(result, 1)
 	suite.Require().True(expected.Equals(result[0]))
@@ -170,7 +170,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposit() {
 	suite.Require().NoError(err)
 
 	var result []dbtypes.DepositRow
-	err = suite.database.Sqlx.Select(&result, `SELECT * FROM deposit`)
+	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_deposit`)
 	suite.Require().NoError(err)
 	suite.Require().Len(result, 1)
 	suite.Require().True(result[0].Equals(dbtypes.NewDepositRow(
@@ -203,7 +203,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 		dbtypes.NewDepositRow(1, depositor2.String(), dbtypes.NewDbCoins(amount2), 10),
 	}
 	var result []dbtypes.DepositRow
-	err = suite.database.Sqlx.Select(&result, `SELECT * FROM deposit`)
+	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_deposit`)
 	suite.Require().NoError(err)
 	for i, r := range result {
 		suite.Require().True(expected[i].Equals(r))

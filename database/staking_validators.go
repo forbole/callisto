@@ -351,8 +351,8 @@ func (db *BigDipperDb) SaveDoubleSignEvidence(evidence types.DoubleSignEvidence)
 	}
 
 	stmt := `
-INSERT INTO double_sign_evidence (vote_a_id, vote_b_id) 
-VALUES ($1, $2) ON CONFLICT DO NOTHING`
-	_, err = db.Sql.Exec(stmt, voteA, voteB)
+INSERT INTO double_sign_evidence (height, vote_a_id, vote_b_id) 
+VALUES ($1, $2, $3) ON CONFLICT DO NOTHING`
+	_, err = db.Sql.Exec(stmt, evidence.Height, voteA, voteB)
 	return err
 }

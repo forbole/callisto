@@ -1,11 +1,11 @@
 package distribution
 
 import (
-	"context"
-
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
+
+	"github.com/forbole/bdjuno/x/distribution/common"
 
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/utils"
@@ -18,9 +18,9 @@ func RegisterPeriodicOps(
 ) error {
 	log.Debug().Str("module", "distribution").Msg("setting up periodic tasks")
 
-	// Update the community pool every 5 minutes
-	if _, err := scheduler.Every(5).Minute().StartImmediately().Do(func() {
-		utils.WatchMethod(func() error { return updateCommunityPool(distrClient, db) })
+	// Update the community pool every 1 hour
+	if _, err := scheduler.Every(1).Hour().StartImmediately().Do(func() {
+		utils.WatchMethod(func() error { return getLatestCommunityPool(distrClient, db) })
 	}); err != nil {
 		return err
 	}
@@ -28,24 +28,12 @@ func RegisterPeriodicOps(
 	return nil
 }
 
-// updateCommunityPool fetch total amount of coins in the system from RPC and store it into database
-func updateCommunityPool(distrClient distrtypes.QueryClient, db *database.BigDipperDb) error {
-	log.Debug().Str("module", "distribution").Str("operation", "community pool").
-		Msg("getting community pool")
-
+// getLatestCommunityPool gets the latest community pool from the chain and stores inside the database
+func getLatestCommunityPool(distrClient distrtypes.QueryClient, db *database.BigDipperDb) error {
 	height, err := db.GetLastBlockHeight()
 	if err != nil {
 		return err
 	}
 
-	res, err := distrClient.CommunityPool(context.Background(), &distrtypes.QueryCommunityPoolRequest{})
-	if err != nil {
-		return err
-	}
-
-	log.Debug().Str("module", "distribution").Str("operation", "community pool").
-		Msg("saving community pool")
-
-	// Store the signing infos into the database
-	return db.SaveCommunityPool(res.Pool, height)
+	return common.UpdateCommunityPool(height, distrClient, db)
 }

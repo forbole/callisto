@@ -1,14 +1,16 @@
 CREATE TABLE validator_signing_info
 (
-    validator_address     TEXT                        NOT NULL REFERENCES validator (consensus_address),
+    validator_address     TEXT                        NOT NULL,
     start_height          BIGINT                      NOT NULL,
     index_offset          BIGINT                      NOT NULL,
     jailed_until          TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     tombstoned            BOOLEAN                     NOT NULL,
     missed_blocks_counter BIGINT                      NOT NULL,
     height                BIGINT                      NOT NULL REFERENCES block (height),
-    PRIMARY KEY (validator_address, height)
+    UNIQUE (validator_address, height)
 );
+CREATE INDEX validator_signing_info_validator_address_index ON validator_signing_info (validator_address);
+CREATE INDEX validator_signing_info_height_index ON validator_signing_info (height);
 
 CREATE TABLE slashing_params
 (
@@ -19,3 +21,4 @@ CREATE TABLE slashing_params
     slash_fraction_downtime    DECIMAL NOT NULL,
     height                     BIGINT  NOT NULL REFERENCES block (height)
 );
+CREATE INDEX slashing_params_height_index ON slashing_params (height);

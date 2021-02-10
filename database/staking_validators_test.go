@@ -1,8 +1,6 @@
 package database_test
 
 import (
-	"fmt"
-
 	tmtypes "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -22,7 +20,7 @@ func newIntPtr(value int64) *sdk.Int {
 	return &val
 }
 
-// _________________________________________________________
+// -----------------------------------------------------------
 
 func (suite *DbTestSuite) TestSaveValidator() {
 	expectedMaxRate := sdk.NewDec(int64(1))
@@ -56,14 +54,12 @@ func (suite *DbTestSuite) TestSaveValidator() {
 	var valInfoRows []dbtypes.ValidatorInfoRow
 	err = suite.database.Sqlx.Select(&valInfoRows, `SELECT * FROM validator_info`)
 	suite.Require().Len(valInfoRows, 1)
-	fmt.Print(valInfoRows[0])
 	suite.Require().True(valInfoRows[0].Equal(dbtypes.NewValidatorInfoRow(
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
 		"cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs",
 		expectedMaxChangeRate.String(), expectedMaxRate.String(),
 	)))
-
 }
 
 func (suite *DbTestSuite) TestSaveValidators() {
@@ -214,7 +210,7 @@ func (suite *DbTestSuite) TestGetValidators() {
 	}
 }
 
-// _________________________________________________________
+// -----------------------------------------------------------
 
 func (suite *DbTestSuite) TestSaveValidatorDescription() {
 	validator := suite.getValidator(
@@ -259,7 +255,7 @@ func (suite *DbTestSuite) TestSaveValidatorDescription() {
 	}
 }
 
-// _________________________________________________________
+// -----------------------------------------------------------
 
 func (suite *DbTestSuite) TestSaveValidatorCommission() {
 	var height int64 = 1000
@@ -295,7 +291,7 @@ func (suite *DbTestSuite) TestSaveValidatorCommission() {
 	}
 }
 
-// _________________________________________________________
+// -----------------------------------------------------------
 
 func (suite *DbTestSuite) TestSaveValidatorsVotingPowers() {
 	block := suite.getBlock(100)
@@ -340,7 +336,7 @@ func (suite *DbTestSuite) TestSaveValidatorsVotingPowers() {
 
 }
 
-//-----------------------------------------------------------
+// -----------------------------------------------------------
 
 func (suite *DbTestSuite) TestSaveValidatorStatus() {
 	block1 := suite.getBlock(10)
@@ -395,7 +391,8 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 	}
 }
 
-//--------------------------------------------
+// --------------------------------------------
+
 func (suite *DbTestSuite) TestSaveDoubleVoteEvidence() {
 	// Insert the validator
 	validator := suite.getValidator(
@@ -406,6 +403,7 @@ func (suite *DbTestSuite) TestSaveDoubleVoteEvidence() {
 
 	// Insert data
 	evidence := types.NewDoubleSignEvidence(
+		10,
 		types.NewDoubleSignVote(
 			int(tmtypes.PrevoteType),
 			10,
@@ -433,7 +431,7 @@ func (suite *DbTestSuite) TestSaveDoubleVoteEvidence() {
 	err = suite.database.Sqlx.Select(&evidenceRows, "SELECT * FROM double_sign_evidence")
 	suite.Require().NoError(err)
 	suite.Require().Len(evidenceRows, 1)
-	suite.Require().Equal(dbtypes.NewDoubleSignEvidenceRow(1, 2), evidenceRows[0])
+	suite.Require().Equal(dbtypes.NewDoubleSignEvidenceRow(10, 1, 2), evidenceRows[0])
 
 	expectVotes := []dbtypes.DoubleSignVoteRow{
 		dbtypes.NewDoubleSignVoteRow(

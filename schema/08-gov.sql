@@ -9,11 +9,35 @@ CREATE TABLE proposal
     deposit_end_time  TIMESTAMP,
     voting_start_time TIMESTAMP,
     voting_end_time   TIMESTAMP,
-    proposer          TEXT      NOT NULL REFERENCES account (address),
+    proposer_address  TEXT      NOT NULL REFERENCES account (address),
     status            TEXT
 );
+CREATE INDEX proposal_proposer_address_index ON proposal (proposer_address);
 
-CREATE TABLE tally_result
+CREATE TABLE proposal_deposit
+(
+    proposal_id       INTEGER REFERENCES proposal (proposal_id) NOT NULL,
+    depositor_address TEXT REFERENCES account (address),
+    amount            COIN[],
+    height            BIGINT,
+    PRIMARY KEY (proposal_id, depositor_address, height)
+);
+CREATE INDEX proposal_deposit_proposal_id_index ON proposal_deposit (proposal_id);
+CREATE INDEX proposal_deposit_depositor_address_index ON proposal_deposit (depositor_address);
+
+CREATE TABLE proposal_vote
+(
+    proposal_id   INTEGER NOT NULL REFERENCES proposal (proposal_id),
+    voter_address TEXT    NOT NULL REFERENCES account (address),
+    option        TEXT    NOT NULL,
+    height        BIGINT  NOT NULL,
+    PRIMARY KEY (proposal_id, voter_address, height)
+);
+CREATE INDEX proposal_vote_proposal_id_index ON proposal_vote (proposal_id);
+CREATE INDEX proposal_vote_voter_address_index ON proposal_vote (voter_address);
+CREATE INDEX proposal_vote_height_index ON proposal_vote (height);
+
+CREATE TABLE proposal_tally_result
 (
     proposal_id  INTEGER REFERENCES proposal (proposal_id),
     yes          BIGINT NOT NULL,
@@ -23,21 +47,5 @@ CREATE TABLE tally_result
     height       BIGINT NOT NULL,
     PRIMARY KEY (proposal_id, height)
 );
-
-CREATE TABLE vote
-(
-    proposal_id INTEGER REFERENCES proposal (proposal_id) NOT NULL,
-    voter       TEXT REFERENCES account (address),
-    option      TEXT                                      NOT NULL,
-    height      BIGINT                                    NOT NULL,
-    PRIMARY KEY (proposal_id, voter, height)
-);
-
-CREATE TABLE deposit
-(
-    proposal_id INTEGER REFERENCES proposal (proposal_id) NOT NULL,
-    depositor   TEXT REFERENCES account (address),
-    amount      COIN[],
-    height      BIGINT,
-    PRIMARY KEY (proposal_id, depositor, height)
-);
+CREATE INDEX proposal_tally_result_proposal_id_index ON proposal_tally_result (proposal_id);
+CREATE INDEX proposal_tally_result_height_index ON proposal_tally_result (height);

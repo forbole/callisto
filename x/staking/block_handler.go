@@ -3,22 +3,23 @@ package staking
 import (
 	"context"
 	"encoding/hex"
+	"sync"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	juno "github.com/desmos-labs/juno/types"
 
 	"github.com/forbole/bdjuno/x/utils"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-
-	jutils "github.com/desmos-labs/juno/db/utils"
 
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 	tmtypes "github.com/tendermint/tendermint/types"
 
 	"github.com/forbole/bdjuno/database"
+	"github.com/forbole/bdjuno/x/staking/common"
 	"github.com/forbole/bdjuno/x/staking/types"
-	stakingutils "github.com/forbole/bdjuno/x/staking/utils"
 )
 
 // HandleBlock represents a method that is called each time a new block is created
@@ -27,110 +28,149 @@ func HandleBlock(
 	stakingClient stakingtypes.QueryClient,
 	cdc codec.Marshaler, db *database.BigDipperDb,
 ) error {
-	// Update the staking pool
-	err := updateStakingPool(block.Block.Height, stakingClient, db)
+	// Get the params
+	params, err := updateParams(block.Block.Height, stakingClient, db)
 	if err != nil {
-		log.Error().Str("module", "staking").Int64("height", block.Block.Height).
-			Err(err).Msg("error while updating staking pool")
+		return err
 	}
 
-	// Update the voting powers
-	err = updateValidatorVotingPower(block.Block.Height, vals, db)
+	// Update the validators
+	validators, err := updateValidators(block.Block.Height, stakingClient, cdc, db)
 	if err != nil {
 		return err
 	}
 
 	// Update the delegations
-	//err = updateValidatorsDelegations(block.Block.Height, stakingClient, db)
-	//if err != nil {
-	//	log.Error().Str("module", "staking").Int64("height", block.Block.Height).
-	//		Err(err).Msg("error while updating validators delegations")
-	//}
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		common.UpdateValidatorsDelegations(block.Block.Height, validators, stakingClient, db)
+		wg.Done()
+	}()
+
+	// Update the unbonding delegations
+	wg.Add(1)
+	go func() {
+		common.UpdateValidatorsUnbondingDelegations(block.Block.Height, params.BondDenom, validators, stakingClient, db)
+		wg.Done()
+	}()
+
+	// Update the redelegations
+	wg.Add(1)
+	go func() {
+		common.UpdateValidatorsRedelegations(block.Block.Height, params.BondDenom, validators, stakingClient, db)
+		wg.Done()
+	}()
+
+	// Update the voting powers
+	go updateValidatorVotingPower(block.Block.Height, vals, db)
 
 	// Update the validators statuses
-	err = updateValidatorsStatus(cdc, block.Block.Height, stakingClient, db)
-	if err != nil {
-		log.Error().Str("module", "staking").Int64("height", block.Block.Height).
-			Err(err).Msg("error while updating validators status")
-	}
+	go updateValidatorsStatus(block.Block.Height, validators, cdc, db)
 
 	// Updated the double sign evidences
-	err = updateDoubleSignEvidence(block.Block.Evidence.Evidence, db)
-	if err != nil {
-		log.Error().Str("module", "staking").Int64("height", block.Block.Height).
-			Err(err).Msg("error while updating double sign evidences")
-	}
+	go updateDoubleSignEvidence(block.Block.Height, block.Block.Evidence.Evidence, db)
 
+	// Update the staking pool
+	go updateStakingPool(block.Block.Height, stakingClient, db)
+
+	// Wait for all the async operations (delegations) to complete
+	wg.Wait()
 	return nil
 }
 
-// updateValidatorVotingPower fetches and stores into the database all the current validators' voting powers
-func updateValidatorVotingPower(height int64, vals *tmctypes.ResultValidators, db *database.BigDipperDb) error {
-	// Store the signing infos into the database
-	log.Debug().Str("module", "staking").Int64("height", height).Msg("saving validators voting percentage")
-
-	votingPowers := make([]types.ValidatorVotingPower, len(vals.Validators))
-	for index, validator := range vals.Validators {
-		consAddr := jutils.ConvertValidatorAddressToBech32String(validator.Address)
-		if found, _ := db.HasValidator(consAddr); !found {
-			continue
-		}
-
-		votingPowers[index] = types.NewValidatorVotingPower(consAddr, validator.VotingPower, height)
-	}
-
-	return db.SaveValidatorsVotingPowers(votingPowers)
-}
-
-// updateStakingPool reads from the LCD the current staking pool and stores its value inside the database
-func updateStakingPool(height int64, stakingClient stakingtypes.QueryClient, db *database.BigDipperDb) error {
+// updateParams updates the staking parameters for the given height,
+// storing them inside the database and returning its value
+func updateParams(
+	height int64, client stakingtypes.QueryClient, db *database.BigDipperDb,
+) (*stakingtypes.Params, error) {
 	log.Debug().Str("module", "staking").Int64("height", height).
-		Str("operation", "staking pool").Msg("getting staking pool")
+		Msg("updating params")
 
-	res, err := stakingClient.Pool(
+	res, err := client.Params(
 		context.Background(),
-		&stakingtypes.QueryPoolRequest{},
+		&stakingtypes.QueryParamsRequest{},
 		utils.GetHeightRequestHeader(height),
 	)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	log.Debug().Str("module", "staking").Int64("height", height).
-		Str("operation", "staking pool").Msg("saving staking pool")
+	err = db.SaveStakingParams(types.NewStakingParams(res.Params.BondDenom))
+	if err != nil {
+		return nil, err
+	}
 
-	return db.SaveStakingPool(res.Pool, height)
+	return &res.Params, nil
+}
+
+// updateValidators updates the list of validators that are present at the given height
+func updateValidators(
+	height int64, client stakingtypes.QueryClient, cdc codec.Marshaler, db *database.BigDipperDb,
+) ([]stakingtypes.Validator, error) {
+	log.Debug().Str("module", "staking").Int64("height", height).
+		Msg("updating validators")
+
+	validators, err := common.GetValidators(height, client)
+	if err != nil {
+		return nil, err
+	}
+
+	var vals = make([]types.Validator, len(validators))
+	for index, val := range validators {
+		consAddr, err := common.GetValidatorConsAddr(cdc, val)
+		if err != nil {
+			return nil, err
+		}
+
+		consPubKey, err := common.GetValidatorConsPubKey(cdc, val)
+		if err != nil {
+			return nil, err
+		}
+
+		vals[index] = types.NewValidator(
+			consAddr.String(),
+			val.OperatorAddress,
+			consPubKey.String(),
+			sdk.AccAddress(consAddr).String(),
+			&val.Commission.MaxChangeRate,
+			&val.Commission.MaxRate,
+		)
+	}
+
+	err = db.SaveValidators(vals)
+	if err != nil {
+		return nil, err
+	}
+
+	return validators, err
 }
 
 // updateValidatorsStatus updates all validators' statuses
 func updateValidatorsStatus(
-	cdc codec.Marshaler, height int64, stakingClient stakingtypes.QueryClient, db *database.BigDipperDb,
-) error {
+	height int64, validators []stakingtypes.Validator, cdc codec.Marshaler, db *database.BigDipperDb,
+) {
 	log.Debug().Str("module", "staking").Int64("height", height).
-		Str("operation", "validators status").Msg("getting statuses")
+		Msg("updating validators statuses")
 
-	res, err := stakingClient.Validators(
-		context.Background(),
-		&stakingtypes.QueryValidatorsRequest{},
-		utils.GetHeightRequestHeader(height),
-	)
-	if err != nil {
-		return err
-	}
-
-	log.Debug().Str("module", "staking").Int64("height", height).
-		Str("operation", "validators status").Msg("saving statuses")
-
-	statuses := make([]types.ValidatorStatus, len(res.Validators))
-	for index, validator := range res.Validators {
-		consAddr, err := stakingutils.GetValidatorConsAddr(cdc, validator)
+	statuses := make([]types.ValidatorStatus, len(validators))
+	for index, validator := range validators {
+		consAddr, err := common.GetValidatorConsAddr(cdc, validator)
 		if err != nil {
-			return err
+			log.Error().Str("module", "staking").Err(err).
+				Int64("height", height).
+				Str("address", validator.OperatorAddress).
+				Msg("error while getting validator consensus address")
+			return
 		}
 
-		consPubKey, err := stakingutils.GetValidatorConsPubKey(cdc, validator)
+		consPubKey, err := common.GetValidatorConsPubKey(cdc, validator)
 		if err != nil {
-			return err
+			log.Error().Str("module", "staking").Err(err).
+				Int64("height", height).
+				Str("address", validator.OperatorAddress).
+				Msg("error while getting validator consensus public key")
+			return
 		}
 
 		statuses[index] = types.NewValidatorStatus(
@@ -142,27 +182,56 @@ func updateValidatorsStatus(
 		)
 	}
 
-	return db.SaveValidatorsStatuses(statuses)
+	err := db.SaveValidatorsStatuses(statuses)
+	if err != nil {
+		log.Error().Str("module", "staking").Err(err).Int64("height", height).
+			Msg("error while saving validators statuses")
+	}
+}
+
+// updateValidatorVotingPower fetches and stores into the database all the current validators' voting powers
+func updateValidatorVotingPower(
+	height int64, vals *tmctypes.ResultValidators, db *database.BigDipperDb,
+) {
+	log.Debug().Str("module", "staking").Int64("height", height).
+		Msg("updating validators voting powers")
+
+	votingPowers := make([]types.ValidatorVotingPower, len(vals.Validators))
+	for index, validator := range vals.Validators {
+		consAddr := juno.ConvertValidatorAddressToBech32String(validator.Address)
+		if found, _ := db.HasValidator(consAddr); !found {
+			continue
+		}
+
+		votingPowers[index] = types.NewValidatorVotingPower(consAddr, validator.VotingPower, height)
+	}
+
+	err := db.SaveValidatorsVotingPowers(votingPowers)
+	if err != nil {
+		log.Error().Str("module", "staking").Err(err).Int64("height", height).
+			Msg("error while saving validators voting powers")
+	}
 }
 
 // updateDoubleSignEvidence updates the double sign evidence of all validators
-func updateDoubleSignEvidence(evidenceList tmtypes.EvidenceList, db *database.BigDipperDb) error {
+func updateDoubleSignEvidence(height int64, evidenceList tmtypes.EvidenceList, db *database.BigDipperDb) {
+	log.Debug().Str("module", "staking").Int64("height", height).
+		Msg("updating double sign evidence")
+
 	for _, ev := range evidenceList {
 		dve, ok := ev.(*tmtypes.DuplicateVoteEvidence)
 		if !ok {
 			continue
 		}
 
-		log.Debug().Str("module", "staking").
-			Str("operation", "double sign evidence").Msg("saving evidence")
-
 		evidence := types.NewDoubleSignEvidence(
+			height,
 			types.NewDoubleSignVote(
 				int(dve.VoteA.Type),
 				dve.VoteA.Height,
 				dve.VoteA.Round,
 				dve.VoteA.BlockID.String(),
-				jutils.ConvertValidatorAddressToBech32String(dve.VoteA.ValidatorAddress),
+				juno.ConvertValidatorAddressToBech32String(dve.VoteA.ValidatorAddress),
 				dve.VoteA.ValidatorIndex,
 				hex.EncodeToString(dve.VoteA.Signature),
 			),
@@ -171,7 +240,7 @@ func updateDoubleSignEvidence(evidenceList tmtypes.EvidenceList, db *database.Bi
 				dve.VoteB.Height,
 				dve.VoteB.Round,
 				dve.VoteB.BlockID.String(),
-				jutils.ConvertValidatorAddressToBech32String(dve.VoteB.ValidatorAddress),
+				juno.ConvertValidatorAddressToBech32String(dve.VoteB.ValidatorAddress),
 				dve.VoteB.ValidatorIndex,
 				hex.EncodeToString(dve.VoteB.Signature),
 			),
@@ -179,9 +248,33 @@ func updateDoubleSignEvidence(evidenceList tmtypes.EvidenceList, db *database.Bi
 
 		err := db.SaveDoubleSignEvidence(evidence)
 		if err != nil {
-			return err
+			log.Error().Str("module", "staking").Err(err).Int64("height", height).
+				Msg("error while saving double sign evidence")
+			return
 		}
 
 	}
-	return nil
+}
+
+// updateStakingPool reads from the LCD the current staking pool and stores its value inside the database
+func updateStakingPool(height int64, stakingClient stakingtypes.QueryClient, db *database.BigDipperDb) {
+	log.Debug().Str("module", "staking").Int64("height", height).
+		Msg("updating staking pool")
+
+	res, err := stakingClient.Pool(
+		context.Background(),
+		&stakingtypes.QueryPoolRequest{},
+		utils.GetHeightRequestHeader(height),
+	)
+	if err != nil {
+		log.Error().Str("module", "staking").Err(err).Int64("height", height).
+			Msg("error while getting staking pool")
+		return
+	}
+
+	err = db.SaveStakingPool(res.Pool, height)
+	if err != nil {
+		log.Error().Str("module", "staking").Err(err).Int64("height", height).
+			Msg("error while saving staking pool")
+	}
 }

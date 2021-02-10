@@ -18,7 +18,7 @@ func (db *BigDipperDb) SaveProposals(proposals []types.Proposal) error {
 
 	query := `
 INSERT INTO proposal(
-	title, description, proposer, proposal_route, proposal_type, proposal_id, status, 
+	title, description, proposer_address, proposal_route, proposal_type, proposal_id, status, 
     submit_time, deposit_end_time, voting_start_time, voting_end_time
 ) VALUES`
 	var param []interface{}
@@ -48,7 +48,7 @@ INSERT INTO proposal(
 func (db *BigDipperDb) SaveProposal(proposal types.Proposal) error {
 	query := `
 INSERT INTO proposal(
-	title, description, proposer, proposal_route, proposal_type, proposal_id, status, 
+	title, description, proposer_address, proposal_route, proposal_type, proposal_id, status, 
     submit_time, deposit_end_time, voting_start_time, voting_end_time
 ) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) ON CONFLICT DO NOTHING`
 
@@ -71,7 +71,7 @@ func (db *BigDipperDb) SaveTallyResults(tallys []types.TallyResult) error {
 	if len(tallys) == 0 {
 		return nil
 	}
-	query := `INSERT INTO tally_result(proposal_id, yes, abstain, no, no_with_veto, height) VALUES`
+	query := `INSERT INTO proposal_tally_result(proposal_id, yes, abstain, no, no_with_veto, height) VALUES`
 	var param []interface{}
 	for i, tally := range tallys {
 		vi := i * 6
@@ -92,7 +92,7 @@ func (db *BigDipperDb) SaveTallyResults(tallys []types.TallyResult) error {
 
 // SaveVote allows to save for the given height and the message vote
 func (db *BigDipperDb) SaveVote(vote types.Vote) error {
-	query := `INSERT INTO vote(proposal_id, voter, option, height) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`
+	query := `INSERT INTO proposal_vote(proposal_id, voter_address, option, height) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(query,
 		vote.ProposalID,
 		vote.Voter,
@@ -105,7 +105,7 @@ func (db *BigDipperDb) SaveVote(vote types.Vote) error {
 // SaveDeposit allows to save for the given message deposit and height
 func (db *BigDipperDb) SaveDeposit(deposit types.Deposit) error {
 	query := `
-INSERT INTO deposit(proposal_id, depositor, amount, height) 
+INSERT INTO proposal_deposit(proposal_id, depositor_address, amount, height) 
 VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(query,
 		deposit.ProposalID,
@@ -121,7 +121,7 @@ func (db *BigDipperDb) SaveDeposits(deposits []types.Deposit) error {
 	if len(deposits) == 0 {
 		return nil
 	}
-	query := `INSERT INTO deposit(proposal_id, depositor, amount, height) VALUES `
+	query := `INSERT INTO proposal_deposit(proposal_id, depositor_address, amount, height) VALUES `
 	var param []interface{}
 
 	for i, deposit := range deposits {

@@ -11,7 +11,6 @@ import (
 
 	"github.com/desmos-labs/juno/modules"
 	"github.com/desmos-labs/juno/types"
-	"github.com/go-co-op/gocron"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 	tmtypes "github.com/tendermint/tendermint/types"
 
@@ -43,20 +42,6 @@ func (m *Module) Name() string {
 	return "bank"
 }
 
-// RegisterPeriodicOperations implements modules.Module
-func (m *Module) RegisterPeriodicOperations(*gocron.Scheduler) error {
-	return nil
-}
-
-// RunAdditionalOperations implements modules.Module
-func (m *Module) RunAdditionalOperations() error {
-	return nil
-}
-
-// RunAsyncOperations implements modules.Module
-func (m *Module) RunAsyncOperations() {
-}
-
 // HandleGenesis implements modules.Module
 func (m *Module) HandleGenesis(_ *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
 	return HandleGenesis(appState, m.encodingConfig.Marshaler, m.db)
@@ -65,11 +50,6 @@ func (m *Module) HandleGenesis(_ *tmtypes.GenesisDoc, appState map[string]json.R
 // HandleBlock implements modules.Module
 func (m *Module) HandleBlock(block *tmctypes.ResultBlock, _ []*types.Tx, _ *tmctypes.ResultValidators) error {
 	return HandleBlock(block, m.bankClient, m.db)
-}
-
-// HandleTx implements modules.Module
-func (m *Module) HandleTx(*types.Tx) error {
-	return nil
 }
 
 // HandleMsg implements modules.Module
