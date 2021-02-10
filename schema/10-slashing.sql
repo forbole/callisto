@@ -10,6 +10,7 @@ CREATE TABLE validator_signing_info
     UNIQUE (validator_address, height)
 );
 CREATE INDEX validator_signing_info_validator_address_index ON validator_signing_info (validator_address);
+CREATE INDEX validator_signing_info_height_index ON validator_signing_info (height);
 
 CREATE TABLE slashing_params
 (

@@ -13,7 +13,7 @@ type ProposalRow struct {
 	DepositEndTime  time.Time `db:"deposit_end_time"`
 	VotingStartTime time.Time `db:"voting_start_time"`
 	VotingEndTime   time.Time `db:"voting_end_time" `
-	Proposer        string    `db:"proposer"`
+	Proposer        string    `db:"proposer_address"`
 	Status          string    `db:"status"`
 }
 
@@ -101,7 +101,7 @@ func (w TallyResultRow) Equals(v TallyResultRow) bool {
 // VoteRow represents a single row inside the vote table
 type VoteRow struct {
 	ProposalID int64  `db:"proposal_id"`
-	Voter      string `db:"voter"`
+	Voter      string `db:"voter_address"`
 	Option     string `db:"option"`
 	Height     int64  `db:"height"`
 }
@@ -132,7 +132,7 @@ func (w VoteRow) Equals(v VoteRow) bool {
 // DepositRow represents a single row inside the deposit table
 type DepositRow struct {
 	ProposalID int64   `db:"proposal_id"`
-	Depositor  string  `db:"depositor"`
+	Depositor  string  `db:"depositor_address"`
 	Amount     DbCoins `db:"amount"`
 	Height     int64   `db:"height"`
 }
