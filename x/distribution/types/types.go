@@ -6,13 +6,15 @@ import sdk "github.com/cosmos/cosmos-sdk/types"
 type ValidatorCommissionAmount struct {
 	ValidatorAddress string
 	Amount           []sdk.DecCoin
+	Height           int64
 }
 
 // NewValidatorCommissionAmount allows to build a new ValidatorCommissionAmount instance
-func NewValidatorCommissionAmount(address string, amount sdk.DecCoins) ValidatorCommissionAmount {
+func NewValidatorCommissionAmount(address string, amount sdk.DecCoins, height int64) ValidatorCommissionAmount {
 	return ValidatorCommissionAmount{
 		ValidatorAddress: address,
 		Amount:           amount,
+		Height:           height,
 	}
 }
 
@@ -21,13 +23,15 @@ type DelegatorRewardAmount struct {
 	ValidatorAddress string
 	DelegatorAddress string
 	Amount           []sdk.DecCoin
+	Height           int64
 }
 
 // NewDelegatorRewardAmount allows to build a new DelegatorRewardAmount instance
-func NewDelegatorRewardAmount(validator, delegator string, amount sdk.DecCoins) DelegatorRewardAmount {
+func NewDelegatorRewardAmount(validator, delegator string, amount sdk.DecCoins, height int64) DelegatorRewardAmount {
 	return DelegatorRewardAmount{
 		ValidatorAddress: validator,
 		DelegatorAddress: delegator,
 		Amount:           amount,
+		Height:           height,
 	}
 }

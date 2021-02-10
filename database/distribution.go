@@ -18,24 +18,18 @@ func (db *BigDipperDb) SaveCommunityPool(coin sdk.DecCoins, height int64) error 
 }
 
 // SaveValidatorCommissionAmounts saves the given validator commission amounts for the given height
-func (db *BigDipperDb) SaveValidatorCommissionAmounts(amounts []bdistrtypes.ValidatorCommissionAmount, height int64) error {
-	stmt := `INSERT INTO validator_commission_amount(validator_address, amount, height) VALUES `
-	var params []interface{}
+func (db *BigDipperDb) SaveValidatorCommissionAmount(amount bdistrtypes.ValidatorCommissionAmount) error {
+	stmt := `
+INSERT INTO validator_commission_amount(validator_address, amount, height) 
+VALUES ($1, $2, $3) ON CONFLICT DO NOTHING`
 
-	for i, amount := range amounts {
-		ai := i * 3
-		stmt += fmt.Sprintf("($%d, $%d, $%d),", ai+1, ai+2, ai+3)
-		params = append(params, amount.ValidatorAddress, pq.Array(dbtypes.NewDbDecCoins(amount.Amount)), height)
-	}
-
-	stmt = stmt[:len(stmt)-1] // Remove trailing ,
-	stmt += "ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(stmt, params...)
+	_, err := db.Sql.Exec(stmt,
+		amount.ValidatorAddress, pq.Array(dbtypes.NewDbDecCoins(amount.Amount)), amount.Height)
 	return err
 }
 
 // SaveDelegatorsRewardsAmounts saves the given delegator commission amounts for the provided height
-func (db *BigDipperDb) SaveDelegatorsRewardsAmounts(amounts []bdistrtypes.DelegatorRewardAmount, height int64) error {
+func (db *BigDipperDb) SaveDelegatorsRewardsAmounts(amounts []bdistrtypes.DelegatorRewardAmount) error {
 	stmt := `INSERT INTO delegation_reward(validator_address, delegator_address, amount, height) VALUES `
 	var params []interface{}
 
@@ -45,7 +39,7 @@ func (db *BigDipperDb) SaveDelegatorsRewardsAmounts(amounts []bdistrtypes.Delega
 
 		coins := pq.Array(dbtypes.NewDbDecCoins(amount.Amount))
 		params = append(params,
-			amount.ValidatorAddress, amount.DelegatorAddress, coins, height)
+			amount.ValidatorAddress, amount.DelegatorAddress, coins, amount.Height)
 	}
 
 	stmt = stmt[:len(stmt)-1] // Remove trailing ,

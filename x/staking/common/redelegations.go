@@ -14,43 +14,25 @@ import (
 	"github.com/forbole/bdjuno/x/utils"
 )
 
-// UpdateValidatorsUnbondingDelegations updates the redelegations for all the validators provided
+// UpdateValidatorsRedelegations updates the redelegations for all the validators provided
 func UpdateValidatorsRedelegations(
-	height int64, validators []stakingtypes.Validator, client stakingtypes.QueryClient, db *database.BigDipperDb,
-) error {
+	height int64, bondDenom string, validators []stakingtypes.Validator,
+	client stakingtypes.QueryClient, db *database.BigDipperDb,
+) {
 	log.Debug().Str("module", "staking").Int64("height", height).
 		Msg("updating validators redelegations")
 
-	params, err := db.GetStakingParams()
-	if err != nil {
-		return err
-	}
-
 	var wg sync.WaitGroup
-	var out = make(chan types.Redelegation)
 	for _, val := range validators {
 		wg.Add(1)
-		go getRedelegations(val.OperatorAddress, params.BondName, height, client, out, &wg)
+		go getRedelegations(val.OperatorAddress, bondDenom, height, client, db, &wg)
 	}
-
-	// We need to call wg.Wait inside another goroutine in order to solve the hanging bug that's described here:
-	// https://dev.to/sophiedebenedetto/synchronizing-go-routines-with-channels-and-waitgroups-3ke2
-	go func() {
-		wg.Wait()
-		close(out)
-	}()
-
-	var redelegations []types.Redelegation
-	for del := range out {
-		redelegations = append(redelegations, del)
-	}
-
-	return db.SaveRedelegations(redelegations)
+	wg.Wait()
 }
 
 func getRedelegations(
-	validatorAddress string, bondDenom string, height int64, client stakingtypes.QueryClient,
-	out chan<- types.Redelegation, wg *sync.WaitGroup,
+	validatorAddress string, bondDenom string, height int64,
+	client stakingtypes.QueryClient, db *database.BigDipperDb, wg *sync.WaitGroup,
 ) {
 	defer wg.Done()
 
@@ -71,22 +53,29 @@ func getRedelegations(
 			header,
 		)
 		if err != nil {
-			log.Error().Str("module", "staking").Err(err).
+			log.Error().Str("module", "staking").Err(err).Int64("height", height).
 				Msg("error while getting validators redelegations")
 			return
 		}
 
+		var delegations []types.Redelegation
 		for _, delegation := range res.RedelegationResponses {
 			for _, entry := range delegation.Entries {
-				out <- types.NewRedelegation(
+				delegations = append(delegations, types.NewRedelegation(
 					delegation.Redelegation.DelegatorAddress,
 					delegation.Redelegation.ValidatorSrcAddress,
 					delegation.Redelegation.ValidatorDstAddress,
 					sdk.NewCoin(bondDenom, entry.Balance),
 					entry.RedelegationEntry.CompletionTime,
 					entry.RedelegationEntry.CreationHeight,
-				)
+				))
 			}
+		}
+		err = db.SaveRedelegations(delegations)
+		if err != nil {
+			log.Error().Str("module", "staking").Err(err).Int64("height", height).
+				Msg("error while saving validators redelegations")
+			return
 		}
 
 		nextKey = res.Pagination.NextKey

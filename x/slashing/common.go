@@ -12,19 +12,21 @@ import (
 
 func GetSigningInfos(height int64, client slashingtypes.QueryClient) ([]types.ValidatorSigningInfo, error) {
 	var signingInfos []slashingtypes.ValidatorSigningInfo
+
+	header := utils.GetHeightRequestHeader(height)
+
 	var nextKey []byte
 	var stop = false
-
 	for !stop {
 		res, err := client.SigningInfos(
 			context.Background(),
 			&slashingtypes.QuerySigningInfosRequest{
 				Pagination: &query.PageRequest{
 					Key:   nextKey,
-					Limit: 100, // Query 100 signing infos at a time
+					Limit: 1000, // Query 1000 signing infos at a time
 				},
 			},
-			utils.GetHeightRequestHeader(height),
+			header,
 		)
 		if err != nil {
 			return nil, err
