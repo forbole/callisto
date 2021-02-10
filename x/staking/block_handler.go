@@ -29,7 +29,7 @@ func HandleBlock(
 	cdc codec.Marshaler, db *database.BigDipperDb,
 ) error {
 	// Get the params
-	params, err := db.GetStakingParams()
+	params, err := updateParams(block.Block.Height, stakingClient, db)
 	if err != nil {
 		return err
 	}
@@ -51,14 +51,14 @@ func HandleBlock(
 	// Update the unbonding delegations
 	wg.Add(1)
 	go func() {
-		common.UpdateValidatorsUnbondingDelegations(block.Block.Height, params.BondName, validators, stakingClient, db)
+		common.UpdateValidatorsUnbondingDelegations(block.Block.Height, params.BondDenom, validators, stakingClient, db)
 		wg.Done()
 	}()
 
 	// Update the redelegations
 	wg.Add(1)
 	go func() {
-		common.UpdateValidatorsRedelegations(block.Block.Height, params.BondName, validators, stakingClient, db)
+		common.UpdateValidatorsRedelegations(block.Block.Height, params.BondDenom, validators, stakingClient, db)
 		wg.Done()
 	}()
 
@@ -77,6 +77,31 @@ func HandleBlock(
 	// Wait for all the async operations (delegations) to complete
 	wg.Wait()
 	return nil
+}
+
+// updateParams updates the staking parameters for the given height,
+// storing them inside the database and returning its value
+func updateParams(
+	height int64, client stakingtypes.QueryClient, db *database.BigDipperDb,
+) (*stakingtypes.Params, error) {
+	log.Debug().Str("module", "staking").Int64("height", height).
+		Msg("updating params")
+
+	res, err := client.Params(
+		context.Background(),
+		&stakingtypes.QueryParamsRequest{},
+		utils.GetHeightRequestHeader(height),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	err = db.SaveStakingParams(types.NewStakingParams(res.Params.BondDenom))
+	if err != nil {
+		return nil, err
+	}
+
+	return &res.Params, nil
 }
 
 // updateValidators updates the list of validators that are present at the given height

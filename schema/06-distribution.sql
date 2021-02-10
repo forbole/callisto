@@ -26,6 +26,7 @@ CREATE TABLE delegation_reward
 (
     validator_address TEXT       NOT NULL REFERENCES validator (consensus_address),
     delegator_address TEXT       NOT NULL REFERENCES account (address),
+    withdraw_address  TEXT       NOT NULL,
     amount            DEC_COIN[] NOT NULL,
     height            BIGINT     NOT NULL REFERENCES block (height),
     UNIQUE (validator_address, delegator_address, height)

@@ -30,16 +30,16 @@ VALUES ($1, $2, $3) ON CONFLICT DO NOTHING`
 
 // SaveDelegatorsRewardsAmounts saves the given delegator commission amounts for the provided height
 func (db *BigDipperDb) SaveDelegatorsRewardsAmounts(amounts []bdistrtypes.DelegatorRewardAmount) error {
-	stmt := `INSERT INTO delegation_reward(validator_address, delegator_address, amount, height) VALUES `
+	stmt := `INSERT INTO delegation_reward(validator_address, delegator_address, withdraw_address, amount, height) VALUES `
 	var params []interface{}
 
 	for i, amount := range amounts {
-		ai := i * 4
-		stmt += fmt.Sprintf("($%d, $%d, $%d, $%d),", ai+1, ai+2, ai+3, ai+4)
+		ai := i * 5
+		stmt += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d),", ai+1, ai+2, ai+3, ai+4, ai+5)
 
 		coins := pq.Array(dbtypes.NewDbDecCoins(amount.Amount))
 		params = append(params,
-			amount.ValidatorAddress, amount.DelegatorAddress, coins, amount.Height)
+			amount.ValidatorAddress, amount.DelegatorAddress, amount.WithdrawAddress, coins, amount.Height)
 	}
 
 	stmt = stmt[:len(stmt)-1] // Remove trailing ,

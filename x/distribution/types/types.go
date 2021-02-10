@@ -22,15 +22,19 @@ func NewValidatorCommissionAmount(address string, amount sdk.DecCoins, height in
 type DelegatorRewardAmount struct {
 	ValidatorAddress string
 	DelegatorAddress string
+	WithdrawAddress  string
 	Amount           []sdk.DecCoin
 	Height           int64
 }
 
 // NewDelegatorRewardAmount allows to build a new DelegatorRewardAmount instance
-func NewDelegatorRewardAmount(validator, delegator string, amount sdk.DecCoins, height int64) DelegatorRewardAmount {
+func NewDelegatorRewardAmount(
+	validator, delegator, withdrawAddress string, amount sdk.DecCoins, height int64,
+) DelegatorRewardAmount {
 	return DelegatorRewardAmount{
 		ValidatorAddress: validator,
 		DelegatorAddress: delegator,
+		WithdrawAddress:  withdrawAddress,
 		Amount:           amount,
 		Height:           height,
 	}

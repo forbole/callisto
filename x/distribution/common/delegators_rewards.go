@@ -38,10 +38,12 @@ func UpdateDelegatorsRewardsAmounts(height int64, client distrtypes.QueryClient,
 func getDelegatorCommission(
 	height int64, delegator string, client distrtypes.QueryClient, db *database.BigDipperDb,
 ) {
-	res, err := client.DelegationTotalRewards(
+	header := utils.GetHeightRequestHeader(height)
+
+	rewardsRes, err := client.DelegationTotalRewards(
 		context.Background(),
 		&distrtypes.QueryDelegationTotalRewardsRequest{DelegatorAddress: delegator},
-		utils.GetHeightRequestHeader(height),
+		header,
 	)
 	if err != nil {
 		log.Error().Str("module", "distribution").Err(err).
@@ -50,8 +52,20 @@ func getDelegatorCommission(
 		return
 	}
 
-	var rewards = make([]bdistrtypes.DelegatorRewardAmount, len(res.Rewards))
-	for index, reward := range res.Rewards {
+	withdrawAddressRes, err := client.DelegatorWithdrawAddress(
+		context.Background(),
+		&distrtypes.QueryDelegatorWithdrawAddressRequest{DelegatorAddress: delegator},
+		header,
+	)
+	if err != nil {
+		log.Error().Str("module", "distribution").Err(err).
+			Int64("height", height).Str("delegator", delegator).
+			Msg("error while getting delegator withdraw address")
+		return
+	}
+
+	var rewards = make([]bdistrtypes.DelegatorRewardAmount, len(rewardsRes.Rewards))
+	for index, reward := range rewardsRes.Rewards {
 		consAddr, err := db.GetValidatorConsensusAddress(reward.ValidatorAddress)
 		if err != nil {
 			log.Error().Str("module", "distribution").Err(err).
@@ -64,6 +78,7 @@ func getDelegatorCommission(
 		rewards[index] = bdistrtypes.NewDelegatorRewardAmount(
 			consAddr.String(),
 			delegator,
+			withdrawAddressRes.WithdrawAddress,
 			reward.Reward,
 			height,
 		)
