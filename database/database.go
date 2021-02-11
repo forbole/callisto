@@ -2,7 +2,6 @@ package database
 
 import (
 	"fmt"
-
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 
 	"github.com/desmos-labs/juno/config"
@@ -11,11 +10,15 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-// BigDipperDb represents a PostgreSQL database with expanded features.
-// so that it can properly store custom BigDipper-related data.
-type BigDipperDb struct {
-	*postgresql.Database
-	Sqlx *sqlx.DB
+var _ db.Database = &BigDipperDb{}
+
+// Cast allows to cast the given db to a BigDipperDb instance
+func Cast(db db.Database) *BigDipperDb {
+	bdDatabase, ok := db.(*BigDipperDb)
+	if !ok {
+		panic(fmt.Errorf("given database instance is not a BigDipperDb"))
+	}
+	return bdDatabase
 }
 
 // Builder allows to create a new BigDipperDb instance implementing the database.Builder type
@@ -36,11 +39,9 @@ func Builder(cfg *config.Config, codec *params.EncodingConfig) (db.Database, err
 	}, nil
 }
 
-// Cast allows to cast the given db to a BigDipperDb instance
-func Cast(db db.Database) *BigDipperDb {
-	bdDatabase, ok := db.(*BigDipperDb)
-	if !ok {
-		panic(fmt.Errorf("given database instance is not a BigDipperDb"))
-	}
-	return bdDatabase
+// BigDipperDb represents a PostgreSQL database with expanded features.
+// so that it can properly store custom BigDipper-related data.
+type BigDipperDb struct {
+	*postgresql.Database
+	Sqlx *sqlx.DB
 }
