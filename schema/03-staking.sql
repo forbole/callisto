@@ -80,11 +80,14 @@ CREATE INDEX validator_status_height_index ON validator_status (height);
  */
 CREATE TABLE delegation
 (
-    validator_address TEXT    NOT NULL REFERENCES validator (consensus_address),
-    delegator_address TEXT    NOT NULL REFERENCES account (address),
-    amount            COIN    NOT NULL,
-    shares            NUMERIC NOT NUll,
-    height            BIGINT  NOT NULL
+    /* This is used to make it possible for Hasura to connect validator and self_delegations properly */
+    id                SERIAL PRIMARY KEY NOT NULL,
+
+    validator_address TEXT               NOT NULL REFERENCES validator (consensus_address),
+    delegator_address TEXT               NOT NULL REFERENCES account (address),
+    amount            COIN               NOT NULL,
+    shares            NUMERIC            NOT NUll,
+    height            BIGINT             NOT NULL
 );
 CREATE INDEX delegation_validator_address_index ON delegation (validator_address);
 CREATE INDEX delegation_delegator_address ON delegation (delegator_address);
