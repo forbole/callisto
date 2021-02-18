@@ -4,7 +4,6 @@ CREATE TABLE validator
     consensus_pubkey  TEXT NOT NULL UNIQUE /* Validator consensus public key */
 );
 
-
 CREATE TABLE pre_commit
 (
     validator_address TEXT                        NOT NULL REFERENCES validator (consensus_address),
@@ -83,3 +82,8 @@ WHERE (cardinality(types) = 0 OR type = ANY (types))
 ORDER BY height DESC
 LIMIT "limit" OFFSET "offset"
 $$ LANGUAGE sql STABLE;
+
+CREATE TABLE pruning
+(
+    last_pruned_height BIGINT NOT NULL
+);
