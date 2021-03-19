@@ -2,6 +2,7 @@ package staking
 
 import (
 	"encoding/json"
+
 	"github.com/go-co-op/gocron"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"

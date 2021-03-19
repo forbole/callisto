@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 
 	"github.com/desmos-labs/juno/config"

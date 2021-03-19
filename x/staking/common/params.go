@@ -2,11 +2,13 @@ package common
 
 import (
 	"context"
+
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	"github.com/rs/zerolog/log"
+
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/staking/types"
 	"github.com/forbole/bdjuno/x/utils"
-	"github.com/rs/zerolog/log"
 )
 
 // UpdateParams updates the staking parameters for the given height,

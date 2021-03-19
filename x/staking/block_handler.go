@@ -3,9 +3,11 @@ package staking
 import (
 	"context"
 	"encoding/hex"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	juno "github.com/desmos-labs/juno/types"
+
 	"github.com/forbole/bdjuno/x/utils"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
