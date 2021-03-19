@@ -11,8 +11,7 @@ import (
 	"github.com/forbole/bdjuno/x/utils"
 )
 
-// PeriodicStakingOperations returns the AdditionalOperation that periodically runs fetches from
-// the LCD to make sure that constantly changing data are synced properly.
+// RegisterPeriodicOps registers the additional operations that periodically run
 func RegisterPeriodicOps(
 	scheduler *gocron.Scheduler, distrClient distrtypes.QueryClient, db *database.BigDipperDb,
 ) error {
