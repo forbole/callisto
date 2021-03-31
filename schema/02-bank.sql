@@ -9,7 +9,7 @@ CREATE TABLE account_balance
 (
     address TEXT   NOT NULL REFERENCES account (address),
     coins   COIN[] NOT NULL DEFAULT '{}',
-    height  BIGINT NOT NULL,
+    height  BIGINT NOT NULL REFERENCES block(height),
     PRIMARY KEY (address, height)
 );
 CREATE INDEX account_balance_address_index ON account_balance (address);

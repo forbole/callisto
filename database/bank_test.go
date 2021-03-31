@@ -40,7 +40,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTotalTokens() {
 		sdk.NewCoin("desmos", sdk.NewInt(10000)),
 		sdk.NewCoin("uatom", sdk.NewInt(15)),
 	)
-	err := suite.database.SaveSupplyToken(coins, 10)
+	err := suite.database.SaveSupply(coins, 10)
 	suite.Require().NoError(err)
 
 	expected := dbtypes.NewTotalSupplyRow(

@@ -8,7 +8,7 @@ import (
 )
 
 // Proposal represent storing a gov.proposal
-// For final tolly result, it stored in tally result as they share same proposal ID and VotingEndTime
+// For final tolly result, it stored in tally result as they share same proposal Symbol and VotingEndTime
 type Proposal struct {
 	Title           string
 	Description     string

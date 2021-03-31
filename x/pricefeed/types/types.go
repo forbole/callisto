@@ -1,5 +1,7 @@
 package types
 
+import "time"
+
 // Token contains the information of a single token
 type Token struct {
 	ID     string `json:"id"`
@@ -12,17 +14,19 @@ type Tokens []Token
 
 // MarketTicker contains the current market data for a single token
 type MarketTicker struct {
-	ID           string  `json:"id"`
-	CurrentPrice float64 `json:"current_price"`
-	MarketCap    int64   `json:"market_cap"`
+	Symbol       string    `json:"symbol"`
+	CurrentPrice float64   `json:"current_price"`
+	MarketCap    int64     `json:"market_cap"`
+	LastUpdated  time.Time `json:"last_updated"`
 }
 
 // NewMarketTicker creates a new instance of MarketTicker
-func NewMarketTicker(id string, currentPrice float64, marketCap int64) MarketTicker {
+func NewMarketTicker(symbol string, currentPrice float64, marketCap int64, lastUpdated time.Time) MarketTicker {
 	return MarketTicker{
-		ID:           id,
+		Symbol:       symbol,
 		CurrentPrice: currentPrice,
 		MarketCap:    marketCap,
+		LastUpdated:  lastUpdated,
 	}
 }
 

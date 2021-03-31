@@ -2,7 +2,7 @@ package pricefeed
 
 import (
 	"fmt"
-	"time"
+	"strings"
 
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
@@ -41,18 +41,16 @@ func updatePrice(db *database.BigDipperDb) error {
 	}
 
 	// Get the list of token names to retrieve
-	names, err := db.GetTokenNames()
+	names, err := db.GetTradedNames()
 	if err != nil {
 		return err
 	}
 
 	// Find the id of the coins
-	var ids = make([]string, len(names))
-	for i := 0; i < len(coins) && len(ids) < len(names); i++ {
-		coin := coins[i]
-
-		for _, name := range names {
-			if coin.Name == name {
+	var ids []string
+	for _, coin := range coins {
+		for _, tradedToken := range names {
+			if coin.Symbol == tradedToken {
 				ids = append(ids, coin.ID)
 				break
 			}
@@ -60,7 +58,7 @@ func updatePrice(db *database.BigDipperDb) error {
 	}
 
 	if len(ids) == 0 {
-		return fmt.Errorf("cannot find tokens from the API: %s", names)
+		return fmt.Errorf("cannot find tokens '%s' from the API", strings.Join(names, ","))
 	}
 
 	// Get the tokens prices
@@ -70,5 +68,5 @@ func updatePrice(db *database.BigDipperDb) error {
 	}
 
 	// Save the token prices
-	return db.SaveTokensPrices(prices, time.Now().UTC())
+	return db.SaveTokensPrices(prices)
 }
