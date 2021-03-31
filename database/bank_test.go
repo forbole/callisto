@@ -11,7 +11,7 @@ import (
 
 func (suite *DbTestSuite) TestSaveAccountBalance() {
 	address := suite.getAccount("cosmos140xsjjg6pwkjp0xjz8zru7ytha60l5aee9nlf7")
-	height := int64(100)
+	height := suite.getBlock(100).Block.Height
 	coins := sdk.NewCoins(
 		sdk.NewCoin("desmos", sdk.NewInt(10000)),
 		sdk.NewCoin("uatom", sdk.NewInt(15)),
@@ -40,7 +40,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTotalTokens() {
 		sdk.NewCoin("desmos", sdk.NewInt(10000)),
 		sdk.NewCoin("uatom", sdk.NewInt(15)),
 	)
-	err := suite.database.SaveSupplyToken(coins, 10)
+	err := suite.database.SaveSupply(coins, 10)
 	suite.Require().NoError(err)
 
 	expected := dbtypes.NewTotalSupplyRow(

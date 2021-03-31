@@ -3,6 +3,8 @@ package staking
 import (
 	"encoding/json"
 
+	"github.com/go-co-op/gocron"
+
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"google.golang.org/grpc"
@@ -37,6 +39,11 @@ func NewModule(encodingConfig *params.EncodingConfig, grpcConnection *grpc.Clien
 // Name implements modules.Module
 func (m *Module) Name() string {
 	return "staking"
+}
+
+// RegisterPeriodicOperations implements PeriodicOperationsModule
+func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
+	return RegisterPeriodicOps(scheduler, m.stakingClient, m.encodingConfig.Marshaler, m.db)
 }
 
 // HandleGenesis implements GenesisModule

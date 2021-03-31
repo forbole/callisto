@@ -3,7 +3,6 @@ package staking
 import (
 	"context"
 	"encoding/hex"
-	"sync"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -28,39 +27,11 @@ func HandleBlock(
 	stakingClient stakingtypes.QueryClient,
 	cdc codec.Marshaler, db *database.BigDipperDb,
 ) error {
-	// Get the params
-	params, err := updateParams(block.Block.Height, stakingClient, db)
-	if err != nil {
-		return err
-	}
-
 	// Update the validators
 	validators, err := updateValidators(block.Block.Height, stakingClient, cdc, db)
 	if err != nil {
 		return err
 	}
-
-	// Update the delegations
-	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
-		common.UpdateValidatorsDelegations(block.Block.Height, validators, stakingClient, db)
-		wg.Done()
-	}()
-
-	// Update the unbonding delegations
-	wg.Add(1)
-	go func() {
-		common.UpdateValidatorsUnbondingDelegations(block.Block.Height, params.BondDenom, validators, stakingClient, db)
-		wg.Done()
-	}()
-
-	// Update the redelegations
-	wg.Add(1)
-	go func() {
-		common.UpdateValidatorsRedelegations(block.Block.Height, params.BondDenom, validators, stakingClient, db)
-		wg.Done()
-	}()
 
 	// Update the voting powers
 	go updateValidatorVotingPower(block.Block.Height, vals, db)
@@ -74,34 +45,7 @@ func HandleBlock(
 	// Update the staking pool
 	go updateStakingPool(block.Block.Height, stakingClient, db)
 
-	// Wait for all the async operations (delegations) to complete
-	wg.Wait()
 	return nil
-}
-
-// updateParams updates the staking parameters for the given height,
-// storing them inside the database and returning its value
-func updateParams(
-	height int64, client stakingtypes.QueryClient, db *database.BigDipperDb,
-) (*stakingtypes.Params, error) {
-	log.Debug().Str("module", "staking").Int64("height", height).
-		Msg("updating params")
-
-	res, err := client.Params(
-		context.Background(),
-		&stakingtypes.QueryParamsRequest{},
-		utils.GetHeightRequestHeader(height),
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	err = db.SaveStakingParams(types.NewStakingParams(res.Params.BondDenom))
-	if err != nil {
-		return nil, err
-	}
-
-	return &res.Params, nil
 }
 
 // updateValidators updates the list of validators that are present at the given height

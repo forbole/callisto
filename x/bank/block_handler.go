@@ -38,5 +38,5 @@ func updateSupply(height int64, bankClient banktypes.QueryClient, db *database.B
 		return err
 	}
 
-	return db.SaveSupplyToken(res.Supply, height)
+	return db.SaveSupply(res.Supply, height)
 }
