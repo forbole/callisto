@@ -1,9 +1,6 @@
 package pricefeed
 
 import (
-	"fmt"
-	"strings"
-
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
 
@@ -41,7 +38,7 @@ func updatePrice(db *database.BigDipperDb) error {
 	}
 
 	// Get the list of token names to retrieve
-	names, err := db.GetTradedNames()
+	names, err := db.GetTokenUnits()
 	if err != nil {
 		return err
 	}
@@ -58,7 +55,8 @@ func updatePrice(db *database.BigDipperDb) error {
 	}
 
 	if len(ids) == 0 {
-		return fmt.Errorf("cannot find tokens '%s' from the API", strings.Join(names, ","))
+		log.Debug().Str("module", "pricefeed").Msg("no traded tokens found")
+		return nil
 	}
 
 	// Get the tokens prices

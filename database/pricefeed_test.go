@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	pricefeedtypes "github.com/forbole/bdjuno/x/pricefeed/types"
+	"github.com/forbole/bdjuno/x/pricefeed/coingecko"
 
 	dbtypes "github.com/forbole/bdjuno/database/types"
 )
@@ -26,7 +26,7 @@ func (suite *DbTestSuite) Test_GetTradedNames() {
 	suite.insertToken("desmos")
 	suite.insertToken("daric")
 
-	tradedNames, err := suite.database.GetTradedNames()
+	tradedNames, err := suite.database.GetTokenUnits()
 	suite.Require().NoError(err)
 
 	var expected = []string{"desmos", "daric"}
@@ -40,14 +40,14 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTokenPrice() {
 	suite.insertToken("desmos")
 	suite.insertToken("atom")
 
-	tickers := pricefeedtypes.MarketTickers{
-		pricefeedtypes.NewMarketTicker(
+	tickers := coingecko.MarketTickers{
+		coingecko.NewMarketTicker(
 			"desmos",
 			100.01,
 			10,
 			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
 		),
-		pricefeedtypes.NewMarketTicker(
+		coingecko.NewMarketTicker(
 			"atom",
 			200.01,
 			20,
@@ -70,7 +70,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTokenPrice() {
 		),
 	}
 	var rows []dbtypes.TokenPriceRow
-	err = suite.database.Sqlx.Select(&rows, `SELECT name, price, market_cap, timestamp FROM token_price`)
+	err = suite.database.Sqlx.Select(&rows, `SELECT unit_name, price, market_cap, timestamp FROM token_price`)
 	suite.Require().NoError(err)
 	for i, row := range rows {
 		suite.Require().True(expected[i].Equals(row))

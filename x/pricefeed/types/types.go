@@ -2,33 +2,48 @@ package types
 
 import "time"
 
-// Token contains the information of a single token
+// Token represents a valid token inside the chain
 type Token struct {
-	ID     string `json:"id"`
-	Symbol string `json:"symbol"`
-	Name   string `json:"name"`
+	Name  string
+	Units []TokenUnit
 }
 
-// Tokens represents a list of Token objects
-type Tokens []Token
-
-// MarketTicker contains the current market data for a single token
-type MarketTicker struct {
-	Symbol       string    `json:"symbol"`
-	CurrentPrice float64   `json:"current_price"`
-	MarketCap    int64     `json:"market_cap"`
-	LastUpdated  time.Time `json:"last_updated"`
-}
-
-// NewMarketTicker creates a new instance of MarketTicker
-func NewMarketTicker(symbol string, currentPrice float64, marketCap int64, lastUpdated time.Time) MarketTicker {
-	return MarketTicker{
-		Symbol:       symbol,
-		CurrentPrice: currentPrice,
-		MarketCap:    marketCap,
-		LastUpdated:  lastUpdated,
+func NewToken(name string, units []TokenUnit) Token {
+	return Token{
+		Name:  name,
+		Units: units,
 	}
 }
 
-// MarketTickers is an array of MarketTicker
-type MarketTickers []MarketTicker
+// TokenUnit represents a unit of a token
+type TokenUnit struct {
+	Denom    string
+	Exponent int
+	Aliases  []string
+}
+
+func NewTokenUnit(denom string, exponent int, aliases []string) TokenUnit {
+	return TokenUnit{
+		Denom:    denom,
+		Exponent: exponent,
+		Aliases:  aliases,
+	}
+}
+
+// TokenPrice represents the price at a given moment in time of a token unit
+type TokenPrice struct {
+	UnitName  string
+	Price     float64
+	MarketCap int64
+	Timestamp time.Time
+}
+
+// NewTokenPrice returns a new TokenPrice instance containing the given data
+func NewTokenPrice(unitName string, price float64, marketCap int64, timestamp time.Time) TokenPrice {
+	return TokenPrice{
+		UnitName:  unitName,
+		Price:     price,
+		MarketCap: marketCap,
+		Timestamp: timestamp,
+	}
+}

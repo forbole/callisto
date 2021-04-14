@@ -49,7 +49,7 @@ func (r *ModulesRegistrar) BuildModules(
 		gov.NewModule(encodingConfig, utils.MustCreateGrpcConnection(cfg), bigDipperBd),
 		mint.NewModule(utils.MustCreateGrpcConnection(cfg), bigDipperBd),
 		bmodules.NewModule(cfg, bigDipperBd),
-		pricefeed.NewModule(bigDipperBd),
+		pricefeed.NewModule(encodingConfig, bigDipperBd),
 		slashing.NewModule(utils.MustCreateGrpcConnection(cfg), bigDipperBd),
 		staking.NewModule(encodingConfig, utils.MustCreateGrpcConnection(cfg), bigDipperBd),
 	}
