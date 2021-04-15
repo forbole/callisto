@@ -22,16 +22,17 @@ CREATE TABLE token_price
     timestamp  TIMESTAMP NOT NULL,
     UNIQUE (unit_name, timestamp)
 );
+CREATE INDEX token_price_timestamp_index ON token_price (timestamp);
 
 /**
   * This function is used to have a Hasura compute field (https://hasura.io/docs/1.0/graphql/core/schema/computed-fields.html)
   * inside the account_balance table, so that it's easy to determine the token price that is associated with that balance.
  */
-CREATE FUNCTION token_price(account_balance_row account_balance) RETURNS SETOF token_price AS
+CREATE FUNCTION account_balance_tokens_prices(account_balance_row account_balance) RETURNS SETOF token_price AS
 $$
-SELECT id, name, price, market_cap, timestamp
+SELECT id, unit_name, price, market_cap, timestamp
 FROM (
-         SELECT DISTINCT ON (name) name, id, price, market_cap, timestamp
+         SELECT DISTINCT ON (unit_name) unit_name, id, price, market_cap, timestamp
          FROM (
                   SELECT *
                   FROM token_price
