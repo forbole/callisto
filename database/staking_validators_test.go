@@ -310,8 +310,8 @@ func (suite *DbTestSuite) TestSaveValidatorsVotingPowers() {
 	)
 
 	err := suite.database.SaveValidatorsVotingPowers([]types.ValidatorVotingPower{
-		types.NewValidatorVotingPower(validator1.GetConsAddr(), 1000, block.Block.Height),
-		types.NewValidatorVotingPower(validator2.GetConsAddr(), 2000, block.Block.Height),
+		types.NewValidatorVotingPower(validator1.GetConsAddr(), 1000, block.Height),
+		types.NewValidatorVotingPower(validator2.GetConsAddr(), 2000, block.Height),
 	})
 	suite.Require().NoError(err)
 
@@ -319,12 +319,12 @@ func (suite *DbTestSuite) TestSaveValidatorsVotingPowers() {
 		dbtypes.NewValidatorVotingPowerRow(
 			validator1.GetConsAddr(),
 			1000,
-			block.Block.Height,
+			block.Height,
 		),
 		dbtypes.NewValidatorVotingPowerRow(
 			validator2.GetConsAddr(),
 			2000,
-			block.Block.Height,
+			block.Height,
 		),
 	}
 
@@ -357,14 +357,14 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 			validator.GetConsPubKey(),
 			1,
 			false,
-			block1.Block.Height,
+			block1.Height,
 		),
 		types.NewValidatorStatus(
 			validator.GetConsAddr(),
 			validator.GetConsPubKey(),
 			2,
 			true,
-			block2.Block.Height,
+			block2.Height,
 		),
 	})
 	suite.Require().NoError(err)
@@ -378,13 +378,13 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 			1,
 			false,
 			validator.GetConsAddr(),
-			block1.Block.Height,
+			block1.Height,
 		),
 		dbtypes.NewValidatorStatusRow(
 			2,
 			true,
 			validator.GetConsAddr(),
-			block2.Block.Height,
+			block2.Height,
 		),
 	}
 	suite.Require().Len(stored, len(expected))

@@ -11,7 +11,7 @@ import (
 
 func (suite *DbTestSuite) TestSaveAccountBalance() {
 	address := suite.getAccount("cosmos140xsjjg6pwkjp0xjz8zru7ytha60l5aee9nlf7")
-	height := suite.getBlock(100).Block.Height
+	height := suite.getBlock(100).Height
 	coins := sdk.NewCoins(
 		sdk.NewCoin("desmos", sdk.NewInt(10000)),
 		sdk.NewCoin("uatom", sdk.NewInt(15)),

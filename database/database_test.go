@@ -8,6 +8,8 @@ import (
 	"testing"
 	"time"
 
+	juno "github.com/desmos-labs/juno/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	tmversion "github.com/tendermint/tendermint/proto/tendermint/version"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
@@ -81,7 +83,7 @@ func (suite *DbTestSuite) SetupTest() {
 }
 
 // getBlock builds, stores and returns a block for the provided height
-func (suite *DbTestSuite) getBlock(height int64) *tmctypes.ResultBlock {
+func (suite *DbTestSuite) getBlock(height int64) *juno.Block {
 	validator := suite.getValidator(
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
@@ -91,7 +93,7 @@ func (suite *DbTestSuite) getBlock(height int64) *tmctypes.ResultBlock {
 	addr, err := sdk.ConsAddressFromBech32(validator.GetConsAddr())
 	suite.Require().NoError(err)
 
-	block := &tmctypes.ResultBlock{
+	tmBlock := &tmctypes.ResultBlock{
 		BlockID: tmtypes.BlockID{},
 		Block: &tmtypes.Block{
 			Header: tmtypes.Header{
@@ -121,7 +123,8 @@ func (suite *DbTestSuite) getBlock(height int64) *tmctypes.ResultBlock {
 		},
 	}
 
-	err = suite.database.SaveBlock(block, 10000)
+	block := juno.NewBlockFromTmBlock(tmBlock, 10000)
+	err = suite.database.SaveBlock(block)
 	suite.Require().NoError(err)
 	return block
 }
