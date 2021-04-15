@@ -161,18 +161,20 @@ func (db *BigDipperDb) SaveValidatorDescription(description types.ValidatorDescr
 
 	// Insert the description
 	stmt := `
-INSERT INTO validator_description (validator_address, moniker, identity, website, security_contact, details, height)
-VALUES($1, $2, $3, $4, $5, $6, $7)
+INSERT INTO validator_description (validator_address, moniker, identity, avatar_url, website, security_contact, details, height)
+VALUES($1, $2, $3, $4, $5, $6, $7, $8)
 ON CONFLICT (validator_address, height) DO UPDATE
     SET moniker = excluded.moniker, 
         identity = excluded.identity, 
+        avatar_url = excluded.avatar_url,
         website = excluded.website, 
         security_contact = excluded.security_contact, 
         details = excluded.details`
 
 	_, err = db.Sql.Exec(stmt,
 		dbtypes.ToNullString(consAddr.String()),
-		dbtypes.ToNullString(des.Moniker), dbtypes.ToNullString(des.Identity), dbtypes.ToNullString(des.Website),
+		dbtypes.ToNullString(des.Moniker), dbtypes.ToNullString(des.Identity),
+		dbtypes.ToNullString(description.AvatarURL), dbtypes.ToNullString(des.Website),
 		dbtypes.ToNullString(des.SecurityContact), dbtypes.ToNullString(des.Details),
 		description.Height,
 	)
@@ -182,7 +184,7 @@ ON CONFLICT (validator_address, height) DO UPDATE
 // getValidatorDescription returns the description of the validator having the given address.
 // If no description could be found, returns false instead
 func (db *BigDipperDb) getValidatorDescription(address sdk.ConsAddress) (*types.ValidatorDescription, bool) {
-	var result []dbtypes.ValidatorDescriptionHistoryRow
+	var result []dbtypes.ValidatorDescriptionRow
 	stmt := `SELECT * FROM validator_description WHERE validator_description.validator_address = $1`
 
 	err := db.Sqlx.Select(&result, stmt, address.String())
@@ -204,6 +206,7 @@ func (db *BigDipperDb) getValidatorDescription(address sdk.ConsAddress) (*types.
 			dbtypes.ToString(row.SecurityContact),
 			dbtypes.ToString(row.Details),
 		),
+		dbtypes.ToString(row.AvatarURL),
 		row.Height,
 	)
 	return &description, true

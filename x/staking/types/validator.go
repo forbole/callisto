@@ -83,20 +83,23 @@ func (v validator) GetMaxRate() *sdk.Dec {
 type ValidatorDescription struct {
 	OperatorAddress string
 	Description     stakingtypes.Description
+	AvatarURL       string
 	Height          int64
 }
 
 // NewValidatorDescription return a new ValidatorDescription object
-func NewValidatorDescription(opAddr string, description stakingtypes.Description, height int64,
+func NewValidatorDescription(
+	opAddr string, description stakingtypes.Description, avatarURL string, height int64,
 ) ValidatorDescription {
 	return ValidatorDescription{
 		OperatorAddress: opAddr,
 		Description:     description,
+		AvatarURL:       avatarURL,
 		Height:          height,
 	}
 }
 
-// Equal tells whether v and w contain the same data
+// Equals tells whether v and w contain the same data
 func (v ValidatorDescription) Equals(w ValidatorDescription) bool {
 	return v.OperatorAddress == w.OperatorAddress &&
 		v.Description == w.Description &&
@@ -170,7 +173,8 @@ func (v ValidatorVotingPower) Equals(w ValidatorVotingPower) bool {
 }
 
 //--------------------------------------------------------
-// ValidatorStatus represent status and jailed state for validator in specific height an timestamp
+
+// ValidatorStatus represents the current state for the specified validator at the specific height
 type ValidatorStatus struct {
 	ConsensusAddress string
 	ConsensusPubKey  string
@@ -179,7 +183,7 @@ type ValidatorStatus struct {
 	Height           int64
 }
 
-// NewValidatorVotingPower creates a new ValidatorVotingPower
+// NewValidatorStatus creates a new ValidatorVotingPower
 func NewValidatorStatus(address, pubKey string, status int, jailed bool, height int64) ValidatorStatus {
 	return ValidatorStatus{
 		ConsensusAddress: address,

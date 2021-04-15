@@ -31,6 +31,7 @@ CREATE TABLE validator_description
     validator_address TEXT NOT NULL REFERENCES validator (consensus_address),
     moniker           TEXT,
     identity          TEXT,
+    avatar_url        TEXT,
     website           TEXT,
     security_contact  TEXT,
     details           TEXT,

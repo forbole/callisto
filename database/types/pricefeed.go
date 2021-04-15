@@ -23,7 +23,7 @@ type TokenRow struct {
 // TokenPriceRow represent a row of the table token_price in the database
 type TokenPriceRow struct {
 	ID        string    `db:"id"`
-	Name      string    `db:"name"`
+	Name      string    `db:"unit_name"`
 	Price     float64   `db:"price"`
 	MarketCap int64     `db:"market_cap"`
 	Timestamp time.Time `db:"timestamp"`

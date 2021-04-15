@@ -215,11 +215,16 @@ func getUnbondingDelegations(genData stakingtypes.UnbondingDelegations, valAddr 
 // saveValidatorDescription saves the description for the given validators
 func saveValidatorDescription(validators stakingtypes.Validators, db *database.BigDipperDb) error {
 	for _, account := range validators {
-		err := db.SaveValidatorDescription(types.NewValidatorDescription(
+		description, err := bstakingutils.GetValidatorDescription(
 			account.OperatorAddress,
 			account.Description,
 			1,
-		))
+		)
+		if err != nil {
+			return err
+		}
+
+		err = db.SaveValidatorDescription(description)
 		if err != nil {
 			return err
 		}

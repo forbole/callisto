@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/forbole/bdjuno/x/pricefeed/coingecko"
+	pricefeedtypes "github.com/forbole/bdjuno/x/pricefeed/types"
 
 	dbtypes "github.com/forbole/bdjuno/database/types"
 )
 
 func (suite *DbTestSuite) insertToken(name string) {
 	query := fmt.Sprintf(
-		`INSERT INTO token (name, traded_unit) VALUES ('%[2]s', '%[1]s')`, name, name)
+		`INSERT INTO token (name) VALUES ('%s')`, name)
 	_, err := suite.database.Sql.Query(query)
 	suite.Require().NoError(err)
 
@@ -29,7 +29,7 @@ func (suite *DbTestSuite) Test_GetTradedNames() {
 	tradedNames, err := suite.database.GetTokenUnits()
 	suite.Require().NoError(err)
 
-	var expected = []string{"desmos", "daric"}
+	var expected = []string{"udesmos", "mdesmos", "desmos", "udaric", "mdaric", "daric"}
 	suite.Require().Len(tradedNames, len(expected))
 	for _, name := range expected {
 		suite.Require().Contains(tradedNames, name)
@@ -40,14 +40,14 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTokenPrice() {
 	suite.insertToken("desmos")
 	suite.insertToken("atom")
 
-	tickers := coingecko.MarketTickers{
-		coingecko.NewMarketTicker(
+	tickers := []pricefeedtypes.TokenPrice{
+		pricefeedtypes.NewTokenPrice(
 			"desmos",
 			100.01,
 			10,
 			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
 		),
-		coingecko.NewMarketTicker(
+		pricefeedtypes.NewTokenPrice(
 			"atom",
 			200.01,
 			20,

@@ -66,11 +66,16 @@ func handleMsgCreateValidator(
 	}
 
 	// Save validator description
-	err = db.SaveValidatorDescription(types.NewValidatorDescription(
+	description, err := bstakingutils.GetValidatorDescription(
 		msg.ValidatorAddress,
 		msg.Description,
 		tx.Height,
-	))
+	)
+	if err != nil {
+		return err
+	}
+
+	err = db.SaveValidatorDescription(description)
 	if err != nil {
 		return err
 	}
@@ -112,9 +117,14 @@ func handleEditValidator(
 	}
 
 	// Save validator description
-	return db.SaveValidatorDescription(types.NewValidatorDescription(
+	desc, err := bstakingutils.GetValidatorDescription(
 		msg.ValidatorAddress,
 		msg.Description,
 		tx.Height,
-	))
+	)
+	if err != nil {
+		return err
+	}
+
+	return db.SaveValidatorDescription(desc)
 }

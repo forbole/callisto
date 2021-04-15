@@ -131,6 +131,7 @@ type ValidatorDescriptionRow struct {
 	ValAddress      string         `db:"validator_address"`
 	Moniker         sql.NullString `db:"moniker"`
 	Identity        sql.NullString `db:"identity"`
+	AvatarURL       sql.NullString `db:"avatar_url"`
 	Website         sql.NullString `db:"website"`
 	SecurityContact sql.NullString `db:"security_contact"`
 	Details         sql.NullString `db:"details"`
@@ -139,12 +140,13 @@ type ValidatorDescriptionRow struct {
 
 // NewValidatorDescriptionRow return a row representing data structure in validator_description
 func NewValidatorDescriptionRow(
-	valAddress, moniker, identity, website, securityContact, details string, height int64,
+	valAddress, moniker, identity, avatarURL, website, securityContact, details string, height int64,
 ) ValidatorDescriptionRow {
 	return ValidatorDescriptionRow{
 		ValAddress:      valAddress,
 		Moniker:         ToNullString(moniker),
 		Identity:        ToNullString(identity),
+		AvatarURL:       ToNullString(avatarURL),
 		Website:         ToNullString(website),
 		SecurityContact: ToNullString(securityContact),
 		Details:         ToNullString(details),
@@ -161,47 +163,6 @@ func (w ValidatorDescriptionRow) Equals(v ValidatorDescriptionRow) bool {
 		v.SecurityContact == w.SecurityContact &&
 		v.Details == w.Details &&
 		v.Height == w.Height
-}
-
-// ValidatorDescriptionHistoryRow represents a single row inside the validator_description_history table
-type ValidatorDescriptionHistoryRow struct {
-	ValAddress      string         `db:"operator_address"`
-	Moniker         sql.NullString `db:"moniker"`
-	Identity        sql.NullString `db:"identity"`
-	Website         sql.NullString `db:"website"`
-	SecurityContact sql.NullString `db:"security_contact"`
-	Details         sql.NullString `db:"details"`
-	Height          int64          `db:"height"`
-	Timestamp       time.Time      `db:"timestamp"`
-}
-
-// NewValidatorDescriptionHistoryRow represents a single row inside the validator_description_history table
-func NewValidatorDescriptionHistoryRow(
-	valAddress, moniker, identity, website, securityContact, details string,
-	height int64, timestamp time.Time,
-) ValidatorDescriptionHistoryRow {
-	return ValidatorDescriptionHistoryRow{
-		ValAddress:      valAddress,
-		Moniker:         sql.NullString{String: moniker, Valid: true},
-		Identity:        sql.NullString{String: identity, Valid: true},
-		Website:         sql.NullString{String: website, Valid: true},
-		SecurityContact: sql.NullString{String: securityContact, Valid: true},
-		Details:         sql.NullString{String: details, Valid: true},
-		Height:          height,
-		Timestamp:       timestamp,
-	}
-}
-
-// Equals return true if two ValidatorDescriptionRow are equal
-func (w ValidatorDescriptionHistoryRow) Equals(v ValidatorDescriptionHistoryRow) bool {
-	return v.ValAddress == w.ValAddress &&
-		v.Moniker == w.Moniker &&
-		v.Identity == w.Identity &&
-		v.Website == w.Website &&
-		v.SecurityContact == w.SecurityContact &&
-		v.Details == w.Details &&
-		v.Height == w.Height &&
-		v.Timestamp.Equal(w.Timestamp)
 }
 
 // ________________________________________________

@@ -229,6 +229,7 @@ func (suite *DbTestSuite) TestSaveValidatorDescription() {
 			"securityContact",
 			"details",
 		),
+		"avatar-url",
 		height,
 	)
 	err := suite.database.SaveValidatorDescription(description)
@@ -243,6 +244,7 @@ func (suite *DbTestSuite) TestSaveValidatorDescription() {
 			validator.GetConsAddr(),
 			"moniker",
 			"identity",
+			"avatar-url",
 			"",
 			"securityContact",
 			"details",

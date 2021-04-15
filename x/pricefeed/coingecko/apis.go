@@ -41,9 +41,9 @@ func convertCoingeckoPrices(prices []MarketTicker) []pricefeedtypes.TokenPrice {
 	return tokenPrices
 }
 
-// QueryCoinGecko can query endpoint from pricefeed
+// queryCoinGecko queries the CoinGecko APIs for the given endpoint
 func queryCoinGecko(endpoint string, ptr interface{}) error {
-	resp, err := http.Get(fmt.Sprintf("%s/%s", "https://api.coingecko.com/api/v3", endpoint))
+	resp, err := http.Get("https://api.coingecko.com/api/v3" + endpoint)
 	if err != nil {
 		return err
 	}
