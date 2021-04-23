@@ -24,7 +24,9 @@ CREATE TABLE validator_info
     max_change_rate       TEXT NOT NULL,
     max_rate              TEXT NOT NULL
 );
+CREATE INDEX validator_info_consensus_address_index ON validator_info (consensus_address);
 CREATE INDEX validator_info_operator_address_index ON validator_info (operator_address);
+CREATE INDEX validator_info_self_delegate_address_index ON validator_info (self_delegate_address);
 
 CREATE TABLE validator_description
 (
