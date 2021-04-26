@@ -90,7 +90,8 @@ CREATE TABLE delegation
     delegator_address TEXT               NOT NULL REFERENCES account (address),
     amount            COIN               NOT NULL,
     shares            NUMERIC            NOT NUll,
-    height            BIGINT             NOT NULL
+    height            BIGINT             NOT NULL,
+    UNIQUE (validator_address, delegator_address, height)
 );
 CREATE INDEX delegation_validator_address_index ON delegation (validator_address);
 CREATE INDEX delegation_delegator_address ON delegation (delegator_address);
