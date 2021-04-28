@@ -6,16 +6,16 @@ import "time"
 
 // DelegationRow represents a single delegation table row
 type DelegationRow struct {
-	ID               string  `db:"id"`
-	ValidatorAddress string  `db:"validator_address"`
-	DelegatorAddress string  `db:"delegator_address"`
-	Amount           DbCoin  `db:"amount"`
-	Shares           float64 `db:"shares"`
-	Height           int64   `db:"height"`
+	ID               string `db:"id"`
+	ValidatorAddress string `db:"validator_address"`
+	DelegatorAddress string `db:"delegator_address"`
+	Amount           DbCoin `db:"amount"`
+	Shares           string `db:"shares"`
+	Height           int64  `db:"height"`
 }
 
 // NewDelegationRow allows to build a new DelegationRow
-func NewDelegationRow(consAddr, delegator string, amount DbCoin, shares float64, height int64) DelegationRow {
+func NewDelegationRow(consAddr, delegator string, amount DbCoin, shares string, height int64) DelegationRow {
 	return DelegationRow{
 		ValidatorAddress: consAddr,
 		DelegatorAddress: delegator,
@@ -25,7 +25,7 @@ func NewDelegationRow(consAddr, delegator string, amount DbCoin, shares float64,
 	}
 }
 
-// Equals tells whether v and w represent the same row
+// Equal tells whether v and w represent the same row
 func (v DelegationRow) Equal(w DelegationRow) bool {
 	return v.ValidatorAddress == w.ValidatorAddress &&
 		v.DelegatorAddress == w.DelegatorAddress &&

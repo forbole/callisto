@@ -2,7 +2,6 @@ package database
 
 import (
 	"fmt"
-
 	dbtypes "github.com/forbole/bdjuno/database/types"
 	"github.com/forbole/bdjuno/x/staking/types"
 )
@@ -63,6 +62,13 @@ INSERT INTO delegation (validator_address, delegator_address, amount, shares, he
 	return err
 }
 
+// DeleteDelegatorDelegations removes all the delegations associated with the given delegator
+func (db *BigDipperDb) DeleteDelegatorDelegations(delegator string) error {
+	stmt := `DELETE FROM delegation WHERE delegator_address = $1`
+	_, err := db.Sql.Exec(stmt, delegator)
+	return err
+}
+
 // GetDelegatorsForHeight returns the delegators addresses for the given height
 func (db *BigDipperDb) GetDelegatorsForHeight(height int64) ([]string, error) {
 	var rows []dbtypes.DelegationRow
@@ -79,67 +85,7 @@ func (db *BigDipperDb) GetDelegatorsForHeight(height int64) ([]string, error) {
 	return delegators, nil
 }
 
-// ________________________________________________
-
-// SaveUnbondingDelegations saves the given unbonding delegations into the database.
-// It assumes that all the validators as well as all the delegators addresses are
-// already present inside the proper tables of the database.
-// To store the validators data call SaveValidatorData(s).
-// To store the account data call SaveAccount.
-func (db *BigDipperDb) SaveUnbondingDelegations(delegations []types.UnbondingDelegation) error {
-	// If the delegations are empty just return
-	if len(delegations) == 0 {
-		return nil
-	}
-
-	accQry := `
-INSERT INTO account (address) VALUES `
-	var accParams []interface{}
-
-	udQry := `
-INSERT INTO unbonding_delegation (validator_address, delegator_address, amount, completion_timestamp, height)
-VALUES `
-	var udParams []interface{}
-
-	for i, delegation := range delegations {
-		ai := i * 1
-		accQry += fmt.Sprintf("($%d),", ai+1)
-		accParams = append(accParams, delegation.DelegatorAddress)
-
-		validator, err := db.GetValidator(delegation.ValidatorAddress)
-		if err != nil {
-			return err
-		}
-
-		coin := dbtypes.NewDbCoin(delegation.Amount)
-		amount, err := coin.Value()
-		if err != nil {
-			return err
-		}
-
-		udi := i * 5
-		udQry += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", udi+1, udi+2, udi+3, udi+4, udi+5)
-		udParams = append(udParams,
-			validator.GetConsAddr(), delegation.DelegatorAddress, amount,
-			delegation.CompletionTimestamp, delegation.Height)
-	}
-
-	// Insert the delegators
-	accQry = accQry[:len(accQry)-1] // Remove the trailing ","
-	accQry += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(accQry, accParams...)
-	if err != nil {
-		return err
-	}
-
-	// Insert the current unbonding delegations
-	udQry = udQry[:len(udQry)-1] // Remove the trailing ","
-	udQry += " ON CONFLICT DO NOTHING"
-	_, err = db.Sql.Exec(udQry, udParams...)
-	return err
-}
-
-// ________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 // SaveRedelegations saves the given redelegations inside the database.
 // It assumes that all the validators as well as all the delegators addresses are
@@ -203,5 +149,93 @@ VALUES `
 	rdQry = rdQry[:len(rdQry)-1] // Remove the trailing ","
 	rdQry += " ON CONFLICT DO NOTHING"
 	_, err = db.Sql.Exec(rdQry, rdParams...)
+	return err
+}
+
+// DeleteRedelegation removes the given redelegation from the database
+func (db *BigDipperDb) DeleteRedelegation(redelegation types.Redelegation) error {
+	stmt := `
+DELETE FROM redelegation 
+WHERE delegator_address = $1 
+  AND src_validator_address = $2 
+  AND dst_validator_address = $3 
+  AND amount = $4
+  AND completion_time = $5`
+	_, err := db.Sql.Exec(stmt,
+		redelegation.DelegatorAddress, redelegation.SrcValidator, redelegation.DstValidator,
+		redelegation.Amount, redelegation.CompletionTime)
+	return err
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// SaveUnbondingDelegations saves the given unbonding delegations into the database.
+// It assumes that all the validators as well as all the delegators addresses are
+// already present inside the proper tables of the database.
+// To store the validators data call SaveValidatorData(s).
+// To store the account data call SaveAccount.
+func (db *BigDipperDb) SaveUnbondingDelegations(delegations []types.UnbondingDelegation) error {
+	// If the delegations are empty just return
+	if len(delegations) == 0 {
+		return nil
+	}
+
+	accQry := `
+INSERT INTO account (address) VALUES `
+	var accParams []interface{}
+
+	udQry := `
+INSERT INTO unbonding_delegation (validator_address, delegator_address, amount, completion_timestamp, height)
+VALUES `
+	var udParams []interface{}
+
+	for i, delegation := range delegations {
+		ai := i * 1
+		accQry += fmt.Sprintf("($%d),", ai+1)
+		accParams = append(accParams, delegation.DelegatorAddress)
+
+		validator, err := db.GetValidator(delegation.ValidatorAddress)
+		if err != nil {
+			return err
+		}
+
+		coin := dbtypes.NewDbCoin(delegation.Amount)
+		amount, err := coin.Value()
+		if err != nil {
+			return err
+		}
+
+		udi := i * 5
+		udQry += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", udi+1, udi+2, udi+3, udi+4, udi+5)
+		udParams = append(udParams,
+			validator.GetConsAddr(), delegation.DelegatorAddress, amount,
+			delegation.CompletionTimestamp, delegation.Height)
+	}
+
+	// Insert the delegators
+	accQry = accQry[:len(accQry)-1] // Remove the trailing ","
+	accQry += " ON CONFLICT DO NOTHING"
+	_, err := db.Sql.Exec(accQry, accParams...)
+	if err != nil {
+		return err
+	}
+
+	// Insert the current unbonding delegations
+	udQry = udQry[:len(udQry)-1] // Remove the trailing ","
+	udQry += " ON CONFLICT DO NOTHING"
+	_, err = db.Sql.Exec(udQry, udParams...)
+	return err
+}
+
+// DeleteUnbondingDelegation removes the given unbonding delegation from the database
+func (db *BigDipperDb) DeleteUnbondingDelegation(delegation types.UnbondingDelegation) error {
+	stmt := `
+DELETE FROM unbonding_delegation 
+WHERE delegator_address = $1 
+  AND validator_address = $2 
+  AND amount = $3
+  AND completion_timestamp = $4`
+	_, err := db.Sql.Exec(stmt,
+		delegation.DelegatorAddress, delegation.ValidatorAddress, delegation.Amount, delegation.CompletionTimestamp)
 	return err
 }

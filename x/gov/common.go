@@ -33,7 +33,7 @@ func updateProposalStatuses(id uint64, govClient govtypes.QueryClient, db *datab
 	proposal := res.Proposal
 	if proposal.Status == govtypes.StatusVotingPeriod {
 		update := UpdateProposal(proposal.ProposalId, govClient, db)
-		time.AfterFunc(time.Since(proposal.VotingEndTime), update)
+		time.AfterFunc(time.Until(proposal.VotingEndTime), update)
 	}
 
 	// Update the proposal to update the status

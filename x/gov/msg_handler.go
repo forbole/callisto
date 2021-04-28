@@ -111,9 +111,9 @@ func handleMsgSubmitProposal(
 
 	// Watch the proposal and renew the database when deposit end and voting end in the future
 	if proposal.Status == govtypes.StatusVotingPeriod && proposal.VotingEndTime.After(time.Now()) {
-		time.AfterFunc(time.Since(proposal.VotingEndTime), UpdateProposal(proposal.ProposalId, govClient, db))
+		time.AfterFunc(time.Until(proposal.VotingEndTime), UpdateProposal(proposal.ProposalId, govClient, db))
 	} else if proposal.Status == govtypes.StatusDepositPeriod && proposal.DepositEndTime.After(time.Now()) {
-		time.AfterFunc(time.Since(proposal.DepositEndTime), UpdateProposal(proposal.ProposalId, govClient, db))
+		time.AfterFunc(time.Until(proposal.DepositEndTime), UpdateProposal(proposal.ProposalId, govClient, db))
 	}
 
 	return nil

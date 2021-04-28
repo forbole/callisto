@@ -39,5 +39,8 @@ func HandleMsg(
 		return auth.RefreshAccounts(accounts, tx.Height, authClient, bankClient, cdc, db)
 	}
 
+	// TODO: Always refresh the account of any user that performed a transaction.
+	// They might have paid for fees. Use MessageAddressesParser to get the addresses and use common.UpdateBalance then
+
 	return nil
 }

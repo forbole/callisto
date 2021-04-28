@@ -31,7 +31,37 @@ func NewDelegation(
 	}
 }
 
-// _________________________________________________________
+// -----------------------------------------------------------------------------------------------------------------
+
+// DelegationUpdateData contains the data needed to update a delegation
+type DelegationUpdateData struct {
+	Delegator string
+	Validator string
+	Amount    sdk.Coin
+}
+
+func NewDelegationUpdateData(delegator, validator string, amount sdk.Coin) DelegationUpdateData {
+	return DelegationUpdateData{
+		Delegator: delegator,
+		Validator: validator,
+		Amount:    amount,
+	}
+}
+
+// DelegationDeleteData contains the data needed to delete a delegation
+type DelegationDeleteData struct {
+	Delegator string
+	Validator string
+}
+
+func NewDelegationDeleteData(delegator, validator string) DelegationDeleteData {
+	return DelegationDeleteData{
+		Delegator: delegator,
+		Validator: validator,
+	}
+}
+
+// -----------------------------------------------------------------------------------------------------------------
 
 // UnbondingDelegation represents a single unbonding delegation
 type UnbondingDelegation struct {

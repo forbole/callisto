@@ -75,9 +75,9 @@ func saveProposals(p govtypes.Proposals, govClient govtypes.QueryClient, db *dat
 		// Update the proposal status when the voting period or deposit period ends
 		update := UpdateProposal(proposal.ProposalId, govClient, db)
 		if proposal.Status == govtypes.StatusVotingPeriod {
-			time.AfterFunc(time.Since(proposal.VotingEndTime), update)
+			time.AfterFunc(time.Until(proposal.VotingEndTime), update)
 		} else if proposal.Status == govtypes.StatusDepositPeriod {
-			time.AfterFunc(time.Since(proposal.DepositEndTime), update)
+			time.AfterFunc(time.Until(proposal.DepositEndTime), update)
 		}
 	}
 
