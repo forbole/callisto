@@ -80,13 +80,6 @@ func (suite *DbTestSuite) TestDelegations() {
 		dbtypes.NewDelegationRow(
 			validator1.GetConsAddr(),
 			delegator1.String(),
-			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(100))),
-			1000,
-			1000,
-		),
-		dbtypes.NewDelegationRow(
-			validator1.GetConsAddr(),
-			delegator1.String(),
 			dbtypes.NewDbCoin(sdk.NewCoin("desmos", sdk.NewInt(100))),
 			1001,
 			1001,
