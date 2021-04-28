@@ -1,28 +1,22 @@
 package main
 
 import (
-	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/desmos-labs/juno/cmd"
+	junoparse "github.com/desmos-labs/juno/cmd/parse"
 	"github.com/desmos-labs/juno/modules/messages"
-	juno "github.com/desmos-labs/juno/types"
 
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x"
 )
 
 func main() {
-	// Build the executor
-	executor := cmd.BuildDefaultExecutor(
-		"bdjuno",
-		x.NewModulesRegistrar(
-			messages.CosmosMessageAddressesParser,
-		),
-		juno.DefaultSetup,
-		simapp.MakeTestEncodingConfig,
-		database.Builder,
-	)
+	// Setup the config
+	config := junoparse.NewConfig("bdjuno").
+		WithRegistrar(x.NewModulesRegistrar(messages.CosmosMessageAddressesParser)).
+		WithDBBuilder(database.Builder)
 
 	// Run the command
+	executor := cmd.BuildDefaultExecutor(config)
 	err := executor.Execute()
 	if err != nil {
 		panic(err)

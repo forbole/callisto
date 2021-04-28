@@ -1,8 +1,8 @@
 package modules
 
 import (
-	"github.com/desmos-labs/juno/config"
 	"github.com/desmos-labs/juno/modules"
+	juno "github.com/desmos-labs/juno/types"
 
 	"github.com/forbole/bdjuno/database"
 )
@@ -10,12 +10,12 @@ import (
 var _ modules.Module = &Module{}
 
 type Module struct {
-	cfg *config.Config
+	cfg *juno.Config
 	db  *database.BigDipperDb
 }
 
 // NewModule returns a new Module instance
-func NewModule(cfg *config.Config, db *database.BigDipperDb) *Module {
+func NewModule(cfg *juno.Config, db *database.BigDipperDb) *Module {
 	return &Module{
 		cfg: cfg,
 		db:  db,

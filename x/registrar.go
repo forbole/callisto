@@ -4,10 +4,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/juno/client"
-	"github.com/desmos-labs/juno/config"
 	"github.com/desmos-labs/juno/db"
 	"github.com/desmos-labs/juno/modules"
 	"github.com/desmos-labs/juno/modules/messages"
+	juno "github.com/desmos-labs/juno/types"
 
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/auth"
@@ -37,7 +37,7 @@ func NewModulesRegistrar(parser messages.MessageAddressesParser) *ModulesRegistr
 
 // BuildModules implements modules.Registrar
 func (r *ModulesRegistrar) BuildModules(
-	cfg *config.Config, encodingConfig *params.EncodingConfig, _ *sdk.Config, db db.Database, cp *client.Proxy,
+	cfg *juno.Config, encodingConfig *params.EncodingConfig, _ *sdk.Config, db db.Database, cp *client.Proxy,
 ) modules.Modules {
 	bigDipperBd := database.Cast(db)
 	return []modules.Module{

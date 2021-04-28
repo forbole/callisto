@@ -17,7 +17,12 @@ import (
 	"github.com/forbole/bdjuno/database"
 )
 
-var _ modules.Module = &Module{}
+var (
+	_ modules.Module        = &Module{}
+	_ modules.GenesisModule = &Module{}
+	_ modules.BlockModule   = &Module{}
+	_ modules.MessageModule = &Module{}
+)
 
 // Module represents the x/bank module
 type Module struct {

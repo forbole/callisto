@@ -3,6 +3,8 @@ package common
 import (
 	"context"
 
+	"github.com/forbole/bdjuno/x/staking/types"
+
 	"github.com/cosmos/cosmos-sdk/types/query"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -29,6 +31,28 @@ func GetValidatorConsAddr(cdc codec.Marshaler, validator stakingtypes.Validator)
 	}
 
 	return sdk.ConsAddress(pubKey.Address()), err
+}
+
+// ConvertValidator converts the given staking validator into a BDJuno validator
+func ConvertValidator(cdc codec.Marshaler, validator stakingtypes.Validator) (types.Validator, error) {
+	consAddr, err := GetValidatorConsAddr(cdc, validator)
+	if err != nil {
+		return nil, err
+	}
+
+	consPubKey, err := GetValidatorConsPubKey(cdc, validator)
+	if err != nil {
+		return nil, err
+	}
+
+	return types.NewValidator(
+		consAddr.String(),
+		validator.OperatorAddress,
+		consPubKey.String(),
+		sdk.AccAddress(validator.GetOperator()).String(),
+		&validator.Commission.MaxChangeRate,
+		&validator.Commission.MaxRate,
+	), nil
 }
 
 // GetValidators returns the validators list at the given height

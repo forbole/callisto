@@ -24,10 +24,10 @@ func HandleMsg(tx *juno.Tx, msg sdk.Msg, cdc codec.Marshaler, db *database.BigDi
 	// Delegations are handled inside the block handler
 	switch cosmosMsg := msg.(type) {
 	case *stakingtypes.MsgCreateValidator:
-		return handleMsgCreateValidator(tx, cosmosMsg, cdc, db)
+		return handleMsgCreateValidator(tx.Height, cosmosMsg, cdc, db)
 
 	case *stakingtypes.MsgEditValidator:
-		return handleEditValidator(tx, cosmosMsg, db)
+		return handleEditValidator(tx.Height, cosmosMsg, db)
 	}
 
 	return nil
@@ -36,7 +36,7 @@ func HandleMsg(tx *juno.Tx, msg sdk.Msg, cdc codec.Marshaler, db *database.BigDi
 // handleMsgCreateValidator handles properly a MsgCreateValidator instance by
 // saving into the database all the data associated to such validator
 func handleMsgCreateValidator(
-	tx *juno.Tx, msg *stakingtypes.MsgCreateValidator, cdc codec.Marshaler, db *database.BigDipperDb,
+	height int64, msg *stakingtypes.MsgCreateValidator, cdc codec.Marshaler, db *database.BigDipperDb,
 ) error {
 	var pubKey cryptotypes.PubKey
 	err := cdc.UnpackAny(msg.Pubkey, &pubKey)
@@ -54,13 +54,13 @@ func handleMsgCreateValidator(
 		return err
 	}
 
-	// Save validator commission
-	err = db.SaveValidatorCommission(types.NewValidatorCommission(
-		msg.ValidatorAddress,
-		&msg.Commission.Rate,
-		&msg.MinSelfDelegation,
-		tx.Height,
-	))
+	validator, err := bstakingutils.ConvertValidator(cdc, stakingValidator)
+	if err != nil {
+		return err
+	}
+
+	// Save validator
+	err = db.SaveValidatorData(validator)
 	if err != nil {
 		return err
 	}
@@ -69,7 +69,7 @@ func handleMsgCreateValidator(
 	description, err := bstakingutils.GetValidatorDescription(
 		msg.ValidatorAddress,
 		msg.Description,
-		tx.Height,
+		height,
 	)
 	if err != nil {
 		return err
@@ -80,37 +80,25 @@ func handleMsgCreateValidator(
 		return err
 	}
 
-	consAddr, err := bstakingutils.GetValidatorConsAddr(cdc, stakingValidator)
-	if err != nil {
-		return err
-	}
-
-	consPubKey, err := bstakingutils.GetValidatorConsPubKey(cdc, stakingValidator)
-	if err != nil {
-		return err
-	}
-
-	// Save validator
-	return db.SaveValidatorData(types.NewValidator(
-		consAddr.String(),
-		stakingValidator.GetOperator().String(),
-		consPubKey.String(),
-		msg.DelegatorAddress,
-		&msg.Commission.MaxChangeRate,
-		&msg.Commission.MaxRate,
+	// Save validator commission
+	return db.SaveValidatorCommission(types.NewValidatorCommission(
+		msg.ValidatorAddress,
+		&msg.Commission.Rate,
+		&msg.MinSelfDelegation,
+		height,
 	))
 }
 
 // handleEditValidator handles MsgEditValidator messages, updating the validator info and commission
 func handleEditValidator(
-	tx *juno.Tx, msg *stakingtypes.MsgEditValidator, db *database.BigDipperDb,
+	height int64, msg *stakingtypes.MsgEditValidator, db *database.BigDipperDb,
 ) error {
 	// Save validator commission
 	err := db.SaveValidatorCommission(types.NewValidatorCommission(
 		msg.ValidatorAddress,
 		msg.CommissionRate,
 		msg.MinSelfDelegation,
-		tx.Height,
+		height,
 	))
 	if err != nil {
 		return err
@@ -120,7 +108,7 @@ func handleEditValidator(
 	desc, err := bstakingutils.GetValidatorDescription(
 		msg.ValidatorAddress,
 		msg.Description,
-		tx.Height,
+		height,
 	)
 	if err != nil {
 		return err

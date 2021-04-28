@@ -3,9 +3,10 @@ package database
 import (
 	"fmt"
 
+	juno "github.com/desmos-labs/juno/types"
+
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 
-	"github.com/desmos-labs/juno/config"
 	"github.com/desmos-labs/juno/db"
 	"github.com/desmos-labs/juno/db/postgresql"
 	"github.com/jmoiron/sqlx"
@@ -23,7 +24,7 @@ func Cast(db db.Database) *BigDipperDb {
 }
 
 // Builder allows to create a new BigDipperDb instance implementing the database.Builder type
-func Builder(cfg *config.Config, codec *params.EncodingConfig) (db.Database, error) {
+func Builder(cfg *juno.Config, codec *params.EncodingConfig) (db.Database, error) {
 	database, err := postgresql.Builder(cfg.Database, codec)
 	if err != nil {
 		return nil, err

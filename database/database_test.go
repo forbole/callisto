@@ -18,7 +18,6 @@ import (
 	stakingtypes "github.com/forbole/bdjuno/x/staking/types"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
-	jconfig "github.com/desmos-labs/juno/config"
 	"github.com/stretchr/testify/suite"
 
 	"github.com/forbole/bdjuno/database"
@@ -41,8 +40,8 @@ func (suite *DbTestSuite) SetupTest() {
 	codec := simapp.MakeTestEncodingConfig()
 
 	// Build the database
-	config := &jconfig.Config{
-		Database: &jconfig.DatabaseConfig{
+	config := &juno.Config{
+		Database: &juno.DatabaseConfig{
 			Name:     "bdjuno",
 			Host:     "localhost",
 			Port:     5433,
