@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-// UpdateEnableModules allows to save enabled module into the database
+// InsertEnableModules allows to save enabled module into the database
 func (db *BigDipperDb) InsertEnableModules(modules []string) error {
 	//clear table first
 	stmt := "DELETE FROM modules WHERE TRUE"

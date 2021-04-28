@@ -4,8 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/cosmos/cosmos-sdk/types/tx"
+
 	bstakingutils "github.com/forbole/bdjuno/x/staking/common"
 
+	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -21,6 +24,56 @@ func HandleGenesis(
 ) error {
 	log.Debug().Str("module", "staking").Msg("parsing genesis")
 
+	err := parseStakingState(appState, cdc, db)
+	if err != nil {
+		return err
+	}
+
+	err = parseGenesisTransactions(appState, cdc, db)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// -----------------------------------------------------------------------------------------------------------------
+
+func parseGenesisTransactions(appState map[string]json.RawMessage, cdc codec.Marshaler, db *database.BigDipperDb) error {
+	var genUtilState genutiltypes.GenesisState
+	err := cdc.UnmarshalJSON(appState[genutiltypes.ModuleName], &genUtilState)
+	if err != nil {
+		return err
+	}
+
+	for _, genTxBz := range genUtilState.GetGenTxs() {
+		// Unmarshal the transaction
+		var genTx tx.Tx
+		if err := cdc.UnmarshalJSON(genTxBz, &genTx); err != nil {
+			return err
+		}
+
+		for _, msg := range genTx.GetMsgs() {
+			// Handle the message properly
+			createValMsg, ok := msg.(*stakingtypes.MsgCreateValidator)
+			if !ok {
+				continue
+			}
+
+			err = handleMsgCreateValidator(1, createValMsg, cdc, db)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// -----------------------------------------------------------------------------------------------------------------
+
+// parseStakingState parses the staking genesis state and stores the data properly
+func parseStakingState(appState map[string]json.RawMessage, cdc codec.Marshaler, db *database.BigDipperDb) error {
 	// Read the genesis state
 	var genState stakingtypes.GenesisState
 	err := cdc.UnmarshalJSON(appState[stakingtypes.ModuleName], &genState)
@@ -68,7 +121,6 @@ func HandleGenesis(
 	if err != nil {
 		return fmt.Errorf("error while storing staking genesis redelegations: %s", err)
 	}
-
 	return nil
 }
 
@@ -81,29 +133,17 @@ func saveParams(params stakingtypes.Params, db *database.BigDipperDb) error {
 
 // saveValidators stores the validators data present inside the given genesis state
 func saveValidators(validators stakingtypes.Validators, cdc codec.Marshaler, db *database.BigDipperDb) error {
-	bdValidators := make([]types.Validator, len(validators))
-	for i, validator := range validators {
-		consAddr, err := bstakingutils.GetValidatorConsAddr(cdc, validator)
+	vals := make([]types.Validator, len(validators))
+	for i, val := range validators {
+		validator, err := bstakingutils.ConvertValidator(cdc, val)
 		if err != nil {
 			return err
 		}
 
-		consPubKey, err := bstakingutils.GetValidatorConsPubKey(cdc, validator)
-		if err != nil {
-			return err
-		}
-
-		bdValidators[i] = types.NewValidator(
-			consAddr.String(),
-			validator.OperatorAddress,
-			consPubKey.String(),
-			sdk.AccAddress(consAddr).String(),
-			&validator.Commission.MaxChangeRate,
-			&validator.Commission.MaxRate,
-		)
+		vals[i] = validator
 	}
 
-	return db.SaveValidators(bdValidators)
+	return db.SaveValidators(vals)
 }
 
 // saveValidatorsCommissions save the initial commission for each validator

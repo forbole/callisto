@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	juno "github.com/desmos-labs/juno/types"
 
 	"github.com/forbole/bdjuno/x/utils"
@@ -62,24 +61,12 @@ func updateValidators(
 
 	var vals = make([]types.Validator, len(validators))
 	for index, val := range validators {
-		consAddr, err := common.GetValidatorConsAddr(cdc, val)
+		validator, err := common.ConvertValidator(cdc, val)
 		if err != nil {
 			return nil, err
 		}
 
-		consPubKey, err := common.GetValidatorConsPubKey(cdc, val)
-		if err != nil {
-			return nil, err
-		}
-
-		vals[index] = types.NewValidator(
-			consAddr.String(),
-			val.OperatorAddress,
-			consPubKey.String(),
-			sdk.AccAddress(consAddr).String(),
-			&val.Commission.MaxChangeRate,
-			&val.Commission.MaxRate,
-		)
+		vals[index] = validator
 	}
 
 	err = db.SaveValidators(vals)
