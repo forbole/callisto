@@ -28,6 +28,17 @@ func UpdateValidatorsDelegations(
 	wg.Wait()
 }
 
+// ConvertDelegationResponse converts the given response to a BDJuno Delegation instance
+func ConvertDelegationResponse(height int64, response stakingtypes.DelegationResponse) types.Delegation {
+	return types.NewDelegation(
+		response.Delegation.DelegatorAddress,
+		response.Delegation.ValidatorAddress,
+		response.Balance,
+		response.Delegation.Shares.String(),
+		height,
+	)
+}
+
 // getDelegations gets the list of all the delegations that the validator having the given address has
 // at the given block height (having the given timestamp).
 // All the delegations will be sent to the out channel, and wg.Done() will be called at the end.
@@ -61,13 +72,7 @@ func getDelegations(
 
 		var delegations = make([]types.Delegation, len(res.DelegationResponses))
 		for index, delegation := range res.DelegationResponses {
-			delegations[index] = types.NewDelegation(
-				delegation.Delegation.DelegatorAddress,
-				delegation.Delegation.ValidatorAddress,
-				delegation.Balance,
-				delegation.Delegation.Shares.String(),
-				height,
-			)
+			delegations[index] = ConvertDelegationResponse(height, delegation)
 		}
 		err = db.SaveDelegations(delegations)
 		if err != nil {
