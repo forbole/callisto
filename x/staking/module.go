@@ -57,6 +57,6 @@ func (m *Module) HandleBlock(block *tmctypes.ResultBlock, _ []*types.Tx, vals *t
 }
 
 // HandleMsg implements MessageModule
-func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *types.Tx) error {
-	return HandleMsg(tx, msg, m.encodingConfig.Marshaler, m.db)
+func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *types.Tx) error {
+	return HandleMsg(tx, index, msg, m.stakingClient, m.encodingConfig.Marshaler, m.db)
 }
