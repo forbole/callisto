@@ -33,19 +33,16 @@ func (suite *DbTestSuite) TestDelegations() {
 			delegator1.String(),
 			validator1.GetOperator(),
 			sdk.NewCoin("cosmos", sdk.NewInt(100)),
-			"100",
 		),
 		types.NewDelegation(
 			delegator1.String(),
 			validator2.GetOperator(),
 			sdk.NewCoin("cosmos", sdk.NewInt(100)),
-			"100",
 		),
 		types.NewDelegation(
 			delegator2.String(),
 			validator2.GetOperator(),
 			sdk.NewCoin("cosmos", sdk.NewInt(200)),
-			"200",
 		),
 	}
 	err := suite.database.SaveDelegations(delegations)
@@ -65,19 +62,16 @@ func (suite *DbTestSuite) TestDelegations() {
 			delegator1.String(),
 			validator1.GetConsAddr(),
 			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(100))),
-			"100",
 		),
 		dbtypes.NewDelegationRow(
 			delegator1.String(),
 			validator2.GetConsAddr(),
 			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(100))),
-			"100",
 		),
 		dbtypes.NewDelegationRow(
 			delegator2.String(),
 			validator2.GetConsAddr(),
 			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(200))),
-			"200",
 		),
 	}
 
@@ -95,19 +89,16 @@ func (suite *DbTestSuite) TestDelegations() {
 			delegator1.String(),
 			validator1.GetOperator(),
 			sdk.NewCoin("cosmos", sdk.NewInt(250)),
-			"250",
 		),
 		types.NewDelegation(
 			delegator1.String(),
 			validator2.GetOperator(),
 			sdk.NewCoin("cosmos", sdk.NewInt(100)),
-			"100",
 		),
 		types.NewDelegation(
 			delegator2.String(),
 			validator2.GetOperator(),
 			sdk.NewCoin("cosmos", sdk.NewInt(160)),
-			"160",
 		),
 	}
 	err = suite.database.SaveDelegations(delegations)
@@ -126,19 +117,16 @@ func (suite *DbTestSuite) TestDelegations() {
 			delegator1.String(),
 			validator1.GetConsAddr(),
 			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(250))),
-			"250",
 		),
 		dbtypes.NewDelegationRow(
 			delegator1.String(),
 			validator2.GetConsAddr(),
 			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(100))),
-			"100",
 		),
 		dbtypes.NewDelegationRow(
 			delegator2.String(),
 			validator2.GetConsAddr(),
 			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(160))),
-			"160",
 		),
 	}
 

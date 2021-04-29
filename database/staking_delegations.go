@@ -21,7 +21,7 @@ INSERT INTO account (address) VALUES `
 	var accParams []interface{}
 
 	delQry := `
-INSERT INTO delegation (validator_address, delegator_address, amount, shares) VALUES `
+INSERT INTO delegation (validator_address, delegator_address, amount) VALUES `
 	var delParams []interface{}
 
 	for i, delegation := range delegations {
@@ -42,10 +42,10 @@ INSERT INTO delegation (validator_address, delegator_address, amount, shares) VA
 		}
 
 		// Current delegation query
-		di := i * 4
-		delQry += fmt.Sprintf("($%d,$%d,$%d,$%d),", di+1, di+2, di+3, di+4)
+		di := i * 3
+		delQry += fmt.Sprintf("($%d,$%d,$%d),", di+1, di+2, di+3)
 		delParams = append(delParams,
-			validator.GetConsAddr(), delegation.DelegatorAddress, value, delegation.Shares)
+			validator.GetConsAddr(), delegation.DelegatorAddress, value)
 	}
 
 	// Insert the accounts
@@ -58,9 +58,7 @@ INSERT INTO delegation (validator_address, delegator_address, amount, shares) VA
 
 	// Insert the delegations
 	delQry = delQry[:len(delQry)-1] // Remove the trailing ","
-	delQry += ` ON CONFLICT ON CONSTRAINT delegation_validator_delegator_unique DO UPDATE 
-SET amount = excluded.amount, 
-    shares = excluded.shares`
+	delQry += ` ON CONFLICT ON CONSTRAINT delegation_validator_delegator_unique DO UPDATE SET amount = excluded.amount`
 	_, err = db.Sql.Exec(delQry, delParams...)
 	return err
 }

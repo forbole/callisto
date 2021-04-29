@@ -10,16 +10,14 @@ type DelegationRow struct {
 	ValidatorAddress string `db:"validator_address"`
 	DelegatorAddress string `db:"delegator_address"`
 	Amount           DbCoin `db:"amount"`
-	Shares           string `db:"shares"`
 }
 
 // NewDelegationRow allows to build a new DelegationRow
-func NewDelegationRow(delegator, consAddr string, amount DbCoin, shares string) DelegationRow {
+func NewDelegationRow(delegator, consAddr string, amount DbCoin) DelegationRow {
 	return DelegationRow{
 		ValidatorAddress: consAddr,
 		DelegatorAddress: delegator,
 		Amount:           amount,
-		Shares:           shares,
 	}
 }
 
@@ -27,8 +25,7 @@ func NewDelegationRow(delegator, consAddr string, amount DbCoin, shares string) 
 func (v DelegationRow) Equal(w DelegationRow) bool {
 	return v.ValidatorAddress == w.ValidatorAddress &&
 		v.DelegatorAddress == w.DelegatorAddress &&
-		v.Amount.Equal(w.Amount) &&
-		v.Shares == w.Shares
+		v.Amount.Equal(w.Amount)
 }
 
 // ________________________________________________

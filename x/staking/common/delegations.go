@@ -19,7 +19,6 @@ func ConvertDelegationResponse(response stakingtypes.DelegationResponse) types.D
 		response.Delegation.DelegatorAddress,
 		response.Delegation.ValidatorAddress,
 		response.Balance,
-		response.Delegation.Shares.String(),
 	)
 }
 

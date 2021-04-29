@@ -175,7 +175,6 @@ func saveDelegations(genState stakingtypes.GenesisState, db *database.BigDipperD
 				delegation.DelegatorAddress,
 				validator.OperatorAddress,
 				sdk.NewCoin(genState.Params.BondDenom, delegationAmount),
-				delegation.Shares.String(),
 			))
 		}
 	}
