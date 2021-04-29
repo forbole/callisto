@@ -6,21 +6,15 @@ CREATE TYPE DEC_COIN AS
 
 CREATE TABLE community_pool
 (
-    coins  DEC_COIN[] NOT NULL,
-    height BIGINT     NOT NULL,
-    PRIMARY KEY (coins, height)
+    coins  DEC_COIN[] NOT NULL
 );
-CREATE INDEX community_pool_height_index ON community_pool (height);
 
 CREATE TABLE validator_commission_amount
 (
-    validator_address TEXT       NOT NULL REFERENCES validator (consensus_address),
-    amount            DEC_COIN[] NOT NULL,
-    height            BIGINT     NOT NULL REFERENCES block (height),
-    UNIQUE (validator_address, height)
+    validator_address TEXT       NOT NULL REFERENCES validator (consensus_address) PRIMARY KEY,
+    amount            DEC_COIN[] NOT NULL
 );
 CREATE INDEX validator_commission_amount_validator_address_index ON validator_commission_amount (validator_address);
-CREATE INDEX validator_commission_amount_height_index ON validator_commission_amount (height);
 
 CREATE TABLE delegation_reward
 (
@@ -28,9 +22,7 @@ CREATE TABLE delegation_reward
     delegator_address TEXT       NOT NULL REFERENCES account (address),
     withdraw_address  TEXT       NOT NULL,
     amount            DEC_COIN[] NOT NULL,
-    height            BIGINT     NOT NULL REFERENCES block (height),
-    UNIQUE (validator_address, delegator_address, height)
+    CONSTRAINT validator_delegator_unique UNIQUE (validator_address, delegator_address, withdraw_address)
 );
 CREATE INDEX delegation_reward_validator_address_index ON delegation_reward (validator_address);
 CREATE INDEX delegation_reward_delegator_address_index ON delegation_reward (delegator_address);
-CREATE INDEX delegation_reward_height_index ON delegation_reward (height);

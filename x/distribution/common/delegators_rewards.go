@@ -64,7 +64,7 @@ func getDelegatorCommission(
 		return
 	}
 
-	var rewards = make([]bdistrtypes.DelegatorRewardAmount, len(rewardsRes.Rewards))
+	var rewards = make([]bdistrtypes.DelegatorReward, len(rewardsRes.Rewards))
 	for index, reward := range rewardsRes.Rewards {
 		consAddr, err := db.GetValidatorConsensusAddress(reward.ValidatorAddress)
 		if err != nil {
@@ -80,7 +80,6 @@ func getDelegatorCommission(
 			delegator,
 			withdrawAddressRes.WithdrawAddress,
 			reward.Reward,
-			height,
 		)
 	}
 

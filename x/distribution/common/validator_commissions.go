@@ -28,13 +28,13 @@ func UpdateValidatorsCommissionAmounts(height int64, client distrtypes.QueryClie
 		return
 	}
 
-	// Get all the commissions
+	// Update all the commissions
 	for _, validator := range validators {
-		go getValidatorCommission(height, client, validator, db)
+		go updateValidatorCommission(height, client, validator, db)
 	}
 }
 
-func getValidatorCommission(
+func updateValidatorCommission(
 	height int64, client distrtypes.QueryClient, validator dbtypes.ValidatorData, db *database.BigDipperDb,
 ) {
 	res, err := client.ValidatorCommission(
@@ -51,7 +51,6 @@ func getValidatorCommission(
 	err = db.SaveValidatorCommissionAmount(bdistrtypes.NewValidatorCommissionAmount(
 		validator.ConsAddress,
 		res.Commission.Commission,
-		height,
 	))
 	if err != nil {
 		log.Error().Str("module", "distribution").Err(err).Int64("height", height).

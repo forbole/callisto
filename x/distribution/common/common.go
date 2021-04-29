@@ -19,5 +19,5 @@ func UpdateCommunityPool(height int64, client distrtypes.QueryClient, db *databa
 	}
 
 	// Store the signing infos into the database
-	return db.SaveCommunityPool(res.Pool, height)
+	return db.SaveCommunityPool(res.Pool)
 }

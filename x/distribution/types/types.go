@@ -4,38 +4,36 @@ import sdk "github.com/cosmos/cosmos-sdk/types"
 
 // ValidatorCommissionAmount represents the commission amount for a specific validator
 type ValidatorCommissionAmount struct {
-	ValidatorAddress string
-	Amount           []sdk.DecCoin
-	Height           int64
+	ValidatorConsAddress string
+	Amount               []sdk.DecCoin
 }
 
 // NewValidatorCommissionAmount allows to build a new ValidatorCommissionAmount instance
-func NewValidatorCommissionAmount(address string, amount sdk.DecCoins, height int64) ValidatorCommissionAmount {
+func NewValidatorCommissionAmount(valConsAddr string, amount sdk.DecCoins) ValidatorCommissionAmount {
 	return ValidatorCommissionAmount{
-		ValidatorAddress: address,
-		Amount:           amount,
-		Height:           height,
+		ValidatorConsAddress: valConsAddr,
+		Amount:               amount,
 	}
 }
 
-// DelegatorRewardAmount contains the data of a delegator commission amount
-type DelegatorRewardAmount struct {
-	ValidatorAddress string
-	DelegatorAddress string
-	WithdrawAddress  string
-	Amount           []sdk.DecCoin
-	Height           int64
+// --------------------------------------------------------------------------------------------------------------------
+
+// DelegatorReward contains the data of a delegator commission amount
+type DelegatorReward struct {
+	ValidatorConsAddress string
+	DelegatorAddress     string
+	WithdrawAddress      string
+	Amount               []sdk.DecCoin
 }
 
-// NewDelegatorRewardAmount allows to build a new DelegatorRewardAmount instance
+// NewDelegatorRewardAmount allows to build a new DelegatorReward instance
 func NewDelegatorRewardAmount(
-	validator, delegator, withdrawAddress string, amount sdk.DecCoins, height int64,
-) DelegatorRewardAmount {
-	return DelegatorRewardAmount{
-		ValidatorAddress: validator,
-		DelegatorAddress: delegator,
-		WithdrawAddress:  withdrawAddress,
-		Amount:           amount,
-		Height:           height,
+	valConsAddr, delegator, withdrawAddress string, amount sdk.DecCoins,
+) DelegatorReward {
+	return DelegatorReward{
+		ValidatorConsAddress: valConsAddr,
+		DelegatorAddress:     delegator,
+		WithdrawAddress:      withdrawAddress,
+		Amount:               amount,
 	}
 }

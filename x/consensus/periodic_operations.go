@@ -8,8 +8,7 @@ import (
 	"github.com/forbole/bdjuno/x/utils"
 )
 
-// PeriodicConcensusOperations returns the AdditionalOperation that periodically runs fetches from
-// the LCD to make sure that constantly changing data are synced properly.
+// Register registers all the operations that should be periodically run
 func Register(scheduler *gocron.Scheduler, db *database.BigDipperDb) error {
 	log.Debug().Str("module", "consensus").Msg("setting up periodic tasks")
 
@@ -90,7 +89,7 @@ func updateBlockTimeInHour(db *database.BigDipperDb) error {
 	}
 	newBlockTime := block.Timestamp.Sub(hour.Timestamp).Seconds() / float64(block.Height-hour.Height)
 
-	return db.SaveAverageBlockTimePerHour(newBlockTime, block.Height)
+	return db.SaveAverageBlockTimePerHour(newBlockTime)
 }
 
 // updateBlockTimeInDay insert average block time in the latest minute
@@ -119,5 +118,5 @@ func updateBlockTimeInDay(db *database.BigDipperDb) error {
 	}
 	newBlockTime := block.Timestamp.Sub(day.Timestamp).Seconds() / float64(block.Height-day.Height)
 
-	return db.SaveAverageBlockTimePerDay(newBlockTime, block.Height)
+	return db.SaveAverageBlockTimePerDay(newBlockTime)
 }
