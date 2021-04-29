@@ -11,17 +11,15 @@ type DelegationRow struct {
 	DelegatorAddress string `db:"delegator_address"`
 	Amount           DbCoin `db:"amount"`
 	Shares           string `db:"shares"`
-	Height           int64  `db:"height"`
 }
 
 // NewDelegationRow allows to build a new DelegationRow
-func NewDelegationRow(consAddr, delegator string, amount DbCoin, shares string, height int64) DelegationRow {
+func NewDelegationRow(delegator, consAddr string, amount DbCoin, shares string) DelegationRow {
 	return DelegationRow{
 		ValidatorAddress: consAddr,
 		DelegatorAddress: delegator,
 		Amount:           amount,
 		Shares:           shares,
-		Height:           height,
 	}
 }
 
@@ -30,8 +28,7 @@ func (v DelegationRow) Equal(w DelegationRow) bool {
 	return v.ValidatorAddress == w.ValidatorAddress &&
 		v.DelegatorAddress == w.DelegatorAddress &&
 		v.Amount.Equal(w.Amount) &&
-		v.Shares == w.Shares &&
-		v.Height == w.Height
+		v.Shares == w.Shares
 }
 
 // ________________________________________________
@@ -42,19 +39,17 @@ type UnbondingDelegationRow struct {
 	DelegatorAddress    string    `db:"delegator_address"`
 	Amount              DbCoin    `db:"amount"`
 	CompletionTimestamp time.Time `db:"completion_timestamp"`
-	Height              int64     `db:"height"`
 }
 
 // NewUnbondingDelegationRow allows to build a new UnbondingDelegationRow instance
 func NewUnbondingDelegationRow(
-	consAddr, delegator string, amount DbCoin, completionTimestamp time.Time, height int64,
+	delegator, consAddr string, amount DbCoin, completionTimestamp time.Time,
 ) UnbondingDelegationRow {
 	return UnbondingDelegationRow{
 		ConsensusAddress:    consAddr,
 		DelegatorAddress:    delegator,
 		Amount:              amount,
 		CompletionTimestamp: completionTimestamp,
-		Height:              height,
 	}
 }
 
@@ -63,42 +58,38 @@ func (v UnbondingDelegationRow) Equal(w UnbondingDelegationRow) bool {
 	return v.ConsensusAddress == w.ConsensusAddress &&
 		v.DelegatorAddress == w.DelegatorAddress &&
 		v.Amount.Equal(w.Amount) &&
-		v.CompletionTimestamp.Equal(w.CompletionTimestamp) &&
-		v.Height == w.Height
+		v.CompletionTimestamp.Equal(w.CompletionTimestamp)
 }
 
 // ________________________________________________
 
-// ReDelegationRow represents a single row of the redelegation database table
-type ReDelegationRow struct {
+// RedelegationRow represents a single row of the redelegation database table
+type RedelegationRow struct {
 	DelegatorAddress    string    `db:"delegator_address"`
 	SrcValidatorAddress string    `db:"src_validator_address"`
 	DstValidatorAddress string    `db:"dst_validator_address"`
 	Amount              DbCoin    `db:"amount"`
 	CompletionTime      time.Time `db:"completion_time"`
-	Height              int64     `db:"height"`
 }
 
-// NewReDelegationRow allows to easily build a new ReDelegationRow instance
-func NewReDelegationRow(
-	delegator, srcConsAddr, dstConsAddr string, amount DbCoin, completionTime time.Time, height int64,
-) ReDelegationRow {
-	return ReDelegationRow{
+// NewRedelegationRow allows to easily build a new RedelegationRow instance
+func NewRedelegationRow(
+	delegator, srcConsAddr, dstConsAddr string, amount DbCoin, completionTime time.Time,
+) RedelegationRow {
+	return RedelegationRow{
 		DelegatorAddress:    delegator,
 		SrcValidatorAddress: srcConsAddr,
 		DstValidatorAddress: dstConsAddr,
 		Amount:              amount,
 		CompletionTime:      completionTime,
-		Height:              height,
 	}
 }
 
 // Equal tells whether v and w represent the same database rows
-func (v ReDelegationRow) Equal(w ReDelegationRow) bool {
+func (v RedelegationRow) Equal(w RedelegationRow) bool {
 	return v.DelegatorAddress == w.DelegatorAddress &&
 		v.SrcValidatorAddress == w.SrcValidatorAddress &&
 		v.DstValidatorAddress == w.DstValidatorAddress &&
 		v.Amount.Equal(w.Amount) &&
-		v.CompletionTime.Equal(w.CompletionTime) &&
-		v.Height == w.Height
+		v.CompletionTime.Equal(w.CompletionTime)
 }

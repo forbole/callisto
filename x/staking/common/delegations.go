@@ -14,13 +14,12 @@ import (
 )
 
 // ConvertDelegationResponse converts the given response to a BDJuno Delegation instance
-func ConvertDelegationResponse(height int64, response stakingtypes.DelegationResponse) types.Delegation {
+func ConvertDelegationResponse(response stakingtypes.DelegationResponse) types.Delegation {
 	return types.NewDelegation(
 		response.Delegation.DelegatorAddress,
 		response.Delegation.ValidatorAddress,
 		response.Balance,
 		response.Delegation.Shares.String(),
-		height,
 	)
 }
 
@@ -74,7 +73,7 @@ func getDelegations(
 
 		var delegations = make([]types.Delegation, len(res.DelegationResponses))
 		for index, delegation := range res.DelegationResponses {
-			delegations[index] = ConvertDelegationResponse(height, delegation)
+			delegations[index] = ConvertDelegationResponse(delegation)
 		}
 		err = db.SaveDelegations(delegations)
 		if err != nil {
@@ -90,51 +89,42 @@ func getDelegations(
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// UpdateDelegations returns a function that when called updates the delegations of the provided delegator.
+// UpdateDelegations updates the current delegations for the given delegator by removing all the existing ones and
+// getting the new ones from the client
+func UpdateDelegations(delegator string, client stakingtypes.QueryClient, db *database.BigDipperDb) error {
+	// Remove existing delegations
+	err := db.DeleteDelegatorDelegations(delegator)
+	if err != nil {
+		return err
+	}
+
+	// Get the delegations
+	res, err := client.DelegatorDelegations(
+		context.Background(),
+		&stakingtypes.QueryDelegatorDelegationsRequest{
+			DelegatorAddr: delegator,
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	var delegations = make([]types.Delegation, len(res.DelegationResponses))
+	for index, delegation := range res.DelegationResponses {
+		delegations[index] = ConvertDelegationResponse(delegation)
+	}
+
+	return db.SaveDelegations(delegations)
+}
+
+// RefreshDelegations returns a function that when called updates the delegations of the provided delegator.
 // In order to properly update the data, it removes all the existing delegations and stores new ones querying the gRPC
-func UpdateDelegations(delegator string, client stakingtypes.QueryClient, db *database.BigDipperDb) func() {
+func RefreshDelegations(delegator string, client stakingtypes.QueryClient, db *database.BigDipperDb) func() {
 	return func() {
-		// Remove existing delegations
-		err := db.DeleteDelegatorDelegations(delegator)
+		err := UpdateDelegations(delegator, client, db)
 		if err != nil {
 			log.Error().Str("module", "staking").Err(err).
-				Str("operation", "update delegations").Msg("error while removing delegator delegations")
-			return
-		}
-
-		// Get the block height
-		height, err := db.GetLastBlockHeight()
-		if err != nil {
-			log.Error().Str("module", "staking").Err(err).
-				Str("operation", "update delegations").Msg("error while getting latest block height")
-			return
-		}
-
-		// Get the delegations
-		header := utils.GetHeightRequestHeader(height)
-		res, err := client.DelegatorDelegations(
-			context.Background(),
-			&stakingtypes.QueryDelegatorDelegationsRequest{
-				DelegatorAddr: delegator,
-			},
-			header,
-		)
-		if err != nil {
-			log.Error().Str("module", "staking").Err(err).
-				Str("operation", "update delegations").Msg("error while getting delegations")
-			return
-		}
-
-		var delegations = make([]types.Delegation, len(res.DelegationResponses))
-		for index, delegation := range res.DelegationResponses {
-			delegations[index] = ConvertDelegationResponse(height, delegation)
-		}
-
-		err = db.SaveDelegations(delegations)
-		if err != nil {
-			log.Error().Str("module", "staking").Err(err).
-				Str("operation", "update delegations").Msg("error while saving delegations")
-			return
+				Str("operation", "refresh delegations").Msg("error while refreshing delegations")
 		}
 	}
 }

@@ -42,8 +42,8 @@ func (r *ModulesRegistrar) BuildModules(
 	bigDipperBd := database.Cast(db)
 	return []modules.Module{
 		messages.NewModule(r.parser, encodingConfig.Marshaler, db),
-		auth.NewModule(encodingConfig, utils.MustCreateGrpcConnection(cfg), bigDipperBd),
-		bank.NewModule(encodingConfig, utils.MustCreateGrpcConnection(cfg), bigDipperBd),
+		auth.NewModule(r.parser, encodingConfig, utils.MustCreateGrpcConnection(cfg), bigDipperBd),
+		bank.NewModule(r.parser, encodingConfig, utils.MustCreateGrpcConnection(cfg), bigDipperBd),
 		consensus.NewModule(cp, bigDipperBd),
 		distribution.NewModule(utils.MustCreateGrpcConnection(cfg), bigDipperBd),
 		gov.NewModule(encodingConfig, utils.MustCreateGrpcConnection(cfg), bigDipperBd),

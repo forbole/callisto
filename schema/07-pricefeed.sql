@@ -1,13 +1,13 @@
 CREATE TABLE token
 (
-    name        TEXT NOT NULL UNIQUE
+    name TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE token_unit
 (
-    token_name TEXT   NOT NULL REFERENCES token (name),
-    denom      TEXT   NOT NULL UNIQUE,
-    exponent   INT    NOT NULL,
+    token_name TEXT NOT NULL REFERENCES token (name),
+    denom      TEXT NOT NULL UNIQUE,
+    exponent   INT  NOT NULL,
     aliases    TEXT[]
 );
 
@@ -16,7 +16,7 @@ CREATE TABLE token_price
     /* Needed for the below token_price function to work properly */
     id         SERIAL    NOT NULL PRIMARY KEY,
 
-    unit_name       TEXT      NOT NULL REFERENCES token_unit (denom),
+    unit_name  TEXT      NOT NULL REFERENCES token_unit (denom),
     price      NUMERIC   NOT NULL,
     market_cap BIGINT    NOT NULL,
     timestamp  TIMESTAMP NOT NULL,
@@ -36,7 +36,6 @@ FROM (
          FROM (
                   SELECT *
                   FROM token_price
-                  WHERE timestamp <= (SELECT timestamp FROM block WHERE block.height = account_balance_row.height)
                   ORDER BY timestamp DESC
               ) AS prices
      ) as prices

@@ -89,21 +89,19 @@ type ValidatorDescription struct {
 
 // NewValidatorDescription return a new ValidatorDescription object
 func NewValidatorDescription(
-	opAddr string, description stakingtypes.Description, avatarURL string, height int64,
+	opAddr string, description stakingtypes.Description, avatarURL string,
 ) ValidatorDescription {
 	return ValidatorDescription{
 		OperatorAddress: opAddr,
 		Description:     description,
 		AvatarURL:       avatarURL,
-		Height:          height,
 	}
 }
 
 // Equals tells whether v and w contain the same data
 func (v ValidatorDescription) Equals(w ValidatorDescription) bool {
 	return v.OperatorAddress == w.OperatorAddress &&
-		v.Description == w.Description &&
-		v.Height == w.Height
+		v.Description == w.Description
 }
 
 // _________________________________________________________
@@ -124,18 +122,16 @@ type ValidatorCommission struct {
 	ValAddress        string
 	Commission        *sdk.Dec
 	MinSelfDelegation *sdk.Int
-	Height            int64
 }
 
 // NewValidatorCommission return a new validator commission instance
 func NewValidatorCommission(
-	valAddress string, rate *sdk.Dec, minSelfDelegation *sdk.Int, height int64,
+	valAddress string, rate *sdk.Dec, minSelfDelegation *sdk.Int,
 ) ValidatorCommission {
 	return ValidatorCommission{
 		ValAddress:        valAddress,
 		Commission:        rate,
 		MinSelfDelegation: minSelfDelegation,
-		Height:            height,
 	}
 }
 
@@ -143,8 +139,7 @@ func NewValidatorCommission(
 func (v ValidatorCommission) Equals(w ValidatorCommission) bool {
 	return v.ValAddress == w.ValAddress &&
 		v.Commission == w.Commission &&
-		v.MinSelfDelegation == w.MinSelfDelegation &&
-		v.Height == w.Height
+		v.MinSelfDelegation == w.MinSelfDelegation
 }
 
 //--------------------------------------------
@@ -153,23 +148,20 @@ func (v ValidatorCommission) Equals(w ValidatorCommission) bool {
 type ValidatorVotingPower struct {
 	ConsensusAddress string
 	VotingPower      int64
-	Height           int64
 }
 
 // NewValidatorVotingPower creates a new ValidatorVotingPower
-func NewValidatorVotingPower(address string, votingPower int64, height int64) ValidatorVotingPower {
+func NewValidatorVotingPower(address string, votingPower int64) ValidatorVotingPower {
 	return ValidatorVotingPower{
 		ConsensusAddress: address,
 		VotingPower:      votingPower,
-		Height:           height,
 	}
 }
 
 // Equals tells whether v and w are equals
 func (v ValidatorVotingPower) Equals(w ValidatorVotingPower) bool {
 	return v.ConsensusAddress == w.ConsensusAddress &&
-		v.VotingPower == w.VotingPower &&
-		v.Height == w.Height
+		v.VotingPower == w.VotingPower
 }
 
 //--------------------------------------------------------
@@ -180,17 +172,15 @@ type ValidatorStatus struct {
 	ConsensusPubKey  string
 	Status           int
 	Jailed           bool
-	Height           int64
 }
 
 // NewValidatorStatus creates a new ValidatorVotingPower
-func NewValidatorStatus(address, pubKey string, status int, jailed bool, height int64) ValidatorStatus {
+func NewValidatorStatus(address, pubKey string, status int, jailed bool) ValidatorStatus {
 	return ValidatorStatus{
 		ConsensusAddress: address,
 		ConsensusPubKey:  pubKey,
 		Status:           status,
 		Jailed:           jailed,
-		Height:           height,
 	}
 }
 
@@ -199,8 +189,7 @@ func (v ValidatorStatus) Equals(w ValidatorStatus) bool {
 	return v.ConsensusAddress == w.ConsensusAddress &&
 		v.ConsensusPubKey == w.ConsensusPubKey &&
 		v.Jailed == w.Jailed &&
-		v.Status == w.Status &&
-		v.Height == w.Height
+		v.Status == w.Status
 }
 
 //---------------------------------------------------------------

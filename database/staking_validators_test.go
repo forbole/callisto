@@ -219,7 +219,6 @@ func (suite *DbTestSuite) TestSaveValidatorDescription() {
 		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
 	)
 
-	var height int64 = 1
 	description := types.NewValidatorDescription(
 		validator.GetOperator(),
 		stakingtypes.NewDescription(
@@ -230,7 +229,6 @@ func (suite *DbTestSuite) TestSaveValidatorDescription() {
 			"details",
 		),
 		"avatar-url",
-		height,
 	)
 	err := suite.database.SaveValidatorDescription(description)
 	suite.Require().NoError(err)
@@ -248,7 +246,6 @@ func (suite *DbTestSuite) TestSaveValidatorDescription() {
 			"",
 			"securityContact",
 			"details",
-			height,
 		),
 	}
 	suite.Require().Len(rows, len(expectedRows))
@@ -260,7 +257,6 @@ func (suite *DbTestSuite) TestSaveValidatorDescription() {
 // -----------------------------------------------------------
 
 func (suite *DbTestSuite) TestSaveValidatorCommission() {
-	var height int64 = 1000
 	validator := suite.getValidator(
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
@@ -271,7 +267,6 @@ func (suite *DbTestSuite) TestSaveValidatorCommission() {
 		validator.GetOperator(),
 		newDecPts(11, 3),
 		newIntPtr(12),
-		height,
 	))
 	suite.Require().NoError(err)
 
@@ -284,7 +279,6 @@ func (suite *DbTestSuite) TestSaveValidatorCommission() {
 			validator.GetConsAddr(),
 			"0.011000000000000000",
 			"12",
-			height,
 		),
 	}
 	suite.Require().Len(rows, len(expectedRows))
@@ -296,8 +290,6 @@ func (suite *DbTestSuite) TestSaveValidatorCommission() {
 // -----------------------------------------------------------
 
 func (suite *DbTestSuite) TestSaveValidatorsVotingPowers() {
-	block := suite.getBlock(100)
-
 	validator1 := suite.getValidator(
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
@@ -310,8 +302,8 @@ func (suite *DbTestSuite) TestSaveValidatorsVotingPowers() {
 	)
 
 	err := suite.database.SaveValidatorsVotingPowers([]types.ValidatorVotingPower{
-		types.NewValidatorVotingPower(validator1.GetConsAddr(), 1000, block.Height),
-		types.NewValidatorVotingPower(validator2.GetConsAddr(), 2000, block.Height),
+		types.NewValidatorVotingPower(validator1.GetConsAddr(), 1000),
+		types.NewValidatorVotingPower(validator2.GetConsAddr(), 2000),
 	})
 	suite.Require().NoError(err)
 
@@ -319,12 +311,10 @@ func (suite *DbTestSuite) TestSaveValidatorsVotingPowers() {
 		dbtypes.NewValidatorVotingPowerRow(
 			validator1.GetConsAddr(),
 			1000,
-			block.Height,
 		),
 		dbtypes.NewValidatorVotingPowerRow(
 			validator2.GetConsAddr(),
 			2000,
-			block.Height,
 		),
 	}
 
@@ -341,34 +331,35 @@ func (suite *DbTestSuite) TestSaveValidatorsVotingPowers() {
 // -----------------------------------------------------------
 
 func (suite *DbTestSuite) TestSaveValidatorStatus() {
-	block1 := suite.getBlock(10)
-	block2 := suite.getBlock(20)
-
-	validator := suite.getValidator(
+	validator1 := suite.getValidator(
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
 		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
 	)
+	validator2 := suite.getValidator(
+		"cosmosvalcons1qq92t2l4jz5pt67tmts8ptl4p0jhr6utx5xa8y",
+		"cosmosvaloper1000ya26q2cmh399q4c5aaacd9lmmdqp90kw2jn",
+		"cosmosvalconspub1zcjduepqe93asg05nlnj30ej2pe3r8rkeryyuflhtfw3clqjphxn4j3u27msrr63nk",
+	)
 
-	// First insert
+	// --- Save the data ---
 	err := suite.database.SaveValidatorsStatuses([]types.ValidatorStatus{
 		types.NewValidatorStatus(
-			validator.GetConsAddr(),
-			validator.GetConsPubKey(),
+			validator1.GetConsAddr(),
+			validator1.GetConsPubKey(),
 			1,
 			false,
-			block1.Height,
 		),
 		types.NewValidatorStatus(
-			validator.GetConsAddr(),
-			validator.GetConsPubKey(),
+			validator2.GetConsAddr(),
+			validator2.GetConsPubKey(),
 			2,
 			true,
-			block2.Height,
 		),
 	})
 	suite.Require().NoError(err)
 
+	// --- Verify the data ---
 	var stored []dbtypes.ValidatorStatusRow
 	err = suite.database.Sqlx.Select(&stored, "SELECT * FROM validator_status")
 	suite.Require().NoError(err)
@@ -377,14 +368,51 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 		dbtypes.NewValidatorStatusRow(
 			1,
 			false,
-			validator.GetConsAddr(),
-			block1.Height,
+			validator1.GetConsAddr(),
 		),
 		dbtypes.NewValidatorStatusRow(
 			2,
 			true,
-			validator.GetConsAddr(),
-			block2.Height,
+			validator2.GetConsAddr(),
+		),
+	}
+	suite.Require().Len(stored, len(expected))
+	for index, stored := range stored {
+		suite.Require().True(stored.Equal(expected[index]))
+	}
+
+	// --- Update the data ---
+	err = suite.database.SaveValidatorsStatuses([]types.ValidatorStatus{
+		types.NewValidatorStatus(
+			validator1.GetConsAddr(),
+			validator1.GetConsPubKey(),
+			3,
+			true,
+		),
+		types.NewValidatorStatus(
+			validator2.GetConsAddr(),
+			validator2.GetConsPubKey(),
+			2,
+			true,
+		),
+	})
+	suite.Require().NoError(err)
+
+	// --- Verify the data ---
+	stored = []dbtypes.ValidatorStatusRow{}
+	err = suite.database.Sqlx.Select(&stored, "SELECT * FROM validator_status")
+	suite.Require().NoError(err)
+
+	expected = []dbtypes.ValidatorStatusRow{
+		dbtypes.NewValidatorStatusRow(
+			3,
+			true,
+			validator1.GetConsAddr(),
+		),
+		dbtypes.NewValidatorStatusRow(
+			2,
+			true,
+			validator2.GetConsAddr(),
 		),
 	}
 	suite.Require().Len(stored, len(expected))
@@ -393,7 +421,7 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 	}
 }
 
-// --------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 func (suite *DbTestSuite) TestSaveDoubleVoteEvidence() {
 	// Insert the validator

@@ -7,10 +7,6 @@ CREATE INDEX supply_height_index ON supply (height);
 
 CREATE TABLE account_balance
 (
-    address TEXT   NOT NULL REFERENCES account (address),
-    coins   COIN[] NOT NULL DEFAULT '{}',
-    height  BIGINT NOT NULL REFERENCES block(height),
-    PRIMARY KEY (address, height)
+    address TEXT   NOT NULL REFERENCES account (address) PRIMARY KEY,
+    coins   COIN[] NOT NULL DEFAULT '{}'
 );
-CREATE INDEX account_balance_address_index ON account_balance (address);
-CREATE INDEX account_balance_height_index ON account_balance (height);

@@ -31,7 +31,6 @@ func (suite *DbTestSuite) TestSaveAccountBalance() {
 	suite.Require().True(balRows[0].Equal(dbtypes.NewAccountBalanceRow(
 		"cosmos140xsjjg6pwkjp0xjz8zru7ytha60l5aee9nlf7",
 		dbtypes.NewDbCoins(coins),
-		height,
 	)))
 }
 

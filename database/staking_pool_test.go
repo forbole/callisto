@@ -8,11 +8,10 @@ import (
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveStakingPool() {
-	height := int64(100)
 	pool := stakingtypes.NewPool(sdk.NewInt(100), sdk.NewInt(50))
 
 	// Save the data
-	err := suite.database.SaveStakingPool(pool, height)
+	err := suite.database.SaveStakingPool(pool)
 	suite.Require().NoError(err)
 
 	var count int
@@ -21,7 +20,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveStakingPool() {
 	suite.Require().Equal(1, count, "inserting a single staking pool row should return 1")
 
 	// Perform a double insertion
-	err = suite.database.SaveStakingPool(pool, height)
+	err = suite.database.SaveStakingPool(pool)
 	suite.Require().NoError(err)
 
 	err = suite.database.Sqlx.QueryRow(`SELECT COUNT(*) FROM staking_pool`).Scan(&count)
@@ -36,6 +35,5 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveStakingPool() {
 	suite.Require().True(rows[0].Equal(dbtypes.NewStakingPoolRow(
 		50,
 		100,
-		height,
 	)))
 }

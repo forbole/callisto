@@ -100,15 +100,14 @@ func (suite *DbTestSuite) TestSaveConsensus_GetBlockHeightTimeDayAgo() {
 }
 
 func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimePerMin() {
-	var height int64 = 1000
 	var averageTime = 5.05
 
-	err := suite.database.SaveAverageBlockTimePerMin(averageTime, height)
+	err := suite.database.SaveAverageBlockTimePerMin(averageTime)
 	suite.Require().NoError(err)
 
-	expected := dbtypes.NewBlockTimeRow(averageTime, height)
+	expected := dbtypes.NewBlockTimeRow(averageTime)
 
-	var rows []dbtypes.BlockTimeRow
+	var rows []dbtypes.AverageTimeRow
 	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM average_block_time_per_minute")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
@@ -116,15 +115,14 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimePerMin() {
 }
 
 func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimePerHour() {
-	var height int64 = 1000
 	var averageTime = 5.05
 
-	err := suite.database.SaveAverageBlockTimePerHour(averageTime, height)
+	err := suite.database.SaveAverageBlockTimePerHour(averageTime)
 	suite.Require().NoError(err)
 
-	expected := dbtypes.NewBlockTimeRow(averageTime, height)
+	expected := dbtypes.NewBlockTimeRow(averageTime)
 
-	var rows []dbtypes.BlockTimeRow
+	var rows []dbtypes.AverageTimeRow
 	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM average_block_time_per_hour")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
@@ -132,15 +130,14 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimePerHour() {
 }
 
 func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimePerDay() {
-	var height int64 = 1000
 	var averageTime = 5.05
 
-	err := suite.database.SaveAverageBlockTimePerDay(averageTime, height)
+	err := suite.database.SaveAverageBlockTimePerDay(averageTime)
 	suite.Require().NoError(err)
 
-	expected := dbtypes.NewBlockTimeRow(averageTime, height)
+	expected := dbtypes.NewBlockTimeRow(averageTime)
 
-	var rows []dbtypes.BlockTimeRow
+	var rows []dbtypes.AverageTimeRow
 	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM average_block_time_per_day")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
@@ -184,15 +181,14 @@ func (suite *DbTestSuite) TestSaveConsensus_GetGenesisTime() {
 }
 
 func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimeGenesis() {
-	var height int64 = 1000
 	var averageTime = 5.05
 
-	err := suite.database.SaveAverageBlockTimeGenesis(averageTime, height)
+	err := suite.database.SaveAverageBlockTimeGenesis(averageTime)
 	suite.Require().NoError(err)
 
-	expected := dbtypes.NewBlockTimeRow(averageTime, height)
+	expected := dbtypes.NewBlockTimeRow(averageTime)
 
-	var rows []dbtypes.BlockTimeRow
+	var rows []dbtypes.AverageTimeRow
 	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM average_block_time_from_genesis")
 	suite.Require().Len(rows, 1)
 	suite.Require().True(expected.Equal(rows[0]))

@@ -135,12 +135,11 @@ type ValidatorDescriptionRow struct {
 	Website         sql.NullString `db:"website"`
 	SecurityContact sql.NullString `db:"security_contact"`
 	Details         sql.NullString `db:"details"`
-	Height          int64          `db:"height"`
 }
 
 // NewValidatorDescriptionRow return a row representing data structure in validator_description
 func NewValidatorDescriptionRow(
-	valAddress, moniker, identity, avatarURL, website, securityContact, details string, height int64,
+	valAddress, moniker, identity, avatarURL, website, securityContact, details string,
 ) ValidatorDescriptionRow {
 	return ValidatorDescriptionRow{
 		ValAddress:      valAddress,
@@ -150,7 +149,6 @@ func NewValidatorDescriptionRow(
 		Website:         ToNullString(website),
 		SecurityContact: ToNullString(securityContact),
 		Details:         ToNullString(details),
-		Height:          height,
 	}
 }
 
@@ -161,8 +159,7 @@ func (w ValidatorDescriptionRow) Equals(v ValidatorDescriptionRow) bool {
 		v.Identity == w.Identity &&
 		v.Website == w.Website &&
 		v.SecurityContact == w.SecurityContact &&
-		v.Details == w.Details &&
-		v.Height == w.Height
+		v.Details == w.Details
 }
 
 // ________________________________________________
@@ -172,18 +169,16 @@ type ValidatorCommissionRow struct {
 	OperatorAddress   string         `db:"validator_address"`
 	Commission        sql.NullString `db:"commission"`
 	MinSelfDelegation sql.NullString `db:"min_self_delegation"`
-	Height            int64          `db:"height"`
 }
 
 // NewValidatorCommissionRow allows to easily build a new ValidatorCommissionRow instance
 func NewValidatorCommissionRow(
-	operatorAddress string, commission string, minSelfDelegation string, height int64,
+	operatorAddress string, commission string, minSelfDelegation string,
 ) ValidatorCommissionRow {
 	return ValidatorCommissionRow{
 		OperatorAddress:   operatorAddress,
 		Commission:        sql.NullString{String: commission, Valid: true},
 		MinSelfDelegation: sql.NullString{String: minSelfDelegation, Valid: true},
-		Height:            height,
 	}
 }
 
@@ -191,8 +186,7 @@ func NewValidatorCommissionRow(
 func (v ValidatorCommissionRow) Equal(w ValidatorCommissionRow) bool {
 	return v.OperatorAddress == w.OperatorAddress &&
 		v.Commission == w.Commission &&
-		v.MinSelfDelegation == w.MinSelfDelegation &&
-		v.Height == w.Height
+		v.MinSelfDelegation == w.MinSelfDelegation
 }
 
 // ValidatorCommissionHistoryRow represents a single row of the validator_commission_history table
@@ -226,124 +220,37 @@ func (v ValidatorCommissionHistoryRow) Equal(w ValidatorCommissionHistoryRow) bo
 type ValidatorVotingPowerRow struct {
 	ValidatorAddress string `db:"validator_address"`
 	VotingPower      int64  `db:"voting_power"`
-	Height           int64  `db:"height"`
 }
 
 // NewValidatorVotingPowerRow allows to easily build a new ValidatorVotingPowerRow instance
-func NewValidatorVotingPowerRow(
-	address string, votingPower int64, height int64,
-) ValidatorVotingPowerRow {
+func NewValidatorVotingPowerRow(address string, votingPower int64) ValidatorVotingPowerRow {
 	return ValidatorVotingPowerRow{
 		ValidatorAddress: address,
 		VotingPower:      votingPower,
-		Height:           height,
 	}
 }
 
 // Equal tells whether v and w represent the same rows
 func (v ValidatorVotingPowerRow) Equal(w ValidatorVotingPowerRow) bool {
 	return v.ValidatorAddress == w.ValidatorAddress &&
-		v.VotingPower == w.VotingPower &&
-		v.Height == w.Height
-}
-
-// ValidatorVotingPowerHistoryRow represents a single row of the validator_voting_power_history database table
-type ValidatorVotingPowerHistoryRow struct {
-	ValidatorAddress string    `db:"validator_address"`
-	VotingPower      int64     `db:"voting_power"`
-	Height           int64     `db:"height"`
-	Timestamp        time.Time `db:"timestamp"`
-}
-
-// NewValidatorVotingPowerHistoryRow allows to easily build a new ValidatorVotingPowerHistoryRow instance
-func NewValidatorVotingPowerHistoryRow(
-	address string, votingPower int64, height int64, timestamp time.Time,
-) ValidatorVotingPowerHistoryRow {
-	return ValidatorVotingPowerHistoryRow{
-		ValidatorAddress: address,
-		VotingPower:      votingPower,
-		Height:           height,
-		Timestamp:        timestamp,
-	}
-}
-
-// Equal tells whether v and w represent the same rows
-func (v ValidatorVotingPowerHistoryRow) Equal(w ValidatorVotingPowerHistoryRow) bool {
-	return v.ValidatorAddress == w.ValidatorAddress &&
-		v.VotingPower == w.VotingPower &&
-		v.Height == w.Height &&
-		v.Timestamp.Equal(w.Timestamp)
+		v.VotingPower == w.VotingPower
 }
 
 // ________________________________________________
 
-// ValidatorUptimeRow represents a single row of the validator_uptime table
-type ValidatorUptimeRow struct {
-	ID                 int64  `db:"id"`
-	ConsAddr           string `db:"validator_address"`
-	SignedBlockWindow  int64  `db:"signed_blocks_window"`
-	MissedBlockCounter int64  `db:"missed_blocks_counter"`
-}
-
-// NewValidatorUptimeRow allows to build a new ValidatorUptimeRow
-func NewValidatorUptimeRow(consAddr string, signedBlocWindow, missedBlocksCounter int64) ValidatorUptimeRow {
-	return ValidatorUptimeRow{
-		ConsAddr:           consAddr,
-		SignedBlockWindow:  signedBlocWindow,
-		MissedBlockCounter: missedBlocksCounter,
-	}
-}
-
-// Equal tells whether v and w contain the same data
-func (v ValidatorUptimeRow) Equal(w ValidatorUptimeRow) bool {
-	return v.ConsAddr == w.ConsAddr &&
-		v.SignedBlockWindow == w.SignedBlockWindow &&
-		v.MissedBlockCounter == w.MissedBlockCounter
-}
-
-// ValidatorUptimeHistoryRow represents a single row of the validator_uptime_history table
-type ValidatorUptimeHistoryRow struct {
-	UptimeID  int64     `db:"uptime_id"`
-	Height    int64     `db:"height"`
-	Timestamp time.Time `db:"timestamp"`
-}
-
-// NewValidatorUptimesHistoryRow builds a new ValidatorUptimeHistoryRow
-func NewValidatorUptimesHistoryRow(
-	uptimeID int64, height int64, timestamp time.Time,
-) ValidatorUptimeHistoryRow {
-	return ValidatorUptimeHistoryRow{
-		UptimeID:  uptimeID,
-		Height:    height,
-		Timestamp: timestamp,
-	}
-}
-
-// Equal tells whether v and w contain the same data
-func (v ValidatorUptimeHistoryRow) Equal(w ValidatorUptimeHistoryRow) bool {
-	return v.UptimeID == w.UptimeID &&
-		v.Height == w.Height &&
-		v.Timestamp.Equal(w.Timestamp)
-}
-
-//------------------------------------------------------------
-// ValidatorStatus represents a single row of the validator_status table
+// ValidatorStatusRow represents a single row of the validator_status table
 type ValidatorStatusRow struct {
 	Status      int    `db:"status"`
 	Jailed      bool   `db:"jailed"`
 	ConsAddress string `db:"validator_address"`
-	Height      int64  `db:"height"`
 }
 
-// NewValidatorUptimesHistoryRow builds a new ValidatorUptimeHistoryRow
-func NewValidatorStatusRow(
-	status int, jailed bool, consAddess string, height int64,
-) ValidatorStatusRow {
+// NewValidatorStatusRow builds a new ValidatorStatusRow
+func NewValidatorStatusRow(status int, jailed bool, consAddess string) ValidatorStatusRow {
 	return ValidatorStatusRow{
 		Status:      status,
 		Jailed:      jailed,
 		ConsAddress: consAddess,
-		Height:      height,
 	}
 }
 
@@ -351,8 +258,7 @@ func NewValidatorStatusRow(
 func (v ValidatorStatusRow) Equal(w ValidatorStatusRow) bool {
 	return v.Status == w.Status &&
 		v.Jailed == w.Jailed &&
-		v.ConsAddress == w.ConsAddress &&
-		v.Height == w.Height
+		v.ConsAddress == w.ConsAddress
 }
 
 //--------------------------------------------------------

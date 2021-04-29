@@ -87,42 +87,58 @@ func (db *BigDipperDb) GetBlockHeightTimeDayAgo(now time.Time) (dbtypes.BlockRow
 }
 
 // SaveAverageBlockTimeGenesis save the average block time in average_block_time_from_genesis table
-func (db *BigDipperDb) SaveAverageBlockTimeGenesis(averageTime float64, height int64) error {
-	stmt := `
-INSERT INTO average_block_time_from_genesis(average_time ,height) 
-VALUES ($1, $2) ON CONFLICT (height) DO UPDATE SET average_time = excluded.average_time`
-	_, err := db.Sqlx.Exec(stmt, averageTime, height)
+func (db *BigDipperDb) SaveAverageBlockTimeGenesis(averageTime float64) error {
+	stmt := `DELETE FROM average_block_time_from_genesis WHERE TRUE`
+	_, err := db.Sql.Exec(stmt)
+	if err != nil {
+		return err
+	}
+
+	stmt = `INSERT INTO average_block_time_from_genesis(average_time) VALUES ($1)`
+	_, err = db.Sqlx.Exec(stmt, averageTime)
 	return err
 }
 
 // SaveAverageBlockTimePerMin save the average block time in average_block_time_per_minute table
-func (db *BigDipperDb) SaveAverageBlockTimePerMin(averageTime float64, height int64) error {
-	stmt := `
-INSERT INTO average_block_time_per_minute(average_time, height) 
-VALUES ($1, $2) ON CONFLICT (height) DO UPDATE SET average_time = excluded.average_time`
-	_, err := db.Sqlx.Exec(stmt, averageTime, height)
+func (db *BigDipperDb) SaveAverageBlockTimePerMin(averageTime float64) error {
+	stmt := `DELETE FROM average_block_time_per_minute WHERE TRUE`
+	_, err := db.Sql.Exec(stmt)
+	if err != nil {
+		return err
+	}
+
+	stmt = `INSERT INTO average_block_time_per_minute(average_time) VALUES ($1)`
+	_, err = db.Sqlx.Exec(stmt, averageTime)
 	return err
 }
 
 // SaveAverageBlockTimePerHour save the average block time in average_block_time_per_hour table
-func (db *BigDipperDb) SaveAverageBlockTimePerHour(averageTime float64, height int64) error {
-	stmt := `
-INSERT INTO average_block_time_per_hour(average_time, height) 
-VALUES ($1, $2) ON CONFLICT (height) DO UPDATE SET average_time = excluded.average_time`
-	_, err := db.Sqlx.Exec(stmt, averageTime, height)
+func (db *BigDipperDb) SaveAverageBlockTimePerHour(averageTime float64) error {
+	stmt := `DELETE FROM average_block_time_per_hour WHERE TRUE`
+	_, err := db.Sql.Exec(stmt)
+	if err != nil {
+		return err
+	}
+
+	stmt = `INSERT INTO average_block_time_per_hour(average_time) VALUES ($1)`
+	_, err = db.Sqlx.Exec(stmt, averageTime)
 	return err
 }
 
 // SaveAverageBlockTimePerDay save the average block time in average_block_time_per_day table
-func (db *BigDipperDb) SaveAverageBlockTimePerDay(averageTime float64, height int64) error {
-	stmt := `
-INSERT INTO average_block_time_per_day(average_time, height) 
-VALUES ($1, $2) ON CONFLICT (height) DO UPDATE SET average_time = excluded.average_time`
-	_, err := db.Sqlx.Exec(stmt, averageTime, height)
+func (db *BigDipperDb) SaveAverageBlockTimePerDay(averageTime float64) error {
+	stmt := `DELETE FROM average_block_time_per_day WHERE TRUE`
+	_, err := db.Sql.Exec(stmt)
+	if err != nil {
+		return err
+	}
+
+	stmt = `INSERT INTO average_block_time_per_day(average_time) VALUES ($1)`
+	_, err = db.Sqlx.Exec(stmt, averageTime)
 	return err
 }
 
-// SaveGenesisHeight save the genesis height
+// SaveGenesisData save the given genesis inside the database
 func (db *BigDipperDb) SaveGenesisData(genesis *tmtypes.GenesisDoc) error {
 	stmt := `DELETE FROM genesis WHERE TRUE`
 	_, err := db.Sqlx.Exec(stmt)

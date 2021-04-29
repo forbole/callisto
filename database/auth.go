@@ -8,7 +8,7 @@ import (
 	dbtypes "github.com/forbole/bdjuno/database/types"
 )
 
-// SaveAccount saves the given account information for the given block height and timestamp
+// SaveAccounts saves the given accounts inside the database
 func (db *BigDipperDb) SaveAccounts(accounts []authttypes.AccountI) error {
 	stmt := `INSERT INTO account (address) VALUES `
 	var params []interface{}

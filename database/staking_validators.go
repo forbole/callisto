@@ -161,9 +161,9 @@ func (db *BigDipperDb) SaveValidatorDescription(description types.ValidatorDescr
 
 	// Insert the description
 	stmt := `
-INSERT INTO validator_description (validator_address, moniker, identity, avatar_url, website, security_contact, details, height)
-VALUES($1, $2, $3, $4, $5, $6, $7, $8)
-ON CONFLICT (validator_address, height) DO UPDATE
+INSERT INTO validator_description (validator_address, moniker, identity, avatar_url, website, security_contact, details)
+VALUES($1, $2, $3, $4, $5, $6, $7)
+ON CONFLICT (validator_address) DO UPDATE
     SET moniker = excluded.moniker, 
         identity = excluded.identity, 
         avatar_url = excluded.avatar_url,
@@ -176,7 +176,6 @@ ON CONFLICT (validator_address, height) DO UPDATE
 		dbtypes.ToNullString(des.Moniker), dbtypes.ToNullString(des.Identity),
 		dbtypes.ToNullString(description.AvatarURL), dbtypes.ToNullString(des.Website),
 		dbtypes.ToNullString(des.SecurityContact), dbtypes.ToNullString(des.Details),
-		description.Height,
 	)
 	return err
 }
@@ -207,7 +206,6 @@ func (db *BigDipperDb) getValidatorDescription(address sdk.ConsAddress) (*types.
 			dbtypes.ToString(row.Details),
 		),
 		dbtypes.ToString(row.AvatarURL),
-		row.Height,
 	)
 	return &description, true
 }
@@ -250,12 +248,12 @@ func (db *BigDipperDb) SaveValidatorCommission(data types.ValidatorCommission) e
 
 	// Update the current value
 	stmt := `
-INSERT INTO validator_commission (validator_address, commission, min_self_delegation, height) 
-VALUES ($1, $2, $3, $4)
-ON CONFLICT (validator_address, height) DO UPDATE 
+INSERT INTO validator_commission (validator_address, commission, min_self_delegation) 
+VALUES ($1, $2, $3)
+ON CONFLICT (validator_address) DO UPDATE 
     SET commission = excluded.commission, 
         min_self_delegation = excluded.min_self_delegation;`
-	_, err = db.Sql.Exec(stmt, consAddr.String(), commission, minSelfDelegation, data.Height)
+	_, err = db.Sql.Exec(stmt, consAddr.String(), commission, minSelfDelegation)
 	return err
 }
 
@@ -279,13 +277,13 @@ func (db *BigDipperDb) getValidatorCommission(address sdk.ConsAddress) (*dbtypes
 // proper database table.
 // TIP: To store the validator data call SaveValidatorData.
 func (db *BigDipperDb) SaveValidatorsVotingPowers(entries []types.ValidatorVotingPower) error {
-	stmt := `INSERT INTO validator_voting_power (validator_address, voting_power, height) VALUES `
+	stmt := `INSERT INTO validator_voting_power (validator_address, voting_power) VALUES `
 	var params []interface{}
 
 	for i, entry := range entries {
-		pi := i * 3
-		stmt += fmt.Sprintf("($%d, $%d, $%d),", pi+1, pi+2, pi+3)
-		params = append(params, entry.ConsensusAddress, entry.VotingPower, entry.Height)
+		pi := i * 2
+		stmt += fmt.Sprintf("($%d,$%d),", pi+1, pi+2)
+		params = append(params, entry.ConsensusAddress, entry.VotingPower)
 	}
 
 	stmt = stmt[:len(stmt)-1]
@@ -301,7 +299,7 @@ func (db *BigDipperDb) SaveValidatorsStatuses(statuses []types.ValidatorStatus) 
 	validatorStmt := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES`
 	var valParams []interface{}
 
-	statusStmt := `INSERT INTO validator_status (validator_address, status, jailed, height) VALUES `
+	statusStmt := `INSERT INTO validator_status (validator_address, status, jailed) VALUES `
 	var statusParams []interface{}
 
 	for i, status := range statuses {
@@ -309,9 +307,9 @@ func (db *BigDipperDb) SaveValidatorsStatuses(statuses []types.ValidatorStatus) 
 		validatorStmt += fmt.Sprintf("($%d, $%d),", vi+1, vi+2)
 		valParams = append(valParams, status.ConsensusAddress, status.ConsensusPubKey)
 
-		si := i * 4
-		statusStmt += fmt.Sprintf("($%d, $%d, $%d, $%d),", si+1, si+2, si+3, si+4)
-		statusParams = append(statusParams, status.ConsensusAddress, status.Status, status.Jailed, status.Height)
+		si := i * 3
+		statusStmt += fmt.Sprintf("($%d,$%d,$%d),", si+1, si+2, si+3)
+		statusParams = append(statusParams, status.ConsensusAddress, status.Status, status.Jailed)
 	}
 
 	validatorStmt = validatorStmt[:len(validatorStmt)-1]
@@ -322,7 +320,7 @@ func (db *BigDipperDb) SaveValidatorsStatuses(statuses []types.ValidatorStatus) 
 	}
 
 	statusStmt = statusStmt[:len(statusStmt)-1]
-	statusStmt += "ON CONFLICT DO NOTHING"
+	statusStmt += "ON CONFLICT (validator_address) DO UPDATE SET status = excluded.status, jailed = excluded.jailed"
 	_, err = db.Sql.Exec(statusStmt, statusParams...)
 	return err
 }

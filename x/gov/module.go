@@ -3,9 +3,10 @@ package gov
 import (
 	"encoding/json"
 
-	"github.com/cosmos/cosmos-sdk/simapp/params"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+
+	"github.com/cosmos/cosmos-sdk/simapp/params"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"google.golang.org/grpc"
 
@@ -46,7 +47,7 @@ func (m *Module) Name() string {
 
 // HandleGenesis implements modules.Module
 func (m *Module) HandleGenesis(_ *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
-	return HandleGenesis(appState, m.encodingConfig.Marshaler, m.govClient, m.db)
+	return HandleGenesis(appState, m.govClient, m.authClient, m.bankClient, m.encodingConfig.Marshaler, m.db)
 }
 
 // HandleMsg implements modules.Module

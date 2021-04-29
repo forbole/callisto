@@ -109,7 +109,6 @@ func updateValidatorsStatus(
 			consPubKey.String(),
 			int(validator.GetStatus()),
 			validator.IsJailed(),
-			height,
 		)
 	}
 
@@ -134,7 +133,7 @@ func updateValidatorVotingPower(
 			continue
 		}
 
-		votingPowers[index] = types.NewValidatorVotingPower(consAddr, validator.VotingPower, height)
+		votingPowers[index] = types.NewValidatorVotingPower(consAddr, validator.VotingPower)
 	}
 
 	err := db.SaveValidatorsVotingPowers(votingPowers)
@@ -203,7 +202,7 @@ func updateStakingPool(height int64, stakingClient stakingtypes.QueryClient, db 
 		return
 	}
 
-	err = db.SaveStakingPool(res.Pool, height)
+	err = db.SaveStakingPool(res.Pool)
 	if err != nil {
 		log.Error().Str("module", "staking").Err(err).Int64("height", height).
 			Msg("error while saving staking pool")

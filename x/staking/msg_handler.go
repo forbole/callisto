@@ -2,8 +2,9 @@ package staking
 
 import (
 	"context"
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"time"
+
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -33,13 +34,13 @@ func HandleMsg(
 
 	switch cosmosMsg := msg.(type) {
 	case *stakingtypes.MsgCreateValidator:
-		return handleMsgCreateValidator(tx.Height, cosmosMsg, cdc, db)
+		return handleMsgCreateValidator(cosmosMsg, cdc, db)
 
 	case *stakingtypes.MsgEditValidator:
-		return handleEditValidator(tx.Height, cosmosMsg, db)
+		return handleEditValidator(cosmosMsg, db)
 
 	case *stakingtypes.MsgDelegate:
-		return handleMsgDelegate(tx.Height, cosmosMsg, stakingClient, bankClient, db)
+		return handleMsgDelegate(tx.Height, cosmosMsg, stakingClient, db)
 
 	case *stakingtypes.MsgBeginRedelegate:
 		return handleMsgBeginRedelegate(tx, index, cosmosMsg, stakingClient, db)
@@ -55,9 +56,7 @@ func HandleMsg(
 
 // handleMsgCreateValidator handles properly a MsgCreateValidator instance by
 // saving into the database all the data associated to such validator
-func handleMsgCreateValidator(
-	height int64, msg *stakingtypes.MsgCreateValidator, cdc codec.Marshaler, db *database.BigDipperDb,
-) error {
+func handleMsgCreateValidator(msg *stakingtypes.MsgCreateValidator, cdc codec.Marshaler, db *database.BigDipperDb) error {
 	var pubKey cryptotypes.PubKey
 	err := cdc.UnpackAny(msg.Pubkey, &pubKey)
 	if err != nil {
@@ -89,7 +88,6 @@ func handleMsgCreateValidator(
 	description, err := bstakingutils.GetValidatorDescription(
 		msg.ValidatorAddress,
 		msg.Description,
-		height,
 	)
 	if err != nil {
 		return err
@@ -105,20 +103,16 @@ func handleMsgCreateValidator(
 		msg.ValidatorAddress,
 		&msg.Commission.Rate,
 		&msg.MinSelfDelegation,
-		height,
 	))
 }
 
 // handleEditValidator handles MsgEditValidator messages, updating the validator info and commission
-func handleEditValidator(
-	height int64, msg *stakingtypes.MsgEditValidator, db *database.BigDipperDb,
-) error {
+func handleEditValidator(msg *stakingtypes.MsgEditValidator, db *database.BigDipperDb) error {
 	// Save validator commission
 	err := db.SaveValidatorCommission(types.NewValidatorCommission(
 		msg.ValidatorAddress,
 		msg.CommissionRate,
 		msg.MinSelfDelegation,
-		height,
 	))
 	if err != nil {
 		return err
@@ -128,7 +122,6 @@ func handleEditValidator(
 	desc, err := bstakingutils.GetValidatorDescription(
 		msg.ValidatorAddress,
 		msg.Description,
-		height,
 	)
 	if err != nil {
 		return err
@@ -141,8 +134,7 @@ func handleEditValidator(
 
 // handleMsgDelegate handles a MsgDelegate and saves the delegation amount inside the database
 func handleMsgDelegate(
-	height int64, msg *stakingtypes.MsgDelegate,
-	stakingClient stakingtypes.QueryClient, bankClient banktypes.QueryClient, db *database.BigDipperDb,
+	height int64, msg *stakingtypes.MsgDelegate, stakingClient stakingtypes.QueryClient, db *database.BigDipperDb,
 ) error {
 	// TODO: Remove the gRPC call when it will be possible to get the new shares amount from the transaction result
 	// Cosmos PR: https://github.com/cosmos/cosmos-sdk/pull/9214
@@ -159,14 +151,8 @@ func handleMsgDelegate(
 		return err
 	}
 
-	// Update the user balance
-	err = bbankutils.UpdateBalance(msg.DelegatorAddress, height, bankClient, db)
-	if err != nil {
-		return err
-	}
-
 	// Store the delegation
-	delegation := bstakingutils.ConvertDelegationResponse(height, *res.DelegationResponse)
+	delegation := bstakingutils.ConvertDelegationResponse(*res.DelegationResponse)
 	return db.SaveDelegations([]types.Delegation{delegation})
 }
 
@@ -196,11 +182,16 @@ func handleMsgBeginRedelegate(
 		msg.ValidatorDstAddress,
 		msg.Amount,
 		completionTime,
-		tx.Height,
 	)
 
+	// Update the current delegations
+	err = bstakingutils.UpdateDelegations(msg.DelegatorAddress, client, db)
+	if err != nil {
+		return err
+	}
+
 	// When the time expires, update the delegations and delete this redelegation
-	time.AfterFunc(time.Until(completionTime), bstakingutils.UpdateDelegations(msg.DelegatorAddress, client, db))
+	time.AfterFunc(time.Until(completionTime), bstakingutils.RefreshDelegations(msg.DelegatorAddress, client, db))
 	time.AfterFunc(time.Until(completionTime), bstakingutils.DeleteRedelegation(redelegation, db))
 
 	return db.SaveRedelegations([]types.Redelegation{redelegation})
@@ -231,11 +222,16 @@ func handleMsgUndelegate(
 		msg.ValidatorAddress,
 		msg.Amount,
 		completionTime,
-		tx.Height,
 	)
 
+	// Update the current delegations
+	err = bstakingutils.UpdateDelegations(msg.DelegatorAddress, stakingClient, db)
+	if err != nil {
+		return err
+	}
+
 	// When timer expires update the delegations, update the user balance and remove the unbonding delegation
-	time.AfterFunc(time.Until(completionTime), bstakingutils.UpdateDelegations(msg.DelegatorAddress, stakingClient, db))
+	time.AfterFunc(time.Until(completionTime), bstakingutils.RefreshDelegations(msg.DelegatorAddress, stakingClient, db))
 	time.AfterFunc(time.Until(completionTime), bbankutils.RefreshBalance(msg.DelegatorAddress, bankClient, db))
 	time.AfterFunc(time.Until(completionTime), bstakingutils.DeleteUnbondingDelegation(delegation, db))
 

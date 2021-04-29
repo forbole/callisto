@@ -70,7 +70,6 @@ func getUnbondingDelegations(
 					delegation.ValidatorAddress,
 					sdk.NewCoin(bondDenom, entry.Balance),
 					entry.CompletionTime,
-					height,
 				))
 			}
 		}

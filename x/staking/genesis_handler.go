@@ -60,7 +60,7 @@ func parseGenesisTransactions(appState map[string]json.RawMessage, cdc codec.Mar
 				continue
 			}
 
-			err = handleMsgCreateValidator(1, createValMsg, cdc, db)
+			err = handleMsgCreateValidator(createValMsg, cdc, db)
 			if err != nil {
 				return err
 			}
@@ -153,7 +153,6 @@ func saveValidatorsCommissions(validators stakingtypes.Validators, db *database.
 			account.OperatorAddress,
 			&account.Commission.Rate,
 			&account.MinSelfDelegation,
-			1,
 		))
 		if err != nil {
 			return err
@@ -177,7 +176,6 @@ func saveDelegations(genState stakingtypes.GenesisState, db *database.BigDipperD
 				validator.OperatorAddress,
 				sdk.NewCoin(genState.Params.BondDenom, delegationAmount),
 				delegation.Shares.String(),
-				1,
 			))
 		}
 	}
@@ -200,7 +198,6 @@ func saveUnbondingDelegations(genState stakingtypes.GenesisState, db *database.B
 					validator.OperatorAddress,
 					sdk.NewCoin(genState.Params.BondDenom, entry.InitialBalance),
 					entry.CompletionTime,
-					entry.CreationHeight,
 				))
 			}
 		}
@@ -220,7 +217,6 @@ func saveRedelegations(genState stakingtypes.GenesisState, db *database.BigDippe
 				redelegation.ValidatorDstAddress,
 				sdk.NewCoin(genState.Params.BondDenom, entry.InitialBalance),
 				entry.CompletionTime,
-				entry.CreationHeight,
 			))
 		}
 	}
@@ -258,7 +254,6 @@ func saveValidatorDescription(validators stakingtypes.Validators, db *database.B
 		description, err := bstakingutils.GetValidatorDescription(
 			account.OperatorAddress,
 			account.Description,
-			1,
 		)
 		if err != nil {
 			return err

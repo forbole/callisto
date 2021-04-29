@@ -61,7 +61,7 @@ func updateBlockTimeInMinute(db *database.BigDipperDb) error {
 	}
 	newBlockTime := block.Timestamp.Sub(minute.Timestamp).Seconds() / float64(block.Height-minute.Height)
 
-	return db.SaveAverageBlockTimePerMin(newBlockTime, block.Height)
+	return db.SaveAverageBlockTimePerMin(newBlockTime)
 }
 
 // updateBlockTimeInHour insert average block time in the latest hour

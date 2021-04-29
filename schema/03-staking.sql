@@ -8,11 +8,9 @@ CREATE TABLE staking_params
 
 CREATE TABLE staking_pool
 (
-    height            BIGINT NOT NULL UNIQUE PRIMARY KEY,
     bonded_tokens     BIGINT NOT NULL,
     not_bonded_tokens BIGINT NOT NULL
 );
-CREATE INDEX staking_pool_height_index ON staking_pool (height);
 
 /* ---- VALIDATORS INFO ---- */
 
@@ -30,50 +28,38 @@ CREATE INDEX validator_info_self_delegate_address_index ON validator_info (self_
 
 CREATE TABLE validator_description
 (
-    validator_address TEXT NOT NULL REFERENCES validator (consensus_address),
+    validator_address TEXT NOT NULL REFERENCES validator (consensus_address) PRIMARY KEY,
     moniker           TEXT,
     identity          TEXT,
     avatar_url        TEXT,
     website           TEXT,
     security_contact  TEXT,
-    details           TEXT,
-    height            BIGINT,
-    PRIMARY KEY (validator_address, height)
+    details           TEXT
 );
 CREATE INDEX validator_description_validator_address_index ON validator_description (validator_address);
-CREATE INDEX validator_description_height_index ON validator_description (height);
 
 CREATE TABLE validator_commission
 (
-    validator_address   TEXT    NOT NULL REFERENCES validator (consensus_address),
+    validator_address   TEXT    NOT NULL REFERENCES validator (consensus_address) PRIMARY KEY,
     commission          DECIMAL NOT NULL,
-    min_self_delegation BIGINT  NOT NULL,
-    height              BIGINT  NOT NULL,
-    PRIMARY KEY (validator_address, height)
+    min_self_delegation BIGINT  NOT NULL
 );
 CREATE INDEX validator_commission_validator_address_index ON validator_commission (validator_address);
-CREATE INDEX validator_commission_height_index ON validator_commission (height);
 
 CREATE TABLE validator_voting_power
 (
-    validator_address TEXT   NOT NULL REFERENCES validator (consensus_address),
-    voting_power      BIGINT NOT NULL,
-    height            BIGINT NOT NULL REFERENCES block (height),
-    PRIMARY KEY (validator_address, height)
+    validator_address TEXT   NOT NULL REFERENCES validator (consensus_address) PRIMARY KEY,
+    voting_power      BIGINT NOT NULL
 );
 CREATE INDEX validator_voting_power_validator_address_index ON validator_voting_power (validator_address);
-CREATE INDEX validator_voting_power_height_index ON validator_voting_power (height);
 
 CREATE TABLE validator_status
 (
-    validator_address TEXT    NOT NULL REFERENCES validator (consensus_address),
+    validator_address TEXT    NOT NULL REFERENCES validator (consensus_address) PRIMARY KEY,
     status            INT     NOT NULL,
-    jailed            BOOLEAN NOT NULL,
-    height            BIGINT,
-    PRIMARY KEY (validator_address, height)
+    jailed            BOOLEAN NOT NULL
 );
 CREATE INDEX validator_status_validator_address_index ON validator_status (validator_address);
-CREATE INDEX validator_status_height_index ON validator_status (height);
 
 /* ---- DELEGATIONS ---- */
 
@@ -90,12 +76,10 @@ CREATE TABLE delegation
     delegator_address TEXT               NOT NULL REFERENCES account (address),
     amount            COIN               NOT NULL,
     shares            NUMERIC            NOT NUll,
-    height            BIGINT             NOT NULL,
-    UNIQUE (validator_address, delegator_address, height)
+    CONSTRAINT delegation_validator_delegator_unique UNIQUE (validator_address, delegator_address)
 );
 CREATE INDEX delegation_validator_address_index ON delegation (validator_address);
 CREATE INDEX delegation_delegator_address ON delegation (delegator_address);
-CREATE INDEX delegation_height_index ON delegation (height);
 
 /**
   * This function is used to add a self_delegations field to the validator table allowing to easily get all the
@@ -126,22 +110,6 @@ SELECT (
 $$ LANGUAGE sql STABLE;
 
 /*
- * This table holds the HISTORICAL unbonding delegations.
- * It should be updated on a MESSAGE basis, to avoid data duplication.
- */
-CREATE TABLE unbonding_delegation
-(
-    validator_address    TEXT                        NOT NULL REFERENCES validator (consensus_address),
-    delegator_address    TEXT                        NOT NULL REFERENCES account (address),
-    amount               COIN                        NOT NUll,
-    completion_timestamp TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    height               BIGINT                      NOT NULL
-);
-CREATE INDEX unbonding_delegation_validator_address_index ON unbonding_delegation (validator_address);
-CREATE INDEX unbonding_delegation_delegator_address_index ON unbonding_delegation (delegator_address);
-CREATE INDEX unbonding_delegation_height_index ON unbonding_delegation (height);
-
-/*
  * This table holds the HISTORICAL redelegations.
  * It should be updated on a MESSAGE basis, to avoid data duplication.
  */
@@ -152,12 +120,28 @@ CREATE TABLE redelegation
     dst_validator_address TEXT                        NOT NULL REFERENCES validator (consensus_address),
     amount                COIN                        NOT NULL,
     completion_time       TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    height                BIGINT                      NOT NULL
+    CONSTRAINT redelegation_validator_delegator_unique UNIQUE (delegator_address, src_validator_address,
+                                                               dst_validator_address, completion_time)
 );
 CREATE INDEX redelegation_delegator_address_index ON redelegation (delegator_address);
 CREATE INDEX redelegation_src_validator_address_index ON redelegation (src_validator_address);
 CREATE INDEX redelegation_dst_validator_address_index ON redelegation (dst_validator_address);
-CREATE INDEX redelegation_height_index ON redelegation (height);
+
+/*
+ * This table holds the HISTORICAL unbonding delegations.
+ * It should be updated on a MESSAGE basis, to avoid data duplication.
+ */
+CREATE TABLE unbonding_delegation
+(
+    validator_address    TEXT                        NOT NULL REFERENCES validator (consensus_address),
+    delegator_address    TEXT                        NOT NULL REFERENCES account (address),
+    amount               COIN                        NOT NUll,
+    completion_timestamp TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    CONSTRAINT unbonding_delegation_validator_delegator_unique UNIQUE (delegator_address, validator_address,
+                                                                       completion_timestamp)
+);
+CREATE INDEX unbonding_delegation_validator_address_index ON unbonding_delegation (validator_address);
+CREATE INDEX unbonding_delegation_delegator_address_index ON unbonding_delegation (delegator_address);
 
 /*--------------------------------------------*/
 
@@ -190,4 +174,3 @@ CREATE TABLE double_sign_evidence
     vote_a_id BIGINT NOT NULL REFERENCES double_sign_vote (id),
     vote_b_id BIGINT NOT NULL REFERENCES double_sign_vote (id)
 );
-CREATE INDEX double_sign_evidence_height_index ON double_sign_evidence (height);

@@ -24,7 +24,6 @@ func ConvertRedelegationResponse(bondDenom string, response stakingtypes.Redeleg
 			response.Redelegation.ValidatorDstAddress,
 			sdk.NewCoin(bondDenom, entry.Balance),
 			entry.RedelegationEntry.CompletionTime,
-			entry.RedelegationEntry.CreationHeight,
 		))
 	}
 	return delegations
