@@ -35,20 +35,14 @@ func updateInflation(mintClient minttypes.QueryClient, db *database.BigDipperDb)
 		Str("operation", "inflation").
 		Msg("getting inflation data")
 
-	height, err := db.GetLastBlockHeight()
-	if err != nil {
-		return err
-	}
-
 	// Get the inflation
 	res, err := mintClient.Inflation(
 		context.Background(),
 		&minttypes.QueryInflationRequest{},
-		utils.GetHeightRequestHeader(height),
 	)
 	if err != nil {
 		return err
 	}
 
-	return db.SaveInflation(res.Inflation, height)
+	return db.SaveInflation(res.Inflation)
 }

@@ -7,12 +7,10 @@ import (
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
-	inflation := sdk.NewDecWithPrec(10050, 2)
-
-	err := suite.database.SaveInflation(inflation, 100)
+	err := suite.database.SaveInflation(sdk.NewDecWithPrec(20000, 2))
 	suite.Require().NoError(err)
 
-	err = suite.database.SaveInflation(inflation, 100)
+	err = suite.database.SaveInflation(sdk.NewDecWithPrec(10050, 2))
 	suite.Require().NoError(err, "double inflation insertion should return no error")
 
 	var value []dbtypes.InflationRow
@@ -20,6 +18,6 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 	suite.Require().NoError(err)
 	suite.Require().Len(value, 1, "no duplicated inflation rows should be inserted")
 
-	expected := dbtypes.NewInflationRow(100.50, 100)
+	expected := dbtypes.NewInflationRow(100.50)
 	suite.Require().True(expected.Equal(value[0]))
 }

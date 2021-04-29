@@ -1,7 +1,4 @@
 CREATE TABLE inflation
 (
-    value  DECIMAL NOT NULL,
-    height BIGINT  NOT NULL,
-    PRIMARY KEY (value, height)
+    value  DECIMAL NOT NULL
 );
-CREATE INDEX inflation_height_index ON inflation (height);
