@@ -8,7 +8,7 @@ import (
 	"github.com/forbole/bdjuno/x/utils"
 )
 
-// Register registers all the operations that should be periodically run
+// Register registers the operations that should be run periodically
 func Register(scheduler *gocron.Scheduler, db *database.BigDipperDb) error {
 	log.Debug().Str("module", "consensus").Msg("setting up periodic tasks")
 

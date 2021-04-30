@@ -2,64 +2,78 @@ package types
 
 // CommunityPoolRow represents a single row inside the total_supply table
 type CommunityPoolRow struct {
-	Coins *DbDecCoins `db:"coins"`
+	OneRowID bool        `db:"one_row_id"`
+	Coins    *DbDecCoins `db:"coins"`
+	Height   int64       `db:"height"`
 }
 
-// NewCommunityPoolRow allows to easily create a new NewCommunityPoolRow
-func NewCommunityPoolRow(coins DbDecCoins) CommunityPoolRow {
+// NewCommunityPoolRow allows to easily create a new CommunityPoolRow
+func NewCommunityPoolRow(coins DbDecCoins, height int64) CommunityPoolRow {
 	return CommunityPoolRow{
-		Coins: &coins,
+		OneRowID: true,
+		Coins:    &coins,
+		Height:   height,
 	}
 }
 
 // Equals return true if one CommunityPoolRow representing the same row as the original one
 func (v CommunityPoolRow) Equals(w CommunityPoolRow) bool {
-	return v.Coins.Equal(w.Coins)
+	return v.Coins.Equal(w.Coins) &&
+		v.Height == w.Height
 }
 
-// --------------------------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------------------------
 
+// ValidatorCommissionAmountRow represents a single row of the "validator_commission_amount" table
 type ValidatorCommissionAmountRow struct {
-	ValidatorAddress string     `db:"validator_address"`
-	Amount           DbDecCoins `db:"amount"`
+	ValidatorAddr string     `db:"validator_address"`
+	Amount        DbDecCoins `db:"amount"`
+	Height        int64      `db:"height"`
 }
 
-func NewValidatorCommissionAmountRow(validatorAddress string, amount DbDecCoins) ValidatorCommissionAmountRow {
+// NewValidatorCommissionAmountRow returns a new ValidatorCommissionAmountRow instance
+func NewValidatorCommissionAmountRow(valAddr string, amount DbDecCoins, height int64) ValidatorCommissionAmountRow {
 	return ValidatorCommissionAmountRow{
-		ValidatorAddress: validatorAddress,
-		Amount:           amount,
+		ValidatorAddr: valAddr,
+		Amount:        amount,
+		Height:        height,
 	}
 }
 
-// Equals return true iff v and w contain the same data
+// Equals returns true iff v and w contain the same data
 func (v ValidatorCommissionAmountRow) Equals(w ValidatorCommissionAmountRow) bool {
-	return v.ValidatorAddress == w.ValidatorAddress &&
-		v.Amount.Equal(&w.Amount)
+	return v.ValidatorAddr == w.ValidatorAddr &&
+		v.Amount.Equal(&w.Amount) &&
+		v.Height == w.Height
 }
 
-// --------------------------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------------------------
 
-// DelegatorRewardRow represents a single row inside the "delegation_reward" table
-type DelegatorRewardRow struct {
-	ValidatorConsAddr string     `db:"validator_address"`
-	DelegatorAddr     string     `db:"delegator_address"`
-	WithdrawAddr      string     `db:"withdraw_address"`
-	Amount            DbDecCoins `db:"amount"`
+// DelegationRewardRow represents a single row inside the "delegation_reward" table
+type DelegationRewardRow struct {
+	ValidatorConsAddress string     `db:"validator_address"`
+	DelegatorAddress     string     `db:"delegator_address"`
+	WithdrawAddress      string     `db:"withdraw_address"`
+	Amount               DbDecCoins `db:"amount"`
+	Height               int64      `db:"height"`
 }
 
-func NewDelegatorRewardRow(validatorConsAdd, delegatorAddr, withdrawAddr string, amount DbDecCoins) DelegatorRewardRow {
-	return DelegatorRewardRow{
-		ValidatorConsAddr: validatorConsAdd,
-		DelegatorAddr:     delegatorAddr,
-		WithdrawAddr:      withdrawAddr,
-		Amount:            amount,
+// NewDelegationRewardRow returns a new DelegationRewardRow instance
+func NewDelegationRewardRow(delegatorAddr, valConsAddr, withdrawAddr string, amount DbDecCoins, height int64) DelegationRewardRow {
+	return DelegationRewardRow{
+		ValidatorConsAddress: valConsAddr,
+		DelegatorAddress:     delegatorAddr,
+		WithdrawAddress:      withdrawAddr,
+		Amount:               amount,
+		Height:               height,
 	}
 }
 
-// Equals return true iff v and w contain the same data
-func (v DelegatorRewardRow) Equals(w DelegatorRewardRow) bool {
-	return v.ValidatorConsAddr == w.ValidatorConsAddr &&
-		v.DelegatorAddr == w.DelegatorAddr &&
-		v.WithdrawAddr == w.WithdrawAddr &&
-		v.Amount.Equal(&w.Amount)
+// Equals returns true iff v and w contain the same data
+func (v DelegationRewardRow) Equals(w DelegationRewardRow) bool {
+	return v.ValidatorConsAddress == w.ValidatorConsAddress &&
+		v.DelegatorAddress == w.DelegatorAddress &&
+		v.WithdrawAddress == w.WithdrawAddress &&
+		v.Amount.Equal(&w.Amount) &&
+		v.Height == w.Height
 }
