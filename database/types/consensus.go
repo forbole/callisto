@@ -38,22 +38,25 @@ func (r ConsensusRow) Equal(s ConsensusRow) bool {
 		r.Step == s.Step
 }
 
-// -------------------------------------------------------------------------------------------------------------------
-
-// AverageTimeRow represents a row inside the average_block_time_per_minute/hour/day table
+// AverageTimeRow is the average block time each minute/hour/day
 type AverageTimeRow struct {
+	OneRowID    bool    `db:"one_row_id"`
 	AverageTime float64 `db:"average_time"`
+	Height      int64   `db:"height"`
 }
 
-func NewBlockTimeRow(averageTime float64) AverageTimeRow {
+func NewAverageTimeRow(averageTime float64, height int64) AverageTimeRow {
 	return AverageTimeRow{
+		OneRowID:    true,
 		AverageTime: averageTime,
+		Height:      height,
 	}
 }
 
 // Equal return true if two AverageTimeRow are true
 func (r AverageTimeRow) Equal(s AverageTimeRow) bool {
-	return r.AverageTime == s.AverageTime
+	return r.AverageTime == s.AverageTime &&
+		r.Height == s.Height
 }
 
 // -------------------------------------------------------------------------------------------------------------------

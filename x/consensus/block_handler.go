@@ -29,5 +29,5 @@ func updateBlockTimeFromGenesis(block *tmctypes.ResultBlock, db *database.BigDip
 	}
 
 	newBlockTime := block.Block.Time.Sub(genesis).Seconds() / float64(block.Block.Height)
-	return db.SaveAverageBlockTimeGenesis(newBlockTime)
+	return db.SaveAverageBlockTimeGenesis(newBlockTime, block.Block.Height)
 }

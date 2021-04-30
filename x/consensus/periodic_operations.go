@@ -60,7 +60,7 @@ func updateBlockTimeInMinute(db *database.BigDipperDb) error {
 	}
 	newBlockTime := block.Timestamp.Sub(minute.Timestamp).Seconds() / float64(block.Height-minute.Height)
 
-	return db.SaveAverageBlockTimePerMin(newBlockTime)
+	return db.SaveAverageBlockTimePerMin(newBlockTime, block.Height)
 }
 
 // updateBlockTimeInHour insert average block time in the latest hour
@@ -89,7 +89,7 @@ func updateBlockTimeInHour(db *database.BigDipperDb) error {
 	}
 	newBlockTime := block.Timestamp.Sub(hour.Timestamp).Seconds() / float64(block.Height-hour.Height)
 
-	return db.SaveAverageBlockTimePerHour(newBlockTime)
+	return db.SaveAverageBlockTimePerHour(newBlockTime, block.Height)
 }
 
 // updateBlockTimeInDay insert average block time in the latest minute
@@ -118,5 +118,5 @@ func updateBlockTimeInDay(db *database.BigDipperDb) error {
 	}
 	newBlockTime := block.Timestamp.Sub(day.Timestamp).Seconds() / float64(block.Height-day.Height)
 
-	return db.SaveAverageBlockTimePerDay(newBlockTime)
+	return db.SaveAverageBlockTimePerDay(newBlockTime, block.Height)
 }

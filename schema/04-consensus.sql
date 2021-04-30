@@ -1,7 +1,9 @@
 CREATE TABLE genesis
 (
-    chain_id TEXT      NOT NULL,
-    time     TIMESTAMP NOT NULL
+    one_row_id BOOL      NOT NULL DEFAULT TRUE PRIMARY KEY,
+    chain_id   TEXT      NOT NULL,
+    time       TIMESTAMP NOT NULL,
+    CHECK (one_row_id)
 );
 
 CREATE TABLE consensus
@@ -14,20 +16,36 @@ CREATE INDEX consensus_height_index ON consensus (height);
 
 CREATE TABLE average_block_time_per_minute
 (
-    average_time DECIMAL NOT NULL
+    one_row_id   BOOL    NOT NULL DEFAULT TRUE PRIMARY KEY,
+    average_time DECIMAL NOT NULL,
+    height       BIGINT  NOT NULL,
+    CHECK (one_row_id)
 );
+CREATE INDEX average_block_time_per_minute_height_index ON average_block_time_per_minute (height);
 
 CREATE TABLE average_block_time_per_hour
 (
-    average_time DECIMAL NOT NULL
+    one_row_id   BOOL    NOT NULL DEFAULT TRUE PRIMARY KEY,
+    average_time DECIMAL NOT NULL,
+    height       BIGINT  NOT NULL,
+    CHECK (one_row_id)
 );
+CREATE INDEX average_block_time_per_hour_height_index ON average_block_time_per_hour (height);
 
 CREATE TABLE average_block_time_per_day
 (
-    average_time DECIMAL NOT NULL
+    one_row_id   BOOL    NOT NULL DEFAULT TRUE PRIMARY KEY,
+    average_time DECIMAL NOT NULL,
+    height       BIGINT  NOT NULL,
+    CHECK (one_row_id)
 );
+CREATE INDEX average_block_time_per_day_height_index ON average_block_time_per_day (height);
 
 CREATE TABLE average_block_time_from_genesis
 (
-    average_time DECIMAL NOT NULL
+    one_row_id   BOOL    NOT NULL DEFAULT TRUE PRIMARY KEY,
+    average_time DECIMAL NOT NULL,
+    height       BIGINT  NOT NULL,
+    CHECK (one_row_id)
 );
+CREATE INDEX average_block_time_from_genesis_height_index ON average_block_time_from_genesis (height);
