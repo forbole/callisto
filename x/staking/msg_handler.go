@@ -152,7 +152,7 @@ func handleMsgDelegate(
 	}
 
 	// Store the delegation
-	delegation := bstakingutils.ConvertDelegationResponse(*res.DelegationResponse)
+	delegation := bstakingutils.ConvertDelegationResponse(height, *res.DelegationResponse)
 	return db.SaveDelegations([]types.Delegation{delegation})
 }
 
@@ -185,13 +185,13 @@ func handleMsgBeginRedelegate(
 	)
 
 	// Update the current delegations
-	err = bstakingutils.UpdateDelegations(msg.DelegatorAddress, client, db)
+	err = bstakingutils.UpdateDelegations(tx.Height, msg.DelegatorAddress, client, db)
 	if err != nil {
 		return err
 	}
 
 	// When the time expires, update the delegations and delete this redelegation
-	time.AfterFunc(time.Until(completionTime), bstakingutils.RefreshDelegations(msg.DelegatorAddress, client, db))
+	time.AfterFunc(time.Until(completionTime), bstakingutils.RefreshDelegations(tx.Height, msg.DelegatorAddress, client, db))
 	time.AfterFunc(time.Until(completionTime), bstakingutils.DeleteRedelegation(redelegation, db))
 
 	return db.SaveRedelegations([]types.Redelegation{redelegation})
@@ -225,13 +225,13 @@ func handleMsgUndelegate(
 	)
 
 	// Update the current delegations
-	err = bstakingutils.UpdateDelegations(msg.DelegatorAddress, stakingClient, db)
+	err = bstakingutils.UpdateDelegations(tx.Height, msg.DelegatorAddress, stakingClient, db)
 	if err != nil {
 		return err
 	}
 
 	// When timer expires update the delegations, update the user balance and remove the unbonding delegation
-	time.AfterFunc(time.Until(completionTime), bstakingutils.RefreshDelegations(msg.DelegatorAddress, stakingClient, db))
+	time.AfterFunc(time.Until(completionTime), bstakingutils.RefreshDelegations(tx.Height, msg.DelegatorAddress, stakingClient, db))
 	time.AfterFunc(time.Until(completionTime), bbankutils.RefreshBalance(msg.DelegatorAddress, bankClient, db))
 	time.AfterFunc(time.Until(completionTime), bstakingutils.DeleteUnbondingDelegation(delegation, db))
 

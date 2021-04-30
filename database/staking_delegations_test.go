@@ -33,16 +33,19 @@ func (suite *DbTestSuite) TestDelegations() {
 			delegator1.String(),
 			validator1.GetOperator(),
 			sdk.NewCoin("cosmos", sdk.NewInt(100)),
+			100,
 		),
 		types.NewDelegation(
 			delegator1.String(),
 			validator2.GetOperator(),
 			sdk.NewCoin("cosmos", sdk.NewInt(100)),
+			50,
 		),
 		types.NewDelegation(
 			delegator2.String(),
 			validator2.GetOperator(),
 			sdk.NewCoin("cosmos", sdk.NewInt(200)),
+			101,
 		),
 	}
 	err := suite.database.SaveDelegations(delegations)
@@ -62,16 +65,19 @@ func (suite *DbTestSuite) TestDelegations() {
 			delegator1.String(),
 			validator1.GetConsAddr(),
 			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(100))),
+			100,
 		),
 		dbtypes.NewDelegationRow(
 			delegator1.String(),
 			validator2.GetConsAddr(),
 			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(100))),
+			50,
 		),
 		dbtypes.NewDelegationRow(
 			delegator2.String(),
 			validator2.GetConsAddr(),
 			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(200))),
+			101,
 		),
 	}
 
@@ -88,17 +94,20 @@ func (suite *DbTestSuite) TestDelegations() {
 		types.NewDelegation(
 			delegator1.String(),
 			validator1.GetOperator(),
-			sdk.NewCoin("cosmos", sdk.NewInt(250)),
+			sdk.NewCoin("cosmos", sdk.NewInt(150)),
+			80,
 		),
 		types.NewDelegation(
 			delegator1.String(),
 			validator2.GetOperator(),
-			sdk.NewCoin("cosmos", sdk.NewInt(100)),
+			sdk.NewCoin("cosmos", sdk.NewInt(120)),
+			50,
 		),
 		types.NewDelegation(
 			delegator2.String(),
 			validator2.GetOperator(),
-			sdk.NewCoin("cosmos", sdk.NewInt(160)),
+			sdk.NewCoin("cosmos", sdk.NewInt(180)),
+			102,
 		),
 	}
 	err = suite.database.SaveDelegations(delegations)
@@ -116,17 +125,20 @@ func (suite *DbTestSuite) TestDelegations() {
 		dbtypes.NewDelegationRow(
 			delegator1.String(),
 			validator1.GetConsAddr(),
-			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(250))),
+			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(100))),
+			100,
 		),
 		dbtypes.NewDelegationRow(
 			delegator1.String(),
 			validator2.GetConsAddr(),
-			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(100))),
+			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(120))),
+			50,
 		),
 		dbtypes.NewDelegationRow(
 			delegator2.String(),
 			validator2.GetConsAddr(),
-			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(160))),
+			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(180))),
+			102,
 		),
 	}
 

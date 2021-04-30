@@ -75,6 +75,7 @@ CREATE TABLE delegation
     validator_address TEXT               NOT NULL REFERENCES validator (consensus_address),
     delegator_address TEXT               NOT NULL REFERENCES account (address),
     amount            COIN               NOT NULL,
+    height            BIGINT             NOT NULL,
     CONSTRAINT delegation_validator_delegator_unique UNIQUE (validator_address, delegator_address)
 );
 CREATE INDEX delegation_validator_address_index ON delegation (validator_address);

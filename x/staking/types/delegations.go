@@ -10,18 +10,20 @@ import (
 // to a specific validator at a specific height (and timestamp)
 // containing a given amount of tokens
 type Delegation struct {
-	DelegatorAddress string
-	ValidatorAddress string
-	Amount           sdk.Coin
+	DelegatorAddress  string
+	ValidatorOperAddr string
+	Amount            sdk.Coin
+	Height            int64
 }
 
 // NewDelegation creates a new Delegation instance containing
 // the given data
-func NewDelegation(delegator string, validatorAddress string, amount sdk.Coin) Delegation {
+func NewDelegation(delegator string, validatorAddress string, amount sdk.Coin, height int64) Delegation {
 	return Delegation{
-		DelegatorAddress: delegator,
-		ValidatorAddress: validatorAddress,
-		Amount:           amount,
+		DelegatorAddress:  delegator,
+		ValidatorOperAddr: validatorAddress,
+		Amount:            amount,
+		Height:            height,
 	}
 }
 
