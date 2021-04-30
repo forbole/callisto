@@ -51,8 +51,8 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 }
 
 // HandleGenesis implements GenesisModule
-func (m *Module) HandleGenesis(_ *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
-	return HandleGenesis(appState, m.encodingConfig.Marshaler, m.db)
+func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
+	return HandleGenesis(doc, appState, m.encodingConfig.Marshaler, m.db)
 }
 
 // HandleBlock implements BlockModule

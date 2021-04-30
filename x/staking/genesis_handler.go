@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
+	tmtypes "github.com/tendermint/tendermint/types"
+
 	"github.com/cosmos/cosmos-sdk/types/tx"
 
 	bstakingutils "github.com/forbole/bdjuno/x/staking/common"
@@ -20,11 +22,11 @@ import (
 )
 
 func HandleGenesis(
-	appState map[string]json.RawMessage, cdc codec.Marshaler, db *database.BigDipperDb,
+	doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, cdc codec.Marshaler, db *database.BigDipperDb,
 ) error {
 	log.Debug().Str("module", "staking").Msg("parsing genesis")
 
-	err := parseStakingState(appState, cdc, db)
+	err := parseStakingState(doc, appState, cdc, db)
 	if err != nil {
 		return err
 	}
@@ -73,7 +75,9 @@ func parseGenesisTransactions(appState map[string]json.RawMessage, cdc codec.Mar
 // -----------------------------------------------------------------------------------------------------------------
 
 // parseStakingState parses the staking genesis state and stores the data properly
-func parseStakingState(appState map[string]json.RawMessage, cdc codec.Marshaler, db *database.BigDipperDb) error {
+func parseStakingState(
+	doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, cdc codec.Marshaler, db *database.BigDipperDb,
+) error {
 	// Read the genesis state
 	var genState stakingtypes.GenesisState
 	err := cdc.UnmarshalJSON(appState[stakingtypes.ModuleName], &genState)
@@ -105,19 +109,19 @@ func parseStakingState(appState map[string]json.RawMessage, cdc codec.Marshaler,
 	}
 
 	// Save the delegations
-	err = saveDelegations(genState, db)
+	err = saveDelegations(doc, genState, db)
 	if err != nil {
 		return fmt.Errorf("error while storing staking genesis delegations: %s", err)
 	}
 
 	// Save the unbonding delegations
-	err = saveUnbondingDelegations(genState, db)
+	err = saveUnbondingDelegations(doc, genState, db)
 	if err != nil {
 		return fmt.Errorf("error while storing staking genesis unbonding delegations: %s", err)
 	}
 
 	// Save the re-delegations
-	err = saveRedelegations(genState, db)
+	err = saveRedelegations(doc, genState, db)
 	if err != nil {
 		return fmt.Errorf("error while storing staking genesis redelegations: %s", err)
 	}
@@ -163,7 +167,7 @@ func saveValidatorsCommissions(validators stakingtypes.Validators, db *database.
 }
 
 // saveDelegations stores the delegations data present inside the given genesis state
-func saveDelegations(genState stakingtypes.GenesisState, db *database.BigDipperDb) error {
+func saveDelegations(doc *tmtypes.GenesisDoc, genState stakingtypes.GenesisState, db *database.BigDipperDb) error {
 	var delegations []types.Delegation
 	for _, validator := range genState.Validators {
 		tokens := validator.Tokens
@@ -175,7 +179,7 @@ func saveDelegations(genState stakingtypes.GenesisState, db *database.BigDipperD
 				delegation.DelegatorAddress,
 				validator.OperatorAddress,
 				sdk.NewCoin(genState.Params.BondDenom, delegationAmount),
-				1,
+				doc.InitialHeight,
 			))
 		}
 	}
@@ -187,7 +191,7 @@ func saveDelegations(genState stakingtypes.GenesisState, db *database.BigDipperD
 }
 
 // saveUnbondingDelegations stores the unbonding delegations data present inside the given genesis state
-func saveUnbondingDelegations(genState stakingtypes.GenesisState, db *database.BigDipperDb) error {
+func saveUnbondingDelegations(doc *tmtypes.GenesisDoc, genState stakingtypes.GenesisState, db *database.BigDipperDb) error {
 	var unbondingDelegations []types.UnbondingDelegation
 	for _, validator := range genState.Validators {
 		valUD := getUnbondingDelegations(genState.UnbondingDelegations, validator.OperatorAddress)
@@ -198,7 +202,7 @@ func saveUnbondingDelegations(genState stakingtypes.GenesisState, db *database.B
 					validator.OperatorAddress,
 					sdk.NewCoin(genState.Params.BondDenom, entry.InitialBalance),
 					entry.CompletionTime,
-					1,
+					doc.InitialHeight,
 				))
 			}
 		}
@@ -208,7 +212,7 @@ func saveUnbondingDelegations(genState stakingtypes.GenesisState, db *database.B
 }
 
 // saveRedelegations stores the redelegations data present inside the given genesis state
-func saveRedelegations(genState stakingtypes.GenesisState, db *database.BigDipperDb) error {
+func saveRedelegations(doc *tmtypes.GenesisDoc, genState stakingtypes.GenesisState, db *database.BigDipperDb) error {
 	var redelegations []types.Redelegation
 	for _, redelegation := range genState.Redelegations {
 		for _, entry := range redelegation.Entries {
@@ -218,6 +222,7 @@ func saveRedelegations(genState stakingtypes.GenesisState, db *database.BigDippe
 				redelegation.ValidatorDstAddress,
 				sdk.NewCoin(genState.Params.BondDenom, entry.InitialBalance),
 				entry.CompletionTime,
+				doc.InitialHeight,
 			))
 		}
 	}

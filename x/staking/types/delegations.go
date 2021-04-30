@@ -60,11 +60,12 @@ type Redelegation struct {
 	DstValidator     string
 	Amount           sdk.Coin
 	CompletionTime   time.Time
+	Height           int64
 }
 
 // NewRedelegation build a new Redelegation object
 func NewRedelegation(
-	delegator string, srcValidator, dstValidator string, amount sdk.Coin, completionTime time.Time,
+	delegator string, srcValidator, dstValidator string, amount sdk.Coin, completionTime time.Time, height int64,
 ) Redelegation {
 	return Redelegation{
 		DelegatorAddress: delegator,
@@ -72,5 +73,6 @@ func NewRedelegation(
 		DstValidator:     dstValidator,
 		Amount:           amount,
 		CompletionTime:   completionTime,
+		Height:           height,
 	}
 }

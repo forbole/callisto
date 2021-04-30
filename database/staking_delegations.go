@@ -102,7 +102,7 @@ INSERT INTO account (address) VALUES `
 
 	rdQry := `
 INSERT INTO redelegation 
-    (delegator_address, src_validator_address, dst_validator_address, amount, completion_time) 
+    (delegator_address, src_validator_address, dst_validator_address, amount, completion_time, height) 
 VALUES `
 	var rdParams []interface{}
 
@@ -129,11 +129,11 @@ VALUES `
 			return err
 		}
 
-		rdi := i * 5
-		rdQry += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", rdi+1, rdi+2, rdi+3, rdi+4, rdi+5)
+		rdi := i * 6
+		rdQry += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d),", rdi+1, rdi+2, rdi+3, rdi+4, rdi+5, rdi+6)
 		rdParams = append(rdParams,
 			redelegation.DelegatorAddress,
-			srcVal.GetConsAddr(), dstVal.GetConsAddr(), amountValue, redelegation.CompletionTime)
+			srcVal.GetConsAddr(), dstVal.GetConsAddr(), amountValue, redelegation.CompletionTime, redelegation.Height)
 	}
 
 	// Insert the delegators
@@ -146,7 +146,10 @@ VALUES `
 
 	// Insert the redelegations
 	rdQry = rdQry[:len(rdQry)-1] // Remove the trailing ","
-	rdQry += " ON CONFLICT ON CONSTRAINT redelegation_validator_delegator_unique DO UPDATE SET amount = excluded.amount"
+	rdQry += `
+ON CONFLICT ON CONSTRAINT redelegation_validator_delegator_unique 
+DO UPDATE SET amount = excluded.amount, height = excluded.height
+WHERE redelegation.height <= excluded.height`
 	_, err = db.Sql.Exec(rdQry, rdParams...)
 	return err
 }

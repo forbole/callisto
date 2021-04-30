@@ -15,7 +15,9 @@ import (
 )
 
 // ConvertRedelegationResponse converts the given response into a slice of BDJuno redelegation objects
-func ConvertRedelegationResponse(bondDenom string, response stakingtypes.RedelegationResponse) []types.Redelegation {
+func ConvertRedelegationResponse(
+	height int64, bondDenom string, response stakingtypes.RedelegationResponse,
+) []types.Redelegation {
 	var delegations []types.Redelegation
 	for _, entry := range response.Entries {
 		delegations = append(delegations, types.NewRedelegation(
@@ -24,6 +26,7 @@ func ConvertRedelegationResponse(bondDenom string, response stakingtypes.Redeleg
 			response.Redelegation.ValidatorDstAddress,
 			sdk.NewCoin(bondDenom, entry.Balance),
 			entry.RedelegationEntry.CompletionTime,
+			height,
 		))
 	}
 	return delegations
@@ -77,7 +80,7 @@ func getRedelegations(
 
 		var delegations []types.Redelegation
 		for _, delegation := range res.RedelegationResponses {
-			redelegations := ConvertRedelegationResponse(bondDenom, delegation)
+			redelegations := ConvertRedelegationResponse(height, bondDenom, delegation)
 			delegations = append(delegations, redelegations...)
 		}
 		err = db.SaveRedelegations(delegations)

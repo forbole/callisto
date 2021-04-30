@@ -182,6 +182,7 @@ func handleMsgBeginRedelegate(
 		msg.ValidatorDstAddress,
 		msg.Amount,
 		completionTime,
+		tx.Height,
 	)
 
 	// Update the current delegations

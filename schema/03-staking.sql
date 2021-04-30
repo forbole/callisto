@@ -120,6 +120,7 @@ CREATE TABLE redelegation
     dst_validator_address TEXT                        NOT NULL REFERENCES validator (consensus_address),
     amount                COIN                        NOT NULL,
     completion_time       TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    height                BIGINT                      NOT NULL,
     CONSTRAINT redelegation_validator_delegator_unique UNIQUE (delegator_address, src_validator_address,
                                                                dst_validator_address, completion_time)
 );

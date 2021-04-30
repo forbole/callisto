@@ -73,11 +73,12 @@ type RedelegationRow struct {
 	DstValidatorAddress string    `db:"dst_validator_address"`
 	Amount              DbCoin    `db:"amount"`
 	CompletionTime      time.Time `db:"completion_time"`
+	Height              int64     `db:"height"`
 }
 
 // NewRedelegationRow allows to easily build a new RedelegationRow instance
 func NewRedelegationRow(
-	delegator, srcConsAddr, dstConsAddr string, amount DbCoin, completionTime time.Time,
+	delegator, srcConsAddr, dstConsAddr string, amount DbCoin, completionTime time.Time, height int64,
 ) RedelegationRow {
 	return RedelegationRow{
 		DelegatorAddress:    delegator,
@@ -85,6 +86,7 @@ func NewRedelegationRow(
 		DstValidatorAddress: dstConsAddr,
 		Amount:              amount,
 		CompletionTime:      completionTime,
+		Height:              height,
 	}
 }
 
@@ -94,5 +96,6 @@ func (v RedelegationRow) Equal(w RedelegationRow) bool {
 		v.SrcValidatorAddress == w.SrcValidatorAddress &&
 		v.DstValidatorAddress == w.DstValidatorAddress &&
 		v.Amount.Equal(w.Amount) &&
-		v.CompletionTime.Equal(w.CompletionTime)
+		v.CompletionTime.Equal(w.CompletionTime) &&
+		v.Height == w.Height
 }

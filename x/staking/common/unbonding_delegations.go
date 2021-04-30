@@ -14,18 +14,21 @@ import (
 	"github.com/forbole/bdjuno/x/utils"
 )
 
-// ConvertUnbondingResponse converts the given data to an unbonding delegation entry
+// ConvertUnbondingResponse converts the given UnbondingDelegation response into a slice of BDJuno UnbondingDelegation
 func ConvertUnbondingResponse(
-	height int64, bondDenom string,
-	entry stakingtypes.UnbondingDelegationEntry, delegation stakingtypes.UnbondingDelegation,
-) types.UnbondingDelegation {
-	return types.NewUnbondingDelegation(
-		delegation.DelegatorAddress,
-		delegation.ValidatorAddress,
-		sdk.NewCoin(bondDenom, entry.Balance),
-		entry.CompletionTime,
-		height,
-	)
+	height int64, bondDenom string, response stakingtypes.UnbondingDelegation,
+) []types.UnbondingDelegation {
+	var delegations []types.UnbondingDelegation
+	for _, entry := range response.Entries {
+		delegations = append(delegations, types.NewUnbondingDelegation(
+			response.DelegatorAddress,
+			response.ValidatorAddress,
+			sdk.NewCoin(bondDenom, entry.Balance),
+			entry.CompletionTime,
+			height,
+		))
+	}
+	return delegations
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -80,9 +83,7 @@ func getUnbondingDelegations(
 
 		var delegations []types.UnbondingDelegation
 		for _, delegation := range res.UnbondingResponses {
-			for _, entry := range delegation.Entries {
-				delegations = append(delegations, ConvertUnbondingResponse(height, bondDenom, entry, delegation))
-			}
+			delegations = append(delegations, ConvertUnbondingResponse(height, bondDenom, delegation)...)
 		}
 
 		err = db.SaveUnbondingDelegations(delegations)
