@@ -14,6 +14,22 @@ import (
 	"github.com/forbole/bdjuno/x/utils"
 )
 
+// ConvertUnbondingResponse converts the given data to an unbonding delegation entry
+func ConvertUnbondingResponse(
+	height int64, bondDenom string,
+	entry stakingtypes.UnbondingDelegationEntry, delegation stakingtypes.UnbondingDelegation,
+) types.UnbondingDelegation {
+	return types.NewUnbondingDelegation(
+		delegation.DelegatorAddress,
+		delegation.ValidatorAddress,
+		sdk.NewCoin(bondDenom, entry.Balance),
+		entry.CompletionTime,
+		height,
+	)
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 // UpdateValidatorsUnbondingDelegations updates the unbonding delegations for all the validators provided
 func UpdateValidatorsUnbondingDelegations(
 	height int64, bondDenom string, validators []stakingtypes.Validator,
@@ -65,12 +81,7 @@ func getUnbondingDelegations(
 		var delegations []types.UnbondingDelegation
 		for _, delegation := range res.UnbondingResponses {
 			for _, entry := range delegation.Entries {
-				delegations = append(delegations, types.NewUnbondingDelegation(
-					delegation.DelegatorAddress,
-					delegation.ValidatorAddress,
-					sdk.NewCoin(bondDenom, entry.Balance),
-					entry.CompletionTime,
-				))
+				delegations = append(delegations, ConvertUnbondingResponse(height, bondDenom, entry, delegation))
 			}
 		}
 

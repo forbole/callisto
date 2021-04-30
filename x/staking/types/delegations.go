@@ -18,42 +18,12 @@ type Delegation struct {
 
 // NewDelegation creates a new Delegation instance containing
 // the given data
-func NewDelegation(delegator string, validatorAddress string, amount sdk.Coin, height int64) Delegation {
+func NewDelegation(delegator string, validatorOperAddr string, amount sdk.Coin, height int64) Delegation {
 	return Delegation{
 		DelegatorAddress:  delegator,
-		ValidatorOperAddr: validatorAddress,
+		ValidatorOperAddr: validatorOperAddr,
 		Amount:            amount,
 		Height:            height,
-	}
-}
-
-// -----------------------------------------------------------------------------------------------------------------
-
-// DelegationUpdateData contains the data needed to update a delegation
-type DelegationUpdateData struct {
-	Delegator string
-	Validator string
-	Amount    sdk.Coin
-}
-
-func NewDelegationUpdateData(delegator, validator string, amount sdk.Coin) DelegationUpdateData {
-	return DelegationUpdateData{
-		Delegator: delegator,
-		Validator: validator,
-		Amount:    amount,
-	}
-}
-
-// DelegationDeleteData contains the data needed to delete a delegation
-type DelegationDeleteData struct {
-	Delegator string
-	Validator string
-}
-
-func NewDelegationDeleteData(delegator, validator string) DelegationDeleteData {
-	return DelegationDeleteData{
-		Delegator: delegator,
-		Validator: validator,
 	}
 }
 
@@ -62,20 +32,22 @@ func NewDelegationDeleteData(delegator, validator string) DelegationDeleteData {
 // UnbondingDelegation represents a single unbonding delegation
 type UnbondingDelegation struct {
 	DelegatorAddress    string
-	ValidatorAddress    string
+	ValidatorOperAddr   string
 	Amount              sdk.Coin
 	CompletionTimestamp time.Time
+	Height              int64
 }
 
 // NewUnbondingDelegation allows to create a new UnbondingDelegation instance
 func NewUnbondingDelegation(
-	delegator string, validator string, amount sdk.Coin, completionTimestamp time.Time,
+	delegator string, validatorOperAddr string, amount sdk.Coin, completionTimestamp time.Time, height int64,
 ) UnbondingDelegation {
 	return UnbondingDelegation{
 		DelegatorAddress:    delegator,
-		ValidatorAddress:    validator,
+		ValidatorOperAddr:   validatorOperAddr,
 		Amount:              amount,
 		CompletionTimestamp: completionTimestamp,
+		Height:              height,
 	}
 }
 

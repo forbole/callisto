@@ -198,6 +198,7 @@ func saveUnbondingDelegations(genState stakingtypes.GenesisState, db *database.B
 					validator.OperatorAddress,
 					sdk.NewCoin(genState.Params.BondDenom, entry.InitialBalance),
 					entry.CompletionTime,
+					1,
 				))
 			}
 		}

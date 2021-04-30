@@ -346,44 +346,45 @@ func (suite *DbTestSuite) TestSaveUnbondingDelegations() {
 		"cosmosvalconspub1zcjduepqe93asg05nlnj30ej2pe3r8rkeryyuflhtfw3clqjphxn4j3u27msrr63nk",
 	)
 
-	// ------------------------------
-	// --- Save the data
-	// ------------------------------
+	// Save the data
 
-	reDelegations := []types.UnbondingDelegation{
+	unbondingDelegations := []types.UnbondingDelegation{
 		types.NewUnbondingDelegation(
 			delegator1.String(),
 			validator1.GetOperator(),
 			sdk.NewCoin("cosmos", sdk.NewInt(100)),
-			time.Date(2021, 1, 1, 12, 00, 00, 000, time.UTC),
+			time.Date(2021, 1, 1, 12, 00, 01, 000, time.UTC),
+			10,
 		),
 		types.NewUnbondingDelegation(
 			delegator1.String(),
 			validator2.GetOperator(),
 			sdk.NewCoin("cosmos", sdk.NewInt(120)),
-			time.Date(2021, 1, 1, 12, 00, 00, 000, time.UTC),
+			time.Date(2021, 1, 1, 12, 00, 02, 000, time.UTC),
+			10,
 		),
 		types.NewUnbondingDelegation(
 			delegator2.String(),
 			validator1.GetOperator(),
 			sdk.NewCoin("cosmos", sdk.NewInt(100)),
-			time.Date(2021, 2, 1, 12, 00, 00, 000, time.UTC),
+			time.Date(2021, 2, 1, 12, 00, 03, 000, time.UTC),
+			10,
 		),
 		types.NewUnbondingDelegation(
 			delegator2.String(),
 			validator2.GetOperator(),
 			sdk.NewCoin("cosmos", sdk.NewInt(200)),
-			time.Date(2021, 2, 1, 12, 00, 00, 000, time.UTC),
+			time.Date(2021, 2, 1, 12, 00, 04, 000, time.UTC),
+			10,
 		),
 	}
-	err := suite.database.SaveUnbondingDelegations(reDelegations)
+	err := suite.database.SaveUnbondingDelegations(unbondingDelegations)
 	suite.Require().NoError(err)
 
-	// ------------------------------
-	// --- Verify the data
-	// ------------------------------
+	// Verify the data
+
 	var rows []dbtypes.UnbondingDelegationRow
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM unbonding_delegation`)
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM unbonding_delegation ORDER BY completion_timestamp`)
 	suite.Require().NoError(err)
 
 	expected := []dbtypes.UnbondingDelegationRow{
@@ -391,25 +392,29 @@ func (suite *DbTestSuite) TestSaveUnbondingDelegations() {
 			delegator1.String(),
 			validator1.GetConsAddr(),
 			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(100))),
-			time.Date(2021, 1, 1, 12, 00, 00, 000, time.UTC),
+			time.Date(2021, 1, 1, 12, 00, 01, 000, time.UTC),
+			10,
 		),
 		dbtypes.NewUnbondingDelegationRow(
 			delegator1.String(),
 			validator2.GetConsAddr(),
 			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(120))),
-			time.Date(2021, 1, 1, 12, 00, 00, 000, time.UTC),
+			time.Date(2021, 1, 1, 12, 00, 02, 000, time.UTC),
+			10,
 		),
 		dbtypes.NewUnbondingDelegationRow(
 			delegator2.String(),
 			validator1.GetConsAddr(),
 			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(100))),
-			time.Date(2021, 2, 1, 12, 00, 00, 000, time.UTC),
+			time.Date(2021, 2, 1, 12, 00, 03, 000, time.UTC),
+			10,
 		),
 		dbtypes.NewUnbondingDelegationRow(
 			delegator2.String(),
 			validator2.GetConsAddr(),
 			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(200))),
-			time.Date(2021, 2, 1, 12, 00, 00, 000, time.UTC),
+			time.Date(2021, 2, 1, 12, 00, 04, 000, time.UTC),
+			10,
 		),
 	}
 
@@ -418,70 +423,75 @@ func (suite *DbTestSuite) TestSaveUnbondingDelegations() {
 		suite.Require().True(row.Equal(expected[index]), fmt.Sprintf("%d", index))
 	}
 
-	// ------------------------------
-	// --- Update the data
-	// ------------------------------
+	// Update the data
 
-	reDelegations = []types.UnbondingDelegation{
+	unbondingDelegations = []types.UnbondingDelegation{
 		types.NewUnbondingDelegation(
 			delegator1.String(),
 			validator1.GetOperator(),
-			sdk.NewCoin("cosmos", sdk.NewInt(150)),
-			time.Date(2021, 1, 1, 12, 00, 00, 000, time.UTC),
+			sdk.NewCoin("cosmos", sdk.NewInt(100)),
+			time.Date(2021, 1, 1, 12, 00, 01, 000, time.UTC),
+			10,
 		),
 		types.NewUnbondingDelegation(
 			delegator1.String(),
 			validator2.GetOperator(),
-			sdk.NewCoin("cosmos", sdk.NewInt(100)),
-			time.Date(2021, 1, 1, 12, 00, 00, 000, time.UTC),
+			sdk.NewCoin("cosmos", sdk.NewInt(130)),
+			time.Date(2021, 1, 1, 12, 00, 02, 000, time.UTC),
+			10,
 		),
 		types.NewUnbondingDelegation(
 			delegator2.String(),
 			validator1.GetOperator(),
-			sdk.NewCoin("cosmos", sdk.NewInt(100)),
-			time.Date(2021, 2, 1, 12, 00, 00, 000, time.UTC),
+			sdk.NewCoin("cosmos", sdk.NewInt(90)),
+			time.Date(2021, 2, 1, 12, 00, 03, 000, time.UTC),
+			11,
 		),
 		types.NewUnbondingDelegation(
 			delegator2.String(),
 			validator2.GetOperator(),
-			sdk.NewCoin("cosmos", sdk.NewInt(80)),
-			time.Date(2021, 2, 1, 12, 00, 00, 000, time.UTC),
+			sdk.NewCoin("cosmos", sdk.NewInt(250)),
+			time.Date(2021, 2, 1, 12, 00, 04, 000, time.UTC),
+			9,
 		),
 	}
-	err = suite.database.SaveUnbondingDelegations(reDelegations)
+	err = suite.database.SaveUnbondingDelegations(unbondingDelegations)
 	suite.Require().NoError(err)
 
-	// ------------------------------
-	// --- Verify the data
-	// ------------------------------
+	// Verify the data
+
 	rows = []dbtypes.UnbondingDelegationRow{}
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM unbonding_delegation`)
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM unbonding_delegation ORDER BY completion_timestamp`)
 	suite.Require().NoError(err, "updating rows should not return an error")
 
 	expected = []dbtypes.UnbondingDelegationRow{
 		dbtypes.NewUnbondingDelegationRow(
 			delegator1.String(),
 			validator1.GetConsAddr(),
-			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(150))),
-			time.Date(2021, 1, 1, 12, 00, 00, 000, time.UTC),
+			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(100))),
+			time.Date(2021, 1, 1, 12, 00, 01, 000, time.UTC),
+			10,
 		),
 		dbtypes.NewUnbondingDelegationRow(
 			delegator1.String(),
 			validator2.GetConsAddr(),
-			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(100))),
-			time.Date(2021, 1, 1, 12, 00, 00, 000, time.UTC),
+			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(130))),
+			time.Date(2021, 1, 1, 12, 00, 02, 000, time.UTC),
+			10,
 		),
 		dbtypes.NewUnbondingDelegationRow(
 			delegator2.String(),
 			validator1.GetConsAddr(),
-			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(100))),
-			time.Date(2021, 2, 1, 12, 00, 00, 000, time.UTC),
+			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(90))),
+			time.Date(2021, 2, 1, 12, 00, 03, 000, time.UTC),
+			11,
 		),
 		dbtypes.NewUnbondingDelegationRow(
 			delegator2.String(),
 			validator2.GetConsAddr(),
-			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(80))),
-			time.Date(2021, 2, 1, 12, 00, 00, 000, time.UTC),
+			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(200))),
+			time.Date(2021, 2, 1, 12, 00, 04, 000, time.UTC),
+			10,
 		),
 	}
 

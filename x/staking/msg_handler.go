@@ -222,6 +222,7 @@ func handleMsgUndelegate(
 		msg.ValidatorAddress,
 		msg.Amount,
 		completionTime,
+		tx.Height,
 	)
 
 	// Update the current delegations

@@ -39,17 +39,19 @@ type UnbondingDelegationRow struct {
 	DelegatorAddress    string    `db:"delegator_address"`
 	Amount              DbCoin    `db:"amount"`
 	CompletionTimestamp time.Time `db:"completion_timestamp"`
+	Height              int64     `db:"height"`
 }
 
 // NewUnbondingDelegationRow allows to build a new UnbondingDelegationRow instance
 func NewUnbondingDelegationRow(
-	delegator, consAddr string, amount DbCoin, completionTimestamp time.Time,
+	delegator, consAddr string, amount DbCoin, completionTimestamp time.Time, height int64,
 ) UnbondingDelegationRow {
 	return UnbondingDelegationRow{
 		ConsensusAddress:    consAddr,
 		DelegatorAddress:    delegator,
 		Amount:              amount,
 		CompletionTimestamp: completionTimestamp,
+		Height:              height,
 	}
 }
 
@@ -58,7 +60,8 @@ func (v UnbondingDelegationRow) Equal(w UnbondingDelegationRow) bool {
 	return v.ConsensusAddress == w.ConsensusAddress &&
 		v.DelegatorAddress == w.DelegatorAddress &&
 		v.Amount.Equal(w.Amount) &&
-		v.CompletionTimestamp.Equal(w.CompletionTimestamp)
+		v.CompletionTimestamp.Equal(w.CompletionTimestamp) &&
+		v.Height == w.Height
 }
 
 // ________________________________________________
