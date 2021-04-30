@@ -16,11 +16,10 @@ CREATE TABLE token_price
     /* Needed for the below token_price function to work properly */
     id         SERIAL    NOT NULL PRIMARY KEY,
 
-    unit_name  TEXT      NOT NULL REFERENCES token_unit (denom),
+    unit_name  TEXT      NOT NULL REFERENCES token_unit (denom) UNIQUE,
     price      NUMERIC   NOT NULL,
     market_cap BIGINT    NOT NULL,
-    timestamp  TIMESTAMP NOT NULL,
-    UNIQUE (unit_name, timestamp)
+    timestamp  TIMESTAMP NOT NULL
 );
 CREATE INDEX token_price_timestamp_index ON token_price (timestamp);
 
