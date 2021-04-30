@@ -6,14 +6,16 @@ import (
 )
 
 type GenesisRow struct {
-	ChainID string    `db:"chain_id"`
-	Time    time.Time `db:"time"`
+	OneRowID bool      `db:"one_row_id"`
+	ChainID  string    `db:"chain_id"`
+	Time     time.Time `db:"time"`
 }
 
 func NewGenesisRow(chainID string, time time.Time) GenesisRow {
 	return GenesisRow{
-		ChainID: chainID,
-		Time:    time,
+		OneRowID: true,
+		ChainID:  chainID,
+		Time:     time,
 	}
 }
 

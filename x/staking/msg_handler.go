@@ -34,10 +34,10 @@ func HandleMsg(
 
 	switch cosmosMsg := msg.(type) {
 	case *stakingtypes.MsgCreateValidator:
-		return handleMsgCreateValidator(cosmosMsg, cdc, db)
+		return handleMsgCreateValidator(tx.Height, cosmosMsg, cdc, db)
 
 	case *stakingtypes.MsgEditValidator:
-		return handleEditValidator(cosmosMsg, db)
+		return handleEditValidator(tx.Height, cosmosMsg, db)
 
 	case *stakingtypes.MsgDelegate:
 		return handleMsgDelegate(tx.Height, cosmosMsg, stakingClient, db)
@@ -56,7 +56,9 @@ func HandleMsg(
 
 // handleMsgCreateValidator handles properly a MsgCreateValidator instance by
 // saving into the database all the data associated to such validator
-func handleMsgCreateValidator(msg *stakingtypes.MsgCreateValidator, cdc codec.Marshaler, db *database.BigDipperDb) error {
+func handleMsgCreateValidator(
+	height int64, msg *stakingtypes.MsgCreateValidator, cdc codec.Marshaler, db *database.BigDipperDb,
+) error {
 	var pubKey cryptotypes.PubKey
 	err := cdc.UnpackAny(msg.Pubkey, &pubKey)
 	if err != nil {
@@ -73,7 +75,7 @@ func handleMsgCreateValidator(msg *stakingtypes.MsgCreateValidator, cdc codec.Ma
 		return err
 	}
 
-	validator, err := bstakingutils.ConvertValidator(cdc, stakingValidator)
+	validator, err := bstakingutils.ConvertValidator(cdc, stakingValidator, height)
 	if err != nil {
 		return err
 	}
@@ -88,6 +90,7 @@ func handleMsgCreateValidator(msg *stakingtypes.MsgCreateValidator, cdc codec.Ma
 	description, err := bstakingutils.GetValidatorDescription(
 		msg.ValidatorAddress,
 		msg.Description,
+		height,
 	)
 	if err != nil {
 		return err
@@ -103,16 +106,20 @@ func handleMsgCreateValidator(msg *stakingtypes.MsgCreateValidator, cdc codec.Ma
 		msg.ValidatorAddress,
 		&msg.Commission.Rate,
 		&msg.MinSelfDelegation,
+		height,
 	))
 }
 
 // handleEditValidator handles MsgEditValidator messages, updating the validator info and commission
-func handleEditValidator(msg *stakingtypes.MsgEditValidator, db *database.BigDipperDb) error {
+func handleEditValidator(
+	height int64, msg *stakingtypes.MsgEditValidator, db *database.BigDipperDb,
+) error {
 	// Save validator commission
 	err := db.SaveValidatorCommission(types.NewValidatorCommission(
 		msg.ValidatorAddress,
 		msg.CommissionRate,
 		msg.MinSelfDelegation,
+		height,
 	))
 	if err != nil {
 		return err
@@ -122,6 +129,7 @@ func handleEditValidator(msg *stakingtypes.MsgEditValidator, db *database.BigDip
 	desc, err := bstakingutils.GetValidatorDescription(
 		msg.ValidatorAddress,
 		msg.Description,
+		height,
 	)
 	if err != nil {
 		return err

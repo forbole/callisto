@@ -17,10 +17,13 @@ type ValidatorData struct {
 	SelfDelegateAddress string `db:"self_delegate_address"`
 	MaxRate             string `db:"max_rate"`
 	MaxChangeRate       string `db:"max_change_rate"`
+	Height              int64  `db:"height"`
 }
 
 // NewValidatorData allows to build a new ValidatorData
-func NewValidatorData(consAddress, valAddress, consPubKey, selfDelegateAddress, maxRate, maxChangeRate string) ValidatorData {
+func NewValidatorData(
+	consAddress, valAddress, consPubKey, selfDelegateAddress, maxRate, maxChangeRate string, height int64,
+) ValidatorData {
 	return ValidatorData{
 		ConsAddress:         consAddress,
 		ValAddress:          valAddress,
@@ -28,6 +31,7 @@ func NewValidatorData(consAddress, valAddress, consPubKey, selfDelegateAddress, 
 		SelfDelegateAddress: selfDelegateAddress,
 		MaxRate:             maxRate,
 		MaxChangeRate:       maxChangeRate,
+		Height:              height,
 	}
 }
 
@@ -71,6 +75,11 @@ func (v ValidatorData) GetMaxRate() *sdk.Dec {
 	return &result
 }
 
+// GetHeight implements types.Validator
+func (v ValidatorData) GetHeight() int64 {
+	return v.Height
+}
+
 // ________________________________________________
 
 // ValidatorRow represents a single row of the validator table
@@ -102,16 +111,20 @@ type ValidatorInfoRow struct {
 	SelfDelegateAddress string `db:"self_delegate_address"`
 	MaxChangeRate       string `db:"max_change_rate"`
 	MaxRate             string `db:"max_rate"`
+	Height              int64  `db:"height"`
 }
 
 // NewValidatorInfoRow allows to build a new ValidatorInfoRow
-func NewValidatorInfoRow(consAddress, valAddress, selfDelegateAddress, maxChangeRate, maxRate string) ValidatorInfoRow {
+func NewValidatorInfoRow(
+	consAddress, valAddress, selfDelegateAddress, maxRate, maxChangeRate string, height int64,
+) ValidatorInfoRow {
 	return ValidatorInfoRow{
 		ConsAddress:         consAddress,
 		ValAddress:          valAddress,
 		SelfDelegateAddress: selfDelegateAddress,
 		MaxChangeRate:       maxChangeRate,
 		MaxRate:             maxRate,
+		Height:              height,
 	}
 }
 
@@ -121,7 +134,8 @@ func (v ValidatorInfoRow) Equal(w ValidatorInfoRow) bool {
 		v.ValAddress == w.ValAddress &&
 		v.SelfDelegateAddress == w.SelfDelegateAddress &&
 		v.MaxRate == w.MaxRate &&
-		v.MaxChangeRate == w.MaxChangeRate
+		v.MaxChangeRate == w.MaxChangeRate &&
+		v.Height == w.Height
 }
 
 //________________________________________________________________
@@ -135,11 +149,12 @@ type ValidatorDescriptionRow struct {
 	Website         sql.NullString `db:"website"`
 	SecurityContact sql.NullString `db:"security_contact"`
 	Details         sql.NullString `db:"details"`
+	Height          int64          `db:"height"`
 }
 
 // NewValidatorDescriptionRow return a row representing data structure in validator_description
 func NewValidatorDescriptionRow(
-	valAddress, moniker, identity, avatarURL, website, securityContact, details string,
+	valAddress, moniker, identity, avatarURL, website, securityContact, details string, height int64,
 ) ValidatorDescriptionRow {
 	return ValidatorDescriptionRow{
 		ValAddress:      valAddress,
@@ -149,6 +164,7 @@ func NewValidatorDescriptionRow(
 		Website:         ToNullString(website),
 		SecurityContact: ToNullString(securityContact),
 		Details:         ToNullString(details),
+		Height:          height,
 	}
 }
 
@@ -159,7 +175,8 @@ func (w ValidatorDescriptionRow) Equals(v ValidatorDescriptionRow) bool {
 		v.Identity == w.Identity &&
 		v.Website == w.Website &&
 		v.SecurityContact == w.SecurityContact &&
-		v.Details == w.Details
+		v.Details == w.Details &&
+		v.Height == w.Height
 }
 
 // ________________________________________________
@@ -169,16 +186,18 @@ type ValidatorCommissionRow struct {
 	OperatorAddress   string         `db:"validator_address"`
 	Commission        sql.NullString `db:"commission"`
 	MinSelfDelegation sql.NullString `db:"min_self_delegation"`
+	Height            int64          `db:"height"`
 }
 
 // NewValidatorCommissionRow allows to easily build a new ValidatorCommissionRow instance
 func NewValidatorCommissionRow(
-	operatorAddress string, commission string, minSelfDelegation string,
+	operatorAddress string, commission string, minSelfDelegation string, height int64,
 ) ValidatorCommissionRow {
 	return ValidatorCommissionRow{
 		OperatorAddress:   operatorAddress,
-		Commission:        sql.NullString{String: commission, Valid: true},
-		MinSelfDelegation: sql.NullString{String: minSelfDelegation, Valid: true},
+		Commission:        ToNullString(commission),
+		MinSelfDelegation: ToNullString(minSelfDelegation),
+		Height:            height,
 	}
 }
 
@@ -186,7 +205,8 @@ func NewValidatorCommissionRow(
 func (v ValidatorCommissionRow) Equal(w ValidatorCommissionRow) bool {
 	return v.OperatorAddress == w.OperatorAddress &&
 		v.Commission == w.Commission &&
-		v.MinSelfDelegation == w.MinSelfDelegation
+		v.MinSelfDelegation == w.MinSelfDelegation &&
+		v.Height == w.Height
 }
 
 // ValidatorCommissionHistoryRow represents a single row of the validator_commission_history table
@@ -220,20 +240,23 @@ func (v ValidatorCommissionHistoryRow) Equal(w ValidatorCommissionHistoryRow) bo
 type ValidatorVotingPowerRow struct {
 	ValidatorAddress string `db:"validator_address"`
 	VotingPower      int64  `db:"voting_power"`
+	Height           int64  `db:"height"`
 }
 
 // NewValidatorVotingPowerRow allows to easily build a new ValidatorVotingPowerRow instance
-func NewValidatorVotingPowerRow(address string, votingPower int64) ValidatorVotingPowerRow {
+func NewValidatorVotingPowerRow(address string, votingPower int64, height int64) ValidatorVotingPowerRow {
 	return ValidatorVotingPowerRow{
 		ValidatorAddress: address,
 		VotingPower:      votingPower,
+		Height:           height,
 	}
 }
 
 // Equal tells whether v and w represent the same rows
 func (v ValidatorVotingPowerRow) Equal(w ValidatorVotingPowerRow) bool {
 	return v.ValidatorAddress == w.ValidatorAddress &&
-		v.VotingPower == w.VotingPower
+		v.VotingPower == w.VotingPower &&
+		v.Height == w.Height
 }
 
 // ________________________________________________
@@ -243,14 +266,16 @@ type ValidatorStatusRow struct {
 	Status      int    `db:"status"`
 	Jailed      bool   `db:"jailed"`
 	ConsAddress string `db:"validator_address"`
+	Height      int64  `db:"height"`
 }
 
 // NewValidatorStatusRow builds a new ValidatorStatusRow
-func NewValidatorStatusRow(status int, jailed bool, consAddess string) ValidatorStatusRow {
+func NewValidatorStatusRow(status int, jailed bool, consAddess string, height int64) ValidatorStatusRow {
 	return ValidatorStatusRow{
 		Status:      status,
 		Jailed:      jailed,
 		ConsAddress: consAddess,
+		Height:      height,
 	}
 }
 
@@ -258,7 +283,8 @@ func NewValidatorStatusRow(status int, jailed bool, consAddess string) Validator
 func (v ValidatorStatusRow) Equal(w ValidatorStatusRow) bool {
 	return v.Status == w.Status &&
 		v.Jailed == w.Jailed &&
-		v.ConsAddress == w.ConsAddress
+		v.ConsAddress == w.ConsAddress &&
+		v.Height == w.Height
 }
 
 //--------------------------------------------------------

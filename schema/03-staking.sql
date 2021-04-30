@@ -1,26 +1,33 @@
 /* ---- PARAMS ---- */
 CREATE TABLE staking_params
 (
-    bond_denom TEXT NOT NULL
+    one_row_id BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
+    bond_denom TEXT    NOT NULL,
+    CHECK (one_row_id)
 );
 
 /* ---- POOL ---- */
 
 CREATE TABLE staking_pool
 (
-    bonded_tokens     BIGINT NOT NULL,
-    not_bonded_tokens BIGINT NOT NULL
+    one_row_id        BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
+    bonded_tokens     BIGINT  NOT NULL,
+    not_bonded_tokens BIGINT  NOT NULL,
+    height            BIGINT  NOT NULL,
+    CHECK (one_row_id)
 );
+CREATE INDEX staking_pool_height_index ON staking_pool (height);
 
 /* ---- VALIDATORS INFO ---- */
 
 CREATE TABLE validator_info
 (
-    consensus_address     TEXT NOT NULL UNIQUE PRIMARY KEY REFERENCES validator (consensus_address),
-    operator_address      TEXT NOT NULL UNIQUE,
+    consensus_address     TEXT   NOT NULL UNIQUE PRIMARY KEY REFERENCES validator (consensus_address),
+    operator_address      TEXT   NOT NULL UNIQUE,
     self_delegate_address TEXT REFERENCES account (address),
-    max_change_rate       TEXT NOT NULL,
-    max_rate              TEXT NOT NULL
+    max_change_rate       TEXT   NOT NULL,
+    max_rate              TEXT   NOT NULL,
+    height                BIGINT NOT NULL
 );
 CREATE INDEX validator_info_consensus_address_index ON validator_info (consensus_address);
 CREATE INDEX validator_info_operator_address_index ON validator_info (operator_address);
@@ -28,38 +35,46 @@ CREATE INDEX validator_info_self_delegate_address_index ON validator_info (self_
 
 CREATE TABLE validator_description
 (
-    validator_address TEXT NOT NULL REFERENCES validator (consensus_address) PRIMARY KEY,
+    validator_address TEXT   NOT NULL REFERENCES validator (consensus_address) PRIMARY KEY,
     moniker           TEXT,
     identity          TEXT,
     avatar_url        TEXT,
     website           TEXT,
     security_contact  TEXT,
-    details           TEXT
+    details           TEXT,
+    height            BIGINT NOT NULL
 );
 CREATE INDEX validator_description_validator_address_index ON validator_description (validator_address);
+CREATE INDEX validator_description_height_index ON validator_description (height);
 
 CREATE TABLE validator_commission
 (
     validator_address   TEXT    NOT NULL REFERENCES validator (consensus_address) PRIMARY KEY,
     commission          DECIMAL NOT NULL,
-    min_self_delegation BIGINT  NOT NULL
+    min_self_delegation BIGINT  NOT NULL,
+    height              BIGINT  NOT NULL
 );
 CREATE INDEX validator_commission_validator_address_index ON validator_commission (validator_address);
+CREATE INDEX validator_commission_height_index ON validator_commission (height);
 
 CREATE TABLE validator_voting_power
 (
     validator_address TEXT   NOT NULL REFERENCES validator (consensus_address) PRIMARY KEY,
-    voting_power      BIGINT NOT NULL
+    voting_power      BIGINT NOT NULL,
+    height            BIGINT NOT NULL
 );
 CREATE INDEX validator_voting_power_validator_address_index ON validator_voting_power (validator_address);
+CREATE INDEX validator_voting_power_height_index ON validator_voting_power (height);
 
 CREATE TABLE validator_status
 (
     validator_address TEXT    NOT NULL REFERENCES validator (consensus_address) PRIMARY KEY,
     status            INT     NOT NULL,
-    jailed            BOOLEAN NOT NULL
+    jailed            BOOLEAN NOT NULL,
+    height            BIGINT  NOT NULL
 );
 CREATE INDEX validator_status_validator_address_index ON validator_status (validator_address);
+CREATE INDEX validator_status_height_index ON validator_status (height);
 
 /* ---- DELEGATIONS ---- */
 
@@ -80,6 +95,7 @@ CREATE TABLE delegation
 );
 CREATE INDEX delegation_validator_address_index ON delegation (validator_address);
 CREATE INDEX delegation_delegator_address ON delegation (delegator_address);
+CREATE INDEX delegation_height_index ON delegation (height);
 
 /**
   * This function is used to add a self_delegations field to the validator table allowing to easily get all the
@@ -176,3 +192,4 @@ CREATE TABLE double_sign_evidence
     vote_a_id BIGINT NOT NULL REFERENCES double_sign_vote (id),
     vote_b_id BIGINT NOT NULL REFERENCES double_sign_vote (id)
 );
+CREATE INDEX double_sign_evidence_height_index ON double_sign_evidence (height);

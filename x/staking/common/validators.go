@@ -34,7 +34,7 @@ func GetValidatorConsAddr(cdc codec.Marshaler, validator stakingtypes.Validator)
 }
 
 // ConvertValidator converts the given staking validator into a BDJuno validator
-func ConvertValidator(cdc codec.Marshaler, validator stakingtypes.Validator) (types.Validator, error) {
+func ConvertValidator(cdc codec.Marshaler, validator stakingtypes.Validator, height int64) (types.Validator, error) {
 	consAddr, err := GetValidatorConsAddr(cdc, validator)
 	if err != nil {
 		return nil, err
@@ -52,6 +52,7 @@ func ConvertValidator(cdc codec.Marshaler, validator stakingtypes.Validator) (ty
 		sdk.AccAddress(validator.GetOperator()).String(),
 		&validator.Commission.MaxChangeRate,
 		&validator.Commission.MaxRate,
+		height,
 	), nil
 }
 

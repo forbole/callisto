@@ -15,6 +15,7 @@ type Validator interface {
 	GetSelfDelegateAddress() string
 	GetMaxChangeRate() *sdk.Dec
 	GetMaxRate() *sdk.Dec
+	GetHeight() int64
 }
 
 // validator allows to easily implement the Validator interface
@@ -25,13 +26,14 @@ type validator struct {
 	SelfDelegateAddress string
 	MaxChangeRate       *sdk.Dec
 	MaxRate             *sdk.Dec
+	Height              int64
 }
 
 // NewValidator allows to build a new Validator implementation having the given data
 func NewValidator(
 	consAddr string, opAddr string, consPubKey string,
 	selfDelegateAddress string, maxChangeRate *sdk.Dec,
-	maxRate *sdk.Dec,
+	maxRate *sdk.Dec, height int64,
 ) Validator {
 	return validator{
 		ConsensusAddr:       consAddr,
@@ -40,6 +42,7 @@ func NewValidator(
 		SelfDelegateAddress: selfDelegateAddress,
 		MaxChangeRate:       maxChangeRate,
 		MaxRate:             maxRate,
+		Height:              height,
 	}
 }
 
@@ -61,19 +64,16 @@ func (v validator) GetSelfDelegateAddress() string {
 	return v.SelfDelegateAddress
 }
 
-//Equals return the equality of two validator
-func (v validator) Equals(w validator) bool {
-	return v.ConsensusAddr == w.ConsensusAddr &&
-		v.ConsPubKey == w.ConsPubKey &&
-		v.OperatorAddr == w.OperatorAddr
-}
-
 func (v validator) GetMaxChangeRate() *sdk.Dec {
 	return v.MaxChangeRate
 }
 
 func (v validator) GetMaxRate() *sdk.Dec {
 	return v.MaxRate
+}
+
+func (v validator) GetHeight() int64 {
+	return v.Height
 }
 
 // _________________________________________________________
@@ -89,57 +89,36 @@ type ValidatorDescription struct {
 
 // NewValidatorDescription return a new ValidatorDescription object
 func NewValidatorDescription(
-	opAddr string, description stakingtypes.Description, avatarURL string,
+	opAddr string, description stakingtypes.Description, avatarURL string, height int64,
 ) ValidatorDescription {
 	return ValidatorDescription{
 		OperatorAddress: opAddr,
 		Description:     description,
 		AvatarURL:       avatarURL,
+		Height:          height,
 	}
 }
 
-// Equals tells whether v and w contain the same data
-func (v ValidatorDescription) Equals(w ValidatorDescription) bool {
-	return v.OperatorAddress == w.OperatorAddress &&
-		v.Description == w.Description
-}
+// ----------------------------------------------------------------------------------------------------------
 
-// _________________________________________________________
-
-// ValidatorDelegations contains both a validator delegations as
-// well as its unbonding delegations
-type ValidatorDelegations struct {
-	ConsAddress          string
-	Delegations          stakingtypes.Delegations
-	UnbondingDelegations stakingtypes.UnbondingDelegations
-	Height               int64
-}
-
-//-----------------------------------------------------
-
-//ValidatorCommission allow to build a validator commission instance
+// ValidatorCommission contains the data of a validator commission at a given height
 type ValidatorCommission struct {
 	ValAddress        string
 	Commission        *sdk.Dec
 	MinSelfDelegation *sdk.Int
+	Height            int64
 }
 
 // NewValidatorCommission return a new validator commission instance
 func NewValidatorCommission(
-	valAddress string, rate *sdk.Dec, minSelfDelegation *sdk.Int,
+	valAddress string, rate *sdk.Dec, minSelfDelegation *sdk.Int, height int64,
 ) ValidatorCommission {
 	return ValidatorCommission{
 		ValAddress:        valAddress,
 		Commission:        rate,
 		MinSelfDelegation: minSelfDelegation,
+		Height:            height,
 	}
-}
-
-//Equals return the equality of two validatorCommission
-func (v ValidatorCommission) Equals(w ValidatorCommission) bool {
-	return v.ValAddress == w.ValAddress &&
-		v.Commission == w.Commission &&
-		v.MinSelfDelegation == w.MinSelfDelegation
 }
 
 //--------------------------------------------
@@ -148,20 +127,16 @@ func (v ValidatorCommission) Equals(w ValidatorCommission) bool {
 type ValidatorVotingPower struct {
 	ConsensusAddress string
 	VotingPower      int64
+	Height           int64
 }
 
 // NewValidatorVotingPower creates a new ValidatorVotingPower
-func NewValidatorVotingPower(address string, votingPower int64) ValidatorVotingPower {
+func NewValidatorVotingPower(address string, votingPower int64, height int64) ValidatorVotingPower {
 	return ValidatorVotingPower{
 		ConsensusAddress: address,
 		VotingPower:      votingPower,
+		Height:           height,
 	}
-}
-
-// Equals tells whether v and w are equals
-func (v ValidatorVotingPower) Equals(w ValidatorVotingPower) bool {
-	return v.ConsensusAddress == w.ConsensusAddress &&
-		v.VotingPower == w.VotingPower
 }
 
 //--------------------------------------------------------
@@ -172,24 +147,18 @@ type ValidatorStatus struct {
 	ConsensusPubKey  string
 	Status           int
 	Jailed           bool
+	Height           int64
 }
 
 // NewValidatorStatus creates a new ValidatorVotingPower
-func NewValidatorStatus(address, pubKey string, status int, jailed bool) ValidatorStatus {
+func NewValidatorStatus(address, pubKey string, status int, jailed bool, height int64) ValidatorStatus {
 	return ValidatorStatus{
 		ConsensusAddress: address,
 		ConsensusPubKey:  pubKey,
 		Status:           status,
 		Jailed:           jailed,
+		Height:           height,
 	}
-}
-
-// Equals tells whether v and w are equals
-func (v ValidatorStatus) Equals(w ValidatorStatus) bool {
-	return v.ConsensusAddress == w.ConsensusAddress &&
-		v.ConsensusPubKey == w.ConsensusPubKey &&
-		v.Jailed == w.Jailed &&
-		v.Status == w.Status
 }
 
 //---------------------------------------------------------------
@@ -208,13 +177,6 @@ func NewDoubleSignEvidence(height int64, voteA DoubleSignVote, voteB DoubleSignV
 		VoteB:  voteB,
 		Height: height,
 	}
-}
-
-// Equals tells whether v and w contain the same data
-func (w DoubleSignEvidence) Equals(v DoubleSignEvidence) bool {
-	return w.VoteA.Equals(v.VoteA) &&
-		w.VoteB.Equals(v.VoteB) &&
-		w.Height == v.Height
 }
 
 // DoubleSignVote represents a double vote which is included inside a DoubleSignEvidence
@@ -247,15 +209,4 @@ func NewDoubleSignVote(
 		ValidatorIndex:   validatorIndex,
 		Signature:        signature,
 	}
-}
-
-func (w DoubleSignVote) Equals(v DoubleSignVote) bool {
-	return w.Type == v.Type &&
-		w.Height == v.Height &&
-		w.Round == v.Round &&
-		w.BlockID == v.BlockID &&
-		w.ValidatorAddress == v.ValidatorAddress &&
-		w.ValidatorIndex == v.ValidatorIndex &&
-		w.Signature == v.Signature
-
 }

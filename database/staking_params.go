@@ -9,15 +9,13 @@ import (
 
 // SaveStakingParams allows to store the given params into the database
 func (db *BigDipperDb) SaveStakingParams(params types.StakingParams) error {
-	// Delete current params
-	stmt := `DELETE FROM staking_params WHERE TRUE`
-	_, err := db.Sql.Exec(stmt)
-	if err != nil {
-		return err
-	}
+	stmt := `
+INSERT INTO staking_params (bond_denom) 
+VALUES ($1)
+ON CONFLICT (one_row_id) DO UPDATE 
+    SET bond_denom = excluded.bond_denom`
 
-	stmt = `INSERT INTO staking_params (bond_denom) VALUES ($1)`
-	_, err = db.Sql.Exec(stmt, params.BondName)
+	_, err := db.Sql.Exec(stmt, params.BondName)
 	return err
 }
 
