@@ -12,7 +12,7 @@ import (
 
 // SaveAccountBalances allows to store the balance for the given account associating it to the given height
 func (db *BigDipperDb) SaveAccountBalances(balances []bbanktypes.AccountBalance) error {
-	paramsNumber := 2
+	paramsNumber := 3
 	slices := db.splitBalances(balances, paramsNumber)
 
 	for _, balances := range slices {
@@ -20,19 +20,24 @@ func (db *BigDipperDb) SaveAccountBalances(balances []bbanktypes.AccountBalance)
 			continue
 		}
 
-		stmt := `INSERT INTO account_balance (address, coins) VALUES `
+		stmt := `INSERT INTO account_balance (address, coins, height) VALUES `
 		var params []interface{}
 
 		for i, bal := range balances {
 			bi := i * paramsNumber
-			stmt += fmt.Sprintf("($%d, $%d),", bi+1, bi+2)
+			stmt += fmt.Sprintf("($%d, $%d, $%d),", bi+1, bi+2, bi+3)
 
 			coins := pq.Array(dbtypes.NewDbCoins(bal.Balance))
-			params = append(params, bal.Address, coins)
+			params = append(params, bal.Address, coins, bal.Height)
 		}
 
 		stmt = stmt[:len(stmt)-1]
-		stmt += " ON CONFLICT (address) DO UPDATE SET coins = excluded.coins"
+		stmt += `
+ON CONFLICT (address) DO UPDATE 
+	SET coins = excluded.coins, 
+	    height = excluded.height 
+WHERE account_balance.height <= excluded.height`
+
 		_, err := db.Sql.Exec(stmt, params...)
 		if err != nil {
 			return err
@@ -42,7 +47,9 @@ func (db *BigDipperDb) SaveAccountBalances(balances []bbanktypes.AccountBalance)
 	return nil
 }
 
-func (db *BigDipperDb) splitBalances(balances []bbanktypes.AccountBalance, paramsNumber int) [][]bbanktypes.AccountBalance {
+func (db BigDipperDb) splitBalances(
+	balances []bbanktypes.AccountBalance, paramsNumber int,
+) [][]bbanktypes.AccountBalance {
 	maxPostgreSQLParams := 65535
 	maxBalancesPerSlice := maxPostgreSQLParams / paramsNumber
 
@@ -60,18 +67,17 @@ func (db *BigDipperDb) splitBalances(balances []bbanktypes.AccountBalance, param
 	return slices
 }
 
-// DeleteAccountBalances deletes the account balances of all the accounts present inside the given slice
-func (db *BigDipperDb) DeleteAccountBalances(accounts []string) error {
-	stmt := `DELETE FROM account_balance WHERE address IN $1`
-	_, err := db.Sql.Exec(stmt, pq.StringArray(accounts))
-	return err
-}
-
 // --------------------------------------------------------------------------------------------------------------------
 
 // SaveSupply allows to save for the given height the given total amount of coins
 func (db *BigDipperDb) SaveSupply(coins sdk.Coins, height int64) error {
-	query := `INSERT INTO supply(coins, height) VALUES ($1,$2)`
+	query := `
+INSERT INTO supply (coins, height) 
+VALUES ($1, $2) 
+ON CONFLICT (one_row_id) DO UPDATE 
+    SET coins = excluded.coins,
+    	height = excluded.height
+WHERE supply.height <= excluded.height`
 
 	_, err := db.Sql.Exec(query, pq.Array(dbtypes.NewDbCoins(coins)), height)
 	if err != nil {

@@ -3,11 +3,12 @@ package bank
 import (
 	"encoding/json"
 
+	junomessages "github.com/desmos-labs/juno/modules/messages"
+
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	junomessages "github.com/desmos-labs/juno/modules/messages"
 	"google.golang.org/grpc"
 
 	"github.com/desmos-labs/juno/modules"
@@ -64,6 +65,6 @@ func (m *Module) HandleBlock(block *tmctypes.ResultBlock, _ []*types.Tx, _ *tmct
 }
 
 // HandleMsg implements modules.MessageModule
-func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *types.Tx) error {
+func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *types.Tx) error {
 	return HandleMsg(tx, msg, m.messageParser, m.bankClient, m.encodingConfig.Marshaler, m.db)
 }

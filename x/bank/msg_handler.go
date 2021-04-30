@@ -3,14 +3,16 @@ package bank
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/desmos-labs/juno/modules/messages"
-	juno "github.com/desmos-labs/juno/types"
 	"github.com/rs/zerolog/log"
 
-	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/x/bank/common"
 	"github.com/forbole/bdjuno/x/utils"
+
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	juno "github.com/desmos-labs/juno/types"
+
+	"github.com/forbole/bdjuno/database"
 )
 
 // HandleMsg handles any message updating the involved addresses
