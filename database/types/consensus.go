@@ -28,9 +28,20 @@ func (r GenesisRow) Equal(s GenesisRow) bool {
 
 // ConsensusRow represents a single row inside the consensus table
 type ConsensusRow struct {
-	Height int64  `db:"height"`
-	Round  int32  `db:"round"`
-	Step   string `db:"step"`
+	Step     string `db:"step"`
+	Height   int64  `db:"height"`
+	Round    int32  `db:"round"`
+	OneRowID bool   `db:"one_row_id"`
+}
+
+// NewConsensusRow allows to build a new ConsensusRow instance
+func NewConsensusRow(height int64, round int32, step string) ConsensusRow {
+	return ConsensusRow{
+		OneRowID: true,
+		Height:   height,
+		Round:    round,
+		Step:     step,
+	}
 }
 
 // Equal tells whether r and s contain the same data

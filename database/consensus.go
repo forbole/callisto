@@ -13,13 +13,13 @@ import (
 // SaveConsensus allows to properly store the given consensus event into the database.
 // Note that only one consensus event is allowed inside the database at any time.
 func (db *BigDipperDb) SaveConsensus(event *constypes.ConsensusEvent) error {
-	// Delete all the existing events
-	stmt := `DELETE FROM consensus WHERE true`
-	if _, err := db.Sql.Exec(stmt); err != nil {
-		return err
-	}
-
-	stmt = `INSERT INTO consensus (height, round, step) VALUES ($1, $2, $3)`
+	stmt := `
+INSERT INTO consensus (height, round, step)
+VALUES ($1, $2, $3)
+ON CONFLICT (one_row_id) DO UPDATE 
+    SET height = excluded.height, 
+        round = excluded.round,
+        step = excluded.step`
 	_, err := db.Sql.Exec(stmt, event.Height, event.Round, event.Step)
 	return err
 }

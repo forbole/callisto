@@ -26,11 +26,11 @@ func (suite *DbTestSuite) TestSaveConsensus() {
 
 		// Make sure the consensus table only holds 1 value at a time with the correct data inside
 		suite.Require().Len(rows, 1)
-		suite.Require().True(rows[0].Equal(dbtypes.ConsensusRow{
-			Height: event.Height,
-			Round:  event.Round,
-			Step:   event.Step,
-		}))
+		suite.Require().True(rows[0].Equal(dbtypes.NewConsensusRow(
+			event.Height,
+			event.Round,
+			event.Step,
+		)))
 	}
 }
 

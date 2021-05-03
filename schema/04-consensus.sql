@@ -8,9 +8,11 @@ CREATE TABLE genesis
 
 CREATE TABLE consensus
 (
-    height BIGINT NOT NULL,
-    round  INT    NOT NULL,
-    step   TEXT   NOT NULL
+    one_row_id BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
+    height     BIGINT  NOT NULL,
+    round      INT     NOT NULL,
+    step       TEXT    NOT NULL,
+    CHECK (one_row_id)
 );
 CREATE INDEX consensus_height_index ON consensus (height);
 
