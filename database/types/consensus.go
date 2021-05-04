@@ -6,14 +6,16 @@ import (
 )
 
 type GenesisRow struct {
-	ChainID string    `db:"chain_id"`
-	Time    time.Time `db:"time"`
+	OneRowID bool      `db:"one_row_id"`
+	ChainID  string    `db:"chain_id"`
+	Time     time.Time `db:"time"`
 }
 
 func NewGenesisRow(chainID string, time time.Time) GenesisRow {
 	return GenesisRow{
-		ChainID: chainID,
-		Time:    time,
+		OneRowID: true,
+		ChainID:  chainID,
+		Time:     time,
 	}
 }
 
@@ -26,9 +28,20 @@ func (r GenesisRow) Equal(s GenesisRow) bool {
 
 // ConsensusRow represents a single row inside the consensus table
 type ConsensusRow struct {
-	Height int64  `db:"height"`
-	Round  int32  `db:"round"`
-	Step   string `db:"step"`
+	Step     string `db:"step"`
+	Height   int64  `db:"height"`
+	Round    int32  `db:"round"`
+	OneRowID bool   `db:"one_row_id"`
+}
+
+// NewConsensusRow allows to build a new ConsensusRow instance
+func NewConsensusRow(height int64, round int32, step string) ConsensusRow {
+	return ConsensusRow{
+		OneRowID: true,
+		Height:   height,
+		Round:    round,
+		Step:     step,
+	}
 }
 
 // Equal tells whether r and s contain the same data
@@ -38,21 +51,23 @@ func (r ConsensusRow) Equal(s ConsensusRow) bool {
 		r.Step == s.Step
 }
 
-// BlockTimeRow is the average block time each minute/hour/day
-type BlockTimeRow struct {
+// AverageTimeRow is the average block time each minute/hour/day
+type AverageTimeRow struct {
+	OneRowID    bool    `db:"one_row_id"`
 	AverageTime float64 `db:"average_time"`
 	Height      int64   `db:"height"`
 }
 
-func NewBlockTimeRow(averageTime float64, height int64) BlockTimeRow {
-	return BlockTimeRow{
+func NewAverageTimeRow(averageTime float64, height int64) AverageTimeRow {
+	return AverageTimeRow{
+		OneRowID:    true,
 		AverageTime: averageTime,
 		Height:      height,
 	}
 }
 
-// Equal return true if two BlockTimeRow are true
-func (r BlockTimeRow) Equal(s BlockTimeRow) bool {
+// Equal return true if two AverageTimeRow are true
+func (r AverageTimeRow) Equal(s AverageTimeRow) bool {
 	return r.AverageTime == s.AverageTime &&
 		r.Height == s.Height
 }

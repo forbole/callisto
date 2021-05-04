@@ -14,6 +14,26 @@ import (
 	"github.com/forbole/bdjuno/x/utils"
 )
 
+// ConvertRedelegationResponse converts the given response into a slice of BDJuno redelegation objects
+func ConvertRedelegationResponse(
+	height int64, bondDenom string, response stakingtypes.RedelegationResponse,
+) []types.Redelegation {
+	var delegations []types.Redelegation
+	for _, entry := range response.Entries {
+		delegations = append(delegations, types.NewRedelegation(
+			response.Redelegation.DelegatorAddress,
+			response.Redelegation.ValidatorSrcAddress,
+			response.Redelegation.ValidatorDstAddress,
+			sdk.NewCoin(bondDenom, entry.Balance),
+			entry.RedelegationEntry.CompletionTime,
+			height,
+		))
+	}
+	return delegations
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 // UpdateValidatorsRedelegations updates the redelegations for all the validators provided
 func UpdateValidatorsRedelegations(
 	height int64, bondDenom string, validators []stakingtypes.Validator,
@@ -60,16 +80,8 @@ func getRedelegations(
 
 		var delegations []types.Redelegation
 		for _, delegation := range res.RedelegationResponses {
-			for _, entry := range delegation.Entries {
-				delegations = append(delegations, types.NewRedelegation(
-					delegation.Redelegation.DelegatorAddress,
-					delegation.Redelegation.ValidatorSrcAddress,
-					delegation.Redelegation.ValidatorDstAddress,
-					sdk.NewCoin(bondDenom, entry.Balance),
-					entry.RedelegationEntry.CompletionTime,
-					entry.RedelegationEntry.CreationHeight,
-				))
-			}
+			redelegations := ConvertRedelegationResponse(height, bondDenom, delegation)
+			delegations = append(delegations, redelegations...)
 		}
 		err = db.SaveRedelegations(delegations)
 		if err != nil {
@@ -80,5 +92,20 @@ func getRedelegations(
 
 		nextKey = res.Pagination.NextKey
 		stop = len(res.Pagination.NextKey) == 0
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// DeleteRedelegation returns a function that when called removes the given redelegation from the database.
+func DeleteRedelegation(redelegation types.Redelegation, db *database.BigDipperDb) func() {
+	return func() {
+		// Remove existing redelegations
+		err := db.DeleteRedelegation(redelegation)
+		if err != nil {
+			log.Error().Str("module", "staking").Err(err).
+				Str("operation", "update redelegations").Msg("error while removing delegator redelegations")
+			return
+		}
 	}
 }

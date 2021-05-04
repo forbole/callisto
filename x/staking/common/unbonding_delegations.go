@@ -14,6 +14,25 @@ import (
 	"github.com/forbole/bdjuno/x/utils"
 )
 
+// ConvertUnbondingResponse converts the given UnbondingDelegation response into a slice of BDJuno UnbondingDelegation
+func ConvertUnbondingResponse(
+	height int64, bondDenom string, response stakingtypes.UnbondingDelegation,
+) []types.UnbondingDelegation {
+	var delegations []types.UnbondingDelegation
+	for _, entry := range response.Entries {
+		delegations = append(delegations, types.NewUnbondingDelegation(
+			response.DelegatorAddress,
+			response.ValidatorAddress,
+			sdk.NewCoin(bondDenom, entry.Balance),
+			entry.CompletionTime,
+			height,
+		))
+	}
+	return delegations
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 // UpdateValidatorsUnbondingDelegations updates the unbonding delegations for all the validators provided
 func UpdateValidatorsUnbondingDelegations(
 	height int64, bondDenom string, validators []stakingtypes.Validator,
@@ -64,15 +83,7 @@ func getUnbondingDelegations(
 
 		var delegations []types.UnbondingDelegation
 		for _, delegation := range res.UnbondingResponses {
-			for _, entry := range delegation.Entries {
-				delegations = append(delegations, types.NewUnbondingDelegation(
-					delegation.DelegatorAddress,
-					delegation.ValidatorAddress,
-					sdk.NewCoin(bondDenom, entry.Balance),
-					entry.CompletionTime,
-					height,
-				))
-			}
+			delegations = append(delegations, ConvertUnbondingResponse(height, bondDenom, delegation)...)
 		}
 
 		err = db.SaveUnbondingDelegations(delegations)
@@ -85,5 +96,18 @@ func getUnbondingDelegations(
 
 		nextKey = res.Pagination.NextKey
 		stop = len(res.Pagination.NextKey) == 0
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// DeleteUnbondingDelegation returns a function that when called deletes the given delegation from the database
+func DeleteUnbondingDelegation(delegation types.UnbondingDelegation, db *database.BigDipperDb) func() {
+	return func() {
+		err := db.DeleteUnbondingDelegation(delegation)
+		if err != nil {
+			log.Error().Str("module", "staking").Err(err).
+				Str("operation", "delete unbonding delegation").Msg("error while deleting unbonding delegation")
+		}
 	}
 }

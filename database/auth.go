@@ -4,12 +4,14 @@ import (
 	"fmt"
 
 	authttypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-
-	dbtypes "github.com/forbole/bdjuno/database/types"
 )
 
-// SaveAccount saves the given account information for the given block height and timestamp
+// SaveAccounts saves the given accounts inside the database
 func (db *BigDipperDb) SaveAccounts(accounts []authttypes.AccountI) error {
+	if len(accounts) == 0 {
+		return nil
+	}
+
 	stmt := `INSERT INTO account (address) VALUES `
 	var params []interface{}
 
@@ -27,18 +29,7 @@ func (db *BigDipperDb) SaveAccounts(accounts []authttypes.AccountI) error {
 
 // GetAccounts returns all the accounts that are currently stored inside the database.
 func (db *BigDipperDb) GetAccounts() ([]string, error) {
-	sqlStmt := `SELECT * FROM account`
-
-	var rows []dbtypes.AccountRow
-	err := db.Sqlx.Select(&rows, sqlStmt)
-	if err != nil {
-		return nil, err
-	}
-
-	addresses := make([]string, len(rows))
-	for index, row := range rows {
-		addresses[index] = row.Address
-	}
-
-	return addresses, nil
+	var rows []string
+	err := db.Sqlx.Select(&rows, `SELECT address FROM account`)
+	return rows, err
 }

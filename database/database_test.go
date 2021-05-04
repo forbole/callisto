@@ -136,7 +136,15 @@ func (suite *DbTestSuite) getValidator(consAddr, valAddr, pubkey string) staking
 	maxRate := sdk.NewDec(10)
 	maxChangeRate := sdk.NewDec(20)
 
-	validator := stakingtypes.NewValidator(consAddr, valAddr, pubkey, selfDelegation.String(), &maxChangeRate, &maxRate)
+	validator := stakingtypes.NewValidator(
+		consAddr,
+		valAddr,
+		pubkey,
+		selfDelegation.String(),
+		&maxChangeRate,
+		&maxRate,
+		1,
+	)
 	err := suite.database.SaveValidatorData(validator)
 	suite.Require().NoError(err)
 

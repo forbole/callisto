@@ -61,7 +61,7 @@ func updateValidators(
 
 	var vals = make([]types.Validator, len(validators))
 	for index, val := range validators {
-		validator, err := common.ConvertValidator(cdc, val)
+		validator, err := common.ConvertValidator(cdc, val, height)
 		if err != nil {
 			return nil, err
 		}
@@ -203,7 +203,7 @@ func updateStakingPool(height int64, stakingClient stakingtypes.QueryClient, db 
 		return
 	}
 
-	err = db.SaveStakingPool(res.Pool, height)
+	err = db.SaveStakingPool(types.NewPool(res.Pool.BondedTokens, res.Pool.NotBondedTokens, height))
 	if err != nil {
 		log.Error().Str("module", "staking").Err(err).Int64("height", height).
 			Msg("error while saving staking pool")

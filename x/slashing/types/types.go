@@ -2,6 +2,8 @@ package types
 
 import (
 	"time"
+
+	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 )
 
 // ValidatorSigningInfo contains the signing info of a validator at a given height
@@ -44,5 +46,21 @@ func NewValidatorSigningInfo(
 		Tombstoned:          tombstoned,
 		MissedBlocksCounter: missedBlocksCounter,
 		Height:              height,
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// Params represents the parameters of the slashing module at a given height
+type Params struct {
+	slashingtypes.Params
+	Height int64
+}
+
+// NewParams allows to build a new Params instance
+func NewParams(params slashingtypes.Params, height int64) Params {
+	return Params{
+		Params: params,
+		Height: height,
 	}
 }

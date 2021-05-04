@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"time"
 
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/rs/zerolog/log"
@@ -14,7 +17,9 @@ import (
 )
 
 func HandleGenesis(
-	appState map[string]json.RawMessage, cdc codec.Marshaler, govClient govtypes.QueryClient, db *database.BigDipperDb,
+	appState map[string]json.RawMessage,
+	govClient govtypes.QueryClient, authClient authtypes.QueryClient, bankClient banktypes.QueryClient,
+	cdc codec.Marshaler, db *database.BigDipperDb,
 ) error {
 	log.Debug().Str("module", "gov").Msg("parsing genesis")
 
@@ -26,7 +31,7 @@ func HandleGenesis(
 	}
 
 	// Save the proposals
-	err = saveProposals(genState.Proposals, govClient, db)
+	err = saveProposals(genState.Proposals, govClient, authClient, bankClient, cdc, db)
 	if err != nil {
 		return fmt.Errorf("error while storing genesis governance proposals: %s", err)
 	}
@@ -35,7 +40,11 @@ func HandleGenesis(
 }
 
 // saveProposals save proposals from genesis file
-func saveProposals(p govtypes.Proposals, govClient govtypes.QueryClient, db *database.BigDipperDb) error {
+func saveProposals(
+	p govtypes.Proposals,
+	govClient govtypes.QueryClient, authClient authtypes.QueryClient, bankClient banktypes.QueryClient,
+	cdc codec.Marshaler, db *database.BigDipperDb,
+) error {
 	proposals := make([]types.Proposal, len(p))
 	tallyResults := make([]types.TallyResult, len(p))
 	deposits := make([]types.Deposit, len(p))
@@ -73,11 +82,11 @@ func saveProposals(p govtypes.Proposals, govClient govtypes.QueryClient, db *dat
 		)
 
 		// Update the proposal status when the voting period or deposit period ends
-		update := UpdateProposal(proposal.ProposalId, govClient, db)
+		update := UpdateProposal(proposal.ProposalId, govClient, authClient, bankClient, cdc, db)
 		if proposal.Status == govtypes.StatusVotingPeriod {
-			time.AfterFunc(time.Since(proposal.VotingEndTime), update)
+			time.AfterFunc(time.Until(proposal.VotingEndTime), update)
 		} else if proposal.Status == govtypes.StatusDepositPeriod {
-			time.AfterFunc(time.Since(proposal.DepositEndTime), update)
+			time.AfterFunc(time.Until(proposal.DepositEndTime), update)
 		}
 	}
 

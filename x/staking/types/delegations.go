@@ -10,33 +10,29 @@ import (
 // to a specific validator at a specific height (and timestamp)
 // containing a given amount of tokens
 type Delegation struct {
-	DelegatorAddress string
-	ValidatorAddress string
-	Amount           sdk.Coin
-	Shares           string
-	Height           int64
+	DelegatorAddress  string
+	ValidatorOperAddr string
+	Amount            sdk.Coin
+	Height            int64
 }
 
 // NewDelegation creates a new Delegation instance containing
 // the given data
-func NewDelegation(
-	delegator string, validatorAddress string, amount sdk.Coin, shares string, height int64,
-) Delegation {
+func NewDelegation(delegator string, validatorOperAddr string, amount sdk.Coin, height int64) Delegation {
 	return Delegation{
-		DelegatorAddress: delegator,
-		ValidatorAddress: validatorAddress,
-		Amount:           amount,
-		Shares:           shares,
-		Height:           height,
+		DelegatorAddress:  delegator,
+		ValidatorOperAddr: validatorOperAddr,
+		Amount:            amount,
+		Height:            height,
 	}
 }
 
-// _________________________________________________________
+// -----------------------------------------------------------------------------------------------------------------
 
 // UnbondingDelegation represents a single unbonding delegation
 type UnbondingDelegation struct {
 	DelegatorAddress    string
-	ValidatorAddress    string
+	ValidatorOperAddr   string
 	Amount              sdk.Coin
 	CompletionTimestamp time.Time
 	Height              int64
@@ -44,12 +40,11 @@ type UnbondingDelegation struct {
 
 // NewUnbondingDelegation allows to create a new UnbondingDelegation instance
 func NewUnbondingDelegation(
-	delegator string, validator string, amount sdk.Coin, completionTimestamp time.Time,
-	height int64,
+	delegator string, validatorOperAddr string, amount sdk.Coin, completionTimestamp time.Time, height int64,
 ) UnbondingDelegation {
 	return UnbondingDelegation{
 		DelegatorAddress:    delegator,
-		ValidatorAddress:    validator,
+		ValidatorOperAddr:   validatorOperAddr,
 		Amount:              amount,
 		CompletionTimestamp: completionTimestamp,
 		Height:              height,
@@ -79,28 +74,5 @@ func NewRedelegation(
 		Amount:           amount,
 		CompletionTime:   completionTime,
 		Height:           height,
-	}
-}
-
-//DelegationShare save the self delegation ratio on that instance
-type DelegationShare struct {
-	ValidatorAddress string
-	DelegatorAddress string
-	Shares           float64
-	Height           int64
-	Timestamp        time.Time
-}
-
-//NewDelegationShare get a new instance of modify self Delegation
-func NewDelegationShare(
-	validatorAddress string, delegatorAddress string, shares float64,
-	height int64, timestamp time.Time,
-) DelegationShare {
-	return DelegationShare{
-		ValidatorAddress: validatorAddress,
-		DelegatorAddress: delegatorAddress,
-		Shares:           shares,
-		Height:           height,
-		Timestamp:        timestamp,
 	}
 }

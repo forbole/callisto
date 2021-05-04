@@ -3,6 +3,8 @@ package staking
 import (
 	"encoding/json"
 
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+
 	"github.com/go-co-op/gocron"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
@@ -24,6 +26,7 @@ var _ modules.Module = &Module{}
 type Module struct {
 	encodingConfig *params.EncodingConfig
 	stakingClient  stakingtypes.QueryClient
+	bankClient     banktypes.QueryClient
 	db             *database.BigDipperDb
 }
 
@@ -32,6 +35,7 @@ func NewModule(encodingConfig *params.EncodingConfig, grpcConnection *grpc.Clien
 	return &Module{
 		encodingConfig: encodingConfig,
 		stakingClient:  stakingtypes.NewQueryClient(grpcConnection),
+		bankClient:     banktypes.NewQueryClient(grpcConnection),
 		db:             db,
 	}
 }
@@ -47,8 +51,8 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 }
 
 // HandleGenesis implements GenesisModule
-func (m *Module) HandleGenesis(_ *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
-	return HandleGenesis(appState, m.encodingConfig.Marshaler, m.db)
+func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
+	return HandleGenesis(doc, appState, m.encodingConfig.Marshaler, m.db)
 }
 
 // HandleBlock implements BlockModule
@@ -58,5 +62,5 @@ func (m *Module) HandleBlock(block *tmctypes.ResultBlock, _ []*types.Tx, vals *t
 
 // HandleMsg implements MessageModule
 func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *types.Tx) error {
-	return HandleMsg(tx, index, msg, m.stakingClient, m.encodingConfig.Marshaler, m.db)
+	return HandleMsg(tx, index, msg, m.stakingClient, m.bankClient, m.encodingConfig.Marshaler, m.db)
 }

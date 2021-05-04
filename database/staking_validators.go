@@ -30,13 +30,13 @@ INSERT INTO validator (consensus_address, consensus_pubkey) VALUES `
 	var validatorParams []interface{}
 
 	validatorInfoQuery := `
-INSERT INTO validator_info (consensus_address, operator_address, self_delegate_address, max_change_rate, max_rate) 
+INSERT INTO validator_info (consensus_address, operator_address, self_delegate_address, max_change_rate, max_rate, height) 
 VALUES `
 	var validatorInfoParams []interface{}
 
 	for i, validator := range validators {
 		vp := i * 2 // Starting position for validator params
-		vi := i * 5 // Starting position for validator info params
+		vi := i * 6 // Starting position for validator info params
 
 		selfDelegationAccQuery += fmt.Sprintf("($%d),", i+1)
 		selfDelegationParam = append(selfDelegationParam,
@@ -46,10 +46,10 @@ VALUES `
 		validatorParams = append(validatorParams,
 			validator.GetConsAddr(), validator.GetConsPubKey())
 
-		validatorInfoQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5)
+		validatorInfoQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6)
 		validatorInfoParams = append(validatorInfoParams,
 			validator.GetConsAddr(), validator.GetOperator(), validator.GetSelfDelegateAddress(),
-			validator.GetMaxChangeRate().String(), validator.GetMaxRate().String(),
+			validator.GetMaxChangeRate().String(), validator.GetMaxRate().String(), validator.GetHeight(),
 		)
 	}
 
@@ -68,7 +68,15 @@ VALUES `
 	}
 
 	validatorInfoQuery = validatorInfoQuery[:len(validatorInfoQuery)-1] // Remove the trailing ","
-	validatorInfoQuery += " ON CONFLICT DO NOTHING"
+	validatorInfoQuery += `
+ON CONFLICT (consensus_address) DO UPDATE 
+	SET consensus_address = excluded.consensus_address,
+		operator_address = excluded.operator_address,
+		self_delegate_address = excluded.self_delegate_address,
+		max_change_rate = excluded.max_change_rate,
+		max_rate = excluded.max_rate,
+		height = excluded.height
+WHERE validator_info.height <= excluded.height`
 	_, err = db.Sql.Exec(validatorInfoQuery, validatorInfoParams...)
 	return err
 }
@@ -119,8 +127,13 @@ WHERE validator_info.operator_address = $1`
 func (db *BigDipperDb) GetValidators() ([]dbtypes.ValidatorData, error) {
 	sqlStmt := `
 SELECT DISTINCT ON (validator.consensus_address) 
-	validator.consensus_address, validator.consensus_pubkey, validator_info.operator_address,
-    validator_info.self_delegate_address, validator_info.max_rate,validator_info.max_change_rate
+	validator.consensus_address, 
+    validator.consensus_pubkey,
+    validator_info.operator_address,
+    validator_info.self_delegate_address,                                             
+    validator_info.max_rate,
+    validator_info.max_change_rate,
+    validator_info.height
 FROM validator 
 INNER JOIN validator_info 
     ON validator.consensus_address = validator_info.consensus_address
@@ -134,7 +147,7 @@ ORDER BY validator.consensus_address`
 	return rows, nil
 }
 
-// ________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 // SaveValidatorDescription save a single validator description.
 // It assumes that the delegator address is already present inside the
@@ -161,21 +174,28 @@ func (db *BigDipperDb) SaveValidatorDescription(description types.ValidatorDescr
 
 	// Insert the description
 	stmt := `
-INSERT INTO validator_description (validator_address, moniker, identity, avatar_url, website, security_contact, details, height)
+INSERT INTO validator_description (
+	validator_address, moniker, identity, avatar_url, website, security_contact, details, height
+)
 VALUES($1, $2, $3, $4, $5, $6, $7, $8)
-ON CONFLICT (validator_address, height) DO UPDATE
+ON CONFLICT (validator_address) DO UPDATE
     SET moniker = excluded.moniker, 
         identity = excluded.identity, 
         avatar_url = excluded.avatar_url,
         website = excluded.website, 
         security_contact = excluded.security_contact, 
-        details = excluded.details`
+        details = excluded.details,
+        height = excluded.height
+WHERE validator_description.height <= excluded.height`
 
 	_, err = db.Sql.Exec(stmt,
 		dbtypes.ToNullString(consAddr.String()),
-		dbtypes.ToNullString(des.Moniker), dbtypes.ToNullString(des.Identity),
-		dbtypes.ToNullString(description.AvatarURL), dbtypes.ToNullString(des.Website),
-		dbtypes.ToNullString(des.SecurityContact), dbtypes.ToNullString(des.Details),
+		dbtypes.ToNullString(des.Moniker),
+		dbtypes.ToNullString(des.Identity),
+		dbtypes.ToNullString(description.AvatarURL),
+		dbtypes.ToNullString(des.Website),
+		dbtypes.ToNullString(des.SecurityContact),
+		dbtypes.ToNullString(des.Details),
 		description.Height,
 	)
 	return err
@@ -252,9 +272,11 @@ func (db *BigDipperDb) SaveValidatorCommission(data types.ValidatorCommission) e
 	stmt := `
 INSERT INTO validator_commission (validator_address, commission, min_self_delegation, height) 
 VALUES ($1, $2, $3, $4)
-ON CONFLICT (validator_address, height) DO UPDATE 
+ON CONFLICT (validator_address) DO UPDATE 
     SET commission = excluded.commission, 
-        min_self_delegation = excluded.min_self_delegation;`
+        min_self_delegation = excluded.min_self_delegation,
+        height = excluded.height
+WHERE validator_commission.height <= excluded.height`
 	_, err = db.Sql.Exec(stmt, consAddr.String(), commission, minSelfDelegation, data.Height)
 	return err
 }
@@ -284,12 +306,17 @@ func (db *BigDipperDb) SaveValidatorsVotingPowers(entries []types.ValidatorVotin
 
 	for i, entry := range entries {
 		pi := i * 3
-		stmt += fmt.Sprintf("($%d, $%d, $%d),", pi+1, pi+2, pi+3)
+		stmt += fmt.Sprintf("($%d,$%d,$%d),", pi+1, pi+2, pi+3)
 		params = append(params, entry.ConsensusAddress, entry.VotingPower, entry.Height)
 	}
 
 	stmt = stmt[:len(stmt)-1]
-	stmt += "ON CONFLICT DO NOTHING"
+	stmt += `
+ON CONFLICT (validator_address) DO UPDATE 
+	SET voting_power = excluded.voting_power, 
+		height = excluded.height
+WHERE validator_voting_power.height <= excluded.height`
+
 	_, err := db.Sql.Exec(stmt, params...)
 	return err
 }
@@ -310,7 +337,7 @@ func (db *BigDipperDb) SaveValidatorsStatuses(statuses []types.ValidatorStatus) 
 		valParams = append(valParams, status.ConsensusAddress, status.ConsensusPubKey)
 
 		si := i * 4
-		statusStmt += fmt.Sprintf("($%d, $%d, $%d, $%d),", si+1, si+2, si+3, si+4)
+		statusStmt += fmt.Sprintf("($%d,$%d,$%d,$%d),", si+1, si+2, si+3, si+4)
 		statusParams = append(statusParams, status.ConsensusAddress, status.Status, status.Jailed, status.Height)
 	}
 
@@ -322,7 +349,12 @@ func (db *BigDipperDb) SaveValidatorsStatuses(statuses []types.ValidatorStatus) 
 	}
 
 	statusStmt = statusStmt[:len(statusStmt)-1]
-	statusStmt += "ON CONFLICT DO NOTHING"
+	statusStmt += `
+ON CONFLICT (validator_address) DO UPDATE 
+	SET status = excluded.status, 
+	    jailed = excluded.jailed,
+	    height = excluded.height
+WHERE validator_status.height <= excluded.height`
 	_, err = db.Sql.Exec(statusStmt, statusParams...)
 	return err
 }

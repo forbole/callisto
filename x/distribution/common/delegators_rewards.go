@@ -17,7 +17,7 @@ func UpdateDelegatorsRewardsAmounts(height int64, client distrtypes.QueryClient,
 		Msg("updating delegators rewards")
 
 	// Get the delegators
-	delegators, err := db.GetDelegatorsForHeight(height)
+	delegators, err := db.GetDelegators()
 	if err != nil {
 		log.Error().Str("module", "distribution").Err(err).Int64("height", height).
 			Msg("error while getting delegators")
@@ -76,8 +76,8 @@ func getDelegatorCommission(
 
 		// Send the reward amount back
 		rewards[index] = bdistrtypes.NewDelegatorRewardAmount(
-			consAddr.String(),
 			delegator,
+			consAddr.String(),
 			withdrawAddressRes.WithdrawAddress,
 			reward.Reward,
 			height,
