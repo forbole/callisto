@@ -8,7 +8,6 @@ CREATE TABLE validator_signing_info
     missed_blocks_counter BIGINT                      NOT NULL,
     height                BIGINT                      NOT NULL
 );
-CREATE INDEX validator_signing_info_validator_address_index ON validator_signing_info (validator_address);
 CREATE INDEX validator_signing_info_height_index ON validator_signing_info (height);
 
 CREATE TABLE slashing_params
