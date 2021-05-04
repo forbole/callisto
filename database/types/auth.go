@@ -12,7 +12,7 @@ func NewAccountRow(address string) AccountRow {
 	}
 }
 
-// Equals tells whether a and b contain the same data
+// Equal tells whether a and b contain the same data
 func (a AccountRow) Equal(b AccountRow) bool {
 	return a.Address == b.Address
 }

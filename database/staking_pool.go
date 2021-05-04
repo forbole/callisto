@@ -1,17 +1,20 @@
 package database
 
 import (
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	"github.com/forbole/bdjuno/x/staking/types"
 )
 
 // SaveStakingPool allows to save for the given height the given stakingtypes pool
-func (db *BigDipperDb) SaveStakingPool(pool stakingtypes.Pool, height int64) error {
+func (db *BigDipperDb) SaveStakingPool(pool types.Pool) error {
 	stmt := `
-INSERT INTO staking_pool (height, bonded_tokens, not_bonded_tokens) 
-VALUES ($1, $2, $3) ON CONFLICT (height) 
-    DO UPDATE SET bonded_tokens = excluded.bonded_tokens, 
-                  not_bonded_tokens = excluded.not_bonded_tokens`
+INSERT INTO staking_pool (bonded_tokens, not_bonded_tokens, height) 
+VALUES ($1, $2, $3)
+ON CONFLICT (one_row_id) DO UPDATE 
+    SET bonded_tokens = excluded.bonded_tokens, 
+        not_bonded_tokens = excluded.not_bonded_tokens, 
+        height = excluded.height
+WHERE staking_pool.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt, height, pool.BondedTokens.Int64(), pool.NotBondedTokens.Int64())
+	_, err := db.Sql.Exec(stmt, pool.BondedTokens.String(), pool.NotBondedTokens.String(), pool.Height)
 	return err
 }

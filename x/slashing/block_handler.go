@@ -3,6 +3,8 @@ package slashing
 import (
 	"context"
 
+	"github.com/forbole/bdjuno/x/slashing/types"
+
 	"github.com/forbole/bdjuno/x/utils"
 
 	"github.com/rs/zerolog/log"
@@ -58,5 +60,5 @@ func updateSlashingParams(height int64, slashingClient slashingtypes.QueryClient
 		return err
 	}
 
-	return db.SaveSlashingParams(res.Params, height)
+	return db.SaveSlashingParams(types.NewParams(res.Params, height))
 }

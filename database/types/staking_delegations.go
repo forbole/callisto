@@ -6,31 +6,28 @@ import "time"
 
 // DelegationRow represents a single delegation table row
 type DelegationRow struct {
-	ID               string  `db:"id"`
-	ValidatorAddress string  `db:"validator_address"`
-	DelegatorAddress string  `db:"delegator_address"`
-	Amount           DbCoin  `db:"amount"`
-	Shares           float64 `db:"shares"`
-	Height           int64   `db:"height"`
+	ID               string `db:"id"`
+	ValidatorAddress string `db:"validator_address"`
+	DelegatorAddress string `db:"delegator_address"`
+	Amount           DbCoin `db:"amount"`
+	Height           int64  `db:"height"`
 }
 
 // NewDelegationRow allows to build a new DelegationRow
-func NewDelegationRow(consAddr, delegator string, amount DbCoin, shares float64, height int64) DelegationRow {
+func NewDelegationRow(delegator, consAddr string, amount DbCoin, height int64) DelegationRow {
 	return DelegationRow{
 		ValidatorAddress: consAddr,
 		DelegatorAddress: delegator,
 		Amount:           amount,
-		Shares:           shares,
 		Height:           height,
 	}
 }
 
-// Equals tells whether v and w represent the same row
+// Equal tells whether v and w represent the same row
 func (v DelegationRow) Equal(w DelegationRow) bool {
 	return v.ValidatorAddress == w.ValidatorAddress &&
 		v.DelegatorAddress == w.DelegatorAddress &&
 		v.Amount.Equal(w.Amount) &&
-		v.Shares == w.Shares &&
 		v.Height == w.Height
 }
 
@@ -47,7 +44,7 @@ type UnbondingDelegationRow struct {
 
 // NewUnbondingDelegationRow allows to build a new UnbondingDelegationRow instance
 func NewUnbondingDelegationRow(
-	consAddr, delegator string, amount DbCoin, completionTimestamp time.Time, height int64,
+	delegator, consAddr string, amount DbCoin, completionTimestamp time.Time, height int64,
 ) UnbondingDelegationRow {
 	return UnbondingDelegationRow{
 		ConsensusAddress:    consAddr,
@@ -69,8 +66,8 @@ func (v UnbondingDelegationRow) Equal(w UnbondingDelegationRow) bool {
 
 // ________________________________________________
 
-// ReDelegationRow represents a single row of the redelegation database table
-type ReDelegationRow struct {
+// RedelegationRow represents a single row of the redelegation database table
+type RedelegationRow struct {
 	DelegatorAddress    string    `db:"delegator_address"`
 	SrcValidatorAddress string    `db:"src_validator_address"`
 	DstValidatorAddress string    `db:"dst_validator_address"`
@@ -79,11 +76,11 @@ type ReDelegationRow struct {
 	Height              int64     `db:"height"`
 }
 
-// NewReDelegationRow allows to easily build a new ReDelegationRow instance
-func NewReDelegationRow(
+// NewRedelegationRow allows to easily build a new RedelegationRow instance
+func NewRedelegationRow(
 	delegator, srcConsAddr, dstConsAddr string, amount DbCoin, completionTime time.Time, height int64,
-) ReDelegationRow {
-	return ReDelegationRow{
+) RedelegationRow {
+	return RedelegationRow{
 		DelegatorAddress:    delegator,
 		SrcValidatorAddress: srcConsAddr,
 		DstValidatorAddress: dstConsAddr,
@@ -94,7 +91,7 @@ func NewReDelegationRow(
 }
 
 // Equal tells whether v and w represent the same database rows
-func (v ReDelegationRow) Equal(w ReDelegationRow) bool {
+func (v RedelegationRow) Equal(w RedelegationRow) bool {
 	return v.DelegatorAddress == w.DelegatorAddress &&
 		v.SrcValidatorAddress == w.SrcValidatorAddress &&
 		v.DstValidatorAddress == w.DstValidatorAddress &&

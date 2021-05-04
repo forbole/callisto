@@ -4,13 +4,12 @@ import (
 	"context"
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/types/query"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
-	"github.com/forbole/bdjuno/x/auth"
+	"github.com/cosmos/cosmos-sdk/types/query"
+
 	bgov "github.com/forbole/bdjuno/x/gov/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -35,10 +34,10 @@ func HandleMsg(
 		return handleMsgSubmitProposal(tx, cosmosMsg, govClient, authClient, bankClient, cdc, db)
 
 	case *govtypes.MsgDeposit:
-		return handleMsgDeposit(tx, cosmosMsg, authClient, bankClient, cdc, db)
+		return handleMsgDeposit(tx, cosmosMsg, db)
 
 	case *govtypes.MsgVote:
-		return handleMsgVote(tx, cosmosMsg, authClient, bankClient, cdc, db)
+		return handleMsgVote(tx, cosmosMsg, db)
 	}
 
 	return nil
@@ -70,12 +69,6 @@ func handleMsgSubmitProposal(
 			proposal = p
 			break
 		}
-	}
-
-	// Refresh the accounts
-	err = auth.RefreshAccounts([]string{msg.Proposer}, tx.Height, authClient, bankClient, cdc, db)
-	if err != nil {
-		return err
 	}
 
 	// Store the proposal
@@ -110,10 +103,11 @@ func handleMsgSubmitProposal(
 	}
 
 	// Watch the proposal and renew the database when deposit end and voting end in the future
+	update := UpdateProposal(proposal.ProposalId, govClient, authClient, bankClient, cdc, db)
 	if proposal.Status == govtypes.StatusVotingPeriod && proposal.VotingEndTime.After(time.Now()) {
-		time.AfterFunc(time.Since(proposal.VotingEndTime), UpdateProposal(proposal.ProposalId, govClient, db))
+		time.AfterFunc(time.Until(proposal.VotingEndTime), update)
 	} else if proposal.Status == govtypes.StatusDepositPeriod && proposal.DepositEndTime.After(time.Now()) {
-		time.AfterFunc(time.Since(proposal.DepositEndTime), UpdateProposal(proposal.ProposalId, govClient, db))
+		time.AfterFunc(time.Until(proposal.DepositEndTime), update)
 	}
 
 	return nil
@@ -121,16 +115,8 @@ func handleMsgSubmitProposal(
 
 // handleMsgDeposit allows to properly handle a handleMsgDeposit
 func handleMsgDeposit(
-	tx *juno.Tx, msg *govtypes.MsgDeposit,
-	authClient authtypes.QueryClient, bankClient banktypes.QueryClient,
-	cdc codec.Marshaler, db *database.BigDipperDb,
+	tx *juno.Tx, msg *govtypes.MsgDeposit, db *database.BigDipperDb,
 ) error {
-	// Refresh the accounts
-	err := auth.RefreshAccounts([]string{msg.Depositor}, tx.Height, authClient, bankClient, cdc, db)
-	if err != nil {
-		return err
-	}
-
 	// Save the deposits
 	deposit := bgov.NewDeposit(msg.ProposalId, msg.Depositor, msg.Amount, tx.Height)
 	return db.SaveDeposit(deposit)
@@ -138,16 +124,8 @@ func handleMsgDeposit(
 
 // handleMsgVote allows to properly handle a handleMsgVote
 func handleMsgVote(
-	tx *juno.Tx, msg *govtypes.MsgVote,
-	authClient authtypes.QueryClient, bankClient banktypes.QueryClient,
-	cdc codec.Marshaler, db *database.BigDipperDb,
+	tx *juno.Tx, msg *govtypes.MsgVote, db *database.BigDipperDb,
 ) error {
-	// Refresh accounts
-	err := auth.RefreshAccounts([]string{msg.Voter}, tx.Height, authClient, bankClient, cdc, db)
-	if err != nil {
-		return err
-	}
-
 	// Save the vote
 	vote := bgov.NewVote(msg.ProposalId, msg.Voter, msg.Option, tx.Height)
 	return db.SaveVote(vote)

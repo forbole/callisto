@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
+	tmtypes "github.com/tendermint/tendermint/types"
+
 	"github.com/cosmos/cosmos-sdk/types/tx"
 
 	bstakingutils "github.com/forbole/bdjuno/x/staking/common"
@@ -20,16 +22,16 @@ import (
 )
 
 func HandleGenesis(
-	appState map[string]json.RawMessage, cdc codec.Marshaler, db *database.BigDipperDb,
+	doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, cdc codec.Marshaler, db *database.BigDipperDb,
 ) error {
 	log.Debug().Str("module", "staking").Msg("parsing genesis")
 
-	err := parseStakingState(appState, cdc, db)
+	err := parseStakingState(doc, appState, cdc, db)
 	if err != nil {
 		return err
 	}
 
-	err = parseGenesisTransactions(appState, cdc, db)
+	err = parseGenesisTransactions(doc, appState, cdc, db)
 	if err != nil {
 		return err
 	}
@@ -39,7 +41,9 @@ func HandleGenesis(
 
 // -----------------------------------------------------------------------------------------------------------------
 
-func parseGenesisTransactions(appState map[string]json.RawMessage, cdc codec.Marshaler, db *database.BigDipperDb) error {
+func parseGenesisTransactions(
+	doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, cdc codec.Marshaler, db *database.BigDipperDb,
+) error {
 	var genUtilState genutiltypes.GenesisState
 	err := cdc.UnmarshalJSON(appState[genutiltypes.ModuleName], &genUtilState)
 	if err != nil {
@@ -60,7 +64,7 @@ func parseGenesisTransactions(appState map[string]json.RawMessage, cdc codec.Mar
 				continue
 			}
 
-			err = handleMsgCreateValidator(1, createValMsg, cdc, db)
+			err = handleMsgCreateValidator(doc.InitialHeight, createValMsg, cdc, db)
 			if err != nil {
 				return err
 			}
@@ -73,7 +77,9 @@ func parseGenesisTransactions(appState map[string]json.RawMessage, cdc codec.Mar
 // -----------------------------------------------------------------------------------------------------------------
 
 // parseStakingState parses the staking genesis state and stores the data properly
-func parseStakingState(appState map[string]json.RawMessage, cdc codec.Marshaler, db *database.BigDipperDb) error {
+func parseStakingState(
+	doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, cdc codec.Marshaler, db *database.BigDipperDb,
+) error {
 	// Read the genesis state
 	var genState stakingtypes.GenesisState
 	err := cdc.UnmarshalJSON(appState[stakingtypes.ModuleName], &genState)
@@ -88,36 +94,36 @@ func parseStakingState(appState map[string]json.RawMessage, cdc codec.Marshaler,
 	}
 
 	// Save the validators
-	err = saveValidators(genState.Validators, cdc, db)
+	err = saveValidators(doc, genState.Validators, cdc, db)
 	if err != nil {
 		return fmt.Errorf("error while storing staking genesis validators: %s", err)
 	}
 
 	// Save the description
-	err = saveValidatorDescription(genState.Validators, db)
+	err = saveValidatorDescription(doc, genState.Validators, db)
 	if err != nil {
 		return fmt.Errorf("error while storing staking genesis validator descriptions: %s", err)
 	}
 
-	err = saveValidatorsCommissions(genState.Validators, db)
+	err = saveValidatorsCommissions(doc.InitialHeight, genState.Validators, db)
 	if err != nil {
 		return fmt.Errorf("error while storing staking genesis validators commissions: %s", err)
 	}
 
 	// Save the delegations
-	err = saveDelegations(genState, db)
+	err = saveDelegations(doc, genState, db)
 	if err != nil {
 		return fmt.Errorf("error while storing staking genesis delegations: %s", err)
 	}
 
 	// Save the unbonding delegations
-	err = saveUnbondingDelegations(genState, db)
+	err = saveUnbondingDelegations(doc, genState, db)
 	if err != nil {
 		return fmt.Errorf("error while storing staking genesis unbonding delegations: %s", err)
 	}
 
 	// Save the re-delegations
-	err = saveRedelegations(genState, db)
+	err = saveRedelegations(doc, genState, db)
 	if err != nil {
 		return fmt.Errorf("error while storing staking genesis redelegations: %s", err)
 	}
@@ -132,10 +138,12 @@ func saveParams(params stakingtypes.Params, db *database.BigDipperDb) error {
 }
 
 // saveValidators stores the validators data present inside the given genesis state
-func saveValidators(validators stakingtypes.Validators, cdc codec.Marshaler, db *database.BigDipperDb) error {
+func saveValidators(
+	doc *tmtypes.GenesisDoc, validators stakingtypes.Validators, cdc codec.Marshaler, db *database.BigDipperDb,
+) error {
 	vals := make([]types.Validator, len(validators))
 	for i, val := range validators {
-		validator, err := bstakingutils.ConvertValidator(cdc, val)
+		validator, err := bstakingutils.ConvertValidator(cdc, val, doc.InitialHeight)
 		if err != nil {
 			return err
 		}
@@ -147,13 +155,13 @@ func saveValidators(validators stakingtypes.Validators, cdc codec.Marshaler, db 
 }
 
 // saveValidatorsCommissions save the initial commission for each validator
-func saveValidatorsCommissions(validators stakingtypes.Validators, db *database.BigDipperDb) error {
+func saveValidatorsCommissions(height int64, validators stakingtypes.Validators, db *database.BigDipperDb) error {
 	for _, account := range validators {
 		err := db.SaveValidatorCommission(types.NewValidatorCommission(
 			account.OperatorAddress,
 			&account.Commission.Rate,
 			&account.MinSelfDelegation,
-			1,
+			height,
 		))
 		if err != nil {
 			return err
@@ -164,7 +172,7 @@ func saveValidatorsCommissions(validators stakingtypes.Validators, db *database.
 }
 
 // saveDelegations stores the delegations data present inside the given genesis state
-func saveDelegations(genState stakingtypes.GenesisState, db *database.BigDipperDb) error {
+func saveDelegations(doc *tmtypes.GenesisDoc, genState stakingtypes.GenesisState, db *database.BigDipperDb) error {
 	var delegations []types.Delegation
 	for _, validator := range genState.Validators {
 		tokens := validator.Tokens
@@ -176,8 +184,7 @@ func saveDelegations(genState stakingtypes.GenesisState, db *database.BigDipperD
 				delegation.DelegatorAddress,
 				validator.OperatorAddress,
 				sdk.NewCoin(genState.Params.BondDenom, delegationAmount),
-				delegation.Shares.String(),
-				1,
+				doc.InitialHeight,
 			))
 		}
 	}
@@ -189,7 +196,7 @@ func saveDelegations(genState stakingtypes.GenesisState, db *database.BigDipperD
 }
 
 // saveUnbondingDelegations stores the unbonding delegations data present inside the given genesis state
-func saveUnbondingDelegations(genState stakingtypes.GenesisState, db *database.BigDipperDb) error {
+func saveUnbondingDelegations(doc *tmtypes.GenesisDoc, genState stakingtypes.GenesisState, db *database.BigDipperDb) error {
 	var unbondingDelegations []types.UnbondingDelegation
 	for _, validator := range genState.Validators {
 		valUD := getUnbondingDelegations(genState.UnbondingDelegations, validator.OperatorAddress)
@@ -200,7 +207,7 @@ func saveUnbondingDelegations(genState stakingtypes.GenesisState, db *database.B
 					validator.OperatorAddress,
 					sdk.NewCoin(genState.Params.BondDenom, entry.InitialBalance),
 					entry.CompletionTime,
-					entry.CreationHeight,
+					doc.InitialHeight,
 				))
 			}
 		}
@@ -210,7 +217,7 @@ func saveUnbondingDelegations(genState stakingtypes.GenesisState, db *database.B
 }
 
 // saveRedelegations stores the redelegations data present inside the given genesis state
-func saveRedelegations(genState stakingtypes.GenesisState, db *database.BigDipperDb) error {
+func saveRedelegations(doc *tmtypes.GenesisDoc, genState stakingtypes.GenesisState, db *database.BigDipperDb) error {
 	var redelegations []types.Redelegation
 	for _, redelegation := range genState.Redelegations {
 		for _, entry := range redelegation.Entries {
@@ -220,7 +227,7 @@ func saveRedelegations(genState stakingtypes.GenesisState, db *database.BigDippe
 				redelegation.ValidatorDstAddress,
 				sdk.NewCoin(genState.Params.BondDenom, entry.InitialBalance),
 				entry.CompletionTime,
-				entry.CreationHeight,
+				doc.InitialHeight,
 			))
 		}
 	}
@@ -253,12 +260,12 @@ func getUnbondingDelegations(genData stakingtypes.UnbondingDelegations, valAddr 
 }
 
 // saveValidatorDescription saves the description for the given validators
-func saveValidatorDescription(validators stakingtypes.Validators, db *database.BigDipperDb) error {
+func saveValidatorDescription(doc *tmtypes.GenesisDoc, validators stakingtypes.Validators, db *database.BigDipperDb) error {
 	for _, account := range validators {
 		description, err := bstakingutils.GetValidatorDescription(
 			account.OperatorAddress,
 			account.Description,
-			1,
+			doc.InitialHeight,
 		)
 		if err != nil {
 			return err

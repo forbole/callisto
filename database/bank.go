@@ -32,7 +32,12 @@ func (db *BigDipperDb) SaveAccountBalances(balances []bbanktypes.AccountBalance)
 		}
 
 		stmt = stmt[:len(stmt)-1]
-		stmt += " ON CONFLICT DO NOTHING"
+		stmt += `
+ON CONFLICT (address) DO UPDATE 
+	SET coins = excluded.coins, 
+	    height = excluded.height 
+WHERE account_balance.height <= excluded.height`
+
 		_, err := db.Sql.Exec(stmt, params...)
 		if err != nil {
 			return err
@@ -62,9 +67,17 @@ func (db BigDipperDb) splitBalances(
 	return slices
 }
 
+// --------------------------------------------------------------------------------------------------------------------
+
 // SaveSupply allows to save for the given height the given total amount of coins
 func (db *BigDipperDb) SaveSupply(coins sdk.Coins, height int64) error {
-	query := `INSERT INTO supply(coins, height) VALUES ($1,$2)`
+	query := `
+INSERT INTO supply (coins, height) 
+VALUES ($1, $2) 
+ON CONFLICT (one_row_id) DO UPDATE 
+    SET coins = excluded.coins,
+    	height = excluded.height
+WHERE supply.height <= excluded.height`
 
 	_, err := db.Sql.Exec(query, pq.Array(dbtypes.NewDbCoins(coins)), height)
 	if err != nil {
@@ -72,6 +85,8 @@ func (db *BigDipperDb) SaveSupply(coins sdk.Coins, height int64) error {
 	}
 	return nil
 }
+
+// --------------------------------------------------------------------------------------------------------------------
 
 // GetTokenNames returns the list of token names stored inside the supply table
 func (db *BigDipperDb) GetTokenNames() ([]string, error) {

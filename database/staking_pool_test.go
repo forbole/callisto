@@ -2,40 +2,70 @@ package database_test
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+
+	"github.com/forbole/bdjuno/x/staking/types"
 
 	dbtypes "github.com/forbole/bdjuno/database/types"
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveStakingPool() {
-	height := int64(100)
-	pool := stakingtypes.NewPool(sdk.NewInt(100), sdk.NewInt(50))
-
 	// Save the data
-	err := suite.database.SaveStakingPool(pool, height)
+	original := types.NewPool(sdk.NewInt(50), sdk.NewInt(100), 10)
+	err := suite.database.SaveStakingPool(original)
 	suite.Require().NoError(err)
-
-	var count int
-	err = suite.database.Sqlx.QueryRow(`SELECT COUNT(*) FROM staking_pool`).Scan(&count)
-	suite.Require().NoError(err)
-	suite.Require().Equal(1, count, "inserting a single staking pool row should return 1")
-
-	// Perform a double insertion
-	err = suite.database.SaveStakingPool(pool, height)
-	suite.Require().NoError(err)
-
-	err = suite.database.Sqlx.QueryRow(`SELECT COUNT(*) FROM staking_pool`).Scan(&count)
-	suite.Require().NoError(err)
-	suite.Require().Equal(1, count, "double inserting the same staking pool should return 1 row")
 
 	// Verify the data
+	expected := dbtypes.NewStakingPoolRow(50, 100, 10)
+
 	var rows []dbtypes.StakingPoolRow
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM staking_pool`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
-	suite.Require().True(rows[0].Equal(dbtypes.NewStakingPoolRow(
-		50,
-		100,
-		height,
-	)))
+	suite.Require().True(rows[0].Equal(expected))
+
+	// ----------------------------------------------------------------------------------------------------------------
+
+	// Try updating using a lower height
+	pool := types.NewPool(sdk.NewInt(1), sdk.NewInt(1), 8)
+	err = suite.database.SaveStakingPool(pool)
+	suite.Require().NoError(err)
+
+	// Verify the data
+	rows = []dbtypes.StakingPoolRow{}
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM staking_pool`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	suite.Require().True(rows[0].Equal(expected), "updating with a lower height should not modify the data")
+
+	// ----------------------------------------------------------------------------------------------------------------
+
+	// Try updating with the same height
+	pool = types.NewPool(sdk.NewInt(1), sdk.NewInt(1), 10)
+	err = suite.database.SaveStakingPool(pool)
+	suite.Require().NoError(err)
+
+	// Verify the data
+	expected = dbtypes.NewStakingPoolRow(1, 1, 10)
+
+	rows = []dbtypes.StakingPoolRow{}
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM staking_pool`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	suite.Require().True(rows[0].Equal(expected), "updating with a lower height should not modify the data")
+
+	// ----------------------------------------------------------------------------------------------------------------
+
+	// Try updating with a higher height
+	pool = types.NewPool(sdk.NewInt(1000000), sdk.NewInt(1000000), 20)
+	err = suite.database.SaveStakingPool(pool)
+	suite.Require().NoError(err)
+
+	// Verify the data
+	expected = dbtypes.NewStakingPoolRow(1000000, 1000000, 20)
+
+	rows = []dbtypes.StakingPoolRow{}
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM staking_pool`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	suite.Require().True(rows[0].Equal(expected), "updating with a lower height should not modify the data")
 }

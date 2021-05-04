@@ -8,8 +8,7 @@ import (
 	"github.com/forbole/bdjuno/x/utils"
 )
 
-// PeriodicConcensusOperations returns the AdditionalOperation that periodically runs fetches from
-// the LCD to make sure that constantly changing data are synced properly.
+// Register registers the operations that should be run periodically
 func Register(scheduler *gocron.Scheduler, db *database.BigDipperDb) error {
 	log.Debug().Str("module", "consensus").Msg("setting up periodic tasks")
 

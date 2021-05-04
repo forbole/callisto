@@ -3,41 +3,29 @@ package bank
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/desmos-labs/juno/modules/messages"
+	"github.com/rs/zerolog/log"
 
-	"github.com/forbole/bdjuno/x/auth"
+	"github.com/forbole/bdjuno/x/bank/common"
+	"github.com/forbole/bdjuno/x/utils"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	"github.com/desmos-labs/juno/types"
+	juno "github.com/desmos-labs/juno/types"
 
 	"github.com/forbole/bdjuno/database"
 )
 
+// HandleMsg handles any message updating the involved addresses
 func HandleMsg(
-	tx *types.Tx, msg sdk.Msg,
-	authClient authtypes.QueryClient, bankClient banktypes.QueryClient, cdc codec.Marshaler,
-	db *database.BigDipperDb,
+	tx *juno.Tx, msg sdk.Msg, getAddresses messages.MessageAddressesParser,
+	bankClient banktypes.QueryClient,
+	cdc codec.Marshaler, db *database.BigDipperDb,
 ) error {
-	if len(tx.Logs) == 0 {
-		return nil
+	addresses, err := getAddresses(cdc, msg)
+	if err != nil {
+		log.Error().Str("module", "bank").Str("operation", "refresh balances").
+			Err(err).Msgf("error while refreshing balances after message of type %s", msg.Type())
 	}
 
-	switch bankMSg := msg.(type) {
-	case *banktypes.MsgSend:
-		accounts := []string{bankMSg.FromAddress, bankMSg.ToAddress}
-		return auth.RefreshAccounts(accounts, tx.Height, authClient, bankClient, cdc, db)
-
-	case *banktypes.MsgMultiSend:
-		var accounts []string
-		for _, input := range bankMSg.Inputs {
-			accounts = append(accounts, input.Address)
-		}
-		for _, output := range bankMSg.Outputs {
-			accounts = append(accounts, output.Address)
-		}
-
-		return auth.RefreshAccounts(accounts, tx.Height, authClient, bankClient, cdc, db)
-	}
-
-	return nil
+	return common.UpdateBalances(utils.FilterNonAccountAddresses(addresses), tx.Height, bankClient, db)
 }

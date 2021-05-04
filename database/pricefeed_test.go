@@ -40,6 +40,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTokenPrice() {
 	suite.insertToken("desmos")
 	suite.insertToken("atom")
 
+	// Save data
 	tickers := []pricefeedtypes.TokenPrice{
 		pricefeedtypes.NewTokenPrice(
 			"desmos",
@@ -54,23 +55,68 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTokenPrice() {
 			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
 		),
 	}
-
 	err := suite.database.SaveTokensPrices(tickers)
 	suite.Require().NoError(err)
 
+	// Verify data
 	expected := []dbtypes.TokenPriceRow{
-		dbtypes.NewTokenPriceRow("desmos",
+		dbtypes.NewTokenPriceRow(
+			"desmos",
 			100.01,
 			10,
-			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC)),
-		dbtypes.NewTokenPriceRow("atom",
+			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
+		),
+		dbtypes.NewTokenPriceRow(
+			"atom",
 			200.01,
 			20,
 			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
 		),
 	}
+
 	var rows []dbtypes.TokenPriceRow
-	err = suite.database.Sqlx.Select(&rows, `SELECT unit_name, price, market_cap, timestamp FROM token_price`)
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM token_price`)
+	suite.Require().NoError(err)
+	for i, row := range rows {
+		suite.Require().True(expected[i].Equals(row))
+	}
+
+	// Update data
+	tickers = []pricefeedtypes.TokenPrice{
+		pricefeedtypes.NewTokenPrice(
+			"desmos",
+			100.01,
+			10,
+			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
+		),
+		pricefeedtypes.NewTokenPrice(
+			"atom",
+			1,
+			20,
+			time.Date(2020, 10, 10, 15, 05, 00, 000, time.UTC),
+		),
+	}
+	err = suite.database.SaveTokensPrices(tickers)
+	suite.Require().NoError(err)
+
+	// Verify data
+	expected = []dbtypes.TokenPriceRow{
+		dbtypes.NewTokenPriceRow(
+			"desmos",
+			100.01,
+			10,
+			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
+		),
+		dbtypes.NewTokenPriceRow(
+			"atom",
+			1,
+			20,
+			time.Date(2020, 10, 10, 15, 05, 00, 000, time.UTC),
+		),
+	}
+
+	rows = []dbtypes.TokenPriceRow{}
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM token_price ORDER BY timestamp`)
 	suite.Require().NoError(err)
 	for i, row := range rows {
 		suite.Require().True(expected[i].Equals(row))
