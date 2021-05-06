@@ -1,21 +1,20 @@
 package main
 
 import (
-	"github.com/desmos-labs/juno/cmd"
-	junoparse "github.com/desmos-labs/juno/cmd/parse"
-
-	"github.com/forbole/bdjuno/x/messages"
-
 	desmosapp "github.com/desmos-labs/desmos/app"
+	"github.com/desmos-labs/juno/cmd"
+	"github.com/desmos-labs/juno/cmd/parse"
+	"github.com/forbole/bdjuno/types"
 
 	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/x"
+	"github.com/forbole/bdjuno/modules"
 )
 
 func main() {
 	// Setup the config
-	config := junoparse.NewConfig("bdjuno").
-		WithRegistrar(x.NewModulesRegistrar(messages.AddressesParser)).
+	config := parse.NewConfig("bdjuno").
+		WithConfigParser(types.ParseConfig).
+		WithRegistrar(modules.NewRegistrar()).
 		WithDBBuilder(database.Builder).
 		WithEncodingConfigBuilder(desmosapp.MakeTestEncodingConfig)
 

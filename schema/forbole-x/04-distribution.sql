@@ -1,0 +1,20 @@
+CREATE TABLE delegation_reward
+(
+    validator_address TEXT       NOT NULL,
+    delegator_address TEXT       NOT NULL REFERENCES account (address),
+    withdraw_address  TEXT       NOT NULL,
+    amount            DEC_COIN[] NOT NULL,
+    height            BIGINT     NOT NULL,
+    CONSTRAINT validator_delegator_unique UNIQUE (delegator_address, validator_address, height)
+);
+CREATE INDEX delegation_reward_delegator_address_index ON delegation_reward (delegator_address);
+CREATE INDEX delegation_reward_height_index ON delegation_reward (height);
+
+CREATE TABLE validator_commission_amount
+(
+    self_delegate_address TEXT       NOT NULL,
+    amount                DEC_COIN[] NOT NULL,
+    height                BIGINT     NOT NULL,
+    CONSTRAINT commission_height_unique UNIQUE (self_delegate_address, height)
+);
+CREATE INDEX validator_commission_amount_height_index ON validator_commission_amount (height);
