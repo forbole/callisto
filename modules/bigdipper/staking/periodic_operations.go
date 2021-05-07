@@ -3,11 +3,11 @@ package staking
 import (
 	"sync"
 
-	staking2 "github.com/forbole/bdjuno/modules/common/staking"
-	utils2 "github.com/forbole/bdjuno/modules/common/utils"
+	"github.com/forbole/bdjuno/modules/common/staking"
+	"github.com/forbole/bdjuno/modules/common/utils"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	staking "github.com/cosmos/cosmos-sdk/x/staking/types"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
 
@@ -17,13 +17,13 @@ import (
 
 // RegisterPeriodicOps registers the additional operations that periodically run
 func RegisterPeriodicOps(
-	scheduler *gocron.Scheduler, stakingClient staking.QueryClient, cdc codec.Marshaler, db *bigdipperdb.Db,
+	scheduler *gocron.Scheduler, stakingClient stakingtypes.QueryClient, cdc codec.Marshaler, db *bigdipperdb.Db,
 ) error {
-	log.Debug().Str("module", "staking").Msg("setting up periodic tasks")
+	log.Debug().Str("module", "stakingtypes").Msg("setting up periodic tasks")
 
 	// Update the validator delegations every 1 hour
 	if _, err := scheduler.Every(1).Hour().StartImmediately().Do(func() {
-		utils2.WatchMethod(func() error { return updateValidatorsDelegations(stakingClient, cdc, db) })
+		utils.WatchMethod(func() error { return updateValidatorsDelegations(stakingClient, cdc, db) })
 	}); err != nil {
 		return err
 	}
@@ -34,7 +34,7 @@ func RegisterPeriodicOps(
 // updateValidatorsDelegations updates the current validators set and all their delegations, unbonding delegations
 // and redelegations
 func updateValidatorsDelegations(
-	stakingClient staking.QueryClient, cdc codec.Marshaler, db *bigdipperdb.Db,
+	stakingClient stakingtypes.QueryClient, cdc codec.Marshaler, db *bigdipperdb.Db,
 ) error {
 	height, err := db.GetLastBlockHeight()
 	if err != nil {
@@ -47,7 +47,7 @@ func updateValidatorsDelegations(
 		return err
 	}
 
-	validators, err := updateValidators(height, stakingClient, cdc, db)
+	validators, err := staking.UpdateValidators(height, stakingClient, cdc, db)
 	if err != nil {
 		return err
 	}
@@ -56,7 +56,7 @@ func updateValidatorsDelegations(
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go func() {
-		staking2.UpdateValidatorsDelegations(height, validators, stakingClient, db)
+		staking.UpdateValidatorsDelegations(height, validators, stakingClient, db)
 		wg.Done()
 	}()
 

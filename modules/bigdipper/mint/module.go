@@ -11,7 +11,7 @@ import (
 
 var _ modules.Module = &Module{}
 
-// Module represent bigdipper/mint module
+// Module represent database/mint module
 type Module struct {
 	mintClient minttypes.QueryClient
 	db         *bigdipperdb.Db

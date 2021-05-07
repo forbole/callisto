@@ -1,9 +1,10 @@
-package bigdipper
+package forbolex
 
 import (
 	"fmt"
 
-	dbtypes "github.com/forbole/bdjuno/database/bigdipper/types"
+	dbtypes "github.com/forbole/bdjuno/database/types"
+
 	"github.com/forbole/bdjuno/modules/common/staking"
 	"github.com/forbole/bdjuno/types"
 )
@@ -11,6 +12,79 @@ import (
 var (
 	_ staking.DB = &Db{}
 )
+
+// SaveStakingParams implements staking.DB
+func (db *Db) SaveStakingParams(params types.StakingParams) error {
+	stmt := `
+INSERT INTO staking_params (bond_denom) 
+VALUES ($1)
+ON CONFLICT (one_row_id) DO UPDATE 
+    SET bond_denom = excluded.bond_denom`
+
+	_, err := db.Sql.Exec(stmt, params.BondName)
+	return err
+}
+
+// GetStakingParams implements staking.DB
+func (db *Db) GetStakingParams() (*types.StakingParams, error) {
+	var rows []dbtypes.StakingParamsRow
+	stmt := `SELECT * FROM staking_params LIMIT 1`
+	err := db.Sqlx.Select(&rows, stmt)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(rows) == 0 {
+		return nil, fmt.Errorf("no staking params found")
+	}
+
+	return &types.StakingParams{
+		BondName: rows[0].BondName,
+	}, nil
+}
+
+// SaveValidators implements staking.DB
+func (db *Db) SaveValidators(validators []types.Validator) error {
+	if len(validators) == 0 {
+		return nil
+	}
+
+	selfDelegationAccQuery := `
+INSERT INTO account (address) VALUES `
+	var selfDelegationParam []interface{}
+
+	validatorQuery := `
+INSERT INTO validator_info (val_oper_addr, val_self_delegate_addr) VALUES `
+	var validatorParams []interface{}
+
+	for i, validator := range validators {
+		vp := i * 2 // Starting position for validator params
+
+		selfDelegationAccQuery += fmt.Sprintf("($%d),", i+1)
+		selfDelegationParam = append(selfDelegationParam,
+			validator.GetSelfDelegateAddress())
+
+		validatorQuery += fmt.Sprintf("($%d,$%d),", vp+1, vp+2)
+		validatorParams = append(validatorParams,
+			validator.GetOperator(), validator.GetSelfDelegateAddress())
+	}
+
+	selfDelegationAccQuery = selfDelegationAccQuery[:len(selfDelegationAccQuery)-1] // Remove trailing ","
+	selfDelegationAccQuery += " ON CONFLICT DO NOTHING"
+	_, err := db.Sql.Exec(selfDelegationAccQuery, selfDelegationParam...)
+	if err != nil {
+		return err
+	}
+
+	validatorQuery = validatorQuery[:len(validatorQuery)-1] // Remove trailing ","
+	validatorQuery += " ON CONFLICT DO NOTHING"
+	_, err = db.Sql.Exec(validatorQuery, validatorParams...)
+	if err != nil {
+		return err
+	}
+
+	return err
+}
 
 // SaveDelegations implements staking.DB
 func (db *Db) SaveDelegations(delegations []types.Delegation) error {

@@ -3,14 +3,14 @@ package bigdipper
 import (
 	"fmt"
 
+	dbtypes "github.com/forbole/bdjuno/database/types"
+
 	dbutils "github.com/forbole/bdjuno/database/utils"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/lib/pq"
 
 	"github.com/forbole/bdjuno/types"
-
-	dbtypes "github.com/forbole/bdjuno/database/bigdipper/types"
 )
 
 // SaveAccountBalances allows to store the balance for the given account associating it to the given height

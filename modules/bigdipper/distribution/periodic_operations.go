@@ -5,7 +5,7 @@ import (
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
 
-	utils2 "github.com/forbole/bdjuno/modules/common/utils"
+	"github.com/forbole/bdjuno/modules/common/utils"
 
 	bigdipperdb "github.com/forbole/bdjuno/database/bigdipper"
 	bdistrcommon "github.com/forbole/bdjuno/modules/bigdipper/distribution/common"
@@ -19,7 +19,7 @@ func RegisterPeriodicOps(
 
 	// Update the community pool every 1 hour
 	if _, err := scheduler.Every(1).Hour().StartImmediately().Do(func() {
-		utils2.WatchMethod(func() error { return getLatestCommunityPool(distrClient, db) })
+		utils.WatchMethod(func() error { return getLatestCommunityPool(distrClient, db) })
 	}); err != nil {
 		return err
 	}
@@ -27,7 +27,7 @@ func RegisterPeriodicOps(
 	return nil
 }
 
-// getLatestCommunityPool gets the latest community pool from the chain and stores inside the bigdipper
+// getLatestCommunityPool gets the latest community pool from the chain and stores inside the database
 func getLatestCommunityPool(distrClient distrtypes.QueryClient, db *bigdipperdb.Db) error {
 	height, err := db.GetLastBlockHeight()
 	if err != nil {

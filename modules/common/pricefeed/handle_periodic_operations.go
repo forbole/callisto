@@ -23,7 +23,7 @@ func RegisterPeriodicOps(scheduler *gocron.Scheduler, db DB) error {
 	return nil
 }
 
-// updatePrice fetch total amount of coins in the system from RPC and store it into bigdipper
+// updatePrice fetch total amount of coins in the system from RPC and store it into database
 func updatePrice(db DB) error {
 	log.Debug().
 		Str("module", "pricefeed").

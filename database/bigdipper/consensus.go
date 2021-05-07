@@ -11,8 +11,8 @@ import (
 	dbtypes "github.com/forbole/bdjuno/database/bigdipper/types"
 )
 
-// SaveConsensus allows to properly store the given consensus event into the bigdipper.
-// Note that only one consensus event is allowed inside the bigdipper at any time.
+// SaveConsensus allows to properly store the given consensus event into the database.
+// Note that only one consensus event is allowed inside the database at any time.
 func (db *Db) SaveConsensus(event *types.ConsensusEvent) error {
 	stmt := `
 INSERT INTO consensus (height, round, step)
@@ -27,7 +27,7 @@ ON CONFLICT (one_row_id) DO UPDATE
 
 // -------------------------------------------------------------------------------------------------------------------
 
-// GetLastBlock returns the last block stored inside the bigdipper based on the heights
+// GetLastBlock returns the last block stored inside the database based on the heights
 func (db *Db) GetLastBlock() (*dbtypes.BlockRow, error) {
 	stmt := `SELECT * FROM block ORDER BY height DESC LIMIT 1`
 
@@ -43,7 +43,7 @@ func (db *Db) GetLastBlock() (*dbtypes.BlockRow, error) {
 	return &blocks[0], nil
 }
 
-// GetLastBlockHeight returns the last block height stored inside the bigdipper
+// GetLastBlockHeight returns the last block height stored inside the database
 func (db *Db) GetLastBlockHeight() (int64, error) {
 	block, err := db.GetLastBlock()
 	if err != nil {
@@ -163,7 +163,7 @@ VALUES ($1, $2) ON CONFLICT (one_row_id) DO UPDATE
 	return err
 }
 
-// GetGenesisTime get genesis time of chain (only work if bigdipper/consensus enabled)
+// GetGenesisTime get genesis time of chain (only work if database/consensus enabled)
 func (db *Db) GetGenesisTime() (time.Time, error) {
 	var rows []*dbtypes.GenesisRow
 	err := db.Sqlx.Select(&rows, `SELECT * FROM genesis;`)

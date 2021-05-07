@@ -3,13 +3,34 @@ package bigdipper
 import (
 	"fmt"
 
+	dbtypes "github.com/forbole/bdjuno/database/types"
+
+	"github.com/forbole/bdjuno/modules/common/distribution"
+
 	"github.com/forbole/bdjuno/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/lib/pq"
-
-	dbtypes "github.com/forbole/bdjuno/database/bigdipper/types"
 )
+
+var (
+	_ distribution.DB = &Db{}
+)
+
+// GetValidatorsInfo implements distribution.DB
+func (db *Db) GetValidatorsInfo() ([]types.ValidatorInfo, error) {
+	validators, err := db.GetValidators()
+	if err != nil {
+		return nil, err
+	}
+
+	var valInfo = make([]types.ValidatorInfo, len(validators))
+	for index, val := range validators {
+		valInfo[index] = types.NewValidatorInfo(val.ValAddress, val.SelfDelegateAddress)
+	}
+
+	return valInfo, nil
+}
 
 // SaveCommunityPool allows to save for the given height the given total amount of coins
 func (db *Db) SaveCommunityPool(coin sdk.DecCoins, height int64) error {
@@ -24,7 +45,7 @@ WHERE community_pool.height <= excluded.height`
 	return err
 }
 
-// SaveValidatorCommissionAmount saves the given validator commission amounts for the given height
+// SaveValidatorCommissionAmount implements distribution.DB
 func (db *Db) SaveValidatorCommissionAmount(amount types.ValidatorCommissionAmount) error {
 	stmt := `
 INSERT INTO validator_commission_amount(validator_address, amount, height) 
@@ -34,12 +55,16 @@ ON CONFLICT (validator_address) DO UPDATE
         height = excluded.height
 WHERE validator_commission_amount.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt,
-		amount.ValidatorConsAddr, pq.Array(dbtypes.NewDbDecCoins(amount.Amount)), amount.Height)
+	consAddr, err := db.GetValidatorConsensusAddress(amount.ValidatorOperAddr)
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Sql.Exec(stmt, consAddr.String(), pq.Array(dbtypes.NewDbDecCoins(amount.Amount)), amount.Height)
 	return err
 }
 
-// SaveDelegatorsRewardsAmounts saves the given delegator commission amounts for the provided height
+// SaveDelegatorsRewardsAmounts implements distribution.DB
 func (db *Db) SaveDelegatorsRewardsAmounts(amounts []types.DelegatorRewardAmount) error {
 	stmt := `INSERT INTO delegation_reward(validator_address, delegator_address, withdraw_address, amount, height) VALUES `
 	var params []interface{}
@@ -48,9 +73,14 @@ func (db *Db) SaveDelegatorsRewardsAmounts(amounts []types.DelegatorRewardAmount
 		ai := i * 5
 		stmt += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d),", ai+1, ai+2, ai+3, ai+4, ai+5)
 
+		consAddr, err := db.GetValidatorConsensusAddress(amount.ValidatorOperAddr)
+		if err != nil {
+			return err
+		}
+
 		coins := pq.Array(dbtypes.NewDbDecCoins(amount.Amount))
 		params = append(params,
-			amount.ValidatorConsAddr, amount.DelegatorAddress, amount.WithdrawAddress, coins, amount.Height)
+			consAddr.String(), amount.DelegatorAddress, amount.WithdrawAddress, coins, amount.Height)
 	}
 
 	stmt = stmt[:len(stmt)-1] // Remove trailing ,

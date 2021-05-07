@@ -20,7 +20,7 @@ import (
 
 var _ modules.Module = &Module{}
 
-// Module represent bigdipper/gov module
+// Module represent x/gov module
 type Module struct {
 	encodingConfig *params.EncodingConfig
 	govClient      govtypes.QueryClient

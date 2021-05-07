@@ -3,11 +3,11 @@ package bigdipper
 import (
 	"fmt"
 
+	"github.com/forbole/bdjuno/database/types"
+
 	bgovtypes "github.com/forbole/bdjuno/modules/bigdipper/gov/types"
 
 	"github.com/lib/pq"
-
-	dbtypes "github.com/forbole/bdjuno/database/bigdipper/types"
 )
 
 // SaveProposals allows to save for the given height the given total amount of coins
@@ -111,7 +111,7 @@ VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(query,
 		deposit.ProposalID,
 		deposit.Depositor,
-		pq.Array(dbtypes.NewDbCoins(deposit.Amount)),
+		pq.Array(types.NewDbCoins(deposit.Amount)),
 		deposit.Height,
 	)
 	return err
@@ -130,7 +130,7 @@ func (db *Db) SaveDeposits(deposits []bgovtypes.Deposit) error {
 		query += fmt.Sprintf("($%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4)
 		param = append(param, deposit.ProposalID,
 			deposit.Depositor,
-			pq.Array(dbtypes.NewDbCoins(deposit.Amount)),
+			pq.Array(types.NewDbCoins(deposit.Amount)),
 			deposit.Height,
 		)
 	}
@@ -140,7 +140,7 @@ func (db *Db) SaveDeposits(deposits []bgovtypes.Deposit) error {
 	return err
 }
 
-// UpdateProposal updates a proposal stored inside the bigdipper
+// UpdateProposal updates a proposal stored inside the database
 func (db *Db) UpdateProposal(proposal bgovtypes.Proposal) error {
 	query := `UPDATE proposal SET status = $1, voting_start_time = $2, voting_end_time = $3 where proposal_id = $4`
 	_, err := db.Sql.Exec(query,

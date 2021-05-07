@@ -1,11 +1,12 @@
-package bigdipper
+package forbolex
 
 import (
 	"fmt"
 
+	dbtypes "github.com/forbole/bdjuno/database/types"
+
 	"github.com/lib/pq"
 
-	dbtypes "github.com/forbole/bdjuno/database/bigdipper/types"
 	dbutils "github.com/forbole/bdjuno/database/utils"
 	"github.com/forbole/bdjuno/modules/common/bank"
 	"github.com/forbole/bdjuno/types"

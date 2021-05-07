@@ -41,7 +41,7 @@ func Builder(cfg juno.Config, codec *params.EncodingConfig) (db.Database, error)
 	}, nil
 }
 
-// Db represents a PostgreSQL bigdipper with expanded features.
+// Db represents a PostgreSQL database with expanded features.
 // so that it can properly store custom BigDipper-related data.
 type Db struct {
 	*postgresql.Database

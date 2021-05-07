@@ -31,7 +31,7 @@ func HandleBlock(block *tmctypes.ResultBlock, slashingClient slashingtypes.Query
 	return nil
 }
 
-// updateSigningInfo reads from the LCD the current staking pool and stores its value inside the bigdipper
+// updateSigningInfo reads from the LCD the current staking pool and stores its value inside the database
 func updateSigningInfo(height int64, slashingClient slashingtypes.QueryClient, db *bigdipperdb.Db) error {
 	log.Debug().Str("module", "slashing").Int64("height", height).
 		Msg("updating signing info")
@@ -44,7 +44,7 @@ func updateSigningInfo(height int64, slashingClient slashingtypes.QueryClient, d
 	return db.SaveValidatorsSigningInfos(signingInfos)
 }
 
-// updateSlashingParams gets the slashing params for the given height, and stores them inside the bigdipper
+// updateSlashingParams gets the slashing params for the given height, and stores them inside the database
 func updateSlashingParams(height int64, slashingClient slashingtypes.QueryClient, db *bigdipperdb.Db) error {
 	log.Debug().Str("module", "slashing").Int64("height", height).
 		Msg("updating slashing params")

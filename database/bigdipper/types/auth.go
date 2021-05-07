@@ -1,5 +1,7 @@
 package types
 
+import "github.com/forbole/bdjuno/database/types"
+
 // AccountRow represents a single row inside the account table
 type AccountRow struct {
 	Address string `db:"address"`
@@ -21,13 +23,13 @@ func (a AccountRow) Equal(b AccountRow) bool {
 
 // AccountBalanceRow represents a single row inside the account_balance table
 type AccountBalanceRow struct {
-	Address string   `db:"address"`
-	Coins   *DbCoins `db:"coins"`
-	Height  int64    `db:"height"`
+	Address string         `db:"address"`
+	Coins   *types.DbCoins `db:"coins"`
+	Height  int64          `db:"height"`
 }
 
 // NewAccountBalanceRow allows to build a new AccountBalanceRow instance
-func NewAccountBalanceRow(address string, coins DbCoins, height int64) AccountBalanceRow {
+func NewAccountBalanceRow(address string, coins types.DbCoins, height int64) AccountBalanceRow {
 	return AccountBalanceRow{
 		Address: address,
 		Coins:   &coins,

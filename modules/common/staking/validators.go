@@ -1,13 +1,16 @@
-package common
+package staking
 
 import (
 	"context"
+
+	"github.com/rs/zerolog/log"
+
+	"github.com/forbole/bdjuno/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 
-	bstakingtypes "github.com/forbole/bdjuno/modules/bigdipper/staking/types"
 	utils2 "github.com/forbole/bdjuno/modules/common/utils"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -32,7 +35,7 @@ func GetValidatorConsAddr(cdc codec.Marshaler, validator stakingtypes.Validator)
 }
 
 // ConvertValidator converts the given staking validator into a BDJuno validator
-func ConvertValidator(cdc codec.Marshaler, validator stakingtypes.Validator, height int64) (bstakingtypes.Validator, error) {
+func ConvertValidator(cdc codec.Marshaler, validator stakingtypes.Validator, height int64) (types.Validator, error) {
 	consAddr, err := GetValidatorConsAddr(cdc, validator)
 	if err != nil {
 		return nil, err
@@ -43,7 +46,7 @@ func ConvertValidator(cdc codec.Marshaler, validator stakingtypes.Validator, hei
 		return nil, err
 	}
 
-	return bstakingtypes.NewValidator(
+	return types.NewValidator(
 		consAddr.String(),
 		validator.OperatorAddress,
 		consPubKey.String(),
@@ -55,7 +58,9 @@ func ConvertValidator(cdc codec.Marshaler, validator stakingtypes.Validator, hei
 }
 
 // GetValidators returns the validators list at the given height
-func GetValidators(height int64, client stakingtypes.QueryClient) ([]stakingtypes.Validator, error) {
+func GetValidators(
+	height int64, client stakingtypes.QueryClient, cdc codec.Marshaler,
+) ([]stakingtypes.Validator, []types.Validator, error) {
 	header := utils2.GetHeightRequestHeader(height)
 
 	var validators []stakingtypes.Validator
@@ -74,7 +79,7 @@ func GetValidators(height int64, client stakingtypes.QueryClient) ([]stakingtype
 			header,
 		)
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 
 		nextKey = res.Pagination.NextKey
@@ -82,5 +87,37 @@ func GetValidators(height int64, client stakingtypes.QueryClient) ([]stakingtype
 		validators = append(validators, res.Validators...)
 	}
 
-	return validators, nil
+	var vals = make([]types.Validator, len(validators))
+	for index, val := range validators {
+		validator, err := ConvertValidator(cdc, val, height)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		vals[index] = validator
+	}
+
+	return validators, vals, nil
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// UpdateValidators updates the list of validators that are present at the given height
+func UpdateValidators(
+	height int64, client stakingtypes.QueryClient, cdc codec.Marshaler, db DB,
+) ([]stakingtypes.Validator, error) {
+	log.Debug().Str("module", "staking").Int64("height", height).
+		Msg("updating validators")
+
+	vals, validators, err := GetValidators(height, client, cdc)
+	if err != nil {
+		return nil, err
+	}
+
+	err = db.SaveValidators(validators)
+	if err != nil {
+		return nil, err
+	}
+
+	return vals, err
 }

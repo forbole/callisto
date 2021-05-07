@@ -3,21 +3,25 @@ package bigdipper
 import (
 	"fmt"
 
+	dbtypes "github.com/forbole/bdjuno/database/types"
+
+	"github.com/forbole/bdjuno/types"
+
 	bstakingtypes "github.com/forbole/bdjuno/modules/bigdipper/staking/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	dbtypes "github.com/forbole/bdjuno/database/bigdipper/types"
+	bddbtypes "github.com/forbole/bdjuno/database/bigdipper/types"
 )
 
 // SaveValidatorData saves properly the information about the given validator.
-func (db *Db) SaveValidatorData(validator bstakingtypes.Validator) error {
-	return db.SaveValidators([]bstakingtypes.Validator{validator})
+func (db *Db) SaveValidatorData(validator types.Validator) error {
+	return db.SaveValidators([]types.Validator{validator})
 }
 
 // SaveValidators allows the bulk saving of a list of validators.
-func (db *Db) SaveValidators(validators []bstakingtypes.Validator) error {
+func (db *Db) SaveValidators(validators []types.Validator) error {
 	if len(validators) == 0 {
 		return nil
 	}
@@ -100,8 +104,8 @@ func (db *Db) GetValidatorConsensusAddress(address string) (sdk.ConsAddress, err
 
 // GetValidator returns the validator having the given address.
 // If no validator for such address can be found, an error is returned instead.
-func (db *Db) GetValidator(valAddress string) (bstakingtypes.Validator, error) {
-	var result []dbtypes.ValidatorData
+func (db *Db) GetValidator(valAddress string) (types.Validator, error) {
+	var result []bddbtypes.ValidatorData
 	stmt := `
 SELECT validator.consensus_address, 
        validator.consensus_pubkey, 
@@ -124,8 +128,8 @@ WHERE validator_info.operator_address = $1`
 	return result[0], nil
 }
 
-// GetValidators returns all the validators that are currently stored inside the bigdipper.
-func (db *Db) GetValidators() ([]dbtypes.ValidatorData, error) {
+// GetValidators returns all the validators that are currently stored inside the database.
+func (db *Db) GetValidators() ([]bddbtypes.ValidatorData, error) {
 	sqlStmt := `
 SELECT DISTINCT ON (validator.consensus_address) 
 	validator.consensus_address, 
@@ -140,7 +144,7 @@ INNER JOIN validator_info
     ON validator.consensus_address = validator_info.consensus_address
 ORDER BY validator.consensus_address`
 
-	var rows []dbtypes.ValidatorData
+	var rows []bddbtypes.ValidatorData
 	err := db.Sqlx.Select(&rows, sqlStmt)
 	if err != nil {
 		return nil, err
@@ -152,7 +156,7 @@ ORDER BY validator.consensus_address`
 
 // SaveValidatorDescription save a single validator description.
 // It assumes that the delegator address is already present inside the
-// proper bigdipper table.
+// proper database table.
 // TIP: To store the validator data call SaveValidatorData.
 func (db *Db) SaveValidatorDescription(description bstakingtypes.ValidatorDescription) error {
 	consAddr, err := db.GetValidatorConsensusAddress(description.OperatorAddress)
@@ -205,7 +209,7 @@ WHERE validator_description.height <= excluded.height`
 // getValidatorDescription returns the description of the validator having the given address.
 // If no description could be found, returns false instead
 func (db *Db) getValidatorDescription(address sdk.ConsAddress) (*bstakingtypes.ValidatorDescription, bool) {
-	var result []dbtypes.ValidatorDescriptionRow
+	var result []bddbtypes.ValidatorDescriptionRow
 	stmt := `SELECT * FROM validator_description WHERE validator_description.validator_address = $1`
 
 	err := db.Sqlx.Select(&result, stmt, address.String())
@@ -237,7 +241,7 @@ func (db *Db) getValidatorDescription(address sdk.ConsAddress) (*bstakingtypes.V
 
 // SaveValidatorCommission saves a single validator commission.
 // It assumes that the delegator address is already present inside the
-// proper bigdipper table.
+// proper database table.
 // TIP: To store the validator data call SaveValidatorData.
 func (db *Db) SaveValidatorCommission(data bstakingtypes.ValidatorCommission) error {
 	if data.MinSelfDelegation == nil && data.Commission == nil {
@@ -284,8 +288,8 @@ WHERE validator_commission.height <= excluded.height`
 
 // getValidatorCommission returns the commissions of the validator having the given address.
 // If no commissions could be found, returns false instead
-func (db *Db) getValidatorCommission(address sdk.ConsAddress) (*dbtypes.ValidatorCommissionRow, bool) {
-	var rows []dbtypes.ValidatorCommissionRow
+func (db *Db) getValidatorCommission(address sdk.ConsAddress) (*bddbtypes.ValidatorCommissionRow, bool) {
+	var rows []bddbtypes.ValidatorCommissionRow
 	stmt := `SELECT * FROM validator_commission WHERE validator_address = $1`
 	err := db.Sqlx.Select(&rows, stmt, address.String())
 	if err != nil || len(rows) == 0 {
@@ -299,7 +303,7 @@ func (db *Db) getValidatorCommission(address sdk.ConsAddress) (*dbtypes.Validato
 
 // SaveValidatorsVotingPowers saves the given validator voting powers.
 // It assumes that the delegator address is already present inside the
-// proper bigdipper table.
+// proper database table.
 // TIP: To store the validator data call SaveValidatorData.
 func (db *Db) SaveValidatorsVotingPowers(entries []bstakingtypes.ValidatorVotingPower) error {
 	stmt := `INSERT INTO validator_voting_power (validator_address, voting_power, height) VALUES `
@@ -360,7 +364,7 @@ WHERE validator_status.height <= excluded.height`
 	return err
 }
 
-// saveDoubleSignVote saves the given vote inside the bigdipper, returning the row id
+// saveDoubleSignVote saves the given vote inside the database, returning the row id
 func (db *Db) saveDoubleSignVote(vote bstakingtypes.DoubleSignVote) (int64, error) {
 	stmt := `
 INSERT INTO double_sign_vote 

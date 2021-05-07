@@ -1,24 +1,21 @@
-package common
+package distribution
 
 import (
 	"context"
 
-	bigdipperdb "github.com/forbole/bdjuno/database/bigdipper"
-	utils2 "github.com/forbole/bdjuno/modules/common/utils"
+	"github.com/forbole/bdjuno/modules/common/utils"
 	"github.com/forbole/bdjuno/types"
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	"github.com/rs/zerolog/log"
-
-	dbtypes "github.com/forbole/bdjuno/database/bigdipper/types"
 )
 
 // UpdateValidatorsCommissionAmounts updates the validators commissions amounts
-func UpdateValidatorsCommissionAmounts(height int64, client distrtypes.QueryClient, db *bigdipperdb.Db) {
+func UpdateValidatorsCommissionAmounts(height int64, client distrtypes.QueryClient, db DB) {
 	log.Debug().Str("module", "distribution").Int64("height", height).
 		Msg("updating validators commissions")
 
-	validators, err := db.GetValidators()
+	validators, err := db.GetValidatorsInfo()
 	if err != nil {
 		log.Error().Str("module", "distribution").Err(err).Int64("height", height).
 			Msg("error while getting validators")
@@ -35,27 +32,26 @@ func UpdateValidatorsCommissionAmounts(height int64, client distrtypes.QueryClie
 	}
 }
 
-func getValidatorCommission(
-	height int64, client distrtypes.QueryClient, validator dbtypes.ValidatorData, db *bigdipperdb.Db,
-) {
+func getValidatorCommission(height int64, client distrtypes.QueryClient, validator types.ValidatorInfo, db DB) {
 	res, err := client.ValidatorCommission(
 		context.Background(),
-		&distrtypes.QueryValidatorCommissionRequest{ValidatorAddress: validator.ValAddress},
-		utils2.GetHeightRequestHeader(height),
+		&distrtypes.QueryValidatorCommissionRequest{ValidatorAddress: validator.ValidatorOperAddr},
+		utils.GetHeightRequestHeader(height),
 	)
 	if err != nil {
 		log.Error().Str("module", "distribution").Err(err).Int64("height", height).
-			Str("validator", validator.ValAddress).Msg("error while getting validator commission")
+			Str("validator", validator.ValidatorOperAddr).Msg("error while getting validator commission")
 		return
 	}
 
 	err = db.SaveValidatorCommissionAmount(types.NewValidatorCommissionAmount(
-		validator.ConsAddress,
+		validator.ValidatorOperAddr,
+		validator.ValidatorSelfDelegateAddr,
 		res.Commission.Commission,
 		height,
 	))
 	if err != nil {
 		log.Error().Str("module", "distribution").Err(err).Int64("height", height).
-			Str("validator", validator.ValAddress).Msg("error while saving validator commission amount")
+			Str("validator", validator.ValidatorOperAddr).Msg("error while saving validator commission amount")
 	}
 }

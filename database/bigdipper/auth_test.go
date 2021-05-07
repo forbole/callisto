@@ -4,6 +4,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
+	"github.com/forbole/bdjuno/types"
+
 	dbtypes "github.com/forbole/bdjuno/database/bigdipper/types"
 )
 
@@ -17,10 +19,10 @@ func (suite *DbTestSuite) TestSaveAccount() {
 	// --- Save the data
 	// ------------------------------
 
-	err = suite.database.SaveAccounts([]authtypes.AccountI{account})
+	err = suite.database.SaveAccounts([]types.Account{types.NewAccount(account.Address)})
 	suite.Require().NoError(err)
 
-	err = suite.database.SaveAccounts([]authtypes.AccountI{account})
+	err = suite.database.SaveAccounts([]types.Account{types.NewAccount(account.Address)})
 	suite.Require().NoError(err, "double account insertion should not insert and returns no error")
 
 	// ------------------------------

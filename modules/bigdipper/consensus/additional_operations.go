@@ -53,7 +53,7 @@ func subscribeConsensusEvent(event string, cp *client.Proxy, eventChan chan<- tm
 	}
 }
 
-// handleEvent handles the given event storing its data inside the bigdipper properly
+// handleEvent handles the given event storing its data inside the database properly
 func handleEvent(event tmctypes.ResultEvent, db *bigdipperdb.Db) {
 	consEvent := mapEvent(event)
 	if consEvent == nil {

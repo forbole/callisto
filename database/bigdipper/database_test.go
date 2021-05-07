@@ -2,17 +2,18 @@ package bigdipper_test
 
 import (
 	"io/ioutil"
+	"path"
 	"path/filepath"
 	"regexp"
 	"strings"
 	"testing"
 	"time"
 
-	bigdipperdb "github.com/forbole/bdjuno/database/bigdipper"
-	bigdipper "github.com/forbole/bdjuno/database/forbolex"
-	"github.com/forbole/bdjuno/modules/bigdipper/staking/types"
+	"github.com/forbole/bdjuno/types"
 
 	juno "github.com/desmos-labs/juno/types"
+
+	bigdipperdb "github.com/forbole/bdjuno/database/bigdipper"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	tmversion "github.com/tendermint/tendermint/proto/tendermint/version"
@@ -39,7 +40,7 @@ func (suite *DbTestSuite) SetupTest() {
 	// Create the codec
 	codec := simapp.MakeTestEncodingConfig()
 
-	// Build the bigdipper
+	// Build the database
 	config := juno.NewConfig(
 		nil, nil, nil,
 		&juno.DatabaseConfig{
@@ -52,7 +53,7 @@ func (suite *DbTestSuite) SetupTest() {
 		nil, nil,
 	)
 
-	db, err := bigdipper.Builder(config, &codec)
+	db, err := bigdipperdb.Builder(config, &codec)
 	suite.Require().NoError(err)
 
 	bigDipperDb, ok := (db).(*bigdipperdb.Db)
@@ -66,8 +67,10 @@ func (suite *DbTestSuite) SetupTest() {
 	_, err = bigDipperDb.Sql.Exec(`CREATE SCHEMA public;`)
 	suite.Require().NoError(err)
 
-	dirPath := "../schema"
+	dirPath := path.Join("..", "..", "schema", "big-dipper")
 	dir, err := ioutil.ReadDir(dirPath)
+	suite.Require().NoError(err)
+
 	for _, fileInfo := range dir {
 		file, err := ioutil.ReadFile(filepath.Join(dirPath, fileInfo.Name()))
 		suite.Require().NoError(err)
@@ -130,7 +133,7 @@ func (suite *DbTestSuite) getBlock(height int64) *juno.Block {
 	return block
 }
 
-// getValidator stores inside the bigdipper a validator having the given
+// getValidator stores inside the database a validator having the given
 // consensus address, validator address and validator public key
 func (suite *DbTestSuite) getValidator(consAddr, valAddr, pubkey string) types.Validator {
 	selfDelegation := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
@@ -153,7 +156,7 @@ func (suite *DbTestSuite) getValidator(consAddr, valAddr, pubkey string) types.V
 	return validator
 }
 
-// getAccount saves inside the bigdipper an account having the given address
+// getAccount saves inside the database an account having the given address
 func (suite *DbTestSuite) getAccount(addr string) sdk.AccAddress {
 	delegator, err := sdk.AccAddressFromBech32(addr)
 	suite.Require().NoError(err)

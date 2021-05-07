@@ -36,15 +36,15 @@ func UpdateValidatorsDelegations(
 	var wg sync.WaitGroup
 	for _, val := range validators {
 		wg.Add(1)
-		go getDelegations(val.OperatorAddress, height, client, db, &wg)
+		go getDelegationsFromGrpc(val.OperatorAddress, height, client, db, &wg)
 	}
 	wg.Wait()
 }
 
-// getDelegations gets the list of all the delegations that the validator having the given address has
+// getDelegationsFromGrpc gets the list of all the delegations that the validator having the given address has
 // at the given block height (having the given timestamp).
 // All the delegations will be sent to the out channel, and wg.Done() will be called at the end.
-func getDelegations(
+func getDelegationsFromGrpc(
 	validatorAddress string, height int64,
 	client stakingtypes.QueryClient, db *bigdipperdb.Db, wg *sync.WaitGroup,
 ) {

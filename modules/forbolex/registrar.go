@@ -9,6 +9,8 @@ import (
 	"github.com/desmos-labs/juno/modules/registrar"
 	juno "github.com/desmos-labs/juno/types"
 
+	"github.com/forbole/bdjuno/modules/forbolex/distribution"
+
 	forbolexdb "github.com/forbole/bdjuno/database/forbolex"
 	"github.com/forbole/bdjuno/modules/common/auth"
 	"github.com/forbole/bdjuno/modules/common/pricefeed"
@@ -41,6 +43,7 @@ func (r *Registrar) BuildModules(
 		auth.NewModule(parser, encodingConfig, utils.MustCreateGrpcConnection(cfg), forboleXDB),
 		bank.NewModule(parser, encodingConfig, utils.MustCreateGrpcConnection(cfg), forboleXDB),
 		staking.NewModule(encodingConfig, utils.MustCreateGrpcConnection(cfg), forboleXDB),
+		distribution.NewModule(utils.MustCreateGrpcConnection(cfg), forboleXDB),
 		pricefeed.NewModule(encodingConfig, forboleXDB),
 	}
 }

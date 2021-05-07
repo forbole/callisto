@@ -13,7 +13,7 @@ var desmosMessageAddressesParser = junomessages.JoinMessageParsers(
 	profilesMessageAddressesParser,
 )
 
-// profilesMessageAddressesParser represents a MessageAddressesParser for the bigdipper/profiles module
+// profilesMessageAddressesParser represents a MessageAddressesParser for the x/profiles module
 func profilesMessageAddressesParser(_ codec.Marshaler, cosmosMsg sdk.Msg) ([]string, error) {
 	switch msg := cosmosMsg.(type) {
 

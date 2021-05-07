@@ -4,12 +4,64 @@ import (
 	"context"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/codec"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	juno "github.com/desmos-labs/juno/types"
 
 	"github.com/forbole/bdjuno/modules/common/utils"
 	"github.com/forbole/bdjuno/types"
 )
+
+// StoreValidatorFromMsgCreateValidator handles properly a MsgCreateValidator instance by
+// saving into the database all the data associated to such validator
+func StoreValidatorFromMsgCreateValidator(
+	height int64, msg *stakingtypes.MsgCreateValidator, cdc codec.Marshaler, db DB,
+) error {
+	var pubKey cryptotypes.PubKey
+	err := cdc.UnpackAny(msg.Pubkey, &pubKey)
+	if err != nil {
+		return err
+	}
+
+	operatorAddr, err := sdk.ValAddressFromBech32(msg.ValidatorAddress)
+	if err != nil {
+		return err
+	}
+
+	stakingValidator, err := stakingtypes.NewValidator(operatorAddr, pubKey, msg.Description)
+	if err != nil {
+		return err
+	}
+
+	validator, err := ConvertValidator(cdc, stakingValidator, height)
+	if err != nil {
+		return err
+	}
+
+	params, err := db.GetStakingParams()
+	if err != nil {
+		return err
+	}
+
+	// Save the validator
+	err = db.SaveValidators([]types.Validator{validator})
+	if err != nil {
+		return err
+	}
+
+	// Save the first self-delegation
+	return db.SaveDelegations([]types.Delegation{
+		types.NewDelegation(
+			msg.DelegatorAddress,
+			msg.ValidatorAddress,
+			sdk.NewCoin(params.BondName, msg.MinSelfDelegation),
+			height,
+		),
+	})
+}
 
 // StoreDelegationFromMessage handles a MsgDelegate and saves the delegation inside the database
 func StoreDelegationFromMessage(

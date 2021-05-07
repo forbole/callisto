@@ -5,6 +5,7 @@ import (
 	"github.com/desmos-labs/juno/cmd"
 	initcmd "github.com/desmos-labs/juno/cmd/init"
 	parsecmd "github.com/desmos-labs/juno/cmd/parse"
+
 	"github.com/forbole/bdjuno/types/config"
 
 	"github.com/forbole/bdjuno/database"

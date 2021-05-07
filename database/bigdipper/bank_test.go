@@ -4,6 +4,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/lib/pq"
 
+	"github.com/forbole/bdjuno/database/types"
+
 	"github.com/forbole/bdjuno/types"
 
 	dbtypes "github.com/forbole/bdjuno/database/bigdipper/types"
@@ -37,7 +39,7 @@ func (suite *DbTestSuite) TestSaveAccountBalance() {
 	expected := []dbtypes.AccountBalanceRow{
 		dbtypes.NewAccountBalanceRow(
 			address1.String(),
-			dbtypes.NewDbCoins(sdk.NewCoins(
+			types.NewDbCoins(sdk.NewCoins(
 				sdk.NewCoin("desmos", sdk.NewInt(10)),
 				sdk.NewCoin("uatom", sdk.NewInt(20)),
 			)),
@@ -45,7 +47,7 @@ func (suite *DbTestSuite) TestSaveAccountBalance() {
 		),
 		dbtypes.NewAccountBalanceRow(
 			address2.String(),
-			dbtypes.NewDbCoins(sdk.NewCoins(
+			types.NewDbCoins(sdk.NewCoins(
 				sdk.NewCoin("uatom", sdk.NewInt(100)),
 			)),
 			10,
@@ -85,7 +87,7 @@ func (suite *DbTestSuite) TestSaveAccountBalance() {
 	expected = []dbtypes.AccountBalanceRow{
 		dbtypes.NewAccountBalanceRow(
 			address1.String(),
-			dbtypes.NewDbCoins(sdk.NewCoins(
+			types.NewDbCoins(sdk.NewCoins(
 				sdk.NewCoin("desmos", sdk.NewInt(10)),
 				sdk.NewCoin("uatom", sdk.NewInt(20)),
 			)),
@@ -93,7 +95,7 @@ func (suite *DbTestSuite) TestSaveAccountBalance() {
 		),
 		dbtypes.NewAccountBalanceRow(
 			address2.String(),
-			dbtypes.NewDbCoins(sdk.NewCoins(
+			types.NewDbCoins(sdk.NewCoins(
 				sdk.NewCoin("uatom", sdk.NewInt(100)),
 				sdk.NewCoin("desmos", sdk.NewInt(200)),
 			)),
@@ -121,7 +123,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSupply() {
 	suite.Require().NoError(err)
 
 	// Verify the data
-	expected := dbtypes.NewSupplyRow(dbtypes.NewDbCoins(original), 10)
+	expected := dbtypes.NewSupplyRow(types.NewDbCoins(original), 10)
 
 	var rows []dbtypes.SupplyRow
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM supply`)
@@ -154,7 +156,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSupply() {
 	suite.Require().NoError(err)
 
 	// Verify the data
-	expected = dbtypes.NewSupplyRow(dbtypes.NewDbCoins(coins), 10)
+	expected = dbtypes.NewSupplyRow(types.NewDbCoins(coins), 10)
 
 	rows = []dbtypes.SupplyRow{}
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM supply`)
@@ -170,7 +172,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSupply() {
 	suite.Require().NoError(err)
 
 	// Verify the data
-	expected = dbtypes.NewSupplyRow(dbtypes.NewDbCoins(coins), 20)
+	expected = dbtypes.NewSupplyRow(types.NewDbCoins(coins), 20)
 
 	rows = []dbtypes.SupplyRow{}
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM supply`)
@@ -184,7 +186,7 @@ func (suite *DbTestSuite) TestBigDipperDb_GetTokenNames() {
 		sdk.NewCoin("desmos", sdk.NewInt(10000)),
 		sdk.NewCoin("uatom", sdk.NewInt(15)),
 	)
-	_, err := suite.database.Sql.Exec("INSERT INTO supply(coins,height) VALUES ($1,$2) ", pq.Array(dbtypes.NewDbCoins(coins)), 10)
+	_, err := suite.database.Sql.Exec("INSERT INTO supply(coins,height) VALUES ($1,$2) ", pq.Array(types.NewDbCoins(coins)), 10)
 	suite.Require().NoError(err)
 	expected := [2]string{"desmos", "uatom"}
 	result, err := suite.database.GetTokenNames()

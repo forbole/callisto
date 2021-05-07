@@ -1,22 +1,22 @@
 package bigdipper_test
 
 import (
-	dbtypes "github.com/forbole/bdjuno/database/bigdipper/types"
-	bstakingtypes "github.com/forbole/bdjuno/modules/bigdipper/staking/types"
+	types2 "github.com/forbole/bdjuno/database/types"
+	"github.com/forbole/bdjuno/types"
 )
 
 func (suite *DbTestSuite) TestSaveStakingParams() {
-	params := bstakingtypes.NewStakingParams("uatom")
+	params := types.NewStakingParams("uatom")
 
 	err := suite.database.SaveStakingParams(params)
 	suite.Require().NoError(err)
 
-	var rows []dbtypes.StakingParamsRow
+	var rows []types2.StakingParamsRow
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM staking_params`)
 	suite.Require().NoError(err)
 
 	suite.Require().Len(rows, 1)
-	suite.Require().True(rows[0].Equal(dbtypes.NewStakingParamsRow("uatom")))
+	suite.Require().True(rows[0].Equal(types2.NewStakingParamsRow("uatom")))
 }
 
 func (suite *DbTestSuite) TestGetStakingParams() {

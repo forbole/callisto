@@ -13,7 +13,7 @@ import (
 
 var _ modules.Module = &Module{}
 
-// Module represent bigdipper/slashing module
+// Module represent x/slashing module
 type Module struct {
 	slashingClient slashingtypes.QueryClient
 	db             *bigdipperdb.Db

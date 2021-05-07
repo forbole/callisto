@@ -13,7 +13,6 @@ import (
 	bstakingtypes "github.com/forbole/bdjuno/modules/bigdipper/staking/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -52,33 +51,11 @@ func HandleMsg(
 // ---------------------------------------------------------------------------------------------------------------------
 
 // handleMsgCreateValidator handles properly a MsgCreateValidator instance by
-// saving into the bigdipper all the data associated to such validator
+// saving into the database all the data associated to such validator
 func handleMsgCreateValidator(
 	height int64, msg *stakingtypes.MsgCreateValidator, cdc codec.Marshaler, db *bigdipperdb.Db,
 ) error {
-	var pubKey cryptotypes.PubKey
-	err := cdc.UnpackAny(msg.Pubkey, &pubKey)
-	if err != nil {
-		return err
-	}
-
-	operatorAddr, err := sdk.ValAddressFromBech32(msg.ValidatorAddress)
-	if err != nil {
-		return err
-	}
-
-	stakingValidator, err := stakingtypes.NewValidator(operatorAddr, pubKey, msg.Description)
-	if err != nil {
-		return err
-	}
-
-	validator, err := bstakingcommon.ConvertValidator(cdc, stakingValidator, height)
-	if err != nil {
-		return err
-	}
-
-	// Save validator
-	err = db.SaveValidatorData(validator)
+	err := staking.StoreValidatorFromMsgCreateValidator(height, msg, cdc, db)
 	if err != nil {
 		return err
 	}
@@ -137,7 +114,7 @@ func handleEditValidator(
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-// handleMsgBeginRedelegate handles a MsgBeginRedelegate storing the data inside the bigdipper
+// handleMsgBeginRedelegate handles a MsgBeginRedelegate storing the data inside the database
 func handleMsgBeginRedelegate(
 	tx *juno.Tx, index int, msg *stakingtypes.MsgBeginRedelegate,
 	client stakingtypes.QueryClient, db *bigdipperdb.Db,
@@ -157,7 +134,7 @@ func handleMsgBeginRedelegate(
 	return bstakingcommon.UpdateDelegationsAndReplaceExisting(tx.Height, msg.DelegatorAddress, client, db)
 }
 
-// handleMsgUndelegate handles a MsgUndelegate storing the data inside the bigdipper
+// handleMsgUndelegate handles a MsgUndelegate storing the data inside the database
 func handleMsgUndelegate(
 	tx *juno.Tx, index int, msg *stakingtypes.MsgUndelegate,
 	stakingClient stakingtypes.QueryClient, bankClient banktypes.QueryClient, db *bigdipperdb.Db,

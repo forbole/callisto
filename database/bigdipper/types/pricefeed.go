@@ -20,7 +20,7 @@ type TokenRow struct {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// TokenPriceRow represent a row of the table token_price in the bigdipper
+// TokenPriceRow represent a row of the table token_price in the database
 type TokenPriceRow struct {
 	ID        string    `db:"id"`
 	Name      string    `db:"unit_name"`

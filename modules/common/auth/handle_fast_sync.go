@@ -10,7 +10,7 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
-// FastSync downloads the bigdipper/auth state at the given height, and stores it inside the bigdipper
+// FastSync downloads the x/auth state at the given height, and stores it inside the database
 func FastSync(height int64, client authtypes.QueryClient, db DB) error {
 	err := updateAccounts(height, client, db)
 	if err != nil {
@@ -20,7 +20,7 @@ func FastSync(height int64, client authtypes.QueryClient, db DB) error {
 	return nil
 }
 
-// updateAccounts downloads all the accounts at the given height, and stores them inside the bigdipper
+// updateAccounts downloads all the accounts at the given height, and stores them inside the database
 func updateAccounts(height int64, client authtypes.QueryClient, db DB) error {
 	header := utils2.GetHeightRequestHeader(height)
 

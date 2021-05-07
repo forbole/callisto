@@ -1,14 +1,16 @@
 package types
 
+import "github.com/forbole/bdjuno/database/types"
+
 // SupplyRow represents a single row inside the "supply" table
 type SupplyRow struct {
-	OneRowID bool     `db:"one_row_id"`
-	Coins    *DbCoins `db:"coins"`
-	Height   int64    `db:"height"`
+	OneRowID bool           `db:"one_row_id"`
+	Coins    *types.DbCoins `db:"coins"`
+	Height   int64          `db:"height"`
 }
 
 // NewSupplyRow allows to easily create a new NewSupplyRow
-func NewSupplyRow(coins DbCoins, height int64) SupplyRow {
+func NewSupplyRow(coins types.DbCoins, height int64) SupplyRow {
 	return SupplyRow{
 		OneRowID: true,
 		Coins:    &coins,

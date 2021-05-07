@@ -1,20 +1,24 @@
 package types
 
-import "time"
+import (
+	"time"
+
+	"github.com/forbole/bdjuno/database/types"
+)
 
 // ________________________________________________
 
 // DelegationRow represents a single delegation table row
 type DelegationRow struct {
-	ID               string `db:"id"`
-	ValidatorAddress string `db:"validator_address"`
-	DelegatorAddress string `db:"delegator_address"`
-	Amount           DbCoin `db:"amount"`
-	Height           int64  `db:"height"`
+	ID               string       `db:"id"`
+	ValidatorAddress string       `db:"validator_address"`
+	DelegatorAddress string       `db:"delegator_address"`
+	Amount           types.DbCoin `db:"amount"`
+	Height           int64        `db:"height"`
 }
 
 // NewDelegationRow allows to build a new DelegationRow
-func NewDelegationRow(delegator, consAddr string, amount DbCoin, height int64) DelegationRow {
+func NewDelegationRow(delegator, consAddr string, amount types.DbCoin, height int64) DelegationRow {
 	return DelegationRow{
 		ValidatorAddress: consAddr,
 		DelegatorAddress: delegator,
@@ -35,16 +39,16 @@ func (v DelegationRow) Equal(w DelegationRow) bool {
 
 // UnbondingDelegationRow represents a single row of the unbonding_delegation table
 type UnbondingDelegationRow struct {
-	ConsensusAddress    string    `db:"validator_address"`
-	DelegatorAddress    string    `db:"delegator_address"`
-	Amount              DbCoin    `db:"amount"`
-	CompletionTimestamp time.Time `db:"completion_timestamp"`
-	Height              int64     `db:"height"`
+	ConsensusAddress    string       `db:"validator_address"`
+	DelegatorAddress    string       `db:"delegator_address"`
+	Amount              types.DbCoin `db:"amount"`
+	CompletionTimestamp time.Time    `db:"completion_timestamp"`
+	Height              int64        `db:"height"`
 }
 
 // NewUnbondingDelegationRow allows to build a new UnbondingDelegationRow instance
 func NewUnbondingDelegationRow(
-	delegator, consAddr string, amount DbCoin, completionTimestamp time.Time, height int64,
+	delegator, consAddr string, amount types.DbCoin, completionTimestamp time.Time, height int64,
 ) UnbondingDelegationRow {
 	return UnbondingDelegationRow{
 		ConsensusAddress:    consAddr,
@@ -66,19 +70,19 @@ func (v UnbondingDelegationRow) Equal(w UnbondingDelegationRow) bool {
 
 // ________________________________________________
 
-// RedelegationRow represents a single row of the redelegation bigdipper table
+// RedelegationRow represents a single row of the redelegation database table
 type RedelegationRow struct {
-	DelegatorAddress    string    `db:"delegator_address"`
-	SrcValidatorAddress string    `db:"src_validator_address"`
-	DstValidatorAddress string    `db:"dst_validator_address"`
-	Amount              DbCoin    `db:"amount"`
-	CompletionTime      time.Time `db:"completion_time"`
-	Height              int64     `db:"height"`
+	DelegatorAddress    string       `db:"delegator_address"`
+	SrcValidatorAddress string       `db:"src_validator_address"`
+	DstValidatorAddress string       `db:"dst_validator_address"`
+	Amount              types.DbCoin `db:"amount"`
+	CompletionTime      time.Time    `db:"completion_time"`
+	Height              int64        `db:"height"`
 }
 
 // NewRedelegationRow allows to easily build a new RedelegationRow instance
 func NewRedelegationRow(
-	delegator, srcConsAddr, dstConsAddr string, amount DbCoin, completionTime time.Time, height int64,
+	delegator, srcConsAddr, dstConsAddr string, amount types.DbCoin, completionTime time.Time, height int64,
 ) RedelegationRow {
 	return RedelegationRow{
 		DelegatorAddress:    delegator,
@@ -90,7 +94,7 @@ func NewRedelegationRow(
 	}
 }
 
-// Equal tells whether v and w represent the same bigdipper rows
+// Equal tells whether v and w represent the same database rows
 func (v RedelegationRow) Equal(w RedelegationRow) bool {
 	return v.DelegatorAddress == w.DelegatorAddress &&
 		v.SrcValidatorAddress == w.SrcValidatorAddress &&

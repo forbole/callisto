@@ -28,7 +28,7 @@ var (
 	_ modules.MessageModule = &Module{}
 )
 
-// Module represents the bigdipper/bank module
+// Module represents the x/bank module
 type Module struct {
 	messageParser  junomessages.MessageAddressesParser
 	encodingConfig *params.EncodingConfig

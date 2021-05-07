@@ -26,13 +26,13 @@ func ToNullString(value string) sql.NullString {
 
 // _________________________________________________________
 
-// DbCoin represents the information stored inside the bigdipper about a single coin
+// DbCoin represents the information stored inside the database about a single coin
 type DbCoin struct {
 	Denom  string
 	Amount string
 }
 
-// NewCoin builds a DbCoin starting from an SDK Coin
+// NewDbCoin builds a DbCoin starting from an SDK Coin
 func NewDbCoin(coin sdk.Coin) DbCoin {
 	return DbCoin{
 		Denom:  coin.Denom,
@@ -124,13 +124,13 @@ func (coins *DbCoins) Scan(src interface{}) error {
 
 //_______________________________________________________
 
-// DbDecCoin represents the information stored inside the bigdipper about a single coin
+// DbDecCoin represents the information stored inside the database about a single coin
 type DbDecCoin struct {
 	Denom  string
 	Amount string
 }
 
-// NewCoin builds a DbDecCoin starting from an SDK Coin
+// NewDbDecCoin builds a DbDecCoin starting from an SDK Coin
 func NewDbDecCoin(coin sdk.DecCoin) DbDecCoin {
 	return DbDecCoin{
 		Denom:  coin.Denom,

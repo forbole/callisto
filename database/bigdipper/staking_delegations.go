@@ -3,14 +3,14 @@ package bigdipper
 import (
 	"fmt"
 
-	"github.com/forbole/bdjuno/types"
+	dbtypes "github.com/forbole/bdjuno/database/types"
 
-	dbtypes "github.com/forbole/bdjuno/database/bigdipper/types"
+	"github.com/forbole/bdjuno/types"
 )
 
-// SaveDelegations stores inside the bigdipper the given delegations data.
+// SaveDelegations stores inside the database the given delegations data.
 // It assumes that the validators addresses are already present inside
-// the proper bigdipper table.
+// the proper database table.
 // TIP: To store the validators data call SaveValidators.
 func (db *Db) SaveDelegations(delegations []types.Delegation) error {
 	if len(delegations) == 0 {
@@ -87,9 +87,9 @@ func (db *Db) GetDelegators() ([]string, error) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// SaveRedelegations saves the given redelegations inside the bigdipper.
+// SaveRedelegations saves the given redelegations inside the database.
 // It assumes that all the validators as well as all the delegators addresses are
-// already present inside the proper tables of the bigdipper.
+// already present inside the proper tables of the database.
 // To store the validators data call SaveValidatorData(s).
 // To store the account data call SaveAccount.
 func (db *Db) SaveRedelegations(redelegations []types.Redelegation) error {
@@ -155,7 +155,7 @@ WHERE redelegation.height <= excluded.height`
 	return err
 }
 
-// DeleteRedelegation removes the given redelegation from the bigdipper
+// DeleteRedelegation removes the given redelegation from the database
 func (db *Db) DeleteRedelegation(redelegation types.Redelegation) error {
 	srcVal, err := db.GetValidator(redelegation.SrcValidator)
 	if err != nil {
@@ -181,9 +181,9 @@ WHERE delegator_address = $1
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// SaveUnbondingDelegations saves the given unbonding delegations into the bigdipper.
+// SaveUnbondingDelegations saves the given unbonding delegations into the database.
 // It assumes that all the validators as well as all the delegators addresses are
-// already present inside the proper tables of the bigdipper.
+// already present inside the proper tables of the database.
 // To store the validators data call SaveValidatorData(s).
 // To store the account data call SaveAccount.
 func (db *Db) SaveUnbondingDelegations(delegations []types.UnbondingDelegation) error {
@@ -241,7 +241,7 @@ WHERE unbonding_delegation.height <= excluded.height`
 	return err
 }
 
-// DeleteUnbondingDelegation removes the given unbonding delegation from the bigdipper
+// DeleteUnbondingDelegation removes the given unbonding delegation from the database
 func (db *Db) DeleteUnbondingDelegation(delegation types.UnbondingDelegation) error {
 	val, err := db.GetValidator(delegation.ValidatorOperAddr)
 	if err != nil {

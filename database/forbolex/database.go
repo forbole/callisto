@@ -1,4 +1,4 @@
-package bigdipper
+package forbolex
 
 import (
 	"fmt"

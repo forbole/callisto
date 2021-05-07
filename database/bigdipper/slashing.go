@@ -6,7 +6,7 @@ import (
 	bslashingtypes "github.com/forbole/bdjuno/modules/bigdipper/slashing/types"
 )
 
-// SaveValidatorsSigningInfos saves the given infos inside the bigdipper
+// SaveValidatorsSigningInfos saves the given infos inside the database
 func (db *Db) SaveValidatorsSigningInfos(infos []bslashingtypes.ValidatorSigningInfo) error {
 	stmt := `
 INSERT INTO validator_signing_info 

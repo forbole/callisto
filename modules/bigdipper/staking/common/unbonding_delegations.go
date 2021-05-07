@@ -102,7 +102,7 @@ func getUnbondingDelegations(
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// DeleteUnbondingDelegation returns a function that when called deletes the given delegation from the bigdipper
+// DeleteUnbondingDelegation returns a function that when called deletes the given delegation from the database
 func DeleteUnbondingDelegation(delegation types.UnbondingDelegation, db *bigdipperdb.Db) func() {
 	return func() {
 		err := db.DeleteUnbondingDelegation(delegation)

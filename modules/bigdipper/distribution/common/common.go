@@ -9,7 +9,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// UpdateCommunityPool fetch total amount of coins in the system from RPC and store it into bigdipper
+// UpdateCommunityPool fetch total amount of coins in the system from RPC and store it into database
 func UpdateCommunityPool(height int64, client distrtypes.QueryClient, db *bigdipperdb.Db) error {
 	log.Debug().Str("module", "distribution").Int64("height", height).Msg("getting community pool")
 
@@ -18,6 +18,6 @@ func UpdateCommunityPool(height int64, client distrtypes.QueryClient, db *bigdip
 		return err
 	}
 
-	// Store the signing infos into the bigdipper
+	// Store the signing infos into the database
 	return db.SaveCommunityPool(res.Pool, height)
 }

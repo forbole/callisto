@@ -1,9 +1,8 @@
-package common
+package distribution
 
 import (
 	"context"
 
-	bigdipperdb "github.com/forbole/bdjuno/database/bigdipper"
 	utils2 "github.com/forbole/bdjuno/modules/common/utils"
 	"github.com/forbole/bdjuno/types"
 
@@ -12,7 +11,7 @@ import (
 )
 
 // UpdateDelegatorsRewardsAmounts updates the delegators commission amounts
-func UpdateDelegatorsRewardsAmounts(height int64, client distrtypes.QueryClient, db *bigdipperdb.Db) {
+func UpdateDelegatorsRewardsAmounts(height int64, client distrtypes.QueryClient, db DB) {
 	log.Debug().Str("module", "distribution").Int64("height", height).
 		Msg("updating delegators rewards")
 
@@ -36,7 +35,7 @@ func UpdateDelegatorsRewardsAmounts(height int64, client distrtypes.QueryClient,
 }
 
 func getDelegatorCommission(
-	height int64, delegator string, client distrtypes.QueryClient, db *bigdipperdb.Db,
+	height int64, delegator string, client distrtypes.QueryClient, db DB,
 ) {
 	header := utils2.GetHeightRequestHeader(height)
 
@@ -66,18 +65,9 @@ func getDelegatorCommission(
 
 	var rewards = make([]types.DelegatorRewardAmount, len(rewardsRes.Rewards))
 	for index, reward := range rewardsRes.Rewards {
-		consAddr, err := db.GetValidatorConsensusAddress(reward.ValidatorAddress)
-		if err != nil {
-			log.Error().Str("module", "distribution").Err(err).
-				Int64("height", height).Str("delegator", delegator).
-				Msg("error while getting delegator reward")
-			return
-		}
-
-		// Send the reward amount back
 		rewards[index] = types.NewDelegatorRewardAmount(
 			delegator,
-			consAddr.String(),
+			reward.ValidatorAddress,
 			withdrawAddressRes.WithdrawAddress,
 			reward.Reward,
 			height,

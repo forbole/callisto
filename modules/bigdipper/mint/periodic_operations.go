@@ -28,7 +28,7 @@ func RegisterPeriodicOps(scheduler *gocron.Scheduler, minClient minttypes.QueryC
 }
 
 // updateInflation fetches from the REST APIs the latest value for the
-// inflation, and saves it inside the bigdipper.
+// inflation, and saves it inside the database.
 func updateInflation(mintClient minttypes.QueryClient, db *bigdipperdb.Db) error {
 	log.Debug().
 		Str("module", "mint").

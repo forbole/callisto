@@ -3,6 +3,8 @@ package bigdipper_test
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/forbole/bdjuno/database/types"
+
 	"github.com/forbole/bdjuno/types"
 
 	dbtypes "github.com/forbole/bdjuno/database/bigdipper/types"
@@ -15,7 +17,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveCommunityPool() {
 	suite.Require().NoError(err)
 
 	// Verify data
-	expected := dbtypes.NewCommunityPoolRow(dbtypes.NewDbDecCoins(original), 10)
+	expected := dbtypes.NewCommunityPoolRow(types.NewDbDecCoins(original), 10)
 	var rows []dbtypes.CommunityPoolRow
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM community_pool`)
 	suite.Require().NoError(err)
@@ -30,7 +32,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveCommunityPool() {
 	suite.Require().NoError(err)
 
 	// Verify data
-	expected = dbtypes.NewCommunityPoolRow(dbtypes.NewDbDecCoins(original), 10)
+	expected = dbtypes.NewCommunityPoolRow(types.NewDbDecCoins(original), 10)
 	rows = []dbtypes.CommunityPoolRow{}
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM community_pool`)
 	suite.Require().NoError(err)
@@ -45,7 +47,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveCommunityPool() {
 	suite.Require().NoError(err)
 
 	// Verify data
-	expected = dbtypes.NewCommunityPoolRow(dbtypes.NewDbDecCoins(coins), 10)
+	expected = dbtypes.NewCommunityPoolRow(types.NewDbDecCoins(coins), 10)
 	rows = []dbtypes.CommunityPoolRow{}
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM community_pool`)
 	suite.Require().NoError(err)
@@ -60,7 +62,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveCommunityPool() {
 	suite.Require().NoError(err)
 
 	// Verify data
-	expected = dbtypes.NewCommunityPoolRow(dbtypes.NewDbDecCoins(coins), 11)
+	expected = dbtypes.NewCommunityPoolRow(types.NewDbDecCoins(coins), 11)
 	rows = []dbtypes.CommunityPoolRow{}
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM community_pool`)
 	suite.Require().NoError(err)
@@ -77,12 +79,17 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommissionAmount() {
 
 	// Save the data
 	original := sdk.NewDecCoins(sdk.NewDecCoin("atom", sdk.NewInt(100)))
-	amount := types.NewValidatorCommissionAmount(validator.GetConsAddr(), original, 10)
+	amount := types.NewValidatorCommissionAmount(
+		validator.GetOperator(),
+		validator.GetSelfDelegateAddress(),
+		original,
+		10,
+	)
 	err := suite.database.SaveValidatorCommissionAmount(amount)
 	suite.Require().NoError(err)
 
 	// Verify the data
-	originalRow := dbtypes.NewValidatorCommissionAmountRow(validator.GetConsAddr(), dbtypes.NewDbDecCoins(original), 10)
+	originalRow := dbtypes.NewValidatorCommissionAmountRow(validator.GetConsAddr(), types.NewDbDecCoins(original), 10)
 	var rows []dbtypes.ValidatorCommissionAmountRow
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM validator_commission_amount`)
 	suite.Require().NoError(err)
@@ -93,7 +100,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommissionAmount() {
 
 	// Try updating with lower height
 	coins := sdk.NewDecCoins(sdk.NewDecCoin("atom", sdk.NewInt(120)))
-	amount = types.NewValidatorCommissionAmount(validator.GetConsAddr(), coins, 9)
+	amount = types.NewValidatorCommissionAmount(validator.GetOperator(), validator.GetSelfDelegateAddress(), coins, 9)
 	err = suite.database.SaveValidatorCommissionAmount(amount)
 	suite.Require().NoError(err)
 
@@ -108,12 +115,12 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommissionAmount() {
 
 	// Try updating with same height
 	coins = sdk.NewDecCoins(sdk.NewDecCoin("atom", sdk.NewInt(200)))
-	amount = types.NewValidatorCommissionAmount(validator.GetConsAddr(), coins, 10)
+	amount = types.NewValidatorCommissionAmount(validator.GetOperator(), validator.GetSelfDelegateAddress(), coins, 10)
 	err = suite.database.SaveValidatorCommissionAmount(amount)
 	suite.Require().NoError(err)
 
 	// Verify the data
-	expected := dbtypes.NewValidatorCommissionAmountRow(validator.GetConsAddr(), dbtypes.NewDbDecCoins(coins), 10)
+	expected := dbtypes.NewValidatorCommissionAmountRow(validator.GetConsAddr(), types.NewDbDecCoins(coins), 10)
 	rows = []dbtypes.ValidatorCommissionAmountRow{}
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM validator_commission_amount`)
 	suite.Require().NoError(err)
@@ -124,12 +131,12 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommissionAmount() {
 
 	// Try updating with higher height
 	coins = sdk.NewDecCoins(sdk.NewDecCoin("atom", sdk.NewInt(500)))
-	amount = types.NewValidatorCommissionAmount(validator.GetConsAddr(), coins, 11)
+	amount = types.NewValidatorCommissionAmount(validator.GetOperator(), validator.GetSelfDelegateAddress(), coins, 11)
 	err = suite.database.SaveValidatorCommissionAmount(amount)
 	suite.Require().NoError(err)
 
 	// Verify the data
-	expected = dbtypes.NewValidatorCommissionAmountRow(validator.GetConsAddr(), dbtypes.NewDbDecCoins(coins), 11)
+	expected = dbtypes.NewValidatorCommissionAmountRow(validator.GetConsAddr(), types.NewDbDecCoins(coins), 11)
 	rows = []dbtypes.ValidatorCommissionAmountRow{}
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM validator_commission_amount`)
 	suite.Require().NoError(err)
@@ -155,21 +162,21 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDelegatorsRewardsAmounts() {
 	rewards := []types.DelegatorRewardAmount{
 		types.NewDelegatorRewardAmount(
 			delegator1.String(),
-			validator1.GetConsAddr(),
+			validator1.GetOperator(),
 			delegator1.String(),
 			sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(100))),
 			10,
 		),
 		types.NewDelegatorRewardAmount(
 			delegator1.String(),
-			validator2.GetConsAddr(),
+			validator2.GetOperator(),
 			delegator1.String(),
 			sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(200))),
 			11,
 		),
 		types.NewDelegatorRewardAmount(
 			delegator2.String(),
-			validator2.GetConsAddr(),
+			validator2.GetOperator(),
 			delegator2.String(),
 			sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(200))),
 			12,
@@ -184,21 +191,21 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDelegatorsRewardsAmounts() {
 			delegator1.String(),
 			validator1.GetConsAddr(),
 			delegator1.String(),
-			dbtypes.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(100)))),
+			types.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(100)))),
 			10,
 		),
 		dbtypes.NewDelegationRewardRow(
 			delegator1.String(),
 			validator2.GetConsAddr(),
 			delegator1.String(),
-			dbtypes.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(200)))),
+			types.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(200)))),
 			11,
 		),
 		dbtypes.NewDelegationRewardRow(
 			delegator2.String(),
 			validator2.GetConsAddr(),
 			delegator2.String(),
-			dbtypes.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(200)))),
+			types.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(200)))),
 			12,
 		),
 	}
@@ -218,21 +225,21 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDelegatorsRewardsAmounts() {
 	rewards = []types.DelegatorRewardAmount{
 		types.NewDelegatorRewardAmount(
 			delegator1.String(),
-			validator1.GetConsAddr(),
+			validator1.GetOperator(),
 			delegator1.String(),
 			sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(120))),
 			10,
 		),
 		types.NewDelegatorRewardAmount(
 			delegator1.String(),
-			validator2.GetConsAddr(),
+			validator2.GetOperator(),
 			delegator1.String(),
 			sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(180))),
 			9,
 		),
 		types.NewDelegatorRewardAmount(
 			delegator2.String(),
-			validator2.GetConsAddr(),
+			validator2.GetOperator(),
 			delegator2.String(),
 			sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(50))),
 			13,
@@ -247,21 +254,21 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDelegatorsRewardsAmounts() {
 			delegator1.String(),
 			validator1.GetConsAddr(),
 			delegator1.String(),
-			dbtypes.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(120)))),
+			types.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(120)))),
 			10,
 		),
 		dbtypes.NewDelegationRewardRow(
 			delegator1.String(),
 			validator2.GetConsAddr(),
 			delegator1.String(),
-			dbtypes.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(200)))),
+			types.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(200)))),
 			11,
 		),
 		dbtypes.NewDelegationRewardRow(
 			delegator2.String(),
 			validator2.GetConsAddr(),
 			delegator2.String(),
-			dbtypes.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(50)))),
+			types.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(50)))),
 			13,
 		),
 	}

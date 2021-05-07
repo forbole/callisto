@@ -3,6 +3,8 @@ package bigdipper_test
 import (
 	tmtypes "github.com/tendermint/tendermint/proto/tendermint/types"
 
+	"github.com/forbole/bdjuno/types"
+
 	bstakingtypes "github.com/forbole/bdjuno/modules/bigdipper/staking/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -72,7 +74,7 @@ func (suite *DbTestSuite) TestSaveValidators() {
 	suite.getAccount("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 
 	// Insert the data
-	validators := []bstakingtypes.Validator{
+	validators := []types.Validator{
 		dbtypes.NewValidatorData(
 			"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 			"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
@@ -137,7 +139,7 @@ func (suite *DbTestSuite) TestSaveValidators() {
 	// --------------------------------------------------------------------------------------------------------------
 
 	// Update the data
-	validators = []bstakingtypes.Validator{
+	validators = []types.Validator{
 		dbtypes.NewValidatorData(
 			"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 			"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",

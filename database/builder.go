@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+
 	"github.com/forbole/bdjuno/types/config"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"

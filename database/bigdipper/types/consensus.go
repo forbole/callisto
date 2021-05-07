@@ -74,7 +74,7 @@ func (r AverageTimeRow) Equal(s AverageTimeRow) bool {
 
 // -------------------------------------------------------------------------------------------------------------------
 
-// BlockRow represents a single block row stored inside the bigdipper
+// BlockRow represents a single block row stored inside the database
 type BlockRow struct {
 	Height          int64          `db:"height"`
 	Hash            string         `db:"hash"`

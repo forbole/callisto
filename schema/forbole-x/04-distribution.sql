@@ -1,4 +1,10 @@
-CREATE TABLE delegation_reward
+CREATE TYPE DEC_COIN AS
+(
+    denom  TEXT,
+    amount TEXT
+);
+
+CREATE TABLE delegation_reward_history
 (
     validator_address TEXT       NOT NULL,
     delegator_address TEXT       NOT NULL REFERENCES account (address),
@@ -10,7 +16,7 @@ CREATE TABLE delegation_reward
 CREATE INDEX delegation_reward_delegator_address_index ON delegation_reward (delegator_address);
 CREATE INDEX delegation_reward_height_index ON delegation_reward (height);
 
-CREATE TABLE validator_commission_amount
+CREATE TABLE validator_commission_amount_history
 (
     self_delegate_address TEXT       NOT NULL,
     amount                DEC_COIN[] NOT NULL,

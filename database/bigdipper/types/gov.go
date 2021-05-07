@@ -1,6 +1,10 @@
 package types
 
-import "time"
+import (
+	"time"
+
+	"github.com/forbole/bdjuno/database/types"
+)
 
 // ProposalRow represents a single row inside the proposal table
 type ProposalRow struct {
@@ -131,17 +135,17 @@ func (w VoteRow) Equals(v VoteRow) bool {
 
 // DepositRow represents a single row inside the deposit table
 type DepositRow struct {
-	ProposalID int64   `db:"proposal_id"`
-	Depositor  string  `db:"depositor_address"`
-	Amount     DbCoins `db:"amount"`
-	Height     int64   `db:"height"`
+	ProposalID int64         `db:"proposal_id"`
+	Depositor  string        `db:"depositor_address"`
+	Amount     types.DbCoins `db:"amount"`
+	Height     int64         `db:"height"`
 }
 
 // NewDepositRow allows to easily create a new NewDepositRow
 func NewDepositRow(
 	proposalID int64,
 	depositor string,
-	amount DbCoins,
+	amount types.DbCoins,
 	height int64,
 ) DepositRow {
 	return DepositRow{

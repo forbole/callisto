@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/forbole/bdjuno/database/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -158,12 +160,12 @@ func NewValidatorDescriptionRow(
 ) ValidatorDescriptionRow {
 	return ValidatorDescriptionRow{
 		ValAddress:      valAddress,
-		Moniker:         ToNullString(moniker),
-		Identity:        ToNullString(identity),
-		AvatarURL:       ToNullString(avatarURL),
-		Website:         ToNullString(website),
-		SecurityContact: ToNullString(securityContact),
-		Details:         ToNullString(details),
+		Moniker:         types.ToNullString(moniker),
+		Identity:        types.ToNullString(identity),
+		AvatarURL:       types.ToNullString(avatarURL),
+		Website:         types.ToNullString(website),
+		SecurityContact: types.ToNullString(securityContact),
+		Details:         types.ToNullString(details),
 		Height:          height,
 	}
 }
@@ -181,7 +183,7 @@ func (w ValidatorDescriptionRow) Equals(v ValidatorDescriptionRow) bool {
 
 // ________________________________________________
 
-// ValidatorCommissionRow represents a single row of the validator_commission bigdipper table
+// ValidatorCommissionRow represents a single row of the validator_commission database table
 type ValidatorCommissionRow struct {
 	OperatorAddress   string         `db:"validator_address"`
 	Commission        sql.NullString `db:"commission"`
@@ -195,8 +197,8 @@ func NewValidatorCommissionRow(
 ) ValidatorCommissionRow {
 	return ValidatorCommissionRow{
 		OperatorAddress:   operatorAddress,
-		Commission:        ToNullString(commission),
-		MinSelfDelegation: ToNullString(minSelfDelegation),
+		Commission:        types.ToNullString(commission),
+		MinSelfDelegation: types.ToNullString(minSelfDelegation),
 		Height:            height,
 	}
 }
@@ -236,7 +238,7 @@ func (v ValidatorCommissionHistoryRow) Equal(w ValidatorCommissionHistoryRow) bo
 
 // ________________________________________________
 
-// ValidatorVotingPowerRow represents a single row of the validator_voting_power bigdipper table
+// ValidatorVotingPowerRow represents a single row of the validator_voting_power database table
 type ValidatorVotingPowerRow struct {
 	ValidatorAddress string `db:"validator_address"`
 	VotingPower      int64  `db:"voting_power"`

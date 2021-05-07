@@ -3,16 +3,17 @@ package common
 import (
 	"context"
 
+	"github.com/forbole/bdjuno/types"
+
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/rs/zerolog/log"
 
 	bigdipperdb "github.com/forbole/bdjuno/database/bigdipper"
-	bstakingtypes "github.com/forbole/bdjuno/modules/bigdipper/staking/types"
 	utils2 "github.com/forbole/bdjuno/modules/common/utils"
 )
 
 // UpdateParams updates the staking parameters for the given height,
-// storing them inside the bigdipper and returning its value
+// storing them inside the database and returning its value
 func UpdateParams(
 	height int64, client stakingtypes.QueryClient, db *bigdipperdb.Db,
 ) (*stakingtypes.Params, error) {
@@ -28,7 +29,7 @@ func UpdateParams(
 		return nil, err
 	}
 
-	err = db.SaveStakingParams(bstakingtypes.NewStakingParams(res.Params.BondDenom))
+	err = db.SaveStakingParams(types.NewStakingParams(res.Params.BondDenom))
 	if err != nil {
 		return nil, err
 	}

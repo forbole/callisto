@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/forbole/bdjuno/database/types"
+
 	bgovtypes "github.com/forbole/bdjuno/modules/bigdipper/gov/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -177,7 +179,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposit() {
 	suite.Require().True(result[0].Equals(dbtypes.NewDepositRow(
 		1,
 		depositor.String(),
-		dbtypes.NewDbCoins(amount),
+		types.NewDbCoins(amount),
 		10,
 	)))
 }
@@ -200,8 +202,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 	suite.Require().NoError(err)
 
 	expected := []dbtypes.DepositRow{
-		dbtypes.NewDepositRow(1, depositor.String(), dbtypes.NewDbCoins(amount), 10),
-		dbtypes.NewDepositRow(1, depositor2.String(), dbtypes.NewDbCoins(amount2), 10),
+		dbtypes.NewDepositRow(1, depositor.String(), types.NewDbCoins(amount), 10),
+		dbtypes.NewDepositRow(1, depositor2.String(), types.NewDbCoins(amount2), 10),
 	}
 	var result []dbtypes.DepositRow
 	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_deposit`)
