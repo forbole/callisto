@@ -64,6 +64,13 @@ func handleMsgSubmitProposal(
 	// Get the specific proposal
 	var proposal govtypes.Proposal
 	for _, p := range res.Proposals {
+		// Unmarshal the content properly
+		var content govtypes.Content
+		err = cdc.UnpackAny(p.Content, &content)
+		if err != nil {
+			return err
+		}
+
 		if p.GetContent().GetTitle() == msg.GetContent().GetTitle() {
 			proposal = p
 			break
@@ -101,7 +108,7 @@ func handleMsgSubmitProposal(
 		return err
 	}
 
-	// Watch the proposal and renew the bigdipper when deposit end and voting end in the future
+	// Watch the proposal and renew the BigDipper when deposit end and voting end in the future
 	update := UpdateProposal(proposal.ProposalId, govClient, authClient, bankClient, cdc, db)
 	if proposal.Status == govtypes.StatusVotingPeriod && proposal.VotingEndTime.After(time.Now()) {
 		time.AfterFunc(time.Until(proposal.VotingEndTime), update)

@@ -1,7 +1,7 @@
 package bigdipper_test
 
 import (
-	"github.com/forbole/bdjuno/bigdipper/types"
+	"github.com/forbole/bdjuno/database/bigdipper/types"
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_InsertEnableModules() {

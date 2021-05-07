@@ -129,12 +129,8 @@ github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20200515063516-9c493b11de3e h1:hG
 github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20200515063516-9c493b11de3e/go.mod h1:5TMhouV+kDGQZZrBK+rzBP+Jmeyu0V7WvrBHqukiTv8=
 github.com/desmos-labs/desmos v0.16.1-0.20210429132406-ac7a025aa126 h1:cRpMjrqourz3e8TlI5R8XGWsBSnDKdfSYvWAH43cR8s=
 github.com/desmos-labs/desmos v0.16.1-0.20210429132406-ac7a025aa126/go.mod h1:vt405OZVprUHU8cFM9EnCmtjmvOkP+556KXamnr0Ihc=
-github.com/desmos-labs/juno v0.0.0-20210429060016-6548afd78e72 h1:ZHrE8sj6IkzuLsHjJdwoAB3WHTWsz223FuoUGIpCpXk=
-github.com/desmos-labs/juno v0.0.0-20210429060016-6548afd78e72/go.mod h1:jO+yPCDCl66QCwSQAvbU8MWTWqku5o+V/2WR9LIbQjo=
-github.com/desmos-labs/juno v0.0.0-20210503094329-1df81455bd10 h1:Bd4UU5QcgTMbe7kXfoN7TAphyeMO7mDhShEEvpDvAK4=
-github.com/desmos-labs/juno v0.0.0-20210503094329-1df81455bd10/go.mod h1:jO+yPCDCl66QCwSQAvbU8MWTWqku5o+V/2WR9LIbQjo=
-github.com/desmos-labs/juno v0.0.0-20210506112305-fd8facfb4fce h1:u4X9XJsi9K+uZuj4SS1Ql8avjsEtq9JvXxD4DkXJJF4=
-github.com/desmos-labs/juno v0.0.0-20210506112305-fd8facfb4fce/go.mod h1:jO+yPCDCl66QCwSQAvbU8MWTWqku5o+V/2WR9LIbQjo=
+github.com/desmos-labs/juno v0.0.0-20210507054922-f46c610e2941 h1:ElXGYObXLH4XJQRxmfq3aZ8RdStTtr0UXf7ztxVdHIs=
+github.com/desmos-labs/juno v0.0.0-20210507054922-f46c610e2941/go.mod h1:jO+yPCDCl66QCwSQAvbU8MWTWqku5o+V/2WR9LIbQjo=
 github.com/dgraph-io/badger/v2 v2.2007.1/go.mod h1:26P/7fbL4kUZVEVKLAKXkBXKOydDmM2p1e+NhhnBCAE=
 github.com/dgraph-io/badger/v2 v2.2007.2 h1:EjjK0KqwaFMlPin1ajhP943VPENHJdEz1KLIegjaI3k=
 github.com/dgraph-io/badger/v2 v2.2007.2/go.mod h1:26P/7fbL4kUZVEVKLAKXkBXKOydDmM2p1e+NhhnBCAE=

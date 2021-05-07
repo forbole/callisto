@@ -2,6 +2,7 @@ package modules
 
 import (
 	"fmt"
+	"github.com/forbole/bdjuno/types/config"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -13,7 +14,6 @@ import (
 
 	bigdippermodules "github.com/forbole/bdjuno/modules/bigdipper"
 	forbolexmodules "github.com/forbole/bdjuno/modules/forbolex"
-	"github.com/forbole/bdjuno/types"
 )
 
 var (
@@ -30,24 +30,24 @@ func NewRegistrar() *Registrar {
 
 // BuildModules implements registrar.Registrar
 func (r *Registrar) BuildModules(
-	cfg juno.Config, encodingConfig *params.EncodingConfig, sdkConfig *sdk.Config, db db.Database, cp *client.Proxy,
+	junoCfg juno.Config, encodingConfig *params.EncodingConfig, sdkConfig *sdk.Config, db db.Database, cp *client.Proxy,
 ) modules.Modules {
-	config, ok := cfg.(*types.Config)
+	cfg, ok := junoCfg.(*config.Config)
 	if !ok {
-		panic(fmt.Errorf("invalid configuration type: %T", cfg))
+		panic(fmt.Errorf("invalid configuration type: %T", junoCfg))
 	}
 
 	var reg registrar.Registrar
-	switch config.GetApplicationType() {
-	case types.ApplicationTypeExplorer:
+	switch cfg.GetDataType() {
+	case config.DataTypeUpdated:
 		reg = bigdippermodules.NewRegistrar()
 
-	case types.ApplicationTypeUtility:
+	case config.DataTypeHistoric:
 		reg = forbolexmodules.NewRegistrar()
 
 	default:
-		panic(fmt.Errorf("invalid application type: %s", config.GetApplicationType()))
+		panic(fmt.Errorf("invalid application type: %s", cfg.GetDataType()))
 	}
 
-	return reg.BuildModules(cfg, encodingConfig, sdkConfig, db, cp)
+	return reg.BuildModules(junoCfg, encodingConfig, sdkConfig, db, cp)
 }
