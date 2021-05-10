@@ -22,7 +22,7 @@ CREATE TABLE delegation_history
     validator_address TEXT   NOT NULL,
     delegator_address TEXT   NOT NULL REFERENCES account (address),
     amount            COIN   NOT NULL,
-    height            BIGINT NOT NULL,
+    height            BIGINT NOT NULL REFERENCES block(height),
     CONSTRAINT delegation_validator_delegator_unique UNIQUE (validator_address, delegator_address, height)
 );
 CREATE INDEX delegation_validator_address_index ON delegation_history (validator_address);
@@ -36,7 +36,7 @@ CREATE TABLE redelegation_history
     dst_validator_address TEXT                        NOT NULL,
     amount                COIN                        NOT NULL,
     completion_time       TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    height                BIGINT                      NOT NULL,
+    height                BIGINT                      NOT NULL REFERENCES block(height),
     CONSTRAINT redelegation_validator_delegator_unique UNIQUE (delegator_address, src_validator_address,
                                                                dst_validator_address, height)
 );
@@ -50,7 +50,7 @@ CREATE TABLE unbonding_delegation_history
     delegator_address    TEXT                        NOT NULL REFERENCES account (address),
     amount               COIN                        NOT NUll,
     completion_timestamp TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    height               BIGINT                      NOT NULL,
+    height               BIGINT                      NOT NULL REFERENCES block(height),
     CONSTRAINT unbonding_delegation_validator_delegator_unique UNIQUE (delegator_address, validator_address, height)
 );
 CREATE INDEX unbonding_delegation_validator_address_index ON unbonding_delegation_history (validator_address);
