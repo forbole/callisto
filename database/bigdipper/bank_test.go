@@ -4,11 +4,11 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/lib/pq"
 
-	"github.com/forbole/bdjuno/database/types"
+	dbtypes "github.com/forbole/bdjuno/database/types"
 
 	"github.com/forbole/bdjuno/types"
 
-	dbtypes "github.com/forbole/bdjuno/database/bigdipper/types"
+	bddbtypes "github.com/forbole/bdjuno/database/bigdipper/types"
 )
 
 func (suite *DbTestSuite) TestSaveAccountBalance() {
@@ -36,25 +36,25 @@ func (suite *DbTestSuite) TestSaveAccountBalance() {
 	suite.Require().NoError(err)
 
 	// Verify the data
-	expected := []dbtypes.AccountBalanceRow{
-		dbtypes.NewAccountBalanceRow(
+	expected := []bddbtypes.AccountBalanceRow{
+		bddbtypes.NewAccountBalanceRow(
 			address1.String(),
-			types.NewDbCoins(sdk.NewCoins(
+			dbtypes.NewDbCoins(sdk.NewCoins(
 				sdk.NewCoin("desmos", sdk.NewInt(10)),
 				sdk.NewCoin("uatom", sdk.NewInt(20)),
 			)),
 			10,
 		),
-		dbtypes.NewAccountBalanceRow(
+		bddbtypes.NewAccountBalanceRow(
 			address2.String(),
-			types.NewDbCoins(sdk.NewCoins(
+			dbtypes.NewDbCoins(sdk.NewCoins(
 				sdk.NewCoin("uatom", sdk.NewInt(100)),
 			)),
 			10,
 		),
 	}
 
-	var rows []dbtypes.AccountBalanceRow
+	var rows []bddbtypes.AccountBalanceRow
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM account_balance ORDER BY address`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, len(expected))
@@ -84,18 +84,18 @@ func (suite *DbTestSuite) TestSaveAccountBalance() {
 	suite.Require().NoError(err)
 
 	// Verify the data
-	expected = []dbtypes.AccountBalanceRow{
-		dbtypes.NewAccountBalanceRow(
+	expected = []bddbtypes.AccountBalanceRow{
+		bddbtypes.NewAccountBalanceRow(
 			address1.String(),
-			types.NewDbCoins(sdk.NewCoins(
+			dbtypes.NewDbCoins(sdk.NewCoins(
 				sdk.NewCoin("desmos", sdk.NewInt(10)),
 				sdk.NewCoin("uatom", sdk.NewInt(20)),
 			)),
 			10,
 		),
-		dbtypes.NewAccountBalanceRow(
+		bddbtypes.NewAccountBalanceRow(
 			address2.String(),
-			types.NewDbCoins(sdk.NewCoins(
+			dbtypes.NewDbCoins(sdk.NewCoins(
 				sdk.NewCoin("uatom", sdk.NewInt(100)),
 				sdk.NewCoin("desmos", sdk.NewInt(200)),
 			)),
@@ -103,7 +103,7 @@ func (suite *DbTestSuite) TestSaveAccountBalance() {
 		),
 	}
 
-	rows = []dbtypes.AccountBalanceRow{}
+	rows = []bddbtypes.AccountBalanceRow{}
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM account_balance ORDER BY address`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, len(expected))
@@ -123,9 +123,9 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSupply() {
 	suite.Require().NoError(err)
 
 	// Verify the data
-	expected := dbtypes.NewSupplyRow(types.NewDbCoins(original), 10)
+	expected := bddbtypes.NewSupplyRow(dbtypes.NewDbCoins(original), 10)
 
-	var rows []dbtypes.SupplyRow
+	var rows []bddbtypes.SupplyRow
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM supply`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1, "supply table should contain only one row")
@@ -142,7 +142,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSupply() {
 	suite.Require().NoError(err)
 
 	// Verify the data
-	rows = []dbtypes.SupplyRow{}
+	rows = []bddbtypes.SupplyRow{}
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM supply`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1, "supply table should contain only one row")
@@ -156,9 +156,9 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSupply() {
 	suite.Require().NoError(err)
 
 	// Verify the data
-	expected = dbtypes.NewSupplyRow(types.NewDbCoins(coins), 10)
+	expected = bddbtypes.NewSupplyRow(dbtypes.NewDbCoins(coins), 10)
 
-	rows = []dbtypes.SupplyRow{}
+	rows = []bddbtypes.SupplyRow{}
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM supply`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1, "supply table should contain only one row")
@@ -172,9 +172,9 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSupply() {
 	suite.Require().NoError(err)
 
 	// Verify the data
-	expected = dbtypes.NewSupplyRow(types.NewDbCoins(coins), 20)
+	expected = bddbtypes.NewSupplyRow(dbtypes.NewDbCoins(coins), 20)
 
-	rows = []dbtypes.SupplyRow{}
+	rows = []bddbtypes.SupplyRow{}
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM supply`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1, "supply table should contain only one row")
@@ -186,7 +186,7 @@ func (suite *DbTestSuite) TestBigDipperDb_GetTokenNames() {
 		sdk.NewCoin("desmos", sdk.NewInt(10000)),
 		sdk.NewCoin("uatom", sdk.NewInt(15)),
 	)
-	_, err := suite.database.Sql.Exec("INSERT INTO supply(coins,height) VALUES ($1,$2) ", pq.Array(types.NewDbCoins(coins)), 10)
+	_, err := suite.database.Sql.Exec("INSERT INTO supply(coins,height) VALUES ($1,$2) ", pq.Array(dbtypes.NewDbCoins(coins)), 10)
 	suite.Require().NoError(err)
 	expected := [2]string{"desmos", "uatom"}
 	result, err := suite.database.GetTokenNames()

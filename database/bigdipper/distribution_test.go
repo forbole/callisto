@@ -3,11 +3,11 @@ package bigdipper_test
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/forbole/bdjuno/database/types"
+	dbtypes "github.com/forbole/bdjuno/database/types"
 
 	"github.com/forbole/bdjuno/types"
 
-	dbtypes "github.com/forbole/bdjuno/database/bigdipper/types"
+	bddbtypes "github.com/forbole/bdjuno/database/bigdipper/types"
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveCommunityPool() {
@@ -17,8 +17,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveCommunityPool() {
 	suite.Require().NoError(err)
 
 	// Verify data
-	expected := dbtypes.NewCommunityPoolRow(types.NewDbDecCoins(original), 10)
-	var rows []dbtypes.CommunityPoolRow
+	expected := bddbtypes.NewCommunityPoolRow(dbtypes.NewDbDecCoins(original), 10)
+	var rows []bddbtypes.CommunityPoolRow
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM community_pool`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1, "community_pool table should contain only one row")
@@ -32,8 +32,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveCommunityPool() {
 	suite.Require().NoError(err)
 
 	// Verify data
-	expected = dbtypes.NewCommunityPoolRow(types.NewDbDecCoins(original), 10)
-	rows = []dbtypes.CommunityPoolRow{}
+	expected = bddbtypes.NewCommunityPoolRow(dbtypes.NewDbDecCoins(original), 10)
+	rows = []bddbtypes.CommunityPoolRow{}
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM community_pool`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1, "community_pool table should contain only one row")
@@ -47,8 +47,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveCommunityPool() {
 	suite.Require().NoError(err)
 
 	// Verify data
-	expected = dbtypes.NewCommunityPoolRow(types.NewDbDecCoins(coins), 10)
-	rows = []dbtypes.CommunityPoolRow{}
+	expected = bddbtypes.NewCommunityPoolRow(dbtypes.NewDbDecCoins(coins), 10)
+	rows = []bddbtypes.CommunityPoolRow{}
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM community_pool`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1, "community_pool table should contain only one row")
@@ -62,8 +62,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveCommunityPool() {
 	suite.Require().NoError(err)
 
 	// Verify data
-	expected = dbtypes.NewCommunityPoolRow(types.NewDbDecCoins(coins), 11)
-	rows = []dbtypes.CommunityPoolRow{}
+	expected = bddbtypes.NewCommunityPoolRow(dbtypes.NewDbDecCoins(coins), 11)
+	rows = []bddbtypes.CommunityPoolRow{}
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM community_pool`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1, "community_pool table should contain only one row")
@@ -89,8 +89,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommissionAmount() {
 	suite.Require().NoError(err)
 
 	// Verify the data
-	originalRow := dbtypes.NewValidatorCommissionAmountRow(validator.GetConsAddr(), types.NewDbDecCoins(original), 10)
-	var rows []dbtypes.ValidatorCommissionAmountRow
+	originalRow := bddbtypes.NewValidatorCommissionAmountRow(validator.GetConsAddr(), dbtypes.NewDbDecCoins(original), 10)
+	var rows []bddbtypes.ValidatorCommissionAmountRow
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM validator_commission_amount`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
@@ -105,7 +105,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommissionAmount() {
 	suite.Require().NoError(err)
 
 	// Verify the data
-	rows = []dbtypes.ValidatorCommissionAmountRow{}
+	rows = []bddbtypes.ValidatorCommissionAmountRow{}
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM validator_commission_amount`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
@@ -120,8 +120,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommissionAmount() {
 	suite.Require().NoError(err)
 
 	// Verify the data
-	expected := dbtypes.NewValidatorCommissionAmountRow(validator.GetConsAddr(), types.NewDbDecCoins(coins), 10)
-	rows = []dbtypes.ValidatorCommissionAmountRow{}
+	expected := bddbtypes.NewValidatorCommissionAmountRow(validator.GetConsAddr(), dbtypes.NewDbDecCoins(coins), 10)
+	rows = []bddbtypes.ValidatorCommissionAmountRow{}
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM validator_commission_amount`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
@@ -136,8 +136,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommissionAmount() {
 	suite.Require().NoError(err)
 
 	// Verify the data
-	expected = dbtypes.NewValidatorCommissionAmountRow(validator.GetConsAddr(), types.NewDbDecCoins(coins), 11)
-	rows = []dbtypes.ValidatorCommissionAmountRow{}
+	expected = bddbtypes.NewValidatorCommissionAmountRow(validator.GetConsAddr(), dbtypes.NewDbDecCoins(coins), 11)
+	rows = []bddbtypes.ValidatorCommissionAmountRow{}
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM validator_commission_amount`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
@@ -186,31 +186,31 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDelegatorsRewardsAmounts() {
 	suite.Require().NoError(err)
 
 	// Verify the data
-	expected := []dbtypes.DelegationRewardRow{
-		dbtypes.NewDelegationRewardRow(
+	expected := []bddbtypes.DelegationRewardRow{
+		bddbtypes.NewDelegationRewardRow(
 			delegator1.String(),
 			validator1.GetConsAddr(),
 			delegator1.String(),
-			types.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(100)))),
+			dbtypes.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(100)))),
 			10,
 		),
-		dbtypes.NewDelegationRewardRow(
+		bddbtypes.NewDelegationRewardRow(
 			delegator1.String(),
 			validator2.GetConsAddr(),
 			delegator1.String(),
-			types.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(200)))),
+			dbtypes.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(200)))),
 			11,
 		),
-		dbtypes.NewDelegationRewardRow(
+		bddbtypes.NewDelegationRewardRow(
 			delegator2.String(),
 			validator2.GetConsAddr(),
 			delegator2.String(),
-			types.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(200)))),
+			dbtypes.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(200)))),
 			12,
 		),
 	}
 
-	var rows []dbtypes.DelegationRewardRow
+	var rows []bddbtypes.DelegationRewardRow
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM delegation_reward ORDER BY height`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, len(expected))
@@ -249,31 +249,31 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDelegatorsRewardsAmounts() {
 	suite.Require().NoError(err)
 
 	// Verify the data
-	expected = []dbtypes.DelegationRewardRow{
-		dbtypes.NewDelegationRewardRow(
+	expected = []bddbtypes.DelegationRewardRow{
+		bddbtypes.NewDelegationRewardRow(
 			delegator1.String(),
 			validator1.GetConsAddr(),
 			delegator1.String(),
-			types.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(120)))),
+			dbtypes.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(120)))),
 			10,
 		),
-		dbtypes.NewDelegationRewardRow(
+		bddbtypes.NewDelegationRewardRow(
 			delegator1.String(),
 			validator2.GetConsAddr(),
 			delegator1.String(),
-			types.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(200)))),
+			dbtypes.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(200)))),
 			11,
 		),
-		dbtypes.NewDelegationRewardRow(
+		bddbtypes.NewDelegationRewardRow(
 			delegator2.String(),
 			validator2.GetConsAddr(),
 			delegator2.String(),
-			types.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(50)))),
+			dbtypes.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("cosmos", sdk.NewInt(50)))),
 			13,
 		),
 	}
 
-	rows = []dbtypes.DelegationRewardRow{}
+	rows = []bddbtypes.DelegationRewardRow{}
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM delegation_reward ORDER BY height`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, len(expected))
