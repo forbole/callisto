@@ -2,6 +2,7 @@ package consensus
 
 import (
 	"fmt"
+	juno "github.com/desmos-labs/juno/types"
 
 	bigdipperdb "github.com/forbole/bdjuno/database/bigdipper"
 	"github.com/forbole/bdjuno/modules/bigdipper/consensus/types"
@@ -41,7 +42,8 @@ func ListenOperation(cp *client.Proxy, db *bigdipperdb.Db) {
 func subscribeConsensusEvent(event string, cp *client.Proxy, eventChan chan<- tmctypes.ResultEvent) {
 	query := fmt.Sprintf("tm.event = '%s'", event)
 
-	eventCh, cancel, err := cp.SubscribeEvents("juno", query)
+	subscriber := fmt.Sprintf("%s-event-%s", juno.Cfg.GetRPCConfig().ClientName, event)
+	eventCh, cancel, err := cp.SubscribeEvents(subscriber, query)
 	if err != nil {
 		log.Error().Str("module", "consensus").Err(err).Msg("error while subscribing to event")
 		return

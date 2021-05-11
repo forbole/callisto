@@ -131,6 +131,8 @@ github.com/desmos-labs/desmos v0.16.1-0.20210429132406-ac7a025aa126 h1:cRpMjrqou
 github.com/desmos-labs/desmos v0.16.1-0.20210429132406-ac7a025aa126/go.mod h1:vt405OZVprUHU8cFM9EnCmtjmvOkP+556KXamnr0Ihc=
 github.com/desmos-labs/juno v0.0.0-20210510062309-883742a9f5f5 h1:+6ez/vANxsoM8yBaq/1OmyV0gQ4C5XKnJMOGha4iSvo=
 github.com/desmos-labs/juno v0.0.0-20210510062309-883742a9f5f5/go.mod h1:jO+yPCDCl66QCwSQAvbU8MWTWqku5o+V/2WR9LIbQjo=
+github.com/desmos-labs/juno v0.0.0-20210511092234-d21020473572 h1:dOOn12cOTogyEF6chVLMJkzUf6obktAE1O74GR6TcUg=
+github.com/desmos-labs/juno v0.0.0-20210511092234-d21020473572/go.mod h1:jO+yPCDCl66QCwSQAvbU8MWTWqku5o+V/2WR9LIbQjo=
 github.com/dgraph-io/badger/v2 v2.2007.1/go.mod h1:26P/7fbL4kUZVEVKLAKXkBXKOydDmM2p1e+NhhnBCAE=
 github.com/dgraph-io/badger/v2 v2.2007.2 h1:EjjK0KqwaFMlPin1ajhP943VPENHJdEz1KLIegjaI3k=
 github.com/dgraph-io/badger/v2 v2.2007.2/go.mod h1:26P/7fbL4kUZVEVKLAKXkBXKOydDmM2p1e+NhhnBCAE=
