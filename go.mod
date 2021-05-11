@@ -5,12 +5,14 @@ go 1.15
 require (
 	github.com/cosmos/cosmos-sdk v0.42.4
 	github.com/desmos-labs/desmos v0.16.1-0.20210429132406-ac7a025aa126
-	github.com/desmos-labs/juno v0.0.0-20210429060016-6548afd78e72
+	github.com/desmos-labs/juno v0.0.0-20210510062309-883742a9f5f5
 	github.com/go-co-op/gocron v0.3.3
 	github.com/jmoiron/sqlx v1.2.1-0.20200324155115-ee514944af4b
 	github.com/lib/pq v1.9.0
+	github.com/pelletier/go-toml v1.8.0
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
 	github.com/rs/zerolog v1.20.0
+	github.com/spf13/cobra v1.1.1
 	github.com/stretchr/testify v1.7.0
 	github.com/tendermint/tendermint v0.34.9
 	github.com/ziutek/mymysql v1.5.4 // indirect
