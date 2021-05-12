@@ -7,7 +7,7 @@ import (
 
 	"github.com/forbole/bdjuno/types"
 
-	bddbtypes "github.com/forbole/bdjuno/database/database/types"
+	bddbtypes "github.com/forbole/bdjuno/database/types"
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveCommunityPool() {
@@ -71,6 +71,10 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveCommunityPool() {
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommissionAmount() {
+	_ = suite.getBlock(9)
+	_ = suite.getBlock(10)
+	_ = suite.getBlock(11)
+
 	validator := suite.getValidator(
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
@@ -145,6 +149,12 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommissionAmount() {
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveDelegatorsRewardsAmounts() {
+	_ = suite.getBlock(9)
+	_ = suite.getBlock(10)
+	_ = suite.getBlock(11)
+	_ = suite.getBlock(12)
+	_ = suite.getBlock(13)
+
 	delegator1 := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	delegator2 := suite.getAccount("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 	validator1 := suite.getValidator(

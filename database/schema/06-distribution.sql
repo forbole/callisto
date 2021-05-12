@@ -28,12 +28,12 @@ CREATE INDEX validator_commission_amount_height_index ON validator_commission_am
 
 CREATE TABLE validator_commission_amount_history
 (
-    self_delegate_address TEXT       NOT NULL,
-    amount                DEC_COIN[] NOT NULL,
-    height                BIGINT     NOT NULL REFERENCES block (height),
-    CONSTRAINT commission_height_unique UNIQUE (self_delegate_address, height)
+    validator_address TEXT       NOT NULL REFERENCES validator (consensus_address),
+    amount            DEC_COIN[] NOT NULL,
+    height            BIGINT     NOT NULL REFERENCES block (height),
+    CONSTRAINT validator_commission_amount_history_commission_height_unique UNIQUE (validator_address, height)
 );
-CREATE INDEX validator_commission_amount_height_index ON validator_commission_amount_history (height);
+CREATE INDEX validator_commission_amount_history_height_index ON validator_commission_amount_history (height);
 
 /* ---- DELEGATOR REWARDS AMOUNTS ---- */
 
@@ -44,19 +44,19 @@ CREATE TABLE delegation_reward
     withdraw_address  TEXT       NOT NULL,
     amount            DEC_COIN[] NOT NULL,
     height            BIGINT     NOT NULL,
-    CONSTRAINT validator_delegator_unique UNIQUE (validator_address, delegator_address)
+    CONSTRAINT delegation_reward_validator_delegator_unique UNIQUE (validator_address, delegator_address)
 );
 CREATE INDEX delegation_reward_delegator_address_index ON delegation_reward (delegator_address);
 CREATE INDEX delegation_reward_height_index ON delegation_reward (height);
 
 CREATE TABLE delegation_reward_history
 (
-    validator_address TEXT       NOT NULL,
+    validator_address TEXT       NOT NULL REFERENCES validator (consensus_address),
     delegator_address TEXT       NOT NULL REFERENCES account (address),
     withdraw_address  TEXT       NOT NULL,
     amount            DEC_COIN[] NOT NULL,
     height            BIGINT     NOT NULL REFERENCES block (height),
-    CONSTRAINT validator_delegator_unique UNIQUE (delegator_address, validator_address, height)
+    CONSTRAINT delegation_reward_history_validator_delegator_unique UNIQUE (delegator_address, validator_address, height)
 );
-CREATE INDEX delegation_reward_delegator_address_index ON delegation_reward_history (delegator_address);
-CREATE INDEX delegation_reward_height_index ON delegation_reward_history (height);
+CREATE INDEX delegation_history_reward_delegator_address_index ON delegation_reward_history (delegator_address);
+CREATE INDEX delegation_history_reward_height_index ON delegation_reward_history (height);

@@ -8,7 +8,7 @@ import (
 
 	"github.com/forbole/bdjuno/types"
 
-	bddbtypes "github.com/forbole/bdjuno/database/database/types"
+	bddbtypes "github.com/forbole/bdjuno/database/types"
 )
 
 func (suite *DbTestSuite) TestSaveAccountBalance() {

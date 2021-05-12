@@ -3,7 +3,7 @@ package utils_test
 import (
 	"testing"
 
-	"github.com/forbole/bdjuno/modules/bigdipper/utils"
+	"github.com/forbole/bdjuno/modules/utils"
 
 	"github.com/stretchr/testify/require"
 )

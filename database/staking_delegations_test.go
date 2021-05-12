@@ -10,10 +10,16 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	bddbtypes "github.com/forbole/bdjuno/database/database/types"
+	bddbtypes "github.com/forbole/bdjuno/database/types"
 )
 
 func (suite *DbTestSuite) TestDelegations() {
+	_ = suite.getBlock(50)
+	_ = suite.getBlock(80)
+	_ = suite.getBlock(100)
+	_ = suite.getBlock(101)
+	_ = suite.getBlock(102)
+
 	delegator1 := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	delegator2 := suite.getAccount("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 	validator1 := suite.getValidator(
@@ -154,6 +160,11 @@ func (suite *DbTestSuite) TestDelegations() {
 // --------------------------------------------------------------------------------------------------------------------
 
 func (suite *DbTestSuite) TestSaveRedelegations() {
+	_ = suite.getBlock(9)
+	_ = suite.getBlock(10)
+	_ = suite.getBlock(11)
+	_ = suite.getBlock(12)
+
 	delegator1 := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	delegator2 := suite.getAccount("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 	srcValidator1 := suite.getValidator(
@@ -173,7 +184,6 @@ func (suite *DbTestSuite) TestSaveRedelegations() {
 	)
 
 	// Save the data
-
 	reDelegations := []types.Redelegation{
 		types.NewRedelegation(
 			delegator1.String(),
@@ -192,7 +202,7 @@ func (suite *DbTestSuite) TestSaveRedelegations() {
 			10,
 		),
 		types.NewRedelegation(
-			delegator1.String(),
+			delegator2.String(),
 			srcValidator1.GetOperator(),
 			dstValidator1.GetOperator(),
 			sdk.NewCoin("cosmos", sdk.NewInt(100)),
@@ -202,7 +212,7 @@ func (suite *DbTestSuite) TestSaveRedelegations() {
 		types.NewRedelegation(
 			delegator2.String(),
 			srcValidator1.GetOperator(),
-			dstValidator1.GetOperator(),
+			dstValidator2.GetOperator(),
 			sdk.NewCoin("cosmos", sdk.NewInt(200)),
 			time.Date(2021, 2, 1, 12, 00, 04, 000, time.UTC),
 			10,
@@ -212,7 +222,6 @@ func (suite *DbTestSuite) TestSaveRedelegations() {
 	suite.Require().NoError(err)
 
 	// Verify the data
-
 	var rows []bddbtypes.RedelegationRow
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM redelegation ORDER BY completion_time`)
 	suite.Require().NoError(err)
@@ -235,7 +244,7 @@ func (suite *DbTestSuite) TestSaveRedelegations() {
 			10,
 		),
 		bddbtypes.NewRedelegationRow(
-			delegator1.String(),
+			delegator2.String(),
 			srcValidator1.GetConsAddr(),
 			dstValidator1.GetConsAddr(),
 			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(100))),
@@ -245,7 +254,7 @@ func (suite *DbTestSuite) TestSaveRedelegations() {
 		bddbtypes.NewRedelegationRow(
 			delegator2.String(),
 			srcValidator1.GetConsAddr(),
-			dstValidator1.GetConsAddr(),
+			dstValidator2.GetConsAddr(),
 			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(200))),
 			time.Date(2021, 2, 1, 12, 00, 04, 000, time.UTC),
 			10,
@@ -277,7 +286,7 @@ func (suite *DbTestSuite) TestSaveRedelegations() {
 			9,
 		),
 		types.NewRedelegation(
-			delegator1.String(),
+			delegator2.String(),
 			srcValidator1.GetOperator(),
 			dstValidator1.GetOperator(),
 			sdk.NewCoin("cosmos", sdk.NewInt(90)),
@@ -287,10 +296,10 @@ func (suite *DbTestSuite) TestSaveRedelegations() {
 		types.NewRedelegation(
 			delegator2.String(),
 			srcValidator1.GetOperator(),
-			dstValidator1.GetOperator(),
+			dstValidator2.GetOperator(),
 			sdk.NewCoin("cosmos", sdk.NewInt(260)),
 			time.Date(2021, 2, 1, 12, 00, 04, 000, time.UTC),
-			15,
+			12,
 		),
 	}
 	err = suite.database.SaveRedelegations(reDelegations)
@@ -321,7 +330,7 @@ func (suite *DbTestSuite) TestSaveRedelegations() {
 			10,
 		),
 		bddbtypes.NewRedelegationRow(
-			delegator1.String(),
+			delegator2.String(),
 			srcValidator1.GetConsAddr(),
 			dstValidator1.GetConsAddr(),
 			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(90))),
@@ -331,10 +340,10 @@ func (suite *DbTestSuite) TestSaveRedelegations() {
 		bddbtypes.NewRedelegationRow(
 			delegator2.String(),
 			srcValidator1.GetConsAddr(),
-			dstValidator1.GetConsAddr(),
+			dstValidator2.GetConsAddr(),
 			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(260))),
 			time.Date(2021, 2, 1, 12, 00, 04, 000, time.UTC),
-			15,
+			12,
 		),
 	}
 
@@ -347,6 +356,10 @@ func (suite *DbTestSuite) TestSaveRedelegations() {
 // --------------------------------------------------------------------------------------------------------------------
 
 func (suite *DbTestSuite) TestSaveUnbondingDelegations() {
+	_ = suite.getBlock(9)
+	_ = suite.getBlock(10)
+	_ = suite.getBlock(11)
+
 	delegator1 := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	delegator2 := suite.getAccount("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 	validator1 := suite.getValidator(
@@ -438,7 +451,6 @@ func (suite *DbTestSuite) TestSaveUnbondingDelegations() {
 	}
 
 	// Update the data
-
 	unbondingDelegations = []types.UnbondingDelegation{
 		types.NewUnbondingDelegation(
 			delegator1.String(),
@@ -473,7 +485,6 @@ func (suite *DbTestSuite) TestSaveUnbondingDelegations() {
 	suite.Require().NoError(err)
 
 	// Verify the data
-
 	rows = []bddbtypes.UnbondingDelegationRow{}
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM unbonding_delegation ORDER BY completion_timestamp`)
 	suite.Require().NoError(err, "updating rows should not return an error")

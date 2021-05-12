@@ -3,11 +3,10 @@ package database_test
 import (
 	time "time"
 
-	"github.com/forbole/bdjuno/modules/bigdipper/consensus/types"
+	dbtypes "github.com/forbole/bdjuno/database/types"
+	"github.com/forbole/bdjuno/types"
 
 	tmtypes "github.com/tendermint/tendermint/types"
-
-	dbtypes "github.com/forbole/bdjuno/database/database/types"
 )
 
 func (suite *DbTestSuite) TestSaveConsensus() {

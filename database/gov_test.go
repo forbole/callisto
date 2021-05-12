@@ -4,22 +4,20 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/forbole/bdjuno/database/types"
-
-	bgovtypes "github.com/forbole/bdjuno/modules/database/gov/types"
+	"github.com/forbole/bdjuno/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 
-	dbtypes "github.com/forbole/bdjuno/database/database/types"
+	dbtypes "github.com/forbole/bdjuno/database/types"
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 	proposer1 := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	proposer2 := suite.getAccount("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 
-	input := []bgovtypes.Proposal{
-		bgovtypes.NewProposal("title",
+	input := []types.Proposal{
+		types.NewProposal("title",
 			"description",
 			"proposalRoute",
 			"proposalType",
@@ -31,7 +29,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 			time.Date(2020, 1, 1, 03, 00, 00, 000, time.UTC),
 			proposer1.String(),
 		),
-		bgovtypes.NewProposal("title1",
+		types.NewProposal("title1",
 			"description1",
 			"proposalRoute1",
 			"proposalType1",
@@ -83,7 +81,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 func (suite *DbTestSuite) TestBigDipperDb_SaveProposal() {
 	proposer1 := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 
-	input := bgovtypes.NewProposal("title",
+	input := types.NewProposal("title",
 		"description",
 		"proposalRoute",
 		"proposalType",
@@ -124,9 +122,9 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTallyResults() {
 	suite.getProposalRow(1)
 	suite.getProposalRow(2)
 
-	input := []bgovtypes.TallyResult{
-		bgovtypes.NewTallyResult(1, 1, 1, 1, 1, 1),
-		bgovtypes.NewTallyResult(2, 2, 2, 2, 2, 2),
+	input := []types.TallyResult{
+		types.NewTallyResult(1, 1, 1, 1, 1, 1),
+		types.NewTallyResult(2, 2, 2, 2, 2, 2),
 	}
 
 	err := suite.database.SaveTallyResults(input)
@@ -150,7 +148,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
 	proposal := suite.getProposalRow(1)
 	voter := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 
-	vote := bgovtypes.NewVote(1, voter.String(), govtypes.OptionYes, 1)
+	vote := types.NewVote(1, voter.String(), govtypes.OptionYes, 1)
 	err := suite.database.SaveVote(vote)
 	suite.Require().NoError(err)
 
@@ -168,7 +166,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposit() {
 	depositor := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	amount := sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(10000)))
 
-	deposit := bgovtypes.NewDeposit(proposal.ProposalID, depositor.String(), amount, 10)
+	deposit := types.NewDeposit(proposal.ProposalID, depositor.String(), amount, 10)
 	err := suite.database.SaveDeposit(deposit)
 	suite.Require().NoError(err)
 
@@ -179,7 +177,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposit() {
 	suite.Require().True(result[0].Equals(dbtypes.NewDepositRow(
 		1,
 		depositor.String(),
-		types.NewDbCoins(amount),
+		dbtypes.NewDbCoins(amount),
 		10,
 	)))
 }
@@ -193,17 +191,17 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 	depositor2 := suite.getAccount("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 	amount2 := sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(30000)))
 
-	deposit := []bgovtypes.Deposit{
-		bgovtypes.NewDeposit(proposal.ProposalID, depositor.String(), amount, 10),
-		bgovtypes.NewDeposit(proposal.ProposalID, depositor2.String(), amount2, 10),
+	deposit := []types.Deposit{
+		types.NewDeposit(proposal.ProposalID, depositor.String(), amount, 10),
+		types.NewDeposit(proposal.ProposalID, depositor2.String(), amount2, 10),
 	}
 
 	err := suite.database.SaveDeposits(deposit)
 	suite.Require().NoError(err)
 
 	expected := []dbtypes.DepositRow{
-		dbtypes.NewDepositRow(1, depositor.String(), types.NewDbCoins(amount), 10),
-		dbtypes.NewDepositRow(1, depositor2.String(), types.NewDbCoins(amount2), 10),
+		dbtypes.NewDepositRow(1, depositor.String(), dbtypes.NewDbCoins(amount), 10),
+		dbtypes.NewDepositRow(1, depositor2.String(), dbtypes.NewDbCoins(amount2), 10),
 	}
 	var result []dbtypes.DepositRow
 	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_deposit`)
@@ -218,7 +216,7 @@ func (suite *DbTestSuite) TestBigDipperDb_UpdateProposal() {
 	proposer, err := sdk.AccAddressFromBech32(proposal.Proposer)
 	suite.Require().NoError(err)
 
-	update := bgovtypes.NewProposal(proposal.Title,
+	update := types.NewProposal(proposal.Title,
 		proposal.Description,
 		proposal.ProposalRoute,
 		proposal.ProposalType,
@@ -255,7 +253,7 @@ func (suite *DbTestSuite) TestBigDipperDb_UpdateProposal() {
 	}
 }
 
-func (suite *DbTestSuite) getProposalRow(id int) bgovtypes.Proposal {
+func (suite *DbTestSuite) getProposalRow(id int) types.Proposal {
 	proposer := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 
 	title := fmt.Sprintf("title%d", id)
@@ -263,7 +261,7 @@ func (suite *DbTestSuite) getProposalRow(id int) bgovtypes.Proposal {
 	proposalRoute := fmt.Sprintf("proposalRoute%d", id)
 	proposalType := fmt.Sprintf("proposalType%d", id)
 
-	proposal := bgovtypes.NewProposal(
+	proposal := types.NewProposal(
 		title,
 		description,
 		proposalRoute,

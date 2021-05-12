@@ -5,12 +5,10 @@ import (
 
 	"github.com/forbole/bdjuno/types"
 
-	bstakingtypes "github.com/forbole/bdjuno/modules/database/staking/types"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	dbtypes "github.com/forbole/bdjuno/database/database/types"
+	dbtypes "github.com/forbole/bdjuno/database/types"
 )
 
 func newDecPts(value int64, prec int64) *sdk.Dec {
@@ -303,7 +301,7 @@ func (suite *DbTestSuite) TestSaveValidatorDescription() {
 	)
 
 	// Save the data
-	description := bstakingtypes.NewValidatorDescription(
+	description := types.NewValidatorDescription(
 		validator.GetOperator(),
 		stakingtypes.NewDescription(
 			"moniker",
@@ -344,7 +342,7 @@ func (suite *DbTestSuite) TestSaveValidatorDescription() {
 	// ----------------------------------------------------------------------------------------------------------------
 
 	// Try updating with lower height
-	description = bstakingtypes.NewValidatorDescription(
+	description = types.NewValidatorDescription(
 		validator.GetOperator(),
 		stakingtypes.NewDescription("moniker", "", "", "", ""),
 		"lower-avatar-url",
@@ -366,7 +364,7 @@ func (suite *DbTestSuite) TestSaveValidatorDescription() {
 	// ----------------------------------------------------------------------------------------------------------------
 
 	// Try updating with same height
-	description = bstakingtypes.NewValidatorDescription(
+	description = types.NewValidatorDescription(
 		validator.GetOperator(),
 		stakingtypes.NewDescription("moniker", "", "", "", ""),
 		"new-avatar-url",
@@ -401,7 +399,7 @@ func (suite *DbTestSuite) TestSaveValidatorDescription() {
 	// ----------------------------------------------------------------------------------------------------------------
 
 	// Try updating with higher height
-	description = bstakingtypes.NewValidatorDescription(
+	description = types.NewValidatorDescription(
 		validator.GetOperator(),
 		stakingtypes.NewDescription("moniker", "higher-identity", "higher-website", "", ""),
 		"higher-avatar-url",
@@ -444,7 +442,7 @@ func (suite *DbTestSuite) TestSaveValidatorCommission() {
 	)
 
 	// Save the data
-	err := suite.database.SaveValidatorCommission(bstakingtypes.NewValidatorCommission(
+	err := suite.database.SaveValidatorCommission(types.NewValidatorCommission(
 		validator.GetOperator(),
 		newDecPts(11, 3),
 		newIntPtr(12),
@@ -474,7 +472,7 @@ func (suite *DbTestSuite) TestSaveValidatorCommission() {
 	// -------------------------------------------------------------------------------------------------------------
 
 	// Try updating with a lowe height
-	err = suite.database.SaveValidatorCommission(bstakingtypes.NewValidatorCommission(
+	err = suite.database.SaveValidatorCommission(types.NewValidatorCommission(
 		validator.GetOperator(),
 		newDecPts(50, 3),
 		newIntPtr(100),
@@ -495,7 +493,7 @@ func (suite *DbTestSuite) TestSaveValidatorCommission() {
 	// -------------------------------------------------------------------------------------------------------------
 
 	// Try updating with the same height
-	err = suite.database.SaveValidatorCommission(bstakingtypes.NewValidatorCommission(
+	err = suite.database.SaveValidatorCommission(types.NewValidatorCommission(
 		validator.GetOperator(),
 		newDecPts(50, 3),
 		newIntPtr(100),
@@ -525,7 +523,7 @@ func (suite *DbTestSuite) TestSaveValidatorCommission() {
 	// -------------------------------------------------------------------------------------------------------------
 
 	// Try updating with a higher height
-	err = suite.database.SaveValidatorCommission(bstakingtypes.NewValidatorCommission(
+	err = suite.database.SaveValidatorCommission(types.NewValidatorCommission(
 		validator.GetOperator(),
 		newDecPts(70, 2),
 		newIntPtr(200),
@@ -568,9 +566,9 @@ func (suite *DbTestSuite) TestSaveValidatorsVotingPowers() {
 	)
 
 	// Save data
-	err := suite.database.SaveValidatorsVotingPowers([]bstakingtypes.ValidatorVotingPower{
-		bstakingtypes.NewValidatorVotingPower(validator1.GetConsAddr(), 1000, 10),
-		bstakingtypes.NewValidatorVotingPower(validator2.GetConsAddr(), 2000, 10),
+	err := suite.database.SaveValidatorsVotingPowers([]types.ValidatorVotingPower{
+		types.NewValidatorVotingPower(validator1.GetConsAddr(), 1000, 10),
+		types.NewValidatorVotingPower(validator2.GetConsAddr(), 2000, 10),
 	})
 	suite.Require().NoError(err)
 
@@ -589,9 +587,9 @@ func (suite *DbTestSuite) TestSaveValidatorsVotingPowers() {
 	}
 
 	// Update the data
-	err = suite.database.SaveValidatorsVotingPowers([]bstakingtypes.ValidatorVotingPower{
-		bstakingtypes.NewValidatorVotingPower(validator1.GetConsAddr(), 5, 9),
-		bstakingtypes.NewValidatorVotingPower(validator2.GetConsAddr(), 10, 11),
+	err = suite.database.SaveValidatorsVotingPowers([]types.ValidatorVotingPower{
+		types.NewValidatorVotingPower(validator1.GetConsAddr(), 5, 9),
+		types.NewValidatorVotingPower(validator2.GetConsAddr(), 10, 11),
 	})
 	suite.Require().NoError(err)
 
@@ -625,15 +623,15 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 	)
 
 	// Save the data
-	err := suite.database.SaveValidatorsStatuses([]bstakingtypes.ValidatorStatus{
-		bstakingtypes.NewValidatorStatus(
+	err := suite.database.SaveValidatorsStatuses([]types.ValidatorStatus{
+		types.NewValidatorStatus(
 			validator1.GetConsAddr(),
 			validator1.GetConsPubKey(),
 			1,
 			false,
 			10,
 		),
-		bstakingtypes.NewValidatorStatus(
+		types.NewValidatorStatus(
 			validator2.GetConsAddr(),
 			validator2.GetConsPubKey(),
 			2,
@@ -668,15 +666,15 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 	}
 
 	// Update the data
-	err = suite.database.SaveValidatorsStatuses([]bstakingtypes.ValidatorStatus{
-		bstakingtypes.NewValidatorStatus(
+	err = suite.database.SaveValidatorsStatuses([]types.ValidatorStatus{
+		types.NewValidatorStatus(
 			validator1.GetConsAddr(),
 			validator1.GetConsPubKey(),
 			3,
 			true,
 			9,
 		),
-		bstakingtypes.NewValidatorStatus(
+		types.NewValidatorStatus(
 			validator2.GetConsAddr(),
 			validator2.GetConsPubKey(),
 			3,
@@ -722,9 +720,9 @@ func (suite *DbTestSuite) TestSaveDoubleVoteEvidence() {
 	)
 
 	// Insert data
-	evidence := bstakingtypes.NewDoubleSignEvidence(
+	evidence := types.NewDoubleSignEvidence(
 		10,
-		bstakingtypes.NewDoubleSignVote(
+		types.NewDoubleSignVote(
 			int(tmtypes.PrevoteType),
 			10,
 			1,
@@ -733,7 +731,7 @@ func (suite *DbTestSuite) TestSaveDoubleVoteEvidence() {
 			1,
 			"1qwPQjPrc7DH7+f6YAE3fOkq6phDAJ60dEyhmcZ7dx2ZgGvi9DbVLsn4leYqRNA/63ZeeH5kVly8zI1jCh4iBg==",
 		),
-		bstakingtypes.NewDoubleSignVote(
+		types.NewDoubleSignVote(
 			int(tmtypes.PrevoteType),
 			10,
 			1,

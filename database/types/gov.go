@@ -14,7 +14,7 @@ type ProposalRow struct {
 	SubmitTime      time.Time `db:"submit_time"`
 	DepositEndTime  time.Time `db:"deposit_end_time"`
 	VotingStartTime time.Time `db:"voting_start_time"`
-	VotingEndTime   time.Time `db:"voting_end_time" `
+	VotingEndTime   time.Time `db:"voting_end_time"`
 	Proposer        string    `db:"proposer_address"`
 	Status          string    `db:"status"`
 }

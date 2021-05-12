@@ -62,14 +62,6 @@ func getValidatorCommission(height int64, client distrtypes.QueryClient, validat
 		log.Error().Str("module", "distribution").Err(err).
 			Int64("height", height).
 			Str("validator", validator.GetOperator()).
-			Msg("error while saving up-to-date validator commission amount")
-	}
-
-	err = db.SaveValidatorCommissionAmountHistory(delegationAmount)
-	if err != nil {
-		log.Error().Str("module", "distribution").Err(err).
-			Int64("height", height).
-			Str("validator", validator.GetOperator()).
-			Msg("error while saving validator commission amount history")
+			Msg("error while saving validator commission amounts")
 	}
 }

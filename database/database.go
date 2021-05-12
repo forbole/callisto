@@ -3,6 +3,8 @@ package database
 import (
 	"fmt"
 
+	"github.com/forbole/bdjuno/types/config"
+
 	juno "github.com/desmos-labs/juno/types"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
@@ -14,13 +16,12 @@ import (
 
 var _ db.Database = &Db{}
 
-// Cast allows to cast the given db to a Db instance
-func Cast(db db.Database) *Db {
-	bdDatabase, ok := db.(*Db)
-	if !ok {
-		panic(fmt.Errorf("given database instance is not a Db"))
-	}
-	return bdDatabase
+// Db represents a PostgreSQL database with expanded features.
+// so that it can properly store custom BigDipper-related data.
+type Db struct {
+	*postgresql.Database
+	Sqlx                *sqlx.DB
+	storeHistoricalData bool
 }
 
 // Builder allows to create a new Db instance implementing the db.Builder type
@@ -35,20 +36,28 @@ func Builder(cfg juno.Config, codec *params.EncodingConfig) (db.Database, error)
 		return nil, fmt.Errorf("invalid configuration database, must be PostgreSQL")
 	}
 
+	dbCfg, ok := cfg.GetDatabaseConfig().(*config.DatabaseConfig)
+	if !ok {
+		return nil, fmt.Errorf("invalid database configuration type")
+	}
+
 	return &Db{
-		Database: psqlDb,
-		Sqlx:     sqlx.NewDb(psqlDb.Sql, "postgresql"),
+		Database:            psqlDb,
+		Sqlx:                sqlx.NewDb(psqlDb.Sql, "postgresql"),
+		storeHistoricalData: dbCfg.ShouldStoreHistoricalData(),
 	}, nil
 }
 
-// Db represents a PostgreSQL database with expanded features.
-// so that it can properly store custom BigDipper-related data.
-type Db struct {
-	*postgresql.Database
-	Sqlx *sqlx.DB
+// IsStoreHistoricDataEnabled tells whether or not the historical data should be stored inside the database
+func (db *Db) IsStoreHistoricDataEnabled() bool {
+	return db.storeHistoricalData
 }
 
-func (db *Db) IsStoreHistoricDataEnabled() bool {
-	// TODO
-	return true
+// Cast allows to cast the given db to a Db instance
+func Cast(db db.Database) *Db {
+	bdDatabase, ok := db.(*Db)
+	if !ok {
+		panic(fmt.Errorf("given database instance is not a Db"))
+	}
+	return bdDatabase
 }

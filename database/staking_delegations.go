@@ -23,7 +23,7 @@ func (db *Db) SaveDelegations(delegations []types.Delegation) error {
 	}
 
 	if db.IsStoreHistoricDataEnabled() {
-		err = db.storeHistoricDelegations(delegations)
+		err = db.storeDelegationsHistory(delegations)
 		if err != nil {
 			return fmt.Errorf("error while storing delegations history: %s", err)
 		}
@@ -47,7 +47,8 @@ INSERT INTO delegation (validator_address, delegator_address, amount, height) VA
 		accQry += fmt.Sprintf("($%d),", ai+1)
 		accParams = append(accParams, delegation.DelegatorAddress)
 
-		validator, err := db.GetValidator(delegation.ValidatorOperAddr)
+		// Get the validator consensus address
+		consAddr, err := db.GetValidatorConsensusAddress(delegation.ValidatorOperAddr)
 		if err != nil {
 			return err
 		}
@@ -63,7 +64,7 @@ INSERT INTO delegation (validator_address, delegator_address, amount, height) VA
 		di := i * 4
 		delQry += fmt.Sprintf("($%d,$%d,$%d,$%d),", di+1, di+2, di+3, di+4)
 		delParams = append(delParams,
-			validator.GetConsAddr(), delegation.DelegatorAddress, value, delegation.Height)
+			consAddr.String(), delegation.DelegatorAddress, value, delegation.Height)
 	}
 
 	// Insert the accounts
@@ -84,8 +85,8 @@ WHERE delegation.height <= excluded.height`
 	return err
 }
 
-// storeHistoricDelegations allows to store the given delegations as historic ones
-func (db *Db) storeHistoricDelegations(delegations []types.Delegation) error {
+// storeDelegationsHistory allows to store the given delegations as historic ones
+func (db *Db) storeDelegationsHistory(delegations []types.Delegation) error {
 	accQry := `
 INSERT INTO account (address) VALUES `
 	var accParams []interface{}
@@ -99,6 +100,12 @@ INSERT INTO delegation_history (validator_address, delegator_address, amount, he
 		accQry += fmt.Sprintf("($%d),", ai+1)
 		accParams = append(accParams, delegation.DelegatorAddress)
 
+		// Get the validator consensus address
+		consAddr, err := db.GetValidatorConsensusAddress(delegation.ValidatorOperAddr)
+		if err != nil {
+			return err
+		}
+
 		// Convert the amount
 		coin := dbtypes.NewDbCoin(delegation.Amount)
 		value, err := coin.Value()
@@ -110,7 +117,7 @@ INSERT INTO delegation_history (validator_address, delegator_address, amount, he
 		di := i * 4
 		delQry += fmt.Sprintf("($%d,$%d,$%d,$%d),", di+1, di+2, di+3, di+4)
 		delParams = append(delParams,
-			delegation.DelegatorAddress, delegation.DelegatorAddress, value, delegation.Height)
+			consAddr.String(), delegation.DelegatorAddress, value, delegation.Height)
 	}
 
 	// Insert the accounts
@@ -124,7 +131,7 @@ INSERT INTO delegation_history (validator_address, delegator_address, amount, he
 	// Insert the delegations
 	delQry = delQry[:len(delQry)-1] // Remove the trailing ","
 	delQry += ` 
-ON CONFLICT ON CONSTRAINT delegation_validator_delegator_unique 
+ON CONFLICT ON CONSTRAINT delegation_history_validator_delegator_unique 
 DO UPDATE SET amount = excluded.amount`
 	_, err = db.Sql.Exec(delQry, delParams...)
 	return err
@@ -280,7 +287,7 @@ VALUES `
 	// Insert the redelegations
 	rdQry = rdQry[:len(rdQry)-1] // Remove the trailing ","
 	rdQry += `
-ON CONFLICT ON CONSTRAINT redelegation_validator_delegator_unique 
+ON CONFLICT ON CONSTRAINT redelegation_history_validator_delegator_unique 
 DO UPDATE SET amount = excluded.amount`
 	_, err = db.Sql.Exec(rdQry, rdParams...)
 	return err
@@ -323,13 +330,13 @@ func (db *Db) SaveUnbondingDelegations(delegations []types.UnbondingDelegation) 
 		return nil
 	}
 
-	err := db.saveUpToDateUnbondingDelegations(delegations)
+	err := db.storeUpToDateUnbondingDelegations(delegations)
 	if err != nil {
 		return fmt.Errorf("error while storing up-to-date undonding delegations: %s", err)
 	}
 
 	if db.IsStoreHistoricDataEnabled() {
-		err = db.saveUnbondingDelegationsHistory(delegations)
+		err = db.storeUnbondingDelegationsHistory(delegations)
 		if err != nil {
 			return fmt.Errorf("error while storing undonding delegations history: %s", err)
 		}
@@ -338,8 +345,8 @@ func (db *Db) SaveUnbondingDelegations(delegations []types.UnbondingDelegation) 
 	return nil
 }
 
-// saveUpToDateUnbondingDelegations allows to store the given unbonding delegations as the most up-to-date ones
-func (db *Db) saveUpToDateUnbondingDelegations(delegations []types.UnbondingDelegation) error {
+// storeUpToDateUnbondingDelegations allows to store the given unbonding delegations as the most up-to-date ones
+func (db *Db) storeUpToDateUnbondingDelegations(delegations []types.UnbondingDelegation) error {
 	accQry := `
 INSERT INTO account (address) VALUES `
 	var accParams []interface{}
@@ -389,8 +396,8 @@ WHERE unbonding_delegation.height <= excluded.height`
 	return err
 }
 
-// saveUnbondingDelegationsHistory allows to store the given unbonding delegations as historic ones
-func (db *Db) saveUnbondingDelegationsHistory(delegations []types.UnbondingDelegation) error {
+// storeUnbondingDelegationsHistory allows to store the given unbonding delegations as historic ones
+func (db *Db) storeUnbondingDelegationsHistory(delegations []types.UnbondingDelegation) error {
 	accQry := `
 INSERT INTO account (address) VALUES `
 	var accParams []interface{}
@@ -429,7 +436,7 @@ VALUES `
 	// Insert the current unbonding delegations
 	udQry = udQry[:len(udQry)-1] // Remove the trailing ","
 	udQry += `
-ON CONFLICT ON CONSTRAINT unbonding_delegation_validator_delegator_unique 
+ON CONFLICT ON CONSTRAINT unbonding_delegation_history_validator_delegator_unique 
 DO UPDATE SET amount = excluded.amount`
 	_, err = db.Sql.Exec(udQry, udParams...)
 	return err

@@ -9,6 +9,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/forbole/bdjuno/types/config"
+
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/types"
 
@@ -40,19 +42,26 @@ func (suite *DbTestSuite) SetupTest() {
 	codec := simapp.MakeTestEncodingConfig()
 
 	// Build the database
-	config := juno.NewConfig(
+	cfg := juno.NewConfig(
 		nil, nil, nil,
-		&juno.DatabaseConfig{
-			Name:     "bdjuno",
-			Host:     "localhost",
-			Port:     5433,
-			User:     "bdjuno",
-			Password: "password",
-		},
-		nil, nil,
+		config.NewDatabaseConfig(
+			juno.NewDatabaseConfig(
+				"bdjuno",
+				"localhost",
+				5433,
+				"bdjuno",
+				"password",
+				"",
+				"public",
+				-1,
+				-1,
+			),
+			true,
+		),
+		nil, nil, nil,
 	)
 
-	db, err := database.Builder(config, &codec)
+	db, err := database.Builder(cfg, &codec)
 	suite.Require().NoError(err)
 
 	bigDipperDb, ok := (db).(*database.Db)
@@ -66,7 +75,7 @@ func (suite *DbTestSuite) SetupTest() {
 	_, err = bigDipperDb.Sql.Exec(`CREATE SCHEMA public;`)
 	suite.Require().NoError(err)
 
-	dirPath := path.Join("..", "..", "schema", "big-dipper")
+	dirPath := path.Join(".", "schema")
 	dir, err := ioutil.ReadDir(dirPath)
 	suite.Require().NoError(err)
 

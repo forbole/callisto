@@ -6,7 +6,7 @@ import (
 
 	"github.com/forbole/bdjuno/types"
 
-	dbtypes "github.com/forbole/bdjuno/database/database/types"
+	dbtypes "github.com/forbole/bdjuno/database/types"
 )
 
 func (suite *DbTestSuite) TestSaveAccount() {

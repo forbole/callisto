@@ -31,7 +31,7 @@ func (db *Db) SaveAccountBalances(balances []types.AccountBalance) error {
 
 		// Store historic data
 		if db.IsStoreHistoricDataEnabled() {
-			err = db.saveUpToDateBalances(paramsNumber, balances)
+			err = db.saveHistoricBalances(paramsNumber, balances)
 			if err != nil {
 				return fmt.Errorf("error while storing balances history: %s", err)
 			}
@@ -67,7 +67,7 @@ WHERE account_balance.height <= excluded.height`
 	return nil
 }
 
-func (db *Db) saveHistoricBalances(balances []types.AccountBalance, paramsNumber int) error {
+func (db *Db) saveHistoricBalances(paramsNumber int, balances []types.AccountBalance) error {
 	stmt := `INSERT INTO account_balance_history (address, coins, height) VALUES `
 	var params []interface{}
 

@@ -43,7 +43,7 @@ func ListenOperation(cp *client.Proxy, db *database.Db) {
 func subscribeConsensusEvent(event string, cp *client.Proxy, eventChan chan<- tmctypes.ResultEvent) {
 	query := fmt.Sprintf("tm.event = '%s'", event)
 
-	subscriber := fmt.Sprintf("%s-event-%s", juno.Cfg.GetRPCConfig().ClientName, event)
+	subscriber := fmt.Sprintf("%s-event-%s", juno.Cfg.GetRPCConfig().GetClientName(), event)
 	eventCh, cancel, err := cp.SubscribeEvents(subscriber, query)
 	if err != nil {
 		log.Error().Str("module", "consensus").Err(err).Msg("error while subscribing to event")

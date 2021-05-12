@@ -29,5 +29,5 @@ func (m *Module) Name() string {
 
 // RunAdditionalOperations implements AdditionalOperationsModule
 func (m *Module) RunAdditionalOperations() error {
-	return m.db.InsertEnableModules(m.cfg.GetCosmosConfig().Modules)
+	return m.db.InsertEnableModules(m.cfg.GetCosmosConfig().GetModules())
 }
