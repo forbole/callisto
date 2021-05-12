@@ -1,54 +1,59 @@
 package modules
 
 import (
-	"fmt"
-
-	"github.com/forbole/bdjuno/types/config"
-
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/juno/client"
 	"github.com/desmos-labs/juno/db"
-	"github.com/desmos-labs/juno/modules"
+	jmodules "github.com/desmos-labs/juno/modules"
+	"github.com/desmos-labs/juno/modules/messages"
 	"github.com/desmos-labs/juno/modules/registrar"
 	juno "github.com/desmos-labs/juno/types"
 
-	bigdippermodules "github.com/forbole/bdjuno/modules/bigdipper"
-	forbolexmodules "github.com/forbole/bdjuno/modules/forbolex"
+	"github.com/forbole/bdjuno/database"
+	"github.com/forbole/bdjuno/modules/auth"
+	"github.com/forbole/bdjuno/modules/bank"
+	"github.com/forbole/bdjuno/modules/consensus"
+	"github.com/forbole/bdjuno/modules/distribution"
+	"github.com/forbole/bdjuno/modules/gov"
+	"github.com/forbole/bdjuno/modules/mint"
+	"github.com/forbole/bdjuno/modules/modules"
+	"github.com/forbole/bdjuno/modules/pricefeed"
+	"github.com/forbole/bdjuno/modules/slashing"
+	"github.com/forbole/bdjuno/modules/staking"
+	"github.com/forbole/bdjuno/modules/utils"
 )
 
 var (
 	_ registrar.Registrar = &Registrar{}
 )
 
-// Registrar represents a modules registrar that decides what modules to register based on the application type
-type Registrar struct{}
+// Registrar represents the modules.Registrar that allows to register all modules that are supported by BigDipper
+type Registrar struct {
+}
 
 // NewRegistrar allows to build a new Registrar instance
 func NewRegistrar() *Registrar {
 	return &Registrar{}
 }
 
-// BuildModules implements registrar.Registrar
+// BuildModules implements modules.Registrar
 func (r *Registrar) BuildModules(
-	junoCfg juno.Config, encodingConfig *params.EncodingConfig, sdkConfig *sdk.Config, db db.Database, cp *client.Proxy,
-) modules.Modules {
-	cfg, ok := junoCfg.(*config.Config)
-	if !ok {
-		panic(fmt.Errorf("invalid configuration type: %T", junoCfg))
+	cfg juno.Config, encodingConfig *params.EncodingConfig, _ *sdk.Config, db db.Database, cp *client.Proxy,
+) jmodules.Modules {
+	parser := utils.AddressesParser
+	bigDipperBd := database.Cast(db)
+	return []jmodules.Module{
+		messages.NewModule(parser, encodingConfig.Marshaler, db),
+		auth.NewModule(parser, encodingConfig, utils.MustCreateGrpcConnection(cfg), bigDipperBd),
+		bank.NewModule(parser, encodingConfig, utils.MustCreateGrpcConnection(cfg), bigDipperBd),
+		consensus.NewModule(cp, bigDipperBd),
+		distribution.NewModule(utils.MustCreateGrpcConnection(cfg), bigDipperBd),
+		gov.NewModule(encodingConfig, utils.MustCreateGrpcConnection(cfg), bigDipperBd),
+		mint.NewModule(utils.MustCreateGrpcConnection(cfg), bigDipperBd),
+		modules.NewModule(cfg, bigDipperBd),
+		pricefeed.NewModule(encodingConfig, bigDipperBd),
+		slashing.NewModule(utils.MustCreateGrpcConnection(cfg), bigDipperBd),
+		staking.NewModule(encodingConfig, utils.MustCreateGrpcConnection(cfg), bigDipperBd),
 	}
-
-	var reg registrar.Registrar
-	switch cfg.GetDataType() {
-	case config.DataTypeUpdated:
-		reg = bigdippermodules.NewRegistrar()
-
-	case config.DataTypeHistoric:
-		reg = forbolexmodules.NewRegistrar()
-
-	default:
-		panic(fmt.Errorf("invalid application type: %s", cfg.GetDataType()))
-	}
-
-	return reg.BuildModules(junoCfg, encodingConfig, sdkConfig, db, cp)
 }
