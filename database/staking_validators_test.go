@@ -92,7 +92,7 @@ func (suite *DbTestSuite) TestSaveValidators() {
 			10,
 		),
 	}
-	err := suite.database.SaveValidators(validators)
+	err := suite.database.SaveValidatorsData(validators)
 	suite.Require().NoError(err)
 
 	// Verify the data
@@ -157,7 +157,7 @@ func (suite *DbTestSuite) TestSaveValidators() {
 			11,
 		),
 	}
-	err = suite.database.SaveValidators(validators)
+	err = suite.database.SaveValidatorsData(validators)
 	suite.Require().NoError(err)
 
 	// Verify the data
@@ -554,6 +554,10 @@ func (suite *DbTestSuite) TestSaveValidatorCommission() {
 // -----------------------------------------------------------
 
 func (suite *DbTestSuite) TestSaveValidatorsVotingPowers() {
+	_ = suite.getBlock(9)
+	_ = suite.getBlock(10)
+	_ = suite.getBlock(11)
+
 	validator1 := suite.getValidator(
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",

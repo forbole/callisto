@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"time"
 
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/gogo/protobuf/proto"
+
 	"github.com/forbole/bdjuno/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -12,16 +15,31 @@ import (
 	dbtypes "github.com/forbole/bdjuno/database/types"
 )
 
+func (suite *DbTestSuite) encodeProposalContent(content govtypes.Content) string {
+	protoContent, ok := content.(proto.Message)
+	suite.Require().True(ok)
+
+	anyContent, err := codectypes.NewAnyWithValue(protoContent)
+	suite.Require().NoError(err)
+
+	contentBz, err := suite.database.EncodingConfig.Marshaler.MarshalJSON(anyContent)
+	suite.Require().NoError(err)
+
+	return string(contentBz)
+}
+
 func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 	proposer1 := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	proposer2 := suite.getAccount("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 
+	content1 := govtypes.NewTextProposal("title", "description")
+	content2 := govtypes.NewTextProposal("title1", "description1")
 	input := []types.Proposal{
-		types.NewProposal("title",
-			"description",
+		types.NewProposal(
+			1,
 			"proposalRoute",
 			"proposalType",
-			1,
+			content1,
 			govtypes.StatusDepositPeriod,
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 			time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC),
@@ -29,11 +47,11 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 			time.Date(2020, 1, 1, 03, 00, 00, 000, time.UTC),
 			proposer1.String(),
 		),
-		types.NewProposal("title1",
-			"description1",
+		types.NewProposal(
+			2,
 			"proposalRoute1",
 			"proposalType1",
-			2,
+			content2,
 			govtypes.StatusPassed,
 			time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 			time.Date(2020, 1, 2, 01, 00, 00, 000, time.UTC),
@@ -50,72 +68,39 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 	err = suite.database.Sqlx.Select(&proposalRow, `SELECT * FROM proposal ORDER BY proposal_id`)
 	suite.Require().NoError(err)
 
-	expected := []dbtypes.ProposalRow{dbtypes.NewProposalRow("title",
-		"description",
-		"proposalRoute",
-		"proposalType",
-		1,
-		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 1, 02, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 1, 03, 00, 00, 000, time.UTC),
-		proposer1.String(),
-		govtypes.StatusDepositPeriod.String(),
-	), dbtypes.NewProposalRow("title1",
-		"description1",
-		"proposalRoute1",
-		"proposalType1",
-		2,
-		time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 2, 01, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 2, 02, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 2, 03, 00, 00, 000, time.UTC),
-		proposer2.String(),
-		govtypes.StatusPassed.String(),
-	)}
+	expected := []dbtypes.ProposalRow{
+		dbtypes.NewProposalRow(
+			1,
+			"proposalRoute",
+			"proposalType",
+			"title",
+			"description",
+			suite.encodeProposalContent(content1),
+			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC),
+			time.Date(2020, 1, 1, 02, 00, 00, 000, time.UTC),
+			time.Date(2020, 1, 1, 03, 00, 00, 000, time.UTC),
+			proposer1.String(),
+			govtypes.StatusDepositPeriod.String(),
+		),
+		dbtypes.NewProposalRow(
+			2,
+			"proposalRoute1",
+			"proposalType1",
+			"title1",
+			"description1",
+			suite.encodeProposalContent(content2),
+			time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+			time.Date(2020, 1, 2, 01, 00, 00, 000, time.UTC),
+			time.Date(2020, 1, 2, 02, 00, 00, 000, time.UTC),
+			time.Date(2020, 1, 2, 03, 00, 00, 000, time.UTC),
+			proposer2.String(),
+			govtypes.StatusPassed.String(),
+		),
+	}
 	for i, expect := range expected {
 		suite.Require().True(proposalRow[i].Equals(expect))
 	}
-}
-
-func (suite *DbTestSuite) TestBigDipperDb_SaveProposal() {
-	proposer1 := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
-
-	input := types.NewProposal("title",
-		"description",
-		"proposalRoute",
-		"proposalType",
-		1,
-		govtypes.StatusDepositPeriod,
-		time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 2, 01, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 2, 02, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 2, 03, 00, 00, 000, time.UTC),
-		proposer1.String(),
-	)
-
-	err := suite.database.SaveProposal(input)
-	suite.Require().NoError(err)
-
-	var proposalRow []dbtypes.ProposalRow
-	err = suite.database.Sqlx.Select(&proposalRow, `SELECT * FROM proposal`)
-	suite.Require().NoError(err)
-	suite.Require().Len(proposalRow, 1)
-
-	expect := dbtypes.NewProposalRow("title",
-		"description",
-		"proposalRoute",
-		"proposalType",
-		1,
-		time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 2, 01, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 2, 02, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 2, 03, 00, 00, 000, time.UTC),
-		proposer1.String(),
-		govtypes.StatusDepositPeriod.String(),
-	)
-
-	suite.Require().True(expect.Equals(proposalRow[0]))
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveTallyResults() {
@@ -161,27 +146,6 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
 	suite.Require().True(expected.Equals(result[0]))
 }
 
-func (suite *DbTestSuite) TestBigDipperDb_SaveDeposit() {
-	proposal := suite.getProposalRow(1)
-	depositor := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
-	amount := sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(10000)))
-
-	deposit := types.NewDeposit(proposal.ProposalID, depositor.String(), amount, 10)
-	err := suite.database.SaveDeposit(deposit)
-	suite.Require().NoError(err)
-
-	var result []dbtypes.DepositRow
-	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_deposit`)
-	suite.Require().NoError(err)
-	suite.Require().Len(result, 1)
-	suite.Require().True(result[0].Equals(dbtypes.NewDepositRow(
-		1,
-		depositor.String(),
-		dbtypes.NewDbCoins(amount),
-		10,
-	)))
-}
-
 func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 	proposal := suite.getProposalRow(1)
 
@@ -216,26 +180,23 @@ func (suite *DbTestSuite) TestBigDipperDb_UpdateProposal() {
 	proposer, err := sdk.AccAddressFromBech32(proposal.Proposer)
 	suite.Require().NoError(err)
 
-	update := types.NewProposal(proposal.Title,
-		proposal.Description,
-		proposal.ProposalRoute,
-		proposal.ProposalType,
+	update := types.NewProposalUpdate(
 		proposal.ProposalID,
 		govtypes.StatusPassed,
-		proposal.SubmitTime,
-		proposal.DepositEndTime,
 		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 		time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC),
-		proposer.String(),
 	)
 
 	err = suite.database.UpdateProposal(update)
 	suite.Require().NoError(err)
-	expected := dbtypes.NewProposalRow(proposal.Title,
-		proposal.Description,
+
+	expected := dbtypes.NewProposalRow(
+		proposal.ProposalID,
 		proposal.ProposalRoute,
 		proposal.ProposalType,
-		proposal.ProposalID,
+		proposal.Content.GetTitle(),
+		proposal.Content.GetDescription(),
+		suite.encodeProposalContent(proposal.Content),
 		proposal.SubmitTime,
 		proposal.DepositEndTime,
 		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
@@ -262,11 +223,10 @@ func (suite *DbTestSuite) getProposalRow(id int) types.Proposal {
 	proposalType := fmt.Sprintf("proposalType%d", id)
 
 	proposal := types.NewProposal(
-		title,
-		description,
+		uint64(id),
 		proposalRoute,
 		proposalType,
-		uint64(id),
+		govtypes.NewTextProposal(title, description),
 		govtypes.StatusPassed,
 		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 		time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC),
@@ -275,7 +235,7 @@ func (suite *DbTestSuite) getProposalRow(id int) types.Proposal {
 		proposer.String(),
 	)
 
-	err := suite.database.SaveProposal(proposal)
+	err := suite.database.SaveProposals([]types.Proposal{proposal})
 	suite.Require().NoError(err)
 
 	return proposal

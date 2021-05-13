@@ -140,7 +140,7 @@ func saveValidators(
 		vals[i] = validator
 	}
 
-	return db.SaveValidators(vals)
+	return db.SaveValidatorsData(vals)
 }
 
 // saveValidatorDescription saves the description for the given validators

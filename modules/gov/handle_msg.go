@@ -2,6 +2,7 @@ package gov
 
 import (
 	"context"
+	"strconv"
 	"time"
 
 	govutils "github.com/forbole/bdjuno/modules/gov/utils"
@@ -13,8 +14,6 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
-	"github.com/cosmos/cosmos-sdk/types/query"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	juno "github.com/desmos-labs/juno/types"
@@ -22,7 +21,7 @@ import (
 
 // HandleMsg allows to handle the different utils related to the staking module
 func HandleMsg(
-	tx *juno.Tx, msg sdk.Msg,
+	tx *juno.Tx, index int, msg sdk.Msg,
 	govClient govtypes.QueryClient, authClient authtypes.QueryClient, bankClient banktypes.QueryClient,
 	cdc codec.Marshaler, db *database.Db,
 ) error {
@@ -32,7 +31,7 @@ func HandleMsg(
 
 	switch cosmosMsg := msg.(type) {
 	case *govtypes.MsgSubmitProposal:
-		return handleMsgSubmitProposal(tx, cosmosMsg, govClient, authClient, bankClient, cdc, db)
+		return handleMsgSubmitProposal(tx, index, cosmosMsg, govClient, authClient, bankClient, cdc, db)
 
 	case *govtypes.MsgDeposit:
 		return handleMsgDeposit(tx, cosmosMsg, db)
@@ -46,46 +45,50 @@ func HandleMsg(
 
 // handleMsgSubmitProposal allows to properly handle a handleMsgSubmitProposal
 func handleMsgSubmitProposal(
-	tx *juno.Tx, msg *govtypes.MsgSubmitProposal,
+	tx *juno.Tx, index int, msg *govtypes.MsgSubmitProposal,
 	govClient govtypes.QueryClient, authClient authtypes.QueryClient, bankClient banktypes.QueryClient,
 	cdc codec.Marshaler, db *database.Db,
 ) error {
-	// Get proposals
-	res, err := govClient.Proposals(
+	// Get the proposal id
+	event, err := tx.FindEventByType(index, govtypes.EventTypeSubmitProposal)
+	if err != nil {
+		return err
+	}
+
+	id, err := tx.FindAttributeByKey(event, govtypes.AttributeKeyProposalID)
+	if err != nil {
+		return err
+	}
+
+	proposalID, err := strconv.ParseUint(id, 10, 64)
+	if err != nil {
+		return err
+	}
+
+	// Get the proposal
+	res, err := govClient.Proposal(
 		context.Background(),
-		&govtypes.QueryProposalsRequest{
-			Pagination: &query.PageRequest{
-				Limit: 10000, // Query 10.000 proposals
-			},
-		},
+		&govtypes.QueryProposalRequest{ProposalId: proposalID},
 	)
 	if err != nil {
 		return err
 	}
 
-	// Get the specific proposal
-	var proposal govtypes.Proposal
-	for _, p := range res.Proposals {
-		// Unmarshal the content properly
-		var content govtypes.Content
-		err = cdc.UnpackAny(p.Content, &content)
-		if err != nil {
-			return err
-		}
+	proposal := res.Proposal
 
-		if p.GetContent().GetTitle() == msg.GetContent().GetTitle() {
-			proposal = p
-			break
-		}
+	// Unpack the content
+	var content govtypes.Content
+	err = cdc.UnpackAny(proposal.Content, &content)
+	if err != nil {
+		return err
 	}
 
 	// Store the proposal
 	proposalObj := types.NewProposal(
-		proposal.GetTitle(),
-		proposal.GetContent().GetDescription(),
+		proposal.ProposalId,
 		proposal.ProposalRoute(),
 		proposal.ProposalType(),
-		proposal.ProposalId,
+		proposal.GetContent(),
 		proposal.Status,
 		proposal.SubmitTime,
 		proposal.DepositEndTime,
@@ -93,19 +96,14 @@ func handleMsgSubmitProposal(
 		proposal.VotingEndTime,
 		msg.Proposer,
 	)
-	err = db.SaveProposal(proposalObj)
+	err = db.SaveProposals([]types.Proposal{proposalObj})
 	if err != nil {
 		return err
 	}
 
 	// Store the deposit
-	deposit := types.NewDeposit(
-		proposal.ProposalId,
-		msg.Proposer,
-		msg.InitialDeposit,
-		tx.Height,
-	)
-	err = db.SaveDeposit(deposit)
+	deposit := types.NewDeposit(proposal.ProposalId, msg.Proposer, msg.InitialDeposit, tx.Height)
+	err = db.SaveDeposits([]types.Deposit{deposit})
 	if err != nil {
 		return err
 	}
@@ -122,19 +120,13 @@ func handleMsgSubmitProposal(
 }
 
 // handleMsgDeposit allows to properly handle a handleMsgDeposit
-func handleMsgDeposit(
-	tx *juno.Tx, msg *govtypes.MsgDeposit, db *database.Db,
-) error {
-	// Save the deposits
+func handleMsgDeposit(tx *juno.Tx, msg *govtypes.MsgDeposit, db *database.Db) error {
 	deposit := types.NewDeposit(msg.ProposalId, msg.Depositor, msg.Amount, tx.Height)
-	return db.SaveDeposit(deposit)
+	return db.SaveDeposits([]types.Deposit{deposit})
 }
 
 // handleMsgVote allows to properly handle a handleMsgVote
-func handleMsgVote(
-	tx *juno.Tx, msg *govtypes.MsgVote, db *database.Db,
-) error {
-	// Save the vote
+func handleMsgVote(tx *juno.Tx, msg *govtypes.MsgVote, db *database.Db) error {
 	vote := types.NewVote(msg.ProposalId, msg.Voter, msg.Option, tx.Height)
 	return db.SaveVote(vote)
 }

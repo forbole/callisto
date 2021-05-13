@@ -2,6 +2,7 @@ CREATE TABLE proposal
 (
     title             TEXT      NOT NULL,
     description       TEXT      NOT NULL,
+    content           JSONB     NOT NULL,
     proposal_route    TEXT      NOT NULL,
     proposal_type     TEXT      NOT NULL,
     proposal_id       DECIMAL   NOT NULL PRIMARY KEY,

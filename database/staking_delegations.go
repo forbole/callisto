@@ -11,7 +11,7 @@ import (
 // SaveDelegations stores inside the database the given delegations data.
 // It assumes that the validators addresses are already present inside
 // the proper database table.
-// TIP: To store the validators data call SaveValidators.
+// TIP: To store the validators data call SaveValidatorsData.
 func (db *Db) SaveDelegations(delegations []types.Delegation) error {
 	if len(delegations) == 0 {
 		return nil

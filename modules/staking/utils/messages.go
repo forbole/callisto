@@ -48,7 +48,7 @@ func StoreValidatorFromMsgCreateValidator(
 	}
 
 	// Save the validator
-	err = db.SaveValidators([]types.Validator{validator})
+	err = db.SaveValidatorsData([]types.Validator{validator})
 	if err != nil {
 		return err
 	}
