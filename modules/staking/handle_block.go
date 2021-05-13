@@ -47,9 +47,7 @@ func HandleBlock(
 }
 
 // updateValidatorsStatus updates all validators' statuses
-func updateValidatorsStatus(
-	height int64, validators []stakingtypes.Validator, cdc codec.Marshaler, db *database.Db,
-) {
+func updateValidatorsStatus(height int64, validators []stakingtypes.Validator, cdc codec.Marshaler, db *database.Db) {
 	log.Debug().Str("module", "staking").Int64("height", height).
 		Msg("updating validators statuses")
 
@@ -90,9 +88,7 @@ func updateValidatorsStatus(
 }
 
 // updateValidatorVotingPower fetches and stores into the database all the current validators' voting powers
-func updateValidatorVotingPower(
-	height int64, vals *tmctypes.ResultValidators, db *database.Db,
-) {
+func updateValidatorVotingPower(height int64, vals *tmctypes.ResultValidators, db *database.Db) {
 	log.Debug().Str("module", "staking").Int64("height", height).
 		Msg("updating validators voting powers")
 

@@ -58,7 +58,7 @@ CREATE TABLE validator_voting_power
 (
     validator_address TEXT   NOT NULL REFERENCES validator (consensus_address) PRIMARY KEY,
     voting_power      BIGINT NOT NULL,
-    height            BIGINT NOT NULL
+    height            BIGINT NOT NULL REFERENCES block (height)
 );
 CREATE INDEX validator_voting_power_height_index ON validator_voting_power (height);
 
@@ -180,7 +180,7 @@ CREATE TABLE unbonding_delegation
     delegator_address    TEXT                        NOT NULL REFERENCES account (address),
     amount               COIN                        NOT NUll,
     completion_timestamp TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    height               BIGINT                      NOT NULL REFERENCES block(height),
+    height               BIGINT                      NOT NULL REFERENCES block (height),
     CONSTRAINT unbonding_delegation_validator_delegator_unique UNIQUE (delegator_address, validator_address,
                                                                        completion_timestamp)
 );

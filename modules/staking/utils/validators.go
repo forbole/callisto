@@ -132,7 +132,7 @@ func UpdateValidators(
 		return nil, err
 	}
 
-	err = db.SaveValidators(validators)
+	err = db.SaveValidatorsData(validators)
 	if err != nil {
 		return nil, err
 	}

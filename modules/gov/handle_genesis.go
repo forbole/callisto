@@ -54,11 +54,10 @@ func saveProposals(
 	for index, proposal := range p {
 		// Since it's not possible to get the proposer, set it to nil
 		proposals[index] = types.NewProposal(
-			proposal.GetTitle(),
-			proposal.GetContent().GetDescription(),
+			proposal.ProposalId,
 			proposal.ProposalRoute(),
 			proposal.ProposalType(),
-			proposal.ProposalId,
+			proposal.GetContent(),
 			proposal.Status,
 			proposal.SubmitTime,
 			proposal.DepositEndTime,

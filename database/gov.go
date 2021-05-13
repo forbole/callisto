@@ -3,6 +3,9 @@ package database
 import (
 	"fmt"
 
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/gogo/protobuf/proto"
+
 	"github.com/forbole/bdjuno/types"
 
 	dbtypes "github.com/forbole/bdjuno/database/types"
@@ -19,16 +22,35 @@ func (db *Db) SaveProposals(proposals []types.Proposal) error {
 
 	query := `
 INSERT INTO proposal(
-	title, description, proposer_address, proposal_route, proposal_type, proposal_id, status, 
+	title, description, content, proposer_address, proposal_route, proposal_type, proposal_id, status, 
     submit_time, deposit_end_time, voting_start_time, voting_end_time
 ) VALUES`
 	var param []interface{}
 	for i, proposal := range proposals {
-		vi := i * 11
-		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
-			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11)
-		param = append(param, proposal.Title,
-			proposal.Description,
+		vi := i * 12
+		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
+			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11, vi+12)
+
+		// Encode the content properly
+		protoContent, ok := proposal.Content.(proto.Message)
+		if !ok {
+			return fmt.Errorf("invalid proposal content types: %T", proposal.Content)
+		}
+
+		anyContent, err := codectypes.NewAnyWithValue(protoContent)
+		if err != nil {
+			return err
+		}
+
+		contentBz, err := db.EncodingConfig.Marshaler.MarshalJSON(anyContent)
+		if err != nil {
+			return err
+		}
+
+		param = append(param,
+			proposal.Content.GetTitle(),
+			proposal.Content.GetDescription(),
+			string(contentBz),
 			proposal.Proposer,
 			proposal.ProposalRoute,
 			proposal.ProposalType,
@@ -37,33 +59,12 @@ INSERT INTO proposal(
 			proposal.SubmitTime,
 			proposal.DepositEndTime,
 			proposal.VotingStartTime,
-			proposal.VotingEndTime)
+			proposal.VotingEndTime,
+		)
 	}
 	query = query[:len(query)-1] // Remove trailing ","
 	query += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(query, param...)
-	return err
-}
-
-//SaveProposal save a single proposal
-func (db *Db) SaveProposal(proposal types.Proposal) error {
-	query := `
-INSERT INTO proposal(
-	title, description, proposer_address, proposal_route, proposal_type, proposal_id, status, 
-    submit_time, deposit_end_time, voting_start_time, voting_end_time
-) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) ON CONFLICT DO NOTHING`
-
-	_, err := db.Sql.Exec(query, proposal.Title,
-		proposal.Description,
-		proposal.Proposer,
-		proposal.ProposalRoute,
-		proposal.ProposalType,
-		proposal.ProposalID,
-		proposal.Status.String(),
-		proposal.SubmitTime,
-		proposal.DepositEndTime,
-		proposal.VotingStartTime,
-		proposal.VotingEndTime)
 	return err
 }
 
@@ -103,25 +104,12 @@ func (db *Db) SaveVote(vote types.Vote) error {
 	return err
 }
 
-// SaveDeposit allows to save for the given message deposit and height
-func (db *Db) SaveDeposit(deposit types.Deposit) error {
-	query := `
-INSERT INTO proposal_deposit(proposal_id, depositor_address, amount, height) 
-VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`
-	_, err := db.Sql.Exec(query,
-		deposit.ProposalID,
-		deposit.Depositor,
-		pq.Array(dbtypes.NewDbCoins(deposit.Amount)),
-		deposit.Height,
-	)
-	return err
-}
-
 // SaveDeposits allows to save multiple deposits
 func (db *Db) SaveDeposits(deposits []types.Deposit) error {
 	if len(deposits) == 0 {
 		return nil
 	}
+
 	query := `INSERT INTO proposal_deposit(proposal_id, depositor_address, amount, height) VALUES `
 	var param []interface{}
 
@@ -141,13 +129,13 @@ func (db *Db) SaveDeposits(deposits []types.Deposit) error {
 }
 
 // UpdateProposal updates a proposal stored inside the database
-func (db *Db) UpdateProposal(proposal types.Proposal) error {
+func (db *Db) UpdateProposal(update types.ProposalUpdate) error {
 	query := `UPDATE proposal SET status = $1, voting_start_time = $2, voting_end_time = $3 where proposal_id = $4`
 	_, err := db.Sql.Exec(query,
-		proposal.Status.String(),
-		proposal.VotingStartTime,
-		proposal.VotingEndTime,
-		proposal.ProposalID,
+		update.Status.String(),
+		update.VotingStartTime,
+		update.VotingEndTime,
+		update.ProposalID,
 	)
 	return err
 }

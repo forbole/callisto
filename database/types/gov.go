@@ -8,6 +8,7 @@ import (
 type ProposalRow struct {
 	Title           string    `db:"title"`
 	Description     string    `db:"description"`
+	Content         string    `db:"content"`
 	ProposalRoute   string    `db:"proposal_route"`
 	ProposalType    string    `db:"proposal_type"`
 	ProposalID      uint64    `db:"proposal_id"`
@@ -20,20 +21,24 @@ type ProposalRow struct {
 }
 
 // NewProposalRow allows to easily create a new ProposalRow
-func NewProposalRow(title string,
-	description string,
+func NewProposalRow(
+	proposalID uint64,
 	proposalRoute string,
 	proposalType string,
-	proposalID uint64,
+	title string,
+	description string,
+	content string,
 	submitTime time.Time,
 	depositEndTime time.Time,
 	votingStartTime time.Time,
 	votingEndTime time.Time,
 	proposer string,
-	status string) ProposalRow {
+	status string,
+) ProposalRow {
 	return ProposalRow{
 		Title:           title,
 		Description:     description,
+		Content:         content,
 		ProposalRoute:   proposalRoute,
 		ProposalType:    proposalType,
 		ProposalID:      proposalID,

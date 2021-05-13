@@ -61,19 +61,14 @@ func updateProposalStatuses(
 	}
 
 	// Update the proposal to update the status
-	return db.UpdateProposal(types.NewProposal(
-		proposal.GetTitle(),
-		proposal.GetContent().GetDescription(),
-		proposal.ProposalRoute(),
-		proposal.ProposalType(),
-		proposal.ProposalId,
-		proposal.Status,
-		proposal.SubmitTime,
-		proposal.DepositEndTime,
-		proposal.VotingStartTime,
-		proposal.VotingEndTime,
-		"",
-	))
+	return db.UpdateProposal(
+		types.NewProposalUpdate(
+			proposal.ProposalId,
+			proposal.Status,
+			proposal.VotingStartTime,
+			proposal.VotingEndTime,
+		),
+	)
 }
 
 func updateAccount(proposal govtypes.Proposal, bankClient banktypes.QueryClient, db *database.Db) error {

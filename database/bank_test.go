@@ -12,6 +12,10 @@ import (
 )
 
 func (suite *DbTestSuite) TestSaveAccountBalance() {
+	_ = suite.getBlock(9)
+	_ = suite.getBlock(10)
+	_ = suite.getBlock(11)
+
 	address1 := suite.getAccount("cosmos140xsjjg6pwkjp0xjz8zru7ytha60l5aee9nlf7")
 	address2 := suite.getAccount("cosmos1tcpsdy9alvucwj0h23n56tey6zmrvkm7sndh9j")
 

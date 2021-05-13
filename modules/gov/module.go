@@ -51,6 +51,6 @@ func (m *Module) HandleGenesis(_ *tmtypes.GenesisDoc, appState map[string]json.R
 }
 
 // HandleMsg implements modules.Module
-func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *types.Tx) error {
-	return HandleMsg(tx, msg, m.govClient, m.authClient, m.bankClient, m.encodingConfig.Marshaler, m.db)
+func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *types.Tx) error {
+	return HandleMsg(tx, index, msg, m.govClient, m.authClient, m.bankClient, m.encodingConfig.Marshaler, m.db)
 }

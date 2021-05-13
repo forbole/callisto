@@ -4,18 +4,17 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
+
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 )
 
-// Proposal represent storing a gov.proposal
-// For final tolly result, it stored in tally result as they share same proposal Symbol and VotingEndTime
+// Proposal represents a single governance proposal
 type Proposal struct {
-	Title           string
-	Description     string
 	ProposalRoute   string
 	ProposalType    string
 	ProposalID      uint64
-	Status          gov.ProposalStatus
+	Content         govtypes.Content
+	Status          govtypes.ProposalStatus
 	SubmitTime      time.Time
 	DepositEndTime  time.Time
 	VotingStartTime time.Time
@@ -25,22 +24,19 @@ type Proposal struct {
 
 // NewProposal return a new Proposal instance
 func NewProposal(
-	title string,
-	description string,
+	proposalID uint64,
 	proposalRoute string,
 	proposalType string,
-	proposalID uint64,
-	status gov.ProposalStatus,
+	content govtypes.Content,
+	status govtypes.ProposalStatus,
 	submitTime time.Time,
 	depositEndTime time.Time,
 	votingStartTime time.Time,
 	votingEndTime time.Time,
 	proposer string,
-
 ) Proposal {
 	return Proposal{
-		Title:           title,
-		Description:     description,
+		Content:         content,
 		ProposalRoute:   proposalRoute,
 		ProposalType:    proposalType,
 		ProposalID:      proposalID,
@@ -53,7 +49,79 @@ func NewProposal(
 	}
 }
 
-//MsgVote
+// ProposalUpdate contains the data that should be used when updating a governance proposal
+type ProposalUpdate struct {
+	ProposalID      uint64
+	Status          govtypes.ProposalStatus
+	VotingStartTime time.Time
+	VotingEndTime   time.Time
+}
+
+// NewProposalUpdate allows to build a new ProposalUpdate instance
+func NewProposalUpdate(
+	proposalID uint64, status govtypes.ProposalStatus, votingStartTime, votingEndTime time.Time,
+) ProposalUpdate {
+	return ProposalUpdate{
+		ProposalID:      proposalID,
+		Status:          status,
+		VotingStartTime: votingStartTime,
+		VotingEndTime:   votingEndTime,
+	}
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+// Deposit contains the data of a single deposit made towards a proposal
+type Deposit struct {
+	ProposalID uint64
+	Depositor  string
+	Amount     sdk.Coins
+	Height     int64
+}
+
+// NewDeposit return a new Deposit instance
+func NewDeposit(
+	proposalID uint64,
+	depositor string,
+	amount sdk.Coins,
+	height int64,
+) Deposit {
+	return Deposit{
+		ProposalID: proposalID,
+		Depositor:  depositor,
+		Amount:     amount,
+		Height:     height,
+	}
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+// Vote contains the data of a single proposal vote
+type Vote struct {
+	ProposalID uint64
+	Voter      string
+	Option     govtypes.VoteOption
+	Height     int64
+}
+
+// NewVote return a new Vote instance
+func NewVote(
+	proposalID uint64,
+	voter string,
+	option govtypes.VoteOption,
+	height int64,
+) Vote {
+	return Vote{
+		ProposalID: proposalID,
+		Voter:      voter,
+		Option:     option,
+		Height:     height,
+	}
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+// TallyResult contains the data about the final results of a proposal
 type TallyResult struct {
 	ProposalID uint64
 	Yes        int64
@@ -78,53 +146,6 @@ func NewTallyResult(
 		Abstain:    abstain,
 		No:         no,
 		NoWithVeto: noWithVeto,
-		Height:     height,
-	}
-}
-
-// Vote describe a msgVote
-type Vote struct {
-	ProposalID uint64
-	Voter      string
-	Option     gov.VoteOption
-	Height     int64
-}
-
-// NewVote return a new Vote instance
-func NewVote(
-	proposalID uint64,
-	voter string,
-	option gov.VoteOption,
-	height int64,
-) Vote {
-	return Vote{
-		ProposalID: proposalID,
-		Voter:      voter,
-		Option:     option,
-		Height:     height,
-	}
-}
-
-// Deposit represent a message that a user do deposit action
-// Assume the entry with latest height get final total deposit
-type Deposit struct {
-	ProposalID uint64
-	Depositor  string
-	Amount     sdk.Coins
-	Height     int64
-}
-
-//NewDeposit return a new Deposit instance
-func NewDeposit(
-	proposalID uint64,
-	depositor string,
-	amount sdk.Coins,
-	height int64,
-) Deposit {
-	return Deposit{
-		ProposalID: proposalID,
-		Depositor:  depositor,
-		Amount:     amount,
 		Height:     height,
 	}
 }
