@@ -11,7 +11,7 @@ type ProposalRow struct {
 	Content         string    `db:"content"`
 	ProposalRoute   string    `db:"proposal_route"`
 	ProposalType    string    `db:"proposal_type"`
-	ProposalID      uint64    `db:"proposal_id"`
+	ProposalID      uint64    `db:"id"`
 	SubmitTime      time.Time `db:"submit_time"`
 	DepositEndTime  time.Time `db:"deposit_end_time"`
 	VotingStartTime time.Time `db:"voting_start_time"`

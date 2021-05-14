@@ -7,7 +7,7 @@ require (
 	github.com/desmos-labs/desmos v0.16.1-0.20210429132406-ac7a025aa126
 	github.com/desmos-labs/juno v0.0.0-20210513082948-fad7f160e2cd
 	github.com/go-co-op/gocron v0.3.3
-	github.com/gogo/protobuf v1.3.3 // indirect
+	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.2.1-0.20200324155115-ee514944af4b
 	github.com/lib/pq v1.9.0
 	github.com/pelletier/go-toml v1.8.0
