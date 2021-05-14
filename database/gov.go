@@ -22,7 +22,7 @@ func (db *Db) SaveProposals(proposals []types.Proposal) error {
 
 	query := `
 INSERT INTO proposal(
-	title, description, content, proposer_address, proposal_route, proposal_type, proposal_id, status, 
+	id, title, description, content, proposer_address, proposal_route, proposal_type, status, 
     submit_time, deposit_end_time, voting_start_time, voting_end_time
 ) VALUES`
 	var param []interface{}
@@ -48,13 +48,13 @@ INSERT INTO proposal(
 		}
 
 		param = append(param,
+			proposal.ProposalID,
 			proposal.Content.GetTitle(),
 			proposal.Content.GetDescription(),
 			string(contentBz),
 			proposal.Proposer,
 			proposal.ProposalRoute,
 			proposal.ProposalType,
-			proposal.ProposalID,
 			proposal.Status.String(),
 			proposal.SubmitTime,
 			proposal.DepositEndTime,
@@ -130,7 +130,7 @@ func (db *Db) SaveDeposits(deposits []types.Deposit) error {
 
 // UpdateProposal updates a proposal stored inside the database
 func (db *Db) UpdateProposal(update types.ProposalUpdate) error {
-	query := `UPDATE proposal SET status = $1, voting_start_time = $2, voting_end_time = $3 where proposal_id = $4`
+	query := `UPDATE proposal SET status = $1, voting_start_time = $2, voting_end_time = $3 where id = $4`
 	_, err := db.Sql.Exec(query,
 		update.Status.String(),
 		update.VotingStartTime,

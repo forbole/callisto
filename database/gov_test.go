@@ -65,7 +65,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 	suite.Require().NoError(err)
 
 	var proposalRow []dbtypes.ProposalRow
-	err = suite.database.Sqlx.Select(&proposalRow, `SELECT * FROM proposal ORDER BY proposal_id`)
+	err = suite.database.Sqlx.Select(&proposalRow, `SELECT * FROM proposal ORDER BY id`)
 	suite.Require().NoError(err)
 
 	expected := []dbtypes.ProposalRow{
