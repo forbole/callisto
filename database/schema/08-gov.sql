@@ -1,6 +1,6 @@
 CREATE TABLE proposal
 (
-    id       INTEGER   NOT NULL PRIMARY KEY,
+    id                INTEGER   NOT NULL PRIMARY KEY,
     title             TEXT      NOT NULL,
     description       TEXT      NOT NULL,
     content           JSONB     NOT NULL,

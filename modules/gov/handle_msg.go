@@ -34,10 +34,10 @@ func HandleMsg(
 		return handleMsgSubmitProposal(tx, index, cosmosMsg, govClient, authClient, bankClient, cdc, db)
 
 	case *govtypes.MsgDeposit:
-		return handleMsgDeposit(tx, cosmosMsg, db)
+		return handleMsgDeposit(tx, cosmosMsg, govClient, authClient, bankClient, cdc, db)
 
 	case *govtypes.MsgVote:
-		return handleMsgVote(tx, cosmosMsg, db)
+		return handleMsgVote(tx, cosmosMsg, govClient, authClient, bankClient, cdc, db)
 	}
 
 	return nil
@@ -109,7 +109,7 @@ func handleMsgSubmitProposal(
 	}
 
 	// Watch the proposal and renew the BigDipper when deposit end and voting end in the future
-	update := govutils.UpdateProposal(proposal.ProposalId, govClient, authClient, bankClient, cdc, db)
+	update := govutils.RefreshProposal(proposal.ProposalId, govClient, authClient, bankClient, cdc, db)
 	if proposal.Status == govtypes.StatusVotingPeriod && proposal.VotingEndTime.After(time.Now()) {
 		time.AfterFunc(time.Until(proposal.VotingEndTime), update)
 	} else if proposal.Status == govtypes.StatusDepositPeriod && proposal.DepositEndTime.After(time.Now()) {
@@ -120,13 +120,33 @@ func handleMsgSubmitProposal(
 }
 
 // handleMsgDeposit allows to properly handle a handleMsgDeposit
-func handleMsgDeposit(tx *juno.Tx, msg *govtypes.MsgDeposit, db *database.Db) error {
+func handleMsgDeposit(
+	tx *juno.Tx, msg *govtypes.MsgDeposit,
+	govClient govtypes.QueryClient, authClient authtypes.QueryClient, bankClient banktypes.QueryClient,
+	cdc codec.Marshaler, db *database.Db,
+) error {
+	// Depositing might have updated the status from Deposit to Voting period
+	err := govutils.UpdateProposal(msg.ProposalId, govClient, authClient, bankClient, cdc, db)
+	if err != nil {
+		return err
+	}
+
 	deposit := types.NewDeposit(msg.ProposalId, msg.Depositor, msg.Amount, tx.Height)
 	return db.SaveDeposits([]types.Deposit{deposit})
 }
 
 // handleMsgVote allows to properly handle a handleMsgVote
-func handleMsgVote(tx *juno.Tx, msg *govtypes.MsgVote, db *database.Db) error {
+func handleMsgVote(
+	tx *juno.Tx, msg *govtypes.MsgVote,
+	govClient govtypes.QueryClient, authClient authtypes.QueryClient, bankClient banktypes.QueryClient,
+	cdc codec.Marshaler, db *database.Db,
+) error {
+	// Voting might have updated the status from Voting to Ended
+	err := govutils.UpdateProposal(msg.ProposalId, govClient, authClient, bankClient, cdc, db)
+	if err != nil {
+		return err
+	}
+
 	vote := types.NewVote(msg.ProposalId, msg.Voter, msg.Option, tx.Height)
 	return db.SaveVote(vote)
 }

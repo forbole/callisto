@@ -2,6 +2,9 @@ package utils
 
 import (
 	"context"
+	"fmt"
+
+	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/bdjuno/database"
 	authutils "github.com/forbole/bdjuno/modules/auth/utils"
@@ -16,47 +19,54 @@ import (
 
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-
-	"github.com/rs/zerolog/log"
 )
 
-// UpdateProposal return a function for time.AfterFunc() to update the proposal status on a given time
-func UpdateProposal(
+// RefreshProposal return a function for time.AfterFunc() to update the proposal status on a given time
+func RefreshProposal(
 	id uint64,
 	govClient govtypes.QueryClient, authClient authtypes.QueryClient, bankClient banktypes.QueryClient,
 	cdc codec.Marshaler, db *database.Db,
 ) func() {
 	return func() {
-		// Get the proposal
-		res, err := govClient.Proposal(context.Background(), &govtypes.QueryProposalRequest{ProposalId: id})
+		err := UpdateProposal(id, govClient, authClient, bankClient, cdc, db)
 		if err != nil {
 			log.Error().Str("module", "gov").Err(err).Uint64("proposal_id", id).
-				Msg("error while getting proposal")
-			return
-		}
-
-		err = updateProposalStatuses(res.Proposal, govClient, authClient, bankClient, cdc, db)
-		if err != nil {
-			log.Error().Str("module", "gov").Err(err).Uint64("proposal_id", id).
-				Msg("error while updating proposal")
-			return
-		}
-
-		err = updateAccount(res.Proposal, bankClient, db)
-		if err != nil {
-			log.Error().Str("module", "gov").Err(err).Uint64("proposal_id", id).
-				Msg("error while updating proposal related accounts balances")
+				Msg("error while refreshing proposal")
 		}
 	}
 }
 
-func updateProposalStatuses(
+func UpdateProposal(
+	id uint64,
+	govClient govtypes.QueryClient, authClient authtypes.QueryClient, bankClient banktypes.QueryClient,
+	cdc codec.Marshaler, db *database.Db,
+) error {
+	// Get the proposal
+	res, err := govClient.Proposal(context.Background(), &govtypes.QueryProposalRequest{ProposalId: id})
+	if err != nil {
+		return fmt.Errorf("error while getting proposal: %s", err)
+	}
+
+	err = updateProposalStatus(res.Proposal, govClient, authClient, bankClient, cdc, db)
+	if err != nil {
+		return fmt.Errorf("error while updating proposal status: %s", err)
+	}
+
+	err = updateAccount(res.Proposal, bankClient, db)
+	if err != nil {
+		return fmt.Errorf("error while updating account: %s", err)
+	}
+
+	return nil
+}
+
+func updateProposalStatus(
 	proposal govtypes.Proposal,
 	govClient govtypes.QueryClient, authClient authtypes.QueryClient, bankClient banktypes.QueryClient,
 	cdc codec.Marshaler, db *database.Db,
 ) error {
 	if proposal.Status == govtypes.StatusVotingPeriod {
-		update := UpdateProposal(proposal.ProposalId, govClient, authClient, bankClient, cdc, db)
+		update := RefreshProposal(proposal.ProposalId, govClient, authClient, bankClient, cdc, db)
 		time.AfterFunc(time.Until(proposal.VotingEndTime), update)
 	}
 

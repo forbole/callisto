@@ -83,7 +83,7 @@ func saveProposals(
 		)
 
 		// Update the proposal status when the voting period or deposit period ends
-		update := govutils.UpdateProposal(proposal.ProposalId, govClient, authClient, bankClient, cdc, db)
+		update := govutils.RefreshProposal(proposal.ProposalId, govClient, authClient, bankClient, cdc, db)
 		if proposal.Status == govtypes.StatusVotingPeriod {
 			time.AfterFunc(time.Until(proposal.VotingEndTime), update)
 		} else if proposal.Status == govtypes.StatusDepositPeriod {
