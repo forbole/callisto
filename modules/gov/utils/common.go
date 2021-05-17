@@ -3,12 +3,13 @@ package utils
 import (
 	"context"
 	"fmt"
+	"github.com/forbole/bdjuno/modules/utils"
 
 	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/bdjuno/database"
 	authutils "github.com/forbole/bdjuno/modules/auth/utils"
-	"github.com/forbole/bdjuno/modules/bank/utils"
+	bankutils "github.com/forbole/bdjuno/modules/bank/utils"
 	"github.com/forbole/bdjuno/types"
 
 	"time"
@@ -52,7 +53,12 @@ func UpdateProposal(
 		return fmt.Errorf("error while updating proposal status: %s", err)
 	}
 
-	err = updateAccount(res.Proposal, bankClient, db)
+	err = updateProposalTallyResult(res.Proposal, govClient, db)
+	if err != nil {
+		return fmt.Errorf("error while updating proposal tally result: %s", err)
+	}
+
+	err = updateAccounts(res.Proposal, bankClient, db)
 	if err != nil {
 		return fmt.Errorf("error while updating account: %s", err)
 	}
@@ -81,7 +87,37 @@ func updateProposalStatus(
 	)
 }
 
-func updateAccount(proposal govtypes.Proposal, bankClient banktypes.QueryClient, db *database.Db) error {
+// updateProposalTallyResult updates the tally result associated with the given proposal
+func updateProposalTallyResult(proposal govtypes.Proposal, govClient govtypes.QueryClient, db *database.Db) error {
+	height, err := db.GetLastBlockHeight()
+	if err != nil {
+		return err
+	}
+
+	header := utils.GetHeightRequestHeader(height)
+	res, err := govClient.TallyResult(
+		context.Background(),
+		&govtypes.QueryTallyResultRequest{ProposalId: proposal.ProposalId},
+		header,
+	)
+	if err != nil {
+		return err
+	}
+
+	return db.SaveTallyResults([]types.TallyResult{
+		types.NewTallyResult(
+			proposal.ProposalId,
+			res.Tally.Yes.Int64(),
+			res.Tally.Abstain.Int64(),
+			res.Tally.No.Int64(),
+			res.Tally.NoWithVeto.Int64(),
+			height,
+		),
+	})
+}
+
+// updateAccounts updates any account that might be involved in the proposal (eg. fund community recipient)
+func updateAccounts(proposal govtypes.Proposal, bankClient banktypes.QueryClient, db *database.Db) error {
 	content, ok := proposal.Content.GetCachedValue().(*distrtypes.CommunityPoolSpendProposal)
 	if ok {
 		height, err := db.GetLastBlockHeight()
@@ -96,7 +132,7 @@ func updateAccount(proposal govtypes.Proposal, bankClient banktypes.QueryClient,
 			return err
 		}
 
-		return utils.UpdateBalances(addresses, height, bankClient, db)
+		return bankutils.UpdateBalances(addresses, height, bankClient, db)
 	}
 	return nil
 }
