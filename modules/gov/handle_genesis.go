@@ -44,7 +44,7 @@ func saveProposals(slice govtypes.Proposals, db *database.Db) error {
 			proposal.ProposalRoute(),
 			proposal.ProposalType(),
 			proposal.GetContent(),
-			proposal.Status,
+			proposal.Status.String(),
 			proposal.SubmitTime,
 			proposal.DepositEndTime,
 			proposal.VotingStartTime,

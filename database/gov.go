@@ -3,9 +3,8 @@ package database
 import (
 	"fmt"
 
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/gogo/protobuf/proto"
 
 	"github.com/forbole/bdjuno/types"
@@ -57,7 +56,7 @@ INSERT INTO proposal(
 			proposal.Proposer,
 			proposal.ProposalRoute,
 			proposal.ProposalType,
-			proposal.Status.String(),
+			proposal.Status,
 			proposal.SubmitTime,
 			proposal.DepositEndTime,
 			proposal.VotingStartTime,
@@ -68,6 +67,47 @@ INSERT INTO proposal(
 	query += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(query, param...)
 	return err
+}
+
+// GetProposal returns the proposal with the given id, or nil if not found
+func (db *Db) GetProposal(id uint64) (*types.Proposal, error) {
+	var rows []*dbtypes.ProposalRow
+	err := db.Sqlx.Select(&rows, `SELECT * FROM proposal WHERE id = $1`, id)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(rows) == 0 {
+		return nil, nil
+	}
+
+	row := rows[0]
+
+	var contentAny codectypes.Any
+	err = db.EncodingConfig.Marshaler.UnmarshalJSON([]byte(row.Content), &contentAny)
+	if err != nil {
+		return nil, err
+	}
+
+	var content govtypes.Content
+	err = db.EncodingConfig.Marshaler.UnpackAny(&contentAny, &content)
+	if err != nil {
+		return nil, err
+	}
+
+	proposal := types.NewProposal(
+		row.ProposalID,
+		row.ProposalRoute,
+		row.ProposalType,
+		content,
+		row.Status,
+		row.SubmitTime,
+		row.DepositEndTime,
+		row.VotingStartTime,
+		row.VotingEndTime,
+		row.Proposer,
+	)
+	return &proposal, nil
 }
 
 // GetOpenProposalsIds returns all the ids of the proposals that are currently in deposit or voting period
@@ -84,7 +124,7 @@ func (db *Db) GetOpenProposalsIds() ([]uint64, error) {
 func (db *Db) UpdateProposal(update types.ProposalUpdate) error {
 	query := `UPDATE proposal SET status = $1, voting_start_time = $2, voting_end_time = $3 where id = $4`
 	_, err := db.Sql.Exec(query,
-		update.Status.String(),
+		update.Status,
 		update.VotingStartTime,
 		update.VotingEndTime,
 		update.ProposalID,

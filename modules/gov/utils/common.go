@@ -4,11 +4,12 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/forbole/bdjuno/modules/utils"
+	"google.golang.org/grpc/codes"
 
 	"github.com/forbole/bdjuno/database"
 	authutils "github.com/forbole/bdjuno/modules/auth/utils"
 	bankutils "github.com/forbole/bdjuno/modules/bank/utils"
+	"github.com/forbole/bdjuno/modules/utils"
 	"github.com/forbole/bdjuno/types"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -17,12 +18,28 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 )
 
+const (
+	ErrProposalNotFound = "rpc error: code = %s desc = rpc error: code = %s desc = proposal %d doesn't exist: key not found"
+)
+
 func UpdateProposal(
 	id uint64, govClient govtypes.QueryClient, bankClient banktypes.QueryClient, db *database.Db,
 ) error {
 	// Get the proposal
 	res, err := govClient.Proposal(context.Background(), &govtypes.QueryProposalRequest{ProposalId: id})
 	if err != nil {
+		// Get the error code
+		var code string
+		_, err := fmt.Sscanf(err.Error(), ErrProposalNotFound, &code, &code, &id)
+		if err != nil {
+			return err
+		}
+
+		if code == codes.NotFound.String() {
+			// Handle case when a proposal is deleted from the chain (did not pass deposit period)
+			return updateDeletedProposalStatus(id, db)
+		}
+
 		return fmt.Errorf("error while getting proposal: %s", err)
 	}
 
@@ -44,11 +61,27 @@ func UpdateProposal(
 	return nil
 }
 
+func updateDeletedProposalStatus(id uint64, db *database.Db) error {
+	stored, err := db.GetProposal(id)
+	if err != nil {
+		return err
+	}
+
+	return db.UpdateProposal(
+		types.NewProposalUpdate(
+			stored.ProposalID,
+			types.ProposalStatusInvalid,
+			stored.VotingStartTime,
+			stored.VotingEndTime,
+		),
+	)
+}
+
 func updateProposalStatus(proposal govtypes.Proposal, db *database.Db) error {
 	return db.UpdateProposal(
 		types.NewProposalUpdate(
 			proposal.ProposalId,
-			proposal.Status,
+			proposal.Status.String(),
 			proposal.VotingStartTime,
 			proposal.VotingEndTime,
 		),

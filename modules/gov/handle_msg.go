@@ -82,7 +82,7 @@ func handleMsgSubmitProposal(
 		proposal.ProposalRoute(),
 		proposal.ProposalType(),
 		proposal.GetContent(),
-		proposal.Status,
+		proposal.Status.String(),
 		proposal.SubmitTime,
 		proposal.DepositEndTime,
 		proposal.VotingStartTime,

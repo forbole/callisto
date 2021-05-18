@@ -8,13 +8,17 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 )
 
+const (
+	ProposalStatusInvalid = "PROPOSAL_STATUS_INVALID"
+)
+
 // Proposal represents a single governance proposal
 type Proposal struct {
 	ProposalRoute   string
 	ProposalType    string
 	ProposalID      uint64
 	Content         govtypes.Content
-	Status          govtypes.ProposalStatus
+	Status          string
 	SubmitTime      time.Time
 	DepositEndTime  time.Time
 	VotingStartTime time.Time
@@ -28,7 +32,7 @@ func NewProposal(
 	proposalRoute string,
 	proposalType string,
 	content govtypes.Content,
-	status govtypes.ProposalStatus,
+	status string,
 	submitTime time.Time,
 	depositEndTime time.Time,
 	votingStartTime time.Time,
@@ -49,17 +53,31 @@ func NewProposal(
 	}
 }
 
+// Equal tells whether p and other contain the same data
+func (p Proposal) Equal(other Proposal) bool {
+	return p.ProposalRoute == other.ProposalRoute &&
+		p.ProposalType == other.ProposalType &&
+		p.ProposalID == other.ProposalID &&
+		p.Content.String() == other.Content.String() &&
+		p.Status == other.Status &&
+		p.SubmitTime.Equal(other.SubmitTime) &&
+		p.DepositEndTime.Equal(other.DepositEndTime) &&
+		p.VotingStartTime.Equal(other.VotingStartTime) &&
+		p.VotingEndTime.Equal(other.VotingEndTime) &&
+		p.Proposer == other.Proposer
+}
+
 // ProposalUpdate contains the data that should be used when updating a governance proposal
 type ProposalUpdate struct {
 	ProposalID      uint64
-	Status          govtypes.ProposalStatus
+	Status          string
 	VotingStartTime time.Time
 	VotingEndTime   time.Time
 }
 
 // NewProposalUpdate allows to build a new ProposalUpdate instance
 func NewProposalUpdate(
-	proposalID uint64, status govtypes.ProposalStatus, votingStartTime, votingEndTime time.Time,
+	proposalID uint64, status string, votingStartTime, votingEndTime time.Time,
 ) ProposalUpdate {
 	return ProposalUpdate{
 		ProposalID:      proposalID,
