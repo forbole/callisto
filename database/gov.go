@@ -3,6 +3,8 @@ package database
 import (
 	"fmt"
 
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/gogo/protobuf/proto"
 
@@ -68,38 +70,24 @@ INSERT INTO proposal(
 	return err
 }
 
-// SaveTallyResults allows to save for the given height the given total amount of coins
-func (db *Db) SaveTallyResults(tallys []types.TallyResult) error {
-	if len(tallys) == 0 {
-		return nil
-	}
-	query := `INSERT INTO proposal_tally_result(proposal_id, yes, abstain, no, no_with_veto, height) VALUES`
-	var param []interface{}
-	for i, tally := range tallys {
-		vi := i * 6
-		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6)
-		param = append(param, tally.ProposalID,
-			tally.Yes,
-			tally.Abstain,
-			tally.No,
-			tally.NoWithVeto,
-			tally.Height,
-		)
-	}
-	query = query[:len(query)-1] // Remove trailing ","
-	query += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(query, param...)
-	return err
+// GetOpenProposalsIds returns all the ids of the proposals that are currently in deposit or voting period
+func (db *Db) GetOpenProposalsIds() ([]uint64, error) {
+	var ids []uint64
+	stmt := `SELECT id FROM proposal WHERE status = $1 OR status = $2`
+	err := db.Sqlx.Select(&ids, stmt, govtypes.StatusDepositPeriod.String(), govtypes.StatusVotingPeriod.String())
+	return ids, err
 }
 
-// SaveVote allows to save for the given height and the message vote
-func (db *Db) SaveVote(vote types.Vote) error {
-	query := `INSERT INTO proposal_vote(proposal_id, voter_address, option, height) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`
+// --------------------------------------------------------------------------------------------------------------------
+
+// UpdateProposal updates a proposal stored inside the database
+func (db *Db) UpdateProposal(update types.ProposalUpdate) error {
+	query := `UPDATE proposal SET status = $1, voting_start_time = $2, voting_end_time = $3 where id = $4`
 	_, err := db.Sql.Exec(query,
-		vote.ProposalID,
-		vote.Voter,
-		vote.Option.String(),
-		vote.Height,
+		update.Status.String(),
+		update.VotingStartTime,
+		update.VotingEndTime,
+		update.ProposalID,
 	)
 	return err
 }
@@ -128,14 +116,40 @@ func (db *Db) SaveDeposits(deposits []types.Deposit) error {
 	return err
 }
 
-// UpdateProposal updates a proposal stored inside the database
-func (db *Db) UpdateProposal(update types.ProposalUpdate) error {
-	query := `UPDATE proposal SET status = $1, voting_start_time = $2, voting_end_time = $3 where id = $4`
+// --------------------------------------------------------------------------------------------------------------------
+
+// SaveVote allows to save for the given height and the message vote
+func (db *Db) SaveVote(vote types.Vote) error {
+	query := `INSERT INTO proposal_vote(proposal_id, voter_address, option, height) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`
 	_, err := db.Sql.Exec(query,
-		update.Status.String(),
-		update.VotingStartTime,
-		update.VotingEndTime,
-		update.ProposalID,
+		vote.ProposalID,
+		vote.Voter,
+		vote.Option.String(),
+		vote.Height,
 	)
+	return err
+}
+
+// SaveTallyResults allows to save for the given height the given total amount of coins
+func (db *Db) SaveTallyResults(tallys []types.TallyResult) error {
+	if len(tallys) == 0 {
+		return nil
+	}
+	query := `INSERT INTO proposal_tally_result(proposal_id, yes, abstain, no, no_with_veto, height) VALUES`
+	var param []interface{}
+	for i, tally := range tallys {
+		vi := i * 6
+		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6)
+		param = append(param, tally.ProposalID,
+			tally.Yes,
+			tally.Abstain,
+			tally.No,
+			tally.NoWithVeto,
+			tally.Height,
+		)
+	}
+	query = query[:len(query)-1] // Remove trailing ","
+	query += " ON CONFLICT DO NOTHING"
+	_, err := db.Sql.Exec(query, param...)
 	return err
 }

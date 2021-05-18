@@ -3,9 +3,10 @@ package gov
 import (
 	"encoding/json"
 
+	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+
 	"github.com/forbole/bdjuno/database"
 
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
@@ -18,13 +19,17 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 )
 
-var _ modules.Module = &Module{}
+var (
+	_ modules.Module        = &Module{}
+	_ modules.GenesisModule = &Module{}
+	_ modules.BlockModule   = &Module{}
+	_ modules.MessageModule = &Module{}
+)
 
 // Module represent x/gov module
 type Module struct {
 	encodingConfig *params.EncodingConfig
 	govClient      govtypes.QueryClient
-	authClient     authtypes.QueryClient
 	bankClient     banktypes.QueryClient
 	db             *database.Db
 }
@@ -34,7 +39,6 @@ func NewModule(encodingConfig *params.EncodingConfig, grpcConnection *grpc.Clien
 	return &Module{
 		encodingConfig: encodingConfig,
 		govClient:      govtypes.NewQueryClient(grpcConnection),
-		authClient:     authtypes.NewQueryClient(grpcConnection),
 		bankClient:     banktypes.NewQueryClient(grpcConnection),
 		db:             db,
 	}
@@ -47,10 +51,15 @@ func (m *Module) Name() string {
 
 // HandleGenesis implements modules.Module
 func (m *Module) HandleGenesis(_ *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
-	return HandleGenesis(appState, m.govClient, m.authClient, m.bankClient, m.encodingConfig.Marshaler, m.db)
+	return HandleGenesis(appState, m.encodingConfig.Marshaler, m.db)
 }
 
-// HandleMsg implements modules.Module
+// HandleBlock implements modules.BlockModule
+func (m *Module) HandleBlock(_ *tmctypes.ResultBlock, _ []*types.Tx, _ *tmctypes.ResultValidators) error {
+	return HandleBlock(m.govClient, m.bankClient, m.db)
+}
+
+// HandleMsg implements modules.MessageModule
 func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *types.Tx) error {
-	return HandleMsg(tx, index, msg, m.govClient, m.authClient, m.bankClient, m.encodingConfig.Marshaler, m.db)
+	return HandleMsg(tx, index, msg, m.govClient, m.encodingConfig.Marshaler, m.db)
 }

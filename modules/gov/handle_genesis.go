@@ -3,26 +3,16 @@ package gov
 import (
 	"encoding/json"
 	"fmt"
-	"time"
-
-	govutils "github.com/forbole/bdjuno/modules/gov/utils"
 
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/types"
-
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/rs/zerolog/log"
 )
 
-func HandleGenesis(
-	appState map[string]json.RawMessage,
-	govClient govtypes.QueryClient, authClient authtypes.QueryClient, bankClient banktypes.QueryClient,
-	cdc codec.Marshaler, db *database.Db,
-) error {
+func HandleGenesis(appState map[string]json.RawMessage, cdc codec.Marshaler, db *database.Db) error {
 	log.Debug().Str("module", "gov").Msg("parsing genesis")
 
 	// Read the genesis state
@@ -33,7 +23,7 @@ func HandleGenesis(
 	}
 
 	// Save the proposals
-	err = saveProposals(genState.Proposals, govClient, authClient, bankClient, cdc, db)
+	err = saveProposals(genState.Proposals, db)
 	if err != nil {
 		return fmt.Errorf("error while storing genesis governance proposals: %s", err)
 	}
@@ -42,16 +32,12 @@ func HandleGenesis(
 }
 
 // saveProposals save proposals from genesis file
-func saveProposals(
-	p govtypes.Proposals,
-	govClient govtypes.QueryClient, authClient authtypes.QueryClient, bankClient banktypes.QueryClient,
-	cdc codec.Marshaler, db *database.Db,
-) error {
-	proposals := make([]types.Proposal, len(p))
-	tallyResults := make([]types.TallyResult, len(p))
-	deposits := make([]types.Deposit, len(p))
+func saveProposals(slice govtypes.Proposals, db *database.Db) error {
+	proposals := make([]types.Proposal, len(slice))
+	tallyResults := make([]types.TallyResult, len(slice))
+	deposits := make([]types.Deposit, len(slice))
 
-	for index, proposal := range p {
+	for index, proposal := range slice {
 		// Since it's not possible to get the proposer, set it to nil
 		proposals[index] = types.NewProposal(
 			proposal.ProposalId,
@@ -81,14 +67,6 @@ func saveProposals(
 			proposal.TotalDeposit,
 			1,
 		)
-
-		// Update the proposal status when the voting period or deposit period ends
-		update := govutils.RefreshProposal(proposal.ProposalId, govClient, authClient, bankClient, cdc, db)
-		if proposal.Status == govtypes.StatusVotingPeriod {
-			time.AfterFunc(time.Until(proposal.VotingEndTime), update)
-		} else if proposal.Status == govtypes.StatusDepositPeriod {
-			time.AfterFunc(time.Until(proposal.DepositEndTime), update)
-		}
 	}
 
 	// Save the proposals
