@@ -15,6 +15,58 @@ import (
 	dbtypes "github.com/forbole/bdjuno/database/types"
 )
 
+func (suite *DbTestSuite) TestBigDipperDb_SaveGovParams() {
+	votingParams := govtypes.NewVotingParams(time.Second * 10)
+	tallyParams := govtypes.NewTallyParams(sdk.NewDec(10), sdk.NewDec(10), sdk.NewDec(10))
+	depositParams := govtypes.NewDepositParams(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(10))), time.Minute*5)
+	original := types.NewGovParams(govtypes.NewParams(votingParams, tallyParams, depositParams), 10)
+
+	err := suite.database.SaveGovParams(original)
+	suite.Require().NoError(err)
+
+	stored, err := suite.database.GetGovParams()
+	suite.Require().NoError(err)
+	suite.Require().Equal(original, stored)
+
+	// ----------------------------------------------------------------------------------------------------------------
+	// Try updating with a lower height
+	depositParams = govtypes.NewDepositParams(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(1000))), time.Minute*5)
+	updated := types.NewGovParams(govtypes.NewParams(votingParams, tallyParams, depositParams), 9)
+
+	err = suite.database.SaveGovParams(updated)
+	suite.Require().NoError(err)
+
+	stored, err = suite.database.GetGovParams()
+	suite.Require().NoError(err)
+	suite.Require().Equal(original, stored)
+
+	// ----------------------------------------------------------------------------------------------------------------
+	// Try updating with the same height	depositParams = govtypes.NewDepositParams(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(1000))), time.Minute*5)
+	updated = types.NewGovParams(govtypes.NewParams(votingParams, tallyParams, depositParams), 10)
+
+	err = suite.database.SaveGovParams(updated)
+	suite.Require().NoError(err)
+
+	stored, err = suite.database.GetGovParams()
+	suite.Require().NoError(err)
+	suite.Require().Equal(updated, stored)
+
+	// ----------------------------------------------------------------------------------------------------------------
+	// Try updating with a higher height
+	tallyParams = govtypes.NewTallyParams(sdk.NewDec(100), sdk.NewDec(100), sdk.NewDec(100))
+	depositParams = govtypes.NewDepositParams(sdk.NewCoins(sdk.NewCoin("udesmos", sdk.NewInt(10000))), time.Minute*5)
+	updated = types.NewGovParams(govtypes.NewParams(votingParams, tallyParams, depositParams), 11)
+
+	err = suite.database.SaveGovParams(updated)
+	suite.Require().NoError(err)
+
+	stored, err = suite.database.GetGovParams()
+	suite.Require().NoError(err)
+	suite.Require().Equal(updated, stored)
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
 func (suite *DbTestSuite) getProposalRow(id int) types.Proposal {
 	proposer := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 
@@ -261,51 +313,6 @@ func (suite *DbTestSuite) TestBigDipperDb_UpdateProposal() {
 
 // -------------------------------------------------------------------------------------------------------------------
 
-func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
-	proposal := suite.getProposalRow(1)
-	voter := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
-
-	vote := types.NewVote(1, voter.String(), govtypes.OptionYes, 1)
-	err := suite.database.SaveVote(vote)
-	suite.Require().NoError(err)
-
-	expected := dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypes.OptionYes.String(), 1)
-
-	var result []dbtypes.VoteRow
-	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_vote`)
-	suite.Require().NoError(err)
-	suite.Require().Len(result, 1)
-	suite.Require().True(expected.Equals(result[0]))
-}
-
-func (suite *DbTestSuite) TestBigDipperDb_SaveTallyResults() {
-	suite.getProposalRow(1)
-	suite.getProposalRow(2)
-
-	input := []types.TallyResult{
-		types.NewTallyResult(1, 1, 1, 1, 1, 1),
-		types.NewTallyResult(2, 2, 2, 2, 2, 2),
-	}
-
-	err := suite.database.SaveTallyResults(input)
-	suite.Require().NoError(err)
-
-	var result []dbtypes.TallyResultRow
-	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_tally_result`)
-	suite.Require().NoError(err)
-
-	expected := []dbtypes.TallyResultRow{
-		dbtypes.NewTallyResultRow(1, 1, 1, 1, 1, 1),
-		dbtypes.NewTallyResultRow(2, 2, 2, 2, 2, 2),
-	}
-
-	for i, r := range result {
-		suite.Require().True(r.Equals(expected[i]))
-	}
-}
-
-// -------------------------------------------------------------------------------------------------------------------
-
 func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 	proposal := suite.getProposalRow(1)
 
@@ -332,5 +339,75 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 	suite.Require().NoError(err)
 	for i, r := range result {
 		suite.Require().True(expected[i].Equals(r))
+	}
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
+	proposal := suite.getProposalRow(1)
+	voter := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
+
+	vote := types.NewVote(1, voter.String(), govtypes.OptionYes, 1)
+	err := suite.database.SaveVote(vote)
+	suite.Require().NoError(err)
+
+	expected := dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypes.OptionYes.String(), 1)
+
+	var result []dbtypes.VoteRow
+	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_vote`)
+	suite.Require().NoError(err)
+	suite.Require().Len(result, 1)
+	suite.Require().True(expected.Equals(result[0]))
+}
+
+func (suite *DbTestSuite) TestBigDipperDb_SaveTallyResults() {
+	suite.getProposalRow(1)
+	suite.getProposalRow(2)
+	suite.getProposalRow(3)
+
+	// Store the data
+	err := suite.database.SaveTallyResults([]types.TallyResult{
+		types.NewTallyResult(1, 1, 1, 1, 1, 2),
+		types.NewTallyResult(2, 2, 2, 2, 2, 2),
+		types.NewTallyResult(3, 3, 3, 3, 3, 2),
+	})
+	suite.Require().NoError(err)
+
+	// Verify the data
+	var result []dbtypes.TallyResultRow
+	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_tally_result`)
+	suite.Require().NoError(err)
+
+	expected := []dbtypes.TallyResultRow{
+		dbtypes.NewTallyResultRow(1, 1, 1, 1, 1, 2),
+		dbtypes.NewTallyResultRow(2, 2, 2, 2, 2, 2),
+		dbtypes.NewTallyResultRow(3, 3, 3, 3, 3, 2),
+	}
+	for i, r := range result {
+		suite.Require().True(r.Equals(expected[i]))
+	}
+
+	// ----------------------------------------------------------------------------------------------------------------
+	// Update the data
+	err = suite.database.SaveTallyResults([]types.TallyResult{
+		types.NewTallyResult(1, 10, 10, 10, 10, 1),
+		types.NewTallyResult(2, 20, 20, 20, 20, 2),
+		types.NewTallyResult(3, 30, 30, 30, 30, 3),
+	})
+	suite.Require().NoError(err)
+
+	// Verify the data
+	result = []dbtypes.TallyResultRow{}
+	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_tally_result`)
+	suite.Require().NoError(err)
+
+	expected = []dbtypes.TallyResultRow{
+		dbtypes.NewTallyResultRow(1, 1, 1, 1, 1, 2),
+		dbtypes.NewTallyResultRow(2, 20, 20, 20, 20, 2),
+		dbtypes.NewTallyResultRow(3, 30, 30, 30, 30, 3),
+	}
+	for i, r := range result {
+		suite.Require().True(r.Equals(expected[i]))
 	}
 }

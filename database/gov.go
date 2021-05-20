@@ -14,9 +14,78 @@ import (
 	"github.com/lib/pq"
 )
 
+// SaveGovParams saves the given x/gov parameters inside the database
+func (db *Db) SaveGovParams(params *types.GovParams) error {
+	depositParamsBz, err := db.EncodingConfig.Marshaler.MarshalJSON(&params.DepositParams)
+	if err != nil {
+		return err
+	}
+
+	votingParamsBz, err := db.EncodingConfig.Marshaler.MarshalJSON(&params.VotingParams)
+	if err != nil {
+		return err
+	}
+
+	tallyingParams, err := db.EncodingConfig.Marshaler.MarshalJSON(&params.TallyParams)
+	if err != nil {
+		return err
+	}
+
+	stmt := `
+INSERT INTO gov_params(deposit_params, voting_params, tally_params, height) 
+VALUES ($1, $2, $3, $4)
+ON CONFLICT (one_row_id) DO UPDATE 
+	SET deposit_params = excluded.deposit_params,
+  		voting_params = excluded.voting_params,
+		tally_params = excluded.tally_params,
+		height = excluded.height
+WHERE gov_params.height <= excluded.height`
+	_, err = db.Sql.Exec(stmt, string(depositParamsBz), string(votingParamsBz), string(tallyingParams), params.Height)
+	return err
+}
+
+// GetGovParams returns the most recent governance parameters
+func (db *Db) GetGovParams() (*types.GovParams, error) {
+	var rows []dbtypes.GovParamsRow
+	err := db.Sqlx.Select(&rows, `SELECT * FROM gov_params`)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(rows) == 0 {
+		return nil, nil
+	}
+
+	row := rows[0]
+
+	var depositParams govtypes.DepositParams
+	err = db.EncodingConfig.Marshaler.UnmarshalJSON([]byte(row.DepositParams), &depositParams)
+	if err != nil {
+		return nil, err
+	}
+
+	var votingParams govtypes.VotingParams
+	err = db.EncodingConfig.Marshaler.UnmarshalJSON([]byte(row.VotingParams), &votingParams)
+	if err != nil {
+		return nil, err
+	}
+
+	var tallyParams govtypes.TallyParams
+	err = db.EncodingConfig.Marshaler.UnmarshalJSON([]byte(row.TallyParams), &tallyParams)
+	if err != nil {
+		return nil, err
+	}
+
+	return types.NewGovParams(
+		govtypes.NewParams(votingParams, tallyParams, depositParams),
+		row.Height,
+	), nil
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 // SaveProposals allows to save for the given height the given total amount of coins
 func (db *Db) SaveProposals(proposals []types.Proposal) error {
-	//do nothing if empty
 	if len(proposals) == 0 {
 		return nil
 	}
@@ -189,7 +258,14 @@ func (db *Db) SaveTallyResults(tallys []types.TallyResult) error {
 		)
 	}
 	query = query[:len(query)-1] // Remove trailing ","
-	query += " ON CONFLICT DO NOTHING"
+	query += `
+ON CONFLICT ON CONSTRAINT unique_tally_result DO UPDATE 
+	SET yes = excluded.yes, 
+	    abstain = excluded.abstain, 
+	    no = excluded.no, 
+	    no_with_veto = excluded.no_with_veto,
+	    height = excluded.height
+WHERE proposal_tally_result.height <= excluded.height`
 	_, err := db.Sql.Exec(query, param...)
 	return err
 }

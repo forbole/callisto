@@ -1,3 +1,13 @@
+CREATE TABLE gov_params
+(
+    one_row_id     BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
+    deposit_params JSONB   NOT NULL,
+    voting_params  JSONB   NOT NULL,
+    tally_params   JSONB   NOT NULL,
+    height         BIGINT  NOT NULL,
+    CHECK (one_row_id)
+);
+
 CREATE TABLE proposal
 (
     id                INTEGER   NOT NULL PRIMARY KEY,
@@ -40,13 +50,13 @@ CREATE INDEX proposal_vote_height_index ON proposal_vote (height);
 
 CREATE TABLE proposal_tally_result
 (
-    proposal_id  INTEGER REFERENCES proposal (id),
+    proposal_id  INTEGER REFERENCES proposal (id) PRIMARY KEY,
     yes          BIGINT NOT NULL,
     abstain      BIGINT NOT NULL,
     no           BIGINT NOT NULL,
     no_with_veto BIGINT NOT NULL,
     height       BIGINT NOT NULL,
-    PRIMARY KEY (proposal_id, height)
+    CONSTRAINT unique_tally_result UNIQUE (proposal_id)
 );
 CREATE INDEX proposal_tally_result_proposal_id_index ON proposal_tally_result (proposal_id);
 CREATE INDEX proposal_tally_result_height_index ON proposal_tally_result (height);

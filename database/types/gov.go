@@ -4,6 +4,17 @@ import (
 	"time"
 )
 
+// GovParamsRow represents a single row of the "gov_params" table
+type GovParamsRow struct {
+	OneRowID      bool   `db:"one_row_id"`
+	DepositParams string `db:"deposit_params"`
+	VotingParams  string `db:"voting_params"`
+	TallyParams   string `db:"tally_params"`
+	Height        int64  `db:"height"`
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 // ProposalRow represents a single row inside the proposal table
 type ProposalRow struct {
 	Title           string    `db:"title"`
