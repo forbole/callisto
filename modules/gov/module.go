@@ -55,8 +55,8 @@ func (m *Module) HandleGenesis(_ *tmtypes.GenesisDoc, appState map[string]json.R
 }
 
 // HandleBlock implements modules.BlockModule
-func (m *Module) HandleBlock(_ *tmctypes.ResultBlock, _ []*types.Tx, _ *tmctypes.ResultValidators) error {
-	return HandleBlock(m.govClient, m.bankClient, m.db)
+func (m *Module) HandleBlock(b *tmctypes.ResultBlock, _ []*types.Tx, _ *tmctypes.ResultValidators) error {
+	return HandleBlock(b.Block.Height, m.govClient, m.bankClient, m.db)
 }
 
 // HandleMsg implements modules.MessageModule

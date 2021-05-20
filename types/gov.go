@@ -12,6 +12,22 @@ const (
 	ProposalStatusInvalid = "PROPOSAL_STATUS_INVALID"
 )
 
+// GovParams contains the data of the x/gov module parameters
+type GovParams struct {
+	govtypes.Params
+	Height int64
+}
+
+// NewGovParams allows to build a new GovParams instance
+func NewGovParams(params govtypes.Params, height int64) *GovParams {
+	return &GovParams{
+		Params: params,
+		Height: height,
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 // Proposal represents a single governance proposal
 type Proposal struct {
 	ProposalRoute   string
