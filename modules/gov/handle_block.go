@@ -33,14 +33,39 @@ func HandleBlock(height int64, govClient govtypes.QueryClient, bankClient bankty
 
 // updateParams updates the governance parameters for the given height
 func updateParams(height int64, govClient govtypes.QueryClient, db *database.Db) error {
-	header := utils.GetHeightRequestHeader(height)
-	res, err := govClient.Params(context.Background(), &govtypes.QueryParamsRequest{}, header)
+	depositRes, err := govClient.Params(
+		context.Background(),
+		&govtypes.QueryParamsRequest{ParamsType: govtypes.ParamDeposit},
+		utils.GetHeightRequestHeader(height),
+	)
+	if err != nil {
+		return err
+	}
+
+	votingRes, err := govClient.Params(
+		context.Background(),
+		&govtypes.QueryParamsRequest{ParamsType: govtypes.ParamVoting},
+		utils.GetHeightRequestHeader(height),
+	)
+	if err != nil {
+		return err
+	}
+
+	tallyRes, err := govClient.Params(
+		context.Background(),
+		&govtypes.QueryParamsRequest{ParamsType: govtypes.ParamTallying},
+		utils.GetHeightRequestHeader(height),
+	)
 	if err != nil {
 		return err
 	}
 
 	return db.SaveGovParams(types.NewGovParams(
-		govtypes.NewParams(res.VotingParams, res.TallyParams, res.DepositParams),
+		govtypes.NewParams(
+			votingRes.GetVotingParams(),
+			tallyRes.GetTallyParams(),
+			depositRes.GetDepositParams(),
+		),
 		height,
 	))
 }
