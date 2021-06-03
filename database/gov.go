@@ -207,7 +207,7 @@ func (db *Db) SaveDeposits(deposits []types.Deposit) error {
 		return nil
 	}
 
-	query := `INSERT INTO proposal_deposit(proposal_id, depositor_address, amount, height) VALUES `
+	query := `INSERT INTO proposal_deposit (proposal_id, depositor_address, amount, height) VALUES `
 	var param []interface{}
 
 	for i, deposit := range deposits {
@@ -220,7 +220,11 @@ func (db *Db) SaveDeposits(deposits []types.Deposit) error {
 		)
 	}
 	query = query[:len(query)-1] // Remove trailing ","
-	query += " ON CONFLICT DO NOTHING"
+	query += `
+ON CONFLICT ON CONSTRAINT unique_deposit DO UPDATE
+	SET amount = excluded.amount,
+		height = excluded.height
+WHERE proposal_deposit.height <= excluded.height`
 	_, err := db.Sql.Exec(query, param...)
 	return err
 }

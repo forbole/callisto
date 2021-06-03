@@ -2,7 +2,10 @@ package gov
 
 import (
 	"context"
+	"fmt"
 	"strconv"
+
+	"github.com/forbole/bdjuno/modules/utils"
 
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/types"
@@ -28,7 +31,7 @@ func HandleMsg(
 		return handleMsgSubmitProposal(tx, index, cosmosMsg, govClient, cdc, db)
 
 	case *govtypes.MsgDeposit:
-		return handleMsgDeposit(tx, cosmosMsg, db)
+		return handleMsgDeposit(tx, cosmosMsg, govClient, db)
 
 	case *govtypes.MsgVote:
 		return handleMsgVote(tx, cosmosMsg, db)
@@ -100,8 +103,18 @@ func handleMsgSubmitProposal(
 }
 
 // handleMsgDeposit allows to properly handle a handleMsgDeposit
-func handleMsgDeposit(tx *juno.Tx, msg *govtypes.MsgDeposit, db *database.Db) error {
-	deposit := types.NewDeposit(msg.ProposalId, msg.Depositor, msg.Amount, tx.Height)
+func handleMsgDeposit(tx *juno.Tx, msg *govtypes.MsgDeposit, govClient govtypes.QueryClient, db *database.Db) error {
+	header := utils.GetHeightRequestHeader(tx.Height)
+	res, err := govClient.Deposit(
+		context.Background(),
+		&govtypes.QueryDepositRequest{ProposalId: msg.ProposalId, Depositor: msg.Depositor},
+		header,
+	)
+	if err != nil {
+		return fmt.Errorf("error while getting proposal deposit: %s", err)
+	}
+
+	deposit := types.NewDeposit(msg.ProposalId, msg.Depositor, res.Deposit.Amount, tx.Height)
 	return db.SaveDeposits([]types.Deposit{deposit})
 }
 

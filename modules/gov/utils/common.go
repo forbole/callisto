@@ -61,6 +61,8 @@ func UpdateProposal(
 	return nil
 }
 
+// updateDeletedProposalStatus updates the proposal having the given id by setting its status
+// to the one that represents a deleted proposal
 func updateDeletedProposalStatus(id uint64, db *database.Db) error {
 	stored, err := db.GetProposal(id)
 	if err != nil {
@@ -77,6 +79,7 @@ func updateDeletedProposalStatus(id uint64, db *database.Db) error {
 	)
 }
 
+// updateProposalStatus updates the given proposal status
 func updateProposalStatus(proposal govtypes.Proposal, db *database.Db) error {
 	return db.UpdateProposal(
 		types.NewProposalUpdate(

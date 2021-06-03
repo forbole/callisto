@@ -314,6 +314,10 @@ func (suite *DbTestSuite) TestBigDipperDb_UpdateProposal() {
 // -------------------------------------------------------------------------------------------------------------------
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
+	_ = suite.getBlock(9)
+	_ = suite.getBlock(10)
+	_ = suite.getBlock(11)
+
 	proposal := suite.getProposalRow(1)
 
 	depositor := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
@@ -322,9 +326,13 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 	depositor2 := suite.getAccount("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 	amount2 := sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(30000)))
 
+	depositor3 := suite.getAccount("cosmos1gyds87lg3m52hex9yqta2mtwzw89pfukx3jl7g")
+	amount3 := sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(50000)))
+
 	deposit := []types.Deposit{
 		types.NewDeposit(proposal.ProposalID, depositor.String(), amount, 10),
 		types.NewDeposit(proposal.ProposalID, depositor2.String(), amount2, 10),
+		types.NewDeposit(proposal.ProposalID, depositor3.String(), amount3, 10),
 	}
 
 	err := suite.database.SaveDeposits(deposit)
@@ -333,8 +341,39 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 	expected := []dbtypes.DepositRow{
 		dbtypes.NewDepositRow(1, depositor.String(), dbtypes.NewDbCoins(amount), 10),
 		dbtypes.NewDepositRow(1, depositor2.String(), dbtypes.NewDbCoins(amount2), 10),
+		dbtypes.NewDepositRow(1, depositor3.String(), dbtypes.NewDbCoins(amount3), 10),
 	}
 	var result []dbtypes.DepositRow
+	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_deposit`)
+	suite.Require().NoError(err)
+	for i, r := range result {
+		suite.Require().True(expected[i].Equals(r))
+	}
+
+	// ----------------------------------------------------------------------------------------------------------------
+	// Update values
+
+	amount = sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(10)))
+	amount2 = sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(20)))
+	amount3 = sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(30)))
+
+	deposit = []types.Deposit{
+		types.NewDeposit(proposal.ProposalID, depositor.String(), amount, 9),
+		types.NewDeposit(proposal.ProposalID, depositor2.String(), amount2, 10),
+		types.NewDeposit(proposal.ProposalID, depositor3.String(), amount3, 11),
+	}
+
+	err = suite.database.SaveDeposits(deposit)
+	suite.Require().NoError(err)
+
+	expected = []dbtypes.DepositRow{
+		dbtypes.NewDepositRow(1, depositor.String(), dbtypes.NewDbCoins(
+			sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(10000)))), 10),
+		dbtypes.NewDepositRow(1, depositor2.String(), dbtypes.NewDbCoins(amount2), 10),
+		dbtypes.NewDepositRow(1, depositor3.String(), dbtypes.NewDbCoins(amount3), 11),
+	}
+
+	result = []dbtypes.DepositRow{}
 	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_deposit`)
 	suite.Require().NoError(err)
 	for i, r := range result {

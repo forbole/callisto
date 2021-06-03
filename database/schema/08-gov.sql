@@ -31,7 +31,7 @@ CREATE TABLE proposal_deposit
     depositor_address TEXT REFERENCES account (address),
     amount            COIN[],
     height            BIGINT REFERENCES block (height),
-    PRIMARY KEY (proposal_id, depositor_address, height)
+    CONSTRAINT unique_deposit UNIQUE (proposal_id, depositor_address)
 );
 CREATE INDEX proposal_deposit_proposal_id_index ON proposal_deposit (proposal_id);
 CREATE INDEX proposal_deposit_depositor_address_index ON proposal_deposit (depositor_address);
