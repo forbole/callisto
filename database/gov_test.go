@@ -345,6 +345,10 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 // -------------------------------------------------------------------------------------------------------------------
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
+	_ = suite.getBlock(0)
+	_ = suite.getBlock(1)
+	_ = suite.getBlock(2)
+
 	proposal := suite.getProposalRow(1)
 	voter := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 
@@ -355,6 +359,43 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
 	expected := dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypes.OptionYes.String(), 1)
 
 	var result []dbtypes.VoteRow
+	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_vote`)
+	suite.Require().NoError(err)
+	suite.Require().Len(result, 1)
+	suite.Require().True(expected.Equals(result[0]))
+
+	// Update with lower height should not change option
+	vote = types.NewVote(1, voter.String(), govtypes.OptionNo, 0)
+	err = suite.database.SaveVote(vote)
+	suite.Require().NoError(err)
+
+	result = []dbtypes.VoteRow{}
+	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_vote`)
+	suite.Require().NoError(err)
+	suite.Require().Len(result, 1)
+	suite.Require().True(expected.Equals(result[0]))
+
+	// Update with same height should change option
+	vote = types.NewVote(1, voter.String(), govtypes.OptionAbstain, 1)
+	err = suite.database.SaveVote(vote)
+	suite.Require().NoError(err)
+
+	expected = dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypes.OptionAbstain.String(), 1)
+
+	result = []dbtypes.VoteRow{}
+	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_vote`)
+	suite.Require().NoError(err)
+	suite.Require().Len(result, 1)
+	suite.Require().True(expected.Equals(result[0]))
+
+	// Update with higher height should change option
+	vote = types.NewVote(1, voter.String(), govtypes.OptionNoWithVeto, 2)
+	err = suite.database.SaveVote(vote)
+	suite.Require().NoError(err)
+
+	expected = dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypes.OptionNoWithVeto.String(), 2)
+
+	result = []dbtypes.VoteRow{}
 	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_vote`)
 	suite.Require().NoError(err)
 	suite.Require().Len(result, 1)

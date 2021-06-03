@@ -42,8 +42,8 @@ CREATE TABLE proposal_vote
     proposal_id   INTEGER NOT NULL REFERENCES proposal (id),
     voter_address TEXT    NOT NULL REFERENCES account (address),
     option        TEXT    NOT NULL,
-    height        BIGINT  NOT NULL REFERENCES block(height),
-    PRIMARY KEY (proposal_id, voter_address, height)
+    height        BIGINT  NOT NULL REFERENCES block (height),
+    CONSTRAINT unique_vote UNIQUE (proposal_id, voter_address)
 );
 CREATE INDEX proposal_vote_proposal_id_index ON proposal_vote (proposal_id);
 CREATE INDEX proposal_vote_voter_address_index ON proposal_vote (voter_address);

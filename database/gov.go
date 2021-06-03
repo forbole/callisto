@@ -182,7 +182,7 @@ func (db *Db) GetProposal(id uint64) (*types.Proposal, error) {
 // GetOpenProposalsIds returns all the ids of the proposals that are currently in deposit or voting period
 func (db *Db) GetOpenProposalsIds() ([]uint64, error) {
 	var ids []uint64
-	stmt := `SELECT id FROM proposal WHERE status = $1 OR status = $2`
+	stmt := `SELECT id FROM proposal WHERE status = '$1' OR status = '$2'`
 	err := db.Sqlx.Select(&ids, stmt, govtypes.StatusDepositPeriod.String(), govtypes.StatusVotingPeriod.String())
 	return ids, err
 }
@@ -229,7 +229,13 @@ func (db *Db) SaveDeposits(deposits []types.Deposit) error {
 
 // SaveVote allows to save for the given height and the message vote
 func (db *Db) SaveVote(vote types.Vote) error {
-	query := `INSERT INTO proposal_vote(proposal_id, voter_address, option, height) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING`
+	query := `
+INSERT INTO proposal_vote (proposal_id, voter_address, option, height) 
+VALUES ($1, $2, $3, $4) 
+ON CONFLICT ON CONSTRAINT unique_vote DO UPDATE
+	SET option = excluded.option,
+		height = excluded.height
+WHERE proposal_vote.height <= excluded.height`
 	_, err := db.Sql.Exec(query,
 		vote.ProposalID,
 		vote.Voter,
