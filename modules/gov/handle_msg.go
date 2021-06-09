@@ -16,7 +16,7 @@ import (
 	juno "github.com/desmos-labs/juno/types"
 )
 
-// HandleMsg allows to handle the different utils related to the staking module
+// HandleMsg allows to handle the different utils related to the gov module
 func HandleMsg(
 	tx *juno.Tx, index int, msg sdk.Msg,
 	govClient govtypes.QueryClient,
