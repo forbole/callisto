@@ -3,6 +3,8 @@ package mint
 import (
 	"context"
 
+	"github.com/desmos-labs/juno/client"
+
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/modules/utils"
 
@@ -44,7 +46,7 @@ func updateInflation(mintClient minttypes.QueryClient, db *database.Db) error {
 	res, err := mintClient.Inflation(
 		context.Background(),
 		&minttypes.QueryInflationRequest{},
-		utils.GetHeightRequestHeader(height),
+		client.GetHeightRequestHeader(height),
 	)
 	if err != nil {
 		return err

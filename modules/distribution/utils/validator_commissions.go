@@ -3,8 +3,9 @@ package utils
 import (
 	"context"
 
+	"github.com/desmos-labs/juno/client"
+
 	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/modules/utils"
 	"github.com/forbole/bdjuno/types"
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -36,11 +37,11 @@ func UpdateValidatorsCommissionAmounts(height int64, client distrtypes.QueryClie
 	}
 }
 
-func getValidatorCommission(height int64, client distrtypes.QueryClient, validator types.Validator, db *database.Db) {
-	res, err := client.ValidatorCommission(
+func getValidatorCommission(height int64, distrClient distrtypes.QueryClient, validator types.Validator, db *database.Db) {
+	res, err := distrClient.ValidatorCommission(
 		context.Background(),
 		&distrtypes.QueryValidatorCommissionRequest{ValidatorAddress: validator.GetOperator()},
-		utils.GetHeightRequestHeader(height),
+		client.GetHeightRequestHeader(height),
 	)
 	if err != nil {
 		log.Error().Str("module", "distribution").Err(err).

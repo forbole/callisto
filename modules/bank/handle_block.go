@@ -3,10 +3,11 @@ package bank
 import (
 	"context"
 
-	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/modules/utils"
+	"github.com/desmos-labs/juno/client"
 
 	"github.com/rs/zerolog/log"
+
+	"github.com/forbole/bdjuno/database"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
@@ -31,7 +32,7 @@ func updateSupply(height int64, bankClient banktypes.QueryClient, db *database.D
 	res, err := bankClient.TotalSupply(
 		context.Background(),
 		&banktypes.QueryTotalSupplyRequest{},
-		utils.GetHeightRequestHeader(height),
+		client.GetHeightRequestHeader(height),
 	)
 	if err != nil {
 		return err

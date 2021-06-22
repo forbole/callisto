@@ -4,8 +4,9 @@ import (
 	"context"
 	"time"
 
+	"github.com/desmos-labs/juno/client"
+
 	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/modules/utils"
 	"github.com/forbole/bdjuno/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -68,7 +69,7 @@ func StoreValidatorFromMsgCreateValidator(
 func StoreDelegationFromMessage(
 	height int64, msg *stakingtypes.MsgDelegate, stakingClient stakingtypes.QueryClient, db *database.Db,
 ) error {
-	header := utils.GetHeightRequestHeader(height)
+	header := client.GetHeightRequestHeader(height)
 	res, err := stakingClient.Delegation(
 		context.Background(),
 		&stakingtypes.QueryDelegationRequest{

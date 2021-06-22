@@ -3,22 +3,23 @@ package utils
 import (
 	"context"
 
-	"github.com/forbole/bdjuno/modules/utils"
+	"github.com/desmos-labs/juno/client"
+
 	"github.com/forbole/bdjuno/types"
 
 	"github.com/cosmos/cosmos-sdk/types/query"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 )
 
-func GetSigningInfos(height int64, client slashingtypes.QueryClient) ([]types.ValidatorSigningInfo, error) {
+func GetSigningInfos(height int64, slashingClient slashingtypes.QueryClient) ([]types.ValidatorSigningInfo, error) {
 	var signingInfos []slashingtypes.ValidatorSigningInfo
 
-	header := utils.GetHeightRequestHeader(height)
+	header := client.GetHeightRequestHeader(height)
 
 	var nextKey []byte
 	var stop = false
 	for !stop {
-		res, err := client.SigningInfos(
+		res, err := slashingClient.SigningInfos(
 			context.Background(),
 			&slashingtypes.QuerySigningInfosRequest{
 				Pagination: &query.PageRequest{

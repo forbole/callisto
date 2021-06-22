@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/forbole/bdjuno/modules/utils"
+	"github.com/desmos-labs/juno/client"
 
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/types"
@@ -104,7 +104,7 @@ func handleMsgSubmitProposal(
 
 // handleMsgDeposit allows to properly handle a handleMsgDeposit
 func handleMsgDeposit(tx *juno.Tx, msg *govtypes.MsgDeposit, govClient govtypes.QueryClient, db *database.Db) error {
-	header := utils.GetHeightRequestHeader(tx.Height)
+	header := client.GetHeightRequestHeader(tx.Height)
 	res, err := govClient.Deposit(
 		context.Background(),
 		&govtypes.QueryDepositRequest{ProposalId: msg.ProposalId, Depositor: msg.Depositor},

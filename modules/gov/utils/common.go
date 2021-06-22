@@ -4,12 +4,13 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/desmos-labs/juno/client"
+
 	"google.golang.org/grpc/codes"
 
 	"github.com/forbole/bdjuno/database"
 	authutils "github.com/forbole/bdjuno/modules/auth/utils"
 	bankutils "github.com/forbole/bdjuno/modules/bank/utils"
-	"github.com/forbole/bdjuno/modules/utils"
 	"github.com/forbole/bdjuno/types"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -98,7 +99,7 @@ func updateProposalTallyResult(proposal govtypes.Proposal, govClient govtypes.Qu
 		return err
 	}
 
-	header := utils.GetHeightRequestHeader(height)
+	header := client.GetHeightRequestHeader(height)
 	res, err := govClient.TallyResult(
 		context.Background(),
 		&govtypes.QueryTallyResultRequest{ProposalId: proposal.ProposalId},

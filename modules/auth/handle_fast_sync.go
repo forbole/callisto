@@ -3,9 +3,9 @@ package auth
 import (
 	"context"
 
-	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/modules/utils"
+	"github.com/desmos-labs/juno/client"
 
+	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/types"
 
 	"github.com/cosmos/cosmos-sdk/types/query"
@@ -23,13 +23,13 @@ func FastSync(height int64, client authtypes.QueryClient, db *database.Db) error
 }
 
 // updateAccounts downloads all the accounts at the given height, and stores them inside the database
-func updateAccounts(height int64, client authtypes.QueryClient, db *database.Db) error {
-	header := utils.GetHeightRequestHeader(height)
+func updateAccounts(height int64, authClient authtypes.QueryClient, db *database.Db) error {
+	header := client.GetHeightRequestHeader(height)
 
 	var nextKey []byte
 	var stop = false
 	for !stop {
-		res, err := client.Accounts(
+		res, err := authClient.Accounts(
 			context.Background(),
 			&authtypes.QueryAccountsRequest{
 				Pagination: &query.PageRequest{

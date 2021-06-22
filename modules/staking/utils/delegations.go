@@ -4,12 +4,13 @@ import (
 	"context"
 	"sync"
 
+	"github.com/desmos-labs/juno/client"
+
 	"github.com/cosmos/cosmos-sdk/types/query"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/modules/utils"
 	"github.com/forbole/bdjuno/types"
 )
 
@@ -44,16 +45,16 @@ func UpdateValidatorsDelegations(
 // at the given block height (having the given timestamp).
 // All the delegations will be sent to the out channel, and wg.Done() will be called at the end.
 func getDelegationsFromGrpc(
-	validatorAddress string, height int64, client stakingtypes.QueryClient, db *database.Db, wg *sync.WaitGroup,
+	validatorAddress string, height int64, stakingClient stakingtypes.QueryClient, db *database.Db, wg *sync.WaitGroup,
 ) {
 	defer wg.Done()
 
-	header := utils.GetHeightRequestHeader(height)
+	header := client.GetHeightRequestHeader(height)
 
 	var nextKey []byte
 	var stop = false
 	for !stop {
-		res, err := client.ValidatorDelegations(
+		res, err := stakingClient.ValidatorDelegations(
 			context.Background(),
 			&stakingtypes.QueryValidatorDelegationsRequest{
 				ValidatorAddr: validatorAddress,

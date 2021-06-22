@@ -3,9 +3,10 @@ package utils
 import (
 	"context"
 
+	"github.com/desmos-labs/juno/client"
+
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/modules/staking/keybase"
-	"github.com/forbole/bdjuno/modules/utils"
 	"github.com/forbole/bdjuno/types"
 
 	"github.com/rs/zerolog/log"
@@ -79,15 +80,15 @@ func ConvertValidatorDescription(
 
 // GetValidators returns the validators list at the given height
 func GetValidators(
-	height int64, client stakingtypes.QueryClient, cdc codec.Marshaler,
+	height int64, stakingClient stakingtypes.QueryClient, cdc codec.Marshaler,
 ) ([]stakingtypes.Validator, []types.Validator, error) {
-	header := utils.GetHeightRequestHeader(height)
+	header := client.GetHeightRequestHeader(height)
 
 	var validators []stakingtypes.Validator
 	var nextKey []byte
 	var stop = false
 	for !stop {
-		res, err := client.Validators(
+		res, err := stakingClient.Validators(
 			context.Background(),
 			&stakingtypes.QueryValidatorsRequest{
 				Status: "", // Query all the statues

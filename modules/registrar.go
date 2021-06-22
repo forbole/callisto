@@ -45,15 +45,15 @@ func (r *Registrar) BuildModules(
 	bigDipperBd := database.Cast(db)
 	return []jmodules.Module{
 		messages.NewModule(parser, encodingConfig.Marshaler, db),
-		auth.NewModule(parser, encodingConfig, utils.MustCreateGrpcConnection(cfg), bigDipperBd),
-		bank.NewModule(parser, encodingConfig, utils.MustCreateGrpcConnection(cfg), bigDipperBd),
+		auth.NewModule(parser, encodingConfig, client.MustCreateGrpcConnection(cfg), bigDipperBd),
+		bank.NewModule(parser, encodingConfig, client.MustCreateGrpcConnection(cfg), bigDipperBd),
 		consensus.NewModule(cp, bigDipperBd),
-		distribution.NewModule(utils.MustCreateGrpcConnection(cfg), bigDipperBd),
-		gov.NewModule(encodingConfig, utils.MustCreateGrpcConnection(cfg), bigDipperBd),
-		mint.NewModule(utils.MustCreateGrpcConnection(cfg), bigDipperBd),
+		distribution.NewModule(client.MustCreateGrpcConnection(cfg), bigDipperBd),
+		gov.NewModule(encodingConfig, client.MustCreateGrpcConnection(cfg), bigDipperBd),
+		mint.NewModule(client.MustCreateGrpcConnection(cfg), bigDipperBd),
 		modules.NewModule(cfg, bigDipperBd),
 		pricefeed.NewModule(encodingConfig, bigDipperBd),
-		slashing.NewModule(utils.MustCreateGrpcConnection(cfg), bigDipperBd),
-		staking.NewModule(encodingConfig, utils.MustCreateGrpcConnection(cfg), bigDipperBd),
+		slashing.NewModule(client.MustCreateGrpcConnection(cfg), bigDipperBd),
+		staking.NewModule(encodingConfig, client.MustCreateGrpcConnection(cfg), bigDipperBd),
 	}
 }

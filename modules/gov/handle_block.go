@@ -3,11 +3,12 @@ package gov
 import (
 	"context"
 
+	"github.com/desmos-labs/juno/client"
+
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/rs/zerolog/log"
 
-	"github.com/forbole/bdjuno/modules/utils"
 	"github.com/forbole/bdjuno/types"
 
 	"github.com/forbole/bdjuno/database"
@@ -33,10 +34,11 @@ func HandleBlock(height int64, govClient govtypes.QueryClient, bankClient bankty
 
 // updateParams updates the governance parameters for the given height
 func updateParams(height int64, govClient govtypes.QueryClient, db *database.Db) error {
+	header := client.GetHeightRequestHeader(height)
 	depositRes, err := govClient.Params(
 		context.Background(),
 		&govtypes.QueryParamsRequest{ParamsType: govtypes.ParamDeposit},
-		utils.GetHeightRequestHeader(height),
+		header,
 	)
 	if err != nil {
 		return err
@@ -45,7 +47,7 @@ func updateParams(height int64, govClient govtypes.QueryClient, db *database.Db)
 	votingRes, err := govClient.Params(
 		context.Background(),
 		&govtypes.QueryParamsRequest{ParamsType: govtypes.ParamVoting},
-		utils.GetHeightRequestHeader(height),
+		header,
 	)
 	if err != nil {
 		return err
@@ -54,7 +56,7 @@ func updateParams(height int64, govClient govtypes.QueryClient, db *database.Db)
 	tallyRes, err := govClient.Params(
 		context.Background(),
 		&govtypes.QueryParamsRequest{ParamsType: govtypes.ParamTallying},
-		utils.GetHeightRequestHeader(height),
+		header,
 	)
 	if err != nil {
 		return err

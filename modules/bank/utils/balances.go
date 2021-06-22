@@ -3,11 +3,12 @@ package utils
 import (
 	"context"
 
+	"github.com/desmos-labs/juno/client"
+
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/modules/utils"
 	"github.com/forbole/bdjuno/types"
 )
 
@@ -31,13 +32,13 @@ func RefreshBalance(address string, client banktypes.QueryClient, db *database.D
 
 // UpdateBalances updates the balances of the accounts having the given addresses,
 // taking the data at the provided height
-func UpdateBalances(addresses []string, height int64, client banktypes.QueryClient, db *database.Db) error {
+func UpdateBalances(addresses []string, height int64, bankClient banktypes.QueryClient, db *database.Db) error {
 	log.Debug().Str("module", "bank").Int64("height", height).Msg("updating balances")
-	header := utils.GetHeightRequestHeader(height)
+	header := client.GetHeightRequestHeader(height)
 
 	var balances []types.AccountBalance
 	for _, address := range addresses {
-		balRes, err := client.AllBalances(
+		balRes, err := bankClient.AllBalances(
 			context.Background(),
 			&banktypes.QueryAllBalancesRequest{Address: address},
 			header,

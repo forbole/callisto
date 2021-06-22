@@ -4,8 +4,9 @@ import (
 	"context"
 	"encoding/hex"
 
+	"github.com/desmos-labs/juno/client"
+
 	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/modules/utils"
 	"github.com/forbole/bdjuno/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -160,7 +161,7 @@ func updateStakingPool(height int64, stakingClient stakingtypes.QueryClient, db 
 	res, err := stakingClient.Pool(
 		context.Background(),
 		&stakingtypes.QueryPoolRequest{},
-		utils.GetHeightRequestHeader(height),
+		client.GetHeightRequestHeader(height),
 	)
 	if err != nil {
 		log.Error().Str("module", "staking").Err(err).Int64("height", height).

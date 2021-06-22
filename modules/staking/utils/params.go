@@ -3,8 +3,9 @@ package utils
 import (
 	"context"
 
+	"github.com/desmos-labs/juno/client"
+
 	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/modules/utils"
 	"github.com/forbole/bdjuno/types"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -14,15 +15,15 @@ import (
 // UpdateParams updates the staking parameters for the given height,
 // storing them inside the database and returning its value
 func UpdateParams(
-	height int64, client stakingtypes.QueryClient, db *database.Db,
+	height int64, stakingClient stakingtypes.QueryClient, db *database.Db,
 ) (*stakingtypes.Params, error) {
 	log.Debug().Str("module", "staking").Int64("height", height).
 		Msg("updating params")
 
-	res, err := client.Params(
+	res, err := stakingClient.Params(
 		context.Background(),
 		&stakingtypes.QueryParamsRequest{},
-		utils.GetHeightRequestHeader(height),
+		client.GetHeightRequestHeader(height),
 	)
 	if err != nil {
 		return nil, err

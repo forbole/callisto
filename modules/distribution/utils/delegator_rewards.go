@@ -3,8 +3,9 @@ package utils
 import (
 	"context"
 
+	"github.com/desmos-labs/juno/client"
+
 	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/modules/utils"
 	"github.com/forbole/bdjuno/types"
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -35,10 +36,10 @@ func UpdateDelegatorsRewardsAmounts(height int64, client distrtypes.QueryClient,
 	}
 }
 
-func getDelegatorCommission(height int64, delegator string, client distrtypes.QueryClient, db *database.Db) {
-	header := utils.GetHeightRequestHeader(height)
+func getDelegatorCommission(height int64, delegator string, distrClient distrtypes.QueryClient, db *database.Db) {
+	header := client.GetHeightRequestHeader(height)
 
-	rewardsRes, err := client.DelegationTotalRewards(
+	rewardsRes, err := distrClient.DelegationTotalRewards(
 		context.Background(),
 		&distrtypes.QueryDelegationTotalRewardsRequest{DelegatorAddress: delegator},
 		header,
@@ -50,7 +51,7 @@ func getDelegatorCommission(height int64, delegator string, client distrtypes.Qu
 		return
 	}
 
-	withdrawAddressRes, err := client.DelegatorWithdrawAddress(
+	withdrawAddressRes, err := distrClient.DelegatorWithdrawAddress(
 		context.Background(),
 		&distrtypes.QueryDelegatorWithdrawAddressRequest{DelegatorAddress: delegator},
 		header,

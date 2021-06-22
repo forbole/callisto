@@ -4,8 +4,9 @@ import (
 	"context"
 	"sync"
 
+	"github.com/desmos-labs/juno/client"
+
 	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/modules/utils"
 	"github.com/forbole/bdjuno/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -50,16 +51,16 @@ func UpdateValidatorsRedelegations(
 }
 
 func getRedelegations(
-	validatorAddress string, bondDenom string, height int64, client stakingtypes.QueryClient, db *database.Db, wg *sync.WaitGroup,
+	validatorAddress string, bondDenom string, height int64, stakingClient stakingtypes.QueryClient, db *database.Db, wg *sync.WaitGroup,
 ) {
 	defer wg.Done()
 
-	header := utils.GetHeightRequestHeader(height)
+	header := client.GetHeightRequestHeader(height)
 
 	var nextKey []byte
 	var stop = false
 	for !stop {
-		res, err := client.Redelegations(
+		res, err := stakingClient.Redelegations(
 			context.Background(),
 			&stakingtypes.QueryRedelegationsRequest{
 				SrcValidatorAddr: validatorAddress,
