@@ -3,7 +3,10 @@ package gov
 import (
 	"context"
 
+	"github.com/cosmos/cosmos-sdk/codec"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/desmos-labs/juno/client"
+	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
@@ -16,8 +19,12 @@ import (
 )
 
 // HandleBlock handles a new block by updating any eventually open proposal's status and tally result
-func HandleBlock(height int64, govClient govtypes.QueryClient, bankClient banktypes.QueryClient, db *database.Db) error {
-	err := updateProposals(govClient, bankClient, db)
+func HandleBlock(
+	height int64, blockVals *tmctypes.ResultValidators,
+	govClient govtypes.QueryClient, bankClient banktypes.QueryClient, stakingClient stakingtypes.QueryClient,
+	cdc codec.Marshaler, db *database.Db,
+) error {
+	err := updateProposals(height, blockVals, govClient, bankClient, stakingClient, cdc, db)
 	if err != nil {
 		log.Error().Str("module", "gov").Int64("height", height).
 			Err(err).Msg("error while updating proposals")
@@ -73,14 +80,18 @@ func updateParams(height int64, govClient govtypes.QueryClient, db *database.Db)
 }
 
 // updateProposals updates the proposals
-func updateProposals(govClient govtypes.QueryClient, bankClient banktypes.QueryClient, db *database.Db) error {
+func updateProposals(
+	height int64, blockVals *tmctypes.ResultValidators,
+	govClient govtypes.QueryClient, bankClient banktypes.QueryClient, stakingClient stakingtypes.QueryClient,
+	cdc codec.Marshaler, db *database.Db,
+) error {
 	ids, err := db.GetOpenProposalsIds()
 	if err != nil {
 		log.Error().Err(err).Str("module", "gov").Msg("error while getting open ids")
 	}
 
 	for _, id := range ids {
-		err = govutils.UpdateProposal(id, govClient, bankClient, db)
+		err = govutils.UpdateProposal(height, blockVals, id, govClient, bankClient, stakingClient, cdc, db)
 		if err != nil {
 			return err
 		}

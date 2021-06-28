@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	authttypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/bdjuno/database"
@@ -16,15 +16,15 @@ import (
 func GetGenesisAccounts(appState map[string]json.RawMessage, cdc codec.Marshaler) ([]types.Account, error) {
 	log.Debug().Str("module", "auth").Msg("parsing genesis")
 
-	var authState authtypes.GenesisState
-	if err := cdc.UnmarshalJSON(appState[authtypes.ModuleName], &authState); err != nil {
+	var authState authttypes.GenesisState
+	if err := cdc.UnmarshalJSON(appState[authttypes.ModuleName], &authState); err != nil {
 		return nil, err
 	}
 
 	// Store the accounts
 	accounts := make([]types.Account, len(authState.Accounts))
 	for index, account := range authState.Accounts {
-		var accountI authtypes.AccountI
+		var accountI authttypes.AccountI
 		err := cdc.UnpackAny(account, &accountI)
 		if err != nil {
 			return nil, err

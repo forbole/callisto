@@ -4,7 +4,12 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/cosmos/cosmos-sdk/codec"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/desmos-labs/juno/client"
+	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+
+	stakingutils "github.com/forbole/bdjuno/modules/staking/utils"
 
 	"google.golang.org/grpc/codes"
 
@@ -24,7 +29,9 @@ const (
 )
 
 func UpdateProposal(
-	id uint64, govClient govtypes.QueryClient, bankClient banktypes.QueryClient, db *database.Db,
+	height int64, blockVals *tmctypes.ResultValidators, id uint64,
+	govClient govtypes.QueryClient, bankClient banktypes.QueryClient, stakingClient stakingtypes.QueryClient,
+	cdc codec.Marshaler, db *database.Db,
 ) error {
 	// Get the proposal
 	res, err := govClient.Proposal(context.Background(), &govtypes.QueryProposalRequest{ProposalId: id})
@@ -57,6 +64,16 @@ func UpdateProposal(
 	err = updateAccounts(res.Proposal, bankClient, db)
 	if err != nil {
 		return fmt.Errorf("error while updating account: %s", err)
+	}
+
+	err = updateProposalStakingPoolSnapshot(height, id, stakingClient, db)
+	if err != nil {
+		return fmt.Errorf("error while updating proposal staking pool snapshot: %s", err)
+	}
+
+	err = updateProposalValidatorStatusesSnapshot(height, id, blockVals, stakingClient, cdc, db)
+	if err != nil {
+		return fmt.Errorf("error while updating proposal validator statuses snapshot: %s", err)
 	}
 
 	return nil
@@ -140,4 +157,86 @@ func updateAccounts(proposal govtypes.Proposal, bankClient banktypes.QueryClient
 		return bankutils.UpdateBalances(addresses, height, bankClient, db)
 	}
 	return nil
+}
+
+// updateProposalStakingPoolSnapshot updates the staking pool snapshot associated with the gov
+// proposal having the provided id
+func updateProposalStakingPoolSnapshot(
+	height int64, proposalID uint64, stakingClient stakingtypes.QueryClient, db *database.Db,
+) error {
+	pool, err := stakingutils.GetStakingPool(height, stakingClient)
+	if err != nil {
+		return fmt.Errorf("error while getting staking pool: %s", err)
+	}
+
+	return db.SaveProposalStakingPoolSnapshot(
+		types.NewProposalStakingPoolSnapshot(proposalID, pool),
+	)
+}
+
+// updateProposalValidatorStatusesSnapshot updates the snapshots of the various validators for
+// the proposal having the given id
+func updateProposalValidatorStatusesSnapshot(
+	height int64, proposalID uint64,
+	blockVals *tmctypes.ResultValidators, stakingClient stakingtypes.QueryClient,
+	cdc codec.Marshaler, db *database.Db,
+) error {
+	validators, _, err := stakingutils.GetValidators(height, stakingClient, cdc)
+	if err != nil {
+		return err
+	}
+
+	votingPowers := stakingutils.GetValidatorsVotingPowers(height, blockVals, db)
+
+	statuses, err := stakingutils.GetValidatorsStatuses(height, validators, cdc)
+	if err != nil {
+		return err
+	}
+
+	var snapshots = make([]types.ProposalValidatorStatusSnapshot, len(validators))
+	for index, validator := range validators {
+		consAddr, err := validator.GetConsAddr()
+		if err != nil {
+			return err
+		}
+
+		status, err := findStatus(consAddr.String(), statuses)
+		if err != nil {
+			return err
+		}
+
+		votingPower, err := findVotingPower(consAddr.String(), votingPowers)
+		if err != nil {
+			return err
+		}
+
+		snapshots[index] = types.NewProposalValidatorStatusSnapshot(
+			proposalID,
+			consAddr.String(),
+			votingPower.VotingPower,
+			status.Status,
+			status.Jailed,
+			height,
+		)
+	}
+
+	return db.SaveProposalValidatorsStatusesSnapshots(snapshots)
+}
+
+func findVotingPower(consAddr string, powers []types.ValidatorVotingPower) (types.ValidatorVotingPower, error) {
+	for _, votingPower := range powers {
+		if votingPower.ConsensusAddress == consAddr {
+			return votingPower, nil
+		}
+	}
+	return types.ValidatorVotingPower{}, fmt.Errorf("voting power not found for validator with consensus address %s", consAddr)
+}
+
+func findStatus(consAddr string, statuses []types.ValidatorStatus) (types.ValidatorStatus, error) {
+	for _, status := range statuses {
+		if status.ConsensusAddress == consAddr {
+			return status, nil
+		}
+	}
+	return types.ValidatorStatus{}, fmt.Errorf("cannot find status for validator with consensus address %s", consAddr)
 }

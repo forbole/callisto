@@ -3,7 +3,6 @@ package distribution
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	"google.golang.org/grpc"
 
 	"github.com/forbole/bdjuno/database"
 
@@ -27,9 +26,9 @@ type Module struct {
 }
 
 // NewModule returns a new Module instance
-func NewModule(grpConnection *grpc.ClientConn, db *database.Db) *Module {
+func NewModule(distrClient distrtypes.QueryClient, db *database.Db) *Module {
 	return &Module{
-		distrClient: distrtypes.NewQueryClient(grpConnection),
+		distrClient: distrClient,
 		db:          db,
 	}
 }

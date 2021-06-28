@@ -3,6 +3,13 @@ package modules
 import (
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authttypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/desmos-labs/juno/client"
 	"github.com/desmos-labs/juno/db"
 	jmodules "github.com/desmos-labs/juno/modules"
@@ -43,17 +50,27 @@ func (r *Registrar) BuildModules(
 ) jmodules.Modules {
 	parser := utils.AddressesParser
 	bigDipperBd := database.Cast(db)
+	grpcConnection := client.MustCreateGrpcConnection(cfg)
+
+	authClient := authttypes.NewQueryClient(grpcConnection)
+	bankClient := banktypes.NewQueryClient(grpcConnection)
+	distrClient := distrtypes.NewQueryClient(grpcConnection)
+	govClient := govtypes.NewQueryClient(grpcConnection)
+	mintClient := minttypes.NewQueryClient(grpcConnection)
+	slashingClient := slashingtypes.NewQueryClient(grpcConnection)
+	stakingClient := stakingtypes.NewQueryClient(grpcConnection)
+
 	return []jmodules.Module{
 		messages.NewModule(parser, encodingConfig.Marshaler, db),
-		auth.NewModule(parser, encodingConfig, client.MustCreateGrpcConnection(cfg), bigDipperBd),
-		bank.NewModule(parser, encodingConfig, client.MustCreateGrpcConnection(cfg), bigDipperBd),
+		auth.NewModule(parser, authClient, encodingConfig, bigDipperBd),
+		bank.NewModule(parser, authClient, bankClient, encodingConfig, bigDipperBd),
 		consensus.NewModule(cp, bigDipperBd),
-		distribution.NewModule(client.MustCreateGrpcConnection(cfg), bigDipperBd),
-		gov.NewModule(encodingConfig, client.MustCreateGrpcConnection(cfg), bigDipperBd),
-		mint.NewModule(client.MustCreateGrpcConnection(cfg), bigDipperBd),
+		distribution.NewModule(distrClient, bigDipperBd),
+		gov.NewModule(bankClient, govClient, stakingClient, encodingConfig, bigDipperBd),
+		mint.NewModule(mintClient, bigDipperBd),
 		modules.NewModule(cfg, bigDipperBd),
 		pricefeed.NewModule(encodingConfig, bigDipperBd),
-		slashing.NewModule(client.MustCreateGrpcConnection(cfg), bigDipperBd),
-		staking.NewModule(encodingConfig, client.MustCreateGrpcConnection(cfg), bigDipperBd),
+		slashing.NewModule(slashingClient, bigDipperBd),
+		staking.NewModule(bankClient, stakingClient, encodingConfig, bigDipperBd),
 	}
 }

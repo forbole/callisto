@@ -10,8 +10,8 @@ type Pool struct {
 }
 
 // NewPool allows to build a new Pool instance
-func NewPool(bondedTokens, notBondedTokens sdk.Int, height int64) Pool {
-	return Pool{
+func NewPool(bondedTokens, notBondedTokens sdk.Int, height int64) *Pool {
+	return &Pool{
 		BondedTokens:    bondedTokens,
 		NotBondedTokens: notBondedTokens,
 		Height:          height,

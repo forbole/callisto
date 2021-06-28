@@ -279,3 +279,52 @@ WHERE proposal_tally_result.height <= excluded.height`
 	_, err := db.Sql.Exec(query, param...)
 	return err
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// SaveProposalStakingPoolSnapshot allows to save the given snapshot of the staking pool
+func (db *Db) SaveProposalStakingPoolSnapshot(snapshot types.ProposalStakingPoolSnapshot) error {
+	stmt := `
+INSERT INTO proposal_staking_pool_snapshot (proposal_id, bonded_tokens, not_bonded_tokens, height)
+VALUES ($1, $2, $3, $4)
+ON CONFLICT ON CONSTRAINT unique_staking_pool_snapshot DO UPDATE SET
+	proposal_id = excluded.proposal_id,
+    bonded_tokens = excluded.bonded_tokens,
+	not_bonded_tokens = excluded.not_bonded_tokens, 
+	height = excluded.height
+WHERE proposal_staking_pool_snapshot.height <= excluded.height`
+
+	_, err := db.Sql.Exec(stmt,
+		snapshot.ProposalID, snapshot.Pool.BondedTokens.Int64(), snapshot.Pool.NotBondedTokens.Int64(), snapshot.Pool.Height)
+	return err
+}
+
+// SaveProposalValidatorsStatusesSnapshots allows to save the given validator statuses snapshots
+func (db *Db) SaveProposalValidatorsStatusesSnapshots(snapshots []types.ProposalValidatorStatusSnapshot) error {
+	stmt := `
+INSERT INTO proposal_validator_status_snapshot(proposal_id, validator_address, voting_power, status, jailed, height) 
+VALUES `
+
+	var args []interface{}
+	for i, snapshot := range snapshots {
+		si := i * 6
+
+		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d),", si+1, si+2, si+3, si+4, si+5, si+6)
+		args = append(args,
+			snapshot.ProposalID, snapshot.ValidatorConsAddress, snapshot.ValidatorVotingPower,
+			snapshot.ValidatorStatus, snapshot.ValidatorJailed, snapshot.Height)
+	}
+
+	stmt = stmt[:len(stmt)-1]
+	stmt += `
+ON CONFLICT ON CONSTRAINT unique_validator_status_snapshot DO UPDATE 
+	SET proposal_id = excluded.proposal_id,
+		validator_address = excluded.validator_address,
+		voting_power = excluded.voting_power, 
+		status = excluded.status, 
+		jailed = excluded.jailed,
+		height = excluded.height
+WHERE proposal_validator_status_snapshot.height <= excluded.height`
+	_, err := db.Sql.Exec(stmt, args...)
+	return err
+}

@@ -7,12 +7,10 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	authttypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/desmos-labs/juno/modules"
 	"github.com/desmos-labs/juno/modules/messages"
 	juno "github.com/desmos-labs/juno/types"
-	"google.golang.org/grpc"
-
-	"github.com/desmos-labs/juno/modules"
 	tmtypes "github.com/tendermint/tendermint/types"
 )
 
@@ -27,19 +25,20 @@ var (
 type Module struct {
 	messagesParser messages.MessageAddressesParser
 	encodingConfig *params.EncodingConfig
-	authClient     authtypes.QueryClient
+	authClient     authttypes.QueryClient
 	db             *database.Db
 }
 
 // NewModule builds a new Module instance
 func NewModule(
 	messagesParser messages.MessageAddressesParser,
-	encodingConfig *params.EncodingConfig, grpcConnection *grpc.ClientConn, db *database.Db,
+	authClient authttypes.QueryClient,
+	encodingConfig *params.EncodingConfig, db *database.Db,
 ) *Module {
 	return &Module{
 		messagesParser: messagesParser,
 		encodingConfig: encodingConfig,
-		authClient:     authtypes.NewQueryClient(grpcConnection),
+		authClient:     authClient,
 		db:             db,
 	}
 }

@@ -3,6 +3,8 @@ package gov
 import (
 	"encoding/json"
 
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"github.com/forbole/bdjuno/database"
@@ -10,10 +12,8 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	"google.golang.org/grpc"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/desmos-labs/juno/modules"
 	"github.com/desmos-labs/juno/types"
 	tmtypes "github.com/tendermint/tendermint/types"
@@ -31,15 +31,20 @@ type Module struct {
 	encodingConfig *params.EncodingConfig
 	govClient      govtypes.QueryClient
 	bankClient     banktypes.QueryClient
+	stakingClient  stakingtypes.QueryClient
 	db             *database.Db
 }
 
 // NewModule returns a new Module instance
-func NewModule(encodingConfig *params.EncodingConfig, grpcConnection *grpc.ClientConn, db *database.Db) *Module {
+func NewModule(
+	bankClient banktypes.QueryClient, govClient govtypes.QueryClient, stakingClient stakingtypes.QueryClient,
+	encodingConfig *params.EncodingConfig, db *database.Db,
+) *Module {
 	return &Module{
 		encodingConfig: encodingConfig,
-		govClient:      govtypes.NewQueryClient(grpcConnection),
-		bankClient:     banktypes.NewQueryClient(grpcConnection),
+		govClient:      govClient,
+		bankClient:     bankClient,
+		stakingClient:  stakingClient,
 		db:             db,
 	}
 }
@@ -55,8 +60,8 @@ func (m *Module) HandleGenesis(_ *tmtypes.GenesisDoc, appState map[string]json.R
 }
 
 // HandleBlock implements modules.BlockModule
-func (m *Module) HandleBlock(b *tmctypes.ResultBlock, _ []*types.Tx, _ *tmctypes.ResultValidators) error {
-	return HandleBlock(b.Block.Height, m.govClient, m.bankClient, m.db)
+func (m *Module) HandleBlock(b *tmctypes.ResultBlock, _ []*types.Tx, vals *tmctypes.ResultValidators) error {
+	return HandleBlock(b.Block.Height, vals, m.govClient, m.bankClient, m.stakingClient, m.encodingConfig.Marshaler, m.db)
 }
 
 // HandleMsg implements modules.MessageModule

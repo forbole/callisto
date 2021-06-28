@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/gogo/protobuf/proto"
 
@@ -490,4 +492,312 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTallyResults() {
 	for i, r := range result {
 		suite.Require().True(r.Equals(expected[i]))
 	}
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+func (suite *DbTestSuite) TestBigDipperDb_SaveProposalStakingPoolSnapshot() {
+	_ = suite.getBlock(9)
+	_ = suite.getBlock(10)
+	_ = suite.getBlock(11)
+	_ = suite.getProposalRow(1)
+
+	// ----------------------------------------------------------------------------------------------------------------
+	// Save snapshot
+
+	snapshot := types.NewProposalStakingPoolSnapshot(1, types.NewPool(
+		sdk.NewInt(100),
+		sdk.NewInt(200),
+		10,
+	))
+	err := suite.database.SaveProposalStakingPoolSnapshot(snapshot)
+	suite.Require().NoError(err)
+
+	var rows []dbtypes.ProposalStakingPoolSnapshotRow
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM proposal_staking_pool_snapshot`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	suite.Require().Equal(rows[0], dbtypes.NewProposalStakingPoolSnapshotRow(
+		1,
+		100,
+		200,
+		10,
+	))
+
+	// ----------------------------------------------------------------------------------------------------------------
+	// Update with lower height
+
+	err = suite.database.SaveProposalStakingPoolSnapshot(types.NewProposalStakingPoolSnapshot(1, types.NewPool(
+		sdk.NewInt(200),
+		sdk.NewInt(500),
+		9,
+	)))
+	suite.Require().NoError(err)
+
+	rows = []dbtypes.ProposalStakingPoolSnapshotRow{}
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM proposal_staking_pool_snapshot`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	suite.Require().Equal(rows[0], dbtypes.NewProposalStakingPoolSnapshotRow(
+		1,
+		100,
+		200,
+		10,
+	))
+
+	// ----------------------------------------------------------------------------------------------------------------
+	// Update with same height
+
+	err = suite.database.SaveProposalStakingPoolSnapshot(types.NewProposalStakingPoolSnapshot(1, types.NewPool(
+		sdk.NewInt(500),
+		sdk.NewInt(1000),
+		10,
+	)))
+	suite.Require().NoError(err)
+
+	rows = []dbtypes.ProposalStakingPoolSnapshotRow{}
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM proposal_staking_pool_snapshot`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	suite.Require().Equal(rows[0], dbtypes.NewProposalStakingPoolSnapshotRow(
+		1,
+		500,
+		1000,
+		10,
+	))
+
+	// ----------------------------------------------------------------------------------------------------------------
+	// Update with higher height
+
+	err = suite.database.SaveProposalStakingPoolSnapshot(types.NewProposalStakingPoolSnapshot(1, types.NewPool(
+		sdk.NewInt(1000),
+		sdk.NewInt(2000),
+		11,
+	)))
+	suite.Require().NoError(err)
+
+	rows = []dbtypes.ProposalStakingPoolSnapshotRow{}
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM proposal_staking_pool_snapshot`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	suite.Require().Equal(rows[0], dbtypes.NewProposalStakingPoolSnapshotRow(
+		1,
+		1000,
+		2000,
+		11,
+	))
+}
+
+func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshots() {
+	_ = suite.getBlock(9)
+	_ = suite.getBlock(10)
+	_ = suite.getBlock(11)
+	_ = suite.getProposalRow(1)
+
+	validator1 := suite.getValidator(
+		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
+		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
+		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
+	)
+	validator2 := suite.getValidator(
+		"cosmosvalcons1rtst6se0nfgjy362v33jt5d05crgdyhfvvvvay",
+		"cosmosvaloper1jlr62guqwrwkdt4m3y00zh2rrsamhjf9num5xr",
+		"cosmosvalconspub1zcjduepq5e8w7t7k9pwfewgrwy8vn6cghk0x49chx64vt0054yl4wwsmjgrqfackxm",
+	)
+
+	// ----------------------------------------------------------------------------------------------------------------
+	// Save snapshots
+
+	var snapshots = []types.ProposalValidatorStatusSnapshot{
+		types.NewProposalValidatorStatusSnapshot(
+			1,
+			validator1.GetConsAddr(),
+			100,
+			int(stakingtypes.Bonded),
+			false,
+			10,
+		),
+		types.NewProposalValidatorStatusSnapshot(
+			1,
+			validator2.GetConsAddr(),
+			100,
+			int(stakingtypes.Unbonding),
+			true,
+			10,
+		),
+	}
+	err := suite.database.SaveProposalValidatorsStatusesSnapshots(snapshots)
+	suite.Require().NoError(err)
+
+	var rows []dbtypes.ProposalValidatorVotingPowerSnapshotRow
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM proposal_validator_status_snapshot`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 2)
+	suite.Require().Equal(rows, []dbtypes.ProposalValidatorVotingPowerSnapshotRow{
+		dbtypes.NewProposalValidatorVotingPowerSnapshotRow(
+			1,
+			1,
+			validator1.GetConsAddr(),
+			100,
+			3,
+			false,
+			10,
+		),
+		dbtypes.NewProposalValidatorVotingPowerSnapshotRow(
+			2,
+			1,
+			validator2.GetConsAddr(),
+			100,
+			2,
+			true,
+			10,
+		),
+	})
+
+	// ----------------------------------------------------------------------------------------------------------------
+	// Update snapshots with lower height
+
+	snapshots = []types.ProposalValidatorStatusSnapshot{
+		types.NewProposalValidatorStatusSnapshot(
+			1,
+			validator1.GetConsAddr(),
+			10,
+			int(stakingtypes.Bonded),
+			true,
+			9,
+		),
+		types.NewProposalValidatorStatusSnapshot(
+			1,
+			validator2.GetConsAddr(),
+			700,
+			int(stakingtypes.Unbonding),
+			true,
+			9,
+		),
+	}
+	err = suite.database.SaveProposalValidatorsStatusesSnapshots(snapshots)
+	suite.Require().NoError(err)
+
+	rows = []dbtypes.ProposalValidatorVotingPowerSnapshotRow{}
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM proposal_validator_status_snapshot`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 2)
+	suite.Require().Equal(rows, []dbtypes.ProposalValidatorVotingPowerSnapshotRow{
+		dbtypes.NewProposalValidatorVotingPowerSnapshotRow(
+			1,
+			1,
+			validator1.GetConsAddr(),
+			100,
+			3,
+			false,
+			10,
+		),
+		dbtypes.NewProposalValidatorVotingPowerSnapshotRow(
+			2,
+			1,
+			validator2.GetConsAddr(),
+			100,
+			2,
+			true,
+			10,
+		),
+	})
+
+	// ----------------------------------------------------------------------------------------------------------------
+	// Update snapshots with same height
+
+	snapshots = []types.ProposalValidatorStatusSnapshot{
+		types.NewProposalValidatorStatusSnapshot(
+			1,
+			validator1.GetConsAddr(),
+			10,
+			int(stakingtypes.Bonded),
+			true,
+			10,
+		),
+		types.NewProposalValidatorStatusSnapshot(
+			1,
+			validator2.GetConsAddr(),
+			700,
+			int(stakingtypes.Unbonding),
+			true,
+			10,
+		),
+	}
+	err = suite.database.SaveProposalValidatorsStatusesSnapshots(snapshots)
+	suite.Require().NoError(err)
+
+	rows = []dbtypes.ProposalValidatorVotingPowerSnapshotRow{}
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM proposal_validator_status_snapshot`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 2)
+	suite.Require().Equal(rows, []dbtypes.ProposalValidatorVotingPowerSnapshotRow{
+		dbtypes.NewProposalValidatorVotingPowerSnapshotRow(
+			1,
+			1,
+			validator1.GetConsAddr(),
+			10,
+			3,
+			true,
+			10,
+		),
+		dbtypes.NewProposalValidatorVotingPowerSnapshotRow(
+			2,
+			1,
+			validator2.GetConsAddr(),
+			700,
+			2,
+			true,
+			10,
+		),
+	})
+
+	// ----------------------------------------------------------------------------------------------------------------
+	// Update snapshots with higher height
+
+	snapshots = []types.ProposalValidatorStatusSnapshot{
+		types.NewProposalValidatorStatusSnapshot(
+			1,
+			validator1.GetConsAddr(),
+			100000,
+			int(stakingtypes.Unspecified),
+			false,
+			11,
+		),
+		types.NewProposalValidatorStatusSnapshot(
+			1,
+			validator2.GetConsAddr(),
+			700000,
+			int(stakingtypes.Unbonded),
+			false,
+			11,
+		),
+	}
+	err = suite.database.SaveProposalValidatorsStatusesSnapshots(snapshots)
+	suite.Require().NoError(err)
+
+	rows = []dbtypes.ProposalValidatorVotingPowerSnapshotRow{}
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM proposal_validator_status_snapshot`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 2)
+	suite.Require().Equal(rows, []dbtypes.ProposalValidatorVotingPowerSnapshotRow{
+		dbtypes.NewProposalValidatorVotingPowerSnapshotRow(
+			1,
+			1,
+			validator1.GetConsAddr(),
+			100000,
+			0,
+			false,
+			11,
+		),
+		dbtypes.NewProposalValidatorVotingPowerSnapshotRow(
+			2,
+			1,
+			validator2.GetConsAddr(),
+			700000,
+			1,
+			false,
+			11,
+		),
+	})
 }

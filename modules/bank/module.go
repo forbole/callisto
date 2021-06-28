@@ -9,10 +9,8 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	authttypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	"google.golang.org/grpc"
-
 	"github.com/desmos-labs/juno/modules"
 	"github.com/desmos-labs/juno/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
@@ -30,21 +28,22 @@ var (
 type Module struct {
 	messageParser  junomessages.MessageAddressesParser
 	encodingConfig *params.EncodingConfig
-	authClient     authtypes.QueryClient
+	authClient     authttypes.QueryClient
 	bankClient     banktypes.QueryClient
 	db             *database.Db
 }
 
 // NewModule returns a new Module instance
 func NewModule(
-	messageParser junomessages.MessageAddressesParser, encodingConfig *params.EncodingConfig,
-	grpcConnection *grpc.ClientConn, db *database.Db,
+	messageParser junomessages.MessageAddressesParser,
+	authClient authttypes.QueryClient, bankClient banktypes.QueryClient,
+	encodingConfig *params.EncodingConfig, db *database.Db,
 ) *Module {
 	return &Module{
 		messageParser:  messageParser,
 		encodingConfig: encodingConfig,
-		authClient:     authtypes.NewQueryClient(grpcConnection),
-		bankClient:     banktypes.NewQueryClient(grpcConnection),
+		authClient:     authClient,
+		bankClient:     bankClient,
 		db:             db,
 	}
 }

@@ -61,3 +61,27 @@ CREATE TABLE proposal_tally_result
 );
 CREATE INDEX proposal_tally_result_proposal_id_index ON proposal_tally_result (proposal_id);
 CREATE INDEX proposal_tally_result_height_index ON proposal_tally_result (height);
+
+CREATE TABLE proposal_staking_pool_snapshot
+(
+    proposal_id       INTEGER REFERENCES proposal (id) PRIMARY KEY,
+    bonded_tokens     BIGINT NOT NULL,
+    not_bonded_tokens BIGINT NOT NULL,
+    height            BIGINT NOT NULL,
+    CONSTRAINT unique_staking_pool_snapshot UNIQUE (proposal_id)
+);
+CREATE INDEX proposal_staking_pool_snapshot_proposal_id_index ON proposal_staking_pool_snapshot (proposal_id);
+
+CREATE TABLE proposal_validator_status_snapshot
+(
+    id                SERIAL PRIMARY KEY NOT NULL,
+    proposal_id       INTEGER REFERENCES proposal (id),
+    validator_address TEXT               NOT NULL REFERENCES validator (consensus_address),
+    voting_power      BIGINT             NOT NULL,
+    status            INT                NOT NULL,
+    jailed            BOOLEAN            NOT NULL,
+    height            BIGINT             NOT NULL,
+    CONSTRAINT unique_validator_status_snapshot UNIQUE (proposal_id, validator_address)
+);
+CREATE INDEX proposal_validator_status_snapshot_proposal_id_index ON proposal_validator_status_snapshot (proposal_id);
+CREATE INDEX proposal_validator_status_snapshot_validator_address_index ON proposal_validator_status_snapshot (validator_address);

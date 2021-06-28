@@ -1,10 +1,7 @@
 package staking
 
 import (
-	"context"
 	"encoding/hex"
-
-	"github.com/desmos-labs/juno/client"
 
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/types"
@@ -52,38 +49,18 @@ func updateValidatorsStatus(height int64, validators []stakingtypes.Validator, c
 	log.Debug().Str("module", "staking").Int64("height", height).
 		Msg("updating validators statuses")
 
-	statuses := make([]types.ValidatorStatus, len(validators))
-	for index, validator := range validators {
-		consAddr, err := stakingutils.GetValidatorConsAddr(cdc, validator)
-		if err != nil {
-			log.Error().Str("module", "staking").Err(err).
-				Int64("height", height).
-				Str("address", validator.OperatorAddress).
-				Msg("error while getting validator consensus address")
-			return
-		}
-
-		consPubKey, err := stakingutils.GetValidatorConsPubKey(cdc, validator)
-		if err != nil {
-			log.Error().Str("module", "staking").Err(err).
-				Int64("height", height).
-				Str("address", validator.OperatorAddress).
-				Msg("error while getting validator consensus public key")
-			return
-		}
-
-		statuses[index] = types.NewValidatorStatus(
-			consAddr.String(),
-			consPubKey.String(),
-			int(validator.GetStatus()),
-			validator.IsJailed(),
-			height,
-		)
+	statuses, err := stakingutils.GetValidatorsStatuses(height, validators, cdc)
+	if err != nil {
+		log.Error().Str("module", "staking").Err(err).
+			Int64("height", height).
+			Send()
+		return
 	}
 
-	err := db.SaveValidatorsStatuses(statuses)
+	err = db.SaveValidatorsStatuses(statuses)
 	if err != nil {
-		log.Error().Str("module", "staking").Err(err).Int64("height", height).
+		log.Error().Str("module", "staking").Err(err).
+			Int64("height", height).
 			Msg("error while saving validators statuses")
 	}
 }
@@ -93,15 +70,7 @@ func updateValidatorVotingPower(height int64, vals *tmctypes.ResultValidators, d
 	log.Debug().Str("module", "staking").Int64("height", height).
 		Msg("updating validators voting powers")
 
-	votingPowers := make([]types.ValidatorVotingPower, len(vals.Validators))
-	for index, validator := range vals.Validators {
-		consAddr := juno.ConvertValidatorAddressToBech32String(validator.Address)
-		if found, _ := db.HasValidator(consAddr); !found {
-			continue
-		}
-
-		votingPowers[index] = types.NewValidatorVotingPower(consAddr, validator.VotingPower, height)
-	}
+	votingPowers := stakingutils.GetValidatorsVotingPowers(height, vals, db)
 
 	err := db.SaveValidatorsVotingPowers(votingPowers)
 	if err != nil {
@@ -158,20 +127,17 @@ func updateStakingPool(height int64, stakingClient stakingtypes.QueryClient, db 
 	log.Debug().Str("module", "staking").Int64("height", height).
 		Msg("updating staking pool")
 
-	res, err := stakingClient.Pool(
-		context.Background(),
-		&stakingtypes.QueryPoolRequest{},
-		client.GetHeightRequestHeader(height),
-	)
+	pool, err := stakingutils.GetStakingPool(height, stakingClient)
 	if err != nil {
 		log.Error().Str("module", "staking").Err(err).Int64("height", height).
 			Msg("error while getting staking pool")
 		return
 	}
 
-	err = db.SaveStakingPool(types.NewPool(res.Pool.BondedTokens, res.Pool.NotBondedTokens, height))
+	err = db.SaveStakingPool(pool)
 	if err != nil {
 		log.Error().Str("module", "staking").Err(err).Int64("height", height).
 			Msg("error while saving staking pool")
+		return
 	}
 }

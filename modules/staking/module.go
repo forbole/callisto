@@ -8,10 +8,8 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"google.golang.org/grpc"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/desmos-labs/juno/modules"
 	"github.com/desmos-labs/juno/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
@@ -34,11 +32,14 @@ type Module struct {
 }
 
 // NewModule returns a new Module instance
-func NewModule(encodingConfig *params.EncodingConfig, grpcConnection *grpc.ClientConn, db *database.Db) *Module {
+func NewModule(
+	bankClient banktypes.QueryClient, stakingClient stakingtypes.QueryClient,
+	encodingConfig *params.EncodingConfig, db *database.Db,
+) *Module {
 	return &Module{
 		encodingConfig: encodingConfig,
-		stakingClient:  stakingtypes.NewQueryClient(grpcConnection),
-		bankClient:     banktypes.NewQueryClient(grpcConnection),
+		stakingClient:  stakingClient,
+		bankClient:     bankClient,
 		db:             db,
 	}
 }

@@ -2,7 +2,7 @@ package database_test
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	authttypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/forbole/bdjuno/types"
 
@@ -13,7 +13,7 @@ func (suite *DbTestSuite) TestSaveAccount() {
 	address, err := sdk.AccAddressFromBech32("cosmos140xsjjg6pwkjp0xjz8zru7ytha60l5aee9nlf7")
 	suite.Require().NoError(err)
 
-	account := authtypes.NewBaseAccountWithAddress(address)
+	account := authttypes.NewBaseAccountWithAddress(address)
 
 	// ------------------------------
 	// --- Save the data

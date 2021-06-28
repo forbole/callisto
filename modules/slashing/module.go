@@ -2,7 +2,6 @@ package slashing
 
 import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
-	"google.golang.org/grpc"
 
 	"github.com/forbole/bdjuno/database"
 
@@ -20,9 +19,9 @@ type Module struct {
 }
 
 // NewModule returns a new Module instance
-func NewModule(grpcConnection *grpc.ClientConn, db *database.Db) *Module {
+func NewModule(slashingClient slashingtypes.QueryClient, db *database.Db) *Module {
 	return &Module{
-		slashingClient: slashingtypes.NewQueryClient(grpcConnection),
+		slashingClient: slashingClient,
 		db:             db,
 	}
 }
