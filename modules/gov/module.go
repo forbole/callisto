@@ -3,6 +3,8 @@ package gov
 import (
 	"encoding/json"
 
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"github.com/forbole/bdjuno/database"
@@ -31,6 +33,7 @@ type Module struct {
 	encodingConfig *params.EncodingConfig
 	govClient      govtypes.QueryClient
 	bankClient     banktypes.QueryClient
+	stakingClient  stakingtypes.QueryClient
 	db             *database.Db
 }
 
@@ -40,6 +43,7 @@ func NewModule(encodingConfig *params.EncodingConfig, grpcConnection *grpc.Clien
 		encodingConfig: encodingConfig,
 		govClient:      govtypes.NewQueryClient(grpcConnection),
 		bankClient:     banktypes.NewQueryClient(grpcConnection),
+		stakingClient:  stakingtypes.NewQueryClient(grpcConnection),
 		db:             db,
 	}
 }
@@ -55,8 +59,8 @@ func (m *Module) HandleGenesis(_ *tmtypes.GenesisDoc, appState map[string]json.R
 }
 
 // HandleBlock implements modules.BlockModule
-func (m *Module) HandleBlock(b *tmctypes.ResultBlock, _ []*types.Tx, _ *tmctypes.ResultValidators) error {
-	return HandleBlock(b.Block.Height, m.govClient, m.bankClient, m.db)
+func (m *Module) HandleBlock(b *tmctypes.ResultBlock, _ []*types.Tx, vals *tmctypes.ResultValidators) error {
+	return HandleBlock(b.Block.Height, vals, m.govClient, m.bankClient, m.stakingClient, m.encodingConfig.Marshaler, m.db)
 }
 
 // HandleMsg implements modules.MessageModule

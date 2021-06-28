@@ -239,7 +239,7 @@ func (db *Db) getValidatorDescription(address sdk.ConsAddress) (*types.Validator
 	return &description, true
 }
 
-// ________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 // SaveValidatorCommission saves a single validator commission.
 // It assumes that the delegator address is already present inside the
@@ -301,7 +301,7 @@ func (db *Db) getValidatorCommission(address sdk.ConsAddress) (*dbtypes.Validato
 	return &rows[0], true
 }
 
-// ________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 // SaveValidatorsVotingPowers saves the given validator voting powers.
 // It assumes that the delegator address is already present inside the
@@ -328,7 +328,7 @@ WHERE validator_voting_power.height <= excluded.height`
 	return err
 }
 
-//---------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 // SaveValidatorsStatuses save validator jail and status in the given height and timestamp
 func (db *Db) SaveValidatorsStatuses(statuses []types.ValidatorStatus) error {

@@ -2,6 +2,10 @@ package utils
 
 import (
 	"context"
+	"fmt"
+
+	juno "github.com/desmos-labs/juno/types"
+	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"github.com/desmos-labs/juno/client"
 
@@ -139,4 +143,44 @@ func UpdateValidators(
 	}
 
 	return vals, err
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+func GetValidatorsStatuses(height int64, validators []stakingtypes.Validator, cdc codec.Marshaler) ([]types.ValidatorStatus, error) {
+	statuses := make([]types.ValidatorStatus, len(validators))
+	for index, validator := range validators {
+		consAddr, err := GetValidatorConsAddr(cdc, validator)
+		if err != nil {
+			return nil, fmt.Errorf("error while getting validator consensus address: %s", err)
+		}
+
+		consPubKey, err := GetValidatorConsPubKey(cdc, validator)
+		if err != nil {
+			return nil, fmt.Errorf("error while getting validator consensus public key: %s", err)
+		}
+
+		statuses[index] = types.NewValidatorStatus(
+			consAddr.String(),
+			consPubKey.String(),
+			int(validator.GetStatus()),
+			validator.IsJailed(),
+			height,
+		)
+	}
+
+	return statuses, nil
+}
+
+func GetValidatorsVotingPowers(height int64, vals *tmctypes.ResultValidators, db *database.Db) []types.ValidatorVotingPower {
+	votingPowers := make([]types.ValidatorVotingPower, len(vals.Validators))
+	for index, validator := range vals.Validators {
+		consAddr := juno.ConvertValidatorAddressToBech32String(validator.Address)
+		if found, _ := db.HasValidator(consAddr); !found {
+			continue
+		}
+
+		votingPowers[index] = types.NewValidatorVotingPower(consAddr, validator.VotingPower, height)
+	}
+	return votingPowers
 }

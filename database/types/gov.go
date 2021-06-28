@@ -177,3 +177,47 @@ func (w DepositRow) Equals(v DepositRow) bool {
 		w.Amount.Equal(&v.Amount) &&
 		w.Height == v.Height
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+
+type ProposalStakingPoolSnapshotRow struct {
+	ProposalID      uint64 `db:"proposal_id"`
+	BondedTokens    int64  `db:"bonded_tokens"`
+	NotBondedTokens int64  `db:"not_bonded_tokens"`
+	Height          int64  `db:"height"`
+}
+
+func NewProposalStakingPoolSnapshotRow(proposalID uint64, bondedTokens, notBondedTokens, height int64) ProposalStakingPoolSnapshotRow {
+	return ProposalStakingPoolSnapshotRow{
+		ProposalID:      proposalID,
+		BondedTokens:    bondedTokens,
+		NotBondedTokens: notBondedTokens,
+		Height:          height,
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+type ProposalValidatorVotingPowerSnapshotRow struct {
+	ID               int64  `db:"id"`
+	ProposalID       int64  `db:"proposal_id"`
+	ValidatorAddress string `db:"validator_address"`
+	VotingPower      int64  `db:"voting_power"`
+	Status           int    `db:"status"`
+	Jailed           bool   `db:"jailed"`
+	Height           int64  `db:"height"`
+}
+
+func NewProposalValidatorVotingPowerSnapshotRow(
+	id int64, proposalID int64, validatorAddr string, votingPower int64, status int, jailed bool, height int64,
+) ProposalValidatorVotingPowerSnapshotRow {
+	return ProposalValidatorVotingPowerSnapshotRow{
+		ID:               id,
+		ProposalID:       proposalID,
+		ValidatorAddress: validatorAddr,
+		VotingPower:      votingPower,
+		Status:           status,
+		Jailed:           jailed,
+		Height:           height,
+	}
+}

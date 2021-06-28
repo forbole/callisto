@@ -183,3 +183,51 @@ func NewTallyResult(
 		Height:     height,
 	}
 }
+
+// -------------------------------------------------------------------------------------------------------------------
+
+// ProposalStakingPoolSnapshot contains the data about a single staking pool snapshot to be associated with a proposal
+type ProposalStakingPoolSnapshot struct {
+	ProposalID uint64
+	Pool       *Pool
+}
+
+// NewProposalStakingPoolSnapshot returns a new ProposalStakingPoolSnapshot instance
+func NewProposalStakingPoolSnapshot(proposalID uint64, pool *Pool) ProposalStakingPoolSnapshot {
+	return ProposalStakingPoolSnapshot{
+		ProposalID: proposalID,
+		Pool:       pool,
+	}
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+// ProposalValidatorStatusSnapshot represents a single snapshot of the status of a validator associated
+// with a single proposal
+type ProposalValidatorStatusSnapshot struct {
+	ProposalID           uint64
+	ValidatorConsAddress string
+	ValidatorVotingPower int64
+	ValidatorStatus      int
+	ValidatorJailed      bool
+	Height               int64
+}
+
+// NewProposalValidatorStatusSnapshot returns a new ProposalValidatorStatusSnapshot instance
+func NewProposalValidatorStatusSnapshot(
+	proposalID uint64,
+	validatorConsAddr string,
+	validatorVotingPower int64,
+	validatorStatus int,
+	validatorJailed bool,
+	height int64,
+) ProposalValidatorStatusSnapshot {
+	return ProposalValidatorStatusSnapshot{
+		ProposalID:           proposalID,
+		ValidatorStatus:      validatorStatus,
+		ValidatorConsAddress: validatorConsAddr,
+		ValidatorVotingPower: validatorVotingPower,
+		ValidatorJailed:      validatorJailed,
+		Height:               height,
+	}
+}
