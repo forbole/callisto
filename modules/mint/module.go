@@ -4,7 +4,6 @@ import (
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	"github.com/desmos-labs/juno/modules"
 	"github.com/go-co-op/gocron"
-	"google.golang.org/grpc"
 
 	"github.com/forbole/bdjuno/database"
 )
@@ -18,9 +17,9 @@ type Module struct {
 }
 
 // NewModule returns a new Module instance
-func NewModule(grpcConnection *grpc.ClientConn, db *database.Db) *Module {
+func NewModule(mintClient minttypes.QueryClient, db *database.Db) *Module {
 	return &Module{
-		mintClient: minttypes.NewQueryClient(grpcConnection),
+		mintClient: mintClient,
 		db:         db,
 	}
 }
