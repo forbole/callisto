@@ -3,19 +3,21 @@ package database_test
 import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	dbtypes "github.com/forbole/bdjuno/database/types"
+	"github.com/forbole/bdjuno/types"
 	"time"
 )
 
 func (suite *DbTestSuite) TestSaveStakingParams() {
-	params := stakingtypes.NewParams(
-		time.Duration(259200000000000),
-		200,
-		7,
-		10000,
-		"uatom",
-	)
-
-	err := suite.database.SaveStakingParams(params)
+	err := suite.database.SaveStakingParams(types.NewStakingParams(
+		stakingtypes.NewParams(
+			time.Duration(259200000000000),
+			200,
+			7,
+			10000,
+			"uatom",
+		),
+		10,
+	))
 	suite.Require().NoError(err)
 
 	var rows []dbtypes.StakingParamsRow
@@ -29,23 +31,27 @@ func (suite *DbTestSuite) TestSaveStakingParams() {
 		7,
 		10000,
 		200,
+		10,
 	)))
 }
 
 func (suite *DbTestSuite) TestGetStakingParams() {
 	_, err := suite.database.Sql.Exec(`
-INSERT INTO staking_params (bond_denom, unbonding_time, max_entries, historical_entries, max_validators) 
-VALUES ($1, $2, $3, $4, $5)`, "uatom", 259200000000000, 7, 10000, 200)
+INSERT INTO staking_params (bond_denom, unbonding_time, max_entries, historical_entries, max_validators, height) 
+VALUES ($1, $2, $3, $4, $5, $6)`, "uatom", 259200000000000, 7, 10000, 200, 10)
 	suite.Require().NoError(err)
 
 	params, err := suite.database.GetStakingParams()
 	suite.Require().NoError(err)
 
-	suite.Require().Equal(&stakingtypes.Params{
-		UnbondingTime:     259200000000000,
-		MaxValidators:     200,
-		MaxEntries:        7,
-		HistoricalEntries: 10000,
-		BondDenom:         "uatom",
+	suite.Require().Equal(&types.StakingParams{
+		Params: stakingtypes.NewParams(
+			259200000000000,
+			200,
+			7,
+			10000,
+			"uatom",
+		),
+		Height: 10,
 	}, params)
 }

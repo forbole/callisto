@@ -8,11 +8,12 @@ type StakingParamsRow struct {
 	MaxEntries        uint32 `db:"max_entries"`
 	HistoricalEntries uint32 `db:"historical_entries"`
 	MaxValidators     uint32 `db:"max_validators"`
+	Height            int64  `db:"height"`
 }
 
 // NewStakingParamsRow allows to build a new StakingParamsRow object
 func NewStakingParamsRow(
-	bondName string, unbondingTime uint64, maxEntries uint32, historicalEntries uint32, maxValidators uint32,
+	bondName string, unbondingTime uint64, maxEntries uint32, historicalEntries uint32, maxValidators uint32, height int64,
 ) StakingParamsRow {
 	return StakingParamsRow{
 		OneRowID:          true,
@@ -21,6 +22,7 @@ func NewStakingParamsRow(
 		MaxEntries:        maxEntries,
 		HistoricalEntries: historicalEntries,
 		MaxValidators:     maxValidators,
+		Height:            height,
 	}
 }
 
@@ -30,5 +32,6 @@ func (r StakingParamsRow) Equal(s StakingParamsRow) bool {
 		r.UnbondingTime == s.UnbondingTime &&
 		r.MaxEntries == s.MaxEntries &&
 		r.HistoricalEntries == s.HistoricalEntries &&
-		r.MaxValidators == s.MaxValidators
+		r.MaxValidators == s.MaxValidators &&
+		r.Height == s.Height
 }
