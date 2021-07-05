@@ -5,10 +5,8 @@ import (
 
 	"github.com/desmos-labs/juno/client"
 
-	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/types"
-
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	"github.com/forbole/bdjuno/database"
 	"github.com/rs/zerolog/log"
 )
 
@@ -29,7 +27,7 @@ func UpdateParams(
 		return nil, err
 	}
 
-	err = db.SaveStakingParams(types.NewStakingParams(res.Params.BondDenom))
+	err = db.SaveStakingParams(res.Params)
 	if err != nil {
 		return nil, err
 	}

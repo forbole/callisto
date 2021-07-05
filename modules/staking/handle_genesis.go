@@ -119,9 +119,7 @@ func parseGenesisTransactions(
 
 // saveParams saves the given params into the database
 func saveParams(params stakingtypes.Params, db *database.Db) error {
-	return db.SaveStakingParams(types.NewStakingParams(
-		params.BondDenom,
-	))
+	return db.SaveStakingParams(params)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
