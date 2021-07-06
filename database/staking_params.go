@@ -2,10 +2,12 @@ package database
 
 import (
 	"fmt"
+	"time"
+
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+
 	dbtypes "github.com/forbole/bdjuno/database/types"
 	"github.com/forbole/bdjuno/types"
-	"time"
 )
 
 // SaveStakingParams allows to store the given params into the database

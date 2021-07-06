@@ -2,12 +2,14 @@ package mint
 
 import (
 	"context"
+
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	"github.com/desmos-labs/juno/client"
-	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/types"
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+
+	"github.com/forbole/bdjuno/database"
+	"github.com/forbole/bdjuno/types"
 )
 
 // HandleBlock represents a method that is called each time a new block is created

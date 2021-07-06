@@ -3,6 +3,7 @@ package staking
 import (
 	"context"
 	"encoding/hex"
+
 	"github.com/desmos-labs/juno/client"
 
 	"github.com/forbole/bdjuno/database"

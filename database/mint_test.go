@@ -3,6 +3,7 @@ package database_test
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+
 	"github.com/forbole/bdjuno/types"
 
 	dbtypes "github.com/forbole/bdjuno/database/types"

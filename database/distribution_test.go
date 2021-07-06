@@ -7,6 +7,7 @@ import (
 
 	"github.com/forbole/bdjuno/types"
 
+	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	bddbtypes "github.com/forbole/bdjuno/database/types"
 )
 
@@ -68,6 +69,31 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveCommunityPool() {
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1, "community_pool table should contain only one row")
 	suite.Require().True(expected.Equals(rows[0]), "updating with higher height should modify the data")
+}
+
+func (suite *DbTestSuite) TestBigDipperDb_SaveDistributionParams() {
+	err := suite.database.SaveDistributionParams(types.NewDistributionParams(
+		distrtypes.Params{
+			CommunityTax:        sdk.NewDecWithPrec(2, 2),
+			BaseProposerReward:  sdk.NewDecWithPrec(1, 2),
+			BonusProposerReward: sdk.NewDecWithPrec(4, 2),
+			WithdrawAddrEnabled: true,
+		},
+		10,
+	))
+	suite.Require().NoError(err)
+
+	var rows []dbtypes.DistributionParamsRow
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM distribution_params`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	suite.Require().Equal(dbtypes.NewDistributionParamsRow(
+		"0.020000000000000000",
+		"0.010000000000000000",
+		"0.040000000000000000",
+		true,
+		10,
+	), rows[0])
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommissionAmount() {

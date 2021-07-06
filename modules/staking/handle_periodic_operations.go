@@ -40,7 +40,7 @@ func updateValidatorsDelegations(
 	}
 
 	// Get the params
-	params, err := stakingutils.UpdateParams(height, stakingClient, db)
+	params, err := db.GetStakingParams()
 	if err != nil {
 		return err
 	}

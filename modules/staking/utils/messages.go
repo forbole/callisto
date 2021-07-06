@@ -59,7 +59,7 @@ func StoreValidatorFromMsgCreateValidator(
 		types.NewDelegation(
 			msg.DelegatorAddress,
 			msg.ValidatorAddress,
-			sdk.NewCoin(params.BondName, msg.MinSelfDelegation),
+			sdk.NewCoin(params.BondDenom, msg.MinSelfDelegation),
 			height,
 		),
 	})

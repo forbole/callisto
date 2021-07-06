@@ -1,10 +1,12 @@
 package database_test
 
 import (
+	"time"
+
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+
 	dbtypes "github.com/forbole/bdjuno/database/types"
 	"github.com/forbole/bdjuno/types"
-	"time"
 )
 
 func (suite *DbTestSuite) TestSaveStakingParams() {

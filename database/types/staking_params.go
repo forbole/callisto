@@ -2,13 +2,13 @@ package types
 
 // StakingParamsRow represents a single row inside the staking_params table
 type StakingParamsRow struct {
-	OneRowID          bool   `db:"one_row_id"`
 	BondName          string `db:"bond_denom"`
 	UnbondingTime     uint64 `db:"unbonding_time"`
+	Height            int64  `db:"height"`
 	MaxEntries        uint32 `db:"max_entries"`
 	HistoricalEntries uint32 `db:"historical_entries"`
 	MaxValidators     uint32 `db:"max_validators"`
-	Height            int64  `db:"height"`
+	OneRowID          bool   `db:"one_row_id"`
 }
 
 // NewStakingParamsRow allows to build a new StakingParamsRow object
