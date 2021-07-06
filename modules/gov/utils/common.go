@@ -181,7 +181,7 @@ func updateProposalValidatorStatusesSnapshot(
 	blockVals *tmctypes.ResultValidators, stakingClient stakingtypes.QueryClient,
 	cdc codec.Marshaler, db *database.Db,
 ) error {
-	validators, _, err := stakingutils.GetValidators(height, stakingClient, cdc)
+	validators, _, err := stakingutils.GetValidatorsWithStatus(height, stakingtypes.Bonded.String(), stakingClient, cdc)
 	if err != nil {
 		return err
 	}

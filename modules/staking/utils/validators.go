@@ -86,6 +86,13 @@ func ConvertValidatorDescription(
 func GetValidators(
 	height int64, stakingClient stakingtypes.QueryClient, cdc codec.Marshaler,
 ) ([]stakingtypes.Validator, []types.Validator, error) {
+	return GetValidatorsWithStatus(height, "", stakingClient, cdc)
+}
+
+// GetValidatorsWithStatus returns the list of all the validators having the given status at the given height
+func GetValidatorsWithStatus(
+	height int64, status string, stakingClient stakingtypes.QueryClient, cdc codec.Marshaler,
+) ([]stakingtypes.Validator, []types.Validator, error) {
 	header := client.GetHeightRequestHeader(height)
 
 	var validators []stakingtypes.Validator
@@ -95,7 +102,7 @@ func GetValidators(
 		res, err := stakingClient.Validators(
 			context.Background(),
 			&stakingtypes.QueryValidatorsRequest{
-				Status: "", // Query all the statues
+				Status: status,
 				Pagination: &query.PageRequest{
 					Key:   nextKey,
 					Limit: 100, // Query 100 validators at time
