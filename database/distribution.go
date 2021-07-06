@@ -26,6 +26,26 @@ WHERE community_pool.height <= excluded.height`
 
 // -------------------------------------------------------------------------------------------------------------------
 
+// SaveDistributionParams allows to store the given distribution parameters inside the database
+func (db *Db) SaveDistributionParams(params types.DistributionParams) error {
+	stmt := `
+INSERT INTO distribution_params (community_tax, base_proposer_reward, bonus_proposer_reward, withdraw_address_enabled, height) 
+VALUES ($1, $2, $3, $4, $5)
+ON CONFLICT (one_row_id) DO UPDATE 
+    SET community_tax = excluded.community_tax,
+      	base_proposer_reward = excluded.base_proposer_reward,
+      	bonus_proposer_reward = excluded.bonus_proposer_reward,
+      	withdraw_address_enabled = excluded.withdraw_address_enabled,
+      	height = excluded.height
+WHERE distribution_params.height <= excluded.height`
+	_, err := db.Sql.Exec(stmt,
+		params.CommunityTax.String(), params.BaseProposerReward.String(), params.BonusProposerReward.String(),
+		params.WithdrawAddrEnabled, params.Height)
+	return err
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
 // SaveValidatorCommissionAmount allows to store the given validator commission amount as the most updated one
 func (db *Db) SaveValidatorCommissionAmount(amount types.ValidatorCommissionAmount) error {
 

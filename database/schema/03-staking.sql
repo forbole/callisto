@@ -1,8 +1,14 @@
 /* ---- PARAMS ---- */
+
 CREATE TABLE staking_params
 (
-    one_row_id BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
-    bond_denom TEXT    NOT NULL,
+    one_row_id         BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
+    unbonding_time     BIGINT  NOT NULL,
+    bond_denom         TEXT    NOT NULL,
+    max_entries        BIGINT  NOT NULL,
+    historical_entries BIGINT  NOT NULL,
+    max_validators     BIGINT  NOT NULL,
+    height             BIGINT  NOT NULL,
     CHECK (one_row_id)
 );
 

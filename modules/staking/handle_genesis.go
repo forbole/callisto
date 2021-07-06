@@ -33,7 +33,7 @@ func HandleGenesis(
 	}
 
 	// Save the params
-	err = saveParams(genState.Params, db)
+	err = saveParams(doc.InitialHeight, genState.Params, db)
 	if err != nil {
 		return fmt.Errorf("error while storing staking genesis params: %s", err)
 	}
@@ -118,10 +118,8 @@ func parseGenesisTransactions(
 // -------------------------------------------------------------------------------------------------------------------
 
 // saveParams saves the given params into the database
-func saveParams(params stakingtypes.Params, db *database.Db) error {
-	return db.SaveStakingParams(types.NewStakingParams(
-		params.BondDenom,
-	))
+func saveParams(height int64, params stakingtypes.Params, db *database.Db) error {
+	return db.SaveStakingParams(types.NewStakingParams(params, height))
 }
 
 // --------------------------------------------------------------------------------------------------------------------

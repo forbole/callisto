@@ -1,18 +1,21 @@
 package types
 
-import sdk "github.com/cosmos/cosmos-sdk/types"
+import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+)
 
-// ValidatorInfo contains the information about a single validator
-type ValidatorInfo struct {
-	ValidatorOperAddr         string
-	ValidatorSelfDelegateAddr string
+// DistributionParams represents the parameters of the x/distribution module
+type DistributionParams struct {
+	distrtypes.Params
+	Height int64
 }
 
-// NewValidatorInfo returns a new ValidatorInfo instance
-func NewValidatorInfo(validatorOperAddr string, validatorSelfDelegateAddr string) ValidatorInfo {
-	return ValidatorInfo{
-		ValidatorOperAddr:         validatorOperAddr,
-		ValidatorSelfDelegateAddr: validatorSelfDelegateAddr,
+// NewDistributionParams allows to build a new DistributionParams instance
+func NewDistributionParams(params distrtypes.Params, height int64) DistributionParams {
+	return DistributionParams{
+		Params: params,
+		Height: height,
 	}
 }
 

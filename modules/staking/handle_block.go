@@ -1,7 +1,10 @@
 package staking
 
 import (
+	"context"
 	"encoding/hex"
+
+	"github.com/desmos-labs/juno/client"
 
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/types"
@@ -29,6 +32,9 @@ func HandleBlock(
 		return err
 	}
 
+	// Get the params
+	go updateParams(block.Block.Height, stakingClient, db)
+
 	// Update the voting powers
 	go updateValidatorVotingPower(block.Block.Height, vals, db)
 
@@ -42,6 +48,32 @@ func HandleBlock(
 	go updateStakingPool(block.Block.Height, stakingClient, db)
 
 	return nil
+}
+
+// updateParams gets the updated params and stores them inside the database
+func updateParams(height int64, stakingClient stakingtypes.QueryClient, db *database.Db) {
+	log.Debug().Str("module", "staking").Int64("height", height).
+		Msg("updating params")
+
+	res, err := stakingClient.Params(
+		context.Background(),
+		&stakingtypes.QueryParamsRequest{},
+		client.GetHeightRequestHeader(height),
+	)
+	if err != nil {
+		log.Error().Str("module", "staking").Err(err).
+			Int64("height", height).
+			Msg("error while getting params")
+		return
+	}
+
+	err = db.SaveStakingParams(types.NewStakingParams(res.Params, height))
+	if err != nil {
+		log.Error().Str("module", "staking").Err(err).
+			Int64("height", height).
+			Msg("error while saving params")
+		return
+	}
 }
 
 // updateValidatorsStatus updates all validators' statuses

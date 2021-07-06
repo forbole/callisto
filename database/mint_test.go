@@ -2,6 +2,9 @@ package database_test
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+
+	"github.com/forbole/bdjuno/types"
 
 	dbtypes "github.com/forbole/bdjuno/database/types"
 )
@@ -65,4 +68,34 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 
 	expected = dbtypes.NewInflationRow(400.00, 110)
 	suite.Require().True(expected.Equal(rows[0]), "data should change with higher height")
+}
+
+func (suite *DbTestSuite) TestBigDipperDb_SaveMintParams() {
+	err := suite.database.SaveMintParams(types.NewMintParams(
+		minttypes.NewParams(
+			"udaric",
+			sdk.NewDecWithPrec(4, 1),
+			sdk.NewDecWithPrec(8, 1),
+			sdk.NewDecWithPrec(4, 1),
+			sdk.NewDecWithPrec(8, 1),
+			5006000,
+		),
+		10,
+	))
+	suite.Require().NoError(err)
+
+	var rows []dbtypes.MintParamsRow
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM mint_params`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	suite.Require().Equal(dbtypes.MintParamsRow{
+		OneRowID:            true,
+		MintDenom:           "udaric",
+		InflationRateChange: "0.400000000000000000",
+		InflationMax:        "0.800000000000000000",
+		InflationMin:        "0.400000000000000000",
+		GoalBonded:          "0.800000000000000000",
+		BlocksPerYear:       5006000,
+		Height:              10,
+	}, rows[0])
 }
