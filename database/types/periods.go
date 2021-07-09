@@ -1,10 +1,12 @@
+package types
+
 import (
 	"database/sql"
 	"database/sql/driver"
 	"fmt"
 	"strings"
+
 	authtype "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func ToString(value sql.NullString) string {
