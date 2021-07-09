@@ -9,21 +9,6 @@ import (
 	authtype "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 )
 
-func ToString(value sql.NullString) string {
-	if value.Valid {
-		return value.String
-	}
-	return ""
-}
-
-func ToNullString(value string) sql.NullString {
-	value = strings.TrimSpace(value)
-	return sql.NullString{
-		Valid:  value != "",
-		String: value,
-	}
-}
-
 // _________________________________________________________
 
 // Period represents the information stored inside the database about 
@@ -34,17 +19,17 @@ type DbPeriod struct {
 }
 
 // NewPeriod builds a Period starting from an SDK Period
-func NewDbPeriod(period authtype.DbPeriod) Period {
-	dbcoins = NewDbCoins(period.amount)
-	return DbCoin{
+func NewDbPeriod(period authtype.Period) DbPeriod {
+	dbcoins := NewDbCoins(period.Amount)
+	return DbPeriod{
 		Length:  period.Length,
 		Amount: dbcoins,
 	}
 }
 
 // Equal tells whether coin and d represent the same coin with the same amount
-func (period DbPeriod) Equal(d Period) bool {
-	return period.Length == d.Length && period.Amount.Equal(d.Amount)
+func (period DbPeriod) Equal(d DbPeriod) bool {
+	return period.Length == d.Length && period.Amount.Equal(&d.Amount)
 }
 
 // Value implements driver.Valuer
@@ -73,10 +58,11 @@ func (period *DbPeriod) Scan(src interface{}) error {
 type DbPeriods []*DbPeriod
 
 // NewDbPeriod build a new DbPeriods object starting from an array of DbPeriod
-func NewDbPeriods(periods authtype.Periods) s {
+func NewDbPeriods(periods authtype.Periods) DbPeriods {
 	dbPeriods := make([]*DbPeriod, 0)
 	for _, period := range periods {
-		dbPeriods = append(dbPeriods, &DbPeriod{Amount: period.Amount.String(), Length: period.Length})
+		amount := NewDbCoins(period.Amount) 
+		dbPeriods = append(dbPeriods, &DbPeriod{Amount: amount, Length: period.Length})
 	}
 	return dbPeriods
 }
@@ -91,8 +77,8 @@ func (periods DbPeriods) Equal(d *DbPeriods) bool {
 		return false
 	}
 
-	for index, coin := range coins {
-		if !coin.Equal(*(*d)[index]) {
+	for index, period := range periods {
+		if !period.Equal(*(*d)[index]) {
 			return false
 		}
 	}
