@@ -83,7 +83,19 @@ func GetAccounts(addresses []string, height int64,authClient authttypes.QueryCli
 
 // UpdateAccounts takes the given addresses and for each one queries the chain
 // retrieving the account data and stores it inside the database.
-func UpdateAccounts(addresses []string, db *database.Db) error {
-	accounts := GetAccounts(addresses)
-	return db.SaveAccounts(accounts)
+func UpdateAccounts(addresses []string, cdc codec.Marshaler, db *database.Db, height int64,authClient authttypes.QueryClient) error {
+	accounts := GetAccounts(addresses,height,authClient)
+	accountsList := make([]types.Account, len(accounts))
+
+	for index,account :=range accounts{
+		var accountI authttypes.BaseAccount
+		err := cdc.UnpackAny(&account, accountI)
+		if err != nil {
+			return err
+		}
+
+		accountsList[index] = types.NewAccount(accountI.GetAddress().String())
+	}
+	
+	return db.SaveAccounts(accountsList)
 }
