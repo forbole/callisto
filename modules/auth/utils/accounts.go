@@ -2,9 +2,16 @@ package utils
 
 import (
 	"encoding/json"
+	"context"
+
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	authttypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	codectypes"github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
+
+	vesttypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
+	"github.com/desmos-labs/juno/client"
 	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/bdjuno/database"
@@ -39,17 +46,40 @@ func GetGenesisAccounts(appState map[string]json.RawMessage, cdc codec.Marshaler
 // --------------------------------------------------------------------------------------------------------------------
 
 // GetAccounts returns the account data for the given addresses
-func GetAccounts(addresses []string) []types.Account {
+func GetAccounts(addresses []string, height int64,authClient authttypes.QueryClient) []codectypes.Any {
 	log.Debug().Str("module", "auth").Str("operation", "accounts").Msg("getting accounts data")
+	var accounts []codectypes.Any
+	header := client.GetHeightRequestHeader(height)
+	
+	var nextKey []byte
+	var stop = false
+	for !stop {
+		res, err := authClient.Accounts(
+			context.Background(),
+			&authttypes.QueryAccountsRequest{
+				Pagination: &query.PageRequest{
+					Key:   nextKey,
+					Limit: 100, // Query 100 delegations at time
+				},
+			},
+			header,
+		)
+		if err != nil {
+			log.Error().Str("module", "auth").Err(err).Int64("height", height).
+				Str("Auth","Get Account").Msg("error while getting accounts")
+		}
 
-	// Get all the accounts information
-	var accounts = make([]types.Account, len(addresses))
-	for index, address := range addresses {
-		accounts[index] = types.NewAccount(address)
+		for _,account := range res.Accounts{
+			accounts=append(accounts,*account)
+		}
+
+		nextKey = res.Pagination.NextKey
+		stop = len(res.Pagination.NextKey) == 0
+		
 	}
-
 	return accounts
 }
+
 
 // UpdateAccounts takes the given addresses and for each one queries the chain
 // retrieving the account data and stores it inside the database.

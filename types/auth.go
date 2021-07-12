@@ -1,7 +1,9 @@
 package types
 
-import sdk "github.com/cosmos/cosmos-sdk/types"
-
+import( 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtype "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
+)
 
 // Account represents a chain account
 type Account struct {
@@ -25,11 +27,11 @@ type PeriodicVestingAccount struct{
 	DelegatedVesting sdk.Coins
 	EndTime          int64
 	StartTime        int64
-	VestingPeriods   int64       
+	VestingPeriods   authtype.Periods       
 }
 func NewPeriodicVestingAccount (address string,pubKey string,accountNumber uint64,sequence uint64,
 	originalVesting sdk.Coins,delegatedFree sdk.Coins,delegatedVesting sdk.Coins,
-	endTime int64,startTime int64,vestingPeriods int64,
+	endTime int64,startTime int64,vestingPeriods authtype.Periods,
 	)PeriodicVestingAccount{
 		return PeriodicVestingAccount{
 	Address          :address         ,

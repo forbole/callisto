@@ -5,6 +5,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/juno/modules/messages"
 	"github.com/rs/zerolog/log"
+	authttypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/forbole/bdjuno/database"
 	authutils "github.com/forbole/bdjuno/modules/auth/utils"
@@ -12,7 +13,7 @@ import (
 )
 
 // HandleMsg handles any message updating the involved accounts
-func HandleMsg(msg sdk.Msg, getAddresses messages.MessageAddressesParser, cdc codec.Marshaler, db *database.Db) error {
+func HandleMsg(msg sdk.Msg, getAddresses messages.MessageAddressesParser, cdc codec.Marshaler, db *database.Db,authClient authttypes.QueryClient) error {
 	addresses, err := getAddresses(cdc, msg)
 	if err != nil {
 		log.Error().Str("module", "auth").Err(err).
