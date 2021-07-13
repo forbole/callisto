@@ -21,7 +21,6 @@ func FastSync(height int64, client authttypes.QueryClient, db *database.Db) erro
 
 	return nil
 }
-
 // updateAccounts downloads all the accounts at the given height, and stores them inside the database
 func updateAccounts(height int64, authClient authttypes.QueryClient, db *database.Db) error {
 	header := client.GetHeightRequestHeader(height)
@@ -47,6 +46,7 @@ func updateAccounts(height int64, authClient authttypes.QueryClient, db *databas
 		for index, acc := range res.Accounts {
 			accounts[index] = types.NewAccount(
 				acc.GetCachedValue().(authttypes.AccountI).GetAddress().String(),
+				acc.GetCachedValue().(authttypes.AccountI),
 			)
 		}
 

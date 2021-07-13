@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
@@ -32,18 +33,21 @@ type Module struct {
 	govClient      govtypes.QueryClient
 	bankClient     banktypes.QueryClient
 	stakingClient  stakingtypes.QueryClient
+	authClient     authtypes.QueryClient
 	db             *database.Db
 }
 
 // NewModule returns a new Module instance
 func NewModule(
 	bankClient banktypes.QueryClient, govClient govtypes.QueryClient, stakingClient stakingtypes.QueryClient,
+	authClient authtypes.QueryClient,
 	encodingConfig *params.EncodingConfig, db *database.Db,
 ) *Module {
 	return &Module{
 		encodingConfig: encodingConfig,
 		govClient:      govClient,
 		bankClient:     bankClient,
+		authClient:     authClient,
 		stakingClient:  stakingClient,
 		db:             db,
 	}
@@ -61,7 +65,7 @@ func (m *Module) HandleGenesis(_ *tmtypes.GenesisDoc, appState map[string]json.R
 
 // HandleBlock implements modules.BlockModule
 func (m *Module) HandleBlock(b *tmctypes.ResultBlock, _ []*types.Tx, vals *tmctypes.ResultValidators) error {
-	return HandleBlock(b.Block.Height, vals, m.govClient, m.bankClient, m.stakingClient, m.encodingConfig.Marshaler, m.db)
+	return HandleBlock(b.Block.Height, vals, m.govClient, m.bankClient, m.stakingClient, m.authClient,m.encodingConfig.Marshaler, m.db)
 }
 
 // HandleMsg implements modules.MessageModule

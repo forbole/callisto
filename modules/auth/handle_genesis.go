@@ -23,6 +23,5 @@ func Handler(appState map[string]json.RawMessage, cdc codec.Marshaler, db *datab
 	if err != nil {
 		return fmt.Errorf("error while storing genesis accounts: %s", err)
 	}
-
 	return nil
 }

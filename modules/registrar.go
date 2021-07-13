@@ -66,7 +66,7 @@ func (r *Registrar) BuildModules(
 		bank.NewModule(parser, authClient, bankClient, encodingConfig, bigDipperBd),
 		consensus.NewModule(cp, bigDipperBd),
 		distribution.NewModule(distrClient, bigDipperBd),
-		gov.NewModule(bankClient, govClient, stakingClient, encodingConfig, bigDipperBd),
+		gov.NewModule(bankClient, govClient, stakingClient, authClient,encodingConfig, bigDipperBd),
 		mint.NewModule(mintClient, bigDipperBd),
 		modules.NewModule(cfg, bigDipperBd),
 		pricefeed.NewModule(encodingConfig, bigDipperBd),
