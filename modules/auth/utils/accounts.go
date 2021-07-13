@@ -1,13 +1,12 @@
 package utils
 
 import (
-	"encoding/json"
 	"context"
-
+	"encoding/json"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	authttypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/desmos-labs/juno/client"
 	"github.com/rs/zerolog/log"
@@ -21,15 +20,15 @@ import (
 func GetGenesisAccounts(appState map[string]json.RawMessage, cdc codec.Marshaler) ([]types.Account, error) {
 	log.Debug().Str("module", "auth").Msg("parsing genesis")
 
-	var authState authttypes.GenesisState
-	if err := cdc.UnmarshalJSON(appState[authttypes.ModuleName], &authState); err != nil {
+	var authState authtypes.GenesisState
+	if err := cdc.UnmarshalJSON(appState[authtypes.ModuleName], &authState); err != nil {
 		return nil, err
 	}
 
 	// Store the accounts
 	accounts := make([]types.Account, len(authState.Accounts))
 	for index, account := range authState.Accounts {
-		var accountI authttypes.AccountI
+		var accountI authtypes.AccountI
 		err := cdc.UnpackAny(account, &accountI)
 		if err != nil {
 			return nil, err
@@ -44,7 +43,7 @@ func GetGenesisAccounts(appState map[string]json.RawMessage, cdc codec.Marshaler
 // --------------------------------------------------------------------------------------------------------------------
 
 // GetAllAccounts returns all account data
-func GetAllAccounts(addresses []string,cdc codec.Marshaler,height int64,authClient authttypes.QueryClient) ([]types.Account,error) {
+func GetAllAccounts(addresses []string,cdc codec.Marshaler,height int64,authClient authtypes.QueryClient) ([]types.Account,error) {
 	log.Debug().Str("module", "auth").Str("operation", "accounts").Msg("getting accounts data")
 	var accounts []types.Account
 	header := client.GetHeightRequestHeader(height)
@@ -54,7 +53,7 @@ func GetAllAccounts(addresses []string,cdc codec.Marshaler,height int64,authClie
 	for !stop {
 		res, err := authClient.Accounts(
 			context.Background(),
-			&authttypes.QueryAccountsRequest{
+			&authtypes.QueryAccountsRequest{
 				Pagination: &query.PageRequest{
 					Key:   nextKey,
 					Limit: 100, // Query 100 delegations at time
@@ -68,7 +67,7 @@ func GetAllAccounts(addresses []string,cdc codec.Marshaler,height int64,authClie
 		}
 
 		for _,account := range res.Accounts{
-			var accountI authttypes.AccountI
+			var accountI authtypes.AccountI
 			err := cdc.UnpackAny(account, &accountI)
 			if err!=nil{
 				return nil,err
@@ -87,7 +86,7 @@ func GetAllAccounts(addresses []string,cdc codec.Marshaler,height int64,authClie
 }
 
 // GetAccounts returns the account data for the given addresses
-func GetAccounts(addresses []string,cdc codec.Marshaler,height int64,authClient authttypes.QueryClient) ([]types.Account,error) {
+func GetAccounts(addresses []string,cdc codec.Marshaler,height int64,authClient authtypes.QueryClient) ([]types.Account,error) {
 	log.Debug().Str("module", "auth").Str("operation", "accounts").Msg("getting accounts data")
 	var accounts []types.Account
 	header := client.GetHeightRequestHeader(height)
@@ -95,7 +94,7 @@ func GetAccounts(addresses []string,cdc codec.Marshaler,height int64,authClient 
 	for _,address:=range addresses{
 		res, err := authClient.Account(
 			context.Background(),
-			&authttypes.QueryAccountRequest{
+			&authtypes.QueryAccountRequest{
 				Address: address,
 			},
 			header,
@@ -104,7 +103,7 @@ func GetAccounts(addresses []string,cdc codec.Marshaler,height int64,authClient 
 			log.Error().Str("module", "auth").Err(err).Int64("height", height).
 				Str("Auth","Get Account").Msg("error while getting accounts")
 		}
-			var accountI authttypes.AccountI
+			var accountI authtypes.AccountI
 			err = cdc.UnpackAny(res.Account, &accountI)
 			if err!=nil{
 				return nil,err
@@ -120,7 +119,7 @@ func GetAccounts(addresses []string,cdc codec.Marshaler,height int64,authClient 
 
 // UpdateAccounts takes the given addresses and for each one queries the chain
 // retrieving the account data and stores it inside the database.
-func UpdateAccounts(addresses []string, cdc codec.Marshaler, db *database.Db, height int64,authClient authttypes.QueryClient) error {
+func UpdateAccounts(addresses []string, cdc codec.Marshaler, db *database.Db, height int64,authClient authtypes.QueryClient) error {
 	accounts,err := GetAccounts(addresses,cdc,height,authClient)
 	if err!=nil{
 		return err

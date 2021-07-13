@@ -3,7 +3,7 @@ package modules
 import (
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authttypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
@@ -52,7 +52,7 @@ func (r *Registrar) BuildModules(
 	bigDipperBd := database.Cast(db)
 	grpcConnection := client.MustCreateGrpcConnection(cfg)
 
-	authClient := authttypes.NewQueryClient(grpcConnection)
+	authClient := authtypes.NewQueryClient(grpcConnection)
 	bankClient := banktypes.NewQueryClient(grpcConnection)
 	distrClient := distrtypes.NewQueryClient(grpcConnection)
 	govClient := govtypes.NewQueryClient(grpcConnection)

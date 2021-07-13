@@ -9,11 +9,11 @@ import (
 	"github.com/forbole/bdjuno/types"
 
 	"github.com/cosmos/cosmos-sdk/types/query"
-	authttypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
 // FastSync downloads the x/auth state at the given height, and stores it inside the database
-func FastSync(height int64, client authttypes.QueryClient, db *database.Db) error {
+func FastSync(height int64, client authtypes.QueryClient, db *database.Db) error {
 	err := updateAccounts(height, client, db)
 	if err != nil {
 		return err
@@ -22,7 +22,7 @@ func FastSync(height int64, client authttypes.QueryClient, db *database.Db) erro
 	return nil
 }
 // updateAccounts downloads all the accounts at the given height, and stores them inside the database
-func updateAccounts(height int64, authClient authttypes.QueryClient, db *database.Db) error {
+func updateAccounts(height int64, authClient authtypes.QueryClient, db *database.Db) error {
 	header := client.GetHeightRequestHeader(height)
 
 	var nextKey []byte
@@ -30,7 +30,7 @@ func updateAccounts(height int64, authClient authttypes.QueryClient, db *databas
 	for !stop {
 		res, err := authClient.Accounts(
 			context.Background(),
-			&authttypes.QueryAccountsRequest{
+			&authtypes.QueryAccountsRequest{
 				Pagination: &query.PageRequest{
 					Key:   nextKey,
 					Limit: 100, // Query 100 accounts at time
@@ -45,8 +45,8 @@ func updateAccounts(height int64, authClient authttypes.QueryClient, db *databas
 		var accounts = make([]types.Account, len(res.Accounts))
 		for index, acc := range res.Accounts {
 			accounts[index] = types.NewAccount(
-				acc.GetCachedValue().(authttypes.AccountI).GetAddress().String(),
-				acc.GetCachedValue().(authttypes.AccountI),
+				acc.GetCachedValue().(authtypes.AccountI).GetAddress().String(),
+				acc.GetCachedValue().(authtypes.AccountI),
 			)
 		}
 

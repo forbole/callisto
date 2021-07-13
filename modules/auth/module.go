@@ -7,7 +7,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authttypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/desmos-labs/juno/modules"
 	"github.com/desmos-labs/juno/modules/messages"
 	juno "github.com/desmos-labs/juno/types"
@@ -25,14 +25,14 @@ var (
 type Module struct {
 	messagesParser messages.MessageAddressesParser
 	encodingConfig *params.EncodingConfig
-	authClient     authttypes.QueryClient
+	authClient     authtypes.QueryClient
 	db             *database.Db
 }
 
 // NewModule builds a new Module instance
 func NewModule(
 	messagesParser messages.MessageAddressesParser,
-	authClient authttypes.QueryClient,
+	authClient authtypes.QueryClient,
 	encodingConfig *params.EncodingConfig, db *database.Db,
 ) *Module {
 	return &Module{
