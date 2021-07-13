@@ -11,6 +11,7 @@ CREATE TABLE staking_params
     height             BIGINT  NOT NULL,
     CHECK (one_row_id)
 );
+CREATE INDEX staking_params_height_index ON staking_params(height);
 
 /* ---- POOL ---- */
 
