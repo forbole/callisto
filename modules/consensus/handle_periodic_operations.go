@@ -36,7 +36,7 @@ func Register(scheduler *gocron.Scheduler, db *database.Db) error {
 
 // updateBlockTimeInMinute insert average block time in the latest minute
 func updateBlockTimeInMinute(db *database.Db) error {
-	log.Debug().Str("module", "consensus").Str("operation", "block time").
+	log.Trace().Str("module", "consensus").Str("operation", "block time").
 		Msg("updating block time in minutes")
 
 	block, err := db.GetLastBlock()
@@ -65,7 +65,7 @@ func updateBlockTimeInMinute(db *database.Db) error {
 
 // updateBlockTimeInHour insert average block time in the latest hour
 func updateBlockTimeInHour(db *database.Db) error {
-	log.Debug().Str("module", "consensus").Str("operation", "block time").
+	log.Trace().Str("module", "consensus").Str("operation", "block time").
 		Msg("updating block time in hours")
 
 	block, err := db.GetLastBlock()
@@ -94,7 +94,7 @@ func updateBlockTimeInHour(db *database.Db) error {
 
 // updateBlockTimeInDay insert average block time in the latest minute
 func updateBlockTimeInDay(db *database.Db) error {
-	log.Debug().Str("module", "consensus").Str("operation", "block time").
+	log.Trace().Str("module", "consensus").Str("operation", "block time").
 		Msg("updating block time in days")
 
 	block, err := db.GetLastBlock()
