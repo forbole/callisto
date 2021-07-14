@@ -1,0 +1,18 @@
+object_relationships:
+- name: post_attachment
+  using:
+    foreign_key_constraint_on: attachment_id
+- name: profile
+  using:
+    foreign_key_constraint_on: tag_address
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - attachment_id
+    - tag_address
+    filter: {}
+  role: anonymous
+table:
+  name: post_attachment_tag
+  schema: public

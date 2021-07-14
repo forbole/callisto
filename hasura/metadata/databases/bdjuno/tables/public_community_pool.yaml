@@ -1,0 +1,11 @@
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - coins
+    - height
+    filter: {}
+  role: anonymous
+table:
+  name: community_pool
+  schema: public
