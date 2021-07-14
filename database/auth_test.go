@@ -3,6 +3,7 @@ package database_test
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	authvestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 
 	"github.com/forbole/bdjuno/types"
 
@@ -13,16 +14,39 @@ func (suite *DbTestSuite) TestSaveAccount() {
 	address, err := sdk.AccAddressFromBech32("cosmos140xsjjg6pwkjp0xjz8zru7ytha60l5aee9nlf7")
 	suite.Require().NoError(err)
 
+	coin:=sdk.Coin{
+		Denom: "daric",
+		Amount: sdk.NewInt(10),
+	}
 	account := authtypes.NewBaseAccountWithAddress(address)
+	baseVestingAccount := authvestingtypes.BaseVestingAccount{
+		BaseAccount: account,
+		OriginalVesting: sdk.NewCoins(coin),
+		DelegatedFree: sdk.NewCoins(coin),
+		DelegatedVesting: sdk.NewCoins(coin),
+	}
+	continuousVestingAccount :=authvestingtypes.ContinuousVestingAccount{
+		BaseVestingAccount: &baseVestingAccount,
+		StartTime: 10,
+	}
 
 	// ------------------------------
 	// --- Save the data
 	// ------------------------------
 
-	err = suite.database.SaveAccounts([]types.Account{types.NewAccount(account.Address)})
+	err = suite.database.SaveAccounts([]types.Account{
+		types.NewAccount(
+			continuousVestingAccount.Address,
+			&continuousVestingAccount,
+		),
+		
+	})
 	suite.Require().NoError(err)
 
-	err = suite.database.SaveAccounts([]types.Account{types.NewAccount(account.Address)})
+	err = suite.database.SaveAccounts([]types.Account{types.NewAccount(
+		continuousVestingAccount.Address,
+		&continuousVestingAccount,
+	),})
 	suite.Require().NoError(err, "double account insertion should not insert and returns no error")
 
 	// ------------------------------
