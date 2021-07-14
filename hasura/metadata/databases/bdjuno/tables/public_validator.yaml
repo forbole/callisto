@@ -1,0 +1,150 @@
+array_relationships:
+- name: blocks
+  using:
+    foreign_key_constraint_on:
+      column: proposer_address
+      table:
+        name: block
+        schema: public
+- name: delegation_reward_histories
+  using:
+    foreign_key_constraint_on:
+      column: validator_address
+      table:
+        name: delegation_reward_history
+        schema: public
+- name: delegation_rewards
+  using:
+    foreign_key_constraint_on:
+      column: validator_address
+      table:
+        name: delegation_reward
+        schema: public
+- name: delegations
+  using:
+    foreign_key_constraint_on:
+      column: validator_address
+      table:
+        name: delegation
+        schema: public
+- name: double_sign_votes
+  using:
+    foreign_key_constraint_on:
+      column: validator_address
+      table:
+        name: double_sign_vote
+        schema: public
+- name: pre_commits
+  using:
+    foreign_key_constraint_on:
+      column: validator_address
+      table:
+        name: pre_commit
+        schema: public
+- name: redelegationsByDstValidatorAddress
+  using:
+    foreign_key_constraint_on:
+      column: dst_validator_address
+      table:
+        name: redelegation
+        schema: public
+- name: redelegationsBySrcValidatorAddress
+  using:
+    foreign_key_constraint_on:
+      column: src_validator_address
+      table:
+        name: redelegation
+        schema: public
+- name: unbonding_delegations
+  using:
+    foreign_key_constraint_on:
+      column: validator_address
+      table:
+        name: unbonding_delegation
+        schema: public
+- name: validator_commission_amount_histories
+  using:
+    foreign_key_constraint_on:
+      column: validator_address
+      table:
+        name: validator_commission_amount_history
+        schema: public
+- name: validator_commission_amounts
+  using:
+    foreign_key_constraint_on:
+      column: validator_address
+      table:
+        name: validator_commission_amount
+        schema: public
+- name: validator_commissions
+  using:
+    foreign_key_constraint_on:
+      column: validator_address
+      table:
+        name: validator_commission
+        schema: public
+- name: validator_descriptions
+  using:
+    foreign_key_constraint_on:
+      column: validator_address
+      table:
+        name: validator_description
+        schema: public
+- name: validator_infos
+  using:
+    foreign_key_constraint_on:
+      column: consensus_address
+      table:
+        name: validator_info
+        schema: public
+- name: validator_signing_infos
+  using:
+    manual_configuration:
+      column_mapping:
+        consensus_address: validator_address
+      insertion_order: null
+      remote_table:
+        name: validator_signing_info
+        schema: public
+- name: validator_statuses
+  using:
+    foreign_key_constraint_on:
+      column: validator_address
+      table:
+        name: validator_status
+        schema: public
+- name: validator_voting_powers
+  using:
+    foreign_key_constraint_on:
+      column: validator_address
+      table:
+        name: validator_voting_power
+        schema: public
+computed_fields:
+- comment: ""
+  definition:
+    function:
+      name: self_delegations
+      schema: public
+  name: self_delegations
+object_relationships:
+- name: validator_info
+  using:
+    manual_configuration:
+      column_mapping:
+        consensus_address: consensus_address
+      insertion_order: null
+      remote_table:
+        name: validator_info
+        schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - consensus_address
+    - consensus_pubkey
+    filter: {}
+  role: anonymous
+table:
+  name: validator
+  schema: public

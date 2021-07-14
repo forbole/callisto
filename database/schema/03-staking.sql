@@ -11,7 +11,7 @@ CREATE TABLE staking_params
     height             BIGINT  NOT NULL,
     CHECK (one_row_id)
 );
-CREATE INDEX staking_params_height_index ON staking_params(height);
+CREATE INDEX staking_params_height_index ON staking_params (height);
 
 /* ---- POOL ---- */
 
@@ -203,7 +203,8 @@ CREATE TABLE unbonding_delegation_history
     amount               COIN                        NOT NUll,
     completion_timestamp TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     height               BIGINT                      NOT NULL REFERENCES block (height),
-    CONSTRAINT unbonding_delegation_history_validator_delegator_unique UNIQUE (delegator_address, validator_address, height)
+    CONSTRAINT unbonding_delegation_history_validator_delegator_unique UNIQUE (delegator_address, validator_address,
+                                                                               completion_timestamp, height)
 );
 CREATE INDEX unbonding_history_delegation_validator_address_index ON unbonding_delegation_history (validator_address);
 CREATE INDEX unbonding_history_delegation_delegator_address_index ON unbonding_delegation_history (delegator_address);
