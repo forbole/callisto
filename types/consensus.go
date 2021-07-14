@@ -18,6 +18,13 @@ func NewGenesis(chainID string, startTime time.Time, initialHeight int64) *Genes
 	}
 }
 
+// Equal returns true iff g and other contain the same data
+func (g *Genesis) Equal(other *Genesis) bool {
+	return g.ChainID == other.ChainID &&
+		g.Time.Equal(other.Time) &&
+		g.InitialHeight == other.InitialHeight
+}
+
 // ------------------------------------------------------------------------------------------------------------------
 
 // ConsensusEvent represents a consensus event
