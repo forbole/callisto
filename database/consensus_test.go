@@ -332,14 +332,14 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimeGenesis() {
 }
 
 func (suite *DbTestSuite) TestSaveConsensus_SaveGenesisData() {
-	err := suite.database.SaveGenesisData(&tmtypes.GenesisDoc{
+	err := suite.database.SaveGenesis(&tmtypes.GenesisDoc{
 		ChainID:     "testnet-1",
 		GenesisTime: time.Date(2020, 1, 02, 15, 00, 00, 000, time.UTC),
 	})
 	suite.Require().NoError(err)
 
 	// Should have only one row
-	err = suite.database.SaveGenesisData(&tmtypes.GenesisDoc{
+	err = suite.database.SaveGenesis(&tmtypes.GenesisDoc{
 		ChainID:     "testnet-2",
 		GenesisTime: time.Date(2020, 1, 1, 15, 00, 00, 000, time.UTC),
 	})
