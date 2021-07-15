@@ -1,6 +1,7 @@
 package types
 
 import (
+	"strconv"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -12,19 +13,48 @@ const (
 	ProposalStatusInvalid = "PROPOSAL_STATUS_INVALID"
 )
 
-// GovParams contains the data of the x/gov module parameters
-type GovParams struct {
-	govtypes.Params
-	Height int64
+type depositParams struct{
+	Min_deposit sdk.Coins
+	MaxDepositPeriod string
+}
+
+func newdepositParam(d govtypes.DepositParams)depositParams{
+	return depositParams{
+		Min_deposit: d.MinDeposit,
+		MaxDepositPeriod: strconv.FormatInt(d.MaxDepositPeriod.Nanoseconds(),10),
+	}
+}
+
+type votingParams struct{
+	VotingPeriod string
+}
+
+func newvotingParams(v govtypes.VotingParams)votingParams{
+	return votingParams{
+		VotingPeriod:strconv.FormatInt(v.VotingPeriod.Nanoseconds(),10),
+	}
+}
+
+type GovParams struct{
+	DepositParams depositParams
+	VotingParams votingParams
+	TallyParams  govtypes.TallyParams
+	Height       int64
 }
 
 // NewGovParams allows to build a new GovParams instance
 func NewGovParams(params govtypes.Params, height int64) *GovParams {
+	d:=newdepositParam(params.DepositParams)
+	v:=newvotingParams(params.VotingParams)
 	return &GovParams{
-		Params: params,
+		DepositParams: d,
+		VotingParams: v,
+		TallyParams: params.TallyParams,
 		Height: height,
 	}
 }
+
+
 
 // --------------------------------------------------------------------------------------------------------------------
 
