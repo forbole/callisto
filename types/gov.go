@@ -13,48 +13,57 @@ const (
 	ProposalStatusInvalid = "PROPOSAL_STATUS_INVALID"
 )
 
-type depositParams struct{
-	Min_deposit sdk.Coins
+type depositParams struct {
+	Min_deposit      sdk.Coins
 	MaxDepositPeriod string
 }
 
-func newdepositParam(d govtypes.DepositParams)depositParams{
+func newdepositParam(d govtypes.DepositParams) depositParams {
 	return depositParams{
-		Min_deposit: d.MinDeposit,
-		MaxDepositPeriod: strconv.FormatInt(d.MaxDepositPeriod.Nanoseconds(),10),
+		Min_deposit:      d.MinDeposit,
+		MaxDepositPeriod: strconv.FormatInt(d.MaxDepositPeriod.Nanoseconds(), 10),
 	}
 }
 
-type votingParams struct{
+type votingParams struct {
 	VotingPeriod string
 }
 
-func newvotingParams(v govtypes.VotingParams)votingParams{
+func newvotingParams(v govtypes.VotingParams) votingParams {
 	return votingParams{
-		VotingPeriod:strconv.FormatInt(v.VotingPeriod.Nanoseconds(),10),
+		VotingPeriod: strconv.FormatInt(v.VotingPeriod.Nanoseconds(), 10),
 	}
 }
 
-type GovParams struct{
+type GovParams struct {
 	DepositParams depositParams
-	VotingParams votingParams
-	TallyParams  govtypes.TallyParams
-	Height       int64
+	VotingParams  votingParams
+	TallyParams   govtypes.TallyParams
+	Height        int64
 }
 
 // NewGovParams allows to build a new GovParams instance
 func NewGovParams(params govtypes.Params, height int64) *GovParams {
-	d:=newdepositParam(params.DepositParams)
-	v:=newvotingParams(params.VotingParams)
+	d := newdepositParam(params.DepositParams)
+	v := newvotingParams(params.VotingParams)
 	return &GovParams{
 		DepositParams: d,
-		VotingParams: v,
-		TallyParams: params.TallyParams,
-		Height: height,
+		VotingParams:  v,
+		TallyParams:   params.TallyParams,
+		Height:        height,
 	}
 }
 
-
+func (*votingParams) ProtoMessage()  {}
+func (*depositParams) ProtoMessage() {}
+func (m *votingParams) Reset()       { *m = votingParams{} }
+func (m *depositParams) Reset()      { *m = depositParams{} }
+func (x votingParams) String() string {
+	return x.VotingPeriod
+}
+func (x depositParams) String() string {
+	return x.MaxDepositPeriod
+}
 
 // --------------------------------------------------------------------------------------------------------------------
 
