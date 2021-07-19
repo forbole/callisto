@@ -13,55 +13,53 @@ const (
 	ProposalStatusInvalid = "PROPOSAL_STATUS_INVALID"
 )
 
-type depositParams struct {
-	Min_deposit      sdk.Coins
-	MaxDepositPeriod string
+type DepositParams struct {
+	MinDeposit       sdk.Coins `json:"min_deposit,omitempty" yaml:"min_deposit"`
+	MaxDepositPeriod string    `json:"max_deposit_period,omitempty" yaml:"max_deposit_period"`
 }
 
-func newdepositParam(d govtypes.DepositParams) depositParams {
-	return depositParams{
-		Min_deposit:      d.MinDeposit,
-		MaxDepositPeriod: strconv.FormatInt(d.MaxDepositPeriod.Nanoseconds(), 10),
+func NewdepositParam(d govtypes.DepositParams) DepositParams {
+	return DepositParams{
+		MinDeposit:       d.MinDeposit,
+		MaxDepositPeriod: strconv.FormatInt(d.MaxDepositPeriod.Nanoseconds(), 10) +"n",
 	}
 }
 
-type votingParams struct {
-	VotingPeriod string
+type VotingParams struct {
+	VotingPeriod string `json:"voting_period,omitempty" yaml:"voting_period"`
 }
 
-func newvotingParams(v govtypes.VotingParams) votingParams {
-	return votingParams{
-		VotingPeriod: strconv.FormatInt(v.VotingPeriod.Nanoseconds(), 10),
+func NewvotingParams(v govtypes.VotingParams) VotingParams {
+	return VotingParams{
+		VotingPeriod: strconv.FormatInt(v.VotingPeriod.Nanoseconds(), 10)+"n",
 	}
 }
 
 type GovParams struct {
-	DepositParams depositParams
-	VotingParams  votingParams
-	TallyParams   govtypes.TallyParams
-	Height        int64
+	DepositParams DepositParams        `json:"deposit_params" yaml:"deposit_params"`
+	VotingParams  VotingParams         `json:"voting_params" yaml:"voting_params"`
+	TallyParams   govtypes.TallyParams `json:"tally_params" yaml:"tally_params"`
+	Height        int64                `json:"height" ymal:"height"`
 }
 
-// NewGovParams allows to build a new GovParams instance
-func NewGovParams(params govtypes.Params, height int64) *GovParams {
-	d := newdepositParam(params.DepositParams)
-	v := newvotingParams(params.VotingParams)
+
+func NewGovParams(v VotingParams,d DepositParams,t govtypes.TallyParams, height int64) *GovParams {
 	return &GovParams{
 		DepositParams: d,
 		VotingParams:  v,
-		TallyParams:   params.TallyParams,
+		TallyParams:   t,
 		Height:        height,
 	}
 }
 
-func (*votingParams) ProtoMessage()  {}
-func (*depositParams) ProtoMessage() {}
-func (m *votingParams) Reset()       { *m = votingParams{} }
-func (m *depositParams) Reset()      { *m = depositParams{} }
-func (x votingParams) String() string {
+func (*VotingParams) ProtoMessage()  {}
+func (*DepositParams) ProtoMessage() {}
+func (m *VotingParams) Reset()       { *m = VotingParams{} }
+func (m *DepositParams) Reset()      { *m = DepositParams{} }
+func (x VotingParams) String() string {
 	return x.VotingPeriod
 }
-func (x depositParams) String() string {
+func (x DepositParams) String() string {
 	return x.MaxDepositPeriod
 }
 
