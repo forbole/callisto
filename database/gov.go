@@ -17,7 +17,7 @@ import (
 
 // SaveGovParams saves the given x/gov parameters inside the database
 func (db *Db) SaveGovParams(params *types.GovParams) error {
-	
+
 	depositParamsBz, err := json.Marshal(&params.DepositParams)
 	if err != nil {
 		return err
@@ -79,7 +79,7 @@ func (db *Db) GetGovParams() (*types.GovParams, error) {
 	}
 
 	return types.NewGovParams(
-		votingParams,depositParams,tallyParams,
+		votingParams, depositParams, tallyParams,
 		row.Height,
 	), nil
 }

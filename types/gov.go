@@ -21,7 +21,7 @@ type DepositParams struct {
 func NewdepositParam(d govtypes.DepositParams) DepositParams {
 	return DepositParams{
 		MinDeposit:       d.MinDeposit,
-		MaxDepositPeriod: strconv.FormatInt(d.MaxDepositPeriod.Nanoseconds(), 10) +"n",
+		MaxDepositPeriod: strconv.FormatInt(d.MaxDepositPeriod.Nanoseconds(), 10) + "n",
 	}
 }
 
@@ -31,7 +31,7 @@ type VotingParams struct {
 
 func NewvotingParams(v govtypes.VotingParams) VotingParams {
 	return VotingParams{
-		VotingPeriod: strconv.FormatInt(v.VotingPeriod.Nanoseconds(), 10)+"n",
+		VotingPeriod: strconv.FormatInt(v.VotingPeriod.Nanoseconds(), 10) + "n",
 	}
 }
 
@@ -42,8 +42,7 @@ type GovParams struct {
 	Height        int64                `json:"height" ymal:"height"`
 }
 
-
-func NewGovParams(v VotingParams,d DepositParams,t govtypes.TallyParams, height int64) *GovParams {
+func NewGovParams(v VotingParams, d DepositParams, t govtypes.TallyParams, height int64) *GovParams {
 	return &GovParams{
 		DepositParams: d,
 		VotingParams:  v,
