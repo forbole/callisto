@@ -1,7 +1,7 @@
 package consensus
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
@@ -42,7 +42,7 @@ func updateBlockTimeInMinute(db *database.Db) error {
 
 	block, err := db.GetLastBlock()
 	if block == nil {
-		return errors.New("Block are empty")
+		return fmt.Errorf("block table is empty")
 	}
 	if err != nil {
 		return err
@@ -50,7 +50,7 @@ func updateBlockTimeInMinute(db *database.Db) error {
 
 	genesis, err := db.GetGenesis()
 	if genesis == nil {
-		return errors.New("Genesis table are empty")
+		return fmt.Errorf("genesis table is empty")
 	}
 	if err != nil {
 		return err
@@ -77,7 +77,7 @@ func updateBlockTimeInHour(db *database.Db) error {
 
 	block, err := db.GetLastBlock()
 	if block == nil {
-		return errors.New("Block are empty")
+		return fmt.Errorf("block si empty")
 	}
 	if err != nil {
 		return err
@@ -85,7 +85,7 @@ func updateBlockTimeInHour(db *database.Db) error {
 
 	genesis, err := db.GetGenesis()
 	if genesis == nil {
-		return errors.New("Genesis table are empty")
+		return fmt.Errorf("genesis table is empty")
 	}
 	if err != nil {
 		return err
@@ -112,7 +112,7 @@ func updateBlockTimeInDay(db *database.Db) error {
 
 	block, err := db.GetLastBlock()
 	if block == nil {
-		return errors.New("Block are empty")
+		return fmt.Errorf("block is empty")
 	}
 	if err != nil {
 		return err
@@ -120,7 +120,7 @@ func updateBlockTimeInDay(db *database.Db) error {
 
 	genesis, err := db.GetGenesis()
 	if genesis == nil {
-		return errors.New("Genesis table are empty")
+		return fmt.Errorf("genesis table is empty")
 	}
 
 	if err != nil {

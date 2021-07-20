@@ -55,11 +55,11 @@ func (*VotingParams) ProtoMessage()  {}
 func (*DepositParams) ProtoMessage() {}
 func (m *VotingParams) Reset()       { *m = VotingParams{} }
 func (m *DepositParams) Reset()      { *m = DepositParams{} }
-func (x VotingParams) String() string {
-	return x.VotingPeriod
+func (m VotingParams) String() string {
+	return m.VotingPeriod
 }
-func (x DepositParams) String() string {
-	return x.MaxDepositPeriod
+func (m DepositParams) String() string {
+	return m.MaxDepositPeriod
 }
 
 // --------------------------------------------------------------------------------------------------------------------

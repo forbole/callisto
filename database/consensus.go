@@ -1,7 +1,6 @@
 package database
 
 import (
-	"errors"
 	"fmt"
 	"time"
 
@@ -46,7 +45,7 @@ func (db *Db) GetLastBlock() (*dbtypes.BlockRow, error) {
 func (db *Db) GetLastBlockHeight() (int64, error) {
 	block, err := db.GetLastBlock()
 	if block == nil {
-		return 0, errors.New("Block are empty")
+		return 0, fmt.Errorf("block are empty")
 	}
 	if err != nil {
 		return 0, err
