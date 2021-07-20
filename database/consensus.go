@@ -1,12 +1,11 @@
 package database
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
 	"github.com/forbole/bdjuno/types"
-
-	tmtypes "github.com/tendermint/tendermint/types"
 
 	dbtypes "github.com/forbole/bdjuno/database/types"
 )
@@ -46,6 +45,9 @@ func (db *Db) GetLastBlock() (*dbtypes.BlockRow, error) {
 // GetLastBlockHeight returns the last block height stored inside the database
 func (db *Db) GetLastBlockHeight() (int64, error) {
 	block, err := db.GetLastBlock()
+	if block == nil {
+		return 0, errors.New("Block are empty")
+	}
 	if err != nil {
 		return 0, err
 	}
@@ -151,24 +153,27 @@ WHERE average_block_time_from_genesis.height <= excluded.height`
 
 // -------------------------------------------------------------------------------------------------------------------
 
-// SaveGenesisData save the given genesis data
-func (db *Db) SaveGenesisData(genesis *tmtypes.GenesisDoc) error {
+// SaveGenesis save the given genesis data
+func (db *Db) SaveGenesis(genesis *types.Genesis) error {
 	stmt := `
-INSERT INTO genesis(time, chain_id) 
-VALUES ($1, $2) ON CONFLICT (one_row_id) DO UPDATE 
+INSERT INTO genesis(time, chain_id, initial_height) 
+VALUES ($1, $2, $3) ON CONFLICT (one_row_id) DO UPDATE 
     SET time = excluded.time,
+        initial_height = excluded.initial_height,
         chain_id = excluded.chain_id`
 
-	_, err := db.Sqlx.Exec(stmt, genesis.GenesisTime, genesis.ChainID)
+	_, err := db.Sqlx.Exec(stmt, genesis.Time, genesis.ChainID, genesis.InitialHeight)
 	return err
 }
 
-// GetGenesisTime get genesis time of chain (only work if database/consensus enabled)
-func (db *Db) GetGenesisTime() (time.Time, error) {
+// GetGenesis returns the genesis information stored inside the database
+func (db *Db) GetGenesis() (*types.Genesis, error) {
 	var rows []*dbtypes.GenesisRow
 	err := db.Sqlx.Select(&rows, `SELECT * FROM genesis;`)
 	if err != nil || len(rows) == 0 {
-		return time.Time{}, err
+		return nil, err
 	}
-	return rows[0].Time, nil
+
+	row := rows[0]
+	return types.NewGenesis(row.ChainID, row.Time, row.InitialHeight), nil
 }

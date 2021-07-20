@@ -1,0 +1,22 @@
+object_relationships:
+- name: post
+  using:
+    foreign_key_constraint_on: post_id
+- name: profile
+  using:
+    foreign_key_constraint_on: reporter_address
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - id
+    - post_id
+    - type
+    - message
+    - reporter_address
+    - height
+    filter: {}
+  role: anonymous
+table:
+  name: post_report
+  schema: public

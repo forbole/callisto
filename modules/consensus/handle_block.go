@@ -1,6 +1,8 @@
 package consensus
 
 import (
+	"errors"
+
 	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/bdjuno/database"
@@ -20,14 +22,17 @@ func HandleBlock(block *tmctypes.ResultBlock, db *database.Db) error {
 
 // updateBlockTimeFromGenesis insert average block time from genesis
 func updateBlockTimeFromGenesis(block *tmctypes.ResultBlock, db *database.Db) error {
-	log.Debug().Str("module", "consensus").Int64("height", block.Block.Height).
+	log.Trace().Str("module", "consensus").Int64("height", block.Block.Height).
 		Msg("updating block time from genesis")
 
-	genesis, err := db.GetGenesisTime()
+	genesis, err := db.GetGenesis()
+	if genesis == nil {
+		return errors.New("Genesis table are empty")
+	}
 	if err != nil {
 		return err
 	}
 
-	newBlockTime := block.Block.Time.Sub(genesis).Seconds() / float64(block.Block.Height)
+	newBlockTime := block.Block.Time.Sub(genesis.Time).Seconds() / float64(block.Block.Height-genesis.InitialHeight)
 	return db.SaveAverageBlockTimeGenesis(newBlockTime, block.Block.Height)
 }

@@ -1,0 +1,20 @@
+object_relationships:
+- name: application_link
+  using:
+    foreign_key_constraint_on: application_link_id
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - id
+    - application_link_id
+    - request_id
+    - script_id
+    - call_data
+    - client_id
+    - height
+    filter: {}
+  role: anonymous
+table:
+  name: application_link_oracle_request
+  schema: public

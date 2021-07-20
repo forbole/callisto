@@ -1,0 +1,20 @@
+object_relationships:
+- name: poll
+  using:
+    foreign_key_constraint_on: poll_id
+- name: profile
+  using:
+    foreign_key_constraint_on: answerer_address
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - poll_id
+    - answer
+    - answerer_address
+    - height
+    filter: {}
+  role: anonymous
+table:
+  name: user_poll_answer
+  schema: public

@@ -3,6 +3,8 @@ package bank
 import (
 	"encoding/json"
 
+	authutils "github.com/forbole/bdjuno/modules/auth/utils"
+
 	tmtypes "github.com/tendermint/tendermint/types"
 
 	"github.com/forbole/bdjuno/database"
@@ -24,11 +26,30 @@ func HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage,
 		return err
 	}
 
-	// Store the accounts
-	balances := make([]types.AccountBalance, len(bankState.Balances))
-	for index, balance := range bankState.Balances {
-		balances[index] = types.NewAccountBalance(balance.Address, balance.Coins, doc.InitialHeight)
+	// Store the balances
+	accounts, err := authutils.GetGenesisAccounts(appState, cdc)
+	if err != nil {
+		return err
+	}
+	accountsMap := getAccountsMap(accounts)
+
+	var balances []types.AccountBalance
+	for _, balance := range bankState.Balances {
+		_, ok := accountsMap[balance.Address]
+		if !ok {
+			continue
+		}
+
+		balances = append(balances, types.NewAccountBalance(balance.Address, balance.Coins, doc.InitialHeight))
 	}
 
 	return db.SaveAccountBalances(balances)
+}
+
+func getAccountsMap(accounts []types.Account) map[string]bool {
+	var accountsMap = make(map[string]bool, len(accounts))
+	for _, account := range accounts {
+		accountsMap[account.Address] = true
+	}
+	return accountsMap
 }

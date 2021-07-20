@@ -26,13 +26,13 @@ func profilesMessageAddressesParser(_ codec.Marshaler, cosmosMsg sdk.Msg) ([]str
 	case *profilestypes.MsgRequestDTagTransfer:
 		return []string{msg.Sender, msg.Receiver}, nil
 
-	case *profilestypes.MsgCancelDTagTransfer:
+	case *profilestypes.MsgCancelDTagTransferRequest:
 		return []string{msg.Sender, msg.Receiver}, nil
 
-	case *profilestypes.MsgAcceptDTagTransfer:
+	case *profilestypes.MsgAcceptDTagTransferRequest:
 		return []string{msg.Sender, msg.Receiver}, nil
 
-	case *profilestypes.MsgRefuseDTagTransfer:
+	case *profilestypes.MsgRefuseDTagTransferRequest:
 		return []string{msg.Sender, msg.Receiver}, nil
 
 	case *profilestypes.MsgCreateRelationship:

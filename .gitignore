@@ -1,9 +1,12 @@
 .idea/
 build/
 
-# configuration
+# Configuration
 *.toml
 *.json
 
-# coverage
+# Coverage
 coverage.*
+
+# Hasura
+hasura/config.yaml
