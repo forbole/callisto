@@ -13,6 +13,32 @@ import (
 	dbtypes "github.com/forbole/bdjuno/database/types"
 )
 
+func (suite *DbTestSuite) getAccountString(add string) string{
+	address, err := sdk.AccAddressFromBech32(add)
+	suite.Require().NoError(err)
+
+	coin:=sdk.Coin{
+		Denom: "daric",
+		Amount: sdk.NewInt(10),
+	}
+	account := authtypes.NewBaseAccountWithAddress(address)
+	baseVestingAccount := authvestingtypes.BaseVestingAccount{
+		BaseAccount: account,
+		OriginalVesting: sdk.NewCoins(coin),
+		DelegatedFree: sdk.NewCoins(coin),
+		DelegatedVesting: sdk.NewCoins(coin),
+	}
+	continuousVestingAccount :=authvestingtypes.ContinuousVestingAccount{
+		BaseVestingAccount: &baseVestingAccount,
+		StartTime: 10,
+	}
+	saveAccount:=[]types.Account{
+		types.NewAccount(
+			continuousVestingAccount.Address,
+			&continuousVestingAccount)}
+
+}
+
 func (suite *DbTestSuite) TestSaveAccount() {
 	address, err := sdk.AccAddressFromBech32("cosmos140xsjjg6pwkjp0xjz8zru7ytha60l5aee9nlf7")
 	suite.Require().NoError(err)

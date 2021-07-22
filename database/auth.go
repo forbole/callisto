@@ -3,13 +3,11 @@ package database
 import (
 	"fmt"
 
-	dbutils "github.com/forbole/bdjuno/database/utils"
-	dbtypes "github.com/forbole/bdjuno/database/types"
-	"github.com/forbole/bdjuno/types"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-
-
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	dbtypes "github.com/forbole/bdjuno/database/types"
+	dbutils "github.com/forbole/bdjuno/database/utils"
+	"github.com/forbole/bdjuno/types"
 )
 
 // SaveAccounts saves the given accounts inside the database
@@ -52,18 +50,20 @@ func (db *Db) saveAccounts(paramsNumber int, accounts []types.Account) error {
 		if err != nil {
 			return err
 		}
-
+// This marsha json return trash not string
 		contentBz, err := db.EncodingConfig.Marshaler.MarshalJSON(anyContent)
 		if err != nil {
 			return err
 		}
 
-		params = append(params, account.Address,string(contentBz))
+		contentBzstring:=string(contentBz)
+
+		params = append(params, account.Address,string(contentBzstring))
 
 	}
 
 	stmt = stmt[:len(stmt)-1]
-	stmt += " ON CONFLICT DO NOTHING"
+	stmt += " ON CONFLICT (address) DO UPDATE SET details = excluded.details"
 	_, err := db.Sql.Exec(stmt, params...)
 	return err
 }
