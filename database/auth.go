@@ -34,7 +34,6 @@ func (db *Db) saveAccounts(paramsNumber int, accounts []types.Account) error {
 	if len(accounts) == 0 {
 		return nil
 	}
-// only support 65535 parameter
 	stmt := `INSERT INTO account (address,details) VALUES `
 	var params []interface{}
 	patchSize := len(accounts)/65535
