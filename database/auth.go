@@ -34,12 +34,14 @@ func (db *Db) saveAccounts(paramsNumber int, accounts []types.Account) error {
 	if len(accounts) == 0 {
 		return nil
 	}
-
+// only support 65535 parameter
 	stmt := `INSERT INTO account (address,details) VALUES `
 	var params []interface{}
-
+	patchSize := len(accounts)/65535
+	patchCount := 0
+	
 	for i, account := range accounts {
-		ai := i * 2
+		ai := patchCount * 2
 		stmt += fmt.Sprintf("($%d,$%d),", ai+1,ai+2)
 		protoContent, ok := account.Details.(authtypes.AccountI)
 		if !ok {
@@ -59,13 +61,23 @@ func (db *Db) saveAccounts(paramsNumber int, accounts []types.Account) error {
 		contentBzstring:=string(contentBz)
 
 		params = append(params, account.Address,string(contentBzstring))
+		patchCount++
+		if (patchCount==patchSize || i==len(accounts)){
+			stmt = stmt[:len(stmt)-1]
+			stmt += " ON CONFLICT (address) DO UPDATE SET details = excluded.details"
+			_, err := db.Sql.Exec(stmt, params...)
+			if err!=nil{
+				return err
+			}
 
+			//Initialise
+			stmt = `INSERT INTO account (address,details) VALUES `
+			patchCount=0
+			params = make([]interface{}, 0)
+
+		}
 	}
-
-	stmt = stmt[:len(stmt)-1]
-	stmt += " ON CONFLICT (address) DO UPDATE SET details = excluded.details"
-	_, err := db.Sql.Exec(stmt, params...)
-	return err
+	return nil
 }
 
 // GetAccounts returns all the accounts that are currently stored inside the database.
