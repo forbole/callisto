@@ -64,7 +64,7 @@ func handleEvent(event tmctypes.ResultEvent, db *database.Db) {
 	}
 
 	// Save the event
-	log.Debug().Str("module", "consensus").
+	log.Trace().Str("module", "consensus").
 		Int64("height", consEvent.Height).
 		Int32("round", consEvent.Round).
 		Str("step", consEvent.Step).

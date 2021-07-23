@@ -59,13 +59,6 @@ func (db *Db) SaveValidatorCommissionAmount(amount types.ValidatorCommissionAmou
 		return fmt.Errorf("error while storing up-to-date validator commission amount: %s", err)
 	}
 
-	if db.IsStoreHistoricDataEnabled() {
-		err = db.storeHistoricValidatorCommissionAmount(amount, consAddr)
-		if err != nil {
-			return fmt.Errorf("error while storing validator commission amount history: %s", err)
-		}
-	}
-
 	return nil
 }
 
@@ -83,16 +76,26 @@ WHERE validator_commission_amount.height <= excluded.height`
 	return err
 }
 
-// storeHistoricValidatorCommissionAmount allows to store the given amount has an historic one
-func (db *Db) storeHistoricValidatorCommissionAmount(amount types.ValidatorCommissionAmount, consAddr sdk.ConsAddress) error {
+// GetUserValidatorCommissionAmount returns the current amount of the validator commission
+// that is associated with the user having the given address
+func (db *Db) GetUserValidatorCommissionAmount(address string) (sdk.DecCoins, error) {
 	stmt := `
-INSERT INTO validator_commission_amount_history(validator_address, amount, height) 
-VALUES ($1, $2, $3) 
-ON CONFLICT ON CONSTRAINT validator_commission_amount_history_commission_height_unique DO UPDATE 
-    SET amount = excluded.amount`
+SELECT validator_commission_amount.*
+FROM validator_commission_amount 
+    INNER JOIN validator_info vi on validator_commission_amount.validator_address = vi.consensus_address
+WHERE vi.self_delegate_address = $1`
 
-	_, err := db.Sql.Exec(stmt, consAddr.String(), pq.Array(dbtypes.NewDbDecCoins(amount.Amount)), amount.Height)
-	return err
+	var rows []*dbtypes.ValidatorCommissionAmountRow
+	err := db.Sqlx.Select(&rows, stmt, address)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(rows) == 0 {
+		return sdk.DecCoins{}, nil
+	}
+
+	return rows[0].Amount.ToDecCoins(), nil
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -102,13 +105,6 @@ func (db *Db) SaveDelegatorsRewardsAmounts(amounts []types.DelegatorRewardAmount
 	err := db.storeUpToDateDelegatorsRewardsAmounts(amounts)
 	if err != nil {
 		return fmt.Errorf("error while storing up-to-date delegator rewards amounts: %s", err)
-	}
-
-	if db.IsStoreHistoricDataEnabled() {
-		err = db.storeDelegatorsRewardsAmountsHistory(amounts)
-		if err != nil {
-			return fmt.Errorf("error while storing delegator rewards amounts history: %s", err)
-		}
 	}
 
 	return nil
@@ -145,34 +141,23 @@ WHERE delegation_reward.height <= excluded.height`
 	return err
 }
 
-// storeDelegatorsRewardsAmountsHistory allows to store the given amounts as historic rewards amounts
-func (db *Db) storeDelegatorsRewardsAmountsHistory(amounts []types.DelegatorRewardAmount) error {
-	stmt := `
-INSERT INTO delegation_reward_history 
-    (validator_address, delegator_address, withdraw_address, amount, height) 
-VALUES `
-	var params []interface{}
+// GetUserDelegatorRewardsAmount returns the amount of rewards that the given user has currently associated
+func (db *Db) GetUserDelegatorRewardsAmount(address string) (sdk.DecCoins, error) {
+	stmt := `SELECT * FROM delegation_reward WHERE delegator_address = $1`
 
-	for i, amount := range amounts {
-		ai := i * 5
-		stmt += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d),", ai+1, ai+2, ai+3, ai+4, ai+5)
-
-		// Get the validator consensus address
-		consAddr, err := db.GetValidatorConsensusAddress(amount.ValidatorOperAddr)
-		if err != nil {
-			return err
-		}
-
-		coins := pq.Array(dbtypes.NewDbDecCoins(amount.Amount))
-		params = append(params,
-			consAddr.String(), amount.DelegatorAddress, amount.WithdrawAddress, coins, amount.Height)
+	var rows []*dbtypes.DelegationRewardRow
+	err := db.Sqlx.Select(&rows, stmt, address)
+	if err != nil {
+		return nil, err
 	}
 
-	stmt = stmt[:len(stmt)-1] // Remove trailing ,
-	stmt += `
-ON CONFLICT ON CONSTRAINT delegation_reward_history_validator_delegator_unique DO UPDATE 
-	SET withdraw_address = excluded.withdraw_address,
-		amount = excluded.amount`
-	_, err := db.Sql.Exec(stmt, params...)
-	return err
+	if len(rows) == 0 {
+		return sdk.DecCoins{}, nil
+	}
+
+	var rewardsAmount = sdk.DecCoins{}
+	for _, row := range rows {
+		rewardsAmount = rewardsAmount.Add(row.Amount.ToDecCoins()...)
+	}
+	return rewardsAmount, nil
 }

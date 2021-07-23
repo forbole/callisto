@@ -17,6 +17,8 @@ import (
 	"github.com/desmos-labs/juno/modules/registrar"
 	juno "github.com/desmos-labs/juno/types"
 
+	"github.com/forbole/bdjuno/modules/history"
+
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/modules/auth"
 	"github.com/forbole/bdjuno/modules/bank"
@@ -72,5 +74,6 @@ func (r *Registrar) BuildModules(
 		pricefeed.NewModule(encodingConfig, bigDipperBd),
 		slashing.NewModule(slashingClient, bigDipperBd),
 		staking.NewModule(bankClient, stakingClient, encodingConfig, bigDipperBd),
+		history.NewModule(parser, encodingConfig, bigDipperBd),
 	}
 }
