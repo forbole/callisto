@@ -1,0 +1,10 @@
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - module_name
+    filter: {}
+  role: anonymous
+table:
+  name: modules
+  schema: public

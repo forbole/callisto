@@ -1,0 +1,11 @@
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - average_time
+    - height
+    filter: {}
+  role: anonymous
+table:
+  name: average_block_time_per_day
+  schema: public

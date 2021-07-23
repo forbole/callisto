@@ -1,0 +1,18 @@
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - chain_id
+    - time
+    filter: {}
+  role: anonymous
+- permission:
+    allow_aggregations: true
+    columns:
+    - chain_id
+    - time
+    filter: {}
+  role: client
+table:
+  name: genesis
+  schema: public

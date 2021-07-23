@@ -6,22 +6,25 @@ import (
 )
 
 type GenesisRow struct {
-	OneRowID bool      `db:"one_row_id"`
-	ChainID  string    `db:"chain_id"`
-	Time     time.Time `db:"time"`
+	OneRowID      bool      `db:"one_row_id"`
+	ChainID       string    `db:"chain_id"`
+	Time          time.Time `db:"time"`
+	InitialHeight int64     `db:"initial_height"`
 }
 
-func NewGenesisRow(chainID string, time time.Time) GenesisRow {
+func NewGenesisRow(chainID string, time time.Time, initialHeight int64) GenesisRow {
 	return GenesisRow{
-		OneRowID: true,
-		ChainID:  chainID,
-		Time:     time,
+		OneRowID:      true,
+		ChainID:       chainID,
+		Time:          time,
+		InitialHeight: initialHeight,
 	}
 }
 
 func (r GenesisRow) Equal(s GenesisRow) bool {
 	return r.Time.Equal(s.Time) &&
-		r.ChainID == s.ChainID
+		r.ChainID == s.ChainID &&
+		r.InitialHeight == s.InitialHeight
 }
 
 // -------------------------------------------------------------------------------------------------------------------

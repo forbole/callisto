@@ -1,0 +1,41 @@
+array_relationships:
+- name: token_price_histories
+  using:
+    foreign_key_constraint_on:
+      column: unit_name
+      table:
+        name: token_price_history
+        schema: public
+- name: token_prices
+  using:
+    foreign_key_constraint_on:
+      column: unit_name
+      table:
+        name: token_price
+        schema: public
+object_relationships:
+- name: token
+  using:
+    foreign_key_constraint_on: token_name
+- name: token_price
+  using:
+    manual_configuration:
+      column_mapping:
+        denom: unit_name
+      insertion_order: null
+      remote_table:
+        name: token_price
+        schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - token_name
+    - denom
+    - exponent
+    - aliases
+    filter: {}
+  role: anonymous
+table:
+  name: token_unit
+  schema: public

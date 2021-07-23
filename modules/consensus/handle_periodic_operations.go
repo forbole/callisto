@@ -31,7 +31,6 @@ func Register(scheduler *gocron.Scheduler, db *database.Db) error {
 	}
 
 	return nil
-
 }
 
 // updateBlockTimeInMinute insert average block time in the latest minute
@@ -44,13 +43,13 @@ func updateBlockTimeInMinute(db *database.Db) error {
 		return err
 	}
 
-	genesis, err := db.GetGenesisTime()
+	genesis, err := db.GetGenesis()
 	if err != nil {
 		return err
 	}
 
-	// check if chain is not created minutes ago
-	if block.Timestamp.Sub(genesis).Minutes() < 0 {
+	// Check if the chain has been created at least a minute ago
+	if block.Timestamp.Sub(genesis.Time).Minutes() < 0 {
 		return nil
 	}
 
@@ -73,13 +72,13 @@ func updateBlockTimeInHour(db *database.Db) error {
 		return err
 	}
 
-	genesis, err := db.GetGenesisTime()
+	genesis, err := db.GetGenesis()
 	if err != nil {
 		return err
 	}
 
-	//check if chain is not created minutes ago
-	if block.Timestamp.Sub(genesis).Hours() < 0 {
+	// Check if the chain has been created at least an hour ago
+	if block.Timestamp.Sub(genesis.Time).Hours() < 0 {
 		return nil
 	}
 
@@ -102,13 +101,13 @@ func updateBlockTimeInDay(db *database.Db) error {
 		return err
 	}
 
-	genesis, err := db.GetGenesisTime()
+	genesis, err := db.GetGenesis()
 	if err != nil {
 		return err
 	}
 
-	//check if chain is not created days ago
-	if block.Timestamp.Sub(genesis).Hours() < 24 {
+	// Check if the chain has been created at least a days ago
+	if block.Timestamp.Sub(genesis.Time).Hours() < 24 {
 		return nil
 	}
 

@@ -5,8 +5,6 @@ import (
 
 	dbtypes "github.com/forbole/bdjuno/database/types"
 	"github.com/forbole/bdjuno/types"
-
-	tmtypes "github.com/tendermint/tendermint/types"
 )
 
 func (suite *DbTestSuite) TestSaveConsensus() {
@@ -332,17 +330,19 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimeGenesis() {
 }
 
 func (suite *DbTestSuite) TestSaveConsensus_SaveGenesisData() {
-	err := suite.database.SaveGenesisData(&tmtypes.GenesisDoc{
-		ChainID:     "testnet-1",
-		GenesisTime: time.Date(2020, 1, 02, 15, 00, 00, 000, time.UTC),
-	})
+	err := suite.database.SaveGenesis(types.NewGenesis(
+		"testnet-1",
+		time.Date(2020, 1, 02, 15, 00, 00, 000, time.UTC),
+		0,
+	))
 	suite.Require().NoError(err)
 
 	// Should have only one row
-	err = suite.database.SaveGenesisData(&tmtypes.GenesisDoc{
-		ChainID:     "testnet-2",
-		GenesisTime: time.Date(2020, 1, 1, 15, 00, 00, 000, time.UTC),
-	})
+	err = suite.database.SaveGenesis(types.NewGenesis(
+		"testnet-2",
+		time.Date(2020, 1, 1, 15, 00, 00, 000, time.UTC),
+		0,
+	))
 
 	var rows []*dbtypes.GenesisRow
 	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM genesis")
@@ -350,19 +350,23 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveGenesisData() {
 	suite.Require().True(rows[0].Equal(dbtypes.NewGenesisRow(
 		"testnet-2",
 		time.Date(2020, 1, 1, 15, 00, 00, 000, time.UTC),
+		0,
 	)))
 }
 
-func (suite *DbTestSuite) TestSaveConsensus_GetGenesisTime() {
+func (suite *DbTestSuite) TestSaveConsensus_GetGenesis() {
 	_, err := suite.database.Sqlx.Exec(
-		`INSERT INTO genesis(chain_id, time) VALUES ($1, $2)`,
+		`INSERT INTO genesis(chain_id, time, initial_height) VALUES ($1, $2, $3)`,
 		"testnet-1",
 		time.Date(2020, 1, 1, 15, 00, 00, 000, time.UTC),
+		0,
 	)
 
-	genTime, err := suite.database.GetGenesisTime()
+	genesis, err := suite.database.GetGenesis()
 	suite.Require().NoError(err)
-	suite.Require().True(genTime.Equal(
+	suite.Require().True(genesis.Equal(types.NewGenesis(
+		"testnet-1",
 		time.Date(2020, 1, 1, 15, 00, 00, 000, time.UTC),
-	))
+		0,
+	)))
 }

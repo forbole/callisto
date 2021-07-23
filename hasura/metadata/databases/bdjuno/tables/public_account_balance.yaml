@@ -1,0 +1,32 @@
+computed_fields:
+- comment: ""
+  definition:
+    function:
+      name: account_balance_tokens_prices
+      schema: public
+  name: tokens_prices
+object_relationships:
+- name: account
+  using:
+    foreign_key_constraint_on: address
+- name: block
+  using:
+    manual_configuration:
+      column_mapping:
+        height: height
+      insertion_order: null
+      remote_table:
+        name: block
+        schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - address
+    - coins
+    - height
+    filter: {}
+  role: anonymous
+table:
+  name: account_balance
+  schema: public

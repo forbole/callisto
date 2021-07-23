@@ -23,11 +23,11 @@ func updateBlockTimeFromGenesis(block *tmctypes.ResultBlock, db *database.Db) er
 	log.Trace().Str("module", "consensus").Int64("height", block.Block.Height).
 		Msg("updating block time from genesis")
 
-	genesis, err := db.GetGenesisTime()
+	genesis, err := db.GetGenesis()
 	if err != nil {
 		return err
 	}
 
-	newBlockTime := block.Block.Time.Sub(genesis).Seconds() / float64(block.Block.Height)
+	newBlockTime := block.Block.Time.Sub(genesis.Time).Seconds() / float64(block.Block.Height-genesis.InitialHeight)
 	return db.SaveAverageBlockTimeGenesis(newBlockTime, block.Block.Height)
 }

@@ -1,0 +1,12 @@
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - height
+    - round
+    - step
+    filter: {}
+  role: anonymous
+table:
+  name: consensus
+  schema: public

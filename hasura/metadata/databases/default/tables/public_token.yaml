@@ -1,0 +1,18 @@
+array_relationships:
+- name: token_units
+  using:
+    foreign_key_constraint_on:
+      column: token_name
+      table:
+        name: token_unit
+        schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - name
+    filter: {}
+  role: anonymous
+table:
+  name: token
+  schema: public

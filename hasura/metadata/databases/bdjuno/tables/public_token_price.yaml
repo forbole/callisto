@@ -1,0 +1,18 @@
+object_relationships:
+- name: token_unit
+  using:
+    foreign_key_constraint_on: unit_name
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - id
+    - unit_name
+    - price
+    - market_cap
+    - timestamp
+    filter: {}
+  role: anonymous
+table:
+  name: token_price
+  schema: public
