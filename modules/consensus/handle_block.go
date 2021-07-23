@@ -28,6 +28,11 @@ func updateBlockTimeFromGenesis(block *tmctypes.ResultBlock, db *database.Db) er
 		return err
 	}
 
+	// Skip if the genesis does not exist
+	if genesis == nil {
+		return nil
+	}
+
 	newBlockTime := block.Block.Time.Sub(genesis.Time).Seconds() / float64(block.Block.Height-genesis.InitialHeight)
 	return db.SaveAverageBlockTimeGenesis(newBlockTime, block.Block.Height)
 }

@@ -28,14 +28,6 @@ func (db *Db) SaveAccountBalances(balances []types.AccountBalance) error {
 		if err != nil {
 			return fmt.Errorf("error while storing up-to-date balances: %s", err)
 		}
-
-		// Store historic data
-		if db.IsStoreHistoricDataEnabled() {
-			err = db.saveHistoricBalances(paramsNumber, balances)
-			if err != nil {
-				return fmt.Errorf("error while storing balances history: %s", err)
-			}
-		}
 	}
 
 	return nil
@@ -67,26 +59,21 @@ WHERE account_balance.height <= excluded.height`
 	return nil
 }
 
-func (db *Db) saveHistoricBalances(paramsNumber int, balances []types.AccountBalance) error {
-	stmt := `INSERT INTO account_balance_history (address, coins, height) VALUES `
-	var params []interface{}
+// GetAccountBalance returns the balance of the user having the given address
+func (db *Db) GetAccountBalance(address string) ([]sdk.Coin, error) {
+	stmt := `SELECT * FROM account_balance WHERE address = $1`
 
-	for i, bal := range balances {
-		bi := i * paramsNumber
-		stmt += fmt.Sprintf("($%d, $%d, $%d),", bi+1, bi+2, bi+3)
-
-		coins := pq.Array(dbtypes.NewDbCoins(bal.Balance))
-		params = append(params, bal.Address, coins, bal.Height)
-	}
-
-	stmt = stmt[:len(stmt)-1]
-	stmt += `ON CONFLICT ON CONSTRAINT unique_balance_for_height DO UPDATE SET coins = excluded.coins`
-
-	_, err := db.Sql.Exec(stmt, params...)
+	var rows []dbtypes.AccountBalanceRow
+	err := db.Sqlx.Select(&rows, stmt, address)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+
+	if len(rows) == 0 {
+		return sdk.Coins{}, nil
+	}
+
+	return rows[0].Coins.ToCoins(), nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------

@@ -2,6 +2,7 @@ package utils
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
 	"github.com/desmos-labs/juno/client"
@@ -98,6 +99,43 @@ func getUnbondingDelegations(
 		nextKey = res.Pagination.NextKey
 		stop = len(res.Pagination.NextKey) == 0
 	}
+}
+
+// GetDelegatorUnbondingDelegations returns the current unbonding delegations for the user having the given address
+func GetDelegatorUnbondingDelegations(
+	height int64, address string, bondDenom string, stakingClient stakingtypes.QueryClient,
+) ([]types.UnbondingDelegation, error) {
+	var delegations []types.UnbondingDelegation
+
+	header := client.GetHeightRequestHeader(height)
+
+	var nextKey []byte
+	var stop = false
+	for !stop {
+		res, err := stakingClient.DelegatorUnbondingDelegations(
+			context.Background(),
+			&stakingtypes.QueryDelegatorUnbondingDelegationsRequest{
+				DelegatorAddr: address,
+				Pagination: &query.PageRequest{
+					Key:   nextKey,
+					Limit: 100, // Query 100 unbonding delegations at a time
+				},
+			},
+			header,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("error while getting validator delegations: %s", err)
+		}
+
+		for _, delegation := range res.UnbondingResponses {
+			delegations = append(delegations, ConvertUnbondingResponse(height, bondDenom, delegation)...)
+		}
+
+		nextKey = res.Pagination.NextKey
+		stop = len(res.Pagination.NextKey) == 0
+	}
+
+	return delegations, nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------
