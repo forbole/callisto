@@ -72,37 +72,15 @@ func (suite *DbTestSuite) TestSaveAccount() {
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_GetAccounts() {
-	address, err := sdk.AccAddressFromBech32("cosmos140xsjjg6pwkjp0xjz8zru7ytha60l5aee9nlf7")
-	suite.Require().NoError(err)
-
-	coin:=sdk.Coin{
-		Denom: "daric",
-		Amount: sdk.NewInt(10),
-	}
-	baseAccount := authtypes.NewBaseAccountWithAddress(address)
-	baseVestingAccount := authvestingtypes.BaseVestingAccount{
-		BaseAccount: baseAccount,
-		OriginalVesting: sdk.NewCoins(coin),
-		DelegatedFree: sdk.NewCoins(coin),
-		DelegatedVesting: sdk.NewCoins(coin),
-	}
-	expectedAccount :=authvestingtypes.ContinuousVestingAccount{
-		BaseVestingAccount: &baseVestingAccount,
-		StartTime: 10,
-	}
+	account:=`{"@type":"/cosmos.vesting.v1beta1.ContinuousVestingAccount","base_vesting_account":{"base_account":{"address":"cosmos140xsjjg6pwkjp0xjz8zru7ytha60l5aee9nlf7","pub_key":null,"account_number":"0","sequence":"0"},"original_vesting":[{"denom":"daric","amount":"10"}],"delegated_free":[{"denom":"daric","amount":"10"}],"delegated_vesting":[{"denom":"daric","amount":"10"}],"end_time":"0"},"start_time":"10"}`
 	
-	account:=`'{"@type":"/cosmos.vesting.v1beta1.ContinuousVestingAccount","base_vesting_account":{"base_account":{"address":"cosmos140xsjjg6pwkjp0xjz8zru7ytha60l5aee9nlf7","pub_key":null,"account_number":"0","sequence":"0"},"original_vesting":[{"denom":"daric","amount":"10"}],"delegated_free":[{"denom":"daric","amount":"10"}],"delegated_vesting":[{"denom":"daric","amount":"10"}],"end_time":"0"},"start_time":"10"}'`
-	/* account=strings.ReplaceAll(account,`"`,`""`)
-	account=strings.ReplaceAll(account,`/`,`//`) */
-
-
 	// Insert the data
 	queries := []string{
-		fmt.Sprintf("INSERT INTO account (address,details) VALUES ('cosmos1ltzt0z992ke6qgmtjxtygwzn36km4cy6cqdknt',%s)",account),
-		fmt.Sprintf("INSERT INTO account (address,details) VALUES ('cosmos1re6zjpyczs0w7flrl6uacl0r4teqtyg62crjsn',%s)",account),
-		fmt.Sprintf("INSERT INTO account (address,details) VALUES ('cosmos1eg47ue0l85lzkfgc4leske6hcah8cz3qajpjy2',%s)",account),
-		fmt.Sprintf("INSERT INTO account (address,details) VALUES ('cosmos1495ghynrns8sxfnw8mj887pgh0c9z6c4lqkzme',%s)",account),
-		fmt.Sprintf("INSERT INTO account (address,details) VALUES ('cosmos18fzr6adp3gjw43xu62vfhg248lepfwpf0pj2dm',%s)",account),
+		fmt.Sprintf("INSERT INTO account (address,details) VALUES ('cosmos1ltzt0z992ke6qgmtjxtygwzn36km4cy6cqdknt',%s)","'"+account+"'"),
+		fmt.Sprintf("INSERT INTO account (address,details) VALUES ('cosmos1re6zjpyczs0w7flrl6uacl0r4teqtyg62crjsn',%s)","'"+account+"'"),
+		fmt.Sprintf("INSERT INTO account (address,details) VALUES ('cosmos1eg47ue0l85lzkfgc4leske6hcah8cz3qajpjy2',%s)","'"+account+"'"),
+		fmt.Sprintf("INSERT INTO account (address,details) VALUES ('cosmos1495ghynrns8sxfnw8mj887pgh0c9z6c4lqkzme',%s)","'"+account+"'"),
+		fmt.Sprintf("INSERT INTO account (address,details) VALUES ('cosmos18fzr6adp3gjw43xu62vfhg248lepfwpf0pj2dm',%s)","'"+account+"'"),
 	}
 
 	for _, query := range queries {
@@ -115,15 +93,15 @@ func (suite *DbTestSuite) TestBigDipperDb_GetAccounts() {
 	suite.Require().NoError(err)
 
 	// Verify the get
-	expectedAccs := []types.Account{
-		types.NewAccount("cosmos1ltzt0z992ke6qgmtjxtygwzn36km4cy6cqdknt",&expectedAccount),
-		types.NewAccount("cosmos1re6zjpyczs0w7flrl6uacl0r4teqtyg62crjsn",&expectedAccount),
-		types.NewAccount("cosmos1eg47ue0l85lzkfgc4leske6hcah8cz3qajpjy2",&expectedAccount),
-		types.NewAccount("cosmos1495ghynrns8sxfnw8mj887pgh0c9z6c4lqkzme",&expectedAccount),
-		types.NewAccount("cosmos18fzr6adp3gjw43xu62vfhg248lepfwpf0pj2dm",&expectedAccount),
+	expectedAccs := []dbtypes.AccountRow{
+		dbtypes.NewAccountRow("cosmos1ltzt0z992ke6qgmtjxtygwzn36km4cy6cqdknt",account),
+		dbtypes.NewAccountRow("cosmos1re6zjpyczs0w7flrl6uacl0r4teqtyg62crjsn",account),
+		dbtypes.NewAccountRow("cosmos1eg47ue0l85lzkfgc4leske6hcah8cz3qajpjy2",account),
+		dbtypes.NewAccountRow("cosmos1495ghynrns8sxfnw8mj887pgh0c9z6c4lqkzme",account),
+		dbtypes.NewAccountRow("cosmos18fzr6adp3gjw43xu62vfhg248lepfwpf0pj2dm",account),
 	}
 
 	for index, acc := range expectedAccs {
-		suite.Require().True(acc.Equal(accounts[index]))
+		suite.Require().Equal(acc,accounts[index])
 	}
 }
