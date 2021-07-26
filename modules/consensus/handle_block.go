@@ -26,11 +26,11 @@ func updateBlockTimeFromGenesis(block *tmctypes.ResultBlock, db *database.Db) er
 		Msg("updating block time from genesis")
 
 	genesis, err := db.GetGenesis()
-	if genesis == nil {
-		return fmt.Errorf("genesis table is empty")
-	}
 	if err != nil {
 		return err
+	}
+	if genesis == nil {
+		return fmt.Errorf("genesis table is empty")
 	}
 
 	newBlockTime := block.Block.Time.Sub(genesis.Time).Seconds() / float64(block.Block.Height-genesis.InitialHeight)

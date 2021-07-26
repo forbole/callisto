@@ -70,9 +70,9 @@ func updateParams(height int64, govClient govtypes.QueryClient, db *database.Db)
 	}
 
 	return db.SaveGovParams(types.NewGovParams(
-		types.NewvotingParams(votingRes.GetVotingParams()),
-		types.NewdepositParam(depositRes.GetDepositParams()),
-		tallyRes.GetTallyParams(),
+		types.NewVotingParams(votingRes.GetVotingParams()),
+		types.NewDepositParam(depositRes.GetDepositParams()),
+		types.NewTallyParams(tallyRes.GetTallyParams()),
 		height,
 	))
 }

@@ -41,19 +41,19 @@ func updateBlockTimeInMinute(db *database.Db) error {
 		Msg("updating block time in minutes")
 
 	block, err := db.GetLastBlock()
+	if err != nil {
+		return err
+	}
 	if block == nil {
 		return fmt.Errorf("block table is empty")
 	}
-	if err != nil {
-		return err
-	}
 
 	genesis, err := db.GetGenesis()
-	if genesis == nil {
-		return fmt.Errorf("genesis table is empty")
-	}
 	if err != nil {
 		return err
+	}
+	if genesis == nil {
+		return fmt.Errorf("genesis table is empty")
 	}
 
 	// Check if the chain has been created at least a minute ago
@@ -76,19 +76,19 @@ func updateBlockTimeInHour(db *database.Db) error {
 		Msg("updating block time in hours")
 
 	block, err := db.GetLastBlock()
-	if block == nil {
-		return fmt.Errorf("block si empty")
-	}
 	if err != nil {
 		return err
+	}
+	if block == nil {
+		return fmt.Errorf("block table is empty")
 	}
 
 	genesis, err := db.GetGenesis()
-	if genesis == nil {
-		return fmt.Errorf("genesis table is empty")
-	}
 	if err != nil {
 		return err
+	}
+	if genesis == nil {
+		return fmt.Errorf("genesis table is empty")
 	}
 
 	// Check if the chain has been created at least an hour ago
@@ -111,20 +111,19 @@ func updateBlockTimeInDay(db *database.Db) error {
 		Msg("updating block time in days")
 
 	block, err := db.GetLastBlock()
-	if block == nil {
-		return fmt.Errorf("block is empty")
-	}
 	if err != nil {
 		return err
+	}
+	if block == nil {
+		return fmt.Errorf("block table is empty")
 	}
 
 	genesis, err := db.GetGenesis()
-	if genesis == nil {
-		return fmt.Errorf("genesis table is empty")
-	}
-
 	if err != nil {
 		return err
+	}
+	if genesis == nil {
+		return fmt.Errorf("genesis table is empty")
 	}
 
 	// Check if the chain has been created at least a days ago
