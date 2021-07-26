@@ -73,7 +73,7 @@ func (r *Registrar) BuildModules(
 		modules.NewModule(cfg, bigDipperBd),
 		pricefeed.NewModule(encodingConfig, bigDipperBd),
 		slashing.NewModule(slashingClient, bigDipperBd),
-		staking.NewModule(bankClient, stakingClient, encodingConfig, bigDipperBd),
+		staking.NewModule(cfg, bankClient, stakingClient, encodingConfig, bigDipperBd),
 		history.NewModule(parser, encodingConfig, bigDipperBd),
 	}
 }

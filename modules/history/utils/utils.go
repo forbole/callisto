@@ -47,8 +47,8 @@ func UpdateAccountBalanceHistory(address string, db *database.Db) error {
 		delegations,
 		unbondingDelegations,
 		redelegations,
-		rewards,
 		commission,
+		rewards,
 		time.Now(),
 	))
 }
