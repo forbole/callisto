@@ -14,14 +14,14 @@ const (
 
 type DepositParams struct {
 	MinDeposit       sdk.Coins `json:"min_deposit,omitempty" yaml:"min_deposit"`
-	MaxDepositPeriod int64    `json:"max_deposit_period,omitempty" yaml:"max_deposit_period"`
+	MaxDepositPeriod int64     `json:"max_deposit_period,omitempty" yaml:"max_deposit_period"`
 }
 
 func NewDepositParam(d govtypes.DepositParams) DepositParams {
 	return DepositParams{
 		MinDeposit:       d.MinDeposit,
 		MaxDepositPeriod: d.MaxDepositPeriod.Nanoseconds(),
-}
+	}
 }
 
 type VotingParams struct {
@@ -35,23 +35,23 @@ func NewVotingParams(v govtypes.VotingParams) VotingParams {
 }
 
 type GovParams struct {
-	DepositParams DepositParams        `json:"deposit_params" yaml:"deposit_params"`
-	VotingParams  VotingParams         `json:"voting_params" yaml:"voting_params"`
-	TallyParams   TallyParams `json:"tally_params" yaml:"tally_params"`
-	Height        int64                `json:"height" ymal:"height"`
+	DepositParams DepositParams `json:"deposit_params" yaml:"deposit_params"`
+	VotingParams  VotingParams  `json:"voting_params" yaml:"voting_params"`
+	TallyParams   TallyParams   `json:"tally_params" yaml:"tally_params"`
+	Height        int64         `json:"height" ymal:"height"`
 }
 
-type TallyParams struct{
-	Quorum sdk.Dec `json:"quorum,omitempty"`
-	Threshold sdk.Dec `json:"threshold,omitempty"`
+type TallyParams struct {
+	Quorum        sdk.Dec `json:"quorum,omitempty"`
+	Threshold     sdk.Dec `json:"threshold,omitempty"`
 	VetoThreshold sdk.Dec `json:"veto_threshold,omitempty" yaml:"veto_threshold"`
 }
 
-func NewTallyParams (t govtypes.TallyParams)TallyParams{
+func NewTallyParams(t govtypes.TallyParams) TallyParams {
 	return TallyParams{
-		Quorum: t.Quorum,
-		Threshold:t.Threshold,
-		VetoThreshold:t.VetoThreshold,
+		Quorum:        t.Quorum,
+		Threshold:     t.Threshold,
+		VetoThreshold: t.VetoThreshold,
 	}
 }
 
