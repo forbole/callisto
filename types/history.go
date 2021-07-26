@@ -6,6 +6,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+const (
+	HistoryModuleName = "history"
+)
+
 // AccountBalanceHistory contains the information of a given balance at a specific height
 type AccountBalanceHistory struct {
 	Account       string
