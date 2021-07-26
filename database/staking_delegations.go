@@ -406,7 +406,7 @@ func (db *Db) DeleteCompletedUnbondingDelegations(timestamp time.Time) ([]types.
 	stmt := `DELETE FROM unbonding_delegation WHERE completion_timestamp <= $1 RETURNING *`
 
 	var rows []dbtypes.UnbondingDelegationRow
-	err := db.Sql.QueryRow(stmt, timestamp).Scan(&rows)
+	err := db.Sqlx.Select(&rows, stmt, timestamp)
 	if err != nil {
 		return nil, err
 	}
