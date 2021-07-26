@@ -13,31 +13,7 @@ import (
 	dbtypes "github.com/forbole/bdjuno/database/types"
 )
 
-func (suite *DbTestSuite) getAccountString(add string) string{
-	address, err := sdk.AccAddressFromBech32(add)
-	suite.Require().NoError(err)
 
-	coin:=sdk.Coin{
-		Denom: "daric",
-		Amount: sdk.NewInt(10),
-	}
-	account := authtypes.NewBaseAccountWithAddress(address)
-	baseVestingAccount := authvestingtypes.BaseVestingAccount{
-		BaseAccount: account,
-		OriginalVesting: sdk.NewCoins(coin),
-		DelegatedFree: sdk.NewCoins(coin),
-		DelegatedVesting: sdk.NewCoins(coin),
-	}
-	continuousVestingAccount :=authvestingtypes.ContinuousVestingAccount{
-		BaseVestingAccount: &baseVestingAccount,
-		StartTime: 10,
-	}
-	saveAccount:=[]types.Account{
-		types.NewAccount(
-			continuousVestingAccount.Address,
-			&continuousVestingAccount)}
-
-}
 
 func (suite *DbTestSuite) TestSaveAccount() {
 	address, err := sdk.AccAddressFromBech32("cosmos140xsjjg6pwkjp0xjz8zru7ytha60l5aee9nlf7")
@@ -96,69 +72,37 @@ func (suite *DbTestSuite) TestSaveAccount() {
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_GetAccounts() {
-	account:=`{
-		"@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
-		"base_vesting_account": {
-		  "base_account": {
-			"address": "cosmos140xsjjg6pwkjp0xjz8zru7ytha60l5aee9nlf7",
-			"pub_key": {
-			  "@type": "/cosmos.crypto.secp256k1.PubKey",
-			  "key": "AsmSLYJM5CoIwuYQF+XvOFMSK1HeijFHF9XehSZGfET9"
-			},
-			"account_number": "143",
-			"sequence": "3"
-		  },
-		  "original_vesting": [
-			{
-			  "denom": "udaric",
-			  "amount": "30000000000"
-			}
-		  ],
-		  "delegated_free": [],
-		  "delegated_vesting": [],
-		  "end_time": "1619766000"
-		},
-		"start_time": "1619506800",
-		"vesting_periods": [
-		  {
-			"length": "86400",
-			"amount": [
-			  {
-				"denom": "udaric",
-				"amount": "10000000000"
-			  }
-			]
-		  },
-		  {
-			"length": "86400",
-			"amount": [
-			  {
-				"denom": "udaric",
-				"amount": "10000000000"
-			  }
-			]
-		  },
-		  {
-			"length": "86400",
-			"amount": [
-			  {
-				"denom": "udaric",
-				"amount": "10000000000"
-			  }
-			]
-		  }
-		]
-	  }`
-	
+	address, err := sdk.AccAddressFromBech32("cosmos140xsjjg6pwkjp0xjz8zru7ytha60l5aee9nlf7")
+	suite.Require().NoError(err)
 
+	coin:=sdk.Coin{
+		Denom: "daric",
+		Amount: sdk.NewInt(10),
+	}
+	baseAccount := authtypes.NewBaseAccountWithAddress(address)
+	baseVestingAccount := authvestingtypes.BaseVestingAccount{
+		BaseAccount: baseAccount,
+		OriginalVesting: sdk.NewCoins(coin),
+		DelegatedFree: sdk.NewCoins(coin),
+		DelegatedVesting: sdk.NewCoins(coin),
+	}
+	expectedAccount :=authvestingtypes.ContinuousVestingAccount{
+		BaseVestingAccount: &baseVestingAccount,
+		StartTime: 10,
+	}
 	
+	account:=`'{"@type":"/cosmos.vesting.v1beta1.ContinuousVestingAccount","base_vesting_account":{"base_account":{"address":"cosmos140xsjjg6pwkjp0xjz8zru7ytha60l5aee9nlf7","pub_key":null,"account_number":"0","sequence":"0"},"original_vesting":[{"denom":"daric","amount":"10"}],"delegated_free":[{"denom":"daric","amount":"10"}],"delegated_vesting":[{"denom":"daric","amount":"10"}],"end_time":"0"},"start_time":"10"}'`
+	/* account=strings.ReplaceAll(account,`"`,`""`)
+	account=strings.ReplaceAll(account,`/`,`//`) */
+
+
 	// Insert the data
 	queries := []string{
-		fmt.Sprintf("INSERT INTO account (address) VALUES ('cosmos1ltzt0z992ke6qgmtjxtygwzn36km4cy6cqdknt',%s)",account),
-		fmt.Sprintf("INSERT INTO account (address) VALUES ('cosmos1re6zjpyczs0w7flrl6uacl0r4teqtyg62crjsn',%s)",account),
-		fmt.Sprintf("INSERT INTO account (address) VALUES ('cosmos1eg47ue0l85lzkfgc4leske6hcah8cz3qajpjy2',%s)",account),
-		fmt.Sprintf("INSERT INTO account (address) VALUES ('cosmos1495ghynrns8sxfnw8mj887pgh0c9z6c4lqkzme',%s)",account),
-		fmt.Sprintf("INSERT INTO account (address) VALUES ('cosmos18fzr6adp3gjw43xu62vfhg248lepfwpf0pj2dm',%s)",account),
+		fmt.Sprintf("INSERT INTO account (address,details) VALUES ('cosmos1ltzt0z992ke6qgmtjxtygwzn36km4cy6cqdknt',%s)",account),
+		fmt.Sprintf("INSERT INTO account (address,details) VALUES ('cosmos1re6zjpyczs0w7flrl6uacl0r4teqtyg62crjsn',%s)",account),
+		fmt.Sprintf("INSERT INTO account (address,details) VALUES ('cosmos1eg47ue0l85lzkfgc4leske6hcah8cz3qajpjy2',%s)",account),
+		fmt.Sprintf("INSERT INTO account (address,details) VALUES ('cosmos1495ghynrns8sxfnw8mj887pgh0c9z6c4lqkzme',%s)",account),
+		fmt.Sprintf("INSERT INTO account (address,details) VALUES ('cosmos18fzr6adp3gjw43xu62vfhg248lepfwpf0pj2dm',%s)",account),
 	}
 
 	for _, query := range queries {
@@ -171,15 +115,15 @@ func (suite *DbTestSuite) TestBigDipperDb_GetAccounts() {
 	suite.Require().NoError(err)
 
 	// Verify the get
-	expectedAccs := []string{
-		"cosmos1ltzt0z992ke6qgmtjxtygwzn36km4cy6cqdknt",
-		"cosmos1re6zjpyczs0w7flrl6uacl0r4teqtyg62crjsn",
-		"cosmos1eg47ue0l85lzkfgc4leske6hcah8cz3qajpjy2",
-		"cosmos1495ghynrns8sxfnw8mj887pgh0c9z6c4lqkzme",
-		"cosmos18fzr6adp3gjw43xu62vfhg248lepfwpf0pj2dm",
+	expectedAccs := []types.Account{
+		types.NewAccount("cosmos1ltzt0z992ke6qgmtjxtygwzn36km4cy6cqdknt",&expectedAccount),
+		types.NewAccount("cosmos1re6zjpyczs0w7flrl6uacl0r4teqtyg62crjsn",&expectedAccount),
+		types.NewAccount("cosmos1eg47ue0l85lzkfgc4leske6hcah8cz3qajpjy2",&expectedAccount),
+		types.NewAccount("cosmos1495ghynrns8sxfnw8mj887pgh0c9z6c4lqkzme",&expectedAccount),
+		types.NewAccount("cosmos18fzr6adp3gjw43xu62vfhg248lepfwpf0pj2dm",&expectedAccount),
 	}
 
 	for index, acc := range expectedAccs {
-		suite.Require().Equal(acc, accounts[index])
+		suite.Require().True(acc.Equal(accounts[index]))
 	}
 }

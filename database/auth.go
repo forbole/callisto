@@ -36,7 +36,7 @@ func (db *Db) saveAccounts(paramsNumber int, accounts []types.Account) error {
 	}
 	stmt := `INSERT INTO account (address,details) VALUES `
 	var params []interface{}
-	patchSize := len(accounts)/65535
+	patchSize:=65535 
 	patchCount := 0
 	
 	for i, account := range accounts {
@@ -51,7 +51,7 @@ func (db *Db) saveAccounts(paramsNumber int, accounts []types.Account) error {
 		if err != nil {
 			return err
 		}
-// This marsha json return trash not string
+
 		contentBz, err := db.EncodingConfig.Marshaler.MarshalJSON(anyContent)
 		if err != nil {
 			return err
@@ -59,9 +59,8 @@ func (db *Db) saveAccounts(paramsNumber int, accounts []types.Account) error {
 
 		contentBzstring:=string(contentBz)
 
-		params = append(params, account.Address,string(contentBzstring))
-		patchCount++
-		if (patchCount==patchSize || i==len(accounts)){
+		params = append(params, account.Address,contentBzstring)
+		if (patchCount==patchSize || i==(len(accounts)-1)){
 			stmt = stmt[:len(stmt)-1]
 			stmt += " ON CONFLICT (address) DO UPDATE SET details = excluded.details"
 			_, err := db.Sql.Exec(stmt, params...)
@@ -75,6 +74,7 @@ func (db *Db) saveAccounts(paramsNumber int, accounts []types.Account) error {
 			params = make([]interface{}, 0)
 
 		}
+		patchCount++
 	}
 	return nil
 }
@@ -82,18 +82,39 @@ func (db *Db) saveAccounts(paramsNumber int, accounts []types.Account) error {
 // GetAccounts returns all the accounts that are currently stored inside the database.
 func (db *Db) GetAccounts() ([]types.Account, error) {
 	var rows []dbtypes.AccountRow
-	var returnRows []types.Account
 	err := db.Sqlx.Select(&rows, `SELECT address,details FROM account`)
 	if err!=nil{
 		return nil,err
 	}
+
+	returnRows:=make([]types.Account,len(rows))
 	for i,row:=range rows {
-		var accountI authtypes.AccountI
-		err=db.EncodingConfig.Marshaler.UnmarshalJSON([]byte(row.Details),accountI)
-		if err!=nil{
-			return nil,err
+		b := []byte(row.Details)
+		
+		if len(b)==0{
+			returnRows[i]=types.NewAccount(row.Address,nil)
+		}else{
+			//var inter interface{}
+			var a codectypes.Any
+			db.EncodingConfig.Marshaler.MustUnmarshalJSON(b,&a)
+			if &a==nil{
+				return nil,fmt.Errorf("UnMarshalJson return nil ")
+			}
+			//err=json.Unmarshal(b,inter)
+
+			if err!=nil{
+				return nil,err
+			}
+		
+			//accI,ok:=(authtypes.AccountI)(a)
+			accI:=a.GetCachedValue()
+			
+			if accI==nil{
+				return nil,fmt.Errorf("CachedValue return nil")
+			}else{
+			returnRows[i]=types.NewAccount(row.Address,accI.(authtypes.AccountI))
+			}
 		}
-		returnRows[i]=types.NewAccount(row.Address,accountI)
 	}
 	return returnRows, err
 }

@@ -17,3 +17,7 @@ func NewAccount(address string, accountI authtypes.AccountI) Account {
 		Details: accountI,
 	}
 }
+
+func (u Account) Equal(v Account)bool{
+	return (u.Address==v.Address && u.Details==v.Details)
+}
