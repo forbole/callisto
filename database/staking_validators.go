@@ -154,6 +154,32 @@ ORDER BY validator.consensus_address`
 	return data, nil
 }
 
+// GetValidatorBySelfDelegateAddress returns the validator having the given address as the self_delegate_address,
+// or an error if such validator cannot be found.
+func (db *Db) GetValidatorBySelfDelegateAddress(address string) (types.Validator, error) {
+	var result []dbtypes.ValidatorData
+	stmt := `
+SELECT validator.consensus_address, 
+       validator.consensus_pubkey, 
+       validator_info.operator_address, 
+       validator_info.max_change_rate, 
+       validator_info.max_rate,
+       validator_info.self_delegate_address
+FROM validator INNER JOIN validator_info ON validator.consensus_address=validator_info.consensus_address 
+WHERE validator_info.self_delegate_address = $1`
+
+	err := db.Sqlx.Select(&result, stmt, address)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(result) == 0 {
+		return nil, fmt.Errorf("no validator with self delegate address %s could be found", address)
+	}
+
+	return result[0], nil
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // SaveValidatorDescription save a single validator description.

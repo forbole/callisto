@@ -92,9 +92,8 @@ func getDelegationsFromGrpc(
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// UpdateDelegations updates the current delegations for the given delegator by removing all the existing ones and
-// getting the new ones from the client
-func UpdateDelegations(height int64, delegator string, client stakingtypes.QueryClient, db *database.Db) error {
+// GetDelegatorDelegations returns the current delegations for the given delegator
+func GetDelegatorDelegations(height int64, delegator string, client stakingtypes.QueryClient) ([]types.Delegation, error) {
 	// Get the delegations
 	res, err := client.DelegatorDelegations(
 		context.Background(),
@@ -103,7 +102,7 @@ func UpdateDelegations(height int64, delegator string, client stakingtypes.Query
 		},
 	)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	var delegations = make([]types.Delegation, len(res.DelegationResponses))
@@ -111,7 +110,7 @@ func UpdateDelegations(height int64, delegator string, client stakingtypes.Query
 		delegations[index] = ConvertDelegationResponse(height, delegation)
 	}
 
-	return db.SaveDelegations(delegations)
+	return delegations, nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -127,7 +126,12 @@ func UpdateDelegationsAndReplaceExisting(
 		return err
 	}
 
-	return UpdateDelegations(height, delegator, client, db)
+	delegations, err := GetDelegatorDelegations(height, delegator, client)
+	if err != nil {
+		return err
+	}
+
+	return db.SaveDelegations(delegations)
 }
 
 // RefreshDelegations returns a function that when called updates the delegations of the provided delegator.

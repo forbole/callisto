@@ -40,15 +40,6 @@ CREATE TABLE validator_commission_amount
 );
 CREATE INDEX validator_commission_amount_height_index ON validator_commission_amount (height);
 
-CREATE TABLE validator_commission_amount_history
-(
-    validator_address TEXT       NOT NULL REFERENCES validator (consensus_address),
-    amount            DEC_COIN[] NOT NULL,
-    height            BIGINT     NOT NULL REFERENCES block (height),
-    CONSTRAINT validator_commission_amount_history_commission_height_unique UNIQUE (validator_address, height)
-);
-CREATE INDEX validator_commission_amount_history_height_index ON validator_commission_amount_history (height);
-
 /* ---- DELEGATOR REWARDS AMOUNTS ---- */
 
 CREATE TABLE delegation_reward
@@ -62,15 +53,3 @@ CREATE TABLE delegation_reward
 );
 CREATE INDEX delegation_reward_delegator_address_index ON delegation_reward (delegator_address);
 CREATE INDEX delegation_reward_height_index ON delegation_reward (height);
-
-CREATE TABLE delegation_reward_history
-(
-    validator_address TEXT       NOT NULL REFERENCES validator (consensus_address),
-    delegator_address TEXT       NOT NULL REFERENCES account (address),
-    withdraw_address  TEXT       NOT NULL,
-    amount            DEC_COIN[] NOT NULL,
-    height            BIGINT     NOT NULL REFERENCES block (height),
-    CONSTRAINT delegation_reward_history_validator_delegator_unique UNIQUE (delegator_address, validator_address, height)
-);
-CREATE INDEX delegation_history_reward_delegator_address_index ON delegation_reward_history (delegator_address);
-CREATE INDEX delegation_history_reward_height_index ON delegation_reward_history (height);

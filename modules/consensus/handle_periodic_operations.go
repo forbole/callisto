@@ -48,6 +48,11 @@ func updateBlockTimeInMinute(db *database.Db) error {
 		return err
 	}
 
+	// Skip if the genesis does not exist
+	if genesis == nil {
+		return nil
+	}
+
 	// Check if the chain has been created at least a minute ago
 	if block.Timestamp.Sub(genesis.Time).Minutes() < 0 {
 		return nil
@@ -77,6 +82,11 @@ func updateBlockTimeInHour(db *database.Db) error {
 		return err
 	}
 
+	// Skip if the genesis does not exist
+	if genesis == nil {
+		return nil
+	}
+
 	// Check if the chain has been created at least an hour ago
 	if block.Timestamp.Sub(genesis.Time).Hours() < 0 {
 		return nil
@@ -104,6 +114,11 @@ func updateBlockTimeInDay(db *database.Db) error {
 	genesis, err := db.GetGenesis()
 	if err != nil {
 		return err
+	}
+
+	// Skip if the genesis does not exist
+	if genesis == nil {
+		return nil
 	}
 
 	// Check if the chain has been created at least a days ago
