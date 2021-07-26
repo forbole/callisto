@@ -8,6 +8,8 @@ import (
 	juno "github.com/desmos-labs/juno/types"
 	"github.com/go-co-op/gocron"
 
+	"github.com/forbole/bdjuno/types"
+
 	"github.com/forbole/bdjuno/database"
 )
 
@@ -35,7 +37,7 @@ func NewModule(messagesParser messages.MessageAddressesParser, encodingConfig *p
 
 // Name implements modules.Module
 func (m *Module) Name() string {
-	return "history"
+	return types.HistoryModuleName
 }
 
 // RegisterPeriodicOperations implements modules.PeriodicOperationsModule

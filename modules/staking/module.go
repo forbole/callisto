@@ -11,7 +11,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/desmos-labs/juno/modules"
-	"github.com/desmos-labs/juno/types"
+	juno "github.com/desmos-labs/juno/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 	tmtypes "github.com/tendermint/tendermint/types"
 )
@@ -25,6 +25,7 @@ var (
 
 // Module represents the x/staking module
 type Module struct {
+	cfg            juno.Config
 	encodingConfig *params.EncodingConfig
 	stakingClient  stakingtypes.QueryClient
 	bankClient     banktypes.QueryClient
@@ -33,10 +34,11 @@ type Module struct {
 
 // NewModule returns a new Module instance
 func NewModule(
-	bankClient banktypes.QueryClient, stakingClient stakingtypes.QueryClient,
+	cfg juno.Config, bankClient banktypes.QueryClient, stakingClient stakingtypes.QueryClient,
 	encodingConfig *params.EncodingConfig, db *database.Db,
 ) *Module {
 	return &Module{
+		cfg:            cfg,
 		encodingConfig: encodingConfig,
 		stakingClient:  stakingClient,
 		bankClient:     bankClient,
@@ -55,11 +57,11 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 }
 
 // HandleBlock implements BlockModule
-func (m *Module) HandleBlock(block *tmctypes.ResultBlock, _ []*types.Tx, vals *tmctypes.ResultValidators) error {
-	return HandleBlock(block, vals, m.stakingClient, m.encodingConfig.Marshaler, m.db)
+func (m *Module) HandleBlock(block *tmctypes.ResultBlock, _ []*juno.Tx, vals *tmctypes.ResultValidators) error {
+	return HandleBlock(m.cfg, block, vals, m.stakingClient, m.bankClient, m.encodingConfig.Marshaler, m.db)
 }
 
 // HandleMsg implements MessageModule
-func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *types.Tx) error {
-	return HandleMsg(tx, index, msg, m.stakingClient, m.bankClient, m.encodingConfig.Marshaler, m.db)
+func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
+	return HandleMsg(tx, index, msg, m.stakingClient, m.encodingConfig.Marshaler, m.db)
 }
