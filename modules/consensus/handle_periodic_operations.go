@@ -1,8 +1,6 @@
 package consensus
 
 import (
-	"fmt"
-
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
 
