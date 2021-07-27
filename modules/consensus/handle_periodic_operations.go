@@ -41,9 +41,6 @@ func updateBlockTimeInMinute(db *database.Db) error {
 		Msg("updating block time in minutes")
 
 	block, err := db.GetLastBlock()
-	if block == nil {
-		return fmt.Errorf("block table is empty")
-	}
 	if err != nil {
 		return err
 	}
@@ -78,9 +75,6 @@ func updateBlockTimeInHour(db *database.Db) error {
 		Msg("updating block time in hours")
 
 	block, err := db.GetLastBlock()
-	if block == nil {
-		return fmt.Errorf("block si empty")
-	}
 	if err != nil {
 		return err
 	}
@@ -115,9 +109,6 @@ func updateBlockTimeInDay(db *database.Db) error {
 		Msg("updating block time in days")
 
 	block, err := db.GetLastBlock()
-	if block == nil {
-		return fmt.Errorf("block is empty")
-	}
 	if err != nil {
 		return err
 	}

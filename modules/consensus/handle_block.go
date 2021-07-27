@@ -27,6 +27,9 @@ func updateBlockTimeFromGenesis(block *tmctypes.ResultBlock, db *database.Db) er
 	if err != nil {
 		return err
 	}
+	if genesis == nil {
+		return fmt.Errorf("genesis table is empty")
+	}
 
 	// Skip if the genesis does not exist
 	if genesis == nil {

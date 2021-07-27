@@ -72,7 +72,7 @@ func (db *Db) GetGovParams() (*types.GovParams, error) {
 		return nil, err
 	}
 
-	var tallyParams govtypes.TallyParams
+	var tallyParams types.TallyParams
 	err = json.Unmarshal([]byte(row.TallyParams), &tallyParams)
 	if err != nil {
 		return nil, err
