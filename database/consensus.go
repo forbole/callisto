@@ -47,6 +47,9 @@ func (db *Db) GetLastBlockHeight() (int64, error) {
 	if err != nil {
 		return 0, err
 	}
+	if block == nil {
+		return 0, fmt.Errorf("block table is empty")
+	}
 	return block.Height, nil
 }
 

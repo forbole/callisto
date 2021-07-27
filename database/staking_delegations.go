@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -245,9 +246,45 @@ WHERE delegator_address = $1
   AND dst_validator_address = $3 
   AND completion_time = $4`
 	_, err = db.Sql.Exec(stmt,
-		redelegation.DelegatorAddress, srcVal.GetConsAddr(), dstVal.GetOperator(), redelegation.CompletionTime,
+		redelegation.DelegatorAddress, srcVal.GetConsAddr(), dstVal.GetConsAddr(), redelegation.CompletionTime,
 	)
 	return err
+}
+
+// DeleteCompletedRedelegations deletes all the redelegations that have completed
+// on or before the given timestamp
+func (db *Db) DeleteCompletedRedelegations(timestamp time.Time) ([]types.Redelegation, error) {
+	stmt := `DELETE FROM redelegation WHERE completion_time <= $1 RETURNING *`
+
+	var rows []dbtypes.RedelegationRow
+	err := db.Sqlx.Select(&rows, stmt, timestamp)
+	if err != nil {
+		return nil, err
+	}
+
+	var redelegations = make([]types.Redelegation, len(rows))
+	for index, row := range rows {
+		srcAddr, err := db.GetValidatorOperatorAddress(row.SrcValidatorAddress)
+		if err != nil {
+			return nil, err
+		}
+
+		dstAddr, err := db.GetValidatorOperatorAddress(row.DstValidatorAddress)
+		if err != nil {
+			return nil, err
+		}
+
+		redelegations[index] = types.NewRedelegation(
+			row.DelegatorAddress,
+			srcAddr.String(),
+			dstAddr.String(),
+			row.Amount.ToCoin(),
+			row.CompletionTime,
+			row.Height,
+		)
+	}
+
+	return redelegations, err
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -361,4 +398,34 @@ WHERE delegator_address = $1
 		delegation.DelegatorAddress, val.GetConsAddr(), delegation.CompletionTimestamp,
 	)
 	return err
+}
+
+// DeleteCompletedUnbondingDelegations deletes all the unbonding delegations that have completed
+// on or before the given timestamp
+func (db *Db) DeleteCompletedUnbondingDelegations(timestamp time.Time) ([]types.UnbondingDelegation, error) {
+	stmt := `DELETE FROM unbonding_delegation WHERE completion_timestamp <= $1 RETURNING *`
+
+	var rows []dbtypes.UnbondingDelegationRow
+	err := db.Sqlx.Select(&rows, stmt, timestamp)
+	if err != nil {
+		return nil, err
+	}
+
+	var delegations = make([]types.UnbondingDelegation, len(rows))
+	for index, row := range rows {
+		operAddr, err := db.GetValidatorOperatorAddress(row.ConsensusAddress)
+		if err != nil {
+			return nil, err
+		}
+
+		delegations[index] = types.NewUnbondingDelegation(
+			row.DelegatorAddress,
+			operAddr.String(),
+			row.Amount.ToCoin(),
+			row.CompletionTimestamp,
+			row.Height,
+		)
+	}
+
+	return delegations, nil
 }

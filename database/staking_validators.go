@@ -98,6 +98,23 @@ func (db *Db) GetValidatorConsensusAddress(address string) (sdk.ConsAddress, err
 	return sdk.ConsAddressFromBech32(result[0])
 }
 
+// GetValidatorOperatorAddress returns the operator address of the validator having the given consensus address
+func (db *Db) GetValidatorOperatorAddress(consAddr string) (sdk.ValAddress, error) {
+	var result []string
+	stmt := `SELECT operator_address FROM validator_info WHERE consensus_address = $1`
+	err := db.Sqlx.Select(&result, stmt, consAddr)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(result) == 0 {
+		return nil, fmt.Errorf("cannot find the operator address of validator having consensus address %s", consAddr)
+	}
+
+	return sdk.ValAddressFromBech32(result[0])
+
+}
+
 // GetValidator returns the validator having the given address.
 // If no validator for such address can be found, an error is returned instead.
 func (db *Db) GetValidator(valAddress string) (types.Validator, error) {

@@ -21,7 +21,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveGovParams() {
 	votingParams := govtypes.NewVotingParams(time.Second * 10)
 	tallyParams := govtypes.NewTallyParams(sdk.NewDec(10), sdk.NewDec(10), sdk.NewDec(10))
 	depositParams := govtypes.NewDepositParams(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(10))), time.Minute*5)
-	original := types.NewGovParams(govtypes.NewParams(votingParams, tallyParams, depositParams), 10)
+	original := types.NewGovParams(types.NewVotingParams(votingParams), types.NewDepositParam(depositParams), types.NewTallyParams(tallyParams), 10)
 
 	err := suite.database.SaveGovParams(original)
 	suite.Require().NoError(err)
@@ -33,7 +33,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveGovParams() {
 	// ----------------------------------------------------------------------------------------------------------------
 	// Try updating with a lower height
 	depositParams = govtypes.NewDepositParams(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(1000))), time.Minute*5)
-	updated := types.NewGovParams(govtypes.NewParams(votingParams, tallyParams, depositParams), 9)
+	updated := types.NewGovParams(types.NewVotingParams(votingParams), types.NewDepositParam(depositParams), types.NewTallyParams(tallyParams), 9)
 
 	err = suite.database.SaveGovParams(updated)
 	suite.Require().NoError(err)
@@ -44,7 +44,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveGovParams() {
 
 	// ----------------------------------------------------------------------------------------------------------------
 	// Try updating with the same height	depositParams = govtypes.NewDepositParams(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(1000))), time.Minute*5)
-	updated = types.NewGovParams(govtypes.NewParams(votingParams, tallyParams, depositParams), 10)
+	updated = types.NewGovParams(types.NewVotingParams(votingParams), types.NewDepositParam(depositParams), types.NewTallyParams(tallyParams), 10)
 
 	err = suite.database.SaveGovParams(updated)
 	suite.Require().NoError(err)
@@ -57,7 +57,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveGovParams() {
 	// Try updating with a higher height
 	tallyParams = govtypes.NewTallyParams(sdk.NewDec(100), sdk.NewDec(100), sdk.NewDec(100))
 	depositParams = govtypes.NewDepositParams(sdk.NewCoins(sdk.NewCoin("udesmos", sdk.NewInt(10000))), time.Minute*5)
-	updated = types.NewGovParams(govtypes.NewParams(votingParams, tallyParams, depositParams), 11)
+	updated = types.NewGovParams(types.NewVotingParams(votingParams), types.NewDepositParam(depositParams), types.NewTallyParams(tallyParams), 11)
 
 	err = suite.database.SaveGovParams(updated)
 	suite.Require().NoError(err)
