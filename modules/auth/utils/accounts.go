@@ -103,8 +103,8 @@ func GetAccounts(addresses []string, cdc codec.Marshaler, height int64, authClie
 			log.Error().Str("module", "auth").Err(err).Int64("height", height).
 				Str("Auth", "Get Account").Msg("error while getting accounts")
 		}
-		if res==nil{
-			return nil,fmt.Errorf("address is not valid and cannot get details")
+		if res == nil {
+			return nil, fmt.Errorf("address is not valid and cannot get details")
 		}
 		var accountI authtypes.AccountI
 		err = cdc.UnpackAny(res.Account, &accountI)
