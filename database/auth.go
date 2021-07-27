@@ -21,7 +21,7 @@ func (db *Db) SaveAccounts(accounts []types.Account) error {
 		}
 
 		// Store up-to-date data
-		err := db.saveAccounts(paramsNumber, accounts)
+		err := db.saveAccounts(accounts)
 		if err != nil {
 			return fmt.Errorf("error while storing accounts: %s", err)
 		}
@@ -30,7 +30,7 @@ func (db *Db) SaveAccounts(accounts []types.Account) error {
 	return nil
 }
 
-func (db *Db) saveAccounts(paramsNumber int, accounts []types.Account) error {
+func (db *Db) saveAccounts(accounts []types.Account) error {
 	if len(accounts) == 0 {
 		return nil
 	}
@@ -85,10 +85,12 @@ func (db *Db) GetAccounts() ([]types.Account, error) {
 			returnRows[i] = types.NewAccount(row.Address, nil)
 		} else {
 			//var inter interface{}
-			var a authtypes.AccountI
-			err = db.EncodingConfig.Marshaler.UnmarshalInterfaceJSON(b, &a)
-
-			returnRows[i] = types.NewAccount(row.Address, a)
+			var account authtypes.AccountI
+			err = db.EncodingConfig.Marshaler.UnmarshalInterfaceJSON(b, &account)
+			if err != nil {
+				return nil, err
+			}
+			returnRows[i] = types.NewAccount(row.Address, account)
 		}
 	}
 	return returnRows, nil
