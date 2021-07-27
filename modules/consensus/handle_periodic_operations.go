@@ -49,9 +49,6 @@ func updateBlockTimeInMinute(db *database.Db) error {
 	}
 
 	genesis, err := db.GetGenesis()
-	if genesis == nil {
-		return fmt.Errorf("genesis table is empty")
-	}
 	if err != nil {
 		return err
 	}
@@ -89,9 +86,6 @@ func updateBlockTimeInHour(db *database.Db) error {
 	}
 
 	genesis, err := db.GetGenesis()
-	if genesis == nil {
-		return fmt.Errorf("genesis table is empty")
-	}
 	if err != nil {
 		return err
 	}
@@ -129,10 +123,6 @@ func updateBlockTimeInDay(db *database.Db) error {
 	}
 
 	genesis, err := db.GetGenesis()
-	if genesis == nil {
-		return fmt.Errorf("genesis table is empty")
-	}
-
 	if err != nil {
 		return err
 	}

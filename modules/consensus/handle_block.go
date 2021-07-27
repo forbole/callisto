@@ -1,8 +1,6 @@
 package consensus
 
 import (
-	"fmt"
-
 	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/bdjuno/database"
@@ -26,9 +24,6 @@ func updateBlockTimeFromGenesis(block *tmctypes.ResultBlock, db *database.Db) er
 		Msg("updating block time from genesis")
 
 	genesis, err := db.GetGenesis()
-	if genesis == nil {
-		return fmt.Errorf("genesis table is empty")
-	}
 	if err != nil {
 		return err
 	}
