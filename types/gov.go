@@ -29,6 +29,7 @@ type VotingParams struct {
 	VotingPeriod int64 `json:"voting_period,omitempty" yaml:"voting_period"`
 }
 
+// NewVotingParams allows to build a new VotingParams instance
 func NewVotingParams(v govtypes.VotingParams) VotingParams {
 	return VotingParams{
 		VotingPeriod: v.VotingPeriod.Nanoseconds(),
