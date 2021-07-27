@@ -36,11 +36,9 @@ func (db *Db) saveAccounts(paramsNumber int, accounts []types.Account) error {
 	}
 	stmt := `INSERT INTO account (address,details) VALUES `
 	var params []interface{}
-	patchSize := 65535
-	patchCount := 0
 
 	for i, account := range accounts {
-		ai := patchCount * 2
+		ai := i
 		stmt += fmt.Sprintf("($%d,$%d),", ai+1, ai+2)
 		protoContent, ok := account.Details.(authtypes.AccountI)
 		if !ok {
@@ -60,21 +58,13 @@ func (db *Db) saveAccounts(paramsNumber int, accounts []types.Account) error {
 		contentBzstring := string(contentBz)
 
 		params = append(params, account.Address, contentBzstring)
-		if patchCount == patchSize || i == (len(accounts)-1) {
-			stmt = stmt[:len(stmt)-1]
-			stmt += " ON CONFLICT (address) DO UPDATE SET details = excluded.details"
-			_, err := db.Sql.Exec(stmt, params...)
-			if err != nil {
-				return err
-			}
-
-			//Initialise
-			stmt = `INSERT INTO account (address,details) VALUES `
-			patchCount = 0
-			params = make([]interface{}, 0)
-
+		stmt = stmt[:len(stmt)-1]
+		stmt += " ON CONFLICT (address) DO UPDATE SET details = excluded.details"
+		_, err = db.Sql.Exec(stmt, params...)
+		if err != nil {
+			return err
 		}
-		patchCount++
+
 	}
 	return nil
 }
