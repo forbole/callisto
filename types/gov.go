@@ -12,6 +12,7 @@ const (
 	ProposalStatusInvalid = "PROPOSAL_STATUS_INVALID"
 )
 
+// DepositParams contains the data of the deposit parameters of the x/gov module
 type DepositParams struct {
 	MinDeposit       sdk.Coins `json:"min_deposit,omitempty" yaml:"min_deposit"`
 	MaxDepositPeriod int64     `json:"max_deposit_period,omitempty" yaml:"max_deposit_period"`
