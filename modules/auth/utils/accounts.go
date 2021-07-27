@@ -3,6 +3,7 @@ package utils
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/query"
@@ -101,6 +102,9 @@ func GetAccounts(addresses []string, cdc codec.Marshaler, height int64, authClie
 		if err != nil {
 			log.Error().Str("module", "auth").Err(err).Int64("height", height).
 				Str("Auth", "Get Account").Msg("error while getting accounts")
+		}
+		if res==nil{
+			return nil,fmt.Errorf("address is not valid and cannot get details")
 		}
 		var accountI authtypes.AccountI
 		err = cdc.UnpackAny(res.Account, &accountI)
