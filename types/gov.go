@@ -24,6 +24,7 @@ func NewDepositParam(d govtypes.DepositParams) DepositParams {
 	}
 }
 
+// VotingParams contains the voting parameters of the x/gov module
 type VotingParams struct {
 	VotingPeriod int64 `json:"voting_period,omitempty" yaml:"voting_period"`
 }
