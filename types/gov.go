@@ -12,17 +12,63 @@ const (
 	ProposalStatusInvalid = "PROPOSAL_STATUS_INVALID"
 )
 
+// DepositParams contains the data of the deposit parameters of the x/gov module
+type DepositParams struct {
+	MinDeposit       sdk.Coins `json:"min_deposit,omitempty" yaml:"min_deposit"`
+	MaxDepositPeriod int64     `json:"max_deposit_period,omitempty" yaml:"max_deposit_period"`
+}
+
+// NewDepositParam allows to build a new DepositParams
+func NewDepositParam(d govtypes.DepositParams) DepositParams {
+	return DepositParams{
+		MinDeposit:       d.MinDeposit,
+		MaxDepositPeriod: d.MaxDepositPeriod.Nanoseconds(),
+	}
+}
+
+// VotingParams contains the voting parameters of the x/gov module
+type VotingParams struct {
+	VotingPeriod int64 `json:"voting_period,omitempty" yaml:"voting_period"`
+}
+
+// NewVotingParams allows to build a new VotingParams instance
+func NewVotingParams(v govtypes.VotingParams) VotingParams {
+	return VotingParams{
+		VotingPeriod: v.VotingPeriod.Nanoseconds(),
+	}
+}
+
 // GovParams contains the data of the x/gov module parameters
 type GovParams struct {
-	govtypes.Params
-	Height int64
+	DepositParams DepositParams `json:"deposit_params" yaml:"deposit_params"`
+	VotingParams  VotingParams  `json:"voting_params" yaml:"voting_params"`
+	TallyParams   TallyParams   `json:"tally_params" yaml:"tally_params"`
+	Height        int64         `json:"height" ymal:"height"`
+}
+
+// TallyParams contains the tally parameters of the x/gov module
+type TallyParams struct {
+	Quorum        sdk.Dec `json:"quorum,omitempty"`
+	Threshold     sdk.Dec `json:"threshold,omitempty"`
+	VetoThreshold sdk.Dec `json:"veto_threshold,omitempty" yaml:"veto_threshold"`
+}
+
+// NewTallyParams allows to build a new TallyParams instance
+func NewTallyParams(t govtypes.TallyParams) TallyParams {
+	return TallyParams{
+		Quorum:        t.Quorum,
+		Threshold:     t.Threshold,
+		VetoThreshold: t.VetoThreshold,
+	}
 }
 
 // NewGovParams allows to build a new GovParams instance
-func NewGovParams(params govtypes.Params, height int64) *GovParams {
+func NewGovParams(votingParams VotingParams, depositParams DepositParams, tallyParams TallyParams, height int64) *GovParams {
 	return &GovParams{
-		Params: params,
-		Height: height,
+		DepositParams: depositParams,
+		VotingParams:  votingParams,
+		TallyParams:   tallyParams,
+		Height:        height,
 	}
 }
 

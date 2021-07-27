@@ -1,6 +1,7 @@
 package database
 
 import (
+	"encoding/json"
 	"fmt"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -16,17 +17,18 @@ import (
 
 // SaveGovParams saves the given x/gov parameters inside the database
 func (db *Db) SaveGovParams(params *types.GovParams) error {
-	depositParamsBz, err := db.EncodingConfig.Marshaler.MarshalJSON(&params.DepositParams)
+
+	depositParamsBz, err := json.Marshal(&params.DepositParams)
 	if err != nil {
 		return err
 	}
 
-	votingParamsBz, err := db.EncodingConfig.Marshaler.MarshalJSON(&params.VotingParams)
+	votingParamsBz, err := json.Marshal(&params.VotingParams)
 	if err != nil {
 		return err
 	}
 
-	tallyingParams, err := db.EncodingConfig.Marshaler.MarshalJSON(&params.TallyParams)
+	tallyingParams, err := json.Marshal(&params.TallyParams)
 	if err != nil {
 		return err
 	}
@@ -58,26 +60,26 @@ func (db *Db) GetGovParams() (*types.GovParams, error) {
 
 	row := rows[0]
 
-	var depositParams govtypes.DepositParams
-	err = db.EncodingConfig.Marshaler.UnmarshalJSON([]byte(row.DepositParams), &depositParams)
+	var depositParams types.DepositParams
+	err = json.Unmarshal([]byte(row.DepositParams), &depositParams)
 	if err != nil {
 		return nil, err
 	}
 
-	var votingParams govtypes.VotingParams
-	err = db.EncodingConfig.Marshaler.UnmarshalJSON([]byte(row.VotingParams), &votingParams)
+	var votingParams types.VotingParams
+	err = json.Unmarshal([]byte(row.VotingParams), &votingParams)
 	if err != nil {
 		return nil, err
 	}
 
-	var tallyParams govtypes.TallyParams
-	err = db.EncodingConfig.Marshaler.UnmarshalJSON([]byte(row.TallyParams), &tallyParams)
+	var tallyParams types.TallyParams
+	err = json.Unmarshal([]byte(row.TallyParams), &tallyParams)
 	if err != nil {
 		return nil, err
 	}
 
 	return types.NewGovParams(
-		govtypes.NewParams(votingParams, tallyParams, depositParams),
+		votingParams, depositParams, tallyParams,
 		row.Height,
 	), nil
 }
