@@ -38,7 +38,7 @@ func NewVotingParams(v govtypes.VotingParams) VotingParams {
 	}
 }
 
- // GovParams contains the data of the x/gov module parameters
+// GovParams contains the data of the x/gov module parameters
 type GovParams struct {
 	DepositParams DepositParams `json:"deposit_params" yaml:"deposit_params"`
 	VotingParams  VotingParams  `json:"voting_params" yaml:"voting_params"`
@@ -62,7 +62,7 @@ func NewTallyParams(t govtypes.TallyParams) TallyParams {
 	}
 }
 
- // NewGovParams allows to build a new GovParams instance
+// NewGovParams allows to build a new GovParams instance
 func NewGovParams(votingParams VotingParams, depositParams DepositParams, tallyParams TallyParams, height int64) *GovParams {
 	return &GovParams{
 		DepositParams: depositParams,

@@ -1,6 +1,8 @@
 package consensus
 
 import (
+	"fmt"
+
 	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/bdjuno/database"
