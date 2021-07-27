@@ -80,12 +80,26 @@ func (db *Db) saveAccounts(paramsNumber int, accounts []types.Account) error {
 }
 
 // GetAccounts returns all the accounts that are currently stored inside the database.
-func (db *Db) GetAccounts() ([]dbtypes.AccountRow, error) {
+func (db *Db) GetAccounts() ([]types.Account, error) {
 	var rows []dbtypes.AccountRow
 	err := db.Sqlx.Select(&rows, `SELECT address,details FROM account`)
 	if err!=nil{
 		return nil,err
 	}
 
-	return rows, err
+	returnRows:=make([]types.Account,len(rows))
+	for i,row:=range rows {
+		b := []byte(row.Details)
+		
+		if len(b)==0{
+			returnRows[i]=types.NewAccount(row.Address,nil)
+		}else{
+			//var inter interface{}
+			var a authtypes.AccountI
+			err=db.EncodingConfig.Marshaler.UnmarshalInterfaceJSON(b,&a)
+			
+			returnRows[i]=types.NewAccount(row.Address,a)
+			}
+	}
+	return returnRows, nil
 }
