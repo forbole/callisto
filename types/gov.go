@@ -55,6 +55,7 @@ func NewTallyParams(t govtypes.TallyParams) TallyParams {
 	}
 }
 
+ // NewGovParams allows to build a new GovParams instance
 func NewGovParams(votingParams VotingParams, depositParams DepositParams, tallyParams TallyParams, height int64) *GovParams {
 	return &GovParams{
 		DepositParams: depositParams,
