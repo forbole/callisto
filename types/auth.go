@@ -1,6 +1,6 @@
 package types
 
-import( 
+import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
@@ -18,6 +18,6 @@ func NewAccount(address string, accountI authtypes.AccountI) Account {
 	}
 }
 
-func (u Account) Equal(v Account)bool{
-	return (u.Address==v.Address && u.Details==v.Details)
+func (u Account) Equal(v Account) bool {
+	return (u.Address == v.Address && u.Details == v.Details)
 }

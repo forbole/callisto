@@ -3,8 +3,8 @@ package gov
 import (
 	"encoding/json"
 
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
@@ -65,7 +65,7 @@ func (m *Module) HandleGenesis(_ *tmtypes.GenesisDoc, appState map[string]json.R
 
 // HandleBlock implements modules.BlockModule
 func (m *Module) HandleBlock(b *tmctypes.ResultBlock, _ []*types.Tx, vals *tmctypes.ResultValidators) error {
-	return HandleBlock(b.Block.Height, vals, m.govClient, m.bankClient, m.stakingClient, m.authClient,m.encodingConfig.Marshaler, m.db)
+	return HandleBlock(b.Block.Height, vals, m.govClient, m.bankClient, m.stakingClient, m.authClient, m.encodingConfig.Marshaler, m.db)
 }
 
 // HandleMsg implements modules.MessageModule

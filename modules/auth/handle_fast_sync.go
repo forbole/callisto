@@ -21,6 +21,7 @@ func FastSync(height int64, client authtypes.QueryClient, db *database.Db) error
 
 	return nil
 }
+
 // updateAccounts downloads all the accounts at the given height, and stores them inside the database
 func updateAccounts(height int64, authClient authtypes.QueryClient, db *database.Db) error {
 	header := client.GetHeightRequestHeader(height)

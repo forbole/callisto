@@ -32,9 +32,9 @@ func updateHistoricBalances(db *database.Db) error {
 		return err
 	}
 
-	addresses:=make([]string,len(accounts))
-	for index,account:=range accounts{
-		addresses[index]=account.Address
+	addresses := make([]string, len(accounts))
+	for index, account := range accounts {
+		addresses[index] = account.Address
 	}
 
 	for _, address := range addresses {

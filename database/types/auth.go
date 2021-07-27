@@ -7,7 +7,7 @@ type AccountRow struct {
 }
 
 // NewAccountRow allows to easily build a new AccountRow
-func NewAccountRow(address string,details string) AccountRow {
+func NewAccountRow(address string, details string) AccountRow {
 	return AccountRow{
 		Address: address,
 		Details: details,
@@ -16,5 +16,5 @@ func NewAccountRow(address string,details string) AccountRow {
 
 // Equal tells whether a and b contain the same data
 func (a AccountRow) Equal(b AccountRow) bool {
-	return a.Address == b.Address && a.Details==b.Details
+	return a.Address == b.Address && a.Details == b.Details
 }

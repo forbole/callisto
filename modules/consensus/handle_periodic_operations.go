@@ -131,7 +131,6 @@ func updateBlockTimeInDay(db *database.Db) error {
 
 	genesis, err := db.GetGenesis()
 
-
 	if err != nil {
 		return err
 	}

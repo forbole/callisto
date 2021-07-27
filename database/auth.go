@@ -36,12 +36,12 @@ func (db *Db) saveAccounts(paramsNumber int, accounts []types.Account) error {
 	}
 	stmt := `INSERT INTO account (address,details) VALUES `
 	var params []interface{}
-	patchSize:=65535 
+	patchSize := 65535
 	patchCount := 0
-	
+
 	for i, account := range accounts {
 		ai := patchCount * 2
-		stmt += fmt.Sprintf("($%d,$%d),", ai+1,ai+2)
+		stmt += fmt.Sprintf("($%d,$%d),", ai+1, ai+2)
 		protoContent, ok := account.Details.(authtypes.AccountI)
 		if !ok {
 			return fmt.Errorf("invalid proposal content types: %T", account.Details)
@@ -57,20 +57,20 @@ func (db *Db) saveAccounts(paramsNumber int, accounts []types.Account) error {
 			return err
 		}
 
-		contentBzstring:=string(contentBz)
+		contentBzstring := string(contentBz)
 
-		params = append(params, account.Address,contentBzstring)
-		if (patchCount==patchSize || i==(len(accounts)-1)){
+		params = append(params, account.Address, contentBzstring)
+		if patchCount == patchSize || i == (len(accounts)-1) {
 			stmt = stmt[:len(stmt)-1]
 			stmt += " ON CONFLICT (address) DO UPDATE SET details = excluded.details"
 			_, err := db.Sql.Exec(stmt, params...)
-			if err!=nil{
+			if err != nil {
 				return err
 			}
 
 			//Initialise
 			stmt = `INSERT INTO account (address,details) VALUES `
-			patchCount=0
+			patchCount = 0
 			params = make([]interface{}, 0)
 
 		}
@@ -83,23 +83,23 @@ func (db *Db) saveAccounts(paramsNumber int, accounts []types.Account) error {
 func (db *Db) GetAccounts() ([]types.Account, error) {
 	var rows []dbtypes.AccountRow
 	err := db.Sqlx.Select(&rows, `SELECT address,details FROM account`)
-	if err!=nil{
-		return nil,err
+	if err != nil {
+		return nil, err
 	}
 
-	returnRows:=make([]types.Account,len(rows))
-	for i,row:=range rows {
+	returnRows := make([]types.Account, len(rows))
+	for i, row := range rows {
 		b := []byte(row.Details)
-		
-		if len(b)==0{
-			returnRows[i]=types.NewAccount(row.Address,nil)
-		}else{
+
+		if len(b) == 0 {
+			returnRows[i] = types.NewAccount(row.Address, nil)
+		} else {
 			//var inter interface{}
 			var a authtypes.AccountI
-			err=db.EncodingConfig.Marshaler.UnmarshalInterfaceJSON(b,&a)
-			
-			returnRows[i]=types.NewAccount(row.Address,a)
-			}
+			err = db.EncodingConfig.Marshaler.UnmarshalInterfaceJSON(b, &a)
+
+			returnRows[i] = types.NewAccount(row.Address, a)
+		}
 	}
 	return returnRows, nil
 }

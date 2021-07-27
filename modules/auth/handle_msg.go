@@ -13,7 +13,7 @@ import (
 )
 
 // HandleMsg handles any message updating the involved accounts
-func HandleMsg(msg sdk.Msg, getAddresses messages.MessageAddressesParser, cdc codec.Marshaler, db *database.Db,height int64,authClient authtypes.QueryClient) error {
+func HandleMsg(msg sdk.Msg, getAddresses messages.MessageAddressesParser, cdc codec.Marshaler, db *database.Db, height int64, authClient authtypes.QueryClient) error {
 	addresses, err := getAddresses(cdc, msg)
 	if err != nil {
 		log.Error().Str("module", "auth").Err(err).
@@ -21,6 +21,6 @@ func HandleMsg(msg sdk.Msg, getAddresses messages.MessageAddressesParser, cdc co
 			Msgf("error while refreshing accounts after message of type %s", msg.Type())
 	}
 
-	return authutils.UpdateAccounts(utils.FilterNonAccountAddresses(addresses), cdc,db,height,authClient)
+	return authutils.UpdateAccounts(utils.FilterNonAccountAddresses(addresses), cdc, db, height, authClient)
 
 }

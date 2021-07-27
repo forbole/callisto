@@ -5,10 +5,10 @@ import (
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/desmos-labs/juno/client"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	stakingutils "github.com/forbole/bdjuno/modules/staking/utils"
 
@@ -31,8 +31,8 @@ const (
 
 func UpdateProposal(
 	height int64, blockVals *tmctypes.ResultValidators, id uint64,
-	govClient govtypes.QueryClient, bankClient banktypes.QueryClient, 
-	stakingClient stakingtypes.QueryClient,authClient authtypes.QueryClient,
+	govClient govtypes.QueryClient, bankClient banktypes.QueryClient,
+	stakingClient stakingtypes.QueryClient, authClient authtypes.QueryClient,
 	cdc codec.Marshaler, db *database.Db,
 ) error {
 	// Get the proposal
@@ -63,7 +63,7 @@ func UpdateProposal(
 		return fmt.Errorf("error while updating proposal tally result: %s", err)
 	}
 
-	err = updateAccounts(res.Proposal,cdc, bankClient,authClient ,db)
+	err = updateAccounts(res.Proposal, cdc, bankClient, authClient, db)
 	if err != nil {
 		return fmt.Errorf("error while updating account: %s", err)
 	}
@@ -141,8 +141,8 @@ func updateProposalTallyResult(proposal govtypes.Proposal, govClient govtypes.Qu
 }
 
 // updateAccounts updates any account that might be involved in the proposal (eg. fund community recipient)
-func updateAccounts(proposal govtypes.Proposal,cdc codec.Marshaler, bankClient banktypes.QueryClient,authClient authtypes.QueryClient,
-	 db *database.Db) error {
+func updateAccounts(proposal govtypes.Proposal, cdc codec.Marshaler, bankClient banktypes.QueryClient, authClient authtypes.QueryClient,
+	db *database.Db) error {
 	content, ok := proposal.Content.GetCachedValue().(*distrtypes.CommunityPoolSpendProposal)
 	if ok {
 		height, err := db.GetLastBlockHeight()
@@ -152,7 +152,7 @@ func updateAccounts(proposal govtypes.Proposal,cdc codec.Marshaler, bankClient b
 
 		addresses := []string{content.Recipient}
 
-		err = authutils.UpdateAccounts(addresses,cdc, db,height,authClient)
+		err = authutils.UpdateAccounts(addresses, cdc, db, height, authClient)
 		if err != nil {
 			return err
 		}

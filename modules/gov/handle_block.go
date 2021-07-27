@@ -4,10 +4,10 @@ import (
 	"context"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/desmos-labs/juno/client"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
@@ -26,7 +26,7 @@ func HandleBlock(
 	authClient authtypes.QueryClient,
 	cdc codec.Marshaler, db *database.Db,
 ) error {
-	err := updateProposals(height, blockVals, govClient, bankClient,authClient, stakingClient, cdc, db)
+	err := updateProposals(height, blockVals, govClient, bankClient, authClient, stakingClient, cdc, db)
 	if err != nil {
 		log.Error().Str("module", "gov").Int64("height", height).
 			Err(err).Msg("error while updating proposals")
@@ -91,7 +91,7 @@ func updateProposals(
 	}
 
 	for _, id := range ids {
-		err = govutils.UpdateProposal(height, blockVals, id, govClient, bankClient, stakingClient,authClient, cdc, db)
+		err = govutils.UpdateProposal(height, blockVals, id, govClient, bankClient, stakingClient, authClient, cdc, db)
 		if err != nil {
 			return err
 		}
