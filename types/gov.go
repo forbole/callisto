@@ -34,6 +34,7 @@ func NewVotingParams(v govtypes.VotingParams) VotingParams {
 	}
 }
 
+ // GovParams contains the data of the x/gov module parameters
 type GovParams struct {
 	DepositParams DepositParams `json:"deposit_params" yaml:"deposit_params"`
 	VotingParams  VotingParams  `json:"voting_params" yaml:"voting_params"`
