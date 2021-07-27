@@ -41,6 +41,7 @@ type GovParams struct {
 	Height        int64         `json:"height" ymal:"height"`
 }
 
+// TallyParams contains the tally parameters of the x/gov module
 type TallyParams struct {
 	Quorum        sdk.Dec `json:"quorum,omitempty"`
 	Threshold     sdk.Dec `json:"threshold,omitempty"`
