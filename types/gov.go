@@ -47,6 +47,7 @@ type TallyParams struct {
 	VetoThreshold sdk.Dec `json:"veto_threshold,omitempty" yaml:"veto_threshold"`
 }
 
+// NewTallyParams allows to build a new TallyParams instance
 func NewTallyParams(t govtypes.TallyParams) TallyParams {
 	return TallyParams{
 		Quorum:        t.Quorum,
