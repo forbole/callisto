@@ -127,18 +127,6 @@ SELECT (
        ) = delegation_row.delegator_address
 $$ LANGUAGE sql STABLE;
 
-CREATE TABLE delegation_history
-(
-    validator_address TEXT   NOT NULL,
-    delegator_address TEXT   NOT NULL REFERENCES account (address),
-    amount            COIN   NOT NULL,
-    height            BIGINT NOT NULL REFERENCES block (height),
-    CONSTRAINT delegation_history_validator_delegator_unique UNIQUE (validator_address, delegator_address, height)
-);
-CREATE INDEX delegation_history_validator_address_index ON delegation_history (validator_address);
-CREATE INDEX delegation_history_delegator_address ON delegation_history (delegator_address);
-CREATE INDEX delegation_history_height_index ON delegation_history (height);
-
 /* ---- RE-DELEGATIONS ---- */
 
 /*
@@ -160,21 +148,6 @@ CREATE INDEX redelegation_delegator_address_index ON redelegation (delegator_add
 CREATE INDEX redelegation_src_validator_address_index ON redelegation (src_validator_address);
 CREATE INDEX redelegation_dst_validator_address_index ON redelegation (dst_validator_address);
 
-CREATE TABLE redelegation_history
-(
-    delegator_address     TEXT                        NOT NULL REFERENCES account (address),
-    src_validator_address TEXT                        NOT NULL,
-    dst_validator_address TEXT                        NOT NULL,
-    amount                COIN                        NOT NULL,
-    completion_time       TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    height                BIGINT                      NOT NULL REFERENCES block (height),
-    CONSTRAINT redelegation_history_validator_delegator_unique UNIQUE (delegator_address, src_validator_address,
-                                                                       dst_validator_address, height)
-);
-CREATE INDEX redelegation_history_delegator_address_index ON redelegation_history (delegator_address);
-CREATE INDEX redelegation_history_src_validator_address_index ON redelegation_history (src_validator_address);
-CREATE INDEX redelegation_history_dst_validator_address_index ON redelegation_history (dst_validator_address);
-
 /* ---- UNBONDING DELEGATIONS ---- */
 
 /*
@@ -195,19 +168,6 @@ CREATE INDEX unbonding_delegation_validator_address_index ON unbonding_delegatio
 CREATE INDEX unbonding_delegation_delegator_address_index ON unbonding_delegation (delegator_address);
 
 /* ---- DOUBLE SIGN EVIDENCE ---- */
-
-CREATE TABLE unbonding_delegation_history
-(
-    validator_address    TEXT                        NOT NULL,
-    delegator_address    TEXT                        NOT NULL REFERENCES account (address),
-    amount               COIN                        NOT NUll,
-    completion_timestamp TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    height               BIGINT                      NOT NULL REFERENCES block (height),
-    CONSTRAINT unbonding_delegation_history_validator_delegator_unique UNIQUE (delegator_address, validator_address,
-                                                                               completion_timestamp, height)
-);
-CREATE INDEX unbonding_history_delegation_validator_address_index ON unbonding_delegation_history (validator_address);
-CREATE INDEX unbonding_history_delegation_delegator_address_index ON unbonding_delegation_history (delegator_address);
 
 /*
  * This holds the votes that is the evidence of a double sign.

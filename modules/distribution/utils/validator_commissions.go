@@ -2,6 +2,7 @@ package utils
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/desmos-labs/juno/client"
 
@@ -33,36 +34,45 @@ func UpdateValidatorsCommissionAmounts(height int64, client distrtypes.QueryClie
 
 	// Get all the commissions
 	for _, validator := range validators {
-		go getValidatorCommission(height, client, validator, db)
+		go updateValidatorCommission(height, client, validator, db)
 	}
 }
 
-func getValidatorCommission(height int64, distrClient distrtypes.QueryClient, validator types.Validator, db *database.Db) {
-	res, err := distrClient.ValidatorCommission(
-		context.Background(),
-		&distrtypes.QueryValidatorCommissionRequest{ValidatorAddress: validator.GetOperator()},
-		client.GetHeightRequestHeader(height),
-	)
+func updateValidatorCommission(height int64, distrClient distrtypes.QueryClient, validator types.Validator, db *database.Db) {
+	commission, err := GetValidatorCommissionAmount(height, validator, distrClient)
 	if err != nil {
 		log.Error().Str("module", "distribution").Err(err).
 			Int64("height", height).
 			Str("validator", validator.GetOperator()).
-			Msg("error while getting validator commission")
-		return
+			Send()
 	}
 
-	delegationAmount := types.NewValidatorCommissionAmount(
-		validator.GetOperator(),
-		validator.GetSelfDelegateAddress(),
-		res.Commission.Commission,
-		height,
-	)
-
-	err = db.SaveValidatorCommissionAmount(delegationAmount)
+	err = db.SaveValidatorCommissionAmount(commission)
 	if err != nil {
 		log.Error().Str("module", "distribution").Err(err).
 			Int64("height", height).
 			Str("validator", validator.GetOperator()).
 			Msg("error while saving validator commission amounts")
 	}
+}
+
+// GetValidatorCommissionAmount returns the amount of the validator commission for the given validator
+func GetValidatorCommissionAmount(
+	height int64, validator types.Validator, distrClient distrtypes.QueryClient,
+) (types.ValidatorCommissionAmount, error) {
+	res, err := distrClient.ValidatorCommission(
+		context.Background(),
+		&distrtypes.QueryValidatorCommissionRequest{ValidatorAddress: validator.GetOperator()},
+		client.GetHeightRequestHeader(height),
+	)
+	if err != nil {
+		return types.ValidatorCommissionAmount{}, fmt.Errorf("error while getting validator commission: %s", err)
+	}
+
+	return types.NewValidatorCommissionAmount(
+		validator.GetOperator(),
+		validator.GetSelfDelegateAddress(),
+		res.Commission.Commission,
+		height,
+	), nil
 }

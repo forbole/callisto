@@ -24,6 +24,16 @@ func ToNullString(value string) sql.NullString {
 	}
 }
 
+func RemoveEmpty(s []string) []string {
+	var r []string
+	for _, str := range s {
+		if str != "" {
+			r = append(r, str)
+		}
+	}
+	return r
+}
+
 // _________________________________________________________
 
 // DbCoin represents the information stored inside the database about a single coin
@@ -63,6 +73,12 @@ func (coin *DbCoin) Scan(src interface{}) error {
 
 	*coin = DbCoin{Denom: values[0], Amount: values[1]}
 	return nil
+}
+
+// ToCoin converts this DbCoin to sdk.Coin
+func (coin DbCoin) ToCoin() sdk.Coin {
+	amount, _ := sdk.NewIntFromString(coin.Amount)
+	return sdk.NewCoin(coin.Denom, amount)
 }
 
 // _________________________________________________________
@@ -108,7 +124,7 @@ func (coins *DbCoins) Scan(src interface{}) error {
 	strValue = strings.ReplaceAll(strValue, "(", "")
 	strValue = strings.ReplaceAll(strValue, ")", "")
 
-	values := strings.Split(strValue, " ")
+	values := RemoveEmpty(strings.Split(strValue, " "))
 
 	coinsV := make(DbCoins, len(values))
 	for index, value := range values {
@@ -120,6 +136,15 @@ func (coins *DbCoins) Scan(src interface{}) error {
 
 	*coins = coinsV
 	return nil
+}
+
+// ToCoins converts this DbCoins to sdk.Coins
+func (coins DbCoins) ToCoins() sdk.Coins {
+	var sdkCoins = make([]sdk.Coin, len(coins))
+	for index := range coins {
+		sdkCoins[index] = coins[index].ToCoin()
+	}
+	return sdkCoins
 }
 
 //_______________________________________________________
@@ -160,6 +185,12 @@ func (coin *DbDecCoin) Scan(src interface{}) error {
 	values := strings.Split(strValue, ",")
 	*coin = DbDecCoin{Denom: values[0], Amount: values[1]}
 	return nil
+}
+
+// ToDecCoin converts this DbDecCoin to sdk.DecCoin
+func (coin DbDecCoin) ToDecCoin() sdk.DecCoin {
+	amount, _ := sdk.NewDecFromStr(coin.Amount)
+	return sdk.NewDecCoinFromDec(coin.Denom, amount)
 }
 
 // _________________________________________________________
@@ -205,7 +236,7 @@ func (coins *DbDecCoins) Scan(src interface{}) error {
 	strValue = strings.ReplaceAll(strValue, "(", "")
 	strValue = strings.ReplaceAll(strValue, ")", "")
 
-	values := strings.Split(strValue, " ")
+	values := RemoveEmpty(strings.Split(strValue, " "))
 
 	coinsV := make(DbDecCoins, len(values))
 	for index, value := range values {
@@ -217,4 +248,13 @@ func (coins *DbDecCoins) Scan(src interface{}) error {
 
 	*coins = coinsV
 	return nil
+}
+
+// ToDecCoins converts this DbDecCoins to sdk.DecCoins
+func (coins DbDecCoins) ToDecCoins() sdk.DecCoins {
+	var sdkCoins = make([]sdk.DecCoin, len(coins))
+	for index := range coins {
+		sdkCoins[index] = coins[index].ToDecCoin()
+	}
+	return sdkCoins
 }

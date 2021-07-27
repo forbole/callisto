@@ -6,6 +6,6 @@ import (
 
 // AddressesParser represents a MessageAddressesParser able to parse Cosmos and custom chain utils
 var AddressesParser = junomessages.JoinMessageParsers(
-	junomessages.CosmosMessageAddressesParser,
 	desmosMessageAddressesParser,
+	junomessages.CosmosMessageAddressesParser,
 )

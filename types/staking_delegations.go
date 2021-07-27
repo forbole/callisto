@@ -51,6 +51,15 @@ func NewUnbondingDelegation(
 	}
 }
 
+// Equal returns true iff u and v contain the same data
+func (u UnbondingDelegation) Equal(v UnbondingDelegation) bool {
+	return u.DelegatorAddress == v.DelegatorAddress &&
+		u.ValidatorOperAddr == v.ValidatorOperAddr &&
+		u.Amount.IsEqual(v.Amount) &&
+		u.CompletionTimestamp.Equal(v.CompletionTimestamp) &&
+		u.Height == v.Height
+}
+
 // _________________________________________________________
 
 // Redelegation represents a single re-delegations
@@ -75,4 +84,14 @@ func NewRedelegation(
 		CompletionTime:   completionTime,
 		Height:           height,
 	}
+}
+
+// Equal returns true iff r and s contain the same data
+func (r Redelegation) Equal(s Redelegation) bool {
+	return r.DelegatorAddress == s.DelegatorAddress &&
+		r.SrcValidator == s.SrcValidator &&
+		r.DstValidator == s.DstValidator &&
+		r.Amount.IsEqual(s.Amount) &&
+		r.CompletionTime.Equal(s.CompletionTime) &&
+		r.Height == s.Height
 }

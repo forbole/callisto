@@ -1,14 +1,9 @@
 package staking
 
 import (
-	"time"
-
 	"github.com/forbole/bdjuno/database"
-	bankutils "github.com/forbole/bdjuno/modules/bank/utils"
 	stakingutils "github.com/forbole/bdjuno/modules/staking/utils"
 	"github.com/forbole/bdjuno/types"
-
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -19,7 +14,7 @@ import (
 
 // HandleMsg allows to handle the different utils related to the staking module
 func HandleMsg(
-	tx *juno.Tx, index int, msg sdk.Msg, stakingClient stakingtypes.QueryClient, bankClient banktypes.QueryClient,
+	tx *juno.Tx, index int, msg sdk.Msg, stakingClient stakingtypes.QueryClient,
 	cdc codec.Marshaler, db *database.Db,
 ) error {
 	if len(tx.Logs) == 0 {
@@ -40,7 +35,7 @@ func HandleMsg(
 		return handleMsgBeginRedelegate(tx, index, cosmosMsg, stakingClient, db)
 
 	case *stakingtypes.MsgUndelegate:
-		return handleMsgUndelegate(tx, index, cosmosMsg, stakingClient, bankClient, db)
+		return handleMsgUndelegate(tx, index, cosmosMsg, stakingClient, db)
 	}
 
 	return nil
@@ -117,16 +112,10 @@ func handleMsgBeginRedelegate(
 	tx *juno.Tx, index int, msg *stakingtypes.MsgBeginRedelegate,
 	client stakingtypes.QueryClient, db *database.Db,
 ) error {
-	redelegation, err := stakingutils.StoreRedelegationFromMessage(tx, index, msg, db)
+	_, err := stakingutils.StoreRedelegationFromMessage(tx, index, msg, db)
 	if err != nil {
 		return err
 	}
-
-	// When the time expires, update the delegations and delete this redelegation
-	time.AfterFunc(time.Until(redelegation.CompletionTime),
-		stakingutils.RefreshDelegations(tx.Height, msg.DelegatorAddress, client, db))
-	time.AfterFunc(time.Until(redelegation.CompletionTime),
-		stakingutils.DeleteRedelegation(*redelegation, db))
 
 	// Update the current delegations
 	return stakingutils.UpdateDelegationsAndReplaceExisting(tx.Height, msg.DelegatorAddress, client, db)
@@ -135,20 +124,12 @@ func handleMsgBeginRedelegate(
 // handleMsgUndelegate handles a MsgUndelegate storing the data inside the database
 func handleMsgUndelegate(
 	tx *juno.Tx, index int, msg *stakingtypes.MsgUndelegate,
-	stakingClient stakingtypes.QueryClient, bankClient banktypes.QueryClient, db *database.Db,
+	stakingClient stakingtypes.QueryClient, db *database.Db,
 ) error {
-	delegation, err := stakingutils.StoreUnbondingDelegationFromMessage(tx, index, msg, db)
+	_, err := stakingutils.StoreUnbondingDelegationFromMessage(tx, index, msg, db)
 	if err != nil {
 		return err
 	}
-
-	// When timer expires update the delegations, update the user balance and remove the unbonding delegation
-	time.AfterFunc(time.Until(delegation.CompletionTimestamp),
-		stakingutils.RefreshDelegations(tx.Height, msg.DelegatorAddress, stakingClient, db))
-	time.AfterFunc(time.Until(delegation.CompletionTimestamp),
-		bankutils.RefreshBalance(msg.DelegatorAddress, bankClient, db))
-	time.AfterFunc(time.Until(delegation.CompletionTimestamp),
-		stakingutils.DeleteUnbondingDelegation(*delegation, db))
 
 	// Update the current delegations
 	return stakingutils.UpdateDelegationsAndReplaceExisting(tx.Height, msg.DelegatorAddress, stakingClient, db)

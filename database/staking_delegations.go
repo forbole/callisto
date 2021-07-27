@@ -2,6 +2,9 @@ package database
 
 import (
 	"fmt"
+	"time"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/forbole/bdjuno/types"
 
@@ -20,13 +23,6 @@ func (db *Db) SaveDelegations(delegations []types.Delegation) error {
 	err := db.storeUpToDateDelegations(delegations)
 	if err != nil {
 		return fmt.Errorf("error while storing up-to-date delegations: %s", err)
-	}
-
-	if db.IsStoreHistoricDataEnabled() {
-		err = db.storeDelegationsHistory(delegations)
-		if err != nil {
-			return fmt.Errorf("error while storing delegations history: %s", err)
-		}
 	}
 
 	return nil
@@ -85,56 +81,27 @@ WHERE delegation.height <= excluded.height`
 	return err
 }
 
-// storeDelegationsHistory allows to store the given delegations as historic ones
-func (db *Db) storeDelegationsHistory(delegations []types.Delegation) error {
-	accQry := `
-INSERT INTO account (address) VALUES `
-	var accParams []interface{}
+// GetUserDelegationsAmount returns the amount of the delegations currently stored for
+// the user having the given address
+func (db *Db) GetUserDelegationsAmount(address string) (sdk.Coins, error) {
+	stmt := `SELECT * FROM delegation WHERE delegator_address = $1`
 
-	delQry := `
-INSERT INTO delegation_history (validator_address, delegator_address, amount, height) VALUES `
-	var delParams []interface{}
-
-	for i, delegation := range delegations {
-		ai := i * 1
-		accQry += fmt.Sprintf("($%d),", ai+1)
-		accParams = append(accParams, delegation.DelegatorAddress)
-
-		// Get the validator consensus address
-		consAddr, err := db.GetValidatorConsensusAddress(delegation.ValidatorOperAddr)
-		if err != nil {
-			return err
-		}
-
-		// Convert the amount
-		coin := dbtypes.NewDbCoin(delegation.Amount)
-		value, err := coin.Value()
-		if err != nil {
-			return err
-		}
-
-		// Current delegation query
-		di := i * 4
-		delQry += fmt.Sprintf("($%d,$%d,$%d,$%d),", di+1, di+2, di+3, di+4)
-		delParams = append(delParams,
-			consAddr.String(), delegation.DelegatorAddress, value, delegation.Height)
-	}
-
-	// Insert the accounts
-	accQry = accQry[:len(accQry)-1] // Remove the trailing ","
-	accQry += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(accQry, accParams...)
+	var rows []*dbtypes.DelegationRow
+	err := db.Sqlx.Select(&rows, stmt, address)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	// Insert the delegations
-	delQry = delQry[:len(delQry)-1] // Remove the trailing ","
-	delQry += ` 
-ON CONFLICT ON CONSTRAINT delegation_history_validator_delegator_unique 
-DO UPDATE SET amount = excluded.amount`
-	_, err = db.Sql.Exec(delQry, delParams...)
-	return err
+	if len(rows) == 0 {
+		return sdk.Coins{}, nil
+	}
+
+	var amount = sdk.Coins{}
+	for _, delegation := range rows {
+		amount = amount.Add(delegation.Amount.ToCoin())
+	}
+
+	return amount, nil
 }
 
 // DeleteDelegatorDelegations removes all the delegations associated with the given delegator
@@ -172,13 +139,6 @@ func (db *Db) SaveRedelegations(redelegations []types.Redelegation) error {
 	err := db.storeUpToDateRedelegations(redelegations)
 	if err != nil {
 		return fmt.Errorf("error while storing up-to-date redelegations: %s", err)
-	}
-
-	if db.IsStoreHistoricDataEnabled() {
-		err = db.storeHistoricRedelegations(redelegations)
-		if err != nil {
-			return fmt.Errorf("error while storing redelegations history: %s", err)
-		}
 	}
 
 	return nil
@@ -244,53 +204,27 @@ WHERE redelegation.height <= excluded.height`
 	return err
 }
 
-// storeHistoricRedelegations allows to store the given redelegations as historic ones
-func (db *Db) storeHistoricRedelegations(redelegations []types.Redelegation) error {
-	accQry := `
-INSERT INTO account (address) VALUES `
-	var accParams []interface{}
+// GetUserRedelegationsAmount returns the amount of the redelegations currently stored for
+// the user having the given address
+func (db *Db) GetUserRedelegationsAmount(address string) (sdk.Coins, error) {
+	stmt := `SELECT * FROM redelegation WHERE delegator_address = $1`
 
-	rdQry := `
-INSERT INTO redelegation_history 
-    (delegator_address, src_validator_address, dst_validator_address, amount, completion_time, height) 
-VALUES `
-	var rdParams []interface{}
-
-	for i, redelegation := range redelegations {
-		a1 := i * 1
-		accQry += fmt.Sprintf("($%d),", a1+1)
-		accParams = append(accParams, redelegation.DelegatorAddress)
-
-		// Convert the amount value
-		coin := dbtypes.NewDbCoin(redelegation.Amount)
-		amountValue, err := coin.Value()
-		if err != nil {
-			return err
-		}
-
-		rdi := i * 6
-		rdQry += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d),", rdi+1, rdi+2, rdi+3, rdi+4, rdi+5, rdi+6)
-		rdParams = append(rdParams,
-			redelegation.DelegatorAddress,
-			redelegation.SrcValidator, redelegation.DstValidator, amountValue,
-			redelegation.CompletionTime, redelegation.Height)
-	}
-
-	// Insert the delegators
-	accQry = accQry[:len(accQry)-1] // Remove the trailing ","
-	accQry += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(accQry, accParams...)
+	var rows []*dbtypes.RedelegationRow
+	err := db.Sqlx.Select(&rows, stmt, address)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	// Insert the redelegations
-	rdQry = rdQry[:len(rdQry)-1] // Remove the trailing ","
-	rdQry += `
-ON CONFLICT ON CONSTRAINT redelegation_history_validator_delegator_unique 
-DO UPDATE SET amount = excluded.amount`
-	_, err = db.Sql.Exec(rdQry, rdParams...)
-	return err
+	if len(rows) == 0 {
+		return sdk.Coins{}, nil
+	}
+
+	var amount = sdk.Coins{}
+	for _, delegation := range rows {
+		amount = amount.Add(delegation.Amount.ToCoin())
+	}
+
+	return amount, nil
 }
 
 // DeleteRedelegation removes the given redelegation from the database
@@ -312,9 +246,45 @@ WHERE delegator_address = $1
   AND dst_validator_address = $3 
   AND completion_time = $4`
 	_, err = db.Sql.Exec(stmt,
-		redelegation.DelegatorAddress, srcVal.GetConsAddr(), dstVal.GetOperator(), redelegation.CompletionTime,
+		redelegation.DelegatorAddress, srcVal.GetConsAddr(), dstVal.GetConsAddr(), redelegation.CompletionTime,
 	)
 	return err
+}
+
+// DeleteCompletedRedelegations deletes all the redelegations that have completed
+// on or before the given timestamp
+func (db *Db) DeleteCompletedRedelegations(timestamp time.Time) ([]types.Redelegation, error) {
+	stmt := `DELETE FROM redelegation WHERE completion_time <= $1 RETURNING *`
+
+	var rows []dbtypes.RedelegationRow
+	err := db.Sqlx.Select(&rows, stmt, timestamp)
+	if err != nil {
+		return nil, err
+	}
+
+	var redelegations = make([]types.Redelegation, len(rows))
+	for index, row := range rows {
+		srcAddr, err := db.GetValidatorOperatorAddress(row.SrcValidatorAddress)
+		if err != nil {
+			return nil, err
+		}
+
+		dstAddr, err := db.GetValidatorOperatorAddress(row.DstValidatorAddress)
+		if err != nil {
+			return nil, err
+		}
+
+		redelegations[index] = types.NewRedelegation(
+			row.DelegatorAddress,
+			srcAddr.String(),
+			dstAddr.String(),
+			row.Amount.ToCoin(),
+			row.CompletionTime,
+			row.Height,
+		)
+	}
+
+	return redelegations, err
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -333,13 +303,6 @@ func (db *Db) SaveUnbondingDelegations(delegations []types.UnbondingDelegation) 
 	err := db.storeUpToDateUnbondingDelegations(delegations)
 	if err != nil {
 		return fmt.Errorf("error while storing up-to-date undonding delegations: %s", err)
-	}
-
-	if db.IsStoreHistoricDataEnabled() {
-		err = db.storeUnbondingDelegationsHistory(delegations)
-		if err != nil {
-			return fmt.Errorf("error while storing undonding delegations history: %s", err)
-		}
 	}
 
 	return nil
@@ -396,50 +359,27 @@ WHERE unbonding_delegation.height <= excluded.height`
 	return err
 }
 
-// storeUnbondingDelegationsHistory allows to store the given unbonding delegations as historic ones
-func (db *Db) storeUnbondingDelegationsHistory(delegations []types.UnbondingDelegation) error {
-	accQry := `
-INSERT INTO account (address) VALUES `
-	var accParams []interface{}
+// GetUserUnBondingDelegationsAmount returns the amount of the redelegations currently stored for
+// the user having the given address
+func (db *Db) GetUserUnBondingDelegationsAmount(address string) (sdk.Coins, error) {
+	stmt := `SELECT * FROM unbonding_delegation WHERE delegator_address = $1`
 
-	udQry := `
-INSERT INTO unbonding_delegation_history (validator_address, delegator_address, amount, completion_timestamp, height)
-VALUES `
-	var udParams []interface{}
-
-	for i, delegation := range delegations {
-		ai := i * 1
-		accQry += fmt.Sprintf("($%d),", ai+1)
-		accParams = append(accParams, delegation.DelegatorAddress)
-
-		coin := dbtypes.NewDbCoin(delegation.Amount)
-		amount, err := coin.Value()
-		if err != nil {
-			return err
-		}
-
-		udi := i * 5
-		udQry += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", udi+1, udi+2, udi+3, udi+4, udi+5)
-		udParams = append(udParams,
-			delegation.ValidatorOperAddr, delegation.DelegatorAddress, amount,
-			delegation.CompletionTimestamp, delegation.Height)
-	}
-
-	// Insert the delegators
-	accQry = accQry[:len(accQry)-1] // Remove the trailing ","
-	accQry += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(accQry, accParams...)
+	var rows []*dbtypes.UnbondingDelegationRow
+	err := db.Sqlx.Select(&rows, stmt, address)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	// Insert the current unbonding delegations
-	udQry = udQry[:len(udQry)-1] // Remove the trailing ","
-	udQry += `
-ON CONFLICT ON CONSTRAINT unbonding_delegation_history_validator_delegator_unique 
-DO UPDATE SET amount = excluded.amount`
-	_, err = db.Sql.Exec(udQry, udParams...)
-	return err
+	if len(rows) == 0 {
+		return sdk.Coins{}, nil
+	}
+
+	var amount = sdk.Coins{}
+	for _, delegation := range rows {
+		amount = amount.Add(delegation.Amount.ToCoin())
+	}
+
+	return amount, nil
 }
 
 // DeleteUnbondingDelegation removes the given unbonding delegation from the database
@@ -458,4 +398,34 @@ WHERE delegator_address = $1
 		delegation.DelegatorAddress, val.GetConsAddr(), delegation.CompletionTimestamp,
 	)
 	return err
+}
+
+// DeleteCompletedUnbondingDelegations deletes all the unbonding delegations that have completed
+// on or before the given timestamp
+func (db *Db) DeleteCompletedUnbondingDelegations(timestamp time.Time) ([]types.UnbondingDelegation, error) {
+	stmt := `DELETE FROM unbonding_delegation WHERE completion_timestamp <= $1 RETURNING *`
+
+	var rows []dbtypes.UnbondingDelegationRow
+	err := db.Sqlx.Select(&rows, stmt, timestamp)
+	if err != nil {
+		return nil, err
+	}
+
+	var delegations = make([]types.UnbondingDelegation, len(rows))
+	for index, row := range rows {
+		operAddr, err := db.GetValidatorOperatorAddress(row.ConsensusAddress)
+		if err != nil {
+			return nil, err
+		}
+
+		delegations[index] = types.NewUnbondingDelegation(
+			row.DelegatorAddress,
+			operAddr.String(),
+			row.Amount.ToCoin(),
+			row.CompletionTimestamp,
+			row.Height,
+		)
+	}
+
+	return delegations, nil
 }
