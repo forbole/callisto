@@ -18,6 +18,7 @@ type DepositParams struct {
 	MaxDepositPeriod int64     `json:"max_deposit_period,omitempty" yaml:"max_deposit_period"`
 }
 
+// NewDepositParam allows to build a new DepositParams
 func NewDepositParam(d govtypes.DepositParams) DepositParams {
 	return DepositParams{
 		MinDeposit:       d.MinDeposit,
