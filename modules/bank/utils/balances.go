@@ -56,3 +56,22 @@ func UpdateBalances(addresses []string, height int64, bankClient banktypes.Query
 
 	return db.SaveAccountBalances(balances)
 }
+
+// GetUserBalance returns the current balance for the specified user
+func GetUserBalance(height int64, address string, bankClient banktypes.QueryClient) (types.AccountBalance, error) {
+	header := client.GetHeightRequestHeader(height)
+	balRes, err := bankClient.AllBalances(
+		context.Background(),
+		&banktypes.QueryAllBalancesRequest{Address: address},
+		header,
+	)
+	if err != nil {
+		return types.AccountBalance{}, err
+	}
+
+	return types.NewAccountBalance(
+		address,
+		balRes.Balances,
+		height,
+	), nil
+}

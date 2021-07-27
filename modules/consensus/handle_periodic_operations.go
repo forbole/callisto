@@ -1,7 +1,7 @@
 package consensus
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
@@ -41,19 +41,24 @@ func updateBlockTimeInMinute(db *database.Db) error {
 		Msg("updating block time in minutes")
 
 	block, err := db.GetLastBlock()
-	if block == nil {
-		return errors.New("Block are empty")
-	}
 	if err != nil {
 		return err
+	}
+	if block == nil {
+		return fmt.Errorf("block table are empty")
 	}
 
 	genesis, err := db.GetGenesis()
-	if genesis == nil {
-		return errors.New("Genesis table are empty")
-	}
 	if err != nil {
 		return err
+	}
+	if genesis == nil {
+		return fmt.Errorf("genesis table are empty")
+	}
+
+	// Skip if the genesis does not exist
+	if genesis == nil {
+		return nil
 	}
 
 	// Check if the chain has been created at least a minute ago
@@ -76,19 +81,24 @@ func updateBlockTimeInHour(db *database.Db) error {
 		Msg("updating block time in hours")
 
 	block, err := db.GetLastBlock()
-	if block == nil {
-		return errors.New("Block are empty")
-	}
 	if err != nil {
 		return err
+	}
+	if block == nil {
+		return fmt.Errorf("block table is empty")
 	}
 
 	genesis, err := db.GetGenesis()
-	if genesis == nil {
-		return errors.New("Genesis table are empty")
-	}
 	if err != nil {
 		return err
+	}
+	if genesis == nil {
+		return fmt.Errorf("genesis table is empty")
+	}
+
+	// Skip if the genesis does not exist
+	if genesis == nil {
+		return nil
 	}
 
 	// Check if the chain has been created at least an hour ago
@@ -111,20 +121,27 @@ func updateBlockTimeInDay(db *database.Db) error {
 		Msg("updating block time in days")
 
 	block, err := db.GetLastBlock()
-	if block == nil {
-		return errors.New("Block are empty")
-	}
+
 	if err != nil {
 		return err
+	}
+	if block == nil {
+		return fmt.Errorf("block table is empty")
 	}
 
 	genesis, err := db.GetGenesis()
-	if genesis == nil {
-		return errors.New("Genesis table are empty")
-	}
+
 
 	if err != nil {
 		return err
+	}
+	if genesis == nil {
+		return fmt.Errorf("genesis table is empty")
+	}
+
+	// Skip if the genesis does not exist
+	if genesis == nil {
+		return nil
 	}
 
 	// Check if the chain has been created at least a days ago

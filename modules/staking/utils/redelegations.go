@@ -2,6 +2,7 @@ package utils
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
 	"github.com/desmos-labs/juno/client"
@@ -92,6 +93,44 @@ func getRedelegations(
 		nextKey = res.Pagination.NextKey
 		stop = len(res.Pagination.NextKey) == 0
 	}
+}
+
+// GetDelegatorRedelegations returns the current redelegations for the user having the given address
+func GetDelegatorRedelegations(
+	height int64, address string, bondDenom string, stakingClient stakingtypes.QueryClient,
+) ([]types.Redelegation, error) {
+	var delegations []types.Redelegation
+
+	header := client.GetHeightRequestHeader(height)
+
+	var nextKey []byte
+	var stop = false
+	for !stop {
+		res, err := stakingClient.Redelegations(
+			context.Background(),
+			&stakingtypes.QueryRedelegationsRequest{
+				DelegatorAddr: address,
+				Pagination: &query.PageRequest{
+					Key:   nextKey,
+					Limit: 100, // Query 100 unbonding delegations at a time
+				},
+			},
+			header,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("error while getting validators redelegations: %s", err)
+		}
+
+		for _, delegation := range res.RedelegationResponses {
+			redelegations := ConvertRedelegationResponse(height, bondDenom, delegation)
+			delegations = append(delegations, redelegations...)
+		}
+
+		nextKey = res.Pagination.NextKey
+		stop = len(res.Pagination.NextKey) == 0
+	}
+
+	return delegations, nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------

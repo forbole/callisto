@@ -1,7 +1,7 @@
 package consensus
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/rs/zerolog/log"
 
@@ -26,13 +26,12 @@ func updateBlockTimeFromGenesis(block *tmctypes.ResultBlock, db *database.Db) er
 		Msg("updating block time from genesis")
 
 	genesis, err := db.GetGenesis()
-	if genesis == nil {
-		return errors.New("Genesis table are empty")
-	}
 	if err != nil {
 		return err
 	}
-
+	if genesis == nil {
+		return fmt.Errorf("genesis table is empty")
+	}
 	newBlockTime := block.Block.Time.Sub(genesis.Time).Seconds() / float64(block.Block.Height-genesis.InitialHeight)
 	return db.SaveAverageBlockTimeGenesis(newBlockTime, block.Block.Height)
 }

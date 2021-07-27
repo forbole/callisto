@@ -47,9 +47,7 @@ $$ LANGUAGE sql STABLE;
 
 CREATE TABLE token_price_history
 (
-    /* Needed for the below account_balance_history_tokens_prices function to work properly */
     id         SERIAL    NOT NULL PRIMARY KEY,
-
     unit_name  TEXT      NOT NULL REFERENCES token_unit (denom),
     price      NUMERIC   NOT NULL,
     market_cap BIGINT    NOT NULL,
@@ -57,21 +55,3 @@ CREATE TABLE token_price_history
     CONSTRAINT unique_price_for_timestamp UNIQUE (unit_name, timestamp)
 );
 CREATE INDEX token_price_history_timestamp_index ON token_price_history (timestamp);
-
-/**
-  * This function is used to have a Hasura compute field (https://hasura.io/docs/1.0/graphql/core/schema/computed-fields.html)
-  * inside the account_balance table, so that it's easy to determine the token price that is associated with that balance.
- */
-CREATE FUNCTION account_balance_history_tokens_prices(balance_row account_balance_history) RETURNS SETOF token_price_history AS
-$$
-SELECT id, unit_name, price, market_cap, timestamp
-FROM (
-         SELECT DISTINCT ON (unit_name) unit_name, id, price, market_cap, timestamp
-         FROM (
-                  SELECT *
-                  FROM token_price_history
-                  WHERE timestamp <= (SELECT timestamp FROM block WHERE block.height = balance_row.height)
-                  ORDER BY timestamp DESC
-              ) AS prices
-     ) as prices
-$$ LANGUAGE sql STABLE;

@@ -3,6 +3,13 @@ package staking
 import (
 	"context"
 	"encoding/hex"
+	"time"
+
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+
+	bankutils "github.com/forbole/bdjuno/modules/bank/utils"
+	historyutils "github.com/forbole/bdjuno/modules/history/utils"
+	"github.com/forbole/bdjuno/modules/utils"
 
 	"github.com/desmos-labs/juno/client"
 
@@ -22,8 +29,8 @@ import (
 
 // HandleBlock represents a method that is called each time a new block is created
 func HandleBlock(
-	block *tmctypes.ResultBlock, vals *tmctypes.ResultValidators,
-	stakingClient stakingtypes.QueryClient,
+	cfg juno.Config, block *tmctypes.ResultBlock, vals *tmctypes.ResultValidators,
+	stakingClient stakingtypes.QueryClient, bankClient banktypes.QueryClient,
 	cdc codec.Marshaler, db *database.Db,
 ) error {
 	// Update the validators
@@ -46,6 +53,9 @@ func HandleBlock(
 
 	// Update the staking pool
 	go updateStakingPool(block.Block.Height, stakingClient, db)
+
+	// Update redelegations and unbonding delegations
+	go updateElapsedDelegations(cfg, block.Block.Height, block.Block.Time, stakingClient, bankClient, db)
 
 	return nil
 }
@@ -171,5 +181,60 @@ func updateStakingPool(height int64, stakingClient stakingtypes.QueryClient, db 
 		log.Error().Str("module", "staking").Err(err).Int64("height", height).
 			Msg("error while saving staking pool")
 		return
+	}
+}
+
+// updateElapsedDelegations updates the redelegations and unbonding delegations that have elapsed
+func updateElapsedDelegations(
+	cfg juno.Config, height int64, timestamp time.Time,
+	stakingClient stakingtypes.QueryClient, bankClient banktypes.QueryClient, db *database.Db,
+) {
+	log.Debug().Str("module", "staking").Int64("height", height).
+		Msg("updating elapsed redelegations and unbonding delegations")
+
+	deletedRedelegations, err := db.DeleteCompletedRedelegations(timestamp)
+	if err != nil {
+		log.Error().Str("module", "staking").Err(err).Int64("height", height).
+			Msg("error while deleting completed redelegations")
+		return
+	}
+
+	deletedUnbondingDelegations, err := db.DeleteCompletedUnbondingDelegations(timestamp)
+	if err != nil {
+		log.Error().Str("module", "staking").Err(err).Int64("height", height).
+			Msg("error while deleting completed unbonding delegations")
+		return
+	}
+
+	var delegators = map[string]bool{}
+
+	// Add all the delegators from the redelegations
+	for _, redelegation := range deletedRedelegations {
+		if _, ok := delegators[redelegation.DelegatorAddress]; !ok {
+			delegators[redelegation.DelegatorAddress] = true
+		}
+	}
+
+	// Add all the delegators from unbonding delegations
+	for _, delegation := range deletedUnbondingDelegations {
+		if _, ok := delegators[delegation.DelegatorAddress]; !ok {
+			delegators[delegation.DelegatorAddress] = true
+		}
+	}
+
+	// Update the delegations and balances of all the delegators
+	for delegator := range delegators {
+		stakingutils.RefreshDelegations(height, delegator, stakingClient, db)
+		bankutils.RefreshBalance(delegator, bankClient, db)
+
+		if utils.IsModuleEnabled(cfg, types.HistoryModuleName) {
+			err = historyutils.UpdateAccountBalanceHistory(delegator, db)
+			if err != nil {
+				log.Error().Str("module", "staking").Err(err).Int64("height", height).
+					Str("account", delegator).
+					Msg("error while updating account balance history")
+				return
+			}
+		}
 	}
 }

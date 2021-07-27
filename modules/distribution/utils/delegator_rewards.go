@@ -2,6 +2,7 @@ package utils
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/desmos-labs/juno/client"
 
@@ -32,11 +33,28 @@ func UpdateDelegatorsRewardsAmounts(height int64, client distrtypes.QueryClient,
 
 	// Get the rewards
 	for _, delegator := range delegators {
-		go getDelegatorCommission(height, delegator, client, db)
+		go updateDelegatorCommission(height, delegator, client, db)
 	}
 }
 
-func getDelegatorCommission(height int64, delegator string, distrClient distrtypes.QueryClient, db *database.Db) {
+func updateDelegatorCommission(height int64, delegator string, distrClient distrtypes.QueryClient, db *database.Db) {
+	rewards, err := GetDelegatorRewards(height, delegator, distrClient)
+	if err != nil {
+		log.Error().Str("module", "distribution").Err(err).
+			Int64("height", height).Str("delegator", delegator).
+			Msg("error while getting delegator rewards")
+	}
+
+	err = db.SaveDelegatorsRewardsAmounts(rewards)
+	if err != nil {
+		log.Error().Str("module", "distribution").Err(err).
+			Int64("height", height).Str("delegator", delegator).
+			Msg("error while saving delegator rewards")
+	}
+}
+
+// GetDelegatorRewards returns the current rewards for the given delegator
+func GetDelegatorRewards(height int64, delegator string, distrClient distrtypes.QueryClient) ([]types.DelegatorRewardAmount, error) {
 	header := client.GetHeightRequestHeader(height)
 
 	rewardsRes, err := distrClient.DelegationTotalRewards(
@@ -45,10 +63,7 @@ func getDelegatorCommission(height int64, delegator string, distrClient distrtyp
 		header,
 	)
 	if err != nil {
-		log.Error().Str("module", "distribution").Err(err).
-			Int64("height", height).Str("delegator", delegator).
-			Msg("error while getting delegator reward")
-		return
+		return nil, fmt.Errorf("error while getting delegator reward: %s", err)
 	}
 
 	withdrawAddressRes, err := distrClient.DelegatorWithdrawAddress(
@@ -57,10 +72,7 @@ func getDelegatorCommission(height int64, delegator string, distrClient distrtyp
 		header,
 	)
 	if err != nil {
-		log.Error().Str("module", "distribution").Err(err).
-			Int64("height", height).Str("delegator", delegator).
-			Msg("error while getting delegator withdraw address")
-		return
+		return nil, fmt.Errorf("error while getting delegator rewards: %s", err)
 	}
 
 	var rewards = make([]types.DelegatorRewardAmount, len(rewardsRes.Rewards))
@@ -73,11 +85,5 @@ func getDelegatorCommission(height int64, delegator string, distrClient distrtyp
 			height,
 		)
 	}
-
-	err = db.SaveDelegatorsRewardsAmounts(rewards)
-	if err != nil {
-		log.Error().Str("module", "distribution").Err(err).
-			Int64("height", height).Str("delegator", delegator).
-			Msg("error while saving delegator rewards")
-	}
+	return rewards, nil
 }
