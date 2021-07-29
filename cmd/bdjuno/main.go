@@ -1,10 +1,12 @@
 package main
 
 import (
-	desmosapp "github.com/desmos-labs/desmos/app"
+	"github.com/cosmos/cosmos-sdk/simapp"
+	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/desmos-labs/juno/cmd"
 	initcmd "github.com/desmos-labs/juno/cmd/init"
 	parsecmd "github.com/desmos-labs/juno/cmd/parse"
+	"github.com/desmos-labs/juno/modules/messages"
 
 	"github.com/forbole/bdjuno/types/config"
 
@@ -20,9 +22,9 @@ func main() {
 
 	parseCfg := parsecmd.NewConfig().
 		WithConfigParser(config.ParseConfig).
-		WithRegistrar(modules.NewRegistrar()).
 		WithDBBuilder(database.Builder).
-		WithEncodingConfigBuilder(desmosapp.MakeTestEncodingConfig)
+		WithEncodingConfigBuilder(config.MakeEncodingConfig(getBasicManagers())).
+		WithRegistrar(modules.NewRegistrar(getAddressesParser()))
 
 	cfg := cmd.NewConfig("bdjuno").
 		WithInitConfig(initCfg).
@@ -34,4 +36,22 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+}
+
+// getBasicManagers returns the various basic managers that are used to register the encoding to
+// support custom messages.
+// This should be edited by custom implementations if needed.
+func getBasicManagers() []module.BasicManager {
+	return []module.BasicManager{
+		simapp.ModuleBasics,
+	}
+}
+
+// getAddressesParser returns the messages parser that should be used to get the users involved in
+// a specific message.
+// This should be edited by custom implementations if needed.
+func getAddressesParser() messages.MessageAddressesParser {
+	return messages.JoinMessageParsers(
+		messages.CosmosMessageAddressesParser,
+	)
 }
