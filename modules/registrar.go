@@ -30,7 +30,6 @@ import (
 	"github.com/forbole/bdjuno/modules/pricefeed"
 	"github.com/forbole/bdjuno/modules/slashing"
 	"github.com/forbole/bdjuno/modules/staking"
-	"github.com/forbole/bdjuno/modules/utils"
 )
 
 var (
@@ -39,18 +38,20 @@ var (
 
 // Registrar represents the modules.Registrar that allows to register all modules that are supported by BigDipper
 type Registrar struct {
+	parser messages.MessageAddressesParser
 }
 
 // NewRegistrar allows to build a new Registrar instance
-func NewRegistrar() *Registrar {
-	return &Registrar{}
+func NewRegistrar(parser messages.MessageAddressesParser) *Registrar {
+	return &Registrar{
+		parser: parser,
+	}
 }
 
 // BuildModules implements modules.Registrar
 func (r *Registrar) BuildModules(
 	cfg juno.Config, encodingConfig *params.EncodingConfig, _ *sdk.Config, db db.Database, cp *client.Proxy,
 ) jmodules.Modules {
-	parser := utils.AddressesParser
 	bigDipperBd := database.Cast(db)
 	grpcConnection := client.MustCreateGrpcConnection(cfg)
 
@@ -63,9 +64,9 @@ func (r *Registrar) BuildModules(
 	stakingClient := stakingtypes.NewQueryClient(grpcConnection)
 
 	return []jmodules.Module{
-		messages.NewModule(parser, encodingConfig.Marshaler, db),
-		auth.NewModule(parser, authClient, encodingConfig, bigDipperBd),
-		bank.NewModule(parser, authClient, bankClient, encodingConfig, bigDipperBd),
+		messages.NewModule(r.parser, encodingConfig.Marshaler, db),
+		auth.NewModule(r.parser, authClient, encodingConfig, bigDipperBd),
+		bank.NewModule(r.parser, authClient, bankClient, encodingConfig, bigDipperBd),
 		consensus.NewModule(cp, bigDipperBd),
 		distribution.NewModule(distrClient, bigDipperBd),
 		gov.NewModule(bankClient, govClient, stakingClient, encodingConfig, bigDipperBd),
@@ -74,6 +75,6 @@ func (r *Registrar) BuildModules(
 		pricefeed.NewModule(encodingConfig, bigDipperBd),
 		slashing.NewModule(slashingClient, bigDipperBd),
 		staking.NewModule(cfg, bankClient, stakingClient, encodingConfig, bigDipperBd),
-		history.NewModule(parser, encodingConfig, bigDipperBd),
+		history.NewModule(r.parser, encodingConfig, bigDipperBd),
 	}
 }
