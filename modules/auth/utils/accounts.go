@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/types/query"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/desmos-labs/juno/client"
@@ -42,48 +41,6 @@ func GetGenesisAccounts(appState map[string]json.RawMessage, cdc codec.Marshaler
 }
 
 // --------------------------------------------------------------------------------------------------------------------
-
-// GetAllAccounts returns all account data
-func GetAllAccounts(addresses []string, cdc codec.Marshaler, height int64, authClient authtypes.QueryClient) ([]types.Account, error) {
-	log.Debug().Str("module", "auth").Str("operation", "accounts").Msg("getting accounts data")
-	var accounts []types.Account
-	header := client.GetHeightRequestHeader(height)
-
-	var nextKey []byte
-	var stop = false
-	for !stop {
-		res, err := authClient.Accounts(
-			context.Background(),
-			&authtypes.QueryAccountsRequest{
-				Pagination: &query.PageRequest{
-					Key:   nextKey,
-					Limit: 100, // Query 100 delegations at time
-				},
-			},
-			header,
-		)
-		if err != nil {
-			log.Error().Str("module", "auth").Err(err).Int64("height", height).
-				Str("Auth", "Get Account").Msg("error while getting accounts")
-		}
-
-		for _, account := range res.Accounts {
-			var accountI authtypes.AccountI
-			err := cdc.UnpackAny(account, &accountI)
-			if err != nil {
-				return nil, err
-			}
-			accounts = append(accounts, types.NewAccount(accountI.GetAddress().String(), accountI))
-
-		}
-
-		nextKey = res.Pagination.NextKey
-		stop = len(res.Pagination.NextKey) == 0
-
-	}
-
-	return accounts, nil
-}
 
 // GetAccounts returns the account data for the given addresses
 func GetAccounts(addresses []string, cdc codec.Marshaler, height int64, authClient authtypes.QueryClient) ([]types.Account, error) {
