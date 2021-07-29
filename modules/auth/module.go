@@ -15,10 +15,9 @@ import (
 )
 
 var (
-	_ modules.Module         = &Module{}
-	_ modules.GenesisModule  = &Module{}
-	_ modules.MessageModule  = &Module{}
-	_ modules.FastSyncModule = &Module{}
+	_ modules.Module        = &Module{}
+	_ modules.GenesisModule = &Module{}
+	_ modules.MessageModule = &Module{}
 )
 
 // Module represents the x/auth module
@@ -46,11 +45,6 @@ func NewModule(
 // Name implements modules.Module
 func (m *Module) Name() string {
 	return "auth"
-}
-
-// DownloadState implements modules.FastSyncModule
-func (m *Module) DownloadState(height int64) error {
-	return FastSync(height, m.authClient, m.db)
 }
 
 // HandleGenesis implements modules.GenesisModule

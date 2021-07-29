@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/cosmos/cosmos-sdk/simapp"
+	"github.com/cosmos/cosmos-sdk/types/module"
 	desmosapp "github.com/desmos-labs/desmos/app"
 	"github.com/desmos-labs/juno/cmd"
 	initcmd "github.com/desmos-labs/juno/cmd/init"
@@ -22,7 +24,7 @@ func main() {
 		WithConfigParser(config.ParseConfig).
 		WithRegistrar(modules.NewRegistrar()).
 		WithDBBuilder(database.Builder).
-		WithEncodingConfigBuilder(desmosapp.MakeTestEncodingConfig)
+		WithEncodingConfigBuilder(config.MakeEncodingConfig(getBasicManagers()))
 
 	cfg := cmd.NewConfig("bdjuno").
 		WithInitConfig(initCfg).
@@ -33,5 +35,14 @@ func main() {
 	err := executor.Execute()
 	if err != nil {
 		panic(err)
+	}
+}
+
+// getBasicManagers returns the various basic managers that are used to
+// register the encoding to support custom messages
+func getBasicManagers() []module.BasicManager {
+	return []module.BasicManager{
+		simapp.ModuleBasics,
+		desmosapp.ModuleBasics,
 	}
 }
