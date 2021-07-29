@@ -4,7 +4,6 @@ go 1.15
 
 require (
 	github.com/cosmos/cosmos-sdk v0.42.7
-	github.com/desmos-labs/desmos v0.17.2
 	github.com/desmos-labs/juno v0.0.0-20210726090239-dc0f7b55ac70
 	github.com/go-co-op/gocron v0.3.3
 	github.com/gogo/protobuf v1.3.3
@@ -24,5 +23,3 @@ require (
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 
 replace google.golang.org/grpc => google.golang.org/grpc v1.33.2
-
-replace github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.42.5-0.20210712073217-87acd62da7d7
