@@ -2,14 +2,9 @@
 
 CREATE TABLE mint_params
 (
-    one_row_id            BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
-    mint_denom            TEXT    NOT NULL,
-    inflation_rate_change DECIMAL NOT NULL,
-    inflation_min         DECIMAL NOT NULL,
-    inflation_max         DECIMAL NOT NULL,
-    goal_bonded           DECIMAL NOT NULL,
-    blocks_per_year       BIGINT  NOT NULL,
-    height                BIGINT  NOT NULL,
+    one_row_id BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
+    params     JSONB   NOT NULL,
+    height     BIGINT  NOT NULL,
     CHECK (one_row_id)
 );
 
