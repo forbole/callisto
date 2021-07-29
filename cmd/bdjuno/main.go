@@ -3,11 +3,11 @@ package main
 import (
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	desmosapp "github.com/desmos-labs/desmos/app"
 	"github.com/desmos-labs/juno/cmd"
 	initcmd "github.com/desmos-labs/juno/cmd/init"
 	parsecmd "github.com/desmos-labs/juno/cmd/parse"
 	"github.com/desmos-labs/juno/modules/messages"
+	osmosisapp "github.com/osmosis-labs/osmosis/app"
 
 	"github.com/forbole/bdjuno/types/config"
 
@@ -45,7 +45,7 @@ func main() {
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
 		simapp.ModuleBasics,
-		desmosapp.ModuleBasics,
+		osmosisapp.ModuleBasics,
 	}
 }
 
@@ -54,7 +54,7 @@ func getBasicManagers() []module.BasicManager {
 // This should be edited by custom implementations if needed.
 func getAddressesParser() messages.MessageAddressesParser {
 	return messages.JoinMessageParsers(
-		desmosMessageAddressesParser,
+		osmosisMessageAddressesParser,
 		messages.CosmosMessageAddressesParser,
 	)
 }

@@ -3,6 +3,8 @@ package database_test
 import (
 	"time"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	dbtypes "github.com/forbole/bdjuno/database/types"
@@ -17,6 +19,7 @@ func (suite *DbTestSuite) TestSaveStakingParams() {
 			7,
 			10000,
 			"uatom",
+			sdk.NewDec(10),
 		),
 		10,
 	))
@@ -33,14 +36,15 @@ func (suite *DbTestSuite) TestSaveStakingParams() {
 		7,
 		10000,
 		200,
+		"10.000000000000000000",
 		10,
 	)))
 }
 
 func (suite *DbTestSuite) TestGetStakingParams() {
 	_, err := suite.database.Sql.Exec(`
-INSERT INTO staking_params (bond_denom, unbonding_time, max_entries, historical_entries, max_validators, height) 
-VALUES ($1, $2, $3, $4, $5, $6)`, "uatom", 259200000000000, 7, 10000, 200, 10)
+INSERT INTO staking_params (bond_denom, unbonding_time, max_entries, historical_entries, max_validators, min_commission_rate, height) 
+VALUES ($1, $2, $3, $4, $5, $6, $7)`, "uatom", 259200000000000, 7, 10000, 200, "10", 10)
 	suite.Require().NoError(err)
 
 	params, err := suite.database.GetStakingParams()
@@ -53,6 +57,7 @@ VALUES ($1, $2, $3, $4, $5, $6)`, "uatom", 259200000000000, 7, 10000, 200, 10)
 			7,
 			10000,
 			"uatom",
+			sdk.NewDec(10),
 		),
 		Height: 10,
 	}, params)

@@ -126,10 +126,8 @@ github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSs
 github.com/decred/dcrd/lru v1.0.0/go.mod h1:mxKOwFd7lFjN2GZYsiz/ecgqR6kkYAl+0pz0tEMk218=
 github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20210623064146-c30bc8196d0f h1:gUywWy8Pw1ROmF4o/qLy/FP1bEyEtjPg6a/RgdXmcCA=
 github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20210623064146-c30bc8196d0f/go.mod h1:5TMhouV+kDGQZZrBK+rzBP+Jmeyu0V7WvrBHqukiTv8=
-github.com/desmos-labs/cosmos-sdk v0.42.5-0.20210712073217-87acd62da7d7 h1:VwZstC18enkOYyN31k3eIimQKINv/uzpbUwrh7MEVeM=
-github.com/desmos-labs/cosmos-sdk v0.42.5-0.20210712073217-87acd62da7d7/go.mod h1:SrclJP9lMXxz2fCbngxb0brsPNuZXqoQQ9VHuQ3Tpf4=
-github.com/desmos-labs/desmos v0.17.2 h1:cnAvdkhd50oY43P5L6cnp9oIu1wHANEletaRAUdl+ts=
-github.com/desmos-labs/desmos v0.17.2/go.mod h1:E3yKKKryYT2Ll4MJRq3bFtaTZ6+uRJvBG7puNqnhjxM=
+github.com/desmos-labs/desmos v0.17.5 h1:x31R3aDtefwg33CCwTcHbJoeoSgy6NQX1lbh+Y01MFQ=
+github.com/desmos-labs/desmos v0.17.5/go.mod h1:yxP88i2+dvupPJM4jKK8qMd5GfoZ28ySp3mMSEvxOO8=
 github.com/desmos-labs/juno v0.0.0-20210726090239-dc0f7b55ac70 h1:71W1nSl1xT0IJBfOxNUsUdmDMvBSaGkxeKDG88WRcuE=
 github.com/desmos-labs/juno v0.0.0-20210726090239-dc0f7b55ac70/go.mod h1:JL/4Z0Ps6Ib8Lu4OyAdtjyZUKVbiC//1db4PWchtKEU=
 github.com/dgraph-io/badger/v2 v2.2007.1/go.mod h1:26P/7fbL4kUZVEVKLAKXkBXKOydDmM2p1e+NhhnBCAE=
@@ -436,6 +434,10 @@ github.com/openzipkin-contrib/zipkin-go-opentracing v0.4.5/go.mod h1:/wsWhb9smxS
 github.com/openzipkin/zipkin-go v0.1.6/go.mod h1:QgAqvLzwWbR/WpD4A3cGpPtJrZXNIiJc5AZX7/PBEpw=
 github.com/openzipkin/zipkin-go v0.2.1/go.mod h1:NaW6tEwdmWMaCDZzg8sh+IBNOxHMPnhQw8ySjnjRyN4=
 github.com/openzipkin/zipkin-go v0.2.2/go.mod h1:NaW6tEwdmWMaCDZzg8sh+IBNOxHMPnhQw8ySjnjRyN4=
+github.com/osmosis-labs/cosmos-sdk v0.42.5-0.20210630232304-f792e47135c3 h1:RSmqvmlkqHf4AXwNDoRmerAVUFgjTkkujJiZVTtqNSA=
+github.com/osmosis-labs/cosmos-sdk v0.42.5-0.20210630232304-f792e47135c3/go.mod h1:kh37gwYQoWdgR7N/9zeqW2rJ7cnP2W4A7nqIaf6m3zg=
+github.com/osmosis-labs/osmosis v1.0.3 h1:REtDJZcLgByE2warQXGQLnBs8YhTBHDYK2riRUlflRg=
+github.com/osmosis-labs/osmosis v1.0.3/go.mod h1:ENV3qCKuW18bWUQASaBZa7JyZQQ/ux3qZrvNpXs8AdQ=
 github.com/otiai10/copy v1.6.0 h1:IinKAryFFuPONZ7cm6T6E2QX/vcJwSnlaA5lfoaXIiQ=
 github.com/otiai10/copy v1.6.0/go.mod h1:XWfuS3CrI0R6IE0FbgHsEazaXO8G0LpMp9o8tos0x4E=
 github.com/otiai10/curr v0.0.0-20150429015615-9b4961190c95/go.mod h1:9qAhocn7zKJG+0mI8eUu6xqkFDYS2kb2saOteoSB3cE=
