@@ -1,3 +1,10 @@
+table:
+  name: double_sign_vote
+  schema: public
+object_relationships:
+- name: validator
+  using:
+    foreign_key_constraint_on: validator_address
 array_relationships:
 - name: doubleSignEvidencesByVoteBId
   using:
@@ -13,10 +20,6 @@ array_relationships:
       table:
         name: double_sign_evidence
         schema: public
-object_relationships:
-- name: validator
-  using:
-    foreign_key_constraint_on: validator_address
 select_permissions:
 - permission:
     allow_aggregations: true
@@ -44,6 +47,3 @@ select_permissions:
     - signature
     filter: {}
   role: client
-table:
-  name: double_sign_vote
-  schema: public

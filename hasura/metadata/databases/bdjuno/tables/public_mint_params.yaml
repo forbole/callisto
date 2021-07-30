@@ -1,3 +1,6 @@
+table:
+  name: mint_params
+  schema: public
 select_permissions:
 - permission:
     allow_aggregations: true
@@ -12,6 +15,3 @@ select_permissions:
     - height
     filter: {}
   role: anonymous
-table:
-  name: mint_params
-  schema: public

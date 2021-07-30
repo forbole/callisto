@@ -1,3 +1,6 @@
+table:
+  name: double_sign_evidence
+  schema: public
 object_relationships:
 - name: doubleSignVoteByVoteAId
   using:
@@ -22,6 +25,3 @@ select_permissions:
     - vote_b_id
     filter: {}
   role: client
-table:
-  name: double_sign_evidence
-  schema: public

@@ -1,3 +1,6 @@
+table:
+  name: pre_commit
+  schema: public
 object_relationships:
 - name: validator
   using:
@@ -23,6 +26,3 @@ select_permissions:
     - proposer_priority
     filter: {}
   role: client
-table:
-  name: pre_commit
-  schema: public

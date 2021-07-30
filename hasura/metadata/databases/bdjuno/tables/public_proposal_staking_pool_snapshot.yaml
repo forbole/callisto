@@ -1,3 +1,6 @@
+table:
+  name: proposal_staking_pool_snapshot
+  schema: public
 object_relationships:
 - name: proposal
   using:
@@ -12,6 +15,3 @@ select_permissions:
     - height
     filter: {}
   role: anonymous
-table:
-  name: proposal_staking_pool_snapshot
-  schema: public

@@ -1,3 +1,28 @@
+table:
+  name: proposal
+  schema: public
+object_relationships:
+- name: proposal_tally_result
+  using:
+    manual_configuration:
+      column_mapping:
+        id: proposal_id
+      insertion_order: null
+      remote_table:
+        name: proposal_tally_result
+        schema: public
+- name: proposer
+  using:
+    foreign_key_constraint_on: proposer_address
+- name: staking_pool_snapshot
+  using:
+    manual_configuration:
+      column_mapping:
+        id: proposal_id
+      insertion_order: null
+      remote_table:
+        name: proposal_staking_pool_snapshot
+        schema: public
 array_relationships:
 - name: proposal_deposits
   using:
@@ -27,28 +52,6 @@ array_relationships:
       table:
         name: proposal_validator_status_snapshot
         schema: public
-object_relationships:
-- name: proposal_tally_result
-  using:
-    manual_configuration:
-      column_mapping:
-        id: proposal_id
-      insertion_order: null
-      remote_table:
-        name: proposal_tally_result
-        schema: public
-- name: proposer
-  using:
-    foreign_key_constraint_on: proposer_address
-- name: staking_pool_snapshot
-  using:
-    manual_configuration:
-      column_mapping:
-        id: proposal_id
-      insertion_order: null
-      remote_table:
-        name: proposal_staking_pool_snapshot
-        schema: public
 select_permissions:
 - permission:
     allow_aggregations: true
@@ -67,6 +70,3 @@ select_permissions:
     - content
     filter: {}
   role: anonymous
-table:
-  name: proposal
-  schema: public

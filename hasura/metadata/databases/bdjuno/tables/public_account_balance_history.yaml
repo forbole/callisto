@@ -1,3 +1,10 @@
+table:
+  name: account_balance_history
+  schema: public
+object_relationships:
+- name: account
+  using:
+    foreign_key_constraint_on: address
 computed_fields:
 - comment: ""
   definition:
@@ -5,22 +12,17 @@ computed_fields:
       name: account_balance_history_tokens_prices
       schema: public
   name: token_prices_history
-object_relationships:
-- name: account
-  using:
-    foreign_key_constraint_on: address
-- name: block
-  using:
-    foreign_key_constraint_on: height
 select_permissions:
 - permission:
     allow_aggregations: true
     columns:
     - address
-    - coins
-    - height
+    - balance
+    - delegated
+    - unbonding
+    - redelegating
+    - commission
+    - reward
+    - timestamp
     filter: {}
   role: anonymous
-table:
-  name: account_balance_history
-  schema: public
