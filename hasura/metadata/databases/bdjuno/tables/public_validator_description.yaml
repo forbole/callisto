@@ -1,3 +1,6 @@
+table:
+  name: validator_description
+  schema: public
 object_relationships:
 - name: validator
   using:
@@ -16,6 +19,3 @@ select_permissions:
     - avatar_url
     filter: {}
   role: anonymous
-table:
-  name: validator_description
-  schema: public

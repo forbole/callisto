@@ -7,6 +7,3 @@ build/
 
 # Coverage
 coverage.*
-
-# Hasura
-hasura/config.yaml

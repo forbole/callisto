@@ -1,3 +1,6 @@
+table:
+  name: unbonding_delegation
+  schema: public
 object_relationships:
 - name: account
   using:
@@ -16,6 +19,3 @@ select_permissions:
     - height
     filter: {}
   role: anonymous
-table:
-  name: unbonding_delegation
-  schema: public
