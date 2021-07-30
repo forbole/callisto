@@ -1,6 +1,7 @@
 package modules
 
 import (
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authttypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -16,6 +17,7 @@ import (
 	"github.com/desmos-labs/juno/modules/messages"
 	"github.com/desmos-labs/juno/modules/registrar"
 	juno "github.com/desmos-labs/juno/types"
+	"github.com/forbole/bdjuno/utils"
 
 	"github.com/forbole/bdjuno/modules/history"
 
@@ -32,6 +34,20 @@ import (
 	"github.com/forbole/bdjuno/modules/staking"
 )
 
+// UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
+func UniqueAddressesParser(parser messages.MessageAddressesParser) messages.MessageAddressesParser {
+	return func(cdc codec.Marshaler, msg sdk.Msg) ([]string, error) {
+		addresses, err := parser(cdc, msg)
+		if err != nil {
+			return nil, err
+		}
+
+		return utils.RemoveDuplicateValues(addresses), nil
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 var (
 	_ registrar.Registrar = &Registrar{}
 )
@@ -44,7 +60,7 @@ type Registrar struct {
 // NewRegistrar allows to build a new Registrar instance
 func NewRegistrar(parser messages.MessageAddressesParser) *Registrar {
 	return &Registrar{
-		parser: parser,
+		parser: UniqueAddressesParser(parser),
 	}
 }
 
