@@ -13,7 +13,7 @@ a [PostgreSQL](https://www.postgresql.org/) database on top of which [GraphQL](h
 created using [Hasura](https://hasura.io/).
 
 ## Usage
-To know how to setup and run BDJuno, please refer to the [docs folder](.docs). 
+To know how to setup and run BDJuno, please refer to the [docs website](https://docs.bigdipper.live/cosmos-based/parser/overview/). 
 
 ## Testing
 If you want to test the code, you can do so by running
