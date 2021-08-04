@@ -1,6 +1,7 @@
 package database_test
 
 import (
+	"encoding/json"
 	"time"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -10,16 +11,14 @@ import (
 )
 
 func (suite *DbTestSuite) TestSaveStakingParams() {
-	err := suite.database.SaveStakingParams(types.NewStakingParams(
-		stakingtypes.NewParams(
-			time.Duration(259200000000000),
-			200,
-			7,
-			10000,
-			"uatom",
-		),
-		10,
-	))
+	stakingParams := stakingtypes.NewParams(
+		time.Duration(259200000000000),
+		200,
+		7,
+		10000,
+		"uatom",
+	)
+	err := suite.database.SaveStakingParams(types.NewStakingParams(stakingParams, 10))
 	suite.Require().NoError(err)
 
 	var rows []dbtypes.StakingParamsRow
@@ -27,33 +26,36 @@ func (suite *DbTestSuite) TestSaveStakingParams() {
 	suite.Require().NoError(err)
 
 	suite.Require().Len(rows, 1)
-	suite.Require().True(rows[0].Equal(dbtypes.NewStakingParamsRow(
-		"uatom",
-		259200000000000,
-		7,
-		10000,
-		200,
-		10,
-	)))
+
+	var stored stakingtypes.Params
+	err = json.Unmarshal([]byte(rows[0].Params), &stored)
+	suite.Require().NoError(err)
+	suite.Require().Equal(stakingParams, stored)
 }
 
 func (suite *DbTestSuite) TestGetStakingParams() {
-	_, err := suite.database.Sql.Exec(`
-INSERT INTO staking_params (bond_denom, unbonding_time, max_entries, historical_entries, max_validators, height) 
-VALUES ($1, $2, $3, $4, $5, $6)`, "uatom", 259200000000000, 7, 10000, 200, 10)
+	stakingParams := stakingtypes.NewParams(
+		259200000000000,
+		200,
+		7,
+		10000,
+		"uatom",
+	)
+
+	paramsBz, err := json.Marshal(&stakingParams)
+	suite.Require().NoError(err)
+
+	_, err = suite.database.Sql.Exec(
+		`INSERT INTO staking_params (params, height) VALUES ($1, $2)`,
+		string(paramsBz), 10,
+	)
 	suite.Require().NoError(err)
 
 	params, err := suite.database.GetStakingParams()
 	suite.Require().NoError(err)
 
 	suite.Require().Equal(&types.StakingParams{
-		Params: stakingtypes.NewParams(
-			259200000000000,
-			200,
-			7,
-			10000,
-			"uatom",
-		),
+		Params: stakingParams,
 		Height: 10,
 	}, params)
 }

@@ -2,26 +2,9 @@ package types
 
 // DistributionParamsRow represents a single row inside the distribution_params table
 type DistributionParamsRow struct {
-	CommunityTax           string `db:"community_tax"`
-	BaseProposerReward     string `db:"base_proposer_reward"`
-	BonusProposerReward    string `db:"bonus_proposer_reward"`
-	Height                 int64  `db:"height"`
-	OneRowID               bool   `db:"one_row_id"`
-	WithdrawAddressEnabled bool   `db:"withdraw_address_enabled"`
-}
-
-// NewDistributionParamsRow allows to create a new DistributionParamsRow instance
-func NewDistributionParamsRow(
-	communityTax, baseProposerReward, bonusProposerReward string, withdrawAddressEnabled bool, height int64,
-) DistributionParamsRow {
-	return DistributionParamsRow{
-		OneRowID:               true,
-		CommunityTax:           communityTax,
-		BaseProposerReward:     baseProposerReward,
-		BonusProposerReward:    bonusProposerReward,
-		WithdrawAddressEnabled: withdrawAddressEnabled,
-		Height:                 height,
-	}
+	OneRowID bool   `db:"one_row_id"`
+	Params   string `db:"params"`
+	Height   int64  `db:"height"`
 }
 
 // -------------------------------------------------------------------------------------------------------------------

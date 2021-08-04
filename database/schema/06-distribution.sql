@@ -8,12 +8,9 @@ CREATE TYPE DEC_COIN AS
 
 CREATE TABLE distribution_params
 (
-    one_row_id               BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
-    community_tax            DECIMAL NOT NULL,
-    base_proposer_reward     DECIMAL NOT NULL,
-    bonus_proposer_reward    DECIMAL NOT NULL,
-    withdraw_address_enabled BOOL    NOT NULL,
-    height                   BIGINT  NOT NULL,
+    one_row_id BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
+    params     JSONB   NOT NULL,
+    height     BIGINT  NOT NULL,
     CHECK (one_row_id)
 );
 CREATE INDEX distribution_params_height_index ON distribution_params (height);
