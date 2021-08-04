@@ -17,7 +17,6 @@ import (
 	"github.com/desmos-labs/juno/modules/messages"
 	"github.com/desmos-labs/juno/modules/registrar"
 	juno "github.com/desmos-labs/juno/types"
-
 	"github.com/forbole/bdjuno/utils"
 
 	"github.com/forbole/bdjuno/modules/history"
