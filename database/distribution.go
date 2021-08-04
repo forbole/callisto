@@ -1,6 +1,7 @@
 package database
 
 import (
+	"encoding/json"
 	"fmt"
 
 	dbtypes "github.com/forbole/bdjuno/database/types"
@@ -28,19 +29,19 @@ WHERE community_pool.height <= excluded.height`
 
 // SaveDistributionParams allows to store the given distribution parameters inside the database
 func (db *Db) SaveDistributionParams(params types.DistributionParams) error {
+	paramsBz, err := json.Marshal(&params.Params)
+	if err != nil {
+		return err
+	}
+
 	stmt := `
-INSERT INTO distribution_params (community_tax, base_proposer_reward, bonus_proposer_reward, withdraw_address_enabled, height) 
-VALUES ($1, $2, $3, $4, $5)
+INSERT INTO distribution_params (params, height) 
+VALUES ($1, $2)
 ON CONFLICT (one_row_id) DO UPDATE 
-    SET community_tax = excluded.community_tax,
-      	base_proposer_reward = excluded.base_proposer_reward,
-      	bonus_proposer_reward = excluded.bonus_proposer_reward,
-      	withdraw_address_enabled = excluded.withdraw_address_enabled,
+    SET params = excluded.params,
       	height = excluded.height
 WHERE distribution_params.height <= excluded.height`
-	_, err := db.Sql.Exec(stmt,
-		params.CommunityTax.String(), params.BaseProposerReward.String(), params.BonusProposerReward.String(),
-		params.WithdrawAddrEnabled, params.Height)
+	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
 	return err
 }
 

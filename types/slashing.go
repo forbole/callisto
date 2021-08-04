@@ -28,7 +28,7 @@ func (v ValidatorSigningInfo) Equal(w ValidatorSigningInfo) bool {
 		v.Height == w.Height
 }
 
-// NewValidatorSigningInfo allows to build a new ValidatorSigningInfo
+// ValidatorSigningInfo allows to build a new ValidatorSigningInfo
 func NewValidatorSigningInfo(
 	validatorAddress string,
 	startHeight int64,

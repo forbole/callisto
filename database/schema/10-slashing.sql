@@ -12,13 +12,9 @@ CREATE INDEX validator_signing_info_height_index ON validator_signing_info (heig
 
 CREATE TABLE slashing_params
 (
-    one_row_id                 BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
-    signed_block_window        BIGINT  NOT NULL,
-    min_signed_per_window      DECIMAL NOT NULL,
-    downtime_jail_duration     BIGINT  NOT NULL,
-    slash_fraction_double_sign DECIMAL NOT NULL,
-    slash_fraction_downtime    DECIMAL NOT NULL,
-    height                     BIGINT  NOT NULL,
+    one_row_id BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
+    params     JSONB   NOT NULL,
+    height     BIGINT  NOT NULL,
     CHECK (one_row_id)
 );
 CREATE INDEX slashing_params_height_index ON slashing_params (height);
