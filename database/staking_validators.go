@@ -351,6 +351,10 @@ func (db *Db) getValidatorCommission(address sdk.ConsAddress) (*dbtypes.Validato
 // proper database table.
 // TIP: To store the validator data call SaveValidatorData.
 func (db *Db) SaveValidatorsVotingPowers(entries []types.ValidatorVotingPower) error {
+	if len(entries) == 0 {
+		return nil
+	}
+
 	stmt := `INSERT INTO validator_voting_power (validator_address, voting_power, height) VALUES `
 	var params []interface{}
 
@@ -375,6 +379,10 @@ WHERE validator_voting_power.height <= excluded.height`
 
 // SaveValidatorsStatuses save validator jail and status in the given height and timestamp
 func (db *Db) SaveValidatorsStatuses(statuses []types.ValidatorStatus) error {
+	if len(statuses) == 0 {
+		return nil
+	}
+
 	validatorStmt := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES`
 	var valParams []interface{}
 

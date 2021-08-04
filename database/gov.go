@@ -256,7 +256,9 @@ func (db *Db) SaveTallyResults(tallys []types.TallyResult) error {
 	if len(tallys) == 0 {
 		return nil
 	}
+
 	query := `INSERT INTO proposal_tally_result(proposal_id, yes, abstain, no, no_with_veto, height) VALUES`
+
 	var param []interface{}
 	for i, tally := range tallys {
 		vi := i * 6
@@ -269,6 +271,7 @@ func (db *Db) SaveTallyResults(tallys []types.TallyResult) error {
 			tally.Height,
 		)
 	}
+
 	query = query[:len(query)-1] // Remove trailing ","
 	query += `
 ON CONFLICT ON CONSTRAINT unique_tally_result DO UPDATE 
@@ -303,6 +306,10 @@ WHERE proposal_staking_pool_snapshot.height <= excluded.height`
 
 // SaveProposalValidatorsStatusesSnapshots allows to save the given validator statuses snapshots
 func (db *Db) SaveProposalValidatorsStatusesSnapshots(snapshots []types.ProposalValidatorStatusSnapshot) error {
+	if len(snapshots) == 0 {
+		return nil
+	}
+
 	stmt := `
 INSERT INTO proposal_validator_status_snapshot(proposal_id, validator_address, voting_power, status, jailed, height) 
 VALUES `
