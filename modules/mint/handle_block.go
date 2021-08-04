@@ -37,7 +37,15 @@ func updateParams(height int64, mintClient minttypes.QueryClient, db *database.D
 		return
 	}
 
-	err = db.SaveMintParams(types.NewMintParams(res.Params, height))
+	err = db.SaveMintParams(types.NewMintParams(
+		res.Params.MintDenom,
+		res.Params.InflationRateChange,
+		res.Params.InflationMax,
+		res.Params.InflationMin,
+		res.Params.GoalBonded,
+		res.Params.BlocksPerYear,
+		height,
+	))
 	if err != nil {
 		log.Error().Str("module", "mint").Err(err).
 			Int64("height", height).
