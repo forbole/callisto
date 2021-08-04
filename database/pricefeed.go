@@ -50,6 +50,10 @@ func (db *Db) SaveToken(token types.Token) error {
 
 // SaveTokensPrices allows to save the given prices as the most updated ones
 func (db *Db) SaveTokensPrices(prices []types.TokenPrice) error {
+	if len(prices) == 0 {
+		return nil
+	}
+
 	err := db.saveUpToDateTokenPrices(prices)
 	if err != nil {
 		return fmt.Errorf("error while storing up-to-date token prices: %s", err)

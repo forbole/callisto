@@ -15,6 +15,10 @@ import (
 
 // SaveAccountBalances allows to store the given balances inside the database
 func (db *Db) SaveAccountBalances(balances []types.AccountBalance) error {
+	if len(balances) == 0 {
+		return nil
+	}
+
 	paramsNumber := 3
 	slices := dbutils.SplitBalances(balances, paramsNumber)
 
