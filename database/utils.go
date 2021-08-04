@@ -6,6 +6,10 @@ import (
 
 // InsertEnableModules allows to save enabled module into the database
 func (db *Db) InsertEnableModules(modules []string) error {
+	if len(modules) == 0 {
+		return nil
+	}
+
 	//clear table first
 	stmt := "DELETE FROM modules WHERE TRUE"
 	_, err := db.Sql.Exec(stmt)

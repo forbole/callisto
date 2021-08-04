@@ -9,6 +9,10 @@ import (
 
 // SaveValidatorsSigningInfos saves the given infos inside the database
 func (db *Db) SaveValidatorsSigningInfos(infos []types.ValidatorSigningInfo) error {
+	if len(infos) == 0 {
+		return nil
+	}
+
 	stmt := `
 INSERT INTO validator_signing_info 
     (validator_address, start_height, index_offset, jailed_until, tombstoned, missed_blocks_counter, height)
