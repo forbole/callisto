@@ -3,6 +3,7 @@ package database
 import (
 	"encoding/json"
 	"fmt"
+
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	dbtypes "github.com/forbole/bdjuno/database/types"
