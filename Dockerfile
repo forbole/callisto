@@ -1,11 +1,10 @@
-FROM golang:1.16 AS builder
-WORKDIR /go/src/github.com/forbole/big-dipper
+FROM golang:1.16-alpine AS builder
+RUN apk update && apk add --no-cache make git
+WORKDIR /go/src/github.com/forbole/bdjuno
 COPY . ./
-RUN CGO_ENABLED=0 go build -o /build/bdjuno ./cmd/bdjuno
+RUN make build
 
 FROM alpine:latest
-WORKDIR /root/
-COPY --from=0 /build/bdjuno ./
-RUN ./bdjuno init
-ENTRYPOINT ["./bdjuno"]
-CMD ["parse", "--home", "/root/.bdjuno"]
+WORKDIR /bdjuno
+COPY --from=builder /go/src/github.com/forbole/bdjuno/build/bdjuno /usr/bin/bdjuno
+CMD [ "bdjuno" ]

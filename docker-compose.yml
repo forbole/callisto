@@ -16,8 +16,11 @@ services:
       ## uncomment next line to set an admin secret
       # HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
   bdjuno:
-    image: forbole/bdjuno:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: always
+    command: bdjuno parse --home /bdjuno/.bdjuno
     volumes:
       ## Modify first path to match configuration file.
-      - /root/.bdjuno:/root/.bdjuno
+      - /bdjuno/.bdjuno/bdjuno/.bdjuno
