@@ -3,8 +3,8 @@ package mint
 import (
 	"context"
 
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	"github.com/desmos-labs/juno/client"
+	minttypes "github.com/osmosis-labs/osmosis/x/mint/types"
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
