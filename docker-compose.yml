@@ -23,4 +23,4 @@ services:
     command: bdjuno parse --home /bdjuno/.bdjuno
     volumes:
       ## Modify first path to match configuration file.
-      - /bdjuno/.bdjuno/bdjuno/.bdjuno
+      - /bdjuno/.bdjuno:/bdjuno/.bdjuno
