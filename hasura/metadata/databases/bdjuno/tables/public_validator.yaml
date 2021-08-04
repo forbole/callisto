@@ -1,3 +1,16 @@
+table:
+  name: validator
+  schema: public
+object_relationships:
+- name: validator_info
+  using:
+    manual_configuration:
+      column_mapping:
+        consensus_address: consensus_address
+      insertion_order: null
+      remote_table:
+        name: validator_info
+        schema: public
 array_relationships:
 - name: blocks
   using:
@@ -5,13 +18,6 @@ array_relationships:
       column: proposer_address
       table:
         name: block
-        schema: public
-- name: delegation_reward_histories
-  using:
-    foreign_key_constraint_on:
-      column: validator_address
-      table:
-        name: delegation_reward_history
         schema: public
 - name: delegation_rewards
   using:
@@ -61,13 +67,6 @@ array_relationships:
       column: validator_address
       table:
         name: unbonding_delegation
-        schema: public
-- name: validator_commission_amount_histories
-  using:
-    foreign_key_constraint_on:
-      column: validator_address
-      table:
-        name: validator_commission_amount_history
         schema: public
 - name: validator_commission_amounts
   using:
@@ -127,16 +126,6 @@ computed_fields:
       name: self_delegations
       schema: public
   name: self_delegations
-object_relationships:
-- name: validator_info
-  using:
-    manual_configuration:
-      column_mapping:
-        consensus_address: consensus_address
-      insertion_order: null
-      remote_table:
-        name: validator_info
-        schema: public
 select_permissions:
 - permission:
     allow_aggregations: true
@@ -145,6 +134,3 @@ select_permissions:
     - consensus_pubkey
     filter: {}
   role: anonymous
-table:
-  name: validator
-  schema: public

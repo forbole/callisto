@@ -1,3 +1,6 @@
+table:
+  name: message
+  schema: public
 object_relationships:
 - name: transaction
   using:
@@ -13,6 +16,3 @@ select_permissions:
     - involved_accounts_addresses
     filter: {}
   role: anonymous
-table:
-  name: message
-  schema: public

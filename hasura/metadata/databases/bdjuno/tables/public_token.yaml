@@ -1,3 +1,6 @@
+table:
+  name: token
+  schema: public
 array_relationships:
 - name: token_units
   using:
@@ -13,6 +16,3 @@ select_permissions:
     - name
     filter: {}
   role: anonymous
-table:
-  name: token
-  schema: public

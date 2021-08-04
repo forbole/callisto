@@ -13,13 +13,3 @@
       use_prepared_statements: true
   tables: "!include bdjuno/tables/tables.yaml"
   functions: "!include bdjuno/functions/functions.yaml"
-- name: djuno
-  kind: postgres
-  configuration:
-    connection_info:
-      database_url:
-        from_env: HASURA_GRAPHQL_DJUNO_DATABASE_URL
-      isolation_level: read-committed
-      use_prepared_statements: false
-  tables: "!include djuno/tables/tables.yaml"
-  functions: "!include djuno/functions/functions.yaml"

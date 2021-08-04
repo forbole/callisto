@@ -1,3 +1,6 @@
+table:
+  name: account
+  schema: public
 array_relationships:
 - name: account_balance_histories
   using:
@@ -12,20 +15,6 @@ array_relationships:
       column: address
       table:
         name: account_balance
-        schema: public
-- name: delegation_histories
-  using:
-    foreign_key_constraint_on:
-      column: delegator_address
-      table:
-        name: delegation_history
-        schema: public
-- name: delegation_reward_histories
-  using:
-    foreign_key_constraint_on:
-      column: delegator_address
-      table:
-        name: delegation_reward_history
         schema: public
 - name: delegation_rewards
   using:
@@ -62,26 +51,12 @@ array_relationships:
       table:
         name: proposal
         schema: public
-- name: redelegation_histories
-  using:
-    foreign_key_constraint_on:
-      column: delegator_address
-      table:
-        name: redelegation_history
-        schema: public
 - name: redelegations
   using:
     foreign_key_constraint_on:
       column: delegator_address
       table:
         name: redelegation
-        schema: public
-- name: unbonding_delegation_histories
-  using:
-    foreign_key_constraint_on:
-      column: delegator_address
-      table:
-        name: unbonding_delegation_history
         schema: public
 - name: unbonding_delegations
   using:
@@ -104,6 +79,3 @@ select_permissions:
     - address
     filter: {}
   role: anonymous
-table:
-  name: account
-  schema: public

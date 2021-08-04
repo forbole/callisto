@@ -1,10 +1,6 @@
-computed_fields:
-- comment: ""
-  definition:
-    function:
-      name: account_balance_tokens_prices
-      schema: public
-  name: tokens_prices
+table:
+  name: account_balance
+  schema: public
 object_relationships:
 - name: account
   using:
@@ -18,6 +14,13 @@ object_relationships:
       remote_table:
         name: block
         schema: public
+computed_fields:
+- comment: ""
+  definition:
+    function:
+      name: account_balance_tokens_prices
+      schema: public
+  name: tokens_prices
 select_permissions:
 - permission:
     allow_aggregations: true
@@ -27,6 +30,3 @@ select_permissions:
     - height
     filter: {}
   role: anonymous
-table:
-  name: account_balance
-  schema: public

@@ -1,3 +1,6 @@
+table:
+  name: token_price
+  schema: public
 object_relationships:
 - name: token_unit
   using:
@@ -13,6 +16,3 @@ select_permissions:
     - timestamp
     filter: {}
   role: anonymous
-table:
-  name: token_price
-  schema: public
