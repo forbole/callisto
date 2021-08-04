@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"time"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	dbtypes "github.com/forbole/bdjuno/database/types"
@@ -17,6 +19,7 @@ func (suite *DbTestSuite) TestSaveStakingParams() {
 		7,
 		10000,
 		"uatom",
+		sdk.NewDec(10),
 	)
 	err := suite.database.SaveStakingParams(types.NewStakingParams(stakingParams, 10))
 	suite.Require().NoError(err)
@@ -40,6 +43,7 @@ func (suite *DbTestSuite) TestGetStakingParams() {
 		7,
 		10000,
 		"uatom",
+		sdk.NewDec(10),
 	)
 
 	paramsBz, err := json.Marshal(&stakingParams)
