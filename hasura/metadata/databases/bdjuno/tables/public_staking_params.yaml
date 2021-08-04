@@ -6,11 +6,7 @@ select_permissions:
     allow_aggregations: true
     columns:
     - one_row_id
-    - bond_denom
-    - unbonding_time
-    - max_entries
-    - historical_entries
-    - max_validators
+    - params
     - height
     filter: {}
   role: anonymous

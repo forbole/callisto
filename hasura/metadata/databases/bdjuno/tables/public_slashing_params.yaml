@@ -5,22 +5,8 @@ select_permissions:
 - permission:
     allow_aggregations: true
     columns:
-    - signed_block_window
-    - min_signed_per_window
-    - downtime_jail_duration
-    - slash_fraction_double_sign
-    - slash_fraction_downtime
+    - one_row_id
+    - params
     - height
     filter: {}
   role: anonymous
-- permission:
-    allow_aggregations: true
-    columns:
-    - signed_block_window
-    - min_signed_per_window
-    - downtime_jail_duration
-    - slash_fraction_double_sign
-    - slash_fraction_downtime
-    - height
-    filter: {}
-  role: client
