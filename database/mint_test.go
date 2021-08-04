@@ -2,7 +2,6 @@ package database_test
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 
 	"github.com/forbole/bdjuno/types"
 
@@ -72,14 +71,12 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveMintParams() {
 	err := suite.database.SaveMintParams(types.NewMintParams(
-		minttypes.NewParams(
-			"udaric",
-			sdk.NewDecWithPrec(4, 1),
-			sdk.NewDecWithPrec(8, 1),
-			sdk.NewDecWithPrec(4, 1),
-			sdk.NewDecWithPrec(8, 1),
-			5006000,
-		),
+		"udaric",
+		sdk.NewDecWithPrec(4, 1),
+		sdk.NewDecWithPrec(8, 1),
+		sdk.NewDecWithPrec(4, 1),
+		sdk.NewDecWithPrec(8, 1),
+		5006000,
 		10,
 	))
 	suite.Require().NoError(err)
