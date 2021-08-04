@@ -8,7 +8,6 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/desmos-labs/juno/client"
@@ -18,8 +17,7 @@ import (
 	"github.com/desmos-labs/juno/modules/registrar"
 	juno "github.com/desmos-labs/juno/types"
 	"github.com/forbole/bdjuno/utils"
-
-	"github.com/forbole/bdjuno/utils"
+	minttypes "github.com/osmosis-labs/osmosis/x/mint/types"
 
 	"github.com/forbole/bdjuno/modules/history"
 

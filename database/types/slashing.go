@@ -24,7 +24,7 @@ func (v ValidatorSigningInfoRow) Equal(w ValidatorSigningInfoRow) bool {
 		v.Height == w.Height
 }
 
-// ValidatorSigningInfoRow allows to build a new ValidatorSigningInfoRow
+// NewValidatorSigningInfoRow allows to build a new ValidatorSigningInfoRow
 func NewValidatorSigningInfoRow(
 	validatorAddress string,
 	startHeight int64,
@@ -47,36 +47,18 @@ func NewValidatorSigningInfoRow(
 
 // -------------------------------------------------------------------------------------------------------------------
 
+// SlashingParamsRow represents a single row inside the slashing_params table
 type SlashingParamsRow struct {
-	OneRowID                bool   `db:"one_row_id"`
-	SignedBlockWindow       int64  `db:"signed_block_window"`
-	MinSignedPerWindow      string `db:"min_signed_per_window"`
-	DowntimeJailDuration    int64  `db:"downtime_jail_duration"`
-	SlashFractionDoubleSign string `db:"slash_fraction_double_sign"`
-	SlashFractionDowntime   string `db:"slash_fraction_downtime"`
-	Height                  int64  `db:"height"`
+	OneRowID bool   `db:"one_row_id"`
+	Params   string `db:"params"`
+	Height   int64  `db:"height"`
 }
 
-func NewSlashingParamsRow(
-	signedBlockPerWindow int64, minSignedPerWindow string, downtimeJailDuration int64,
-	slashFractionDoubleSign string, slashFractionDownTime string, height int64,
-) SlashingParamsRow {
+// NewSlashingParamsRow allows to create a new instance SlashingParamsRow
+func NewSlashingParamsRow(params string, height int64) SlashingParamsRow {
 	return SlashingParamsRow{
-		OneRowID:                true,
-		SignedBlockWindow:       signedBlockPerWindow,
-		MinSignedPerWindow:      minSignedPerWindow,
-		DowntimeJailDuration:    downtimeJailDuration,
-		SlashFractionDoubleSign: slashFractionDoubleSign,
-		SlashFractionDowntime:   slashFractionDownTime,
-		Height:                  height,
+		OneRowID: true,
+		Params:   params,
+		Height:   height,
 	}
-}
-
-func (p SlashingParamsRow) Equal(q SlashingParamsRow) bool {
-	return p.SignedBlockWindow == q.SignedBlockWindow &&
-		p.MinSignedPerWindow == q.MinSignedPerWindow &&
-		p.DowntimeJailDuration == q.DowntimeJailDuration &&
-		p.SlashFractionDowntime == q.SlashFractionDowntime &&
-		p.SlashFractionDoubleSign == q.SlashFractionDoubleSign &&
-		p.Height == q.Height
 }
