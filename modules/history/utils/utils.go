@@ -53,6 +53,7 @@ func UpdateAccountBalanceHistory(address string, db *database.Db) error {
 	))
 }
 
+// UpdatePriceHistory stores the given prices inside the price history table
 func UpdatePriceHistory(prices []types.TokenPrice, db *database.Db) error {
 	return db.SaveTokenPricesHistory(prices)
 }
