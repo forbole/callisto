@@ -1,6 +1,8 @@
 package database_test
 
 import (
+	"encoding/json"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	dbtypes "github.com/forbole/bdjuno/database/types"
@@ -72,28 +74,25 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveCommunityPool() {
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveDistributionParams() {
-	err := suite.database.SaveDistributionParams(types.NewDistributionParams(
-		distrtypes.Params{
-			CommunityTax:        sdk.NewDecWithPrec(2, 2),
-			BaseProposerReward:  sdk.NewDecWithPrec(1, 2),
-			BonusProposerReward: sdk.NewDecWithPrec(4, 2),
-			WithdrawAddrEnabled: true,
-		},
-		10,
-	))
+	distrParams := distrtypes.Params{
+		CommunityTax:        sdk.NewDecWithPrec(2, 2),
+		BaseProposerReward:  sdk.NewDecWithPrec(1, 2),
+		BonusProposerReward: sdk.NewDecWithPrec(4, 2),
+		WithdrawAddrEnabled: true,
+	}
+	err := suite.database.SaveDistributionParams(types.NewDistributionParams(distrParams, 10))
 	suite.Require().NoError(err)
 
 	var rows []dbtypes.DistributionParamsRow
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM distribution_params`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
-	suite.Require().Equal(dbtypes.NewDistributionParamsRow(
-		"0.020000000000000000",
-		"0.010000000000000000",
-		"0.040000000000000000",
-		true,
-		10,
-	), rows[0])
+
+	var stored distrtypes.Params
+	err = json.Unmarshal([]byte(rows[0].Params), &stored)
+	suite.Require().NoError(err)
+	suite.Require().Equal(distrParams, stored)
+	suite.Require().Equal(int64(10), rows[0].Height)
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveValidatorCommissionAmount() {

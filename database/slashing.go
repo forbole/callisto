@@ -1,6 +1,7 @@
 package database
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/forbole/bdjuno/types"
@@ -8,6 +9,10 @@ import (
 
 // SaveValidatorsSigningInfos saves the given infos inside the database
 func (db *Db) SaveValidatorsSigningInfos(infos []types.ValidatorSigningInfo) error {
+	if len(infos) == 0 {
+		return nil
+	}
+
 	stmt := `
 INSERT INTO validator_signing_info 
     (validator_address, start_height, index_offset, jailed_until, tombstoned, missed_blocks_counter, height)
@@ -42,22 +47,18 @@ WHERE validator_signing_info.height <= excluded.height`
 
 // SaveSlashingParams saves the slashing params for the given height
 func (db *Db) SaveSlashingParams(params types.SlashingParams) error {
+	paramsBz, err := json.Marshal(&params.Params)
+	if err != nil {
+		return err
+	}
+
 	stmt := `
-INSERT INTO slashing_params (
-	signed_block_window, min_signed_per_window, downtime_jail_duration, 
-	slash_fraction_double_sign, slash_fraction_downtime, height
-) 
-VALUES ($1, $2, $3, $4, $5, $6)
+INSERT INTO slashing_params (params, height) 
+VALUES ($1, $2)
 ON CONFLICT (one_row_id) DO UPDATE 
-    SET signed_block_window = excluded.signed_block_window, 
-        min_signed_per_window = excluded.min_signed_per_window, 
-        downtime_jail_duration = excluded.downtime_jail_duration,
-        slash_fraction_double_sign = excluded.slash_fraction_double_sign,
-        slash_fraction_downtime = excluded.slash_fraction_downtime,
+    SET params = excluded.params, 
         height = excluded.height
 WHERE slashing_params.height <= excluded.height`
-	_, err := db.Sql.Exec(stmt,
-		params.SignedBlocksWindow, params.MinSignedPerWindow.String(), params.DowntimeJailDuration,
-		params.SlashFractionDoubleSign.String(), params.SlashFractionDowntime.String(), params.Height)
+	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
 	return err
 }

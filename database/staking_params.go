@@ -1,8 +1,8 @@
 package database
 
 import (
+	"encoding/json"
 	"fmt"
-	"time"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
@@ -12,21 +12,20 @@ import (
 
 // SaveStakingParams allows to store the given params into the database
 func (db *Db) SaveStakingParams(params types.StakingParams) error {
+	paramsBz, err := json.Marshal(&params.Params)
+	if err != nil {
+		return err
+	}
+
 	stmt := `
-INSERT INTO staking_params (bond_denom, unbonding_time, max_entries, historical_entries, max_validators, height) 
-VALUES ($1, $2, $3, $4, $5, $6)
+INSERT INTO staking_params (params, height) 
+VALUES ($1, $2)
 ON CONFLICT (one_row_id) DO UPDATE 
-    SET bond_denom = excluded.bond_denom,
-    	unbonding_time = excluded.unbonding_time,
-    	max_entries = excluded.max_entries,
-    	historical_entries = excluded.historical_entries,
-    	max_validators = excluded.max_validators,
+    SET params = excluded.params,
         height = excluded.height
 WHERE staking_params.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt,
-		params.BondDenom, params.UnbondingTime.Nanoseconds(), params.MaxEntries,
-		params.HistoricalEntries, params.MaxValidators, params.Height)
+	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
 	return err
 }
 
@@ -43,14 +42,14 @@ func (db *Db) GetStakingParams() (*types.StakingParams, error) {
 		return nil, fmt.Errorf("no staking params found")
 	}
 
+	var stakingParams stakingtypes.Params
+	err = json.Unmarshal([]byte(rows[0].Params), &stakingParams)
+	if err != nil {
+		return nil, err
+	}
+
 	return &types.StakingParams{
-		Params: stakingtypes.NewParams(
-			time.Duration(rows[0].UnbondingTime),
-			rows[0].MaxValidators,
-			rows[0].MaxEntries,
-			rows[0].HistoricalEntries,
-			rows[0].BondName,
-		),
+		Params: stakingParams,
 		Height: rows[0].Height,
 	}, nil
 }

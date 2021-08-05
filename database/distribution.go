@@ -1,6 +1,7 @@
 package database
 
 import (
+	"encoding/json"
 	"fmt"
 
 	dbtypes "github.com/forbole/bdjuno/database/types"
@@ -28,19 +29,19 @@ WHERE community_pool.height <= excluded.height`
 
 // SaveDistributionParams allows to store the given distribution parameters inside the database
 func (db *Db) SaveDistributionParams(params types.DistributionParams) error {
+	paramsBz, err := json.Marshal(&params.Params)
+	if err != nil {
+		return err
+	}
+
 	stmt := `
-INSERT INTO distribution_params (community_tax, base_proposer_reward, bonus_proposer_reward, withdraw_address_enabled, height) 
-VALUES ($1, $2, $3, $4, $5)
+INSERT INTO distribution_params (params, height) 
+VALUES ($1, $2)
 ON CONFLICT (one_row_id) DO UPDATE 
-    SET community_tax = excluded.community_tax,
-      	base_proposer_reward = excluded.base_proposer_reward,
-      	bonus_proposer_reward = excluded.bonus_proposer_reward,
-      	withdraw_address_enabled = excluded.withdraw_address_enabled,
+    SET params = excluded.params,
       	height = excluded.height
 WHERE distribution_params.height <= excluded.height`
-	_, err := db.Sql.Exec(stmt,
-		params.CommunityTax.String(), params.BaseProposerReward.String(), params.BonusProposerReward.String(),
-		params.WithdrawAddrEnabled, params.Height)
+	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
 	return err
 }
 
@@ -102,6 +103,10 @@ WHERE vi.self_delegate_address = $1`
 
 // SaveDelegatorsRewardsAmounts allows to store the given delegator reward amounts as the most updated ones
 func (db *Db) SaveDelegatorsRewardsAmounts(amounts []types.DelegatorRewardAmount) error {
+	if len(amounts) == 0 {
+		return nil
+	}
+
 	err := db.storeUpToDateDelegatorsRewardsAmounts(amounts)
 	if err != nil {
 		return fmt.Errorf("error while storing up-to-date delegator rewards amounts: %s", err)
@@ -112,6 +117,10 @@ func (db *Db) SaveDelegatorsRewardsAmounts(amounts []types.DelegatorRewardAmount
 
 // storeUpToDateDelegatorsRewardsAmounts allows to store the given amounts has the most up-to-date ones
 func (db *Db) storeUpToDateDelegatorsRewardsAmounts(amounts []types.DelegatorRewardAmount) error {
+	if len(amounts) == 0 {
+		return nil
+	}
+
 	stmt := `INSERT INTO delegation_reward(validator_address, delegator_address, withdraw_address, amount, height) VALUES `
 	var params []interface{}
 
