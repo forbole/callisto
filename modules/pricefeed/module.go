@@ -11,7 +11,11 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 )
 
-var _ modules.Module = &Module{}
+var (
+	_ modules.Module                   = &Module{}
+	_ modules.PeriodicOperationsModule = &Module{}
+	_ modules.GenesisModule            = &Module{}
+)
 
 // Module represents the module that allows to get the token prices
 type Module struct {
@@ -32,12 +36,12 @@ func (m *Module) Name() string {
 	return "pricefeed"
 }
 
-// HandleGenesis implements modules.GenesisModule
-func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
-	return HandleGenesis(doc, appState, m.encodingConfig.Marshaler, m.db)
-}
-
 // RegisterPeriodicOperations implements modules.PeriodicOperationsModule
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	return RegisterPeriodicOps(scheduler, m.db)
+}
+
+// HandleGenesis implements modules.GenesisModule
+func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
+	return HandleGenesis(doc, appState, m.encodingConfig.Marshaler, m.db)
 }
