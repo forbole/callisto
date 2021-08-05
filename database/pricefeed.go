@@ -54,23 +54,6 @@ func (db *Db) SaveTokensPrices(prices []types.TokenPrice) error {
 		return nil
 	}
 
-	err := db.saveUpToDateTokenPrices(prices)
-	if err != nil {
-		return fmt.Errorf("error while storing up-to-date token prices: %s", err)
-	}
-
-	if db.IsStoreHistoricDataEnabled() {
-		err = db.saveTokenPricesHistory(prices)
-		if err != nil {
-			return fmt.Errorf("error while storing historic token prices: %s", err)
-		}
-	}
-
-	return nil
-}
-
-// saveUpToDateTokenPrices stores the given prices as the most up-to-date ones
-func (db *Db) saveUpToDateTokenPrices(prices []types.TokenPrice) error {
 	query := `INSERT INTO token_price (unit_name, price, market_cap, timestamp) VALUES`
 	var param []interface{}
 
@@ -87,27 +70,6 @@ ON CONFLICT (unit_name) DO UPDATE
 	    market_cap = excluded.market_cap,
 	    timestamp = excluded.timestamp
 WHERE token_price.timestamp <= excluded.timestamp`
-
-	_, err := db.Sql.Exec(query, param...)
-	return err
-}
-
-// saveTokenPricesHistory stores the given prices as historic ones
-func (db *Db) saveTokenPricesHistory(prices []types.TokenPrice) error {
-	query := `INSERT INTO token_price_history (unit_name, price, market_cap, timestamp) VALUES`
-	var param []interface{}
-
-	for i, ticker := range prices {
-		vi := i * 4
-		query += fmt.Sprintf("($%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4)
-		param = append(param, ticker.UnitName, ticker.Price, ticker.MarketCap, ticker.Timestamp)
-	}
-
-	query = query[:len(query)-1] // Remove trailing ","
-	query += `
-ON CONFLICT ON CONSTRAINT unique_price_for_timestamp DO UPDATE 
-	SET price = excluded.price,
-	    market_cap = excluded.market_cap`
 
 	_, err := db.Sql.Exec(query, param...)
 	return err

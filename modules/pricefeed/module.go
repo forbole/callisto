@@ -3,6 +3,8 @@ package pricefeed
 import (
 	"encoding/json"
 
+	juno "github.com/desmos-labs/juno/types"
+
 	"github.com/forbole/bdjuno/database"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
@@ -19,13 +21,15 @@ var (
 
 // Module represents the module that allows to get the token prices
 type Module struct {
+	cfg            juno.Config
 	encodingConfig *params.EncodingConfig
 	db             *database.Db
 }
 
 // NewModule returns a new Module instance
-func NewModule(encodingConfig *params.EncodingConfig, db *database.Db) *Module {
+func NewModule(cfg juno.Config, encodingConfig *params.EncodingConfig, db *database.Db) *Module {
 	return &Module{
+		cfg:            cfg,
 		encodingConfig: encodingConfig,
 		db:             db,
 	}
@@ -43,5 +47,5 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 
 // HandleGenesis implements modules.GenesisModule
 func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
-	return HandleGenesis(doc, appState, m.encodingConfig.Marshaler, m.db)
+	return HandleGenesis(m.cfg, doc, appState, m.encodingConfig.Marshaler, m.db)
 }

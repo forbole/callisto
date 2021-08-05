@@ -52,3 +52,7 @@ func UpdateAccountBalanceHistory(address string, db *database.Db) error {
 		time.Now(),
 	))
 }
+
+func UpdatePriceHistory(prices []types.TokenPrice, db *database.Db) error {
+	return db.SaveTokenPricesHistory(prices)
+}

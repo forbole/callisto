@@ -1,6 +1,8 @@
 package database
 
 import (
+	"fmt"
+
 	"github.com/lib/pq"
 
 	dbtypes "github.com/forbole/bdjuno/database/types"
@@ -30,5 +32,26 @@ ON CONFLICT ON CONSTRAINT unique_balance_for_height DO UPDATE
 		pq.Array(dbtypes.NewDbDecCoins(entry.Reward)),
 		entry.Timestamp,
 	)
+	return err
+}
+
+// SaveTokenPricesHistory stores the given prices as historic ones
+func (db *Db) SaveTokenPricesHistory(prices []types.TokenPrice) error {
+	query := `INSERT INTO token_price_history (unit_name, price, market_cap, timestamp) VALUES`
+	var param []interface{}
+
+	for i, ticker := range prices {
+		vi := i * 4
+		query += fmt.Sprintf("($%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4)
+		param = append(param, ticker.UnitName, ticker.Price, ticker.MarketCap, ticker.Timestamp)
+	}
+
+	query = query[:len(query)-1] // Remove trailing ","
+	query += `
+ON CONFLICT ON CONSTRAINT unique_price_for_timestamp DO UPDATE 
+	SET price = excluded.price,
+	    market_cap = excluded.market_cap`
+
+	_, err := db.Sql.Exec(query, param...)
 	return err
 }
