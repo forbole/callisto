@@ -9,22 +9,6 @@ import (
 	dbtypes "github.com/forbole/bdjuno/database/types"
 )
 
-// SaveConsensus allows to properly store the given consensus event into the database.
-// Note that only one consensus event is allowed inside the database at any time.
-func (db *Db) SaveConsensus(event *types.ConsensusEvent) error {
-	stmt := `
-INSERT INTO consensus (height, round, step)
-VALUES ($1, $2, $3)
-ON CONFLICT (one_row_id) DO UPDATE 
-    SET height = excluded.height, 
-        round = excluded.round,
-        step = excluded.step`
-	_, err := db.Sql.Exec(stmt, event.Height, event.Round, event.Step)
-	return err
-}
-
-// -------------------------------------------------------------------------------------------------------------------
-
 // GetLastBlock returns the last block stored inside the database based on the heights
 func (db *Db) GetLastBlock() (*dbtypes.BlockRow, error) {
 	stmt := `SELECT * FROM block ORDER BY height DESC LIMIT 1`

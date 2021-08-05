@@ -7,31 +7,6 @@ import (
 	"github.com/forbole/bdjuno/types"
 )
 
-func (suite *DbTestSuite) TestSaveConsensus() {
-	events := []*types.ConsensusEvent{
-		types.NewConsensusEvent(1, 0, "First"),
-		types.NewConsensusEvent(2, 0, "Second - Round 0 "),
-		types.NewConsensusEvent(2, 1, "Second - Round 1"),
-	}
-
-	for _, event := range events {
-		err := suite.database.SaveConsensus(event)
-		suite.Require().NoError(err)
-
-		var rows []dbtypes.ConsensusRow
-		err = suite.database.Sqlx.Select(&rows, "SELECT * FROM consensus")
-		suite.Require().NoError(err)
-
-		// Make sure the consensus table only holds 1 value at a time with the correct data inside
-		suite.Require().Len(rows, 1)
-		suite.Require().True(rows[0].Equal(dbtypes.NewConsensusRow(
-			event.Height,
-			event.Round,
-			event.Step,
-		)))
-	}
-}
-
 func (suite *DbTestSuite) TestSaveConsensus_GetBlockHeightTimeMinuteAgo() {
 	timeAgo, err := time.Parse(time.RFC3339, "2020-01-01T15:00:00Z")
 	suite.Require().NoError(err)

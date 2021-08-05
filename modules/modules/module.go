@@ -7,7 +7,10 @@ import (
 	"github.com/forbole/bdjuno/database"
 )
 
-var _ modules.Module = &Module{}
+var (
+	_ modules.Module                     = &Module{}
+	_ modules.AdditionalOperationsModule = &Module{}
+)
 
 type Module struct {
 	cfg juno.Config

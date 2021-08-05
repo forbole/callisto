@@ -7,16 +7,6 @@ CREATE TABLE genesis
     CHECK (one_row_id)
 );
 
-CREATE TABLE consensus
-(
-    one_row_id BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
-    height     BIGINT  NOT NULL,
-    round      INT     NOT NULL,
-    step       TEXT    NOT NULL,
-    CHECK (one_row_id)
-);
-CREATE INDEX consensus_height_index ON consensus (height);
-
 CREATE TABLE average_block_time_per_minute
 (
     one_row_id   BOOL    NOT NULL DEFAULT TRUE PRIMARY KEY,

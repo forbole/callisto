@@ -13,7 +13,12 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 )
 
-var _ modules.Module = &Module{}
+var (
+	_ modules.Module                   = &Module{}
+	_ modules.PeriodicOperationsModule = &Module{}
+	_ modules.GenesisModule            = &Module{}
+	_ modules.BlockModule              = &Module{}
+)
 
 // Module implements the consensus utils
 type Module struct {
@@ -37,11 +42,6 @@ func (m *Module) Name() string {
 // RegisterPeriodicOperations implements modules.Module
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	return Register(scheduler, m.db)
-}
-
-// RunAsyncOperations implements modules.Module
-func (m *Module) RunAsyncOperations() {
-	go ListenOperation(m.cp, m.db)
 }
 
 // HandleGenesis implements modules.Module
