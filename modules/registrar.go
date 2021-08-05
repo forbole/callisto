@@ -89,7 +89,7 @@ func (r *Registrar) BuildModules(
 		gov.NewModule(bankClient, govClient, stakingClient, encodingConfig, bigDipperBd),
 		mint.NewModule(mintClient, bigDipperBd),
 		modules.NewModule(cfg, bigDipperBd),
-		pricefeed.NewModule(encodingConfig, bigDipperBd),
+		pricefeed.NewModule(cfg, encodingConfig, bigDipperBd),
 		slashing.NewModule(slashingClient, bigDipperBd),
 		staking.NewModule(cfg, bankClient, stakingClient, encodingConfig, bigDipperBd),
 		history.NewModule(r.parser, encodingConfig, bigDipperBd),

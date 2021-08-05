@@ -9,8 +9,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/forbole/bdjuno/types/config"
-
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/types"
 
@@ -44,19 +42,16 @@ func (suite *DbTestSuite) SetupTest() {
 	// Build the database
 	cfg := juno.NewConfig(
 		nil, nil, nil,
-		config.NewDatabaseConfig(
-			juno.NewDatabaseConfig(
-				"bdjuno",
-				"localhost",
-				5433,
-				"bdjuno",
-				"password",
-				"",
-				"public",
-				-1,
-				-1,
-			),
-			true,
+		juno.NewDatabaseConfig(
+			"bdjuno",
+			"localhost",
+			5433,
+			"bdjuno",
+			"password",
+			"",
+			"public",
+			-1,
+			-1,
 		),
 		nil, nil, nil,
 	)

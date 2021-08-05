@@ -4,7 +4,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/desmos-labs/juno/cmd"
-	initcmd "github.com/desmos-labs/juno/cmd/init"
 	parsecmd "github.com/desmos-labs/juno/cmd/parse"
 	"github.com/desmos-labs/juno/modules/messages"
 
@@ -15,19 +14,12 @@ import (
 )
 
 func main() {
-	// Setup the config
-	initCfg := initcmd.NewConfig().
-		WithConfigFlagSetup(config.SetupConfigFlags).
-		WithConfigCreator(config.CreateConfig)
-
 	parseCfg := parsecmd.NewConfig().
-		WithConfigParser(config.ParseConfig).
 		WithDBBuilder(database.Builder).
 		WithEncodingConfigBuilder(config.MakeEncodingConfig(getBasicManagers())).
 		WithRegistrar(modules.NewRegistrar(getAddressesParser()))
 
 	cfg := cmd.NewConfig("bdjuno").
-		WithInitConfig(initCfg).
 		WithParseConfig(parseCfg)
 
 	// Run the command
