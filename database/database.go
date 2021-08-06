@@ -3,10 +3,6 @@ package database
 import (
 	"fmt"
 
-	juno "github.com/desmos-labs/juno/types"
-
-	"github.com/cosmos/cosmos-sdk/simapp/params"
-
 	"github.com/desmos-labs/juno/db"
 	"github.com/desmos-labs/juno/db/postgresql"
 	"github.com/jmoiron/sqlx"
@@ -22,8 +18,8 @@ type Db struct {
 }
 
 // Builder allows to create a new Db instance implementing the db.Builder type
-func Builder(cfg juno.Config, codec *params.EncodingConfig) (db.Database, error) {
-	database, err := postgresql.Builder(cfg.GetDatabaseConfig(), codec)
+func Builder(ctx *db.Context) (db.Database, error) {
+	database, err := postgresql.Builder(ctx)
 	if err != nil {
 		return nil, err
 	}

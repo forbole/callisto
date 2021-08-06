@@ -9,6 +9,9 @@ import (
 	"testing"
 	"time"
 
+	junodb "github.com/desmos-labs/juno/db"
+	"github.com/desmos-labs/juno/types/logging"
+
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/types"
 
@@ -40,23 +43,18 @@ func (suite *DbTestSuite) SetupTest() {
 	codec := simapp.MakeTestEncodingConfig()
 
 	// Build the database
-	cfg := juno.NewConfig(
-		nil, nil, nil,
-		juno.NewDatabaseConfig(
-			"bdjuno",
-			"localhost",
-			5433,
-			"bdjuno",
-			"password",
-			"",
-			"public",
-			-1,
-			-1,
-		),
-		nil, nil, nil,
+	dbCfg := juno.NewDatabaseConfig(
+		"bdjuno",
+		"localhost",
+		5433,
+		"bdjuno",
+		"password",
+		"",
+		"public",
+		-1,
+		-1,
 	)
-
-	db, err := database.Builder(cfg, &codec)
+	db, err := database.Builder(junodb.NewContext(dbCfg, &codec, logging.DefaultLogger()))
 	suite.Require().NoError(err)
 
 	bigDipperDb, ok := (db).(*database.Db)

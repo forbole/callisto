@@ -2,7 +2,6 @@ package modules
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authttypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -12,11 +11,10 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/desmos-labs/juno/client"
-	"github.com/desmos-labs/juno/db"
 	jmodules "github.com/desmos-labs/juno/modules"
 	"github.com/desmos-labs/juno/modules/messages"
 	"github.com/desmos-labs/juno/modules/registrar"
-	juno "github.com/desmos-labs/juno/types"
+
 	"github.com/forbole/bdjuno/utils"
 
 	"github.com/forbole/bdjuno/modules/history"
@@ -65,11 +63,10 @@ func NewRegistrar(parser messages.MessageAddressesParser) *Registrar {
 }
 
 // BuildModules implements modules.Registrar
-func (r *Registrar) BuildModules(
-	cfg juno.Config, encodingConfig *params.EncodingConfig, _ *sdk.Config, db db.Database, cp *client.Proxy,
-) jmodules.Modules {
-	bigDipperBd := database.Cast(db)
-	grpcConnection := client.MustCreateGrpcConnection(cfg)
+func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
+	bigDipperBd := database.Cast(ctx.Database)
+	grpcConnection := client.MustCreateGrpcConnection(ctx.ParsingConfig)
+	encodingConfig := ctx.EncodingConfig
 
 	authClient := authttypes.NewQueryClient(grpcConnection)
 	bankClient := banktypes.NewQueryClient(grpcConnection)
@@ -80,17 +77,17 @@ func (r *Registrar) BuildModules(
 	stakingClient := stakingtypes.NewQueryClient(grpcConnection)
 
 	return []jmodules.Module{
-		messages.NewModule(r.parser, encodingConfig.Marshaler, db),
+		messages.NewModule(r.parser, encodingConfig.Marshaler, ctx.Database),
 		auth.NewModule(r.parser, authClient, encodingConfig, bigDipperBd),
 		bank.NewModule(r.parser, authClient, bankClient, encodingConfig, bigDipperBd),
-		consensus.NewModule(cp, bigDipperBd),
+		consensus.NewModule(ctx.Proxy, bigDipperBd),
 		distribution.NewModule(distrClient, bigDipperBd),
 		gov.NewModule(bankClient, govClient, stakingClient, encodingConfig, bigDipperBd),
 		mint.NewModule(mintClient, bigDipperBd),
-		modules.NewModule(cfg, bigDipperBd),
-		pricefeed.NewModule(cfg, encodingConfig, bigDipperBd),
+		modules.NewModule(ctx.ParsingConfig, bigDipperBd),
+		pricefeed.NewModule(ctx.ParsingConfig, encodingConfig, bigDipperBd),
 		slashing.NewModule(slashingClient, bigDipperBd),
-		staking.NewModule(cfg, bankClient, stakingClient, encodingConfig, bigDipperBd),
+		staking.NewModule(ctx.ParsingConfig, bankClient, stakingClient, encodingConfig, bigDipperBd),
 		history.NewModule(r.parser, encodingConfig, bigDipperBd),
 	}
 }
