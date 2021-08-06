@@ -43,6 +43,11 @@ func StoreValidatorFromMsgCreateValidator(
 		return err
 	}
 
+	desc, err := ConvertValidatorDescription(msg.ValidatorAddress, msg.Description, height)
+	if err != nil {
+		return err
+	}
+
 	params, err := db.GetStakingParams()
 	if err != nil {
 		return err
@@ -50,6 +55,12 @@ func StoreValidatorFromMsgCreateValidator(
 
 	// Save the validator
 	err = db.SaveValidatorsData([]types.Validator{validator})
+	if err != nil {
+		return err
+	}
+
+	// Save the description
+	err = db.SaveValidatorDescription(desc)
 	if err != nil {
 		return err
 	}
