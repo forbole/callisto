@@ -7,7 +7,6 @@
 - "!include public_average_block_time_per_minute.yaml"
 - "!include public_block.yaml"
 - "!include public_community_pool.yaml"
-- "!include public_consensus.yaml"
 - "!include public_delegation.yaml"
 - "!include public_delegation_reward.yaml"
 - "!include public_distribution_params.yaml"
