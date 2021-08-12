@@ -150,6 +150,10 @@ github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSs
 github.com/decred/dcrd/lru v1.0.0/go.mod h1:mxKOwFd7lFjN2GZYsiz/ecgqR6kkYAl+0pz0tEMk218=
 github.com/desmos-labs/juno v0.0.0-20210806082910-83ece0d89cdd h1:OTdwsYtSE6ysiLrN3uElSvSHllTp2l8rap9SRe/9xDQ=
 github.com/desmos-labs/juno v0.0.0-20210806082910-83ece0d89cdd/go.mod h1:oH5jyDLgnoB6nNpGpqUDXwpzhEIzYSJlI4TKd+13rVc=
+github.com/desmos-labs/juno v0.0.0-20210811110047-9042629de5a8 h1:pXstxPQ4DEIbwnJqZPJdSsYtplJHOqUDIE11kPPnLMo=
+github.com/desmos-labs/juno v0.0.0-20210811110047-9042629de5a8/go.mod h1:oH5jyDLgnoB6nNpGpqUDXwpzhEIzYSJlI4TKd+13rVc=
+github.com/desmos-labs/juno v0.0.0-20210812114304-074d555149ed h1:NDpnTDu9N4uMjKFJNjGDotaTGB0kGAfdXPEPmDMKWHo=
+github.com/desmos-labs/juno v0.0.0-20210812114304-074d555149ed/go.mod h1:oH5jyDLgnoB6nNpGpqUDXwpzhEIzYSJlI4TKd+13rVc=
 github.com/dgraph-io/badger/v2 v2.2007.1/go.mod h1:26P/7fbL4kUZVEVKLAKXkBXKOydDmM2p1e+NhhnBCAE=
 github.com/dgraph-io/badger/v2 v2.2007.2 h1:EjjK0KqwaFMlPin1ajhP943VPENHJdEz1KLIegjaI3k=
 github.com/dgraph-io/badger/v2 v2.2007.2/go.mod h1:26P/7fbL4kUZVEVKLAKXkBXKOydDmM2p1e+NhhnBCAE=
