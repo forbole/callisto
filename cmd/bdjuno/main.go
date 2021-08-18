@@ -9,6 +9,8 @@ import (
 
 	"github.com/forbole/bdjuno/types/config"
 
+	likeapp "github.com/likecoin/likechain/app"
+
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/modules"
 
