@@ -1,6 +1,8 @@
 package pricefeed
 
 import (
+	"strings"
+
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
 
@@ -12,7 +14,7 @@ import (
 // RegisterPeriodicOps returns the AdditionalOperation that periodically runs fetches from
 // CoinGecko to make sure that constantly changing data are synced properly.
 func RegisterPeriodicOps(scheduler *gocron.Scheduler, db *database.Db) error {
-	log.Debug().Str("module", "PriceFeed").Msg("setting up periodic tasks")
+	log.Debug().Str("module", "pricefeed").Msg("setting up periodic tasks")
 
 	// Fetch total supply of token in 30 seconds each
 	if _, err := scheduler.Every(30).Second().StartImmediately().Do(func() {
@@ -47,7 +49,7 @@ func updatePrice(db *database.Db) error {
 	var ids []string
 	for _, coin := range coins {
 		for _, tradedToken := range names {
-			if coin.Symbol == tradedToken {
+			if strings.EqualFold(coin.Symbol, tradedToken) {
 				ids = append(ids, coin.ID)
 				break
 			}

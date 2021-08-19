@@ -1,6 +1,8 @@
 package modules
 
 import (
+	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authttypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -14,6 +16,8 @@ import (
 	jmodules "github.com/desmos-labs/juno/modules"
 	"github.com/desmos-labs/juno/modules/messages"
 	"github.com/desmos-labs/juno/modules/registrar"
+
+	"github.com/forbole/bdjuno/types/config"
 
 	"github.com/forbole/bdjuno/utils"
 
@@ -64,6 +68,11 @@ func NewRegistrar(parser messages.MessageAddressesParser) *Registrar {
 
 // BuildModules implements modules.Registrar
 func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
+	bdjunoCfg, ok := ctx.ParsingConfig.(*config.Config)
+	if !ok {
+		panic(fmt.Errorf("invalid configuration type: %T", ctx.ParsingConfig))
+	}
+
 	bigDipperBd := database.Cast(ctx.Database)
 	grpcConnection := client.MustCreateGrpcConnection(ctx.ParsingConfig)
 	encodingConfig := ctx.EncodingConfig
@@ -85,7 +94,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		gov.NewModule(bankClient, govClient, stakingClient, encodingConfig, bigDipperBd),
 		mint.NewModule(mintClient, bigDipperBd),
 		modules.NewModule(ctx.ParsingConfig, bigDipperBd),
-		pricefeed.NewModule(ctx.ParsingConfig, encodingConfig, bigDipperBd),
+		pricefeed.NewModule(bdjunoCfg, encodingConfig, bigDipperBd),
 		slashing.NewModule(slashingClient, bigDipperBd),
 		staking.NewModule(ctx.ParsingConfig, bankClient, stakingClient, encodingConfig, bigDipperBd),
 		history.NewModule(r.parser, encodingConfig, bigDipperBd),
