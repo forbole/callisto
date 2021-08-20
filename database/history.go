@@ -37,6 +37,10 @@ ON CONFLICT ON CONSTRAINT unique_balance_for_height DO UPDATE
 
 // SaveTokenPricesHistory stores the given prices as historic ones
 func (db *Db) SaveTokenPricesHistory(prices []types.TokenPrice) error {
+	if len(prices) == 0 {
+		return nil
+	}
+
 	query := `INSERT INTO token_price_history (unit_name, price, market_cap, timestamp) VALUES`
 	var param []interface{}
 
