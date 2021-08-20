@@ -198,7 +198,7 @@ VALUES `
 	rdQry = rdQry[:len(rdQry)-1] // Remove the trailing ","
 	rdQry += `
 ON CONFLICT ON CONSTRAINT redelegation_validator_delegator_unique 
-DO UPDATE SET amount = excluded.amount, height = excluded.height
+DO UPDATE SET height = excluded.height
 WHERE redelegation.height <= excluded.height`
 	_, err = db.Sql.Exec(rdQry, rdParams...)
 	return err
@@ -353,7 +353,7 @@ VALUES `
 	udQry = udQry[:len(udQry)-1] // Remove the trailing ","
 	udQry += `
 ON CONFLICT ON CONSTRAINT unbonding_delegation_validator_delegator_unique 
-DO UPDATE SET amount = excluded.amount, height = excluded.height
+DO UPDATE SET height = excluded.height
 WHERE unbonding_delegation.height <= excluded.height`
 	_, err = db.Sql.Exec(udQry, udParams...)
 	return err
