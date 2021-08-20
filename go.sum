@@ -147,6 +147,8 @@ github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSs
 github.com/decred/dcrd/lru v1.0.0/go.mod h1:mxKOwFd7lFjN2GZYsiz/ecgqR6kkYAl+0pz0tEMk218=
 github.com/desmos-labs/juno v0.0.0-20210820073508-e0715b9f2837 h1:Lwfzs2UVlF2awy0rFBl0aQJidV5N3Gyzn8onLKYfmh4=
 github.com/desmos-labs/juno v0.0.0-20210820073508-e0715b9f2837/go.mod h1:JSJQ3vi+nzBK5s9+IC7tb5ylhjfeL98Jl9fRncom2Xo=
+github.com/desmos-labs/juno v0.0.0-20210820090829-4142e0029177 h1:T2arMz9NLiv4AyRbaWXjoHXeIeBiQzCI20K5/b2t5tY=
+github.com/desmos-labs/juno v0.0.0-20210820090829-4142e0029177/go.mod h1:JSJQ3vi+nzBK5s9+IC7tb5ylhjfeL98Jl9fRncom2Xo=
 github.com/dgraph-io/badger/v2 v2.2007.2 h1:EjjK0KqwaFMlPin1ajhP943VPENHJdEz1KLIegjaI3k=
 github.com/dgraph-io/badger/v2 v2.2007.2/go.mod h1:26P/7fbL4kUZVEVKLAKXkBXKOydDmM2p1e+NhhnBCAE=
 github.com/dgraph-io/ristretto v0.0.3-0.20200630154024-f66de99634de/go.mod h1:KPxhHT9ZxKefz+PCeOGsrHpl1qZ7i70dGTu2u+Ahh6E=
