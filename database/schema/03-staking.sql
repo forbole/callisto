@@ -156,7 +156,7 @@ CREATE TABLE unbonding_delegation
     delegator_address    TEXT                        NOT NULL REFERENCES account (address),
     amount               COIN                        NOT NUll,
     completion_timestamp TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    height               BIGINT                      NOT NULL REFERENCES block (height),
+    height               BIGINT                      NOT NULL,
     CONSTRAINT unbonding_delegation_validator_delegator_unique UNIQUE (delegator_address, validator_address,
                                                                        amount, completion_timestamp)
 );
