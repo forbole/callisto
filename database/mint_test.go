@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+	minttypes "github.com/osmosis-labs/osmosis/x/mint/types"
 
 	"github.com/forbole/bdjuno/types"
 
@@ -76,9 +76,18 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveMintParams() {
 	mintParams := minttypes.NewParams(
 		"udaric",
 		sdk.NewDecWithPrec(4, 1),
+		"identifier",
 		sdk.NewDecWithPrec(8, 1),
-		sdk.NewDecWithPrec(4, 1),
-		sdk.NewDecWithPrec(8, 1),
+		100,
+		minttypes.DistributionProportions{
+			Staking:          sdk.NewDecWithPrec(15, 2),
+			PoolIncentives:   sdk.NewDecWithPrec(35, 2),
+			DeveloperRewards: sdk.NewDecWithPrec(15, 2),
+			CommunityPool:    sdk.NewDecWithPrec(35, 2),
+		},
+		[]minttypes.WeightedAddress{
+			{Address: "address", Weight: sdk.NewDecWithPrec(15, 2)},
+		},
 		5006000,
 	)
 	err := suite.database.SaveMintParams(types.NewMintParams(mintParams, 10))
