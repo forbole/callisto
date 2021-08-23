@@ -353,8 +353,10 @@ VALUES `
 	udQry = udQry[:len(udQry)-1] // Remove the trailing ","
 	udQry += `
 ON CONFLICT ON CONSTRAINT unbonding_delegation_validator_delegator_unique 
-DO UPDATE SET delegator_address = excluded.delegator_address,
+DO UPDATE SET validator_address = excluded.validator_address,
+		delegator_address = excluded.delegator_address,
 		amount = excluded.amount,
+		completion_timestamp = excluded.completion_timestamp,
 		height = excluded.height
 WHERE unbonding_delegation.height <= excluded.height`
 	_, err = db.Sql.Exec(udQry, udParams...)
