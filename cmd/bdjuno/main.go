@@ -14,7 +14,6 @@ import (
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/modules"
 
-	likeapp "github.com/likecoin/likechain/app"
 )
 
 func main() {
