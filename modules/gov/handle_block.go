@@ -22,7 +22,7 @@ import (
 func HandleBlock(
 	height int64, blockVals *tmctypes.ResultValidators,
 	govClient govtypes.QueryClient, bankClient banktypes.QueryClient, stakingClient stakingtypes.QueryClient,
-	cdc codec.Marshaler, db *database.Db,
+	cdc codec.Codec, db *database.Db,
 ) error {
 	err := updateProposals(height, blockVals, govClient, bankClient, stakingClient, cdc, db)
 	if err != nil {
@@ -81,7 +81,7 @@ func updateParams(height int64, govClient govtypes.QueryClient, db *database.Db)
 func updateProposals(
 	height int64, blockVals *tmctypes.ResultValidators,
 	govClient govtypes.QueryClient, bankClient banktypes.QueryClient, stakingClient stakingtypes.QueryClient,
-	cdc codec.Marshaler, db *database.Db,
+	cdc codec.Codec, db *database.Db,
 ) error {
 	ids, err := db.GetOpenProposalsIds()
 	if err != nil {
