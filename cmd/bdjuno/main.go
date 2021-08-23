@@ -11,6 +11,8 @@ import (
 
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/modules"
+
+	desmosapp "github.com/desmos-labs/desmos/app"
 )
 
 func main() {
@@ -37,6 +39,7 @@ func main() {
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
 		simapp.ModuleBasics,
+		desmosapp.ModuleBasics,
 	}
 }
 
@@ -45,6 +48,7 @@ func getBasicManagers() []module.BasicManager {
 // This should be edited by custom implementations if needed.
 func getAddressesParser() messages.MessageAddressesParser {
 	return messages.JoinMessageParsers(
+		desmosMessageAddressesParser,
 		messages.CosmosMessageAddressesParser,
 	)
 }
