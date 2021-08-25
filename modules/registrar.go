@@ -10,6 +10,7 @@ import (
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+	iscntypes "https://github.com/likecoin/likecoin-chain/tree/master/x/iscn/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/desmos-labs/juno/client"
@@ -82,6 +83,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	distrClient := distrtypes.NewQueryClient(grpcConnection)
 	govClient := govtypes.NewQueryClient(grpcConnection)
 	mintClient := minttypes.NewQueryClient(grpcConnection)
+	iscnClient := iscntypes.NewQueryClient(grpcConnection)
 	slashingClient := slashingtypes.NewQueryClient(grpcConnection)
 	stakingClient := stakingtypes.NewQueryClient(grpcConnection)
 
@@ -93,6 +95,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		distribution.NewModule(distrClient, bigDipperBd),
 		gov.NewModule(bankClient, govClient, stakingClient, encodingConfig, bigDipperBd),
 		mint.NewModule(mintClient, bigDipperBd),
+		iscn.NewModule(iscnClient, bigDipperBd),
 		modules.NewModule(ctx.ParsingConfig, bigDipperBd),
 		pricefeed.NewModule(bdjunoCfg, encodingConfig, bigDipperBd),
 		slashing.NewModule(slashingClient, bigDipperBd),
