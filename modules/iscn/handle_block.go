@@ -3,7 +3,7 @@ package iscn
 import (
 	"context"
 
-	iscntypes "github.com/likecoin/likecoin-chain/x/iscn/types"
+	iscntypes "github.com/likecoin/likechain/x/iscn/types"
 	"github.com/desmos-labs/juno/client"
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"

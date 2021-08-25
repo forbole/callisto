@@ -3,8 +3,6 @@ package database
 import (
 	"encoding/json"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/forbole/bdjuno/types"
 )
 

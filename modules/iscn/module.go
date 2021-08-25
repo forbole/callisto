@@ -1,10 +1,9 @@
 package iscn
 
 import (
-	iscntypes "github.com/likecoin/likecoin-chain/x/iscn/types"
+	iscntypes "github.com/likecoin/likechain/x/iscn/types"
 	"github.com/desmos-labs/juno/modules"
 	juno "github.com/desmos-labs/juno/types"
-	"github.com/go-co-op/gocron"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"github.com/forbole/bdjuno/database"
@@ -13,7 +12,6 @@ import (
 var (
 	_ modules.Module                   = &Module{}
 	_ modules.BlockModule              = &Module{}
-	_ modules.PeriodicOperationsModule = &Module{}
 )
 
 // Module represent database/iscn module
@@ -35,10 +33,6 @@ func (m *Module) Name() string {
 	return "iscn"
 }
 
-// RegisterPeriodicOperations implements modules.PeriodicOperationsModule
-func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
-	return RegisterPeriodicOps(scheduler, m.iscnClient, m.db)
-}
 
 // HandleBlock implements modules.BlockModule
 func (m *Module) HandleBlock(block *tmctypes.ResultBlock, _ []*juno.Tx, _ *tmctypes.ResultValidators) error {
