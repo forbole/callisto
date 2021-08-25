@@ -1,6 +1,6 @@
 package types
 
-iscntypes "https://github.com/likecoin/likecoin-chain/tree/master/x/iscn/types"
+iscntypes "github.com/likecoin/likecoin-chain/tree/master/x/iscn/types"
 
 // IscnParams represents the x/iscn parameters
 type IscnParams struct {

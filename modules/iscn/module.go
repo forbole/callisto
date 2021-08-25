@@ -1,7 +1,7 @@
 package iscn
 
 import (
-	iscntypes "https://github.com/likecoin/likecoin-chain/tree/master/x/iscn/types"
+	iscntypes "github.com/likecoin/likecoin-chain/tree/master/x/iscn/types"
 	"github.com/desmos-labs/juno/modules"
 	juno "github.com/desmos-labs/juno/types"
 	"github.com/go-co-op/gocron"
