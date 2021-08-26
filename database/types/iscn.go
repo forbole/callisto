@@ -1,5 +1,33 @@
 package types
 
+// RecordRow represents a single row inside the record table
+type RecordRow struct {
+	OneRowID     	bool      `db:"one_row_id"`
+	Owner     		string    `db:"owner_address"`
+	LatestVersion   uint64    `db:"latest_version"`
+	Records 		string    `db:"records"`
+	Height       	int64     `db:"height"`
+}
+
+// NewRecordRow builds a new RecordRow instance
+func NewRecordRow(owner string, latestVersion uint64,records string, height int64) RecordRow {
+	return RecordRow{
+		OneRowID: true,
+		Owner: owner, 
+		LatestVersion: latestVersion,
+		Records:   records,
+		Height:   height,
+	}
+}
+
+// Equal reports whether i and j represent the same table rows.
+func (i RecordRow) Equal(j RecordRow) bool {
+	return i.Owner == j.Owner &&
+		i.Height == j.Height
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 // IscnParamsRow represents a single row inside the iscn_params table
 type IscnParamsRow struct {
 	OneRowID bool   `db:"one_row_id"`
