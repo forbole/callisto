@@ -69,7 +69,7 @@ func updateRecords(height int64, iscnClient iscntypes.QueryClient, db *database.
 	if err != nil {
 		log.Error().Str("module", "iscn").Err(err).
 			Int64("height", height).
-			Msg("error while saving iscn params")
+			Msg("error while saving iscn records")
 		return
 	}
 }
