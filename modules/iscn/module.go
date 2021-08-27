@@ -38,3 +38,9 @@ func (m *Module) Name() string {
 func (m *Module) HandleBlock(block *tmctypes.ResultBlock, _ []*juno.Tx, _ *tmctypes.ResultValidators) error {
 	return HandleBlock(block, m.iscnClient, m.db)
 }
+
+
+// HandleMsg implements modules.MessageModule
+func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *types.Tx) error {
+	return HandleMsg(tx, index, msg, m.iscnClient, m.encodingConfig.Marshaler, m.db)
+}
