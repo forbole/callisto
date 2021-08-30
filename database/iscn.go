@@ -7,37 +7,31 @@ import (
 
 )
 
-// SaveRecord allows to store iscn record for the given block height and timestamp
-func (db *Db) SaveRecord(record types.IscnRecord) error {
-	stmt := `
-	INSERT INTO iscn_record (ipld, context, record_id, record_route, record_type, content_fingerprints, 
-			content_metadata, record_notes, record_timestamp, record_version, stakeholders, height) 
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) 
-	ON CONFLICT ON CONSTRAINT one_row_id DO UPDATE
-		SET ipld = excluded.ipld, context = excluded.context, record_id = excluded.record_id, 
-			record_route = excluded.record_route, record_type = excluded.record_type, 
-			content_fingerprints = excluded.content_fingerprints, content_metadata = excluded.content_metadata, 
-			record_notes = excluded.record_notes, record_timestamp = excluded.record_timestamp, 
-			record_version = excluded.record_version, stakeholders = excluded.stakeholders,
+func (db *Db) SaveRecord(records []types.IscnRecord, height int64) error {
+	if len(records) == 0 {
+		return nil
+	}
+
+	stmt := `INSERT INTO iscn_record(records, height) VALUES `
+	var recordList []interface{}
+
+	for _, record := range records {
+		recordList = append(recordList, record, height)
+	}
+
+	stmt = stmt[:len(stmt)-1] // Remove trailing ,
+	stmt += `
+	ON CONFLICT ON CONSTRAINT one_row_id) DO UPDATE 
+		SET records = excluded.records,
 			height = excluded.height
 	WHERE iscn_record.height <= excluded.height`
-	_, err := db.Sql.Exec(stmt,
-		record.Ipld,
-		record.Context,
-		record.RecordID,
-		record.RecordRoute,
-		record.RecordType,
-		record.ContentFingerprints,
-		record.ContentMetadata,
-		record.RecordNotes,
-		record.RecordTimestamp,
-		record.RecordVersion,
-		record.Stakeholders,
-		record.Height,
-	)
+	_, err := db.Sql.Exec(stmt, recordList...)
+	if err != nil {
+		return err
+	}
 	return err
 }
-
+	
 // SaveIscnParams allows to store iscn params inside the database
 func (db *Db) SaveIscnParams(params types.IscnParams) error {
 	paramsBz, err := json.Marshal(&params.Params)

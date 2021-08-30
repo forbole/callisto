@@ -5,8 +5,10 @@ import (
 	"github.com/desmos-labs/juno/modules"
 	juno "github.com/desmos-labs/juno/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/forbole/bdjuno/database"
+	"github.com/desmos-labs/juno/types"
 )
 
 var (
@@ -24,7 +26,7 @@ type Module struct {
 func NewModule(iscnClient iscntypes.QueryClient, db *database.Db) *Module {
 	return &Module{
 		iscnClient: iscnClient,
-		db:         db,
+		db: db,
 	}
 }
 
@@ -42,5 +44,5 @@ func (m *Module) HandleBlock(block *tmctypes.ResultBlock, _ []*juno.Tx, _ *tmcty
 
 // HandleMsg implements modules.MessageModule
 func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *types.Tx) error {
-	return HandleMsg(tx, index, msg, m.iscnClient, m.encodingConfig.Marshaler, m.db)
+	return HandleMsg(tx, index, msg, m.iscnClient, m.db)
 }
