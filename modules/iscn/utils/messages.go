@@ -40,5 +40,5 @@ func StoreIscnRecordFromMessage(
 	}
 
 	iscnRecord := types.NewIscnRecord(res.Owner, res.LatestVersion, res.Records, height)
-	return db.SaveRecord([]types.IscnRecord{iscnRecord}, height)
+	return db.SaveRecord([]types.IscnRecord{iscnRecord})
 }

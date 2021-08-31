@@ -2,15 +2,19 @@ package types
 
 type RecordRow struct {
 	OneRowID     	bool      `db:"one_row_id"`
+	Owner 			string 	  `db:"owner_address"`
+	LatestVersion 	uint64 	  `db:"latest_version"`
 	Records 		string    `db:"records"`
 	Height       	int64     `db:"height"`
 }
 
 
 // NewRecordRow builds a new RecordRow instance
-func NewRecordRow(records string, height int64) RecordRow {
+func NewRecordRow(owner string, latestVersion uint64, records string, height int64) RecordRow {
 	return RecordRow{
 		OneRowID: true,
+		Owner: owner,
+		LatestVersion: latestVersion,
 		Records:   records,
 		Height:   height,
 	}
@@ -18,7 +22,7 @@ func NewRecordRow(records string, height int64) RecordRow {
 
 // Equal reports whether i and j represent the same table rows.
 func (i RecordRow) Equal(j RecordRow) bool {
-	return i.Records == j.Records &&
+	return i.Owner == j.Owner && i.LatestVersion == j.LatestVersion &&
 		i.Height == j.Height
 }
 // --------------------------------------------------------------------------------------------------------------------
