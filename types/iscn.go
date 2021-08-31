@@ -24,14 +24,18 @@ func NewIscnParams(params iscntypes.Params, height int64) IscnParams {
 
 // IscnParams represents the x/iscn records
 type IscnRecord struct {
+	Owner string
+	LatestVersion uint64
 	Records []iscntypes.QueryResponseRecord
 	Height int64
 }
 
-func NewIscnRecord(
+func NewIscnRecord(owner string, latestVersion uint64, 
 	records []iscntypes.QueryResponseRecord, 
 	height int64) IscnRecord {
 	return IscnRecord{
+		Owner: owner,
+		LatestVersion: latestVersion,
 		Records: records,
 		Height: height,
 	}
