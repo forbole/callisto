@@ -38,7 +38,8 @@ func StoreIscnRecordFromMessage(
 	if err != nil {
 		return err
 	}
+	rec := types.NewRecord(res.Records[0].Ipld, res.Records[0].Data)
 
-	iscnRecord := types.NewIscnRecord(res.Owner, res.LatestVersion, res.Records, height)
+	iscnRecord := types.NewIscnRecord(res.Owner, res.LatestVersion, rec, height)
 	return db.SaveRecord([]types.IscnRecord{iscnRecord})
 }
