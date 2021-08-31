@@ -40,12 +40,12 @@ func NewRecord(	ipld string,
 type IscnRecord struct {
 	Owner string
 	LatestVersion uint64
-	Records Record
+	Records []iscntypes.QueryResponseRecord
 	Height int64
 }
 
 func NewIscnRecord(owner string, latestVersion uint64, 
-	records Record, 
+	records []iscntypes.QueryResponseRecord, 
 	height int64) IscnRecord {
 	return IscnRecord{
 		Owner: owner,

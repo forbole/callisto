@@ -15,7 +15,7 @@ CREATE TABLE iscn_record
     one_row_id      bool    PRIMARY KEY DEFAULT TRUE,
     owner_address   TEXT    NOT NULL,
     latest_version  BIGINT  NOT NULL,
-    records         []TEXT   NOT NULL,
+    records         JSONB   NOT NULL,
     height          BIGINT  NOT NULL,
     CONSTRAINT one_row_uni CHECK (one_row_id)
 );
