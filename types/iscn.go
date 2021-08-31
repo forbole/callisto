@@ -21,6 +21,20 @@ func NewIscnParams(params iscntypes.Params, height int64) IscnParams {
 	}
 }
 
+// Record represents the x/iscn records
+type Record struct {
+	Ipld string
+	Data iscntypes.IscnInput
+}
+
+func NewRecord(	ipld string,
+	data iscntypes.IscnInput) Record {
+	return Record{
+		Ipld: ipld,
+		Data: data,
+	}
+}
+
 
 // IscnParams represents the x/iscn records
 type IscnRecord struct {
@@ -41,16 +55,3 @@ func NewIscnRecord(owner string, latestVersion uint64,
 	}
 }
 
-// Record represents the x/iscn records
-type Record struct {
-	Ipld string
-	Data iscntypes.IscnInput
-}
-
-func NewRecord(	ipld string,
-	data iscntypes.IscnInput) Record {
-	return Record{
-		Ipld: ipld,
-		Data: data,
-	}
-}
