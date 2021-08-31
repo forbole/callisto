@@ -11,21 +11,15 @@ func (db *Db) SaveRecord(records []types.IscnRecord, height int64) error {
 	if len(records) == 0 {
 		return nil
 	}
-
-	stmt := `INSERT INTO iscn_record(records, height) VALUES `
-	var recordList []interface{}
-
-	for _, record := range records {
-		recordList = append(recordList, record, height)
-	}
-
-	stmt = stmt[:len(stmt)-1] // Remove trailing ,
-	stmt += `
+	
+	stmt := `
+	INSERT INTO iscn_record (records, height)
+	VALUES ($1, $2)
 	ON CONFLICT ON CONSTRAINT one_row_id) DO UPDATE 
 		SET records = excluded.records,
 			height = excluded.height
 	WHERE iscn_record.height <= excluded.height`
-	_, err := db.Sql.Exec(stmt, recordList...)
+	_, err := db.Sql.Exec(stmt, records, height)
 	if err != nil {
 		return err
 	}
