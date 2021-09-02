@@ -2,6 +2,9 @@ package history
 
 import (
 	"fmt"
+	"time"
+
+	juno "github.com/desmos-labs/juno/types"
 
 	"github.com/gogo/protobuf/proto"
 
@@ -15,14 +18,20 @@ import (
 )
 
 // HandleMsg handles any message updating the involved accounts
-func HandleMsg(msg sdk.Msg, getAddresses messages.MessageAddressesParser, cdc codec.Codec, db *database.Db) error {
+func HandleMsg
+(msg sdk.Msg, getAddresses messages.MessageAddressesParser, cdc codec.Codec, db *database.Db) error {
+timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
+if err != nil {
+return err
+}
+
 	addresses, err := getAddresses(cdc, msg)
 	if err != nil {
 		return fmt.Errorf("error while getting accounts after message of type %s", proto.MessageName(msg))
 	}
 
 	for _, address := range utils.FilterNonAccountAddresses(addresses) {
-		err = historyutils.UpdateAccountBalanceHistory(address, db)
+		err = historyutils.UpdateAccountBalanceHistoryWithTime(address, timestamp, db)
 		if err != nil {
 			return err
 		}
