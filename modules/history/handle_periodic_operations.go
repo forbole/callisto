@@ -14,7 +14,7 @@ func RegisterPeriodicOps(scheduler *gocron.Scheduler, db *database.Db) error {
 	log.Debug().Str("module", "history").Msg("setting up periodic tasks")
 
 	// Update the historic balance of users every 10 minutes
-	if _, err := scheduler.Every(30).Minutes().StartImmediately().Do(func() {
+	if _, err := scheduler.Every(30).Minutes().Do(func() {
 		utils.WatchMethod(func() error { return updateHistoricBalances(db) })
 	}); err != nil {
 		return err

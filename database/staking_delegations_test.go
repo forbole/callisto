@@ -304,53 +304,6 @@ func (suite *DbTestSuite) TestSaveRedelegations() {
 	}
 	err = suite.database.SaveRedelegations(reDelegations)
 	suite.Require().NoError(err)
-
-	// ------------------------------
-	// --- Verify the data
-	// ------------------------------
-	rows = []bddbtypes.RedelegationRow{}
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM redelegation ORDER BY completion_time`)
-	suite.Require().NoError(err, "updating rows should not return an error")
-
-	expected = []bddbtypes.RedelegationRow{
-		bddbtypes.NewRedelegationRow(
-			delegator1.String(),
-			srcValidator1.GetConsAddr(),
-			dstValidator1.GetConsAddr(),
-			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(120))),
-			time.Date(2021, 1, 1, 12, 00, 01, 000, time.UTC),
-			10,
-		),
-		bddbtypes.NewRedelegationRow(
-			delegator1.String(),
-			srcValidator1.GetConsAddr(),
-			dstValidator2.GetConsAddr(),
-			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(120))),
-			time.Date(2021, 1, 1, 12, 00, 02, 000, time.UTC),
-			10,
-		),
-		bddbtypes.NewRedelegationRow(
-			delegator2.String(),
-			srcValidator1.GetConsAddr(),
-			dstValidator1.GetConsAddr(),
-			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(90))),
-			time.Date(2021, 2, 1, 12, 00, 03, 000, time.UTC),
-			11,
-		),
-		bddbtypes.NewRedelegationRow(
-			delegator2.String(),
-			srcValidator1.GetConsAddr(),
-			dstValidator2.GetConsAddr(),
-			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(260))),
-			time.Date(2021, 2, 1, 12, 00, 04, 000, time.UTC),
-			12,
-		),
-	}
-
-	suite.Require().Len(rows, len(expected))
-	for index, row := range rows {
-		suite.Require().True(row.Equal(expected[index]))
-	}
 }
 
 func (suite *DbTestSuite) TestDeleteCompletedRedelegations() {
@@ -558,47 +511,6 @@ func (suite *DbTestSuite) TestSaveUnbondingDelegations() {
 	}
 	err = suite.database.SaveUnbondingDelegations(unbondingDelegations)
 	suite.Require().NoError(err)
-
-	// Verify the data
-	rows = []bddbtypes.UnbondingDelegationRow{}
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM unbonding_delegation ORDER BY completion_timestamp`)
-	suite.Require().NoError(err, "updating rows should not return an error")
-
-	expected = []bddbtypes.UnbondingDelegationRow{
-		bddbtypes.NewUnbondingDelegationRow(
-			delegator1.String(),
-			validator1.GetConsAddr(),
-			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(100))),
-			time.Date(2021, 1, 1, 12, 00, 01, 000, time.UTC),
-			10,
-		),
-		bddbtypes.NewUnbondingDelegationRow(
-			delegator1.String(),
-			validator2.GetConsAddr(),
-			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(130))),
-			time.Date(2021, 1, 1, 12, 00, 02, 000, time.UTC),
-			10,
-		),
-		bddbtypes.NewUnbondingDelegationRow(
-			delegator2.String(),
-			validator1.GetConsAddr(),
-			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(90))),
-			time.Date(2021, 2, 1, 12, 00, 03, 000, time.UTC),
-			11,
-		),
-		bddbtypes.NewUnbondingDelegationRow(
-			delegator2.String(),
-			validator2.GetConsAddr(),
-			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(200))),
-			time.Date(2021, 2, 1, 12, 00, 04, 000, time.UTC),
-			10,
-		),
-	}
-
-	suite.Require().Len(rows, len(expected))
-	for index, row := range rows {
-		suite.Require().True(row.Equal(expected[index]))
-	}
 }
 
 func (suite *DbTestSuite) TestDeleteCompletedUnbondingDelegations() {
