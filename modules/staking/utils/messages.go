@@ -66,7 +66,7 @@ func StoreValidatorFromMsgCreateValidator(
 	}
 
 	// Save the first self-delegation
-	return db.SaveDelegations([]types.Delegation{
+	err = db.SaveDelegations([]types.Delegation{
 		types.NewDelegation(
 			msg.DelegatorAddress,
 			msg.ValidatorAddress,
@@ -74,6 +74,18 @@ func StoreValidatorFromMsgCreateValidator(
 			height,
 		),
 	})
+	if err != nil {
+		return err
+	}
+
+	// Save the commission
+	err = db.SaveValidatorCommission(types.NewValidatorCommission(
+		msg.ValidatorAddress,
+		&msg.Commission.Rate,
+		&msg.MinSelfDelegation,
+		height,
+	))
+	return err
 }
 
 // StoreDelegationFromMessage handles a MsgDelegate and saves the delegation inside the database
