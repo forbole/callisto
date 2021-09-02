@@ -1,29 +1,40 @@
 package types
 
+import (
+	iscntypes "github.com/likecoin/likechain/x/iscn/types"
+)
+
 type RecordRow struct {
 	OneRowID     	bool      `db:"one_row_id"`
 	Owner 			string 	  `db:"owner_address"`
+	IscnId 			string	  `db:"iscn_id"`
 	LatestVersion 	uint64 	  `db:"latest_version"`
-	Records 		[]string    `db:"records"`
+	Ipld			string 	  `db:"ipld"`
+	Data 			iscntypes.IscnInput `db:"iscn_data"`
 	Height       	int64     `db:"height"`
 }
 
 
 // NewRecordRow builds a new RecordRow instance
-func NewRecordRow(owner string, latestVersion uint64, records []string, height int64) RecordRow {
+func NewRecordRow(owner string, iscnId string, latestVersion uint64, ipld string, data iscntypes.IscnInput, height int64) RecordRow {
 	return RecordRow{
 		OneRowID: true,
 		Owner: owner,
+		IscnId: iscnId,
 		LatestVersion: latestVersion,
-		Records:   records,
+		Ipld: ipld,
+		Data: data,
 		Height:   height,
 	}
 }
 
 // Equal reports whether i and j represent the same table rows.
 func (i RecordRow) Equal(j RecordRow) bool {
-	return i.Owner == j.Owner && i.LatestVersion == j.LatestVersion &&
-		i.Height == j.Height
+	return i.Owner == j.Owner && 
+	i.LatestVersion == j.LatestVersion && 
+	i.IscnId == j.IscnId &&
+	i.Ipld == j.Ipld && 
+	i.Height == j.Height
 }
 // --------------------------------------------------------------------------------------------------------------------
 

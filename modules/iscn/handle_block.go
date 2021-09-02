@@ -45,31 +45,3 @@ func updateParams(height int64, iscnClient iscntypes.QueryClient, db *database.D
 		return
 	}
 }
-
-
-// // updateRecords gets the updated iscn records and stores them inside the database
-// func updateRecords(height int64, iscnClient iscntypes.QueryClient, db *database.Db) {
-// 	log.Debug().Str("module", "iscn").Int64("height", height).
-// 		Msg("updating iscn records")
-
-// 	res, err := iscnClient.RecordsById(
-// 		context.Background(),
-// 		&iscntypes.QueryRecordsByIdRequest{},
-// 		client.GetHeightRequestHeader(height),
-// 	)
-// 	if err != nil {
-// 		log.Error().Str("module", "iscn").Err(err).
-// 			Int64("height", height).
-// 			Msg("error while getting iscn records")
-// 		return
-// 	}
-
-
-// 	err = db.SaveRecord(res.Owner, res.LatestVersion, res.Records, height)
-// 	if err != nil {
-// 		log.Error().Str("module", "iscn").Err(err).
-// 			Int64("height", height).
-// 			Msg("error while saving iscn records")
-// 		return
-// 	}
-// }
