@@ -48,11 +48,6 @@ func StoreValidatorFromMsgCreateValidator(
 		return err
 	}
 
-	params, err := db.GetStakingParams()
-	if err != nil {
-		return err
-	}
-
 	// Save the validator
 	err = db.SaveValidatorsData([]types.Validator{validator})
 	if err != nil {
@@ -70,7 +65,7 @@ func StoreValidatorFromMsgCreateValidator(
 		types.NewDelegation(
 			msg.DelegatorAddress,
 			msg.ValidatorAddress,
-			sdk.NewCoin(params.BondDenom, msg.MinSelfDelegation),
+			msg.Value,
 			height,
 		),
 	})
