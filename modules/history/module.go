@@ -1,21 +1,24 @@
 package history
 
 import (
+	"encoding/json"
+
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/juno/modules"
 	"github.com/desmos-labs/juno/modules/messages"
 	juno "github.com/desmos-labs/juno/types"
 	"github.com/go-co-op/gocron"
-
-	"github.com/forbole/bdjuno/types"
+	tmtypes "github.com/tendermint/tendermint/types"
 
 	"github.com/forbole/bdjuno/database"
+	"github.com/forbole/bdjuno/types"
 )
 
 var (
 	_ modules.Module                   = &Module{}
 	_ modules.PeriodicOperationsModule = &Module{}
+	_ modules.GenesisModule            = &Module{}
 	_ modules.MessageModule            = &Module{}
 )
 
@@ -45,7 +48,12 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	return RegisterPeriodicOps(scheduler, m.db)
 }
 
+// HandleGenesis implements modules.GenesisModule
+func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, _ map[string]json.RawMessage) error {
+	return HandleGenesis(doc.GenesisTime, m.db)
+}
+
 // HandleMsg implements modules.MessageModule
-func (m *Module) HandleMsg(_ int, msg sdk.Msg, _ *juno.Tx) error {
-	return HandleMsg(msg, m.messagesParser, m.encodingConfig.Marshaler, m.db)
+func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
+	return HandleMsg(tx, msg, m.messagesParser, m.encodingConfig.Marshaler, m.db)
 }
