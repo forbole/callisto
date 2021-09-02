@@ -18,12 +18,11 @@ import (
 )
 
 // HandleMsg handles any message updating the involved accounts
-func HandleMsg
-(msg sdk.Msg, getAddresses messages.MessageAddressesParser, cdc codec.Codec, db *database.Db) error {
-timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
-if err != nil {
-return err
-}
+func HandleMsg(tx *juno.Tx, msg sdk.Msg, getAddresses messages.MessageAddressesParser, cdc codec.Codec, db *database.Db) error {
+	timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
+	if err != nil {
+		return err
+	}
 
 	addresses, err := getAddresses(cdc, msg)
 	if err != nil {
