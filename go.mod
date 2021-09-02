@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/cosmos/cosmos-sdk v0.42.9
-	github.com/desmos-labs/desmos v0.17.6
+	github.com/desmos-labs/desmos v1.0.1
 	github.com/desmos-labs/juno v0.0.0-20210820090829-4142e0029177
 	github.com/go-co-op/gocron v0.3.3
 	github.com/gogo/protobuf v1.3.3
@@ -22,8 +22,8 @@ require (
 
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 
+replace github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.42.5-0.20210826081936-864fc99bab62
+
 replace google.golang.org/grpc => google.golang.org/grpc v1.33.2
 
-replace github.com/tendermint/tendermint => github.com/forbole/tendermint v0.34.13-0.20210820072129-a2a4af55563d
-
-replace github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.42.5-0.20210814123412-0e951b4cec31
+replace github.com/cosmos/ledger-cosmos-go => github.com/desmos-labs/ledger-desmos-go v0.11.2-0.20210814121638-5d87e392e8a9
