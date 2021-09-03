@@ -65,10 +65,10 @@ func handleMsgChangeIscnRecordOwnership(
 	tx *juno.Tx, index int, msg *iscntypes.MsgChangeIscnRecordOwnership,
 	iscnClient iscntypes.QueryClient, db *database.Db,
 ) error {
-	// err := iscnutils.UpdateIscnRecordOwnershipFromMessage(tx.Height, tx, index, msg, iscnClient, db) 
-	// if err != nil {
-	// 	return err
-	// }
+	err := iscnutils.UpdateIscnRecordOwnershipFromMessage(tx.Height, tx, index, msg, iscnClient, db) 
+	if err != nil {
+		return err
+	}
 
-	return nil 
+	return err 
 }

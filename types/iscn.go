@@ -1,7 +1,6 @@
 package types
 
 import (
-	// "time"
 	
 	iscntypes "github.com/likecoin/likechain/x/iscn/types"
 )
@@ -32,8 +31,8 @@ type IscnRecord struct {
 }
 
 // NewIscnRecord allows to build a new IscnRecord instance
-func NewIscnRecord(owner string, iscnId string, latestVersion uint64, ipld string, data iscntypes.IscnRecord,
-	height int64) IscnRecord {
+func NewIscnRecord(owner string, iscnId string, latestVersion uint64, ipld string, 
+	data iscntypes.IscnRecord, height int64) IscnRecord {
 	return IscnRecord{
 		Owner: owner,
 		IscnId: iscnId,
@@ -41,5 +40,20 @@ func NewIscnRecord(owner string, iscnId string, latestVersion uint64, ipld strin
 		Ipld: ipld,
 		Data: data,
 		Height: height,
+	}
+}
+
+type IscnChangeOwnership struct {
+	From string
+	IscnId string
+	NewOwner string
+}
+
+// NewIscnChangeOwnership allows to build a new IscnChangeOwnership instance
+func NewIscnChangeOwnership(from string, iscnId string, newOwner string) IscnChangeOwnership {
+	return IscnChangeOwnership{
+		From: from,
+		IscnId: iscnId,
+		NewOwner: newOwner,
 	}
 }
