@@ -16,7 +16,6 @@ import (
 func HandleBlock(block *tmctypes.ResultBlock, iscnClient iscntypes.QueryClient, db *database.Db) error {
 	// Update the params
 	go updateParams(block.Block.Height, iscnClient, db)
-	// go updateRecords(block.Block.Height, iscnClient, db)
 	return nil
 }
 

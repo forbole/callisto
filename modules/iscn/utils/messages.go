@@ -42,3 +42,23 @@ func StoreIscnRecordFromMessage(
 	iscnRecord := types.NewIscnRecord(res.Owner, id, res.LatestVersion, res.Records[0].Ipld, res.Records[0].Data, height)
 	return db.SaveIscnRecord(iscnRecord)
 }
+
+func UpdateIscnRecordOwnershipFromMessage(
+	height int64, tx *juno.Tx, index int, msg *iscntypes.MsgChangeIscnRecordOwnership, iscnClient iscntypes.QueryClient, db *database.Db,
+) ( error) {
+
+	id := msg.IscnId
+
+	// Get the record
+	res, err := iscnClient.RecordsById(
+		context.Background(),
+		&iscntypes.QueryRecordsByIdRequest{IscnId: id},
+		client.GetHeightRequestHeader(height),
+	)
+	if err != nil {
+		return err
+	}
+
+	iscnRecord := types.NewIscnRecord(res.Owner, id, res.LatestVersion, res.Records[0].Ipld, res.Records[0].Data, height)
+	return db.UpdateIscnRecordOwnership(iscnRecord)
+}

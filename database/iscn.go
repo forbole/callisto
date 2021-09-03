@@ -15,9 +15,30 @@ func (db *Db) SaveIscnRecord(records types.IscnRecord) error {
 	stmt := `
 	INSERT INTO iscn_record (owner_address, iscn_id, latest_version, ipld, iscn_data, height)
 	VALUES ($1, $2, $3, $4, $5, $6)
-	ON CONFLICT DO NOTHING`
+	ON CONFLICT (iscn_id) DO UPDATE
+			SET latest_version = excluded.latest_version,
+			ipld = excluded.ipld,
+			iscn_data = excluded.iscn_data,
+			height = excluded.height
+	WHERE iscn_record.height <= excluded.height`
 
 	_, err = db.Sql.Exec(stmt, string(records.Owner), records.IscnId, records.LatestVersion, string(records.Ipld), string(iscn_data), records.Height)
+	if err != nil {
+		return err
+	}
+	return err
+}
+
+func (db *Db) UpdateIscnRecordOwnership(records types.IscnRecord) error {
+	stmt := `
+	INSERT INTO iscn_record (owner_address, iscn_id, height)
+	VALUES ($1, $2, $3)
+	ON CONFLICT (iscn_id) DO UPDATE
+			SET owner_address = excluded.owner_address,
+			height = excluded.height
+	WHERE iscn_record.height <= excluded.height`
+
+	_, err := db.Sql.Exec(stmt, string(records.Owner), records.IscnId, records.Height)
 	if err != nil {
 		return err
 	}
