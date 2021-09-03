@@ -11,7 +11,6 @@ type IscnParams struct {
 	Height int64
 }
 
-
 // NewIscnParams allows to build a new IscnParams instance
 func NewIscnParams(params iscntypes.Params, height int64) IscnParams {
 	return IscnParams{

@@ -30,12 +30,10 @@ func HandleMsg(
 		return handleMsgChangeIscnRecordOwnership(tx, index, cosmosMsg, iscnClient, db)
 	}
 
-
 	return nil
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-
 
 // handleMsgCreateIscnRecord handles storing iscn records inside the database
 func handleMsgCreateIscnRecord(
@@ -55,10 +53,13 @@ func handleMsgUpdateIscnRecord(
 	tx *juno.Tx, index int, msg *iscntypes.MsgUpdateIscnRecord,
 	iscnClient iscntypes.QueryClient, db *database.Db,
 ) error {
-	// to do 
-	return nil 
-}
+	err := iscnutils.UpdateIscnRecordFromMessage(tx.Height, tx, index, msg, iscnClient, db)
+	if err != nil {
+		return err
+	}
 
+	return err
+}
 
 // handleMsgChangeIscnRecordOwnership handles updating the iscn record ownership inside the database
 func handleMsgChangeIscnRecordOwnership(

@@ -17,7 +17,7 @@ import (
 // and returns new iscn record instance
 func StoreIscnRecordFromMessage(
 	height int64, tx *juno.Tx, index int, msg *iscntypes.MsgCreateIscnRecord, iscnClient iscntypes.QueryClient, db *database.Db,
-) ( error) {
+) error {
 
 	event, err := tx.FindEventByType(index, iscntypes.EventTypeIscnRecord)
 	if err != nil {
@@ -41,6 +41,27 @@ func StoreIscnRecordFromMessage(
 	iscnRecord := types.NewRecord(msg.Record.RecordNotes, msg.Record.ContentFingerprints, msg.Record.Stakeholders, msg.Record.ContentMetadata)
 	newIscnRecord := types.NewIscnRecord(res.Owner, id, res.LatestVersion, res.Records[0].Ipld, iscnRecord, height)
 	return db.SaveIscnRecord(newIscnRecord)
+}
+
+// UpdateIscnRecordFromMessage handles updating the existing iscn record inside the database
+func UpdateIscnRecordFromMessage(
+	height int64, tx *juno.Tx, index int, msg *iscntypes.MsgUpdateIscnRecord, iscnClient iscntypes.QueryClient, db *database.Db,
+) error {
+
+	id := msg.IscnId
+
+	// Get the record
+	res, err := iscnClient.RecordsById(
+		context.Background(),
+		&iscntypes.QueryRecordsByIdRequest{IscnId: id},
+		client.GetHeightRequestHeader(height),
+	)
+	if err != nil {
+		return err
+	}
+
+	iscnRecord := types.NewIscnRecord(res.Owner, id, res.LatestVersion, res.Records[0].Ipld, res.Records[0].Data, height)
+	return db.UpdateIscnRecord(iscnRecord)
 }
 
 

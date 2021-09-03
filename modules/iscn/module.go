@@ -35,12 +35,10 @@ func (m *Module) Name() string {
 	return "iscn"
 }
 
-
 // HandleBlock implements modules.BlockModule
 func (m *Module) HandleBlock(block *tmctypes.ResultBlock, _ []*juno.Tx, _ *tmctypes.ResultValidators) error {
 	return HandleBlock(block, m.iscnClient, m.db)
 }
-
 
 // HandleMsg implements modules.MessageModule
 func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *types.Tx) error {
