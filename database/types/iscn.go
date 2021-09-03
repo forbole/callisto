@@ -10,13 +10,13 @@ type RecordRow struct {
 	IscnId 			string	  `db:"iscn_id"`
 	LatestVersion 	uint64 	  `db:"latest_version"`
 	Ipld			string 	  `db:"ipld"`
-	Data 			iscntypes.IscnInput `db:"iscn_data"`
+	Data 			iscntypes.IscnRecord `db:"iscn_data"`
 	Height       	int64     `db:"height"`
 }
 
 
 // NewRecordRow builds a new RecordRow instance
-func NewRecordRow(owner string, iscnId string, latestVersion uint64, ipld string, data iscntypes.IscnInput, height int64) RecordRow {
+func NewRecordRow(owner string, iscnId string, latestVersion uint64, ipld string, data iscntypes.IscnRecord, height int64) RecordRow {
 	return RecordRow{
 		OneRowID: true,
 		Owner: owner,

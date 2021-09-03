@@ -27,12 +27,12 @@ type IscnRecord struct {
 	IscnId string
 	LatestVersion uint64
 	Ipld string
-	Data iscntypes.IscnInput
+	Data iscntypes.IscnRecord
 	Height int64
 }
 
 // NewIscnRecord allows to build a new IscnRecord instance
-func NewIscnRecord(owner string, iscnId string, latestVersion uint64, ipld string, data iscntypes.IscnInput,
+func NewIscnRecord(owner string, iscnId string, latestVersion uint64, ipld string, data iscntypes.IscnRecord,
 	height int64) IscnRecord {
 	return IscnRecord{
 		Owner: owner,

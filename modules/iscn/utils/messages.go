@@ -38,27 +38,27 @@ func StoreIscnRecordFromMessage(
 	if err != nil {
 		return err
 	}
-
-	iscnRecord := types.NewIscnRecord(res.Owner, id, res.LatestVersion, res.Records[0].Ipld, res.Records[0].Data, height)
+	iscnR := iscntypes.IscnRecord{RecordNotes: msg.Record.RecordNotes, ContentFingerprints: msg.Record.ContentFingerprints, Stakeholders: msg.Record.Stakeholders, ContentMetadata: msg.Record.ContentMetadata}
+	iscnRecord := types.NewIscnRecord(res.Owner, id, res.LatestVersion, res.Records[0].Ipld, iscnR, height)
 	return db.SaveIscnRecord(iscnRecord)
 }
 
-func UpdateIscnRecordOwnershipFromMessage(
-	height int64, tx *juno.Tx, index int, msg *iscntypes.MsgChangeIscnRecordOwnership, iscnClient iscntypes.QueryClient, db *database.Db,
-) ( error) {
+// func UpdateIscnRecordOwnershipFromMessage(
+// 	height int64, tx *juno.Tx, index int, msg *iscntypes.MsgChangeIscnRecordOwnership, iscnClient iscntypes.QueryClient, db *database.Db,
+// ) ( error) {
 
-	id := msg.IscnId
+// 	id := msg.IscnId
 
-	// Get the record
-	res, err := iscnClient.RecordsById(
-		context.Background(),
-		&iscntypes.QueryRecordsByIdRequest{IscnId: id},
-		client.GetHeightRequestHeader(height),
-	)
-	if err != nil {
-		return err
-	}
+// 	// Get the record
+// 	res, err := iscnClient.RecordsById(
+// 		context.Background(),
+// 		&iscntypes.QueryRecordsByIdRequest{IscnId: id},
+// 		client.GetHeightRequestHeader(height),
+// 	)
+// 	if err != nil {
+// 		return err
+// 	}
 
-	iscnRecord := types.NewIscnRecord(res.Owner, id, res.LatestVersion, res.Records[0].Ipld, res.Records[0].Data, height)
-	return db.UpdateIscnRecordOwnership(iscnRecord)
-}
+// 	iscnRecord := types.NewIscnRecord(res.Owner, id, res.LatestVersion, res.Records[0].Ipld,res.Records[0].Data, height)
+// 	return db.UpdateIscnRecordOwnership(iscnRecord)
+// }
