@@ -12,12 +12,11 @@ CREATE TABLE iscn_params
 
 CREATE TABLE iscn_record
 (
-    id              INTEGER   NOT NULL PRIMARY KEY,
+    iscn_id         TEXT      NOT NULL PRIMARY KEY,
     owner_address   TEXT      NOT NULL,
-    iscn_id         TEXT      NOT NULL,
     latest_version  BIGINT    NOT NULL,
     ipld            TEXT      NOT NULL,
     iscn_data       JSONB     NOT NULL,
-    height          BIGINT    NOT NULL,
+    height          BIGINT    NOT NULL
 );
 CREATE INDEX iscn_record_height_index ON iscn_record (height);
