@@ -18,7 +18,15 @@ func StoreIscnRecordFromMessage(
 	height int64, tx *juno.Tx, index int, msg *iscntypes.MsgCreateIscnRecord, iscnClient iscntypes.QueryClient, db *database.Db,
 ) error {
 
-	id := msg.IscnId
+	event, err := tx.FindEventByType(index, iscntypes.EventTypeIscnRecord)
+	if err != nil {
+		return err
+	}
+
+	id, err := tx.FindAttributeByKey(event, iscntypes.AttributeKeyIscnId)
+	if err != nil {
+		return err
+	}
 
 	// Get the record
 	res, err := iscnClient.RecordsById(
@@ -60,7 +68,7 @@ func UpdateIscnRecordFromMessage(
 func UpdateIscnRecordOwnershipFromMessage(
 	height int64, tx *juno.Tx, index int, msg *iscntypes.MsgChangeIscnRecordOwnership, iscnClient iscntypes.QueryClient, db *database.Db,
 ) ( error) {
-
-	updatedIscnRecord := types.NewIscnChangeOwnership(msg.From, msg.IscnId, msg.NewOwner)
+	id := msg.IscnId
+	updatedIscnRecord := types.NewIscnChangeOwnership(msg.From, id, msg.NewOwner)
 	return db.UpdateIscnRecordOwnership(updatedIscnRecord)
 }
