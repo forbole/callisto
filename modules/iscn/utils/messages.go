@@ -13,8 +13,7 @@ import (
 )
 
 
-// StoreIscnRecordFromMessage handles storing the new iscn record inside the database
-// and returns new iscn record instance
+// StoreIscnRecordFromMessage handles storing new iscn record inside the database
 func StoreIscnRecordFromMessage(
 	height int64, tx *juno.Tx, index int, msg *iscntypes.MsgCreateIscnRecord, iscnClient iscntypes.QueryClient, db *database.Db,
 ) error {
@@ -57,7 +56,7 @@ func UpdateIscnRecordFromMessage(
 }
 
 
-// UpdateIscnRecordOwnershipFromMessage handles updating new iscn record owner inside the database
+// UpdateIscnRecordOwnershipFromMessage handles updating ownership of the existing iscn record inside the database
 func UpdateIscnRecordOwnershipFromMessage(
 	height int64, tx *juno.Tx, index int, msg *iscntypes.MsgChangeIscnRecordOwnership, iscnClient iscntypes.QueryClient, db *database.Db,
 ) ( error) {

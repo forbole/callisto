@@ -5,7 +5,6 @@ import (
 )
 
 type RecordRow struct {
-	OneRowID     	bool      			  `db:"one_row_id"`
 	Owner 			string 	  			  `db:"owner_address"`
 	IscnId 			string	  			  `db:"iscn_id"`
 	LatestVersion 	uint64 	  			  `db:"latest_version"`
@@ -19,7 +18,6 @@ type RecordRow struct {
 func NewRecordRow(owner string, iscnId string, latestVersion uint64, ipld string, data iscntypes.IscnRecord, 
 	height int64) RecordRow {
 	return RecordRow{
-		OneRowID: true,
 		Owner: owner,
 		IscnId: iscnId,
 		LatestVersion: latestVersion,
