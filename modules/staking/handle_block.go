@@ -186,20 +186,20 @@ func updateStakingPool(height int64, stakingClient stakingtypes.QueryClient, db 
 
 // updateElapsedDelegations updates the redelegations and unbonding delegations that have elapsed
 func updateElapsedDelegations(
-	cfg juno.Config, height int64, timestamp time.Time,
+	cfg juno.Config, height int64, blockTime time.Time,
 	stakingClient stakingtypes.QueryClient, bankClient banktypes.QueryClient, db *database.Db,
 ) {
 	log.Debug().Str("module", "staking").Int64("height", height).
 		Msg("updating elapsed redelegations and unbonding delegations")
 
-	deletedRedelegations, err := db.DeleteCompletedRedelegations(timestamp)
+	deletedRedelegations, err := db.DeleteCompletedRedelegations(blockTime)
 	if err != nil {
 		log.Error().Str("module", "staking").Err(err).Int64("height", height).
 			Msg("error while deleting completed redelegations")
 		return
 	}
 
-	deletedUnbondingDelegations, err := db.DeleteCompletedUnbondingDelegations(timestamp)
+	deletedUnbondingDelegations, err := db.DeleteCompletedUnbondingDelegations(blockTime)
 	if err != nil {
 		log.Error().Str("module", "staking").Err(err).Int64("height", height).
 			Msg("error while deleting completed unbonding delegations")
@@ -228,7 +228,7 @@ func updateElapsedDelegations(
 		bankutils.RefreshBalance(delegator, bankClient, db)
 
 		if utils.IsModuleEnabled(cfg, types.HistoryModuleName) {
-			err = historyutils.UpdateAccountBalanceHistory(delegator, db)
+			err = historyutils.UpdateAccountBalanceHistoryWithTime(delegator, blockTime, db)
 			if err != nil {
 				log.Error().Str("module", "staking").Err(err).Int64("height", height).
 					Str("account", delegator).
