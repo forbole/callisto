@@ -19,15 +19,7 @@ func StoreIscnRecordFromMessage(
 	height int64, tx *juno.Tx, index int, msg *iscntypes.MsgCreateIscnRecord, iscnClient iscntypes.QueryClient, db *database.Db,
 ) error {
 
-	event, err := tx.FindEventByType(index, iscntypes.EventTypeIscnRecord)
-	if err != nil {
-		return err
-	}
-
-	id, err := tx.FindAttributeByKey(event, iscntypes.AttributeKeyIscnId)
-	if err != nil {
-		return err
-	}
+	id := msg.IscnId
 
 	// Get the record
 	res, err := iscnClient.RecordsById(
