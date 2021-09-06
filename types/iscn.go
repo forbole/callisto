@@ -20,17 +20,17 @@ func NewIscnParams(params iscntypes.Params, height int64) IscnParams {
 }
 
 type Record struct {
-	IscnId string
+	IscnID string
 	RecordNotes string
 	ContentFingerprints []string
 	Stakeholders []iscntypes.IscnInput
 	ContentMetadata iscntypes.IscnInput
 }
 
-func NewRecord(iscnId string, recordNotes string, contentFingerprints []string, 
+func NewRecord(iscnID string, recordNotes string, contentFingerprints []string, 
 	stakeholders []iscntypes.IscnInput, contentMetadata iscntypes.IscnInput) Record {
 	return Record{
-		IscnId: iscnId,
+		IscnID: iscnID,
 		RecordNotes: recordNotes,
 		ContentFingerprints: contentFingerprints,
 		Stakeholders: stakeholders,
@@ -41,7 +41,7 @@ func NewRecord(iscnId string, recordNotes string, contentFingerprints []string,
 // IscnRecord represents the x/iscn records
 type IscnRecord struct {
 	Owner string
-	IscnId string
+	IscnID string
 	LatestVersion uint64
 	Ipld string
 	Data Record
@@ -49,11 +49,11 @@ type IscnRecord struct {
 }
 
 // NewIscnRecord allows to build a new IscnRecord instance
-func NewIscnRecord(owner string, iscnId string, latestVersion uint64, ipld string, 
+func NewIscnRecord(owner string, iscnID string, latestVersion uint64, ipld string, 
 	data Record, height int64) IscnRecord {
 	return IscnRecord{
 		Owner: owner,
-		IscnId: iscnId,
+		IscnID: iscnID,
 		LatestVersion: latestVersion,
 		Ipld: ipld,
 		Data: data,
@@ -63,15 +63,15 @@ func NewIscnRecord(owner string, iscnId string, latestVersion uint64, ipld strin
 
 type IscnChangeOwnership struct {
 	From string
-	IscnId string
+	IscnID string
 	NewOwner string
 }
 
 // NewIscnChangeOwnership allows to build a new IscnChangeOwnership instance
-func NewIscnChangeOwnership(from string, iscnId string, newOwner string) IscnChangeOwnership {
+func NewIscnChangeOwnership(from string, iscnID string, newOwner string) IscnChangeOwnership {
 	return IscnChangeOwnership{
 		From: from,
-		IscnId: iscnId,
+		IscnID: iscnID,
 		NewOwner: newOwner,
 	}
 }

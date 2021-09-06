@@ -7,7 +7,7 @@ import (
 )
 
 func (db *Db) SaveIscnRecord(records types.IscnRecord) error {
-	iscn_data, err := json.Marshal(&records.Data)
+	iscnData, err := json.Marshal(&records.Data)
 	if err != nil {
 		return err
 	}
@@ -22,7 +22,7 @@ func (db *Db) SaveIscnRecord(records types.IscnRecord) error {
 			height = excluded.height
 	WHERE iscn_record.height <= excluded.height`
 
-	_, err = db.Sql.Exec(stmt, string(records.Owner), records.IscnId, records.LatestVersion, string(records.Ipld), string(iscn_data), records.Height)
+	_, err = db.Sql.Exec(stmt, records.Owner, records.IscnID, records.LatestVersion, records.Ipld, string(iscnData), records.Height)
 	if err != nil {
 		return err
 	}
@@ -31,7 +31,7 @@ func (db *Db) SaveIscnRecord(records types.IscnRecord) error {
 
 
 func (db *Db) UpdateIscnRecord(records types.IscnRecord) error {
-	iscn_data, err := json.Marshal(&records.Data)
+	iscnData, err := json.Marshal(&records.Data)
 	if err != nil {
 		return err
 	}
@@ -42,7 +42,7 @@ func (db *Db) UpdateIscnRecord(records types.IscnRecord) error {
 	WHERE iscn_id = $6
 	ON CONFLICT DO UPDATE`
 
-	_, err = db.Sql.Exec(stmt, string(records.Owner), records.LatestVersion, string(records.Ipld), string(iscn_data), records.Height, records.IscnId)
+	_, err = db.Sql.Exec(stmt, records.Owner, records.LatestVersion, records.Ipld, string(iscnData), records.Height, records.IscnID)
 	if err != nil {
 		return err
 	}
@@ -54,7 +54,7 @@ func (db *Db) UpdateIscnRecordOwnership(records types.IscnChangeOwnership) error
 	
 	stmt := `UPDATE iscn_record SET owner_address = $1 where iscn_id = $2`
 
-	_, err := db.Sql.Exec(stmt, string(records.NewOwner), records.IscnId)
+	_, err := db.Sql.Exec(stmt, records.NewOwner, records.IscnID)
 	if err != nil {
 		return err
 	}

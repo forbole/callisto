@@ -59,47 +59,47 @@ func GetGenesisIscnRecords(appState map[string]json.RawMessage, db *database.Db,
 		if !ok {
 			return fmt.Errorf("error: iscn ID at index %d is not in string format", i)
 		}
-		iscnId, err := iscntypes.ParseIscnId(idStr)
+		iscnID, err := iscntypes.ParseIscnId(idStr)
 		if err != nil {
-			return fmt.Errorf("error: invalid iscn ID at index %d", i, err)
+			return fmt.Errorf("error: invalid iscn ID at index %d : %v", i, err)
 		}
 
 
 		fingerprints, ok := mapIscnRecords["contentFingerprints"]
 		if !ok {
-			return fmt.Errorf("error: couldn't find content fingerprints field for iscn record with ID %s", iscnId.String())
+			return fmt.Errorf("error: couldn't find content fingerprints field for iscn record with ID %s", iscnID.String())
 		}
 
 		stakeholders, ok := mapIscnRecords["stakeholders"]
 		if !ok {
-			return fmt.Errorf("error: couldn't find stakeholders field for iscn record with ID %s", iscnId.String())
+			return fmt.Errorf("error: couldn't find stakeholders field for iscn record with ID %s", iscnID.String())
 		}
 
 		contentMetadata, ok := mapIscnRecords["contentMetadata"]
 		if !ok {
-			return fmt.Errorf("error: couldn't find content metadata field for iscn record with ID %s", iscnId.String())
+			return fmt.Errorf("error: couldn't find content metadata field for iscn record with ID %s", iscnID.String())
 		}
-		iscnID := iscnId.String()
+		// iscnID := iscnID.String()
 		iscnFingerprints := fingerprints.([]string)
 		iscnStakeholders := stakeholders.([]iscntypes.IscnInput)
 		iscnContentMetadata := contentMetadata.(iscntypes.IscnInput)
 
 
-		iscnRecords[i] = types.NewRecord(iscnID, "", iscnFingerprints, iscnStakeholders, iscnContentMetadata)
+		iscnRecords[i] = types.NewRecord(iscnID.String(), "", iscnFingerprints, iscnStakeholders, iscnContentMetadata)
 
 	}
 
 	// Store content_id_records
-	for index, contentIdRecord := range genState.ContentIdRecords {
-		var latestVersion uint64 = contentIdRecord.LatestVersion
-		ownerAddress := string(contentIdRecord.Owner)
+	for index, contentIDRecord := range genState.ContentIdRecords {
+		var latestVersion uint64 = contentIDRecord.LatestVersion
+		ownerAddress := contentIDRecord.Owner
 		
-		iscnId, err := iscntypes.ParseIscnId(contentIdRecord.IscnId)
+		iscnID, err := iscntypes.ParseIscnId(contentIDRecord.IscnId)
 		if err != nil {
-			return fmt.Errorf("error: couldn't parse iscn ID %s in content ID record entries: %w", contentIdRecord.IscnId, err)
+			return fmt.Errorf("error: couldn't parse iscn ID %s in content ID record entries: %w", contentIDRecord.IscnId, err)
 		}
 		
-		id := iscnId.String()
+		id := iscnID.String()
 
 		contentRecords[index] = types.NewIscnRecord(ownerAddress, id, latestVersion, "", iscnRecords[index], height)
 	}

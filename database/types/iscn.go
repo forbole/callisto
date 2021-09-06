@@ -5,21 +5,21 @@ import (
 )
 
 type RecordRow struct {
-	Owner 			string 	  			  `db:"owner_address"`
-	IscnId 			string	  			  `db:"iscn_id"`
-	LatestVersion 	uint64 	  			  `db:"latest_version"`
-	Ipld			string 	  			  `db:"ipld"`
-	Data 			iscntypes.IscnRecord  `db:"iscn_data"`
-	Height       	int64     			  `db:"height"`
+    Owner           string                `db:"owner_address"`
+    IscnID          string                `db:"iscn_id"`
+    LatestVersion   uint64                `db:"latest_version"`
+    Ipld            string                `db:"ipld"`
+    Data            iscntypes.IscnRecord  `db:"iscn_data"`
+    Height          int64                 `db:"height"`
 }
 
 
 // NewRecordRow builds a new RecordRow instance
-func NewRecordRow(owner string, iscnId string, latestVersion uint64, ipld string, data iscntypes.IscnRecord, 
+func NewRecordRow(owner string, iscnID string, latestVersion uint64, ipld string, data iscntypes.IscnRecord, 
 	height int64) RecordRow {
 	return RecordRow{
 		Owner: owner,
-		IscnId: iscnId,
+		IscnID: iscnID,
 		LatestVersion: latestVersion,
 		Ipld: ipld,
 		Data: data,
@@ -31,7 +31,7 @@ func NewRecordRow(owner string, iscnId string, latestVersion uint64, ipld string
 func (i RecordRow) Equal(j RecordRow) bool {
 	return i.Owner == j.Owner && 
 	i.LatestVersion == j.LatestVersion && 
-	i.IscnId == j.IscnId &&
+	i.IscnID == j.IscnID &&
 	i.Ipld == j.Ipld && 
 	i.Height == j.Height
 }
