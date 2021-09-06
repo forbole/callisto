@@ -9,7 +9,12 @@ import (
 
 // UpdateAccountBalanceHistory updates the historic balance for the user having the given address
 func UpdateAccountBalanceHistory(address string, db *database.Db) error {
-	return UpdateAccountBalanceHistoryWithTime(address, time.Now(), db)
+	block, err := db.GetLastBlock()
+	if err != nil {
+		return err
+	}
+
+	return UpdateAccountBalanceHistoryWithTime(address, block.Timestamp, db)
 }
 
 // UpdateAccountBalanceHistoryWithTime updates the historic balance for the user having the given address storing it
