@@ -7,7 +7,6 @@ import (
 	iscntypes "github.com/likecoin/likechain/x/iscn/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
-	"github.com/desmos-labs/juno/types"
 	"github.com/forbole/bdjuno/database"
 )
 
@@ -41,6 +40,6 @@ func (m *Module) HandleBlock(block *tmctypes.ResultBlock, _ []*juno.Tx, _ *tmcty
 }
 
 // HandleMsg implements modules.MessageModule
-func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *types.Tx) error {
+func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	return HandleMsg(tx, index, msg, m.iscnClient, m.db)
 }
