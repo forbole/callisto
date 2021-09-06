@@ -29,6 +29,27 @@ func (db *Db) SaveIscnRecord(records types.IscnRecord) error {
 	return err
 }
 
+
+func (db *Db) UpdateIscnRecord(records types.IscnRecord) error {
+	iscn_data, err := json.Marshal(&records.Data)
+	if err != nil {
+		return err
+	}
+
+	stmt := `
+	UPDATE iscn_record (owner_address, latest_version, ipld, iscn_data, height)
+	VALUES ($1, $2, $3, $4, $5)
+	WHERE iscn_id = $6
+	ON CONFLICT DO UPDATE`
+
+	_, err = db.Sql.Exec(stmt, string(records.Owner), records.LatestVersion, string(records.Ipld), string(iscn_data), records.Height, records.IscnId)
+	if err != nil {
+		return err
+	}
+	return err
+}
+
+
 func (db *Db) UpdateIscnRecordOwnership(records types.IscnChangeOwnership) error {
 	
 	stmt := `UPDATE iscn_record SET owner_address = $1 where iscn_id = $2`

@@ -59,9 +59,9 @@ func UpdateIscnRecordFromMessage(
 	if err != nil {
 		return err
 	}
-
-	iscnRecord := types.NewIscnRecord(res.Owner, id, res.LatestVersion, res.Records[0].Ipld, res.Records[0].Data, height)
-	return db.UpdateIscnRecord(iscnRecord)
+	iscnRecord := types.NewRecord(msg.Record.RecordNotes, msg.Record.ContentFingerprints, msg.Record.Stakeholders, msg.Record.ContentMetadata)
+	newIscnRecord := types.NewIscnRecord(res.Owner, id, res.LatestVersion, res.Records[0].Ipld, iscnRecord, height)
+	return db.UpdateIscnRecord(newIscnRecord)
 }
 
 

@@ -17,7 +17,6 @@ import (
 	jmodules "github.com/desmos-labs/juno/modules"
 	"github.com/desmos-labs/juno/modules/messages"
 	"github.com/desmos-labs/juno/modules/registrar"
-	iscntypes "github.com/likecoin/likechain/x/iscn/types"
 
 	"github.com/forbole/bdjuno/types/config"
 
@@ -33,7 +32,6 @@ import (
 	"github.com/forbole/bdjuno/modules/gov"
 	"github.com/forbole/bdjuno/modules/iscn"
 	"github.com/forbole/bdjuno/modules/mint"
-	"github.com/forbole/bdjuno/modules/iscn"
 	"github.com/forbole/bdjuno/modules/modules"
 	"github.com/forbole/bdjuno/modules/pricefeed"
 	"github.com/forbole/bdjuno/modules/slashing"
