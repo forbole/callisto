@@ -8,7 +8,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	juno "github.com/desmos-labs/juno/types"
-	
 )
 
 // HandleMsg allows to handle the different utils related to the iscn record module
@@ -40,12 +39,12 @@ func handleMsgCreateIscnRecord(
 	tx *juno.Tx, index int, msg *iscntypes.MsgCreateIscnRecord,
 	iscnClient iscntypes.QueryClient, db *database.Db,
 ) error {
-	err := iscnutils.StoreIscnRecordFromMessage(tx.Height, tx, index, msg, iscnClient, db) 
+	err := iscnutils.StoreIscnRecordFromMessage(tx.Height, tx, index, msg, iscnClient, db)
 	if err != nil {
 		return err
 	}
 
-	return err 
+	return err
 }
 
 // handleMsgUpdateIscnRecord handles updating the iscn data inside the database
@@ -66,10 +65,10 @@ func handleMsgChangeIscnRecordOwnership(
 	tx *juno.Tx, index int, msg *iscntypes.MsgChangeIscnRecordOwnership,
 	iscnClient iscntypes.QueryClient, db *database.Db,
 ) error {
-	err := iscnutils.UpdateIscnRecordOwnershipFromMessage(tx.Height, tx, index, msg, iscnClient, db) 
+	err := iscnutils.UpdateIscnRecordOwnershipFromMessage(tx.Height, tx, index, msg, iscnClient, db)
 	if err != nil {
 		return err
 	}
 
-	return err 
+	return err
 }

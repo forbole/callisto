@@ -8,10 +8,9 @@ import (
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/types"
 
-	iscntypes "github.com/likecoin/likechain/x/iscn/types"
 	juno "github.com/desmos-labs/juno/types"
+	iscntypes "github.com/likecoin/likechain/x/iscn/types"
 )
-
 
 // StoreIscnRecordFromMessage handles storing new iscn record inside the database
 func StoreIscnRecordFromMessage(
@@ -63,11 +62,10 @@ func UpdateIscnRecordFromMessage(
 	return db.UpdateIscnRecord(newIscnRecord)
 }
 
-
 // UpdateIscnRecordOwnershipFromMessage handles updating ownership of the existing iscn record inside the database
 func UpdateIscnRecordOwnershipFromMessage(
 	height int64, tx *juno.Tx, index int, msg *iscntypes.MsgChangeIscnRecordOwnership, iscnClient iscntypes.QueryClient, db *database.Db,
-) ( error) {
+) error {
 	id := msg.IscnId
 	updatedIscnRecord := types.NewIscnChangeOwnership(msg.From, id, msg.NewOwner)
 	return db.UpdateIscnRecordOwnership(updatedIscnRecord)

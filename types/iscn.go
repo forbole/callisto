@@ -1,7 +1,6 @@
 package types
 
 import (
-	
 	iscntypes "github.com/likecoin/likechain/x/iscn/types"
 )
 
@@ -20,58 +19,58 @@ func NewIscnParams(params iscntypes.Params, height int64) IscnParams {
 }
 
 type Record struct {
-	IscnID string
-	RecordNotes string
+	IscnID              string
+	RecordNotes         string
 	ContentFingerprints []string
-	Stakeholders []iscntypes.IscnInput
-	ContentMetadata iscntypes.IscnInput
+	Stakeholders        []iscntypes.IscnInput
+	ContentMetadata     iscntypes.IscnInput
 }
 
-func NewRecord(iscnID string, recordNotes string, contentFingerprints []string, 
+func NewRecord(iscnID string, recordNotes string, contentFingerprints []string,
 	stakeholders []iscntypes.IscnInput, contentMetadata iscntypes.IscnInput) Record {
 	return Record{
-		IscnID: iscnID,
-		RecordNotes: recordNotes,
+		IscnID:              iscnID,
+		RecordNotes:         recordNotes,
 		ContentFingerprints: contentFingerprints,
-		Stakeholders: stakeholders,
-		ContentMetadata: contentMetadata,
+		Stakeholders:        stakeholders,
+		ContentMetadata:     contentMetadata,
 	}
 }
 
 // IscnRecord represents the x/iscn records
 type IscnRecord struct {
-	Owner string
-	IscnID string
+	Owner         string
+	IscnID        string
 	LatestVersion uint64
-	Ipld string
-	Data Record
-	Height int64
+	Ipld          string
+	Data          Record
+	Height        int64
 }
 
 // NewIscnRecord allows to build a new IscnRecord instance
-func NewIscnRecord(owner string, iscnID string, latestVersion uint64, ipld string, 
+func NewIscnRecord(owner string, iscnID string, latestVersion uint64, ipld string,
 	data Record, height int64) IscnRecord {
 	return IscnRecord{
-		Owner: owner,
-		IscnID: iscnID,
+		Owner:         owner,
+		IscnID:        iscnID,
 		LatestVersion: latestVersion,
-		Ipld: ipld,
-		Data: data,
-		Height: height,
+		Ipld:          ipld,
+		Data:          data,
+		Height:        height,
 	}
 }
 
 type IscnChangeOwnership struct {
-	From string
-	IscnID string
+	From     string
+	IscnID   string
 	NewOwner string
 }
 
 // NewIscnChangeOwnership allows to build a new IscnChangeOwnership instance
 func NewIscnChangeOwnership(from string, iscnID string, newOwner string) IscnChangeOwnership {
 	return IscnChangeOwnership{
-		From: from,
-		IscnID: iscnID,
+		From:     from,
+		IscnID:   iscnID,
 		NewOwner: newOwner,
 	}
 }

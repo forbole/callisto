@@ -40,8 +40,6 @@ func GetGenesisIscnRecords(appState map[string]json.RawMessage, db *database.Db,
 	contentRecords := make([]types.IscnRecord, len(genState.ContentIdRecords))
 	var height int64 = 0
 
-	
-	
 	// Store iscn_records
 	for i, record := range genState.IscnRecords {
 
@@ -64,7 +62,6 @@ func GetGenesisIscnRecords(appState map[string]json.RawMessage, db *database.Db,
 			return fmt.Errorf("error: invalid iscn ID at index %d : %v", i, err)
 		}
 
-
 		fingerprints, ok := mapIscnRecords["contentFingerprints"]
 		if !ok {
 			return fmt.Errorf("error: couldn't find content fingerprints field for iscn record with ID %s", iscnID.String())
@@ -84,7 +81,6 @@ func GetGenesisIscnRecords(appState map[string]json.RawMessage, db *database.Db,
 		iscnStakeholders := stakeholders.([]iscntypes.IscnInput)
 		iscnContentMetadata := contentMetadata.(iscntypes.IscnInput)
 
-
 		iscnRecords[i] = types.NewRecord(iscnID.String(), "", iscnFingerprints, iscnStakeholders, iscnContentMetadata)
 
 	}
@@ -93,17 +89,16 @@ func GetGenesisIscnRecords(appState map[string]json.RawMessage, db *database.Db,
 	for index, contentIDRecord := range genState.ContentIdRecords {
 		var latestVersion uint64 = contentIDRecord.LatestVersion
 		ownerAddress := contentIDRecord.Owner
-		
+
 		iscnID, err := iscntypes.ParseIscnId(contentIDRecord.IscnId)
 		if err != nil {
 			return fmt.Errorf("error: couldn't parse iscn ID %s in content ID record entries: %w", contentIDRecord.IscnId, err)
 		}
-		
+
 		id := iscnID.String()
 
 		contentRecords[index] = types.NewIscnRecord(ownerAddress, id, latestVersion, "", iscnRecords[index], height)
 	}
-
 
 	return nil
 

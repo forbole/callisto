@@ -29,7 +29,6 @@ func (db *Db) SaveIscnRecord(records types.IscnRecord) error {
 	return err
 }
 
-
 func (db *Db) UpdateIscnRecord(records types.IscnRecord) error {
 	iscnData, err := json.Marshal(&records.Data)
 	if err != nil {
@@ -49,9 +48,8 @@ func (db *Db) UpdateIscnRecord(records types.IscnRecord) error {
 	return err
 }
 
-
 func (db *Db) UpdateIscnRecordOwnership(records types.IscnChangeOwnership) error {
-	
+
 	stmt := `UPDATE iscn_record SET owner_address = $1 where iscn_id = $2`
 
 	_, err := db.Sql.Exec(stmt, records.NewOwner, records.IscnID)
@@ -60,7 +58,7 @@ func (db *Db) UpdateIscnRecordOwnership(records types.IscnChangeOwnership) error
 	}
 	return err
 }
-	
+
 // SaveIscnParams allows to store iscn params inside the database
 func (db *Db) SaveIscnParams(params types.IscnParams) error {
 	paramsBz, err := json.Marshal(&params.Params)

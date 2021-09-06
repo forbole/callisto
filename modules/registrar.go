@@ -10,13 +10,13 @@ import (
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-	iscntypes "github.com/likecoin/likechain/x/iscn/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/desmos-labs/juno/client"
 	jmodules "github.com/desmos-labs/juno/modules"
 	"github.com/desmos-labs/juno/modules/messages"
 	"github.com/desmos-labs/juno/modules/registrar"
+	iscntypes "github.com/likecoin/likechain/x/iscn/types"
 
 	"github.com/forbole/bdjuno/types/config"
 
