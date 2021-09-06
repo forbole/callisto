@@ -20,19 +20,36 @@ func NewIscnParams(params iscntypes.Params, height int64) IscnParams {
 	}
 }
 
+type Record struct {
+	RecordNotes string
+	ContentFingerprints []string
+	Stakeholders []iscntypes.IscnInput
+	ContentMetadata iscntypes.IscnInput
+}
+
+func NewRecord(recordNotes string, contentFingerprints []string, 
+	stakeholders []iscntypes.IscnInput, contentMetadata iscntypes.IscnInput) Record {
+	return Record{
+		RecordNotes: recordNotes,
+		ContentFingerprints: contentFingerprints,
+		Stakeholders: stakeholders,
+		ContentMetadata: contentMetadata,
+	}
+}
+
 // IscnRecord represents the x/iscn records
 type IscnRecord struct {
 	Owner string
 	IscnId string
 	LatestVersion uint64
 	Ipld string
-	Data iscntypes.IscnRecord
+	Data Record
 	Height int64
 }
 
 // NewIscnRecord allows to build a new IscnRecord instance
 func NewIscnRecord(owner string, iscnId string, latestVersion uint64, ipld string, 
-	data iscntypes.IscnRecord, height int64) IscnRecord {
+	data Record, height int64) IscnRecord {
 	return IscnRecord{
 		Owner: owner,
 		IscnId: iscnId,
