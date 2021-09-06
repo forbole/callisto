@@ -20,15 +20,17 @@ func NewIscnParams(params iscntypes.Params, height int64) IscnParams {
 }
 
 type Record struct {
+	IscnId string
 	RecordNotes string
 	ContentFingerprints []string
 	Stakeholders []iscntypes.IscnInput
 	ContentMetadata iscntypes.IscnInput
 }
 
-func NewRecord(recordNotes string, contentFingerprints []string, 
+func NewRecord(iscnId string, recordNotes string, contentFingerprints []string, 
 	stakeholders []iscntypes.IscnInput, contentMetadata iscntypes.IscnInput) Record {
 	return Record{
+		IscnId: iscnId,
 		RecordNotes: recordNotes,
 		ContentFingerprints: contentFingerprints,
 		Stakeholders: stakeholders,
