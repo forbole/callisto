@@ -38,8 +38,7 @@ func (db *Db) UpdateIscnRecord(records types.IscnRecord) error {
 	stmt := `
 	UPDATE iscn_record (owner_address, latest_version, ipld, iscn_data, height)
 	VALUES ($1, $2, $3, $4, $5)
-	WHERE iscn_id = $6
-	ON CONFLICT DO UPDATE`
+	WHERE iscn_id = $6`
 
 	_, err = db.Sql.Exec(stmt, records.Owner, records.LatestVersion, records.Ipld, string(iscnData), records.Height, records.IscnID)
 	if err != nil {
