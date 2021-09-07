@@ -39,6 +39,7 @@ func GetGenesisIscnRecords(appState map[string]json.RawMessage, db *database.Db,
 	iscnRecords := make([]types.Record, len(genState.IscnRecords))
 	contentRecords := make([]types.IscnRecord, len(genState.ContentIdRecords))
 	var height int64 = 0
+	ipld := make([]string, len(genState.IscnRecords))
 
 	// Store iscn_records
 	for i, record := range genState.IscnRecords {
@@ -76,13 +77,18 @@ func GetGenesisIscnRecords(appState map[string]json.RawMessage, db *database.Db,
 		if !ok {
 			return fmt.Errorf("error: couldn't find content metadata field for iscn record with ID %s", iscnID.String())
 		}
-		// iscnID := iscnID.String()
+
+		ipldRecord, ok := mapIscnRecords["ipld"]
+		if !ok {
+			return fmt.Errorf("error: couldn't find ipld field for iscn record with ID %s", iscnID.String())
+		}
+
 		iscnFingerprints := fingerprints.([]string)
 		iscnStakeholders := stakeholders.([]iscntypes.IscnInput)
 		iscnContentMetadata := contentMetadata.(iscntypes.IscnInput)
 
 		iscnRecords[i] = types.NewRecord(iscnID.String(), "", iscnFingerprints, iscnStakeholders, iscnContentMetadata)
-
+		ipld[i] = ipldRecord.(string)
 	}
 
 	// Store content_id_records
@@ -97,7 +103,13 @@ func GetGenesisIscnRecords(appState map[string]json.RawMessage, db *database.Db,
 
 		id := iscnID.String()
 
-		contentRecords[index] = types.NewIscnRecord(ownerAddress, id, latestVersion, "", iscnRecords[index], height)
+		contentRecords[index] = types.NewIscnRecord(ownerAddress, id, latestVersion, ipld[index], iscnRecords[index], height)
+
+		// Save each record in db
+		err = db.SaveIscnRecord(contentRecords[index])
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
