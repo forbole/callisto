@@ -30,6 +30,11 @@ func StoreTokens(cfg *config.Config, db *database.Db) error {
 
 		// Create the price entry
 		for _, unit := range coin.Units {
+			// Skip units with empty price ids
+			if unit.PriceID == "" {
+				continue
+			}
+
 			prices = append(prices, types.NewTokenPrice(unit.Denom, 0, 0, time.Time{}))
 		}
 	}

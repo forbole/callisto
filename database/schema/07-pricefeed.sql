@@ -10,7 +10,8 @@ CREATE TABLE token_unit
     token_name TEXT NOT NULL REFERENCES token (name),
     denom      TEXT NOT NULL UNIQUE,
     exponent   INT  NOT NULL,
-    aliases    TEXT[]
+    aliases    TEXT[],
+    price_id   TEXT
 );
 
 
