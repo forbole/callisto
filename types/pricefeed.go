@@ -20,13 +20,15 @@ type TokenUnit struct {
 	Denom    string   `toml:"denom"`
 	Exponent int      `toml:"exponent"`
 	Aliases  []string `toml:"aliases"`
+	PriceID  string   `toml:"price_id"`
 }
 
-func NewTokenUnit(denom string, exponent int, aliases []string) TokenUnit {
+func NewTokenUnit(denom string, exponent int, aliases []string, priceID string) TokenUnit {
 	return TokenUnit{
 		Denom:    denom,
 		Exponent: exponent,
 		Aliases:  aliases,
+		PriceID:  priceID,
 	}
 }
 
