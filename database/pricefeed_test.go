@@ -26,13 +26,20 @@ func (suite *DbTestSuite) Test_GetTradedNames() {
 	suite.insertToken("desmos")
 	suite.insertToken("daric")
 
-	tradedNames, err := suite.database.GetTokenUnits()
+	units, err := suite.database.GetTokenUnits()
 	suite.Require().NoError(err)
 
-	var expected = []string{"udesmos", "mdesmos", "desmos", "udaric", "mdaric", "daric"}
-	suite.Require().Len(tradedNames, len(expected))
+	var expected = []types.TokenUnit{
+		types.NewTokenUnit("udesmos", 0, nil, ""),
+		types.NewTokenUnit("mdesmos", 3, nil, ""),
+		types.NewTokenUnit("desmos", 6, nil, ""),
+		types.NewTokenUnit("udaric", 0, nil, ""),
+		types.NewTokenUnit("mdaric", 3, nil, ""),
+		types.NewTokenUnit("daric", 6, nil, ""),
+	}
+	suite.Require().Len(units, len(expected))
 	for _, name := range expected {
-		suite.Require().Contains(tradedNames, name)
+		suite.Require().Contains(units, name)
 	}
 }
 
