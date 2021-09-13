@@ -44,17 +44,22 @@ func updatePrice(cfg juno.Config, db *database.Db) error {
 		return err
 	}
 
-	// Get the list of token names to retrieve
-	names, err := db.GetTokenUnits()
+	// Get the list of token units
+	units, err := db.GetTokenUnits()
 	if err != nil {
 		return err
 	}
 
 	// Find the id of the coins
 	var ids []string
-	for _, coin := range coins {
-		for _, tradedToken := range names {
-			if strings.EqualFold(coin.Symbol, tradedToken) {
+	for _, tradedToken := range units {
+		// Skip the token if the price id is empty
+		if tradedToken.PriceID == "" {
+			continue
+		}
+
+		for _, coin := range coins {
+			if strings.EqualFold(coin.ID, tradedToken.PriceID) {
 				ids = append(ids, coin.ID)
 				break
 			}
