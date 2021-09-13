@@ -3,22 +3,34 @@ package database
 import (
 	"fmt"
 
+	dbtypes "github.com/forbole/bdjuno/database/types"
+
 	"github.com/forbole/bdjuno/types"
 
 	"github.com/lib/pq"
 )
 
 // GetTokenUnits returns the slice of all the names of the different tokens units
-func (db *Db) GetTokenUnits() ([]string, error) {
-	query := `SELECT denom FROM token_unit`
+func (db *Db) GetTokenUnits() ([]types.TokenUnit, error) {
+	query := `SELECT * FROM token_unit`
 
-	var names pq.StringArray
-	err := db.Sqlx.Select(&names, query)
+	var dbUnits []dbtypes.TokenUnitRow
+	err := db.Sqlx.Select(&dbUnits, query)
 	if err != nil {
 		return nil, err
 	}
 
-	return names, nil
+	var units = make([]types.TokenUnit, len(dbUnits))
+	for index, unit := range dbUnits {
+		units[index] = types.NewTokenUnit(
+			unit.Denom,
+			unit.Exponent,
+			unit.Aliases,
+			dbtypes.ToString(unit.PriceID),
+		)
+	}
+
+	return units, nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -31,13 +43,14 @@ func (db *Db) SaveToken(token types.Token) error {
 		return err
 	}
 
-	query = `INSERT INTO token_unit (token_name, denom, exponent, aliases) VALUES `
+	query = `INSERT INTO token_unit (token_name, denom, exponent, aliases, price_id) VALUES `
 	var params []interface{}
 
 	for i, unit := range token.Units {
-		ui := i * 4
-		query += fmt.Sprintf("($%d,$%d,$%d,$%d),", ui+1, ui+2, ui+3, ui+4)
-		params = append(params, token.Name, unit.Denom, unit.Exponent, pq.StringArray(unit.Aliases))
+		ui := i * 5
+		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", ui+1, ui+2, ui+3, ui+4, ui+5)
+		params = append(params, token.Name, unit.Denom, unit.Exponent, pq.StringArray(unit.Aliases),
+			dbtypes.ToNullString(unit.PriceID))
 	}
 
 	query = query[:len(query)-1] // Remove trailing ","

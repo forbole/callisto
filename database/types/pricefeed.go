@@ -1,6 +1,7 @@
 package types
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/lib/pq"
@@ -9,8 +10,9 @@ import (
 type TokenUnitRow struct {
 	TokenName string         `db:"token_name"`
 	Denom     string         `db:"denom"`
-	Exponent  uint32         `db:"exponent"`
+	Exponent  int            `db:"exponent"`
 	Aliases   pq.StringArray `db:"aliases"`
+	PriceID   sql.NullString `db:"price_id"`
 }
 
 type TokenRow struct {
