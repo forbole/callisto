@@ -3,6 +3,11 @@ package pricefeed
 import (
 	"strings"
 
+	juno "github.com/desmos-labs/juno/types"
+
+	historyutils "github.com/forbole/bdjuno/modules/history/utils"
+	"github.com/forbole/bdjuno/types"
+
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
 
@@ -13,12 +18,12 @@ import (
 
 // RegisterPeriodicOps returns the AdditionalOperation that periodically runs fetches from
 // CoinGecko to make sure that constantly changing data are synced properly.
-func RegisterPeriodicOps(scheduler *gocron.Scheduler, db *database.Db) error {
+func RegisterPeriodicOps(cfg juno.Config, scheduler *gocron.Scheduler, db *database.Db) error {
 	log.Debug().Str("module", "pricefeed").Msg("setting up periodic tasks")
 
 	// Fetch total supply of token in 30 seconds each
 	if _, err := scheduler.Every(30).Second().StartImmediately().Do(func() {
-		utils.WatchMethod(func() error { return updatePrice(db) })
+		utils.WatchMethod(func() error { return updatePrice(cfg, db) })
 	}); err != nil {
 		return err
 	}
@@ -27,7 +32,7 @@ func RegisterPeriodicOps(scheduler *gocron.Scheduler, db *database.Db) error {
 }
 
 // updatePrice fetch total amount of coins in the system from RPC and store it into database
-func updatePrice(db *database.Db) error {
+func updatePrice(cfg juno.Config, db *database.Db) error {
 	log.Debug().
 		Str("module", "pricefeed").
 		Str("operation", "pricefeed").
@@ -68,5 +73,14 @@ func updatePrice(db *database.Db) error {
 	}
 
 	// Save the token prices
-	return db.SaveTokensPrices(prices)
+	err = db.SaveTokensPrices(prices)
+	if err != nil {
+		return err
+	}
+
+	if utils.IsModuleEnabled(cfg, types.HistoryModuleName) {
+		return historyutils.UpdatePriceHistory(prices, db)
+	}
+
+	return nil
 }
