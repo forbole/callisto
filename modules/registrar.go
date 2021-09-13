@@ -16,6 +16,7 @@ import (
 	jmodules "github.com/desmos-labs/juno/modules"
 	"github.com/desmos-labs/juno/modules/messages"
 	"github.com/desmos-labs/juno/modules/registrar"
+	iscntypes "github.com/likecoin/likechain/x/iscn/types"
 
 	"github.com/forbole/bdjuno/types/config"
 
@@ -29,6 +30,7 @@ import (
 	"github.com/forbole/bdjuno/modules/consensus"
 	"github.com/forbole/bdjuno/modules/distribution"
 	"github.com/forbole/bdjuno/modules/gov"
+	"github.com/forbole/bdjuno/modules/iscn"
 	"github.com/forbole/bdjuno/modules/mint"
 	"github.com/forbole/bdjuno/modules/modules"
 	"github.com/forbole/bdjuno/modules/pricefeed"
@@ -82,6 +84,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	distrClient := distrtypes.NewQueryClient(grpcConnection)
 	govClient := govtypes.NewQueryClient(grpcConnection)
 	mintClient := minttypes.NewQueryClient(grpcConnection)
+	iscnClient := iscntypes.NewQueryClient(grpcConnection)
 	slashingClient := slashingtypes.NewQueryClient(grpcConnection)
 	stakingClient := stakingtypes.NewQueryClient(grpcConnection)
 
@@ -93,6 +96,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		distribution.NewModule(distrClient, bigDipperBd),
 		gov.NewModule(bankClient, govClient, stakingClient, encodingConfig, bigDipperBd),
 		mint.NewModule(mintClient, bigDipperBd),
+		iscn.NewModule(iscnClient, bigDipperBd),
 		modules.NewModule(ctx.ParsingConfig, bigDipperBd),
 		pricefeed.NewModule(bdjunoCfg, encodingConfig, bigDipperBd),
 		slashing.NewModule(slashingClient, bigDipperBd),
