@@ -16,18 +16,8 @@ type Tokens []Token
 type MarketTicker struct {
 	Symbol       string    `json:"symbol"`
 	CurrentPrice float64   `json:"current_price"`
-	MarketCap    int64     `json:"market_cap"`
+	MarketCap    float64   `json:"market_cap"`
 	LastUpdated  time.Time `json:"last_updated"`
-}
-
-// NewMarketTicker creates a new instance of MarketTicker
-func NewMarketTicker(symbol string, currentPrice float64, marketCap int64, lastUpdated time.Time) MarketTicker {
-	return MarketTicker{
-		Symbol:       symbol,
-		CurrentPrice: currentPrice,
-		MarketCap:    marketCap,
-		LastUpdated:  lastUpdated,
-	}
 }
 
 // MarketTickers is an array of MarketTicker
