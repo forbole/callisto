@@ -44,5 +44,5 @@ func (m *Module) RunAdditionalOperations() error {
 
 // RegisterPeriodicOperations implements modules.PeriodicOperationsModule
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
-	return RegisterPeriodicOps(scheduler, m.db)
+	return RegisterPeriodicOps(m.cfg, scheduler, m.db)
 }
