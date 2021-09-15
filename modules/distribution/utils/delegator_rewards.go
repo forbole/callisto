@@ -13,8 +13,28 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// each epoch time in blocks
+var EPOCH_TIME int64 = 14440
+
 // UpdateDelegatorsRewardsAmounts updates the delegators commission amounts
 func UpdateDelegatorsRewardsAmounts(height int64, client distrtypes.QueryClient, db *database.Db) {
+	rewards, _ := db.GetDelegatorRewards()
+
+	if len(rewards) == 0 {
+		// run once when chain starts
+		go updateDelegatorsRewards(height, client, db)
+	}
+
+	if len(rewards) > 0 {
+		// run on the first block in epoch
+		if height%EPOCH_TIME == 1 {
+			go updateDelegatorsRewards(height, client, db)
+		}
+	}
+
+}
+
+func updateDelegatorsRewards(height int64, client distrtypes.QueryClient, db *database.Db) {
 	log.Debug().Str("module", "distribution").Int64("height", height).
 		Msg("updating delegators rewards")
 

@@ -14,9 +14,6 @@ import (
 	distrutils "github.com/forbole/bdjuno/modules/distribution/utils"
 )
 
-// epoch time in blocks
-var EPOCH_TIME int64 = 14440
-
 // HandleBlock represents a method that is called each time a new block is created
 func HandleBlock(block *tmctypes.ResultBlock, client distrtypes.QueryClient, db *database.Db) error {
 	go updateParams(block.Block.Height, client, db)
@@ -24,11 +21,8 @@ func HandleBlock(block *tmctypes.ResultBlock, client distrtypes.QueryClient, db 
 	// Update the validator commissions
 	go distrutils.UpdateValidatorsCommissionAmounts(block.Block.Height, client, db)
 
-	// Update on first block in every epoch
-	if block.Block.Height%EPOCH_TIME == 1 {
-		// Update the delegators commissions amounts
-		go distrutils.UpdateDelegatorsRewardsAmounts(block.Block.Height, client, db)
-	}
+	// Update the delegators commissions amounts
+	go distrutils.UpdateDelegatorsRewardsAmounts(block.Block.Height, client, db)
 
 	return nil
 }
