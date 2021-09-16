@@ -11,6 +11,9 @@ import (
 
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/modules"
+
+	//emoney
+	emoneyapp "github.com/e-money/em-ledger"
 )
 
 func main() {
@@ -37,6 +40,7 @@ func main() {
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
 		simapp.ModuleBasics,
+		emoneyapp.ModuleBasics,
 	}
 }
 

@@ -34,6 +34,9 @@ import (
 	"github.com/forbole/bdjuno/modules/pricefeed"
 	"github.com/forbole/bdjuno/modules/slashing"
 	"github.com/forbole/bdjuno/modules/staking"
+
+	//emoney inlfation module types:
+	inflationtypes "github.com/e-money/em-ledger/x/inflation/internal/types"
 )
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
@@ -84,6 +87,9 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	mintClient := minttypes.NewQueryClient(grpcConnection)
 	slashingClient := slashingtypes.NewQueryClient(grpcConnection)
 	stakingClient := stakingtypes.NewQueryClient(grpcConnection)
+
+	//e-money inlfation
+	inflationClient := inflationtypes.NewQueryClient(grpcConnection)
 
 	return []jmodules.Module{
 		messages.NewModule(r.parser, encodingConfig.Marshaler, ctx.Database),

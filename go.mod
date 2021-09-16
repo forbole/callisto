@@ -5,6 +5,7 @@ go 1.15
 require (
 	github.com/cosmos/cosmos-sdk v0.42.9
 	github.com/desmos-labs/juno v0.0.0-20210820090829-4142e0029177
+	github.com/e-money/em-ledger v1.1.0-RC2 //for emoney testnet
 	github.com/go-co-op/gocron v0.3.3
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.2.1-0.20200324155115-ee514944af4b
@@ -17,6 +18,7 @@ require (
 	github.com/ziutek/mymysql v1.5.4 // indirect
 	google.golang.org/grpc v1.37.0
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
+
 )
 
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
@@ -24,3 +26,6 @@ replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alp
 replace google.golang.org/grpc => google.golang.org/grpc v1.33.2
 
 replace github.com/tendermint/tendermint => github.com/forbole/tendermint v0.34.13-0.20210820072129-a2a4af55563d
+
+//for emoney
+replace github.com/cosmos/cosmos-sdk => github.com/e-money/cosmos-sdk v0.42.10-rc1
