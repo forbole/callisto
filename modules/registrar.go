@@ -105,6 +105,6 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		slashing.NewModule(slashingClient, bigDipperBd),
 		staking.NewModule(ctx.ParsingConfig, bankClient, stakingClient, encodingConfig, bigDipperBd),
 		history.NewModule(r.parser, encodingConfig, bigDipperBd),
-		issuer.NewModule(issuerClient, bigDipperBd),
+		issuer.NewModule(issuerClient, mintClient, bigDipperBd),
 	}
 }
