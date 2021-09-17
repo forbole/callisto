@@ -25,5 +25,5 @@ func HandleMsg(
 			Err(err).Msgf("error while refreshing balances after message of type %s", msg.Type())
 	}
 
-	return bankutils.UpdateBalances(utils.FilterNonAccountAddresses(addresses), tx.Height, bankClient, db)
+	return bankutils.RefreshBalances(tx.Height, utils.FilterNonAccountAddresses(addresses), bankClient, db)
 }

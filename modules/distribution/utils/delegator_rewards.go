@@ -87,3 +87,24 @@ func GetDelegatorRewards(height int64, delegator string, distrClient distrtypes.
 	}
 	return rewards, nil
 }
+
+// RefreshDelegatorRewards refreshes the rewards associated to the given delegator for the given height,
+// deleting the ones existing and downloading them from scratch.
+func RefreshDelegatorRewards(height int64, delegator string, distrClient distrtypes.QueryClient, db *database.Db) error {
+	rewards, err := GetDelegatorRewards(height, delegator, distrClient)
+	if err != nil {
+		return fmt.Errorf("error while refreshing delegator rewards: %s", err)
+	}
+
+	err = db.DeleteDelegatorRewardsAmount(delegator, height)
+	if err != nil {
+		return fmt.Errorf("error deleting the delegator rewards amount: %s", err)
+	}
+
+	err = db.SaveDelegatorsRewardsAmounts(rewards)
+	if err != nil {
+		return fmt.Errorf("error while saving delegators rewards amounts: %s", err)
+	}
+
+	return nil
+}

@@ -1,6 +1,8 @@
 package staking
 
 import (
+	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+
 	"github.com/forbole/bdjuno/database"
 	stakingutils "github.com/forbole/bdjuno/modules/staking/utils"
 	"github.com/forbole/bdjuno/types"
@@ -14,7 +16,8 @@ import (
 
 // HandleMsg allows to handle the different utils related to the staking module
 func HandleMsg(
-	tx *juno.Tx, index int, msg sdk.Msg, stakingClient stakingtypes.QueryClient,
+	tx *juno.Tx, index int, msg sdk.Msg,
+	stakingClient stakingtypes.QueryClient, distrClient distrtypes.QueryClient,
 	cdc codec.Marshaler, db *database.Db,
 ) error {
 	if len(tx.Logs) == 0 {
@@ -32,10 +35,10 @@ func HandleMsg(
 		return stakingutils.StoreDelegationFromMessage(tx.Height, cosmosMsg, stakingClient, db)
 
 	case *stakingtypes.MsgBeginRedelegate:
-		return handleMsgBeginRedelegate(tx, index, cosmosMsg, stakingClient, db)
+		return handleMsgBeginRedelegate(tx, index, cosmosMsg, stakingClient, distrClient, db)
 
 	case *stakingtypes.MsgUndelegate:
-		return handleMsgUndelegate(tx, index, cosmosMsg, stakingClient, db)
+		return handleMsgUndelegate(tx, index, cosmosMsg, stakingClient, distrClient, db)
 	}
 
 	return nil
@@ -110,7 +113,8 @@ func handleEditValidator(
 // handleMsgBeginRedelegate handles a MsgBeginRedelegate storing the data inside the database
 func handleMsgBeginRedelegate(
 	tx *juno.Tx, index int, msg *stakingtypes.MsgBeginRedelegate,
-	client stakingtypes.QueryClient, db *database.Db,
+	stakingClient stakingtypes.QueryClient, distrClient distrtypes.QueryClient,
+	db *database.Db,
 ) error {
 	_, err := stakingutils.StoreRedelegationFromMessage(tx, index, msg, db)
 	if err != nil {
@@ -118,13 +122,14 @@ func handleMsgBeginRedelegate(
 	}
 
 	// Update the current delegations
-	return stakingutils.UpdateDelegationsAndReplaceExisting(tx.Height, msg.DelegatorAddress, client, db)
+	return stakingutils.RefreshDelegations(tx.Height, msg.DelegatorAddress, stakingClient, distrClient, db)
 }
 
 // handleMsgUndelegate handles a MsgUndelegate storing the data inside the database
 func handleMsgUndelegate(
 	tx *juno.Tx, index int, msg *stakingtypes.MsgUndelegate,
-	stakingClient stakingtypes.QueryClient, db *database.Db,
+	stakingClient stakingtypes.QueryClient, distrClient distrtypes.QueryClient,
+	db *database.Db,
 ) error {
 	_, err := stakingutils.StoreUnbondingDelegationFromMessage(tx, index, msg, db)
 	if err != nil {
@@ -132,5 +137,5 @@ func handleMsgUndelegate(
 	}
 
 	// Update the current delegations
-	return stakingutils.UpdateDelegationsAndReplaceExisting(tx.Height, msg.DelegatorAddress, stakingClient, db)
+	return stakingutils.RefreshDelegations(tx.Height, msg.DelegatorAddress, stakingClient, distrClient, db)
 }
