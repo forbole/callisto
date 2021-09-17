@@ -72,9 +72,16 @@ func ConvertValidator(
 func ConvertValidatorDescription(
 	opAddr string, description stakingtypes.Description, height int64,
 ) (types.ValidatorDescription, error) {
-	avatarURL, err := keybase.GetAvatarURL(description.Identity)
-	if err != nil {
-		return types.ValidatorDescription{}, err
+	var avatarURL string
+
+	if description.Identity == stakingtypes.DoNotModifyDesc {
+		avatarURL = stakingtypes.DoNotModifyDesc
+	} else {
+		url, err := keybase.GetAvatarURL(description.Identity)
+		if err != nil {
+			return types.ValidatorDescription{}, err
+		}
+		avatarURL = url
 	}
 
 	return types.NewValidatorDescription(opAddr, description, avatarURL, height), nil
