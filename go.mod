@@ -14,7 +14,7 @@ require (
 	github.com/rs/zerolog v1.23.0
 	github.com/stretchr/testify v1.7.0
 	github.com/tendermint/tendermint v0.34.12
-	github.com/terra-money/core v0.5.2 // indirect
+	github.com/terra-money/core v0.5.2
 	github.com/ziutek/mymysql v1.5.4 // indirect
 	google.golang.org/grpc v1.40.0
 )
