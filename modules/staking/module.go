@@ -3,6 +3,8 @@ package staking
 import (
 	"encoding/json"
 
+	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+
 	"github.com/forbole/bdjuno/database"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -29,12 +31,14 @@ type Module struct {
 	encodingConfig *params.EncodingConfig
 	stakingClient  stakingtypes.QueryClient
 	bankClient     banktypes.QueryClient
+	distrClient    distrtypes.QueryClient
 	db             *database.Db
 }
 
 // NewModule returns a new Module instance
 func NewModule(
-	cfg juno.Config, bankClient banktypes.QueryClient, stakingClient stakingtypes.QueryClient,
+	cfg juno.Config,
+	bankClient banktypes.QueryClient, stakingClient stakingtypes.QueryClient, distrClient distrtypes.QueryClient,
 	encodingConfig *params.EncodingConfig, db *database.Db,
 ) *Module {
 	return &Module{
@@ -42,6 +46,7 @@ func NewModule(
 		encodingConfig: encodingConfig,
 		stakingClient:  stakingClient,
 		bankClient:     bankClient,
+		distrClient:    distrClient,
 		db:             db,
 	}
 }
@@ -58,10 +63,10 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 
 // HandleBlock implements BlockModule
 func (m *Module) HandleBlock(block *tmctypes.ResultBlock, _ []*juno.Tx, vals *tmctypes.ResultValidators) error {
-	return HandleBlock(m.cfg, block, vals, m.stakingClient, m.bankClient, m.encodingConfig.Marshaler, m.db)
+	return HandleBlock(m.cfg, block, vals, m.stakingClient, m.bankClient, m.distrClient, m.encodingConfig.Marshaler, m.db)
 }
 
 // HandleMsg implements MessageModule
 func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
-	return HandleMsg(tx, index, msg, m.stakingClient, m.encodingConfig.Marshaler, m.db)
+	return HandleMsg(tx, index, msg, m.stakingClient, m.distrClient, m.encodingConfig.Marshaler, m.db)
 }

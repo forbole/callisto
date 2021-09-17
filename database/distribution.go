@@ -170,3 +170,10 @@ func (db *Db) GetUserDelegatorRewardsAmount(address string) (sdk.DecCoins, error
 	}
 	return rewardsAmount, nil
 }
+
+// DeleteDelegatorRewardsAmount deletes the rewards for the given delegator-validator tuple at the given height
+func (db *Db) DeleteDelegatorRewardsAmount(delegatorAddr string, height int64) error {
+	stmt := `DELETE FROM delegation_reward WHERE delegator_address = $1 AND height <= $2`
+	_, err := db.Sql.Exec(stmt, delegatorAddr, height)
+	return err
+}
