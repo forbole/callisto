@@ -96,7 +96,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		modules.NewModule(ctx.ParsingConfig, bigDipperBd),
 		pricefeed.NewModule(bdjunoCfg, encodingConfig, bigDipperBd),
 		slashing.NewModule(slashingClient, bigDipperBd),
-		staking.NewModule(ctx.ParsingConfig, bankClient, stakingClient, encodingConfig, bigDipperBd),
+		staking.NewModule(ctx.ParsingConfig, bankClient, stakingClient, distrClient, encodingConfig, bigDipperBd),
 		history.NewModule(r.parser, encodingConfig, bigDipperBd),
 	}
 }
