@@ -215,10 +215,15 @@ func (db *Db) SaveValidatorDescription(description types.ValidatorDescription) e
 	}
 
 	// Update the existing description with this one, if one is already present
+	var avatarURL = description.AvatarURL
 	if existing, found := db.getValidatorDescription(consAddr); found {
 		des, err = existing.Description.UpdateDescription(des)
 		if err != nil {
 			return err
+		}
+
+		if description.AvatarURL == stakingtypes.DoNotModifyDesc {
+			avatarURL = existing.AvatarURL
 		}
 	}
 
@@ -242,7 +247,7 @@ WHERE validator_description.height <= excluded.height`
 		dbtypes.ToNullString(consAddr.String()),
 		dbtypes.ToNullString(des.Moniker),
 		dbtypes.ToNullString(des.Identity),
-		dbtypes.ToNullString(description.AvatarURL),
+		dbtypes.ToNullString(avatarURL),
 		dbtypes.ToNullString(des.Website),
 		dbtypes.ToNullString(des.SecurityContact),
 		dbtypes.ToNullString(des.Details),
