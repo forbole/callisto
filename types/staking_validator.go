@@ -83,7 +83,7 @@ func (v validator) GetHeight() int64 {
 type ValidatorDescription struct {
 	OperatorAddress string
 	Description     stakingtypes.Description
-	AvatarURL       string
+	AvatarURL       string // URL of the avatar to be used. Will be [do-no-modify] if it shouldn't be edited
 	Height          int64
 }
 
