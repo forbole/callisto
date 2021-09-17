@@ -162,8 +162,6 @@ github.com/dvsekhvalnov/jose2go v0.0.0-20200901110807-248326c1351b h1:HBah4D48yp
 github.com/dvsekhvalnov/jose2go v0.0.0-20200901110807-248326c1351b/go.mod h1:7BvyPhdbLxMXIYTFPLsyJRFMsKmOZnQmzh6Gb+uquuM=
 github.com/e-money/cosmos-sdk v0.42.10-rc1 h1:jJCvp3+ReXrqoBIwuulW5bwDCErMNhwS7WvYxaiilhc=
 github.com/e-money/cosmos-sdk v0.42.10-rc1/go.mod h1:SrclJP9lMXxz2fCbngxb0brsPNuZXqoQQ9VHuQ3Tpf4=
-github.com/e-money/em-ledger v1.1.0-RC1 h1:sQorvT5hZXF9ueRTNbKLbdxlTjF0kulcRrYrbQAlW9w=
-github.com/e-money/em-ledger v1.1.0-RC1/go.mod h1:LWhOm9ESMjxn1pqKKfidWK8qf7NrSWmPPNX5BU9P71Y=
 github.com/e-money/em-ledger v1.1.0-RC2 h1:XMFHwdNdTrvKNjw8f61/zPIOnj59agkqrHGk/lUKMuk=
 github.com/e-money/em-ledger v1.1.0-RC2/go.mod h1:LWhOm9ESMjxn1pqKKfidWK8qf7NrSWmPPNX5BU9P71Y=
 github.com/eapache/go-resiliency v1.1.0/go.mod h1:kFI+JgMyC7bLPUVY133qvEBtVayf5mFgVsvEsIPBvNs=

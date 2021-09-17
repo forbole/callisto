@@ -1,10 +1,10 @@
-package inflation
+package issuer
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/juno/modules"
 	juno "github.com/desmos-labs/juno/types"
-	inflationtypes "github.com/e-money/em-ledger/x/inflation/internal/types"
+	issuertypes "github.com/e-money/em-ledger/x/issuer/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"github.com/forbole/bdjuno/database"
@@ -17,14 +17,14 @@ var (
 
 // Module represent database/iscn module
 type Module struct {
-	inflationClient inflationtypes.QueryClient
+	inflationClient issuertypes.QueryClient
 	db              *database.Db
 }
 
 // NewModule returns a new Module instance
-func NewModule(inflationClient inflationtypes.QueryClient, db *database.Db) *Module {
+func NewModule(issuerClient issuertypes.QueryClient, db *database.Db) *Module {
 	return &Module{
-		inflationClient: inflationClient,
+		inflationClient: issuerClient,
 		db:              db,
 	}
 }
