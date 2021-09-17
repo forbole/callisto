@@ -2,7 +2,13 @@ package utils
 
 import (
 	"context"
+	"fmt"
 	"sync"
+
+	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+	"google.golang.org/grpc/codes"
+
+	distrutils "github.com/forbole/bdjuno/modules/distribution/utils"
 
 	"github.com/desmos-labs/juno/client"
 
@@ -12,6 +18,10 @@ import (
 
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/types"
+)
+
+const (
+	ErrDelegationNotFound = "rpc error: code = %s desc = rpc error: code = %s"
 )
 
 // ConvertDelegationResponse converts the given response to a BDJuno Delegation instance
@@ -115,33 +125,42 @@ func GetDelegatorDelegations(height int64, delegator string, client stakingtypes
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// UpdateDelegationsAndReplaceExisting updates the delegations of the given delegator by querying them at the
+// RefreshDelegations updates the delegations of the given delegator by querying them at the
 // required height, and then stores them inside the database by replacing all existing ones.
-func UpdateDelegationsAndReplaceExisting(
-	height int64, delegator string, client stakingtypes.QueryClient, db *database.Db,
+func RefreshDelegations(
+	height int64, delegator string,
+	stakingClient stakingtypes.QueryClient, distrClient distrtypes.QueryClient,
+	db *database.Db,
 ) error {
-	// Remove existing delegations
-	err := db.DeleteDelegatorDelegations(delegator)
+	// Get current delegations
+	delegations, err := GetDelegatorDelegations(height, delegator, stakingClient)
 	if err != nil {
-		return err
-	}
-
-	delegations, err := GetDelegatorDelegations(height, delegator, client)
-	if err != nil {
-		return err
-	}
-
-	return db.SaveDelegations(delegations)
-}
-
-// RefreshDelegations returns a function that when called updates the delegations of the provided delegator.
-// In order to properly update the data, it removes all the existing delegations and stores new ones querying the gRPC
-func RefreshDelegations(height int64, delegator string, client stakingtypes.QueryClient, db *database.Db) func() {
-	return func() {
-		err := UpdateDelegationsAndReplaceExisting(height, delegator, client, db)
+		// Get the error code
+		var code string
+		_, err = fmt.Sscanf(err.Error(), ErrDelegationNotFound, &code, &code)
 		if err != nil {
-			log.Error().Str("module", "staking").Err(err).
-				Str("operation", "refresh delegations").Msg("error while refreshing delegations")
+			return err
+		}
+
+		// If delegations are not found there is no problem.
+		// If it's a different error, we need to return it
+		if code != codes.NotFound.String() {
+			return fmt.Errorf("error while getting delegator delegations: %s", err)
 		}
 	}
+
+	// Remove existing delegations
+	err = db.DeleteDelegatorDelegations(delegator)
+	if err != nil {
+		return fmt.Errorf("error while deleting delegator delegations: %s", err)
+	}
+
+	// Save new delegations
+	err = db.SaveDelegations(delegations)
+	if err != nil {
+		return fmt.Errorf("error while saving delegations: %s", err)
+	}
+
+	// Refresh the delegator rewards
+	return distrutils.RefreshDelegatorRewards(height, delegator, distrClient, db)
 }
