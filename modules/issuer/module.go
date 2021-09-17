@@ -5,14 +5,13 @@ import (
 	"github.com/desmos-labs/juno/modules"
 	juno "github.com/desmos-labs/juno/types"
 	issuertypes "github.com/e-money/em-ledger/x/issuer/types"
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"github.com/forbole/bdjuno/database"
 )
 
 var (
-	_ modules.Module      = &Module{}
-	_ modules.BlockModule = &Module{}
+	_ modules.Module        = &Module{}
+	_ modules.MessageModule = &Module{}
 )
 
 // Module represent database/iscn module
@@ -31,12 +30,7 @@ func NewModule(issuerClient issuertypes.QueryClient, db *database.Db) *Module {
 
 // Name implements modules.Module
 func (m *Module) Name() string {
-	return "inflation"
-}
-
-// HandleBlock implements modules.BlockModule
-func (m *Module) HandleBlock(block *tmctypes.ResultBlock, _ []*juno.Tx, _ *tmctypes.ResultValidators) error {
-	return HandleBlock(block, m.inflationClient, m.db)
+	return "issuer"
 }
 
 // HandleMsg implements modules.MessageModule
