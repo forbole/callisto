@@ -154,7 +154,7 @@ func updateAccounts(proposal govtypes.Proposal, bankClient banktypes.QueryClient
 			return err
 		}
 
-		return bankutils.UpdateBalances(addresses, height, bankClient, db)
+		return bankutils.RefreshBalances(height, addresses, bankClient, db)
 	}
 	return nil
 }

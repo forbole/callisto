@@ -5,6 +5,8 @@ import (
 	"encoding/hex"
 	"time"
 
+	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
 	bankutils "github.com/forbole/bdjuno/modules/bank/utils"
@@ -30,7 +32,7 @@ import (
 // HandleBlock represents a method that is called each time a new block is created
 func HandleBlock(
 	cfg juno.Config, block *tmctypes.ResultBlock, vals *tmctypes.ResultValidators,
-	stakingClient stakingtypes.QueryClient, bankClient banktypes.QueryClient,
+	stakingClient stakingtypes.QueryClient, bankClient banktypes.QueryClient, distrClient distrtypes.QueryClient,
 	cdc codec.Marshaler, db *database.Db,
 ) error {
 	// Update the validators
@@ -55,7 +57,7 @@ func HandleBlock(
 	go updateStakingPool(block.Block.Height, stakingClient, db)
 
 	// Update redelegations and unbonding delegations
-	go updateElapsedDelegations(cfg, block.Block.Height, block.Block.Time, stakingClient, bankClient, db)
+	go updateElapsedDelegations(cfg, block.Block.Height, block.Block.Time, stakingClient, bankClient, distrClient, db)
 
 	return nil
 }
@@ -187,7 +189,8 @@ func updateStakingPool(height int64, stakingClient stakingtypes.QueryClient, db 
 // updateElapsedDelegations updates the redelegations and unbonding delegations that have elapsed
 func updateElapsedDelegations(
 	cfg juno.Config, height int64, blockTime time.Time,
-	stakingClient stakingtypes.QueryClient, bankClient banktypes.QueryClient, db *database.Db,
+	stakingClient stakingtypes.QueryClient, bankClient banktypes.QueryClient, distrClient distrtypes.QueryClient,
+	db *database.Db,
 ) {
 	log.Debug().Str("module", "staking").Int64("height", height).
 		Msg("updating elapsed redelegations and unbonding delegations")
@@ -224,15 +227,25 @@ func updateElapsedDelegations(
 
 	// Update the delegations and balances of all the delegators
 	for delegator := range delegators {
-		stakingutils.RefreshDelegations(height, delegator, stakingClient, db)
-		bankutils.RefreshBalance(delegator, bankClient, db)
+		err = stakingutils.RefreshDelegations(height, delegator, stakingClient, distrClient, db)
+		if err != nil {
+			log.Error().Str("module", "staking").Err(err).Int64("height", height).
+				Str("delegator", delegator).Msg("error while refreshing the delegations")
+			return
+		}
+
+		err = bankutils.RefreshBalances(height, []string{delegator}, bankClient, db)
+		if err != nil {
+			log.Error().Str("module", "staking").Err(err).Int64("height", height).
+				Str("delegator", delegator).Msg("error while refreshing the balance")
+			return
+		}
 
 		if utils.IsModuleEnabled(cfg, types.HistoryModuleName) {
 			err = historyutils.UpdateAccountBalanceHistoryWithTime(delegator, blockTime, db)
 			if err != nil {
 				log.Error().Str("module", "staking").Err(err).Int64("height", height).
-					Str("account", delegator).
-					Msg("error while updating account balance history")
+					Str("delegator", delegator).Msg("error while updating account balance history")
 				return
 			}
 		}
