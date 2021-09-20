@@ -190,4 +190,3 @@ func (db *Db) GetDelegatorRewards() ([]*dbtypes.DelegationRewardRow, error) {
 
 	return rows, nil
 }
-
