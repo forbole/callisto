@@ -12,7 +12,7 @@ import (
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/modules"
 
-	//emoney
+	// emoney
 	emoneyapp "github.com/e-money/em-ledger"
 )
 
