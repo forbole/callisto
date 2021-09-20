@@ -13,8 +13,8 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// each epoch time in blocks
-var EPOCH_TIME int64 = 14440
+// EpochTime returns epoch time in blocks
+var EpochTime int64 = 14440
 
 // UpdateDelegatorsRewardsAmounts updates the delegators commission amounts
 func UpdateDelegatorsRewardsAmounts(height int64, client distrtypes.QueryClient, db *database.Db) {
@@ -27,7 +27,7 @@ func UpdateDelegatorsRewardsAmounts(height int64, client distrtypes.QueryClient,
 
 	if len(rewards) > 0 {
 		// run on the first block in epoch
-		if height%EPOCH_TIME == 1 {
+		if height%EpochTime == 1 {
 			go updateDelegatorsRewards(height, client, db)
 		}
 	}
