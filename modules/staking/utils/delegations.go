@@ -137,8 +137,8 @@ func RefreshDelegations(
 	if err != nil {
 		// Get the error code
 		var code string
-		_, err = fmt.Sscanf(err.Error(), ErrDelegationNotFound, &code, &code)
-		if err != nil {
+		_, scanErr := fmt.Sscanf(err.Error(), ErrDelegationNotFound, &code, &code)
+		if scanErr != nil {
 			return err
 		}
 
