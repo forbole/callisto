@@ -13,23 +13,44 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// EpochTime returns epoch time in blocks
-var EpochTime int64 = 14440
+// GetBlockInterval return block interval for each epoch
+func GetBlockInterval(height int64, db *database.Db) int64 {
+	epochIdentifier, _ := db.GetEpochIdentifier(height)
+
+	blockInterval := GetEpochIdentifierInBlocks(height, epochIdentifier, db)
+	return blockInterval
+}
+
+// GetEpochIdentifierInBlocks returns epoch length in blocks
+func GetEpochIdentifierInBlocks(height int64, day string, db *database.Db) int64 {
+	averageBlockTime, _ := db.GetAverageBlockTimeFromGenesis(height)
+	var epochInSeconds int64 = 0
+	switch day {
+	case "day":
+		epochInSeconds = 86400
+		return epochInSeconds
+	case "week":
+		epochInSeconds = 604800
+		return epochInSeconds
+	case "month":
+		epochInSeconds = 2630000
+		return epochInSeconds
+	case "year":
+		epochInSeconds = 31536000
+		return epochInSeconds
+	}
+	epochInBlocks := epochInSeconds / averageBlockTime
+
+	return epochInBlocks
+}
 
 // UpdateDelegatorsRewardsAmounts updates the delegators commission amounts
 func UpdateDelegatorsRewardsAmounts(height int64, client distrtypes.QueryClient, db *database.Db) {
 	rewards, _ := db.GetDelegatorRewards()
+	blockInterval := GetBlockInterval(height, db)
 
-	if len(rewards) == 0 {
-		// run once when chain starts
+	if len(rewards) == 0 || height%blockInterval == 0 {
 		go updateDelegatorsRewards(height, client, db)
-	}
-
-	if len(rewards) > 0 {
-		// run on the first block in epoch
-		if height%EpochTime == 1 {
-			go updateDelegatorsRewards(height, client, db)
-		}
 	}
 
 }

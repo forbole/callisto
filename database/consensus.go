@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/forbole/bdjuno/types"
@@ -163,4 +164,21 @@ func (db *Db) GetGenesis() (*types.Genesis, error) {
 
 	row := rows[0]
 	return types.NewGenesis(row.ChainID, row.Time, row.InitialHeight), nil
+}
+
+// GetAverageBlockTimeFromGenesis returns average block time param from genesis stored in db
+func (db *Db) GetAverageBlockTimeFromGenesis(height int64) (int64, error) {
+	stmt := `SELECT average_time FROM average_block_time_from_genesis WHERE height = $1`
+
+	var averageBlockTimeFromGenesis = ""
+	err := db.Sqlx.Select(&averageBlockTimeFromGenesis, stmt, height)
+	if err != nil {
+		return 0, err
+	}
+	averageBlockTime, err := strconv.ParseInt(averageBlockTimeFromGenesis, 10, 64)
+	if err != nil {
+		return 0, err
+	}
+
+	return averageBlockTime, nil
 }

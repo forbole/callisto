@@ -38,3 +38,16 @@ WHERE mint_params.height <= excluded.height`
 	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
 	return err
 }
+
+// GetEpochIdentifier returns epoch_identifier param stored in db
+func (db *Db) GetEpochIdentifier(height int64) (string, error) {
+	stmt := `SELECT params FROM mint_params WHERE height = $1`
+
+	var epochIdentifier = ""
+	err := db.Sqlx.Select(&epochIdentifier, stmt, height)
+	if err != nil {
+		return "", err
+	}
+
+	return epochIdentifier, nil
+}
