@@ -2,6 +2,7 @@ package distribution
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 
 	"github.com/forbole/bdjuno/database"
@@ -22,12 +23,14 @@ var (
 // Module represents the x/distr module
 type Module struct {
 	db          *database.Db
+	bankClient  banktypes.QueryClient
 	distrClient distrtypes.QueryClient
 }
 
 // NewModule returns a new Module instance
-func NewModule(distrClient distrtypes.QueryClient, db *database.Db) *Module {
+func NewModule(bankClient banktypes.QueryClient, distrClient distrtypes.QueryClient, db *database.Db) *Module {
 	return &Module{
+		bankClient:  bankClient,
 		distrClient: distrClient,
 		db:          db,
 	}
@@ -50,5 +53,5 @@ func (m *Module) HandleBlock(b *tmctypes.ResultBlock, _ []*types.Tx, _ *tmctypes
 
 // HandleMsg implements modules.MessageModule
 func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *types.Tx) error {
-	return HandleMsg(tx, msg, m.distrClient, m.db)
+	return HandleMsg(tx, msg, m.distrClient, m.bankClient, m.db)
 }
