@@ -13,8 +13,27 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// BlockInterval returns interval time in blocks
+var BlockInterval int64 = 100
+
 // UpdateDelegatorsRewardsAmounts updates the delegators commission amounts
 func UpdateDelegatorsRewardsAmounts(height int64, client distrtypes.QueryClient, db *database.Db) {
+	rewards, _ := db.GetDelegatorRewards()
+
+	if len(rewards) == 0 {
+		// run once when chain starts
+		go updateDelegatorsRewards(height, client, db)
+	}
+
+	if len(rewards) > 0 {
+		// run every 100 blocks interval
+		if height%BlockInterval == 0 {
+			go updateDelegatorsRewards(height, client, db)
+		}
+	}
+}
+
+func updateDelegatorsRewards(height int64, client distrtypes.QueryClient, db *database.Db) {
 	log.Debug().Str("module", "distribution").Int64("height", height).
 		Msg("updating delegators rewards")
 
