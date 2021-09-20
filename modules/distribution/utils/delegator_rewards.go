@@ -20,16 +20,8 @@ var BlockInterval int64 = 100
 func UpdateDelegatorsRewardsAmounts(height int64, client distrtypes.QueryClient, db *database.Db) {
 	rewards, _ := db.GetDelegatorRewards()
 
-	if len(rewards) == 0 {
-		// run once when chain starts
+	if len(rewards) == 0 || height%BlockInterval == 0 {
 		go updateDelegatorsRewards(height, client, db)
-	}
-
-	if len(rewards) > 0 {
-		// run every 100 blocks interval
-		if height%BlockInterval == 0 {
-			go updateDelegatorsRewards(height, client, db)
-		}
 	}
 }
 
