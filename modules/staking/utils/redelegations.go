@@ -132,19 +132,3 @@ func GetDelegatorRedelegations(
 
 	return delegations, nil
 }
-
-// --------------------------------------------------------------------------------------------------------------------
-
-// DeleteRedelegation returns a function that when called removes the given redelegation from the database.
-func DeleteRedelegation(redelegation types.Redelegation, db *database.Db) func() {
-	return func() {
-		// Remove existing redelegations
-		err := db.DeleteRedelegation(redelegation)
-		if err != nil {
-			log.Error().Str("module", "staking").Err(err).
-				Str("operation", "update redelegations").
-				Msg("error while removing delegator redelegations")
-			return
-		}
-	}
-}

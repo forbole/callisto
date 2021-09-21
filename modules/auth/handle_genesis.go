@@ -20,7 +20,7 @@ func Handler(appState map[string]json.RawMessage, cdc codec.Codec, db *database.
 
 	accounts, err := authutils.GetGenesisAccounts(appState, cdc)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting genesis accounts: %s", err)
 	}
 
 	err = db.SaveAccounts(accounts)

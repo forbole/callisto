@@ -2,6 +2,7 @@ package bank
 
 import (
 	"encoding/json"
+	"fmt"
 
 	authutils "github.com/forbole/bdjuno/modules/auth/utils"
 
@@ -23,13 +24,13 @@ func HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage,
 
 	var bankState banktypes.GenesisState
 	if err := cdc.UnmarshalJSON(appState[banktypes.ModuleName], &bankState); err != nil {
-		return err
+		return fmt.Errorf("error while unmarhshaling bank state: %s", err)
 	}
 
 	// Store the balances
 	accounts, err := authutils.GetGenesisAccounts(appState, cdc)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting genesis account: %s", err)
 	}
 	accountsMap := getAccountsMap(accounts)
 

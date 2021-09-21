@@ -1,6 +1,8 @@
 package distribution
 
 import (
+	"fmt"
+
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
@@ -20,7 +22,7 @@ func RegisterPeriodicOps(
 	if _, err := scheduler.Every(1).Hour().StartImmediately().Do(func() {
 		utils.WatchMethod(func() error { return getLatestCommunityPool(distrClient, db) })
 	}); err != nil {
-		return err
+		return fmt.Errorf("error while scheduling distribution peridic operation: %s", err)
 	}
 
 	return nil
@@ -30,7 +32,7 @@ func RegisterPeriodicOps(
 func getLatestCommunityPool(distrClient distrtypes.QueryClient, db *database.Db) error {
 	height, err := db.GetLastBlockHeight()
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting latest block height: %s", err)
 	}
 
 	return distrutils.UpdateCommunityPool(height, distrClient, db)
