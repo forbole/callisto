@@ -18,12 +18,12 @@ func GetAvatarURL(identity string) (string, error) {
 	endpoint := fmt.Sprintf("/user/lookup.json?key_suffix=%[1]s&fields=basics&fields=pictures", identity)
 	err := queryKeyBase(endpoint, &response)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("error while querying keybase")
 	}
 
 	// The server responded with an error
 	if response.Status.Code != 0 {
-		return "", fmt.Errorf(response.Status.ErrDesc)
+		return "", fmt.Errorf("response code not valid: %s", response.Status.ErrDesc)
 	}
 
 	// No images found
@@ -46,18 +46,20 @@ func GetAvatarURL(identity string) (string, error) {
 func queryKeyBase(endpoint string, ptr interface{}) error {
 	resp, err := http.Get("https://keybase.io/_/api/1.0" + endpoint)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while querying keybase APIs: %s", err)
 	}
 
 	defer resp.Body.Close()
 
 	bz, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while reading response body: %s", err)
 	}
 
-	if err := json.Unmarshal(bz, &ptr); err != nil {
-		return err
+	err = json.Unmarshal(bz, &ptr)
+	if err != nil {
+		return fmt.Errorf("error while unmarshaling response body: %s", err)
 	}
+
 	return nil
 }

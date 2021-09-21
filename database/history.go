@@ -32,7 +32,11 @@ ON CONFLICT ON CONSTRAINT unique_balance_for_height DO UPDATE
 		pq.Array(dbtypes.NewDbDecCoins(entry.Reward)),
 		entry.Timestamp,
 	)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing account balance history: %s", err)
+	}
+
+	return nil
 }
 
 // SaveTokenPricesHistory stores the given prices as historic ones
@@ -57,5 +61,9 @@ ON CONFLICT ON CONSTRAINT unique_price_for_timestamp DO UPDATE
 	    market_cap = excluded.market_cap`
 
 	_, err := db.Sql.Exec(query, param...)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing tokens price history: %s", err)
+	}
+
+	return nil
 }
