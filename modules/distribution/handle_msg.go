@@ -48,5 +48,11 @@ func HandleMsg(
 		return fmt.Errorf("error while getting delegator withdraw address: %s", err)
 	}
 
-	return bankutils.RefreshBalances(tx.Height, []string{delegatorAddr, res.WithdrawAddress}, bankClient, db)
+	var addresses = []string{delegatorAddr}
+	if delegatorAddr != res.WithdrawAddress {
+		// Only update the withdraw address if it's not the same as the delegation address
+		addresses = append(addresses, res.WithdrawAddress)
+	}
+
+	return bankutils.RefreshBalances(tx.Height, addresses, bankClient, db)
 }
