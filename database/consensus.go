@@ -89,7 +89,11 @@ ON CONFLICT (one_row_id) DO UPDATE
 WHERE average_block_time_per_minute.height <= excluded.height`
 
 	_, err := db.Sqlx.Exec(stmt, averageTime, height)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing average block time per minute: %s", err)
+	}
+
+	return nil
 }
 
 // SaveAverageBlockTimePerHour save the average block time in average_block_time_per_hour table
@@ -103,7 +107,11 @@ ON CONFLICT (one_row_id) DO UPDATE
 WHERE average_block_time_per_hour.height <= excluded.height`
 
 	_, err := db.Sqlx.Exec(stmt, averageTime, height)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing average block time per hour: %s", err)
+	}
+
+	return nil
 }
 
 // SaveAverageBlockTimePerDay save the average block time in average_block_time_per_day table
@@ -117,7 +125,11 @@ ON CONFLICT (one_row_id) DO UPDATE
 WHERE average_block_time_per_day.height <= excluded.height`
 
 	_, err := db.Sqlx.Exec(stmt, averageTime, height)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing average block time per day: %s", err)
+	}
+
+	return nil
 }
 
 // SaveAverageBlockTimeGenesis save the average block time in average_block_time_from_genesis table
@@ -131,7 +143,11 @@ ON CONFLICT (one_row_id) DO UPDATE
 WHERE average_block_time_from_genesis.height <= excluded.height`
 
 	_, err := db.Sqlx.Exec(stmt, averageTime, height)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing average block time since genesis: %s", err)
+	}
+
+	return nil
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -146,7 +162,11 @@ VALUES ($1, $2, $3) ON CONFLICT (one_row_id) DO UPDATE
         chain_id = excluded.chain_id`
 
 	_, err := db.Sqlx.Exec(stmt, genesis.Time, genesis.ChainID, genesis.InitialHeight)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing genesis: %s", err)
+	}
+
+	return nil
 }
 
 // GetGenesis returns the genesis information stored inside the database

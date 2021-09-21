@@ -1,6 +1,8 @@
 package database
 
 import (
+	"fmt"
+
 	"github.com/forbole/bdjuno/types"
 )
 
@@ -16,5 +18,9 @@ ON CONFLICT (one_row_id) DO UPDATE
 WHERE staking_pool.height <= excluded.height`
 
 	_, err := db.Sql.Exec(stmt, pool.BondedTokens.String(), pool.NotBondedTokens.String(), pool.Height)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing staking pool: %s", err)
+	}
+
+	return nil
 }
