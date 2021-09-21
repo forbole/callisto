@@ -53,11 +53,13 @@ func queryCoinGecko(endpoint string, ptr interface{}) error {
 
 	bz, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while reading response body: %s", err)
 	}
 
-	if err := json.Unmarshal(bz, &ptr); err != nil {
-		return err
+	err = json.Unmarshal(bz, &ptr)
+	if err != nil {
+		return fmt.Errorf("error while unmarshaling response body: %s", err)
 	}
+
 	return nil
 }
