@@ -112,7 +112,7 @@ func GetDelegatorDelegations(height int64, delegator string, client stakingtypes
 		},
 	)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error while getting delegator delegations: %s", err)
 	}
 
 	var delegations = make([]types.Delegation, len(res.DelegationResponses))
@@ -139,7 +139,7 @@ func RefreshDelegations(
 		var code string
 		_, scanErr := fmt.Sscanf(err.Error(), ErrDelegationNotFound, &code, &code)
 		if scanErr != nil {
-			return err
+			return fmt.Errorf("error while scanning error: %s", scanErr)
 		}
 
 		// If delegations are not found there is no problem.

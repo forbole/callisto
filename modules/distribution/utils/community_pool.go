@@ -2,6 +2,7 @@ package utils
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/forbole/bdjuno/database"
 
@@ -15,7 +16,7 @@ func UpdateCommunityPool(height int64, client distrtypes.QueryClient, db *databa
 
 	res, err := client.CommunityPool(context.Background(), &distrtypes.QueryCommunityPoolRequest{})
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting comminity pool: %s", err)
 	}
 
 	// Store the signing infos into the database

@@ -2,6 +2,7 @@ package utils
 
 import (
 	"context"
+	"fmt"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/desmos-labs/juno/client"
@@ -16,7 +17,7 @@ func GetStakingPool(height int64, stakingClient stakingtypes.QueryClient) (*type
 		client.GetHeightRequestHeader(height),
 	)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error while getting staking pool: %s", err)
 	}
 
 	return types.NewPool(res.Pool.BondedTokens, res.Pool.NotBondedTokens, height), nil
