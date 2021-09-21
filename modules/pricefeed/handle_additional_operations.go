@@ -25,7 +25,7 @@ func StoreTokens(cfg *config.Config, db *database.Db) error {
 		// Save the coin as a token with its units
 		err := db.SaveToken(coin)
 		if err != nil {
-			return err
+			return fmt.Errorf("error while saving token: %s", err)
 		}
 
 		// Create the price entry

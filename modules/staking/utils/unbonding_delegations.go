@@ -137,16 +137,3 @@ func GetDelegatorUnbondingDelegations(
 
 	return delegations, nil
 }
-
-// --------------------------------------------------------------------------------------------------------------------
-
-// DeleteUnbondingDelegation returns a function that when called deletes the given delegation from the database
-func DeleteUnbondingDelegation(delegation types.UnbondingDelegation, db *database.Db) func() {
-	return func() {
-		err := db.DeleteUnbondingDelegation(delegation)
-		if err != nil {
-			log.Error().Str("module", "staking").Err(err).
-				Str("operation", "delete unbonding delegation").Msg("error while deleting unbonding delegation")
-		}
-	}
-}

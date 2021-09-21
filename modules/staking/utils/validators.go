@@ -34,7 +34,7 @@ func GetValidatorConsPubKey(cdc codec.Marshaler, validator stakingtypes.Validato
 func GetValidatorConsAddr(cdc codec.Marshaler, validator stakingtypes.Validator) (sdk.ConsAddress, error) {
 	pubKey, err := GetValidatorConsPubKey(cdc, validator)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error while getting validator consensus pub key: %s", err)
 	}
 
 	return sdk.ConsAddress(pubKey.Address()), err
@@ -48,12 +48,12 @@ func ConvertValidator(
 ) (types.Validator, error) {
 	consAddr, err := GetValidatorConsAddr(cdc, validator)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error while getting validator consensus address: %s", err)
 	}
 
 	consPubKey, err := GetValidatorConsPubKey(cdc, validator)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error while getting validator consensus pub key: %s", err)
 	}
 
 	return types.NewValidator(
@@ -118,7 +118,7 @@ func GetValidatorsWithStatus(
 			header,
 		)
 		if err != nil {
-			return nil, nil, err
+			return nil, nil, fmt.Errorf("error while getting validators: %s", err)
 		}
 
 		nextKey = res.Pagination.NextKey
@@ -130,7 +130,7 @@ func GetValidatorsWithStatus(
 	for index, val := range validators {
 		validator, err := ConvertValidator(cdc, val, height)
 		if err != nil {
-			return nil, nil, err
+			return nil, nil, fmt.Errorf("error while converting validator: %s", err)
 		}
 
 		vals[index] = validator
@@ -148,7 +148,7 @@ func UpdateValidators(
 
 	vals, validators, err := GetValidators(height, client, cdc)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error while getting validator: %s", err)
 	}
 
 	err = db.SaveValidatorsData(validators)
