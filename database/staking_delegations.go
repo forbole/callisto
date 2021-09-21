@@ -46,14 +46,14 @@ INSERT INTO delegation (validator_address, delegator_address, amount, height) VA
 		// Get the validator consensus address
 		consAddr, err := db.GetValidatorConsensusAddress(delegation.ValidatorOperAddr)
 		if err != nil {
-			return err
+			return fmt.Errorf("error while gettting validator consensus address: %s", err)
 		}
 
 		// Convert the amount
 		coin := dbtypes.NewDbCoin(delegation.Amount)
 		value, err := coin.Value()
 		if err != nil {
-			return err
+			return fmt.Errorf("error while converting coin to dbcoin: %s", err)
 		}
 
 		// Current delegation query
@@ -66,9 +66,10 @@ INSERT INTO delegation (validator_address, delegator_address, amount, height) VA
 	// Insert the accounts
 	accQry = accQry[:len(accQry)-1] // Remove the trailing ","
 	accQry += " ON CONFLICT DO NOTHING"
+
 	_, err := db.Sql.Exec(accQry, accParams...)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while storing accounts: %s", err)
 	}
 
 	// Insert the delegations
@@ -77,8 +78,12 @@ INSERT INTO delegation (validator_address, delegator_address, amount, height) VA
 ON CONFLICT ON CONSTRAINT delegation_validator_delegator_unique 
 DO UPDATE SET amount = excluded.amount, height = excluded.height
 WHERE delegation.height <= excluded.height`
+
 	_, err = db.Sql.Exec(delQry, delParams...)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing delegations: %s", err)
+	}
+	return nil
 }
 
 // GetUserDelegationsAmount returns the amount of the delegations currently stored for
@@ -107,8 +112,13 @@ func (db *Db) GetUserDelegationsAmount(address string) (sdk.Coins, error) {
 // DeleteDelegatorDelegations removes all the delegations associated with the given delegator
 func (db *Db) DeleteDelegatorDelegations(delegator string) error {
 	stmt := `DELETE FROM delegation WHERE delegator_address = $1`
+
 	_, err := db.Sql.Exec(stmt, delegator)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while deleting delegations for delegator: %s", err)
+	}
+
+	return nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -164,19 +174,19 @@ VALUES `
 		// Get the validators info
 		srcVal, err := db.GetValidator(redelegation.SrcValidator)
 		if err != nil {
-			return err
+			return fmt.Errorf("error while getting validator: %s", err)
 		}
 
 		dstVal, err := db.GetValidator(redelegation.DstValidator)
 		if err != nil {
-			return err
+			return fmt.Errorf("error while getting validator: %s", err)
 		}
 
 		// Convert the amount value
 		coin := dbtypes.NewDbCoin(redelegation.Amount)
 		amountValue, err := coin.Value()
 		if err != nil {
-			return err
+			return fmt.Errorf("error while converting coin to dbcoin: %s", err)
 		}
 
 		rdi := i * 6
@@ -191,7 +201,7 @@ VALUES `
 	accQry += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(accQry, accParams...)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while storing accounts: %s", err)
 	}
 
 	// Insert the redelegations
@@ -200,8 +210,13 @@ VALUES `
 ON CONFLICT ON CONSTRAINT redelegation_validator_delegator_unique 
 DO UPDATE SET height = excluded.height
 WHERE redelegation.height <= excluded.height`
+
 	_, err = db.Sql.Exec(rdQry, rdParams...)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing redelegations: %s", err)
+	}
+
+	return nil
 }
 
 // GetUserRedelegationsAmount returns the amount of the redelegations currently stored for
@@ -231,12 +246,12 @@ func (db *Db) GetUserRedelegationsAmount(address string) (sdk.Coins, error) {
 func (db *Db) DeleteRedelegation(redelegation types.Redelegation) error {
 	srcVal, err := db.GetValidator(redelegation.SrcValidator)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting validator: %s", err)
 	}
 
 	dstVal, err := db.GetValidator(redelegation.DstValidator)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting validator: %s", err)
 	}
 
 	stmt := `
@@ -248,7 +263,11 @@ WHERE delegator_address = $1
 	_, err = db.Sql.Exec(stmt,
 		redelegation.DelegatorAddress, srcVal.GetConsAddr(), dstVal.GetConsAddr(), redelegation.CompletionTime,
 	)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while deleting redelegations: %s", err)
+	}
+
+	return nil
 }
 
 // DeleteCompletedRedelegations deletes all the redelegations that have completed
@@ -326,13 +345,13 @@ VALUES `
 
 		validator, err := db.GetValidator(delegation.ValidatorOperAddr)
 		if err != nil {
-			return err
+			return fmt.Errorf("error while getting validator: %s", err)
 		}
 
 		coin := dbtypes.NewDbCoin(delegation.Amount)
 		amount, err := coin.Value()
 		if err != nil {
-			return err
+			return fmt.Errorf("error while converting coin to dbcoin: %s", err)
 		}
 
 		udi := i * 5
@@ -346,7 +365,7 @@ VALUES `
 	accQry += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(accQry, accParams...)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while storing accounts: %s", err)
 	}
 
 	// Insert the current unbonding delegations
@@ -355,8 +374,13 @@ VALUES `
 ON CONFLICT ON CONSTRAINT unbonding_delegation_validator_delegator_unique 
 DO UPDATE SET height = excluded.height
 WHERE unbonding_delegation.height <= excluded.height`
+
 	_, err = db.Sql.Exec(udQry, udParams...)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing unbonding delegations: %s", err)
+	}
+
+	return nil
 }
 
 // GetUserUnBondingDelegationsAmount returns the amount of the redelegations currently stored for
@@ -386,7 +410,7 @@ func (db *Db) GetUserUnBondingDelegationsAmount(address string) (sdk.Coins, erro
 func (db *Db) DeleteUnbondingDelegation(delegation types.UnbondingDelegation) error {
 	val, err := db.GetValidator(delegation.ValidatorOperAddr)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting validator: %s", err)
 	}
 
 	stmt := `
@@ -394,10 +418,15 @@ DELETE FROM unbonding_delegation
 WHERE delegator_address = $1 
   AND validator_address = $2 
   AND completion_timestamp = $3`
+
 	_, err = db.Sql.Exec(stmt,
 		delegation.DelegatorAddress, val.GetConsAddr(), delegation.CompletionTimestamp,
 	)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while deleting unbonding delegation: %s", err)
+	}
+
+	return nil
 }
 
 // DeleteCompletedUnbondingDelegations deletes all the unbonding delegations that have completed

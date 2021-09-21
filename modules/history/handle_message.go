@@ -19,7 +19,7 @@ import (
 func HandleMsg(tx *juno.Tx, msg sdk.Msg, getAddresses messages.MessageAddressesParser, cdc codec.Marshaler, db *database.Db) error {
 	timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while parsing time: %s", err)
 	}
 
 	addresses, err := getAddresses(cdc, msg)
@@ -30,7 +30,7 @@ func HandleMsg(tx *juno.Tx, msg sdk.Msg, getAddresses messages.MessageAddressesP
 	for _, address := range utils.FilterNonAccountAddresses(addresses) {
 		err = historyutils.UpdateAccountBalanceHistoryWithTime(address, timestamp, db)
 		if err != nil {
-			return err
+			return fmt.Errorf("error while updating account balance history: %s", err)
 		}
 	}
 

@@ -45,7 +45,11 @@ func (db *Db) saveAccounts(paramsNumber int, accounts []types.Account) error {
 	stmt = stmt[:len(stmt)-1]
 	stmt += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(stmt, params...)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing accounts: %s", err)
+	}
+
+	return nil
 }
 
 // GetAccounts returns all the accounts that are currently stored inside the database.

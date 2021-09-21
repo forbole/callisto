@@ -22,7 +22,11 @@ ON CONFLICT (one_row_id) DO UPDATE
         height = excluded.height
 WHERE community_pool.height <= excluded.height`
 	_, err := db.Sql.Exec(query, pq.Array(dbtypes.NewDbDecCoins(coin)), height)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing community pool: %s", err)
+	}
+
+	return nil
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -31,7 +35,7 @@ WHERE community_pool.height <= excluded.height`
 func (db *Db) SaveDistributionParams(params types.DistributionParams) error {
 	paramsBz, err := json.Marshal(&params.Params)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while marshaling params: %s", err)
 	}
 
 	stmt := `
@@ -42,7 +46,11 @@ ON CONFLICT (one_row_id) DO UPDATE
       	height = excluded.height
 WHERE distribution_params.height <= excluded.height`
 	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing distribution params: %s", err)
+	}
+
+	return nil
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -52,7 +60,7 @@ func (db *Db) SaveValidatorCommissionAmount(amount types.ValidatorCommissionAmou
 
 	consAddr, err := db.GetValidatorConsensusAddress(amount.ValidatorOperAddr)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting validator consensus address: %s", err)
 	}
 
 	err = db.storeUpToDateValidatorCommissionAmount(amount, consAddr)
@@ -74,7 +82,11 @@ ON CONFLICT (validator_address) DO UPDATE
 WHERE validator_commission_amount.height <= excluded.height`
 
 	_, err := db.Sql.Exec(stmt, consAddr.String(), pq.Array(dbtypes.NewDbDecCoins(amount.Amount)), amount.Height)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing validator commission amount: %s", err)
+	}
+
+	return nil
 }
 
 // GetUserValidatorCommissionAmount returns the current amount of the validator commission
@@ -131,7 +143,7 @@ func (db *Db) storeUpToDateDelegatorsRewardsAmounts(amounts []types.DelegatorRew
 		// Get the validator consensus address
 		consAddr, err := db.GetValidatorConsensusAddress(amount.ValidatorOperAddr)
 		if err != nil {
-			return err
+			return fmt.Errorf("error while getting validator consensus address: %s", err)
 		}
 
 		coins := pq.Array(dbtypes.NewDbDecCoins(amount.Amount))
@@ -147,7 +159,11 @@ ON CONFLICT ON CONSTRAINT delegation_reward_validator_delegator_unique DO UPDATE
 		height = excluded.height
 WHERE delegation_reward.height <= excluded.height`
 	_, err := db.Sql.Exec(stmt, params...)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing delegation reward: %s", err)
+	}
+
+	return nil
 }
 
 // GetUserDelegatorRewardsAmount returns the amount of rewards that the given user has currently associated
@@ -175,5 +191,9 @@ func (db *Db) GetUserDelegatorRewardsAmount(address string) (sdk.DecCoins, error
 func (db *Db) DeleteDelegatorRewardsAmount(delegatorAddr string, height int64) error {
 	stmt := `DELETE FROM delegation_reward WHERE delegator_address = $1 AND height <= $2`
 	_, err := db.Sql.Exec(stmt, delegatorAddr, height)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while deleting delegation reward: %s", err)
+	}
+
+	return nil
 }

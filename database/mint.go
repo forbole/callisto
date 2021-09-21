@@ -2,6 +2,7 @@ package database
 
 import (
 	"encoding/json"
+	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -17,15 +18,20 @@ ON CONFLICT (one_row_id) DO UPDATE
     SET value = excluded.value, 
         height = excluded.height 
 WHERE inflation.height <= excluded.height`
+
 	_, err := db.Sql.Exec(stmt, inflation.String(), height)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing inflation: %s", err)
+	}
+
+	return nil
 }
 
 // SaveMintParams allows to store the given params inside the database
 func (db *Db) SaveMintParams(params types.MintParams) error {
 	paramsBz, err := json.Marshal(&params.Params)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while marshaling mint params: %s", err)
 	}
 
 	stmt := `
@@ -35,6 +41,11 @@ ON CONFLICT (one_row_id) DO UPDATE
     SET params = excluded.params,
         height = excluded.height
 WHERE mint_params.height <= excluded.height`
+
 	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing mint params: %s", err)
+	}
+
+	return nil
 }

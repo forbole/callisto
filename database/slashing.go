@@ -42,7 +42,11 @@ ON CONFLICT (validator_address) DO UPDATE
 WHERE validator_signing_info.height <= excluded.height`
 
 	_, err := db.Sql.Exec(stmt, args...)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing validators signing infos: %s", err)
+	}
+
+	return nil
 }
 
 // SaveSlashingParams saves the slashing params for the given height
@@ -59,6 +63,11 @@ ON CONFLICT (one_row_id) DO UPDATE
     SET params = excluded.params, 
         height = excluded.height
 WHERE slashing_params.height <= excluded.height`
+
 	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing slashing params: %s", err)
+	}
+
+	return nil
 }

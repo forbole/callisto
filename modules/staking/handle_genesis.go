@@ -29,7 +29,7 @@ func HandleGenesis(
 	var genState stakingtypes.GenesisState
 	err := cdc.UnmarshalJSON(appState[stakingtypes.ModuleName], &genState)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while unmarshaling staking state: %s", err)
 	}
 
 	// Save the params
@@ -88,14 +88,15 @@ func parseGenesisTransactions(
 	var genUtilState genutiltypes.GenesisState
 	err := cdc.UnmarshalJSON(appState[genutiltypes.ModuleName], &genUtilState)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while unmarhsaling genutil state: %s", err)
 	}
 
 	for _, genTxBz := range genUtilState.GetGenTxs() {
 		// Unmarshal the transaction
 		var genTx tx.Tx
-		if err := cdc.UnmarshalJSON(genTxBz, &genTx); err != nil {
-			return err
+		err = cdc.UnmarshalJSON(genTxBz, &genTx)
+		if err != nil {
+			return fmt.Errorf("error while unmashasling genesis tx: %s", err)
 		}
 
 		for _, msg := range genTx.GetMsgs() {
@@ -107,7 +108,7 @@ func parseGenesisTransactions(
 
 			err = utils.StoreValidatorFromMsgCreateValidator(doc.InitialHeight, createValMsg, cdc, db)
 			if err != nil {
-				return err
+				return fmt.Errorf("error while storing validators from MsgCreateValidator: %s", err)
 			}
 		}
 	}
@@ -150,7 +151,7 @@ func saveValidatorDescription(doc *tmtypes.GenesisDoc, validators stakingtypes.V
 			doc.InitialHeight,
 		)
 		if err != nil {
-			return err
+			return fmt.Errorf("error while converting validator description: %s", err)
 		}
 
 		err = db.SaveValidatorDescription(description)
@@ -182,10 +183,7 @@ func saveDelegations(doc *tmtypes.GenesisDoc, genState stakingtypes.GenesisState
 		}
 	}
 
-	if err := db.SaveDelegations(delegations); err != nil {
-		return err
-	}
-	return nil
+	return db.SaveDelegations(delegations)
 }
 
 // findDelegations returns the list of all the delegations that are
