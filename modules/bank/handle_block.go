@@ -2,6 +2,7 @@ package bank
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/desmos-labs/juno/client"
 
@@ -35,7 +36,7 @@ func updateSupply(height int64, bankClient banktypes.QueryClient, db *database.D
 		client.GetHeightRequestHeader(height),
 	)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting total supply: %s", err)
 	}
 
 	return db.SaveSupply(res.Supply, height)

@@ -20,17 +20,17 @@ func (db *Db) SaveGovParams(params *types.GovParams) error {
 
 	depositParamsBz, err := json.Marshal(&params.DepositParams)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while marshaling deposit params: %s", err)
 	}
 
 	votingParamsBz, err := json.Marshal(&params.VotingParams)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while marshaling voting params: %s", err)
 	}
 
 	tallyingParams, err := json.Marshal(&params.TallyParams)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while marshaling tally params: %s", err)
 	}
 
 	stmt := `
@@ -43,7 +43,11 @@ ON CONFLICT (one_row_id) DO UPDATE
 		height = excluded.height
 WHERE gov_params.height <= excluded.height`
 	_, err = db.Sql.Exec(stmt, string(depositParamsBz), string(votingParamsBz), string(tallyingParams), params.Height)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing gov params: %s", err)
+	}
+
+	return nil
 }
 
 // GetGovParams returns the most recent governance parameters
@@ -111,12 +115,12 @@ INSERT INTO proposal(
 
 		anyContent, err := codectypes.NewAnyWithValue(protoContent)
 		if err != nil {
-			return err
+			return fmt.Errorf("error while wrapping proposal proto content: %s", err)
 		}
 
 		contentBz, err := db.EncodingConfig.Marshaler.MarshalJSON(anyContent)
 		if err != nil {
-			return err
+			return fmt.Errorf("error while marshaling proposal content: %s", err)
 		}
 
 		param = append(param,
@@ -137,7 +141,11 @@ INSERT INTO proposal(
 	query = query[:len(query)-1] // Remove trailing ","
 	query += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(query, param...)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing proposal: %s", err)
+	}
+
+	return nil
 }
 
 // GetProposal returns the proposal with the given id, or nil if not found
@@ -200,7 +208,11 @@ func (db *Db) UpdateProposal(update types.ProposalUpdate) error {
 		update.VotingEndTime,
 		update.ProposalID,
 	)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while updating proposal: %s", err)
+	}
+
+	return nil
 }
 
 // SaveDeposits allows to save multiple deposits
@@ -228,7 +240,11 @@ ON CONFLICT ON CONSTRAINT unique_deposit DO UPDATE
 		height = excluded.height
 WHERE proposal_deposit.height <= excluded.height`
 	_, err := db.Sql.Exec(query, param...)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing deposits: %s", err)
+	}
+
+	return nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -242,13 +258,18 @@ ON CONFLICT ON CONSTRAINT unique_vote DO UPDATE
 	SET option = excluded.option,
 		height = excluded.height
 WHERE proposal_vote.height <= excluded.height`
+
 	_, err := db.Sql.Exec(query,
 		vote.ProposalID,
 		vote.Voter,
 		vote.Option.String(),
 		vote.Height,
 	)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing vote: %s", err)
+	}
+
+	return nil
 }
 
 // SaveTallyResults allows to save for the given height the given total amount of coins
@@ -282,7 +303,11 @@ ON CONFLICT ON CONSTRAINT unique_tally_result DO UPDATE
 	    height = excluded.height
 WHERE proposal_tally_result.height <= excluded.height`
 	_, err := db.Sql.Exec(query, param...)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing tally result: %s", err)
+	}
+
+	return nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -301,7 +326,11 @@ WHERE proposal_staking_pool_snapshot.height <= excluded.height`
 
 	_, err := db.Sql.Exec(stmt,
 		snapshot.ProposalID, snapshot.Pool.BondedTokens.Int64(), snapshot.Pool.NotBondedTokens.Int64(), snapshot.Pool.Height)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing proposal staking pool snapshot: %s", err)
+	}
+
+	return nil
 }
 
 // SaveProposalValidatorsStatusesSnapshots allows to save the given validator statuses snapshots
@@ -335,5 +364,9 @@ ON CONFLICT ON CONSTRAINT unique_validator_status_snapshot DO UPDATE
 		height = excluded.height
 WHERE proposal_validator_status_snapshot.height <= excluded.height`
 	_, err := db.Sql.Exec(stmt, args...)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing proposal validator statuses snapshot: %s", err)
+	}
+
+	return nil
 }

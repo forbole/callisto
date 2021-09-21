@@ -56,7 +56,11 @@ func (db *Db) SaveToken(token types.Token) error {
 	query = query[:len(query)-1] // Remove trailing ","
 	query += " ON CONFLICT DO NOTHING"
 	_, err = db.Sql.Exec(query, params...)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while saving token: %s", err)
+	}
+
+	return nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -85,5 +89,9 @@ ON CONFLICT (unit_name) DO UPDATE
 WHERE token_price.timestamp <= excluded.timestamp`
 
 	_, err := db.Sql.Exec(query, param...)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while saving tokens prices: %s", err)
+	}
+
+	return nil
 }
