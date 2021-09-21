@@ -123,7 +123,7 @@ func updateProposalTallyResult(proposal govtypes.Proposal, govClient govtypes.Qu
 		header,
 	)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting tally result: %s", err)
 	}
 
 	return db.SaveTallyResults([]types.TallyResult{
@@ -144,7 +144,7 @@ func updateAccounts(proposal govtypes.Proposal, bankClient banktypes.QueryClient
 	if ok {
 		height, err := db.GetLastBlockHeight()
 		if err != nil {
-			return err
+			return fmt.Errorf("error while getting last block height: %s", err)
 		}
 
 		addresses := []string{content.Recipient}
@@ -183,14 +183,14 @@ func updateProposalValidatorStatusesSnapshot(
 ) error {
 	validators, _, err := stakingutils.GetValidatorsWithStatus(height, stakingtypes.Bonded.String(), stakingClient, cdc)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting validators with bonded status: %s", err)
 	}
 
 	votingPowers := stakingutils.GetValidatorsVotingPowers(height, blockVals, db)
 
 	statuses, err := stakingutils.GetValidatorsStatuses(height, validators, cdc)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting validator statuses: %s", err)
 	}
 
 	var snapshots = make([]types.ProposalValidatorStatusSnapshot, len(validators))
@@ -202,12 +202,12 @@ func updateProposalValidatorStatusesSnapshot(
 
 		status, err := findStatus(consAddr.String(), statuses)
 		if err != nil {
-			return err
+			return fmt.Errorf("error while searching for status: %s", err)
 		}
 
 		votingPower, err := findVotingPower(consAddr.String(), votingPowers)
 		if err != nil {
-			return err
+			return fmt.Errorf("error while searching for voting power: %s", err)
 		}
 
 		snapshots[index] = types.NewProposalValidatorStatusSnapshot(

@@ -1,6 +1,7 @@
 package staking
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/forbole/bdjuno/database"
@@ -23,7 +24,7 @@ func RegisterPeriodicOps(
 	if _, err := scheduler.Every(1).Hour().StartImmediately().Do(func() {
 		utils.WatchMethod(func() error { return updateValidatorsDelegations(stakingClient, cdc, db) })
 	}); err != nil {
-		return err
+		return fmt.Errorf("error while setting up staking periodic operation: %s", err)
 	}
 
 	return nil
@@ -36,18 +37,18 @@ func updateValidatorsDelegations(
 ) error {
 	height, err := db.GetLastBlockHeight()
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting last block height: %s", err)
 	}
 
 	// Get the params
 	params, err := db.GetStakingParams()
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting staking params: %s", err)
 	}
 
 	validators, err := stakingutils.UpdateValidators(height, stakingClient, cdc, db)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while updating validators: %s", err)
 	}
 
 	// Update the delegations

@@ -1,6 +1,7 @@
 package pricefeed
 
 import (
+	"fmt"
 	"strings"
 
 	juno "github.com/desmos-labs/juno/types"
@@ -25,7 +26,7 @@ func RegisterPeriodicOps(cfg juno.Config, scheduler *gocron.Scheduler, db *datab
 	if _, err := scheduler.Every(30).Second().StartImmediately().Do(func() {
 		utils.WatchMethod(func() error { return updatePrice(cfg, db) })
 	}); err != nil {
-		return err
+		return fmt.Errorf("error while setting up pricefeed period operations: %s", err)
 	}
 
 	return nil
@@ -41,13 +42,13 @@ func updatePrice(cfg juno.Config, db *database.Db) error {
 	// Get the list of coins
 	coins, err := coingecko.GetCoinsList()
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting coins list: %s", err)
 	}
 
 	// Get the list of token units
 	units, err := db.GetTokenUnits()
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting token units: %s", err)
 	}
 
 	// Find the id of the coins
@@ -74,13 +75,13 @@ func updatePrice(cfg juno.Config, db *database.Db) error {
 	// Get the tokens prices
 	prices, err := coingecko.GetTokensPrices(ids)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting tokens prices: %s", err)
 	}
 
 	// Save the token prices
 	err = db.SaveTokensPrices(prices)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while saving token prices: %s", err)
 	}
 
 	if utils.IsModuleEnabled(cfg, types.HistoryModuleName) {

@@ -72,13 +72,13 @@ func saveProposals(slice govtypes.Proposals, db *database.Db) error {
 	// Save the proposals
 	err := db.SaveProposals(proposals)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	// Save the deposits
 	err = db.SaveDeposits(deposits)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	// Save the tally results

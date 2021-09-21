@@ -3,6 +3,7 @@ package staking
 import (
 	"context"
 	"encoding/hex"
+	"fmt"
 	"time"
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -38,7 +39,7 @@ func HandleBlock(
 	// Update the validators
 	validators, err := stakingutils.UpdateValidators(block.Block.Height, stakingClient, cdc, db)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while updating validators: %s", err)
 	}
 
 	// Get the params

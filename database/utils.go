@@ -14,7 +14,7 @@ func (db *Db) InsertEnableModules(modules []string) error {
 	stmt := "DELETE FROM modules WHERE TRUE"
 	_, err := db.Sql.Exec(stmt)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while deleting modules: %s", err)
 	}
 
 	if len(modules) == 0 {
@@ -31,7 +31,8 @@ func (db *Db) InsertEnableModules(modules []string) error {
 	stmt += " ON CONFLICT DO NOTHING"
 	_, err = db.Sql.Exec(stmt, values...)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while storing modules: %s", err)
 	}
+
 	return nil
 }

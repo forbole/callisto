@@ -14,7 +14,7 @@ import (
 func (db *Db) SaveStakingParams(params types.StakingParams) error {
 	paramsBz, err := json.Marshal(&params.Params)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while marshaling staking params: %s", err)
 	}
 
 	stmt := `
@@ -26,7 +26,11 @@ ON CONFLICT (one_row_id) DO UPDATE
 WHERE staking_params.height <= excluded.height`
 
 	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing staking params: %s", err)
+	}
+
+	return nil
 }
 
 // GetStakingParams returns the types.StakingParams instance containing the current params

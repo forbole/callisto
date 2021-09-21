@@ -1,6 +1,8 @@
 package staking
 
 import (
+	"fmt"
+
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 
 	"github.com/forbole/bdjuno/database"
@@ -53,7 +55,7 @@ func handleMsgCreateValidator(
 ) error {
 	err := stakingutils.StoreValidatorFromMsgCreateValidator(height, msg, cdc, db)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while storing validator from MsgCreateValidator: %s", err)
 	}
 
 	// Save validator description
@@ -63,7 +65,7 @@ func handleMsgCreateValidator(
 		height,
 	)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while converting validator description: %s", err)
 	}
 
 	err = db.SaveValidatorDescription(description)
@@ -102,7 +104,7 @@ func handleEditValidator(
 		height,
 	)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while converting validator description: %s", err)
 	}
 
 	return db.SaveValidatorDescription(desc)
@@ -118,7 +120,7 @@ func handleMsgBeginRedelegate(
 ) error {
 	_, err := stakingutils.StoreRedelegationFromMessage(tx, index, msg, db)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while storing redelegation from message: %s", err)
 	}
 
 	// Update the current delegations
@@ -133,7 +135,7 @@ func handleMsgUndelegate(
 ) error {
 	_, err := stakingutils.StoreUnbondingDelegationFromMessage(tx, index, msg, db)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while storing unbonding delegation from message: %s", err)
 	}
 
 	// Update the current delegations
