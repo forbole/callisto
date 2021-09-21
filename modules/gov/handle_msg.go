@@ -48,17 +48,17 @@ func handleMsgSubmitProposal(
 	// Get the proposal id
 	event, err := tx.FindEventByType(index, govtypes.EventTypeSubmitProposal)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while searching for EventTypeSubmitProposal: %s", err)
 	}
 
 	id, err := tx.FindAttributeByKey(event, govtypes.AttributeKeyProposalID)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while searching for AttributeKeyProposalID: %s", err)
 	}
 
 	proposalID, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while parsing proposal id: %s", err)
 	}
 
 	// Get the proposal
@@ -67,7 +67,7 @@ func handleMsgSubmitProposal(
 		&govtypes.QueryProposalRequest{ProposalId: proposalID},
 	)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting proposal: %s", err)
 	}
 
 	proposal := res.Proposal
@@ -76,7 +76,7 @@ func handleMsgSubmitProposal(
 	var content govtypes.Content
 	err = cdc.UnpackAny(proposal.Content, &content)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while unpacking proposal content: %s", err)
 	}
 
 	// Store the proposal

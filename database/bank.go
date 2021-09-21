@@ -58,8 +58,9 @@ WHERE account_balance.height <= excluded.height`
 
 	_, err := db.Sql.Exec(stmt, params...)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while storing up-to-date balances: %s", err)
 	}
+
 	return nil
 }
 
@@ -94,7 +95,8 @@ WHERE supply.height <= excluded.height`
 
 	_, err := db.Sql.Exec(query, pq.Array(dbtypes.NewDbCoins(coins)), height)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while storing supply: %s", err)
 	}
+
 	return nil
 }
