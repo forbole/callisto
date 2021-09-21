@@ -34,6 +34,8 @@ func HandleMsg(
 		delegatorAddr = cosmosMsg.GetSigners()[0].String()
 	case *distrtypes.MsgWithdrawDelegatorReward:
 		delegatorAddr = cosmosMsg.DelegatorAddress
+	default:
+		return nil
 	}
 
 	header := client.GetHeightRequestHeader(tx.Height)
