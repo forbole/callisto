@@ -5,7 +5,7 @@ go 1.15
 require (
 	github.com/cosmos/cosmos-sdk v0.42.9
 	github.com/desmos-labs/juno v0.0.0-20210820090829-4142e0029177
-	github.com/e-money/em-ledger v1.0.0-RC13 //for emoney testnet
+	github.com/e-money/em-ledger v1.1.2-0.20210921132726-e8c9f576072b //for emoney testnet
 	github.com/go-co-op/gocron v0.3.3
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.2.1-0.20200324155115-ee514944af4b

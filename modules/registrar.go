@@ -29,11 +29,17 @@ import (
 	"github.com/forbole/bdjuno/modules/consensus"
 	"github.com/forbole/bdjuno/modules/distribution"
 	"github.com/forbole/bdjuno/modules/gov"
+	"github.com/forbole/bdjuno/modules/inflation"
 	"github.com/forbole/bdjuno/modules/mint"
 	"github.com/forbole/bdjuno/modules/modules"
 	"github.com/forbole/bdjuno/modules/pricefeed"
 	"github.com/forbole/bdjuno/modules/slashing"
 	"github.com/forbole/bdjuno/modules/staking"
+
+	//import emoney inflation module types for inflation data
+
+	//import emoney inflation module types for inflation data
+	inflationtypes "github.com/e-money/em-ledger/x/inflation/types"
 )
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
@@ -84,6 +90,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	mintClient := minttypes.NewQueryClient(grpcConnection)
 	slashingClient := slashingtypes.NewQueryClient(grpcConnection)
 	stakingClient := stakingtypes.NewQueryClient(grpcConnection)
+	inflationClient := inflationtypes.NewQueryClient(grpcConnection)
 
 	return []jmodules.Module{
 		messages.NewModule(r.parser, encodingConfig.Marshaler, ctx.Database),
@@ -98,5 +105,6 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		slashing.NewModule(slashingClient, bigDipperBd),
 		staking.NewModule(ctx.ParsingConfig, bankClient, stakingClient, distrClient, encodingConfig, bigDipperBd),
 		history.NewModule(r.parser, encodingConfig, bigDipperBd),
+		inflation.NewModule(inflationClient, encodingConfig, bigDipperBd),
 	}
 }
