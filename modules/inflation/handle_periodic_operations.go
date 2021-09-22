@@ -5,6 +5,7 @@ import (
 
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/modules/utils"
+	"github.com/forbole/bdjuno/types"
 
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
@@ -35,6 +36,11 @@ func updateInflation(inflationClient inflationtypes.QueryClient, db *database.Db
 		Str("operation", "inflation").
 		Msg("getting inflation data")
 
+	height, err := db.GetLastBlockHeight()
+	if err != nil {
+		return err
+	}
+
 	// Get the inflation
 	res, err := inflationClient.Inflation(
 		context.Background(),
@@ -43,5 +49,15 @@ func updateInflation(inflationClient inflationtypes.QueryClient, db *database.Db
 	if err != nil {
 		return err
 	}
-	return db.SaveEmoneyInflation(res.State)
+
+	//build EmoneyInflation instance and store in DB
+	inflationState := res.State
+	newInflation := types.NewEmoneyInflation(
+		inflationState.InflationAssets,
+		inflationState.LastAppliedTime,
+		inflationState.LastAppliedHeight.Int64(),
+		height,
+	)
+
+	return db.SaveEmoneyInflation(newInflation)
 }
