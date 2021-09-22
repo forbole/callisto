@@ -2,21 +2,17 @@ package database
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/e-money/em-ledger/x/inflation/types"
 )
 
-// SaveInflation allows to store the inflation for the given block height as well as timestamp
+// SaveEmoneyInflation allows to store the emoney inflation (scheduler = per day)
 func (db *Db) SaveEmoneyInflation(state types.InflationState) error {
 
 	inflationBz, err := json.Marshal(&state.InflationAssets)
 	if err != nil {
 		return err
 	}
-
-	fmt.Println("string(inflationBz)")
-	fmt.Println(string(inflationBz))
 
 	stmt := `
 INSERT INTO emoney_inflation (inflation, last_applied_time, last_applied_height)
