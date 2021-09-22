@@ -7,21 +7,22 @@ import (
 	"github.com/desmos-labs/juno/client"
 
 	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/types"
+	"github.com/forbole/bdjuno/types/config"
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+	"github.com/forbole/bdjuno/types"
 	"github.com/rs/zerolog/log"
 )
 
-// BlockInterval returns interval time in blocks
-var BlockInterval int64 = 100
-
 // UpdateDelegatorsRewardsAmounts updates the delegators commission amounts
-func UpdateDelegatorsRewardsAmounts(height int64, client distrtypes.QueryClient, db *database.Db) {
+func UpdateDelegatorsRewardsAmounts(height int64, client distrtypes.QueryClient, db *database.Db, cfg *config.Config) {
 	rewards, _ := db.GetDelegatorRewards()
+	interval := cfg.GetRewardsFrequencyConfig().GetRewardsFrequency()
 
-	if len(rewards) == 0 || height%BlockInterval == 0 {
-		go updateDelegatorsRewards(height, client, db)
+	if interval > 0 {
+		if len(rewards) == 0 || height%interval == 0 {
+			go updateDelegatorsRewards(height, client, db)
+		}
 	}
 }
 

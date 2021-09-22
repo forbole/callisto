@@ -210,16 +210,3 @@ func (db *Db) GetDelegatorRewards() ([]*dbtypes.DelegationRewardRow, error) {
 
 	return rows, nil
 }
-
-// GetDelegatorRewards returns all delegation reward data stored in db
-func (db *Db) GetDelegatorRewards() ([]*dbtypes.DelegationRewardRow, error) {
-	stmt := `SELECT * FROM delegation_reward`
-
-	var rows []*dbtypes.DelegationRewardRow
-	err := db.Sqlx.Select(&rows, stmt)
-	if err != nil {
-		return nil, err
-	}
-
-	return rows, nil
-}

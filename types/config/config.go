@@ -12,18 +12,21 @@ var _ juno.Config = &Config{}
 // Config contains the data about the BDJuno configuration
 type Config struct {
 	juno.Config
-	PricefeedConfig *PricefeedConfig
+	PricefeedConfig        *PricefeedConfig
+	RewardsFrequencyConfig *RewardsFrequencyConfig
 }
 
 type tomlConfig struct {
-	PricefeedConfig *PricefeedConfig `toml:"pricefeed"`
+	PricefeedConfig        *PricefeedConfig        `toml:"pricefeed"`
+	RewardsFrequencyConfig *RewardsFrequencyConfig `toml:"distribution"`
 }
 
 // NewConfig returns a new Config instance
-func NewConfig(junoConfig juno.Config, pricefeedConfig *PricefeedConfig) *Config {
+func NewConfig(junoConfig juno.Config, pricefeedConfig *PricefeedConfig, rewardsFrequencyConfig *RewardsFrequencyConfig) *Config {
 	return &Config{
-		Config:          junoConfig,
-		PricefeedConfig: pricefeedConfig,
+		Config:                 junoConfig,
+		PricefeedConfig:        pricefeedConfig,
+		RewardsFrequencyConfig: rewardsFrequencyConfig,
 	}
 }
 
@@ -40,7 +43,7 @@ func Parser(fileContents []byte) (juno.Config, error) {
 		return nil, err
 	}
 
-	return NewConfig(junoCfg, tomlCfg.PricefeedConfig), nil
+	return NewConfig(junoCfg, tomlCfg.PricefeedConfig, tomlCfg.RewardsFrequencyConfig), nil
 }
 
 // GetRPCConfig implements juno.Config
@@ -91,6 +94,14 @@ func (c *Config) GetPricefeedConfig() *PricefeedConfig {
 	return c.PricefeedConfig
 }
 
+// GetRewardsFrequencyConfig return current rewards frequency
+func (c *Config) GetRewardsFrequencyConfig() *RewardsFrequencyConfig {
+	if c.RewardsFrequencyConfig == nil {
+		return &RewardsFrequencyConfig{RewardsFrequency: 0}
+	}
+	return c.RewardsFrequencyConfig
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // PricefeedConfig contains the configuration about the pricefeed module
@@ -101,4 +112,14 @@ type PricefeedConfig struct {
 // GetTokens returns the list of tokens for which to get the prices
 func (p *PricefeedConfig) GetTokens() []types.Token {
 	return p.Tokens
+}
+
+// RewardsFrequencyConfig contains the configuration about rewards frequency in distribution module
+type RewardsFrequencyConfig struct {
+	RewardsFrequency int64 `toml:"rewards_frequency"`
+}
+
+// GetRewardsFrequency returns the rewards frequency int64 value
+func (b *RewardsFrequencyConfig) GetRewardsFrequency() int64 {
+	return b.RewardsFrequency
 }
