@@ -35,6 +35,11 @@ func updateInflation(inflationClient inflationtypes.QueryClient, db *database.Db
 		Str("operation", "inflation").
 		Msg("getting inflation data")
 
+	height, err := db.GetLastBlockHeight()
+	if err != nil {
+		return err
+	}
+
 	// Get the inflation
 	res, err := inflationClient.Inflation(
 		context.Background(),
@@ -43,5 +48,5 @@ func updateInflation(inflationClient inflationtypes.QueryClient, db *database.Db
 	if err != nil {
 		return err
 	}
-	return db.SaveEmoneyInflation(res.State)
+	return db.SaveEmoneyInflation(res.State, height)
 }

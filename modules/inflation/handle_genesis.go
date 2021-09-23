@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	tmtypes "github.com/tendermint/tendermint/types"
 
 	inflationtypes "github.com/e-money/em-ledger/x/inflation/types"
 	"github.com/forbole/bdjuno/database"
@@ -11,7 +12,7 @@ import (
 )
 
 func HandleGenesis(
-	appState map[string]json.RawMessage, cdc codec.Marshaler, db *database.Db,
+	genesisDoc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, cdc codec.Marshaler, db *database.Db,
 ) error {
 	log.Debug().Str("module", "inflation").Msg("parsing genesis")
 
@@ -22,5 +23,5 @@ func HandleGenesis(
 		return err
 	}
 
-	return db.SaveEmoneyInflation(genState.InflationState)
+	return db.SaveEmoneyInflation(genState.InflationState, genesisDoc.InitialHeight)
 }

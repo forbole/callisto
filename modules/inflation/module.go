@@ -43,8 +43,8 @@ func (m *Module) Name() string {
 }
 
 // HandleBlock implements modules.BlockModule
-func (m *Module) HandleGenesis(_ *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
-	return HandleGenesis(appState, m.encodingConfig.Marshaler, m.db)
+func (m *Module) HandleGenesis(genesisDoc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
+	return HandleGenesis(genesisDoc, appState, m.encodingConfig.Marshaler, m.db)
 }
 
 // RegisterPeriodicOperations implements modules.PeriodicOperationsModule
