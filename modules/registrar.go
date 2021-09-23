@@ -29,14 +29,18 @@ import (
 	"github.com/forbole/bdjuno/modules/consensus"
 	"github.com/forbole/bdjuno/modules/distribution"
 	"github.com/forbole/bdjuno/modules/gov"
-	"github.com/forbole/bdjuno/modules/inflation"
 	"github.com/forbole/bdjuno/modules/mint"
 	"github.com/forbole/bdjuno/modules/modules"
 	"github.com/forbole/bdjuno/modules/pricefeed"
 	"github.com/forbole/bdjuno/modules/slashing"
 	"github.com/forbole/bdjuno/modules/staking"
 
+	//emoney customized bdjuno modules
+	"github.com/forbole/bdjuno/modules/authority"
+	"github.com/forbole/bdjuno/modules/inflation"
+
 	//import emoney inflation module types for inflation data
+	authoritytypes "github.com/e-money/em-ledger/x/authority/types"
 	inflationtypes "github.com/e-money/em-ledger/x/inflation/types"
 )
 
@@ -88,7 +92,10 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	mintClient := minttypes.NewQueryClient(grpcConnection)
 	slashingClient := slashingtypes.NewQueryClient(grpcConnection)
 	stakingClient := stakingtypes.NewQueryClient(grpcConnection)
+
+	//emoney query clients
 	inflationClient := inflationtypes.NewQueryClient(grpcConnection)
+	authorityClient := authoritytypes.NewQueryClient(grpcConnection)
 
 	return []jmodules.Module{
 		messages.NewModule(r.parser, encodingConfig.Marshaler, ctx.Database),
@@ -103,6 +110,9 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		slashing.NewModule(slashingClient, bigDipperBd),
 		staking.NewModule(ctx.ParsingConfig, bankClient, stakingClient, distrClient, encodingConfig, bigDipperBd),
 		history.NewModule(r.parser, encodingConfig, bigDipperBd),
+
+		//emoney build modules
 		inflation.NewModule(inflationClient, encodingConfig, bigDipperBd),
+		authority.NewModule(authorityClient, encodingConfig, bigDipperBd),
 	}
 }

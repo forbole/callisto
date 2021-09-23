@@ -9,11 +9,10 @@ CREATE TABLE emoney_inflation
     CHECK (one_row_id)
 );
 
-/* ---- GAS PRICE ---- */
+/* ---- AUTHORITY / GAS PRICE ---- */
 CREATE TABLE emoney_gas_prices
 (
-    one_row_id      BOOLEAN     NOT NULL DEFAULT TRUE PRIMARY KEY,
-    authority       TEXT        NOT NULL,
+    authority       TEXT        NOT NULL PRIMARY KEY,
     gas_prices      COIN[]      NOT NULL,
     height          BIGINT      NOT NULL,
     CHECK (one_row_id)
