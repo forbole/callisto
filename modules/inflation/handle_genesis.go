@@ -8,6 +8,7 @@ import (
 
 	inflationtypes "github.com/e-money/em-ledger/x/inflation/types"
 	"github.com/forbole/bdjuno/database"
+	"github.com/forbole/bdjuno/types"
 	"github.com/rs/zerolog/log"
 )
 
@@ -23,5 +24,7 @@ func HandleGenesis(
 		return err
 	}
 
-	return db.SaveEmoneyInflation(genState.InflationState, genesisDoc.InitialHeight)
+	newEmoneyInflation := types.NewEmoneyInfaltion(genState.InflationState, genesisDoc.InitialHeight)
+
+	return db.SaveEmoneyInflation(newEmoneyInflation)
 }
