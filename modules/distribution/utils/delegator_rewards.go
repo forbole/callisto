@@ -15,15 +15,19 @@ import (
 )
 
 // UpdateDelegatorsRewardsAmounts updates the delegators commission amounts
-func UpdateDelegatorsRewardsAmounts(height int64, client distrtypes.QueryClient, db *database.Db, cfg *config.Config) {
-	rewards, _ := db.GetDelegatorRewards()
-	interval := cfg.GetRewardsFrequencyConfig().GetRewardsFrequency()
-
-	if interval > 0 {
-		if len(rewards) == 0 || height%interval == 0 {
-			go updateDelegatorsRewards(height, client, db)
-		}
+func UpdateDelegatorsRewardsAmounts(cfg *config.Config, height int64, client distrtypes.QueryClient, db *database.Db) {
+	interval := cfg.GetDistributionConfig().GetDistributionFrequency()
+	if interval == 0 {
+		log.Debug().Str("module", "distribution").Msg("delegator rewards refresh interval set to 0. Skipping refresh")
+		return
 	}
+
+	rewards, _ := db.GetDelegatorRewards()
+
+	if len(rewards) == 0 || height%interval == 0 {
+		go updateDelegatorsRewards(height, client, db)
+	}
+
 }
 
 func updateDelegatorsRewards(height int64, client distrtypes.QueryClient, db *database.Db) {

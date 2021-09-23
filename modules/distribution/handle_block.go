@@ -16,14 +16,14 @@ import (
 )
 
 // HandleBlock represents a method that is called each time a new block is created
-func HandleBlock(block *tmctypes.ResultBlock, client distrtypes.QueryClient, db *database.Db, cfg *config.Config) error {
+func HandleBlock(cfg *config.Config, block *tmctypes.ResultBlock, client distrtypes.QueryClient, db *database.Db) error {
 	go updateParams(block.Block.Height, client, db)
 
 	// Update the validator commissions
 	go distrutils.UpdateValidatorsCommissionAmounts(block.Block.Height, client, db)
 
 	// Update the delegators commissions amounts
-	go distrutils.UpdateDelegatorsRewardsAmounts(block.Block.Height, client, db, cfg)
+	go distrutils.UpdateDelegatorsRewardsAmounts(cfg, block.Block.Height, client, db)
 
 	return nil
 }

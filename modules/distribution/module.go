@@ -22,19 +22,19 @@ var (
 
 // Module represents the x/distr module
 type Module struct {
-	db          *database.Db
 	cfg         *config.Config
+	db          *database.Db
 	bankClient  banktypes.QueryClient
 	distrClient distrtypes.QueryClient
 }
 
 // NewModule returns a new Module instance
-func NewModule(bankClient banktypes.QueryClient, distrClient distrtypes.QueryClient, db *database.Db, cfg *config.Config) *Module {
+func NewModule(cfg *config.Config, bankClient banktypes.QueryClient, distrClient distrtypes.QueryClient, db *database.Db) *Module {
 	return &Module{
+		cfg:         cfg,
 		bankClient:  bankClient,
 		distrClient: distrClient,
 		db:          db,
-		cfg:         cfg,
 	}
 }
 
@@ -50,7 +50,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 
 // HandleBlock implements modules.BlockModule
 func (m *Module) HandleBlock(b *tmctypes.ResultBlock, _ []*types.Tx, _ *tmctypes.ResultValidators) error {
-	return HandleBlock(b, m.distrClient, m.db, m.cfg)
+	return HandleBlock(m.cfg, b, m.distrClient, m.db)
 }
 
 // HandleMsg implements modules.MessageModule
