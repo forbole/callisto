@@ -12,6 +12,7 @@ import (
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	// oracletypes "github.com/bandprotocol/chain/x/oracle/types"
 	"github.com/desmos-labs/juno/client"
 	jmodules "github.com/desmos-labs/juno/modules"
 	"github.com/desmos-labs/juno/modules/messages"
@@ -30,6 +31,8 @@ import (
 	"github.com/forbole/bdjuno/modules/distribution"
 	"github.com/forbole/bdjuno/modules/gov"
 	"github.com/forbole/bdjuno/modules/mint"
+	// "github.com/forbole/bdjuno/modules/oracle"
+
 	"github.com/forbole/bdjuno/modules/modules"
 	"github.com/forbole/bdjuno/modules/pricefeed"
 	"github.com/forbole/bdjuno/modules/slashing"
@@ -84,6 +87,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	mintClient := minttypes.NewQueryClient(grpcConnection)
 	slashingClient := slashingtypes.NewQueryClient(grpcConnection)
 	stakingClient := stakingtypes.NewQueryClient(grpcConnection)
+	// oracleClient := oracletypes.NewQueryClient(grpcConnection)
 
 	return []jmodules.Module{
 		messages.NewModule(r.parser, encodingConfig.Marshaler, ctx.Database),
