@@ -10,7 +10,6 @@ CREATE TABLE emoney_inflation
 );
 
 /* ---- GAS PRICE ---- */
-
 CREATE TABLE emoney_gas_prices
 (
     one_row_id      BOOLEAN     NOT NULL DEFAULT TRUE PRIMARY KEY,
