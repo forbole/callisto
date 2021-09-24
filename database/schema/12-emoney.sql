@@ -12,9 +12,8 @@ CREATE TABLE emoney_inflation
 /* ---- AUTHORITY / GAS PRICE ---- */
 CREATE TABLE emoney_gas_prices
 (
-    authority       TEXT        NOT NULL PRIMARY KEY,
+    authority_key   TEXT        NOT NULL PRIMARY KEY,
     gas_prices      COIN[]      NOT NULL,
-    height          BIGINT      NOT NULL,
-    CHECK (one_row_id)
+    height          BIGINT      NOT NULL
 );
 
