@@ -198,7 +198,7 @@ func (db *Db) DeleteDelegatorRewardsAmount(delegatorAddr string, height int64) e
 	return nil
 }
 
-// HasDelegatorRewards checks if data is present in db and returns boolean value
+// HasDelegatorRewards checks if the database contains any delegation reward
 func (db *Db) HasDelegatorRewards() (bool, error) {
 	stmt := `SELECT COUNT(*) FROM delegation_reward`
 
