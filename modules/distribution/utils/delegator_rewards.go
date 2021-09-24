@@ -22,9 +22,13 @@ func UpdateDelegatorsRewardsAmounts(cfg *config.Config, height int64, client dis
 		return
 	}
 
-	rewards, _ := db.GetDelegatorRewards()
+	hasRewards, error := db.HasDelegatorRewards()
+	if error != nil {
+		log.Error().Str("module", "distribution").Err(error).Int64("height", height).
+			Msg("error while checking delegators reward")
+	}
 
-	if len(rewards) == 0 || height%interval == 0 {
+	if !hasRewards || height%interval == 0 {
 		go updateDelegatorsRewards(height, client, db)
 	}
 

@@ -198,15 +198,16 @@ func (db *Db) DeleteDelegatorRewardsAmount(delegatorAddr string, height int64) e
 	return nil
 }
 
-// GetDelegatorRewards returns all delegation reward data stored in db
-func (db *Db) GetDelegatorRewards() ([]*dbtypes.DelegationRewardRow, error) {
-	stmt := `SELECT * FROM delegation_reward`
+// HasDelegatorRewards checks if data is present in db and returns boolean value
+func (db *Db) HasDelegatorRewards() (bool, error) {
+	stmt := `SELECT COUNT(*) FROM delegation_reward`
 
-	var rows []*dbtypes.DelegationRewardRow
-	err := db.Sqlx.Select(&rows, stmt)
+	var count int
+	err := db.Sql.QueryRow(stmt).Scan(&count)
 	if err != nil {
-		return nil, err
+		return false, fmt.Errorf("error while getting delegation reward: %s", err)
+
 	}
 
-	return rows, nil
+	return count > 0, nil
 }
