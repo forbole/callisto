@@ -36,7 +36,7 @@ import (
 	"github.com/forbole/bdjuno/modules/slashing"
 	"github.com/forbole/bdjuno/modules/staking"
 
-	//import emoney inflation module types for inflation data
+	//import eMoney inflation module types for inflation data
 	inflationtypes "github.com/e-money/em-ledger/x/inflation/types"
 )
 

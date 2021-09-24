@@ -6,10 +6,10 @@ import (
 	"github.com/forbole/bdjuno/types"
 )
 
-// SaveEmoneyInflation allows to store the emoney inflation (scheduler = per day)
-func (db *Db) SaveEmoneyInflation(emoneyInflation types.EmoneyInflation) error {
+// SaveEMoneyInflation allows to store the eMoney inflation (scheduler = per day)
+func (db *Db) SaveEMoneyInflation(eMoneyInflation types.EMoneyInflation) error {
 
-	inflationBz, err := json.Marshal(&emoneyInflation.InflationAssets)
+	inflationBz, err := json.Marshal(&eMoneyInflation.InflationAssets)
 	if err != nil {
 		return err
 	}
@@ -23,7 +23,7 @@ ON CONFLICT (one_row_id) DO UPDATE
 		last_applied_height = excluded.last_applied_height,
 		height = excluded.height
 WHERE emoney_inflation.height <= excluded.height`
-	_, err = db.Sql.Exec(stmt, string(inflationBz), emoneyInflation.LastAppliedTime, emoneyInflation.LastAppliedHeight, emoneyInflation.Height)
+	_, err = db.Sql.Exec(stmt, string(inflationBz), eMoneyInflation.LastAppliedTime, eMoneyInflation.LastAppliedHeight, eMoneyInflation.Height)
 	if err != nil {
 		return err
 	}

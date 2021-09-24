@@ -24,7 +24,7 @@ func HandleGenesis(
 		return err
 	}
 
-	newEmoneyInflation := types.NewEmoneyInfaltion(genState.InflationState, genesisDoc.InitialHeight)
+	newEMoneyInflation := types.NewEMoneyInfaltion(genState.InflationState, genesisDoc.InitialHeight)
 
-	return db.SaveEmoneyInflation(newEmoneyInflation)
+	return db.SaveEMoneyInflation(newEMoneyInflation)
 }
