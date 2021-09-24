@@ -16,4 +16,5 @@ CREATE TABLE emoney_gas_prices
     gas_prices      COIN[]      NOT NULL,
     height          BIGINT      NOT NULL
 );
+CREATE INDEX emoney_gas_prices_index ON emoney_gas_prices (height);
 

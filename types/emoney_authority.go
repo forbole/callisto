@@ -2,14 +2,14 @@ package types
 
 import sdk "github.com/cosmos/cosmos-sdk/types"
 
-type EmoneyGasPrice struct {
+type EMoneyGasPrices struct {
 	AuthorityKey string
 	GasPrices    sdk.DecCoins
 	Height       int64
 }
 
-func NewEmoneyGasPrice(authorityKey string, gasPrices sdk.DecCoins, height int64) EmoneyGasPrice {
-	return EmoneyGasPrice{
+func NewEMoneyGasPrices(authorityKey string, gasPrices sdk.DecCoins, height int64) EMoneyGasPrices {
+	return EMoneyGasPrices{
 		AuthorityKey: authorityKey,
 		GasPrices:    gasPrices,
 		Height:       height,

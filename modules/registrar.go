@@ -12,6 +12,11 @@ import (
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+
+	//import emoney types
+	authoritytypes "github.com/e-money/em-ledger/x/authority/types"
+	inflationtypes "github.com/e-money/em-ledger/x/inflation/types"
+
 	"github.com/desmos-labs/juno/client"
 	jmodules "github.com/desmos-labs/juno/modules"
 	"github.com/desmos-labs/juno/modules/messages"
@@ -38,10 +43,6 @@ import (
 	//emoney customized bdjuno modules
 	"github.com/forbole/bdjuno/modules/authority"
 	"github.com/forbole/bdjuno/modules/inflation"
-
-	//import emoney inflation module types for inflation data
-	authoritytypes "github.com/e-money/em-ledger/x/authority/types"
-	inflationtypes "github.com/e-money/em-ledger/x/inflation/types"
 )
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
@@ -93,7 +94,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	slashingClient := slashingtypes.NewQueryClient(grpcConnection)
 	stakingClient := stakingtypes.NewQueryClient(grpcConnection)
 
-	//emoney query clients
+	//eMoney Query Clients
 	inflationClient := inflationtypes.NewQueryClient(grpcConnection)
 	authorityClient := authoritytypes.NewQueryClient(grpcConnection)
 
@@ -111,7 +112,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		staking.NewModule(ctx.ParsingConfig, bankClient, stakingClient, distrClient, encodingConfig, bigDipperBd),
 		history.NewModule(r.parser, encodingConfig, bigDipperBd),
 
-		//emoney build modules
+		//eMoney build modules
 		inflation.NewModule(inflationClient, encodingConfig, bigDipperBd),
 		authority.NewModule(authorityClient, encodingConfig, bigDipperBd),
 	}

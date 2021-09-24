@@ -4,18 +4,19 @@ import (
 	"encoding/json"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/juno/modules"
+	"github.com/desmos-labs/juno/types"
 	authoritytypes "github.com/e-money/em-ledger/x/authority/types"
-	"github.com/go-co-op/gocron"
 	tmtypes "github.com/tendermint/tendermint/types"
 
 	"github.com/forbole/bdjuno/database"
 )
 
 var (
-	_ modules.Module                   = &Module{}
-	_ modules.GenesisModule            = &Module{}
-	_ modules.PeriodicOperationsModule = &Module{}
+	_ modules.Module        = &Module{}
+	_ modules.GenesisModule = &Module{}
+	_ modules.MessageModule = &Module{}
 )
 
 // Module represent database/mint module
@@ -43,12 +44,12 @@ func (m *Module) Name() string {
 	return "authority"
 }
 
-// HandleBlock implements modules.BlockModule
+// HandleGenesis implements modules.BlockModule
 func (m *Module) HandleGenesis(genesisDoc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
 	return HandleGenesis(genesisDoc, appState, m.encodingConfig.Marshaler, m.db)
 }
 
-// RegisterPeriodicOperations implements modules.PeriodicOperationsModule
-func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
-	return RegisterPeriodicOps(scheduler, m.authorityClient, m.db)
+// HandleMsg implements modules.MessageModule
+func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *types.Tx) error {
+	return HandleMsg(tx, msg, m.authorityClient, m.db)
 }
