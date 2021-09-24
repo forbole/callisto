@@ -50,7 +50,7 @@ func updateInflation(inflationClient inflationtypes.QueryClient, db *database.Db
 		return err
 	}
 
-	newEmoneyInflation := types.NewEmoneyInfaltion(res.State, height)
+	newEMoneyInflation := types.NewEMoneyInfaltion(res.State, height)
 
-	return db.SaveEmoneyInflation(newEmoneyInflation)
+	return db.SaveEMoneyInflation(newEMoneyInflation)
 }
