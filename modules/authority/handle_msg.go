@@ -18,14 +18,14 @@ func HandleMsg(
 	}
 
 	if msg, ok := msg.(*authoritytypes.MsgSetGasPrices); ok {
-		return handleMsgSetGasprices(tx, msg, authorityClient, db)
+		return handleMsgSetGasPrices(tx, msg, authorityClient, db)
 	}
 
 	return nil
 }
 
 // handleMsgSetGasprices handles storing the gas prices inside the database
-func handleMsgSetGasprices(
+func handleMsgSetGasPrices(
 	tx *juno.Tx, msg *authoritytypes.MsgSetGasPrices,
 	authorityClient authoritytypes.QueryClient, db *database.Db,
 ) error {
