@@ -4,7 +4,7 @@ import "time"
 
 // EMoneyInflationRow represents a single row of the emoney_inflation table
 type EMoneyInflationRow struct {
-	OneRowId          bool      `db:"one_row_id"`
+	OneRowID          bool      `db:"one_row_id"`
 	Inflation         string    `db:"inflation"`
 	LastAppliedTime   time.Time `db:"last_applied_time"`
 	LastAppliedHeight int64     `db:"last_applied_height"`
@@ -19,7 +19,7 @@ func NewEMoneyInflationRow(
 	height int64,
 ) EMoneyInflationRow {
 	return EMoneyInflationRow{
-		OneRowId:          true,
+		OneRowID:          true,
 		Inflation:         inflation,
 		LastAppliedTime:   lastAppliedTime,
 		LastAppliedHeight: lastAppliedHeight,
