@@ -48,13 +48,13 @@ type EMoneyGasPricesRow struct {
 
 // EMoneyGasPricesRow allows to build a new EmoneyGasPricesRow
 func NewEMoneyGasPricesRow(
-	authority_key string,
-	gas_prices string,
+	authorityKey string,
+	gasPrices string,
 	height int64,
 ) EMoneyGasPricesRow {
 	return EMoneyGasPricesRow{
-		AuthorityKey: authority_key,
-		GasPrices:    gas_prices,
+		AuthorityKey: authorityKey,
+		GasPrices:    gasPrices,
 		Height:       height,
 	}
 }
