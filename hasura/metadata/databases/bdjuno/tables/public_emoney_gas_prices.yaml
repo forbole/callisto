@@ -1,0 +1,12 @@
+table:
+  name: emoney_gas_prices
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - authority_key
+    - gas_prices
+    - height
+    filter: {}
+  role: anonymous
