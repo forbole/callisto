@@ -13,17 +13,16 @@ type EMoneyInflationRow struct {
 
 // NewEMoneyInflationRow allows to build a new EMoneyInflationRow
 func NewEMoneyInflationRow(
-	one_row_id bool,
 	inflation string,
-	last_applied_time time.Time,
-	last_applied_height int64,
+	lastAppliedTime time.Time,
+	lastAppliedHeight int64,
 	height int64,
 ) EMoneyInflationRow {
 	return EMoneyInflationRow{
 		OneRowId:          true,
 		Inflation:         inflation,
-		LastAppliedTime:   last_applied_time,
-		LastAppliedHeight: last_applied_height,
+		LastAppliedTime:   lastAppliedTime,
+		LastAppliedHeight: lastAppliedHeight,
 		Height:            height,
 	}
 }
