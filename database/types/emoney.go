@@ -2,8 +2,8 @@ package types
 
 import "time"
 
-// EmoneyInflationRow represents a single row of the emoney_inflation table
-type EmoneyInflationRow struct {
+// EMoneyInflationRow represents a single row of the emoney_inflation table
+type EMoneyInflationRow struct {
 	OneRowId          bool      `db:"one_row_id"`
 	Inflation         string    `db:"inflation"`
 	LastAppliedTime   time.Time `db:"last_applied_time"`
@@ -11,15 +11,15 @@ type EmoneyInflationRow struct {
 	Height            int64     `db:"height"`
 }
 
-// EmoneyInflationRow allows to build a new EmoneyInflationRow
-func NewEmoneyInflationRow(
+// NewEMoneyInflationRow allows to build a new EMoneyInflationRow
+func NewEMoneyInflationRow(
 	one_row_id bool,
 	inflation string,
 	last_applied_time time.Time,
 	last_applied_height int64,
 	height int64,
-) EmoneyInflationRow {
-	return EmoneyInflationRow{
+) EMoneyInflationRow {
+	return EMoneyInflationRow{
 		OneRowId:          true,
 		Inflation:         inflation,
 		LastAppliedTime:   last_applied_time,
@@ -29,7 +29,7 @@ func NewEmoneyInflationRow(
 }
 
 // Equal tells whether v and w represent the same rows
-func (v EmoneyInflationRow) Equal(w EmoneyInflationRow) bool {
+func (v EMoneyInflationRow) Equal(w EMoneyInflationRow) bool {
 	return v.Inflation == w.Inflation &&
 		v.LastAppliedTime == w.LastAppliedTime &&
 		v.LastAppliedHeight == w.LastAppliedHeight &&
