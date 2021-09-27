@@ -17,4 +17,3 @@ CREATE TABLE emoney_gas_prices
     height          BIGINT      NOT NULL
 );
 CREATE INDEX emoney_gas_prices_index ON emoney_gas_prices (height);
-
