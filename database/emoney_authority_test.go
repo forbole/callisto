@@ -1,8 +1,6 @@
 package database_test
 
 import (
-	"log"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	dbtypes "github.com/forbole/bdjuno/database/types"
 	"github.com/forbole/bdjuno/types"
@@ -26,23 +24,23 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveEMoneyGasPrices() {
 			Amount: sdk.NewDec(1),
 		},
 	}
+	var height int64 = 1
 
 	// Save the data
 	eMoneyGasPrices := types.NewEMoneyGasPrices(
 		authorityKey,
 		minGasPrices,
-		1,
+		height,
 	)
 	err := suite.database.SaveEMoneyGasPrices(eMoneyGasPrices)
 	suite.Require().NoError(err)
 
-	// Verify data
+	// Verify the data
+	expected := dbtypes.NewEMoneyGasPricesRow(authorityKey, dbtypes.NewDbDecCoins(minGasPrices), height)
+
 	row := []dbtypes.EMoneyGasPricesRow{}
 	err = suite.database.Sqlx.Select(&row, `SELECT * FROM emoney_gas_prices`)
-	if err != nil {
-		log.Fatal(err)
-	}
-	// suite.Require().NoError(err)
-	// suite.Require().Len(row, 1)
-	// suite.Require().Equal(row[0].AuthorityKey, authorityKey)
+	suite.Require().NoError(err)
+	suite.Require().Len(row, 1, "emoney_gas_prices table should contain only one row")
+	suite.Require().True(expected.Equal(row[0]))
 }
