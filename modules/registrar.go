@@ -3,6 +3,7 @@ package modules
 import (
 	"fmt"
 
+	oracletypes "github.com/bandprotocol/chain/v2/x/oracle/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authttypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -12,7 +13,6 @@ import (
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	// oracletypes "github.com/bandprotocol/chain/x/oracle/types"
 	"github.com/desmos-labs/juno/client"
 	jmodules "github.com/desmos-labs/juno/modules"
 	"github.com/desmos-labs/juno/modules/messages"
@@ -31,7 +31,7 @@ import (
 	"github.com/forbole/bdjuno/modules/distribution"
 	"github.com/forbole/bdjuno/modules/gov"
 	"github.com/forbole/bdjuno/modules/mint"
-	// "github.com/forbole/bdjuno/modules/oracle"
+	"github.com/forbole/bdjuno/modules/oracle"
 
 	"github.com/forbole/bdjuno/modules/modules"
 	"github.com/forbole/bdjuno/modules/pricefeed"
@@ -85,9 +85,9 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	distrClient := distrtypes.NewQueryClient(grpcConnection)
 	govClient := govtypes.NewQueryClient(grpcConnection)
 	mintClient := minttypes.NewQueryClient(grpcConnection)
+	oracleClient := oracletypes.NewQueryClient(grpcConnection)
 	slashingClient := slashingtypes.NewQueryClient(grpcConnection)
 	stakingClient := stakingtypes.NewQueryClient(grpcConnection)
-	// oracleClient := oracletypes.NewQueryClient(grpcConnection)
 
 	return []jmodules.Module{
 		messages.NewModule(r.parser, encodingConfig.Marshaler, ctx.Database),
@@ -98,6 +98,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		gov.NewModule(bankClient, govClient, stakingClient, encodingConfig, bigDipperBd),
 		mint.NewModule(mintClient, bigDipperBd),
 		modules.NewModule(ctx.ParsingConfig, bigDipperBd),
+		oracle.NewModule(oracleClient, bigDipperBd),
 		pricefeed.NewModule(bdjunoCfg, encodingConfig, bigDipperBd),
 		slashing.NewModule(slashingClient, bigDipperBd),
 		staking.NewModule(ctx.ParsingConfig, bankClient, stakingClient, distrClient, encodingConfig, bigDipperBd),

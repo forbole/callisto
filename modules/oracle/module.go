@@ -23,7 +23,7 @@ type Module struct {
 func NewModule(oracleClient oracletypes.QueryClient, db *database.Db) *Module {
 	return &Module{
 		oracleClient: oracleClient,
-		db:         db,
+		db:           db,
 	}
 }
 
