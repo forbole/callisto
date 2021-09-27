@@ -1,6 +1,10 @@
 package types
 
-import "time"
+import (
+	"time"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+)
 
 // ---------------------------- EMoneyInflationRow ----------------------------
 
@@ -41,15 +45,15 @@ func (v EMoneyInflationRow) Equal(w EMoneyInflationRow) bool {
 
 // EMoneyGasPricesRow represents a single row of the emoney_gas_prices table
 type EMoneyGasPricesRow struct {
-	AuthorityKey string `db:"authority_key"`
-	GasPrices    string `db:"gas_prices"`
-	Height       int64  `db:"height"`
+	AuthorityKey string       `db:"authority_key"`
+	GasPrices    sdk.DecCoins `db:"gas_prices"`
+	Height       int64        `db:"height"`
 }
 
 // EMoneyGasPricesRow allows to build a new EmoneyGasPricesRow
 func NewEMoneyGasPricesRow(
 	authorityKey string,
-	gasPrices string,
+	gasPrices sdk.DecCoins,
 	height int64,
 ) EMoneyGasPricesRow {
 	return EMoneyGasPricesRow{
@@ -62,6 +66,5 @@ func NewEMoneyGasPricesRow(
 // Equal tells whether v and w represent the same rows
 func (v EMoneyGasPricesRow) Equal(w EMoneyGasPricesRow) bool {
 	return v.AuthorityKey == w.AuthorityKey &&
-		v.GasPrices == w.GasPrices &&
 		v.Height == w.Height
 }
