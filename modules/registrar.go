@@ -112,7 +112,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		staking.NewModule(ctx.ParsingConfig, bankClient, stakingClient, distrClient, encodingConfig, bigDipperBd),
 		history.NewModule(r.parser, encodingConfig, bigDipperBd),
 
-    //eMoney build modules
+		//eMoney build modules
 		inflation.NewModule(inflationClient, encodingConfig, bigDipperBd),
 		authority.NewModule(authorityClient, encodingConfig, bigDipperBd),
 	}
