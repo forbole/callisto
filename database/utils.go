@@ -27,7 +27,7 @@ func (db *Db) InsertEnableModules(modules []string) error {
 		stmt += fmt.Sprintf("($%d),", key+1)
 		values = append(values, value)
 	}
-	stmt = stmt[:len(stmt)-1] //remove tailing ","
+	stmt = stmt[:len(stmt)-1] // remove tailing ","
 	stmt += " ON CONFLICT DO NOTHING"
 	_, err = db.Sql.Exec(stmt, values...)
 	if err != nil {
