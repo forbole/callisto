@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	bankutils "github.com/forbole/bdjuno/modules/bank"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/desmos-labs/juno/client"
@@ -15,7 +17,6 @@ import (
 
 	"github.com/forbole/bdjuno/database"
 	authutils "github.com/forbole/bdjuno/modules/auth/utils"
-	bankutils "github.com/forbole/bdjuno/modules/bank/utils"
 	"github.com/forbole/bdjuno/types"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"

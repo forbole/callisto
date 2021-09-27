@@ -8,27 +8,24 @@ import (
 
 	tmtypes "github.com/tendermint/tendermint/types"
 
-	"github.com/forbole/bdjuno/database"
-
-	"github.com/cosmos/cosmos-sdk/codec"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/bdjuno/types"
 )
 
-// HandleGenesis handles the genesis state of the x/bank module in order to store the initial values
-// of the different account balances.
-func HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, cdc codec.Marshaler, db *database.Db) error {
+// HandleGenesis implements modules.GenesisModule
+func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
 	log.Debug().Str("module", "bank").Msg("parsing genesis")
 
+	// Unmarshal the bank state
 	var bankState banktypes.GenesisState
-	if err := cdc.UnmarshalJSON(appState[banktypes.ModuleName], &bankState); err != nil {
+	if err := m.cdc.UnmarshalJSON(appState[banktypes.ModuleName], &bankState); err != nil {
 		return fmt.Errorf("error while unmarhshaling bank state: %s", err)
 	}
 
 	// Store the balances
-	accounts, err := authutils.GetGenesisAccounts(appState, cdc)
+	accounts, err := authutils.GetGenesisAccounts(appState, m.cdc)
 	if err != nil {
 		return fmt.Errorf("error while getting genesis account: %s", err)
 	}
@@ -44,7 +41,7 @@ func HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage,
 		balances = append(balances, types.NewAccountBalance(balance.Address, balance.Coins, doc.InitialHeight))
 	}
 
-	return db.SaveAccountBalances(balances)
+	return m.db.SaveAccountBalances(balances)
 }
 
 func getAccountsMap(accounts []types.Account) map[string]bool {

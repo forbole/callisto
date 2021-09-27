@@ -10,24 +10,24 @@ import (
 	"github.com/forbole/bdjuno/modules/utils"
 )
 
-// Register registers the utils that should be run periodically
-func Register(scheduler *gocron.Scheduler, db *database.Db) error {
+// RegisterPeriodicOperations implements modules.Module
+func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	log.Debug().Str("module", "consensus").Msg("setting up periodic tasks")
 
 	if _, err := scheduler.Every(1).Minute().Do(func() {
-		utils.WatchMethod(func() error { return updateBlockTimeInMinute(db) })
+		utils.WatchMethod(func() error { return updateBlockTimeInMinute(m.db) })
 	}); err != nil {
 		return fmt.Errorf("error while setting up consensus periodic operation: %s", err)
 	}
 
 	if _, err := scheduler.Every(1).Hour().StartImmediately().Do(func() {
-		utils.WatchMethod(func() error { return updateBlockTimeInHour(db) })
+		utils.WatchMethod(func() error { return updateBlockTimeInHour(m.db) })
 	}); err != nil {
 		return fmt.Errorf("error while setting up consensus periodic operation: %s", err)
 	}
 
 	if _, err := scheduler.Every(1).Day().StartImmediately().Do(func() {
-		utils.WatchMethod(func() error { return updateBlockTimeInDay(db) })
+		utils.WatchMethod(func() error { return updateBlockTimeInDay(m.db) })
 	}); err != nil {
 		return fmt.Errorf("error while setting up consensus periodic operation: %s", err)
 	}

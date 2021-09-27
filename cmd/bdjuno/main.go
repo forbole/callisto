@@ -16,7 +16,6 @@ import (
 func main() {
 	parseCfg := parsecmd.NewConfig().
 		WithDBBuilder(database.Builder).
-		WithConfigParser(config.Parser).
 		WithEncodingConfigBuilder(config.MakeEncodingConfig(getBasicManagers())).
 		WithRegistrar(modules.NewRegistrar(getAddressesParser()))
 

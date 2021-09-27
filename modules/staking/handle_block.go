@@ -6,11 +6,12 @@ import (
 	"fmt"
 	"time"
 
+	bankutils "github.com/forbole/bdjuno/modules/bank"
+
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
-	bankutils "github.com/forbole/bdjuno/modules/bank/utils"
 	historyutils "github.com/forbole/bdjuno/modules/history/utils"
 	"github.com/forbole/bdjuno/modules/utils"
 
