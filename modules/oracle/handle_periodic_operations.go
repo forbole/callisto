@@ -35,14 +35,14 @@ func RegisterPeriodicOps(scheduler *gocron.Scheduler, oracleClient oracletypes.Q
 func updateOracleParams(oracleClient oracletypes.QueryClient, db *database.Db) error {
 	log.Debug().
 		Str("module", "oracle").
-		Msg("getting inflation data")
+		Msg("getting oracle params data")
 
 	height, err := db.GetLastBlockHeight()
 	if err != nil {
 		return err
 	}
 
-	// Get the inflation
+	// Get the params
 	res, err := oracleClient.Params(
 		context.Background(),
 		&oracletypes.QueryParamsRequest{},
