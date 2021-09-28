@@ -9,9 +9,9 @@ import (
 
 	"github.com/forbole/bdjuno/types/config"
 
+	sifchainapp "github.com/Sifchain/sifnode/app"
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/modules"
-	sifchainapp "github.com/Sifchain/sifnode/app"
 )
 
 func main() {
