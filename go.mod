@@ -3,6 +3,7 @@ module github.com/forbole/bdjuno
 go 1.15
 
 require (
+	github.com/Sifchain/sifnode v0.0.0-20210926222538-ee70e64471d1
 	github.com/cosmos/cosmos-sdk v0.42.9
 	github.com/desmos-labs/juno v0.0.0-20210820090829-4142e0029177
 	github.com/go-co-op/gocron v0.3.3
@@ -16,7 +17,6 @@ require (
 	github.com/tendermint/tendermint v0.34.11
 	github.com/ziutek/mymysql v1.5.4 // indirect
 	google.golang.org/grpc v1.37.0
-	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
 )
 
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
