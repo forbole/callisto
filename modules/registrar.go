@@ -3,6 +3,7 @@ package modules
 import (
 	"fmt"
 	"github.com/cosmos/cosmos-sdk/simapp/params"
+	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	"github.com/desmos-labs/juno/node/remote"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -12,9 +13,11 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
+	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/desmos-labs/juno/node/local"
 
@@ -24,9 +27,8 @@ import (
 
 	"github.com/forbole/bdjuno/utils"
 
-	"github.com/forbole/bdjuno/modules/history"
-
 	nodeconfig "github.com/desmos-labs/juno/node/config"
+
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/modules/auth"
 	"github.com/forbole/bdjuno/modules/bank"
@@ -35,11 +37,16 @@ import (
 	remotebanksource "github.com/forbole/bdjuno/modules/bank/source/remote"
 	"github.com/forbole/bdjuno/modules/consensus"
 	"github.com/forbole/bdjuno/modules/distribution"
+	distrsource "github.com/forbole/bdjuno/modules/distribution/source"
+	localdistrsource "github.com/forbole/bdjuno/modules/distribution/source/local"
+	remotedistrsource "github.com/forbole/bdjuno/modules/distribution/source/remote"
 	"github.com/forbole/bdjuno/modules/gov"
+	govsource "github.com/forbole/bdjuno/modules/gov/source"
+	localgovsource "github.com/forbole/bdjuno/modules/gov/source/local"
+	remotegovsource "github.com/forbole/bdjuno/modules/gov/source/remote"
 	"github.com/forbole/bdjuno/modules/mint"
 	"github.com/forbole/bdjuno/modules/modules"
 	"github.com/forbole/bdjuno/modules/pricefeed"
-	"github.com/forbole/bdjuno/modules/slashing"
 	"github.com/forbole/bdjuno/modules/staking"
 )
 
@@ -83,25 +90,31 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		panic(err)
 	}
 
+	authModule := auth.NewModule(r.parser, cdc, db)
+	bankModule := bank.NewModule(r.parser, sources.BankSource, cdc, db)
+	stakingModule := staking.NewModule(ctx.ParsingConfig, bankClient, stakingClient, distrClient, encodingConfig, db),
+
 	return []jmodules.Module{
 		messages.NewModule(r.parser, cdc, ctx.Database),
-		auth.NewModule(r.parser, cdc, db),
-		bank.NewModule(r.parser, sources.BankSource, cdc, db),
+		authModule,
+		bankModule,
 		consensus.NewModule(db),
+		distribution.NewModule(ctx.JunoConfig, sources.DistrSource, bankModule, db),
+		gov.NewModule(cdc, sources.GovSource, authModule, bankModule, stakingModule, db),
 
-		distribution.NewModule(bdjunoCfg, bankClient, distrClient, db),
-		gov.NewModule(bankClient, govClient, stakingClient, encodingConfig, db),
 		mint.NewModule(mintClient, db),
 		modules.NewModule(ctx.ParsingConfig, db),
-		pricefeed.NewModule(bdjunoCfg, encodingConfig, db),
+		pricefeed.NewModule(bdjunoCfg, encodingC
+		onfig, db),
 		slashing.NewModule(slashingClient, db),
-		staking.NewModule(ctx.ParsingConfig, bankClient, stakingClient, distrClient, encodingConfig, db),
 		history.NewModule(r.parser, encodingConfig, db),
 	}
 }
 
 type Sources struct {
-	BankSource banksource.Source
+	BankSource  banksource.Source
+	DistrSource distrsource.Source
+	GovSource   govsource.Source
 }
 
 func buildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -125,8 +138,14 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 	ak := authkeeper.NewAccountKeeper(source.Codec, source.RegisterKey(authtypes.StoreKey), source.RegisterSubspace(authtypes.ModuleName), authtypes.ProtoBaseAccount, nil)
 	bk := bankkeeper.NewBaseKeeper(source.Codec, source.RegisterKey(banktypes.StoreKey), ak, source.RegisterSubspace(banktypes.ModuleName), nil)
 
+	sk := stakingkeeper.NewKeeper(source.Codec, source.RegisterKey(stakingtypes.StoreKey), ak, bk, source.RegisterSubspace(stakingtypes.ModuleName))
+	dk := distrkeeper.NewKeeper(source.Codec, source.RegisterKey(distrtypes.StoreKey), source.RegisterSubspace(distrtypes.ModuleName), ak, bk, &sk, authtypes.FeeCollectorName, nil)
+	gk := govkeeper.NewKeeper(source.Codec, source.RegisterKey(govtypes.StoreKey), source.RegisterSubspace(govtypes.ModuleName), ak, bk, &sk, govtypes.NewRouter())
+
 	return &Sources{
-		BankSource: localbanksource.NewSource(source, bk),
+		BankSource:  localbanksource.NewSource(source, bk),
+		DistrSource: localdistrsource.NewSource(source, dk),
+		GovSource: localgovsource.NewSource(source, gk),
 	}, nil
 }
 
@@ -137,14 +156,13 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 	}
 
 	authClient := authtypes.NewQueryClient(source.GrpcConn)
-	bankClient := banktypes.NewQueryClient(source.GrpcConn)
-	distrClient := distrtypes.NewQueryClient(source.GrpcConn)
-	govClient := govtypes.NewQueryClient(source.GrpcConn)
 	mintClient := minttypes.NewQueryClient(source.GrpcConn)
 	slashingClient := slashingtypes.NewQueryClient(source.GrpcConn)
 	stakingClient := stakingtypes.NewQueryClient(source.GrpcConn)
 
 	return &Sources{
-		BankSource: remotebanksource.NewSource(source, bankClient),
+		BankSource:  remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
+		DistrSource: remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
+		GovSource:   remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }

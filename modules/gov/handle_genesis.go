@@ -3,27 +3,27 @@ package gov
 import (
 	"encoding/json"
 	"fmt"
+	tmtypes "github.com/tendermint/tendermint/types"
 
-	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/types"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/rs/zerolog/log"
 )
 
-func HandleGenesis(appState map[string]json.RawMessage, cdc codec.Marshaler, db *database.Db) error {
+// HandleGenesis implements modules.Module
+func (m *Module) HandleGenesis(_ *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
 	log.Debug().Str("module", "gov").Msg("parsing genesis")
 
 	// Read the genesis state
 	var genState govtypes.GenesisState
-	err := cdc.UnmarshalJSON(appState[govtypes.ModuleName], &genState)
+	err := m.cdc.UnmarshalJSON(appState[govtypes.ModuleName], &genState)
 	if err != nil {
 		return fmt.Errorf("error while reading gov genesis data: %s", err)
 	}
 
 	// Save the proposals
-	err = saveProposals(genState.Proposals, db)
+	err = m.saveProposals(genState.Proposals)
 	if err != nil {
 		return fmt.Errorf("error while storing genesis governance proposals: %s", err)
 	}
@@ -32,7 +32,7 @@ func HandleGenesis(appState map[string]json.RawMessage, cdc codec.Marshaler, db 
 }
 
 // saveProposals save proposals from genesis file
-func saveProposals(slice govtypes.Proposals, db *database.Db) error {
+func (m *Module) saveProposals(slice govtypes.Proposals) error {
 	proposals := make([]types.Proposal, len(slice))
 	tallyResults := make([]types.TallyResult, len(slice))
 	deposits := make([]types.Deposit, len(slice))
@@ -70,17 +70,17 @@ func saveProposals(slice govtypes.Proposals, db *database.Db) error {
 	}
 
 	// Save the proposals
-	err := db.SaveProposals(proposals)
+	err := m.db.SaveProposals(proposals)
 	if err != nil {
 		return err
 	}
 
 	// Save the deposits
-	err = db.SaveDeposits(deposits)
+	err = m.db.SaveDeposits(deposits)
 	if err != nil {
 		return err
 	}
 
 	// Save the tally results
-	return db.SaveTallyResults(tallyResults)
+	return m.db.SaveTallyResults(tallyResults)
 }

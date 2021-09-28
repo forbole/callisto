@@ -1,42 +1,33 @@
 package distribution
 
 import (
-	"context"
-
-	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	"github.com/desmos-labs/juno/client"
-	"github.com/rs/zerolog/log"
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+	juno "github.com/desmos-labs/juno/types"
 
 	"github.com/forbole/bdjuno/types"
 
-	"github.com/forbole/bdjuno/database"
-	distrutils "github.com/forbole/bdjuno/modules/distribution/utils"
-	"github.com/forbole/bdjuno/types/config"
+	"github.com/rs/zerolog/log"
+	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
 
-// HandleBlock represents a method that is called each time a new block is created
-func HandleBlock(cfg *config.Config, block *tmctypes.ResultBlock, client distrtypes.QueryClient, db *database.Db) error {
-	go updateParams(block.Block.Height, client, db)
+// HandleBlock implements modules.BlockModule
+func (m *Module) HandleBlock(b *tmctypes.ResultBlock, _ []*juno.Tx, _ *tmctypes.ResultValidators) error {
+	// Update the params
+	go m.updateParams(b.Block.Height)
 
 	// Update the validator commissions
-	go distrutils.UpdateValidatorsCommissionAmounts(block.Block.Height, client, db)
+	go m.updateValidatorsCommissionAmounts(b.Block.Height)
 
 	// Update the delegators commissions amounts
-	go distrutils.UpdateDelegatorsRewardsAmounts(cfg, block.Block.Height, client, db)
+	go m.refreshDelegatorsRewardsAmounts(b.Block.Height)
 
 	return nil
 }
 
-func updateParams(height int64, distrClient distrtypes.QueryClient, db *database.Db) {
+func (m *Module) updateParams(height int64) {
 	log.Debug().Str("module", "distribution").Int64("height", height).
 		Msg("updating params")
 
-	res, err := distrClient.Params(
-		context.Background(),
-		&distrtypes.QueryParamsRequest{},
-		client.GetHeightRequestHeader(height),
-	)
+	params, err := m.source.Params(height)
 	if err != nil {
 		log.Error().Str("module", "distribution").Err(err).
 			Int64("height", height).
@@ -44,7 +35,7 @@ func updateParams(height int64, distrClient distrtypes.QueryClient, db *database
 		return
 	}
 
-	err = db.SaveDistributionParams(types.NewDistributionParams(res.Params, height))
+	err = m.db.SaveDistributionParams(types.NewDistributionParams(params, height))
 	if err != nil {
 		log.Error().Str("module", "distribution").Err(err).
 			Int64("height", height).

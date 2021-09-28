@@ -2,9 +2,11 @@ package remote
 
 import (
 	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/desmos-labs/juno/node/remote"
+
 	bankkeeper "github.com/forbole/bdjuno/modules/bank/source"
 	"github.com/forbole/bdjuno/types"
 )
@@ -27,12 +29,12 @@ func NewSource(source *remote.Source, bankClient banktypes.QueryClient) *Source 
 }
 
 // GetBalances implements bankkeeper.Source
-func (k Source) GetBalances(addresses []string, height int64) ([]types.AccountBalance, error) {
+func (s Source) GetBalances(addresses []string, height int64) ([]types.AccountBalance, error) {
 	header := remote.GetHeightRequestHeader(height)
 
 	var balances []types.AccountBalance
 	for _, address := range addresses {
-		balRes, err := k.bankClient.AllBalances(k.Ctx, &banktypes.QueryAllBalancesRequest{Address: address}, header)
+		balRes, err := s.bankClient.AllBalances(s.Ctx, &banktypes.QueryAllBalancesRequest{Address: address}, header)
 		if err != nil {
 			return nil, fmt.Errorf("error while getting all balances: %s", err)
 		}
@@ -48,9 +50,9 @@ func (k Source) GetBalances(addresses []string, height int64) ([]types.AccountBa
 }
 
 // GetSupply implements bankkeeper.Source
-func (k Source) GetSupply(height int64) (sdk.Coins, error) {
+func (s Source) GetSupply(height int64) (sdk.Coins, error) {
 	header := remote.GetHeightRequestHeader(height)
-	res, err := k.bankClient.TotalSupply(k.Ctx, &banktypes.QueryTotalSupplyRequest{}, header)
+	res, err := s.bankClient.TotalSupply(s.Ctx, &banktypes.QueryTotalSupplyRequest{}, header)
 	if err != nil {
 		return nil, fmt.Errorf("error while getting total supply: %s", err)
 	}

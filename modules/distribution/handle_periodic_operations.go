@@ -3,24 +3,19 @@ package distribution
 import (
 	"fmt"
 
-	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
 
-	"github.com/forbole/bdjuno/database"
-	distrutils "github.com/forbole/bdjuno/modules/distribution/utils"
 	"github.com/forbole/bdjuno/modules/utils"
 )
 
-// RegisterPeriodicOps registers the additional utils that periodically run
-func RegisterPeriodicOps(
-	scheduler *gocron.Scheduler, distrClient distrtypes.QueryClient, db *database.Db,
-) error {
+// RegisterPeriodicOperations implements modules.PeriodicOperationsModule
+func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	log.Debug().Str("module", "distribution").Msg("setting up periodic tasks")
 
 	// Update the community pool every 1 hour
 	if _, err := scheduler.Every(1).Hour().StartImmediately().Do(func() {
-		utils.WatchMethod(func() error { return getLatestCommunityPool(distrClient, db) })
+		utils.WatchMethod(func() error { return m.getLatestCommunityPool() })
 	}); err != nil {
 		return fmt.Errorf("error while scheduling distribution peridic operation: %s", err)
 	}
@@ -29,11 +24,11 @@ func RegisterPeriodicOps(
 }
 
 // getLatestCommunityPool gets the latest community pool from the chain and stores inside the database
-func getLatestCommunityPool(distrClient distrtypes.QueryClient, db *database.Db) error {
-	height, err := db.GetLastBlockHeight()
+func (m *Module) getLatestCommunityPool() error {
+	height, err := m.db.GetLastBlockHeight()
 	if err != nil {
 		return fmt.Errorf("error while getting latest block height: %s", err)
 	}
 
-	return distrutils.UpdateCommunityPool(height, distrClient, db)
+	return m.updateCommunityPool(height)
 }

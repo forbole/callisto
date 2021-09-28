@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"sync"
 
+	distrutils "github.com/forbole/bdjuno/modules/distribution"
+
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	"google.golang.org/grpc/codes"
-
-	distrutils "github.com/forbole/bdjuno/modules/distribution/utils"
 
 	"github.com/desmos-labs/juno/client"
 

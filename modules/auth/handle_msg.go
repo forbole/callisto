@@ -5,7 +5,6 @@ import (
 	juno "github.com/desmos-labs/juno/types"
 	"github.com/rs/zerolog/log"
 
-	authutils "github.com/forbole/bdjuno/modules/auth/utils"
 	"github.com/forbole/bdjuno/modules/utils"
 )
 
@@ -18,5 +17,5 @@ func (m *Module) HandleMsg(_ int, msg sdk.Msg, _ *juno.Tx) error {
 			Msgf("error while refreshing accounts after message of type %s", msg.Type())
 	}
 
-	return authutils.UpdateAccounts(utils.FilterNonAccountAddresses(addresses), m.db)
+	return RefreshAccounts(utils.FilterNonAccountAddresses(addresses), m.db)
 }

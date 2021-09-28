@@ -2,6 +2,7 @@ package consensus
 
 import (
 	"fmt"
+
 	"github.com/desmos-labs/juno/types"
 
 	"github.com/rs/zerolog/log"
