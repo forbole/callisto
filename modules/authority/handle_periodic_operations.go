@@ -28,7 +28,7 @@ func RegisterPeriodicOps(
 	return nil
 }
 
-// updateInflation fetches from the REST APIs the latest value for the
+// updateMinGasPrices fetches from the REST APIs the latest value for the
 // minimum gas prices, and saves it inside the database.
 func updateMinGasPrices(authorityclient authoritytypes.QueryClient, db *database.Db) error {
 	log.Debug().
