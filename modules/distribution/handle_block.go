@@ -3,7 +3,7 @@ package distribution
 import (
 	juno "github.com/desmos-labs/juno/v2/types"
 
-	"github.com/forbole/bdjuno/types"
+	"github.com/forbole/bdjuno/v2/types"
 
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"

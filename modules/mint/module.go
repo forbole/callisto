@@ -3,8 +3,8 @@ package mint
 import (
 	"github.com/desmos-labs/juno/v2/modules"
 
-	"github.com/forbole/bdjuno/database"
-	mintsource "github.com/forbole/bdjuno/modules/mint/source"
+	"github.com/forbole/bdjuno/v2/database"
+	mintsource "github.com/forbole/bdjuno/v2/modules/mint/source"
 )
 
 var (

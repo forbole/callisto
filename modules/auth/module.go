@@ -3,7 +3,7 @@ package auth
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/forbole/bdjuno/database"
+	"github.com/forbole/bdjuno/v2/database"
 
 	"github.com/desmos-labs/juno/v2/modules"
 	"github.com/desmos-labs/juno/v2/modules/messages"

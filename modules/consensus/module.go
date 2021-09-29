@@ -1,7 +1,7 @@
 package consensus
 
 import (
-	"github.com/forbole/bdjuno/database"
+	"github.com/forbole/bdjuno/v2/database"
 
 	"github.com/desmos-labs/juno/v2/modules"
 )

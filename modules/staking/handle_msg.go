@@ -3,7 +3,7 @@ package staking
 import (
 	"fmt"
 
-	"github.com/forbole/bdjuno/types"
+	"github.com/forbole/bdjuno/v2/types"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 

@@ -3,9 +3,9 @@ package gov
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/forbole/bdjuno/database"
+	"github.com/forbole/bdjuno/v2/database"
 
-	govsource "github.com/forbole/bdjuno/modules/gov/source"
+	govsource "github.com/forbole/bdjuno/v2/modules/gov/source"
 
 	"github.com/desmos-labs/juno/v2/modules"
 )

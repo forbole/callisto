@@ -3,7 +3,7 @@ package staking
 import (
 	"fmt"
 
-	"github.com/forbole/bdjuno/types"
+	"github.com/forbole/bdjuno/v2/types"
 )
 
 func (m *Module) GetStakingPool(height int64) (*types.Pool, error) {

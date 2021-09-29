@@ -6,8 +6,8 @@ import (
 	juno "github.com/desmos-labs/juno/v2/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
-	"github.com/forbole/bdjuno/modules/staking/keybase"
-	"github.com/forbole/bdjuno/types"
+	"github.com/forbole/bdjuno/v2/modules/staking/keybase"
+	"github.com/forbole/bdjuno/v2/types"
 
 	"github.com/rs/zerolog/log"
 

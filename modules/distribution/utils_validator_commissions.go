@@ -1,7 +1,7 @@
 package distribution
 
 import (
-	"github.com/forbole/bdjuno/types"
+	"github.com/forbole/bdjuno/v2/types"
 
 	"github.com/rs/zerolog/log"
 )

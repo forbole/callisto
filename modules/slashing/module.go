@@ -1,9 +1,9 @@
 package slashing
 
 import (
-	slashingsource "github.com/forbole/bdjuno/modules/slashing/source"
+	slashingsource "github.com/forbole/bdjuno/v2/modules/slashing/source"
 
-	"github.com/forbole/bdjuno/database"
+	"github.com/forbole/bdjuno/v2/database"
 
 	"github.com/desmos-labs/juno/v2/modules"
 )

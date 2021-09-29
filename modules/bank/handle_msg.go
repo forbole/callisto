@@ -5,7 +5,7 @@ import (
 	"github.com/desmos-labs/juno/v2/types"
 	"github.com/rs/zerolog/log"
 
-	"github.com/forbole/bdjuno/modules/utils"
+	"github.com/forbole/bdjuno/v2/modules/utils"
 )
 
 // HandleMsg implements modules.MessageModule

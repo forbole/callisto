@@ -4,7 +4,7 @@ import (
 	"github.com/desmos-labs/juno/v2/modules"
 	"github.com/desmos-labs/juno/v2/types/config"
 
-	"github.com/forbole/bdjuno/database"
+	"github.com/forbole/bdjuno/v2/database"
 )
 
 var (
