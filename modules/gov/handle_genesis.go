@@ -3,6 +3,7 @@ package gov
 import (
 	"encoding/json"
 	"fmt"
+
 	tmtypes "github.com/tendermint/tendermint/types"
 
 	"github.com/forbole/bdjuno/types"

@@ -7,8 +7,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx"
 
-	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/modules/staking/utils"
 	"github.com/forbole/bdjuno/types"
 
 	tmtypes "github.com/tendermint/tendermint/types"
@@ -16,65 +14,63 @@ import (
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/rs/zerolog/log"
 )
 
-func HandleGenesis(
-	doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, cdc codec.Marshaler, db *database.Db,
-) error {
+// HandleGenesis implements GenesisModule
+func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
 	log.Debug().Str("module", "staking").Msg("parsing genesis")
 
 	// Read the genesis state
 	var genState stakingtypes.GenesisState
-	err := cdc.UnmarshalJSON(appState[stakingtypes.ModuleName], &genState)
+	err := m.cdc.UnmarshalJSON(appState[stakingtypes.ModuleName], &genState)
 	if err != nil {
 		return fmt.Errorf("error while unmarshaling staking state: %s", err)
 	}
 
 	// Save the params
-	err = saveParams(doc.InitialHeight, genState.Params, db)
+	err = m.saveParams(doc.InitialHeight, genState.Params)
 	if err != nil {
 		return fmt.Errorf("error while storing staking genesis params: %s", err)
 	}
 
 	// Parse genesis transactions
-	err = parseGenesisTransactions(doc, appState, cdc, db)
+	err = m.parseGenesisTransactions(doc, appState)
 	if err != nil {
 		return fmt.Errorf("error while storing genesis transactions: %s", err)
 	}
 
 	// Save the validators
-	err = saveValidators(doc, genState.Validators, cdc, db)
+	err = m.saveValidators(doc, genState.Validators)
 	if err != nil {
 		return fmt.Errorf("error while storing staking genesis validators: %s", err)
 	}
 
 	// Save the delegations
-	err = saveDelegations(doc, genState, db)
+	err = m.saveDelegations(doc, genState)
 	if err != nil {
 		return fmt.Errorf("error while storing staking genesis delegations: %s", err)
 	}
 
 	// Save the unbonding delegations
-	err = saveUnbondingDelegations(doc, genState, db)
+	err = m.saveUnbondingDelegations(doc, genState)
 	if err != nil {
 		return fmt.Errorf("error while storing staking genesis unbonding delegations: %s", err)
 	}
 
 	// Save the re-delegations
-	err = saveRedelegations(doc, genState, db)
+	err = m.saveRedelegations(doc, genState)
 	if err != nil {
 		return fmt.Errorf("error while storing staking genesis redelegations: %s", err)
 	}
 
 	// Save the description
-	err = saveValidatorDescription(doc, genState.Validators, db)
+	err = m.saveValidatorDescription(doc, genState.Validators)
 	if err != nil {
 		return fmt.Errorf("error while storing staking genesis validator descriptions: %s", err)
 	}
 
-	err = saveValidatorsCommissions(doc.InitialHeight, genState.Validators, db)
+	err = m.saveValidatorsCommissions(doc.InitialHeight, genState.Validators)
 	if err != nil {
 		return fmt.Errorf("error while storing staking genesis validators commissions: %s", err)
 	}
@@ -82,11 +78,9 @@ func HandleGenesis(
 	return nil
 }
 
-func parseGenesisTransactions(
-	doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, cdc codec.Marshaler, db *database.Db,
-) error {
+func (m *Module) parseGenesisTransactions(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
 	var genUtilState genutiltypes.GenesisState
-	err := cdc.UnmarshalJSON(appState[genutiltypes.ModuleName], &genUtilState)
+	err := m.cdc.UnmarshalJSON(appState[genutiltypes.ModuleName], &genUtilState)
 	if err != nil {
 		return fmt.Errorf("error while unmarhsaling genutil state: %s", err)
 	}
@@ -94,7 +88,7 @@ func parseGenesisTransactions(
 	for _, genTxBz := range genUtilState.GetGenTxs() {
 		// Unmarshal the transaction
 		var genTx tx.Tx
-		err = cdc.UnmarshalJSON(genTxBz, &genTx)
+		err = m.cdc.UnmarshalJSON(genTxBz, &genTx)
 		if err != nil {
 			return fmt.Errorf("error while unmashasling genesis tx: %s", err)
 		}
@@ -106,7 +100,7 @@ func parseGenesisTransactions(
 				continue
 			}
 
-			err = utils.StoreValidatorFromMsgCreateValidator(doc.InitialHeight, createValMsg, cdc, db)
+			err = m.storeValidatorFromMsgCreateValidator(doc.InitialHeight, createValMsg)
 			if err != nil {
 				return fmt.Errorf("error while storing validators from MsgCreateValidator: %s", err)
 			}
@@ -119,19 +113,17 @@ func parseGenesisTransactions(
 // -------------------------------------------------------------------------------------------------------------------
 
 // saveParams saves the given params into the database
-func saveParams(height int64, params stakingtypes.Params, db *database.Db) error {
-	return db.SaveStakingParams(types.NewStakingParams(params, height))
+func (m *Module) saveParams(height int64, params stakingtypes.Params) error {
+	return m.db.SaveStakingParams(types.NewStakingParams(params, height))
 }
 
 // --------------------------------------------------------------------------------------------------------------------
 
 // saveValidators stores the validators data present inside the given genesis state
-func saveValidators(
-	doc *tmtypes.GenesisDoc, validators stakingtypes.Validators, cdc codec.Marshaler, db *database.Db,
-) error {
+func (m *Module) saveValidators(doc *tmtypes.GenesisDoc, validators stakingtypes.Validators) error {
 	vals := make([]types.Validator, len(validators))
 	for i, val := range validators {
-		validator, err := utils.ConvertValidator(cdc, val, doc.InitialHeight)
+		validator, err := m.convertValidator(doc.InitialHeight, val)
 		if err != nil {
 			return err
 		}
@@ -139,22 +131,22 @@ func saveValidators(
 		vals[i] = validator
 	}
 
-	return db.SaveValidatorsData(vals)
+	return m.db.SaveValidatorsData(vals)
 }
 
 // saveValidatorDescription saves the description for the given validators
-func saveValidatorDescription(doc *tmtypes.GenesisDoc, validators stakingtypes.Validators, db *database.Db) error {
+func (m *Module) saveValidatorDescription(doc *tmtypes.GenesisDoc, validators stakingtypes.Validators) error {
 	for _, account := range validators {
-		description, err := utils.ConvertValidatorDescription(
+		description, err := m.convertValidatorDescription(
+			doc.InitialHeight,
 			account.OperatorAddress,
 			account.Description,
-			doc.InitialHeight,
 		)
 		if err != nil {
 			return fmt.Errorf("error while converting validator description: %s", err)
 		}
 
-		err = db.SaveValidatorDescription(description)
+		err = m.db.SaveValidatorDescription(description)
 		if err != nil {
 			return err
 		}
@@ -166,7 +158,7 @@ func saveValidatorDescription(doc *tmtypes.GenesisDoc, validators stakingtypes.V
 // --------------------------------------------------------------------------------------------------------------------
 
 // saveDelegations stores the delegations data present inside the given genesis state
-func saveDelegations(doc *tmtypes.GenesisDoc, genState stakingtypes.GenesisState, db *database.Db) error {
+func (m *Module) saveDelegations(doc *tmtypes.GenesisDoc, genState stakingtypes.GenesisState) error {
 	var delegations []types.Delegation
 	for _, validator := range genState.Validators {
 		tokens := validator.Tokens
@@ -183,7 +175,7 @@ func saveDelegations(doc *tmtypes.GenesisDoc, genState stakingtypes.GenesisState
 		}
 	}
 
-	return db.SaveDelegations(delegations)
+	return m.db.SaveDelegations(delegations)
 }
 
 // findDelegations returns the list of all the delegations that are
@@ -201,7 +193,7 @@ func findDelegations(genData stakingtypes.Delegations, valAddr string) stakingty
 // --------------------------------------------------------------------------------------------------------------------
 
 // saveUnbondingDelegations stores the unbonding delegations data present inside the given genesis state
-func saveUnbondingDelegations(doc *tmtypes.GenesisDoc, genState stakingtypes.GenesisState, db *database.Db) error {
+func (m *Module) saveUnbondingDelegations(doc *tmtypes.GenesisDoc, genState stakingtypes.GenesisState) error {
 	var unbondingDelegations []types.UnbondingDelegation
 	for _, validator := range genState.Validators {
 		valUD := findUnbondingDelegations(genState.UnbondingDelegations, validator.OperatorAddress)
@@ -218,7 +210,7 @@ func saveUnbondingDelegations(doc *tmtypes.GenesisDoc, genState stakingtypes.Gen
 		}
 	}
 
-	return db.SaveUnbondingDelegations(unbondingDelegations)
+	return m.db.SaveUnbondingDelegations(unbondingDelegations)
 }
 
 // findUnbondingDelegations returns the list of all the unbonding delegations
@@ -236,7 +228,7 @@ func findUnbondingDelegations(genData stakingtypes.UnbondingDelegations, valAddr
 // --------------------------------------------------------------------------------------------------------------------
 
 // saveRedelegations stores the redelegations data present inside the given genesis state
-func saveRedelegations(doc *tmtypes.GenesisDoc, genState stakingtypes.GenesisState, db *database.Db) error {
+func (m *Module) saveRedelegations(doc *tmtypes.GenesisDoc, genState stakingtypes.GenesisState) error {
 	var redelegations []types.Redelegation
 	for _, redelegation := range genState.Redelegations {
 		for _, entry := range redelegation.Entries {
@@ -251,15 +243,15 @@ func saveRedelegations(doc *tmtypes.GenesisDoc, genState stakingtypes.GenesisSta
 		}
 	}
 
-	return db.SaveRedelegations(redelegations)
+	return m.db.SaveRedelegations(redelegations)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
 
 // saveValidatorsCommissions save the initial commission for each validator
-func saveValidatorsCommissions(height int64, validators stakingtypes.Validators, db *database.Db) error {
+func (m *Module) saveValidatorsCommissions(height int64, validators stakingtypes.Validators) error {
 	for _, account := range validators {
-		err := db.SaveValidatorCommission(types.NewValidatorCommission(
+		err := m.db.SaveValidatorCommission(types.NewValidatorCommission(
 			account.OperatorAddress,
 			&account.Commission.Rate,
 			&account.MinSelfDelegation,

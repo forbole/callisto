@@ -2,8 +2,9 @@ package gov
 
 import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/forbole/bdjuno/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+
+	"github.com/forbole/bdjuno/types"
 )
 
 type AuthModule interface {

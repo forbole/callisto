@@ -9,5 +9,4 @@ type Source interface {
 	DepositParams(height int64) (govtypes.DepositParams, error)
 	VotingParams(height int64) (govtypes.VotingParams, error)
 	TallyParams(height int64) (govtypes.TallyParams, error)
-
 }

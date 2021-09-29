@@ -3,6 +3,7 @@ package bank
 import (
 	"encoding/json"
 	"fmt"
+
 	authutils "github.com/forbole/bdjuno/modules/auth"
 
 	tmtypes "github.com/tendermint/tendermint/types"

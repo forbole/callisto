@@ -9,7 +9,7 @@ import (
 )
 
 // HandleMsg implements modules.MessageModule
-func (m *Module) HandleMsg(_ int, msg sdk.Msg, _ *juno.Tx) error {
+func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
 	addresses, err := m.messagesParser(m.cdc, msg)
 	if err != nil {
 		log.Error().Str("module", "auth").Err(err).
@@ -17,5 +17,5 @@ func (m *Module) HandleMsg(_ int, msg sdk.Msg, _ *juno.Tx) error {
 			Msgf("error while refreshing accounts after message of type %s", msg.Type())
 	}
 
-	return RefreshAccounts(utils.FilterNonAccountAddresses(addresses), m.db)
+	return m.RefreshAccounts(tx.Height, utils.FilterNonAccountAddresses(addresses))
 }

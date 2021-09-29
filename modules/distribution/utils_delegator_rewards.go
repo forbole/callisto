@@ -45,7 +45,7 @@ func (m *Module) refreshDelegatorsRewardsAmounts(height int64) {
 
 		// Refresh the delegators using a goroutine to improve efficiency
 		go func(delegator string) {
-			err = m.refreshDelegatorRewards(height, delegator)
+			err = m.RefreshDelegatorRewards(height, delegator)
 			if err != nil {
 				log.Error().Str("module", "distribution").Err(err).Int64("height", height).
 					Str("delegator", delegator).Msg("error while updating delegator rewards")
@@ -54,9 +54,9 @@ func (m *Module) refreshDelegatorsRewardsAmounts(height int64) {
 	}
 }
 
-// refreshDelegatorRewards refreshes the rewards associated to the given delegator for the given height,
+// RefreshDelegatorRewards refreshes the rewards associated to the given delegator for the given height,
 // deleting the ones existing and downloading them from scratch.
-func (m *Module) refreshDelegatorRewards(height int64, delegator string) error {
+func (m *Module) RefreshDelegatorRewards(height int64, delegator string) error {
 	rewards, err := m.getDelegatorRewardsAmounts(height, delegator)
 	if err != nil {
 		return fmt.Errorf("error while refreshing delegator rewards: %s", err)

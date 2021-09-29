@@ -1,16 +1,11 @@
-package utils
+package staking
 
 import (
-	"context"
 	"fmt"
 	"time"
 
-	"github.com/desmos-labs/juno/client"
-
-	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/types"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -18,13 +13,11 @@ import (
 	juno "github.com/desmos-labs/juno/types"
 )
 
-// StoreValidatorFromMsgCreateValidator handles properly a MsgCreateValidator instance by
+// storeValidatorFromMsgCreateValidator handles properly a MsgCreateValidator instance by
 // saving into the database all the data associated to such validator
-func StoreValidatorFromMsgCreateValidator(
-	height int64, msg *stakingtypes.MsgCreateValidator, cdc codec.Marshaler, db *database.Db,
-) error {
+func (m *Module) storeValidatorFromMsgCreateValidator(height int64, msg *stakingtypes.MsgCreateValidator) error {
 	var pubKey cryptotypes.PubKey
-	err := cdc.UnpackAny(msg.Pubkey, &pubKey)
+	err := m.cdc.UnpackAny(msg.Pubkey, &pubKey)
 	if err != nil {
 		return fmt.Errorf("error while unpacking pub key: %s", err)
 	}
@@ -39,30 +32,30 @@ func StoreValidatorFromMsgCreateValidator(
 		return fmt.Errorf("error while creating validator: %s", err)
 	}
 
-	validator, err := ConvertValidator(cdc, stakingValidator, height)
+	validator, err := m.convertValidator(height, stakingValidator)
 	if err != nil {
 		return fmt.Errorf("error while converting validator: %s", err)
 	}
 
-	desc, err := ConvertValidatorDescription(msg.ValidatorAddress, msg.Description, height)
+	desc, err := m.convertValidatorDescription(height, msg.ValidatorAddress, msg.Description)
 	if err != nil {
 		return fmt.Errorf("error while converting validator description: %s", err)
 	}
 
 	// Save the validator
-	err = db.SaveValidatorsData([]types.Validator{validator})
+	err = m.db.SaveValidatorsData([]types.Validator{validator})
 	if err != nil {
 		return err
 	}
 
 	// Save the description
-	err = db.SaveValidatorDescription(desc)
+	err = m.db.SaveValidatorDescription(desc)
 	if err != nil {
 		return err
 	}
 
 	// Save the first self-delegation
-	err = db.SaveDelegations([]types.Delegation{
+	err = m.db.SaveDelegations([]types.Delegation{
 		types.NewDelegation(
 			msg.DelegatorAddress,
 			msg.ValidatorAddress,
@@ -75,7 +68,7 @@ func StoreValidatorFromMsgCreateValidator(
 	}
 
 	// Save the commission
-	return db.SaveValidatorCommission(types.NewValidatorCommission(
+	return m.db.SaveValidatorCommission(types.NewValidatorCommission(
 		msg.ValidatorAddress,
 		&msg.Commission.Rate,
 		&msg.MinSelfDelegation,
@@ -83,31 +76,22 @@ func StoreValidatorFromMsgCreateValidator(
 	))
 }
 
-// StoreDelegationFromMessage handles a MsgDelegate and saves the delegation inside the database
-func StoreDelegationFromMessage(
-	height int64, msg *stakingtypes.MsgDelegate, stakingClient stakingtypes.QueryClient, db *database.Db,
-) error {
-	header := client.GetHeightRequestHeader(height)
-	res, err := stakingClient.Delegation(
-		context.Background(),
-		&stakingtypes.QueryDelegationRequest{
-			DelegatorAddr: msg.DelegatorAddress,
-			ValidatorAddr: msg.ValidatorAddress,
-		},
-		header,
-	)
+// storeDelegationFromMessage handles a MsgDelegate and saves the delegation inside the database
+func (m *Module) storeDelegationFromMessage(height int64, msg *stakingtypes.MsgDelegate) error {
+	delegation, err := m.source.GetDelegation(height, msg.DelegatorAddress, msg.ValidatorAddress)
 	if err != nil {
-		return fmt.Errorf("error while getting delegation: %s", err)
+		return err
 	}
 
-	delegation := ConvertDelegationResponse(height, *res.DelegationResponse)
-	return db.SaveDelegations([]types.Delegation{delegation})
+	return m.db.SaveDelegations([]types.Delegation{
+		convertDelegationResponse(height, delegation),
+	})
 }
 
-// StoreRedelegationFromMessage handles a MsgBeginRedelegate by saving the redelegation inside the database,
+// storeRedelegationFromMessage handles a MsgBeginRedelegate by saving the redelegation inside the database,
 // and returns the new redelegation instance
-func StoreRedelegationFromMessage(
-	tx *juno.Tx, index int, msg *stakingtypes.MsgBeginRedelegate, db *database.Db,
+func (m *Module) storeRedelegationFromMessage(
+	tx *juno.Tx, index int, msg *stakingtypes.MsgBeginRedelegate,
 ) (*types.Redelegation, error) {
 	event, err := tx.FindEventByType(index, stakingtypes.EventTypeRedelegate)
 	if err != nil {
@@ -133,13 +117,13 @@ func StoreRedelegationFromMessage(
 		tx.Height,
 	)
 
-	return &redelegation, db.SaveRedelegations([]types.Redelegation{redelegation})
+	return &redelegation, m.db.SaveRedelegations([]types.Redelegation{redelegation})
 }
 
-// StoreUnbondingDelegationFromMessage handles a MsgUndelegate storing the new unbonding delegation inside the database,
+// storeUnbondingDelegationFromMessage handles a MsgUndelegate storing the new unbonding delegation inside the database,
 // and returns the new unbonding delegation instance
-func StoreUnbondingDelegationFromMessage(
-	tx *juno.Tx, index int, msg *stakingtypes.MsgUndelegate, db *database.Db,
+func (m *Module) storeUnbondingDelegationFromMessage(
+	tx *juno.Tx, index int, msg *stakingtypes.MsgUndelegate,
 ) (*types.UnbondingDelegation, error) {
 	event, err := tx.FindEventByType(index, stakingtypes.EventTypeUnbond)
 	if err != nil {
@@ -164,5 +148,5 @@ func StoreUnbondingDelegationFromMessage(
 		tx.Height,
 	)
 
-	return &delegation, db.SaveUnbondingDelegations([]types.UnbondingDelegation{delegation})
+	return &delegation, m.db.SaveUnbondingDelegations([]types.UnbondingDelegation{delegation})
 }

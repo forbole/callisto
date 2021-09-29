@@ -9,8 +9,10 @@ import (
 	"testing"
 	"time"
 
-	junodb "github.com/desmos-labs/juno/db"
-	"github.com/desmos-labs/juno/types/logging"
+	dbconfig "github.com/desmos-labs/juno/database/config"
+	"github.com/desmos-labs/juno/logging"
+
+	junodb "github.com/desmos-labs/juno/database"
 
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/types"
@@ -43,7 +45,7 @@ func (suite *DbTestSuite) SetupTest() {
 	codec := simapp.MakeTestEncodingConfig()
 
 	// Build the database
-	dbCfg := juno.NewDatabaseConfig(
+	dbCfg := dbconfig.NewDatabaseConfig(
 		"bdjuno",
 		"localhost",
 		5433,

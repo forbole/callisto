@@ -2,9 +2,13 @@ package modules
 
 import (
 	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	"github.com/desmos-labs/juno/node/remote"
+
+	"github.com/forbole/bdjuno/modules/history"
+	"github.com/forbole/bdjuno/modules/slashing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -15,7 +19,9 @@ import (
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+	slashingkeeper "github.com/cosmos/cosmos-sdk/x/slashing/keeper"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -45,9 +51,18 @@ import (
 	localgovsource "github.com/forbole/bdjuno/modules/gov/source/local"
 	remotegovsource "github.com/forbole/bdjuno/modules/gov/source/remote"
 	"github.com/forbole/bdjuno/modules/mint"
+	mintsource "github.com/forbole/bdjuno/modules/mint/source"
+	localmintsource "github.com/forbole/bdjuno/modules/mint/source/local"
+	remotemintsource "github.com/forbole/bdjuno/modules/mint/source/remote"
 	"github.com/forbole/bdjuno/modules/modules"
 	"github.com/forbole/bdjuno/modules/pricefeed"
+	slashingsource "github.com/forbole/bdjuno/modules/slashing/source"
+	localslashingsource "github.com/forbole/bdjuno/modules/slashing/source/local"
+	remoteslashingsource "github.com/forbole/bdjuno/modules/slashing/source/remote"
 	"github.com/forbole/bdjuno/modules/staking"
+	stakingsource "github.com/forbole/bdjuno/modules/staking/source"
+	localstakingsource "github.com/forbole/bdjuno/modules/staking/source/local"
+	remotestakingsource "github.com/forbole/bdjuno/modules/staking/source/remote"
 )
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
@@ -92,29 +107,33 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 
 	authModule := auth.NewModule(r.parser, cdc, db)
 	bankModule := bank.NewModule(r.parser, sources.BankSource, cdc, db)
-	stakingModule := staking.NewModule(ctx.ParsingConfig, bankClient, stakingClient, distrClient, encodingConfig, db),
+	distrModule := distribution.NewModule(ctx.JunoConfig, sources.DistrSource, bankModule, db)
+	historyModule := history.NewModule(ctx.JunoConfig.Chain, r.parser, cdc, db)
+	stakingModule := staking.NewModule(sources.StakingSource, bankModule, distrModule, historyModule, cdc, db)
 
 	return []jmodules.Module{
 		messages.NewModule(r.parser, cdc, ctx.Database),
 		authModule,
 		bankModule,
 		consensus.NewModule(db),
-		distribution.NewModule(ctx.JunoConfig, sources.DistrSource, bankModule, db),
+		distrModule,
 		gov.NewModule(cdc, sources.GovSource, authModule, bankModule, stakingModule, db),
-
-		mint.NewModule(mintClient, db),
-		modules.NewModule(ctx.ParsingConfig, db),
-		pricefeed.NewModule(bdjunoCfg, encodingC
-		onfig, db),
-		slashing.NewModule(slashingClient, db),
-		history.NewModule(r.parser, encodingConfig, db),
+		historyModule,
+		mint.NewModule(sources.MintSource, db),
+		modules.NewModule(ctx.JunoConfig.Chain, db),
+		pricefeed.NewModule(ctx.JunoConfig, historyModule, cdc, db),
+		slashing.NewModule(sources.SlashingSource, db),
+		stakingModule,
 	}
 }
 
 type Sources struct {
-	BankSource  banksource.Source
-	DistrSource distrsource.Source
-	GovSource   govsource.Source
+	BankSource     banksource.Source
+	DistrSource    distrsource.Source
+	GovSource      govsource.Source
+	MintSource     mintsource.Source
+	SlashingSource slashingsource.Source
+	StakingSource  stakingsource.Source
 }
 
 func buildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -141,11 +160,16 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 	sk := stakingkeeper.NewKeeper(source.Codec, source.RegisterKey(stakingtypes.StoreKey), ak, bk, source.RegisterSubspace(stakingtypes.ModuleName))
 	dk := distrkeeper.NewKeeper(source.Codec, source.RegisterKey(distrtypes.StoreKey), source.RegisterSubspace(distrtypes.ModuleName), ak, bk, &sk, authtypes.FeeCollectorName, nil)
 	gk := govkeeper.NewKeeper(source.Codec, source.RegisterKey(govtypes.StoreKey), source.RegisterSubspace(govtypes.ModuleName), ak, bk, &sk, govtypes.NewRouter())
+	mk := mintkeeper.NewKeeper(source.Codec, source.RegisterKey(minttypes.StoreKey), source.RegisterSubspace(minttypes.ModuleName), &sk, ak, bk, authtypes.FeeCollectorName)
+	slk := slashingkeeper.NewKeeper(source.Codec, source.RegisterKey(slashingtypes.StoreKey), &sk, source.RegisterSubspace(slashingtypes.ModuleName))
 
 	return &Sources{
-		BankSource:  localbanksource.NewSource(source, bk),
-		DistrSource: localdistrsource.NewSource(source, dk),
-		GovSource: localgovsource.NewSource(source, gk),
+		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(bk)),
+		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(dk)),
+		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(gk)),
+		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(mk)),
+		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(slk)),
+		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: sk}),
 	}, nil
 }
 
@@ -155,14 +179,12 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		return nil, fmt.Errorf("error while creating remote source: %s", err)
 	}
 
-	authClient := authtypes.NewQueryClient(source.GrpcConn)
-	mintClient := minttypes.NewQueryClient(source.GrpcConn)
-	slashingClient := slashingtypes.NewQueryClient(source.GrpcConn)
-	stakingClient := stakingtypes.NewQueryClient(source.GrpcConn)
-
 	return &Sources{
-		BankSource:  remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
-		DistrSource: remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
-		GovSource:   remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
+		BankSource:     remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
+		DistrSource:    remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
+		GovSource:      remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
+		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
+		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
+		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }

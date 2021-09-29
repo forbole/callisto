@@ -2,6 +2,7 @@ package gov
 
 import (
 	"fmt"
+
 	juno "github.com/desmos-labs/juno/types"
 
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"

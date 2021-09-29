@@ -2,10 +2,11 @@ package local
 
 import (
 	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/desmos-labs/juno/node/local"
+
 	govsource "github.com/forbole/bdjuno/modules/gov/source"
 )
 
@@ -16,14 +17,14 @@ var (
 // Source implements govsource.Source by using a local node
 type Source struct {
 	*local.Source
-	k govkeeper.Keeper
+	q govtypes.QueryServer
 }
 
 // NewSource returns a new Source instance
-func NewSource(source *local.Source, govKeeper govkeeper.Keeper) *Source {
+func NewSource(source *local.Source, govKeeper govtypes.QueryServer) *Source {
 	return &Source{
 		Source: source,
-		k:      govKeeper,
+		q:      govKeeper,
 	}
 }
 
@@ -34,7 +35,7 @@ func (s Source) Proposal(height int64, id uint64) (govtypes.Proposal, error) {
 		return govtypes.Proposal{}, fmt.Errorf("error while loading height: %s", err)
 	}
 
-	res, err := s.k.Proposal(sdk.WrapSDKContext(ctx), &govtypes.QueryProposalRequest{ProposalId: id})
+	res, err := s.q.Proposal(sdk.WrapSDKContext(ctx), &govtypes.QueryProposalRequest{ProposalId: id})
 	if err != nil {
 		return govtypes.Proposal{}, err
 	}
@@ -49,7 +50,7 @@ func (s Source) ProposalDeposit(height int64, id uint64, depositor string) (govt
 		return govtypes.Deposit{}, fmt.Errorf("error while loading height: %s", err)
 	}
 
-	res, err := s.k.Deposit(sdk.WrapSDKContext(ctx), &govtypes.QueryDepositRequest{ProposalId: id, Depositor: depositor})
+	res, err := s.q.Deposit(sdk.WrapSDKContext(ctx), &govtypes.QueryDepositRequest{ProposalId: id, Depositor: depositor})
 	if err != nil {
 		return govtypes.Deposit{}, err
 	}
@@ -64,7 +65,7 @@ func (s Source) TallyResult(height int64, proposalID uint64) (govtypes.TallyResu
 		return govtypes.TallyResult{}, fmt.Errorf("error while loading height: %s", err)
 	}
 
-	res, err := s.k.TallyResult(sdk.WrapSDKContext(ctx), &govtypes.QueryTallyResultRequest{ProposalId: proposalID})
+	res, err := s.q.TallyResult(sdk.WrapSDKContext(ctx), &govtypes.QueryTallyResultRequest{ProposalId: proposalID})
 	if err != nil {
 		return govtypes.TallyResult{}, err
 	}
@@ -79,7 +80,7 @@ func (s Source) DepositParams(height int64) (govtypes.DepositParams, error) {
 		return govtypes.DepositParams{}, fmt.Errorf("error while loading height: %s", err)
 	}
 
-	res, err := s.k.Params(sdk.WrapSDKContext(ctx), &govtypes.QueryParamsRequest{ParamsType: govtypes.ParamDeposit})
+	res, err := s.q.Params(sdk.WrapSDKContext(ctx), &govtypes.QueryParamsRequest{ParamsType: govtypes.ParamDeposit})
 	if err != nil {
 		return govtypes.DepositParams{}, err
 	}
@@ -94,7 +95,7 @@ func (s Source) VotingParams(height int64) (govtypes.VotingParams, error) {
 		return govtypes.VotingParams{}, fmt.Errorf("error while loading height: %s", err)
 	}
 
-	res, err := s.k.Params(sdk.WrapSDKContext(ctx), &govtypes.QueryParamsRequest{ParamsType: govtypes.ParamVoting})
+	res, err := s.q.Params(sdk.WrapSDKContext(ctx), &govtypes.QueryParamsRequest{ParamsType: govtypes.ParamVoting})
 	if err != nil {
 		return govtypes.VotingParams{}, err
 	}
@@ -109,7 +110,7 @@ func (s Source) TallyParams(height int64) (govtypes.TallyParams, error) {
 		return govtypes.TallyParams{}, fmt.Errorf("error while loading height: %s", err)
 	}
 
-	res, err := s.k.Params(sdk.WrapSDKContext(ctx), &govtypes.QueryParamsRequest{ParamsType: govtypes.ParamTallying})
+	res, err := s.q.Params(sdk.WrapSDKContext(ctx), &govtypes.QueryParamsRequest{ParamsType: govtypes.ParamTallying})
 	if err != nil {
 		return govtypes.TallyParams{}, err
 	}

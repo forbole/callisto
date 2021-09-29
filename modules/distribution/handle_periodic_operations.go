@@ -15,7 +15,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 
 	// Update the community pool every 1 hour
 	if _, err := scheduler.Every(1).Hour().StartImmediately().Do(func() {
-		utils.WatchMethod(func() error { return m.getLatestCommunityPool() })
+		utils.WatchMethod(m.getLatestCommunityPool)
 	}); err != nil {
 		return fmt.Errorf("error while scheduling distribution peridic operation: %s", err)
 	}

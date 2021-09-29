@@ -4,27 +4,20 @@ import (
 	"fmt"
 	"strings"
 
-	juno "github.com/desmos-labs/juno/types"
-
-	historyutils "github.com/forbole/bdjuno/modules/history/utils"
-	"github.com/forbole/bdjuno/types"
-
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
 
-	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/modules/pricefeed/coingecko"
 	"github.com/forbole/bdjuno/modules/utils"
 )
 
-// RegisterPeriodicOps returns the AdditionalOperation that periodically runs fetches from
-// CoinGecko to make sure that constantly changing data are synced properly.
-func RegisterPeriodicOps(cfg juno.Config, scheduler *gocron.Scheduler, db *database.Db) error {
+// RegisterPeriodicOperations implements modules.PeriodicOperationsModule
+func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	log.Debug().Str("module", "pricefeed").Msg("setting up periodic tasks")
 
 	// Fetch total supply of token in 30 seconds each
 	if _, err := scheduler.Every(30).Second().StartImmediately().Do(func() {
-		utils.WatchMethod(func() error { return updatePrice(cfg, db) })
+		utils.WatchMethod(m.updatePrice)
 	}); err != nil {
 		return fmt.Errorf("error while setting up pricefeed period operations: %s", err)
 	}
@@ -33,7 +26,7 @@ func RegisterPeriodicOps(cfg juno.Config, scheduler *gocron.Scheduler, db *datab
 }
 
 // updatePrice fetch total amount of coins in the system from RPC and store it into database
-func updatePrice(cfg juno.Config, db *database.Db) error {
+func (m *Module) updatePrice() error {
 	log.Debug().
 		Str("module", "pricefeed").
 		Str("operation", "pricefeed").
@@ -46,7 +39,7 @@ func updatePrice(cfg juno.Config, db *database.Db) error {
 	}
 
 	// Get the list of token units
-	units, err := db.GetTokenUnits()
+	units, err := m.db.GetTokenUnits()
 	if err != nil {
 		return fmt.Errorf("error while getting token units: %s", err)
 	}
@@ -79,14 +72,10 @@ func updatePrice(cfg juno.Config, db *database.Db) error {
 	}
 
 	// Save the token prices
-	err = db.SaveTokensPrices(prices)
+	err = m.db.SaveTokensPrices(prices)
 	if err != nil {
 		return fmt.Errorf("error while saving token prices: %s", err)
 	}
 
-	if utils.IsModuleEnabled(cfg, types.HistoryModuleName) {
-		return historyutils.UpdatePriceHistory(prices, db)
-	}
-
-	return nil
+	return m.historyModule.UpdatePricesHistory(prices)
 }

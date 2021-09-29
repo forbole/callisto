@@ -2,10 +2,11 @@ package local
 
 import (
 	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	"github.com/desmos-labs/juno/node/local"
+
 	distrsource "github.com/forbole/bdjuno/modules/distribution/source"
 )
 
@@ -16,13 +17,13 @@ var (
 // Source implements distrsource.Source reading the data from a local node
 type Source struct {
 	*local.Source
-	k distrkeeper.Keeper
+	q distrtypes.QueryServer
 }
 
-func NewSource(source *local.Source, keeper distrkeeper.Keeper) *Source {
+func NewSource(source *local.Source, keeper distrtypes.QueryServer) *Source {
 	return &Source{
 		Source: source,
-		k:      keeper,
+		q:      keeper,
 	}
 }
 
@@ -33,7 +34,7 @@ func (s Source) ValidatorCommission(valOperAddr string, height int64) (sdk.DecCo
 		return nil, fmt.Errorf("error while loading height: %s", err)
 	}
 
-	res, err := s.k.ValidatorCommission(
+	res, err := s.q.ValidatorCommission(
 		sdk.WrapSDKContext(ctx),
 		&distrtypes.QueryValidatorCommissionRequest{ValidatorAddress: valOperAddr},
 	)
@@ -51,7 +52,7 @@ func (s Source) DelegatorTotalRewards(delegator string, height int64) ([]distrty
 		return nil, fmt.Errorf("error while loading height: %s", err)
 	}
 
-	res, err := s.k.DelegationTotalRewards(
+	res, err := s.q.DelegationTotalRewards(
 		sdk.WrapSDKContext(ctx),
 		&distrtypes.QueryDelegationTotalRewardsRequest{DelegatorAddress: delegator},
 	)
@@ -69,7 +70,7 @@ func (s Source) DelegatorWithdrawAddress(delegator string, height int64) (string
 		return "", fmt.Errorf("error while loading height: %s", err)
 	}
 
-	res, err := s.k.DelegatorWithdrawAddress(
+	res, err := s.q.DelegatorWithdrawAddress(
 		sdk.WrapSDKContext(ctx),
 		&distrtypes.QueryDelegatorWithdrawAddressRequest{DelegatorAddress: delegator},
 	)
@@ -87,7 +88,7 @@ func (s Source) CommunityPool(height int64) (sdk.DecCoins, error) {
 		return nil, fmt.Errorf("error while loading height: %s", err)
 	}
 
-	res, err := s.k.CommunityPool(sdk.WrapSDKContext(ctx), &distrtypes.QueryCommunityPoolRequest{})
+	res, err := s.q.CommunityPool(sdk.WrapSDKContext(ctx), &distrtypes.QueryCommunityPoolRequest{})
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +103,7 @@ func (s Source) Params(height int64) (distrtypes.Params, error) {
 		return distrtypes.Params{}, fmt.Errorf("error while loading height: %s", err)
 	}
 
-	res, err := s.k.Params(sdk.WrapSDKContext(ctx), &distrtypes.QueryParamsRequest{})
+	res, err := s.q.Params(sdk.WrapSDKContext(ctx), &distrtypes.QueryParamsRequest{})
 	if err != nil {
 		return distrtypes.Params{}, err
 	}

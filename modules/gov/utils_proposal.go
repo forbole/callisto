@@ -2,6 +2,7 @@ package gov
 
 import (
 	"fmt"
+
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 

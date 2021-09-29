@@ -3,8 +3,9 @@ package local
 import (
 	"fmt"
 
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	"github.com/desmos-labs/juno/node/local"
 
 	"github.com/forbole/bdjuno/modules/bank/source"
@@ -18,14 +19,14 @@ var (
 // Source represents the implementation of the bank keeper that works on a local node
 type Source struct {
 	*local.Source
-	k bankkeeper.BaseKeeper
+	q banktypes.QueryServer
 }
 
 // NewSource builds a new Source instance
-func NewSource(source *local.Source, bk bankkeeper.BaseKeeper) *Source {
+func NewSource(source *local.Source, bk banktypes.QueryServer) *Source {
 	return &Source{
 		Source: source,
-		k:      bk,
+		q:      bk,
 	}
 }
 
@@ -38,13 +39,12 @@ func (s Source) GetBalances(addresses []string, height int64) ([]types.AccountBa
 
 	var balances []types.AccountBalance
 	for _, address := range addresses {
-		addr, err := sdk.AccAddressFromBech32(address)
+		res, err := s.q.AllBalances(sdk.WrapSDKContext(ctx), &banktypes.QueryAllBalancesRequest{Address: address})
 		if err != nil {
 			return nil, err
 		}
 
-		balance := s.k.GetAllBalances(ctx, addr)
-		balances = append(balances, types.NewAccountBalance(address, balance, height))
+		balances = append(balances, types.NewAccountBalance(address, res.Balances, height))
 	}
 
 	return balances, nil
@@ -57,5 +57,10 @@ func (s Source) GetSupply(height int64) (sdk.Coins, error) {
 		return nil, fmt.Errorf("error while loading height: %s", err)
 	}
 
-	return s.k.GetSupply(ctx).GetTotal(), nil
+	res, err := s.q.TotalSupply(sdk.WrapSDKContext(ctx), &banktypes.QueryTotalSupplyRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	return res.Supply, nil
 }

@@ -1,13 +1,21 @@
 package pricefeed
 
-import "github.com/forbole/bdjuno/types"
+import (
+	"gopkg.in/yaml.v3"
 
-// PricefeedConfig contains the configuration about the pricefeed module
-type PricefeedConfig struct {
+	"github.com/forbole/bdjuno/types"
+)
+
+// Config contains the configuration about the pricefeed module
+type Config struct {
 	Tokens []types.Token `toml:"tokens"`
 }
 
-// GetTokens returns the list of tokens for which to get the prices
-func (p *PricefeedConfig) GetTokens() []types.Token {
-	return p.Tokens
+func ParseConfig(bz []byte) (*Config, error) {
+	type T struct {
+		Config *Config `yaml:"pricefeed"`
+	}
+	var cfg T
+	err := yaml.Unmarshal(bz, &cfg)
+	return cfg.Config, err
 }
