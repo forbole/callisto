@@ -1,11 +1,11 @@
 package distribution
 
 import (
-	"github.com/desmos-labs/juno/types/config"
+	"github.com/desmos-labs/juno/v2/types/config"
 
 	distrsource "github.com/forbole/bdjuno/modules/distribution/source"
 
-	"github.com/desmos-labs/juno/modules"
+	"github.com/desmos-labs/juno/v2/modules"
 
 	"github.com/forbole/bdjuno/database"
 )

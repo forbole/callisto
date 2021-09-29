@@ -2,7 +2,7 @@ package remote
 
 import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	"github.com/desmos-labs/juno/node/remote"
+	"github.com/desmos-labs/juno/v2/node/remote"
 
 	govsource "github.com/forbole/bdjuno/modules/gov/source"
 )

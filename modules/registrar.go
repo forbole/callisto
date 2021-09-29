@@ -5,7 +5,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
-	"github.com/desmos-labs/juno/node/remote"
+	"github.com/desmos-labs/juno/v2/node/remote"
 
 	"github.com/forbole/bdjuno/modules/history"
 	"github.com/forbole/bdjuno/modules/slashing"
@@ -19,21 +19,22 @@ import (
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	ibctransfertypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingkeeper "github.com/cosmos/cosmos-sdk/x/slashing/keeper"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/desmos-labs/juno/node/local"
+	"github.com/desmos-labs/juno/v2/node/local"
 
-	jmodules "github.com/desmos-labs/juno/modules"
-	"github.com/desmos-labs/juno/modules/messages"
-	"github.com/desmos-labs/juno/modules/registrar"
+	jmodules "github.com/desmos-labs/juno/v2/modules"
+	"github.com/desmos-labs/juno/v2/modules/messages"
+	"github.com/desmos-labs/juno/v2/modules/registrar"
 
 	"github.com/forbole/bdjuno/utils"
 
-	nodeconfig "github.com/desmos-labs/juno/node/config"
+	nodeconfig "github.com/desmos-labs/juno/v2/node/config"
 
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/modules/auth"
@@ -149,19 +150,35 @@ func buildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConf
 }
 
 func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig) (*Sources, error) {
-	source, err := local.NewKeeper(cfg.Home, encodingConfig)
+	source, err := local.NewSource(cfg.Home, encodingConfig)
 	if err != nil {
 		return nil, err
 	}
 
-	ak := authkeeper.NewAccountKeeper(source.Codec, source.RegisterKey(authtypes.StoreKey), source.RegisterSubspace(authtypes.ModuleName), authtypes.ProtoBaseAccount, nil)
+	// Module account permissions
+	maccPerms := map[string][]string{
+		authtypes.FeeCollectorName:     nil,
+		distrtypes.ModuleName:          nil,
+		minttypes.ModuleName:           {authtypes.Minter},
+		stakingtypes.BondedPoolName:    {authtypes.Burner, authtypes.Staking},
+		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
+		govtypes.ModuleName:            {authtypes.Burner},
+		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
+	}
+	ak := authkeeper.NewAccountKeeper(source.Codec, source.RegisterKey(authtypes.StoreKey), source.RegisterSubspace(authtypes.ModuleName), authtypes.ProtoBaseAccount, maccPerms)
 	bk := bankkeeper.NewBaseKeeper(source.Codec, source.RegisterKey(banktypes.StoreKey), ak, source.RegisterSubspace(banktypes.ModuleName), nil)
 
 	sk := stakingkeeper.NewKeeper(source.Codec, source.RegisterKey(stakingtypes.StoreKey), ak, bk, source.RegisterSubspace(stakingtypes.ModuleName))
 	dk := distrkeeper.NewKeeper(source.Codec, source.RegisterKey(distrtypes.StoreKey), source.RegisterSubspace(distrtypes.ModuleName), ak, bk, &sk, authtypes.FeeCollectorName, nil)
-	gk := govkeeper.NewKeeper(source.Codec, source.RegisterKey(govtypes.StoreKey), source.RegisterSubspace(govtypes.ModuleName), ak, bk, &sk, govtypes.NewRouter())
+	gk := govkeeper.NewKeeper(source.Codec, source.RegisterKey(govtypes.StoreKey), source.RegisterSubspace(govtypes.ModuleName).WithKeyTable(govtypes.ParamKeyTable()), ak, bk, &sk, govtypes.NewRouter())
 	mk := mintkeeper.NewKeeper(source.Codec, source.RegisterKey(minttypes.StoreKey), source.RegisterSubspace(minttypes.ModuleName), &sk, ak, bk, authtypes.FeeCollectorName)
 	slk := slashingkeeper.NewKeeper(source.Codec, source.RegisterKey(slashingtypes.StoreKey), &sk, source.RegisterSubspace(slashingtypes.ModuleName))
+
+	// Initialize the stores
+	err = source.InitStores()
+	if err != nil {
+		return nil, err
+	}
 
 	return &Sources{
 		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(bk)),
@@ -174,7 +191,7 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 }
 
 func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
-	source, err := remote.NewKeeper(cfg.GRPC)
+	source, err := remote.NewSource(cfg.GRPC)
 	if err != nil {
 		return nil, fmt.Errorf("error while creating remote source: %s", err)
 	}

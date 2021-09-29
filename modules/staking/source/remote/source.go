@@ -3,7 +3,7 @@ package remote
 import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/desmos-labs/juno/node/remote"
+	"github.com/desmos-labs/juno/v2/node/remote"
 
 	stakingsource "github.com/forbole/bdjuno/modules/staking/source"
 )

@@ -9,15 +9,15 @@ import (
 	"testing"
 	"time"
 
-	dbconfig "github.com/desmos-labs/juno/database/config"
-	"github.com/desmos-labs/juno/logging"
+	dbconfig "github.com/desmos-labs/juno/v2/database/config"
+	"github.com/desmos-labs/juno/v2/logging"
 
-	junodb "github.com/desmos-labs/juno/database"
+	junodb "github.com/desmos-labs/juno/v2/database"
 
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/types"
 
-	juno "github.com/desmos-labs/juno/types"
+	juno "github.com/desmos-labs/juno/v2/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	tmversion "github.com/tendermint/tendermint/proto/tendermint/version"

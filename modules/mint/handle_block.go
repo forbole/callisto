@@ -1,7 +1,7 @@
 package mint
 
 import (
-	juno "github.com/desmos-labs/juno/types"
+	juno "github.com/desmos-labs/juno/v2/types"
 
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"

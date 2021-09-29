@@ -3,7 +3,7 @@ package remote
 import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
-	"github.com/desmos-labs/juno/node/remote"
+	"github.com/desmos-labs/juno/v2/node/remote"
 
 	slashingsource "github.com/forbole/bdjuno/modules/slashing/source"
 )

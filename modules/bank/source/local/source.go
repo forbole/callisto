@@ -6,7 +6,7 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/juno/node/local"
+	"github.com/desmos-labs/juno/v2/node/local"
 
 	"github.com/forbole/bdjuno/modules/bank/source"
 	"github.com/forbole/bdjuno/types"

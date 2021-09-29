@@ -2,11 +2,11 @@ package pricefeed
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/desmos-labs/juno/types/config"
+	"github.com/desmos-labs/juno/v2/types/config"
 
 	"github.com/forbole/bdjuno/database"
 
-	"github.com/desmos-labs/juno/modules"
+	"github.com/desmos-labs/juno/v2/modules"
 )
 
 var (

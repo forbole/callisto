@@ -1,7 +1,7 @@
 package slashing
 
 import (
-	juno "github.com/desmos-labs/juno/types"
+	juno "github.com/desmos-labs/juno/v2/types"
 
 	"github.com/forbole/bdjuno/types"
 

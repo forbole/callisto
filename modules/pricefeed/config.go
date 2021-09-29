@@ -8,7 +8,7 @@ import (
 
 // Config contains the configuration about the pricefeed module
 type Config struct {
-	Tokens []types.Token `toml:"tokens"`
+	Tokens []types.Token `yaml:"tokens"`
 }
 
 func ParseConfig(bz []byte) (*Config, error) {

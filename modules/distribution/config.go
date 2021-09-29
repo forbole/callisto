@@ -4,7 +4,7 @@ import "gopkg.in/yaml.v3"
 
 // Config contains the configuration about distribution frequency
 type Config struct {
-	DistributionFrequency int64 `toml:"distribution_frequency"`
+	DistributionFrequency int64 `yaml:"distribution_frequency"`
 }
 
 // GetDistributionFrequency returns distribution frequency int64 value

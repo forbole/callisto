@@ -2,7 +2,7 @@ package staking
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/desmos-labs/juno/modules"
+	"github.com/desmos-labs/juno/v2/modules"
 
 	"github.com/forbole/bdjuno/database"
 	stakingsource "github.com/forbole/bdjuno/modules/staking/source"

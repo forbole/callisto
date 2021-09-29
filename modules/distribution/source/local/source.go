@@ -5,7 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	"github.com/desmos-labs/juno/node/local"
+	"github.com/desmos-labs/juno/v2/node/local"
 
 	distrsource "github.com/forbole/bdjuno/modules/distribution/source"
 )

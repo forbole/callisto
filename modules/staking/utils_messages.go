@@ -10,7 +10,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	juno "github.com/desmos-labs/juno/types"
+	juno "github.com/desmos-labs/juno/v2/types"
 )
 
 // storeValidatorFromMsgCreateValidator handles properly a MsgCreateValidator instance by

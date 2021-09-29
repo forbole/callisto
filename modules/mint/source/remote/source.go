@@ -3,7 +3,7 @@ package remote
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-	"github.com/desmos-labs/juno/node/remote"
+	"github.com/desmos-labs/juno/v2/node/remote"
 
 	mintsource "github.com/forbole/bdjuno/modules/mint/source"
 )

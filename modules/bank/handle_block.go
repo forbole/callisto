@@ -1,7 +1,7 @@
 package bank
 
 import (
-	"github.com/desmos-labs/juno/types"
+	"github.com/desmos-labs/juno/v2/types"
 
 	"github.com/rs/zerolog/log"
 
