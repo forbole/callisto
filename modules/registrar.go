@@ -19,13 +19,13 @@ import (
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	ibctransfertypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingkeeper "github.com/cosmos/cosmos-sdk/x/slashing/keeper"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	ibctransfertypes "github.com/cosmos/ibc-go/modules/apps/transfer/types"
 	"github.com/desmos-labs/juno/v2/node/local"
 
 	jmodules "github.com/desmos-labs/juno/v2/modules"
@@ -68,7 +68,7 @@ import (
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
 func UniqueAddressesParser(parser messages.MessageAddressesParser) messages.MessageAddressesParser {
-	return func(cdc codec.Marshaler, msg sdk.Msg) ([]string, error) {
+	return func(cdc codec.Codec, msg sdk.Msg) ([]string, error) {
 		addresses, err := parser(cdc, msg)
 		if err != nil {
 			return nil, err
