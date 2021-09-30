@@ -5,10 +5,10 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 
-	"github.com/forbole/bdjuno/database"
-
 	"github.com/desmos-labs/juno/modules"
 	"github.com/desmos-labs/juno/types"
+	"github.com/forbole/bdjuno/database"
+	"github.com/forbole/bdjuno/types/config"
 	"github.com/go-co-op/gocron"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
@@ -22,14 +22,16 @@ var (
 
 // Module represents the x/distr module
 type Module struct {
+	cfg         *config.Config
 	db          *database.Db
 	bankClient  banktypes.QueryClient
 	distrClient distrtypes.QueryClient
 }
 
 // NewModule returns a new Module instance
-func NewModule(bankClient banktypes.QueryClient, distrClient distrtypes.QueryClient, db *database.Db) *Module {
+func NewModule(cfg *config.Config, bankClient banktypes.QueryClient, distrClient distrtypes.QueryClient, db *database.Db) *Module {
 	return &Module{
+		cfg:         cfg,
 		bankClient:  bankClient,
 		distrClient: distrClient,
 		db:          db,
@@ -48,7 +50,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 
 // HandleBlock implements modules.BlockModule
 func (m *Module) HandleBlock(b *tmctypes.ResultBlock, _ []*types.Tx, _ *tmctypes.ResultValidators) error {
-	return HandleBlock(b, m.distrClient, m.db)
+	return HandleBlock(m.cfg, b, m.distrClient, m.db)
 }
 
 // HandleMsg implements modules.MessageModule
