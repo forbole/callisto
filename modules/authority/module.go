@@ -4,9 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/desmos-labs/juno/modules"
-	"github.com/desmos-labs/juno/types"
 	authoritytypes "github.com/e-money/em-ledger/x/authority/types"
 	"github.com/go-co-op/gocron"
 	tmtypes "github.com/tendermint/tendermint/types"
@@ -18,7 +16,6 @@ var (
 	_ modules.Module                   = &Module{}
 	_ modules.GenesisModule            = &Module{}
 	_ modules.PeriodicOperationsModule = &Module{}
-	_ modules.MessageModule            = &Module{}
 )
 
 // Module represent database/mint module
@@ -54,9 +51,4 @@ func (m *Module) HandleGenesis(genesisDoc *tmtypes.GenesisDoc, appState map[stri
 // RegisterPeriodicOperations implements modules.PeriodicOperationsModule
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	return RegisterPeriodicOps(scheduler, m.authorityClient, m.db)
-}
-
-// HandleMsg implements modules.MessageModule
-func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *types.Tx) error {
-	return HandleMsg(tx, msg, m.authorityClient, m.db)
 }
