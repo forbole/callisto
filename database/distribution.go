@@ -211,3 +211,17 @@ func (db *Db) HasDelegatorRewards() (bool, error) {
 
 	return count > 0, nil
 }
+
+// HasValidatorCommission checks if the database contains any validators commission
+func (db *Db) HasValidatorCommission() (bool, error) {
+	stmt := `SELECT COUNT(*) FROM validator_commission_amount`
+
+	var count int
+	err := db.Sql.QueryRow(stmt).Scan(&count)
+	if err != nil {
+		return false, fmt.Errorf("error while getting validator commission: %s", err)
+
+	}
+
+	return count > 0, nil
+}

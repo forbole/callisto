@@ -10,11 +10,32 @@ import (
 	"github.com/forbole/bdjuno/types"
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+	"github.com/forbole/bdjuno/types/config"
 	"github.com/rs/zerolog/log"
 )
 
-// UpdateValidatorsCommissionAmounts updates the validators commissions amounts
-func UpdateValidatorsCommissionAmounts(height int64, client distrtypes.QueryClient, db *database.Db) {
+// UpdateValidatorsCommissionAmounts updates the validator commission amounts
+func UpdateValidatorsCommissionAmounts(cfg *config.Config, height int64, client distrtypes.QueryClient, db *database.Db) {
+	interval := cfg.GetDistributionConfig().GetDistributionFrequency()
+	if interval == 0 {
+		log.Debug().Str("module", "distribution").Msg("validator commission refresh interval set to 0. Skipping refresh")
+		return
+	}
+
+	hasCommission, error := db.HasValidatorCommission()
+	if error != nil {
+		log.Error().Str("module", "distribution").Err(error).Int64("height", height).
+			Msg("error while checking validator commission amount")
+	}
+
+	if !hasCommission || height%interval == 0 {
+		go updateValidatorCommissions(height, client, db)
+	}
+
+}
+
+// updateValidatorCommissions updates the validators commissions amounts
+func updateValidatorCommissions(height int64, client distrtypes.QueryClient, db *database.Db) {
 	log.Debug().Str("module", "distribution").
 		Int64("height", height).
 		Msg("updating validators commissions")
