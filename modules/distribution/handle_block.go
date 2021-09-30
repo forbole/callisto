@@ -20,7 +20,7 @@ func HandleBlock(cfg *config.Config, block *tmctypes.ResultBlock, client distrty
 	go updateParams(block.Block.Height, client, db)
 
 	// Update the validator commissions
-	go distrutils.UpdateValidatorsCommissionAmounts(block.Block.Height, client, db)
+	go distrutils.UpdateValidatorsCommissionAmounts(cfg, block.Block.Height, client, db)
 
 	// Update the delegators commissions amounts
 	go distrutils.UpdateDelegatorsRewardsAmounts(cfg, block.Block.Height, client, db)
