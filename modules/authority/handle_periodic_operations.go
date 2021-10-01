@@ -6,6 +6,7 @@ import (
 	authoritytypes "github.com/e-money/em-ledger/x/authority/types"
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/modules/utils"
+	"github.com/forbole/bdjuno/types"
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
 )
@@ -50,5 +51,6 @@ func updateMinGasPrices(authorityclient authoritytypes.QueryClient, db *database
 		return err
 	}
 
-	return db.UpdateEMoneyGasPrices(res.GetMinGasPrices(), height)
+	newEMoneyGasPrices := types.NewEMoneyGasPrices(res.MinGasPrices, height)
+	return db.SaveEMoneyGasPrices(newEMoneyGasPrices)
 }

@@ -12,8 +12,8 @@ CREATE TABLE emoney_inflation
 /* ---- AUTHORITY / GAS PRICE ---- */
 CREATE TABLE emoney_gas_prices
 (
-    authority_key   TEXT,
-    gas_prices      COIN[]      NOT NULL,
+    one_row_id      BOOLEAN     NOT NULL DEFAULT TRUE PRIMARY KEY,
+    gas_prices      DEC_COIN[]  NOT NULL,
     height          BIGINT      NOT NULL
 );
 CREATE INDEX emoney_gas_prices_index ON emoney_gas_prices (height);

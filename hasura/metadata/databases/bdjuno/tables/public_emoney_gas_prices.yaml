@@ -5,7 +5,7 @@ select_permissions:
 - permission:
     allow_aggregations: true
     columns:
-    - authority_key
+    - one_row_id
     - gas_prices
     - height
     filter: {}

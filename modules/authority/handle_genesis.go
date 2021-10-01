@@ -21,7 +21,7 @@ func HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage,
 		return err
 	}
 
-	newEMoneyGasPrices := types.NewEMoneyGasPrices(genState.AuthorityKey, genState.MinGasPrices, doc.InitialHeight)
+	newEMoneyGasPrices := types.NewEMoneyGasPrices(genState.MinGasPrices, doc.InitialHeight)
 
 	return db.SaveEMoneyGasPrices(newEMoneyGasPrices)
 }

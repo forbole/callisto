@@ -9,7 +9,6 @@ import (
 func (suite *DbTestSuite) TestBigDipperDb_SaveEMoneyGasPrices() {
 
 	//prepare data for storing in DB
-	authorityKey := "emoney1zp22dzt8q2vfkemytl8fwvr2d4vjxrsyjugygv"
 	minGasPrices := sdk.DecCoins{
 		sdk.DecCoin{
 			Denom:  "echf",
@@ -28,7 +27,6 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveEMoneyGasPrices() {
 
 	// Save the data
 	eMoneyGasPrices := types.NewEMoneyGasPrices(
-		authorityKey,
 		minGasPrices,
 		height,
 	)
@@ -36,7 +34,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveEMoneyGasPrices() {
 	suite.Require().NoError(err)
 
 	// Verify the data
-	expected := dbtypes.NewEMoneyGasPricesRow(authorityKey, dbtypes.NewDbDecCoins(minGasPrices), height)
+	expected := dbtypes.NewEMoneyGasPricesRow(dbtypes.NewDbDecCoins(minGasPrices), height)
 
 	row := []dbtypes.EMoneyGasPricesRow{}
 	err = suite.database.Sqlx.Select(&row, `SELECT * FROM emoney_gas_prices`)
