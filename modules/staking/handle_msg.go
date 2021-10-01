@@ -20,7 +20,7 @@ import (
 func HandleMsg(
 	tx *juno.Tx, index int, msg sdk.Msg,
 	stakingClient stakingtypes.QueryClient, distrClient distrtypes.QueryClient,
-	cdc codec.Marshaler, db *database.Db,
+	cdc codec.Codec, db *database.Db,
 ) error {
 	if len(tx.Logs) == 0 {
 		return nil
@@ -51,7 +51,7 @@ func HandleMsg(
 // handleMsgCreateValidator handles properly a MsgCreateValidator instance by
 // saving into the database all the data associated to such validator
 func handleMsgCreateValidator(
-	height int64, msg *stakingtypes.MsgCreateValidator, cdc codec.Marshaler, db *database.Db,
+	height int64, msg *stakingtypes.MsgCreateValidator, cdc codec.Codec, db *database.Db,
 ) error {
 	err := stakingutils.StoreValidatorFromMsgCreateValidator(height, msg, cdc, db)
 	if err != nil {

@@ -21,7 +21,7 @@ import (
 )
 
 func HandleGenesis(
-	doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, cdc codec.Marshaler, db *database.Db,
+	doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, cdc codec.Codec, db *database.Db,
 ) error {
 	log.Debug().Str("module", "staking").Msg("parsing genesis")
 
@@ -83,7 +83,7 @@ func HandleGenesis(
 }
 
 func parseGenesisTransactions(
-	doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, cdc codec.Marshaler, db *database.Db,
+	doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, cdc codec.Codec, db *database.Db,
 ) error {
 	var genUtilState genutiltypes.GenesisState
 	err := cdc.UnmarshalJSON(appState[genutiltypes.ModuleName], &genUtilState)
@@ -127,7 +127,7 @@ func saveParams(height int64, params stakingtypes.Params, db *database.Db) error
 
 // saveValidators stores the validators data present inside the given genesis state
 func saveValidators(
-	doc *tmtypes.GenesisDoc, validators stakingtypes.Validators, cdc codec.Marshaler, db *database.Db,
+	doc *tmtypes.GenesisDoc, validators stakingtypes.Validators, cdc codec.Codec, db *database.Db,
 ) error {
 	vals := make([]types.Validator, len(validators))
 	for i, val := range validators {

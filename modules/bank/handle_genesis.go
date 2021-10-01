@@ -19,7 +19,7 @@ import (
 
 // HandleGenesis handles the genesis state of the x/bank module in order to store the initial values
 // of the different account balances.
-func HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, cdc codec.Marshaler, db *database.Db) error {
+func HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, cdc codec.Codec, db *database.Db) error {
 	log.Debug().Str("module", "bank").Msg("parsing genesis")
 
 	var bankState banktypes.GenesisState

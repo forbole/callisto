@@ -24,14 +24,14 @@ import (
 )
 
 // GetValidatorConsPubKey returns the consensus public key of the given validator
-func GetValidatorConsPubKey(cdc codec.Marshaler, validator stakingtypes.Validator) (cryptotypes.PubKey, error) {
+func GetValidatorConsPubKey(cdc codec.Codec, validator stakingtypes.Validator) (cryptotypes.PubKey, error) {
 	var pubKey cryptotypes.PubKey
 	err := cdc.UnpackAny(validator.ConsensusPubkey, &pubKey)
 	return pubKey, err
 }
 
 // GetValidatorConsAddr returns the consensus address of the given validator
-func GetValidatorConsAddr(cdc codec.Marshaler, validator stakingtypes.Validator) (sdk.ConsAddress, error) {
+func GetValidatorConsAddr(cdc codec.Codec, validator stakingtypes.Validator) (sdk.ConsAddress, error) {
 	pubKey, err := GetValidatorConsPubKey(cdc, validator)
 	if err != nil {
 		return nil, fmt.Errorf("error while getting validator consensus pub key: %s", err)
@@ -44,7 +44,7 @@ func GetValidatorConsAddr(cdc codec.Marshaler, validator stakingtypes.Validator)
 
 // ConvertValidator converts the given staking validator into a BDJuno validator
 func ConvertValidator(
-	cdc codec.Marshaler, validator stakingtypes.Validator, height int64,
+	cdc codec.Codec, validator stakingtypes.Validator, height int64,
 ) (types.Validator, error) {
 	consAddr, err := GetValidatorConsAddr(cdc, validator)
 	if err != nil {
@@ -91,14 +91,14 @@ func ConvertValidatorDescription(
 
 // GetValidators returns the validators list at the given height
 func GetValidators(
-	height int64, stakingClient stakingtypes.QueryClient, cdc codec.Marshaler,
+	height int64, stakingClient stakingtypes.QueryClient, cdc codec.Codec,
 ) ([]stakingtypes.Validator, []types.Validator, error) {
 	return GetValidatorsWithStatus(height, "", stakingClient, cdc)
 }
 
 // GetValidatorsWithStatus returns the list of all the validators having the given status at the given height
 func GetValidatorsWithStatus(
-	height int64, status string, stakingClient stakingtypes.QueryClient, cdc codec.Marshaler,
+	height int64, status string, stakingClient stakingtypes.QueryClient, cdc codec.Codec,
 ) ([]stakingtypes.Validator, []types.Validator, error) {
 	header := client.GetHeightRequestHeader(height)
 
@@ -141,7 +141,7 @@ func GetValidatorsWithStatus(
 
 // UpdateValidators updates the list of validators that are present at the given height
 func UpdateValidators(
-	height int64, client stakingtypes.QueryClient, cdc codec.Marshaler, db *database.Db,
+	height int64, client stakingtypes.QueryClient, cdc codec.Codec, db *database.Db,
 ) ([]stakingtypes.Validator, error) {
 	log.Debug().Str("module", "staking").Int64("height", height).
 		Msg("updating validators")
@@ -161,7 +161,7 @@ func UpdateValidators(
 
 // --------------------------------------------------------------------------------------------------------------------
 
-func GetValidatorsStatuses(height int64, validators []stakingtypes.Validator, cdc codec.Marshaler) ([]types.ValidatorStatus, error) {
+func GetValidatorsStatuses(height int64, validators []stakingtypes.Validator, cdc codec.Codec) ([]types.ValidatorStatus, error) {
 	statuses := make([]types.ValidatorStatus, len(validators))
 	for index, validator := range validators {
 		consAddr, err := GetValidatorConsAddr(cdc, validator)

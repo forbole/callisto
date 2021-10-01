@@ -21,7 +21,7 @@ import (
 // StoreValidatorFromMsgCreateValidator handles properly a MsgCreateValidator instance by
 // saving into the database all the data associated to such validator
 func StoreValidatorFromMsgCreateValidator(
-	height int64, msg *stakingtypes.MsgCreateValidator, cdc codec.Marshaler, db *database.Db,
+	height int64, msg *stakingtypes.MsgCreateValidator, cdc codec.Codec, db *database.Db,
 ) error {
 	var pubKey cryptotypes.PubKey
 	err := cdc.UnpackAny(msg.Pubkey, &pubKey)

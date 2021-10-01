@@ -31,7 +31,7 @@ const (
 func UpdateProposal(
 	height int64, blockVals *tmctypes.ResultValidators, id uint64,
 	govClient govtypes.QueryClient, bankClient banktypes.QueryClient, stakingClient stakingtypes.QueryClient,
-	cdc codec.Marshaler, db *database.Db,
+	cdc codec.Codec, db *database.Db,
 ) error {
 	// Get the proposal
 	res, err := govClient.Proposal(context.Background(), &govtypes.QueryProposalRequest{ProposalId: id})
@@ -179,7 +179,7 @@ func updateProposalStakingPoolSnapshot(
 func updateProposalValidatorStatusesSnapshot(
 	height int64, proposalID uint64,
 	blockVals *tmctypes.ResultValidators, stakingClient stakingtypes.QueryClient,
-	cdc codec.Marshaler, db *database.Db,
+	cdc codec.Codec, db *database.Db,
 ) error {
 	validators, _, err := stakingutils.GetValidatorsWithStatus(height, stakingtypes.Bonded.String(), stakingClient, cdc)
 	if err != nil {

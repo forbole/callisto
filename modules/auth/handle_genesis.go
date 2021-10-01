@@ -15,7 +15,7 @@ import (
 
 // Handler handles the genesis state of the x/auth module in order to store the initial values
 // of the different accounts.
-func Handler(appState map[string]json.RawMessage, cdc codec.Marshaler, db *database.Db) error {
+func Handler(appState map[string]json.RawMessage, cdc codec.Codec, db *database.Db) error {
 	log.Debug().Str("module", "auth").Msg("parsing genesis")
 
 	accounts, err := authutils.GetGenesisAccounts(appState, cdc)

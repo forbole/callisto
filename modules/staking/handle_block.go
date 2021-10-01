@@ -34,7 +34,7 @@ import (
 func HandleBlock(
 	cfg juno.Config, block *tmctypes.ResultBlock, vals *tmctypes.ResultValidators,
 	stakingClient stakingtypes.QueryClient, bankClient banktypes.QueryClient, distrClient distrtypes.QueryClient,
-	cdc codec.Marshaler, db *database.Db,
+	cdc codec.Codec, db *database.Db,
 ) error {
 	// Update the validators
 	validators, err := stakingutils.UpdateValidators(block.Block.Height, stakingClient, cdc, db)
@@ -90,7 +90,7 @@ func updateParams(height int64, stakingClient stakingtypes.QueryClient, db *data
 }
 
 // updateValidatorsStatus updates all validators' statuses
-func updateValidatorsStatus(height int64, validators []stakingtypes.Validator, cdc codec.Marshaler, db *database.Db) {
+func updateValidatorsStatus(height int64, validators []stakingtypes.Validator, cdc codec.Codec, db *database.Db) {
 	log.Debug().Str("module", "staking").Int64("height", height).
 		Msg("updating validators statuses")
 

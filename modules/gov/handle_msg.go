@@ -20,7 +20,7 @@ import (
 func HandleMsg(
 	tx *juno.Tx, index int, msg sdk.Msg,
 	govClient govtypes.QueryClient,
-	cdc codec.Marshaler, db *database.Db,
+	cdc codec.Codec, db *database.Db,
 ) error {
 	if len(tx.Logs) == 0 {
 		return nil
@@ -43,7 +43,7 @@ func HandleMsg(
 // handleMsgSubmitProposal allows to properly handle a handleMsgSubmitProposal
 func handleMsgSubmitProposal(
 	tx *juno.Tx, index int, msg *govtypes.MsgSubmitProposal,
-	govClient govtypes.QueryClient, cdc codec.Marshaler, db *database.Db,
+	govClient govtypes.QueryClient, cdc codec.Codec, db *database.Db,
 ) error {
 	// Get the proposal id
 	event, err := tx.FindEventByType(index, govtypes.EventTypeSubmitProposal)

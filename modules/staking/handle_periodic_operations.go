@@ -16,7 +16,7 @@ import (
 
 // RegisterPeriodicOps registers the additional utils that periodically run
 func RegisterPeriodicOps(
-	scheduler *gocron.Scheduler, stakingClient stakingtypes.QueryClient, cdc codec.Marshaler, db *database.Db,
+	scheduler *gocron.Scheduler, stakingClient stakingtypes.QueryClient, cdc codec.Codec, db *database.Db,
 ) error {
 	log.Debug().Str("module", "stakingtypes").Msg("setting up periodic tasks")
 
@@ -33,7 +33,7 @@ func RegisterPeriodicOps(
 // updateValidatorsDelegations updates the current validators set and all their delegations, unbonding delegations
 // and redelegations
 func updateValidatorsDelegations(
-	stakingClient stakingtypes.QueryClient, cdc codec.Marshaler, db *database.Db,
+	stakingClient stakingtypes.QueryClient, cdc codec.Codec, db *database.Db,
 ) error {
 	height, err := db.GetLastBlockHeight()
 	if err != nil {
