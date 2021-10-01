@@ -10,8 +10,9 @@ import (
 	"github.com/forbole/bdjuno/types"
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	"github.com/forbole/bdjuno/types/config"
 	"github.com/rs/zerolog/log"
+
+	"github.com/forbole/bdjuno/types/config"
 )
 
 // UpdateValidatorsCommissionAmounts updates the validator commission amounts

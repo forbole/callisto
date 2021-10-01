@@ -7,10 +7,11 @@ import (
 
 	"github.com/desmos-labs/juno/modules"
 	"github.com/desmos-labs/juno/types"
-	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/types/config"
 	"github.com/go-co-op/gocron"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+
+	"github.com/forbole/bdjuno/database"
+	"github.com/forbole/bdjuno/types/config"
 )
 
 var (

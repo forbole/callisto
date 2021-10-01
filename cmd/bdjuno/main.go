@@ -12,7 +12,7 @@ import (
 	"github.com/forbole/bdjuno/database"
 	"github.com/forbole/bdjuno/modules"
 
-	desmosapp "github.com/desmos-labs/desmos/app"
+	desmosapp "github.com/desmos-labs/desmos/v2/app"
 )
 
 func main() {

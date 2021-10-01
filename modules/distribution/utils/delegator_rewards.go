@@ -10,8 +10,9 @@ import (
 	"github.com/forbole/bdjuno/types/config"
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	"github.com/forbole/bdjuno/types"
 	"github.com/rs/zerolog/log"
+
+	"github.com/forbole/bdjuno/types"
 )
 
 // UpdateDelegatorsRewardsAmounts updates the delegators commission amounts

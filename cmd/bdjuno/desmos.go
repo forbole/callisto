@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
+	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
 	junomessages "github.com/desmos-labs/juno/modules/messages"
 )
 
@@ -14,7 +14,7 @@ var desmosMessageAddressesParser = junomessages.JoinMessageParsers(
 )
 
 // profilesMessageAddressesParser represents a MessageAddressesParser for the x/profiles module
-func profilesMessageAddressesParser(_ codec.Marshaler, cosmosMsg sdk.Msg) ([]string, error) {
+func profilesMessageAddressesParser(_ codec.Codec, cosmosMsg sdk.Msg) ([]string, error) {
 	switch msg := cosmosMsg.(type) {
 
 	case *profilestypes.MsgSaveProfile:
