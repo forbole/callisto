@@ -3,23 +3,24 @@ package main
 import (
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/desmos-labs/juno/v2/cmd"
+	initcmd "github.com/desmos-labs/juno/v2/cmd/init"
+	parsecmd "github.com/desmos-labs/juno/v2/cmd/parse"
+	"github.com/desmos-labs/juno/v2/modules/messages"
+
+	migratecmd "github.com/forbole/bdjuno/v2/cmd/migrate"
+
 	"github.com/desmos-labs/juno/cmd"
-	parsecmd "github.com/desmos-labs/juno/cmd/parse"
-	"github.com/desmos-labs/juno/modules/messages"
 
-	"github.com/forbole/bdjuno/types/config"
+	"github.com/forbole/bdjuno/v2/database"
+	"github.com/forbole/bdjuno/v2/modules"
 
-	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/modules"
-
-	//emoney
 	emoneyapp "github.com/e-money/em-ledger"
 )
 
 func main() {
 	parseCfg := parsecmd.NewConfig().
 		WithDBBuilder(database.Builder).
-		WithConfigParser(config.Parser).
 		WithEncodingConfigBuilder(config.MakeEncodingConfig(getBasicManagers())).
 		WithRegistrar(modules.NewRegistrar(getAddressesParser()))
 
@@ -27,7 +28,16 @@ func main() {
 		WithParseConfig(parseCfg)
 
 	// Run the command
-	executor := cmd.BuildDefaultExecutor(cfg)
+	rootCmd := cmd.RootCmd(cfg.GetName())
+
+	rootCmd.AddCommand(
+		cmd.VersionCmd(),
+		initcmd.InitCmd(cfg.GetInitConfig()),
+		parsecmd.ParseCmd(cfg.GetParseConfig()),
+		migratecmd.MigrateCmd(),
+	)
+
+	executor := cmd.PrepareRootCmd(cfg.GetName(), rootCmd)
 	err := executor.Execute()
 	if err != nil {
 		panic(err)

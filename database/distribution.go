@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	dbtypes "github.com/forbole/bdjuno/database/types"
+	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 
-	"github.com/forbole/bdjuno/types"
+	"github.com/forbole/bdjuno/v2/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/lib/pq"
@@ -196,4 +196,32 @@ func (db *Db) DeleteDelegatorRewardsAmount(delegatorAddr string, height int64) e
 	}
 
 	return nil
+}
+
+// HasDelegatorRewards checks if the database contains any delegation reward
+func (db *Db) HasDelegatorRewards() (bool, error) {
+	stmt := `SELECT COUNT(*) FROM delegation_reward`
+
+	var count int
+	err := db.Sql.QueryRow(stmt).Scan(&count)
+	if err != nil {
+		return false, fmt.Errorf("error while getting delegation reward: %s", err)
+
+	}
+
+	return count > 0, nil
+}
+
+// HasValidatorCommission checks if the database contains any validators commission
+func (db *Db) HasValidatorCommission() (bool, error) {
+	stmt := `SELECT COUNT(*) FROM validator_commission_amount`
+
+	var count int
+	err := db.Sql.QueryRow(stmt).Scan(&count)
+	if err != nil {
+		return false, fmt.Errorf("error while getting validator commission: %s", err)
+
+	}
+
+	return count > 0, nil
 }
