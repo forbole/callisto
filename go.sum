@@ -151,8 +151,6 @@ github.com/desmos-labs/cosmos-sdk v0.42.5-0.20210826081936-864fc99bab62 h1:DhzAu
 github.com/desmos-labs/cosmos-sdk v0.42.5-0.20210826081936-864fc99bab62/go.mod h1:SrclJP9lMXxz2fCbngxb0brsPNuZXqoQQ9VHuQ3Tpf4=
 github.com/desmos-labs/desmos v1.0.1 h1:94tXXTEVxnqigb1BcIu5ibO8m2udbL1R2r7AbgReynM=
 github.com/desmos-labs/desmos v1.0.1/go.mod h1:msVRCns+CIe6xC6vRTY3l5goRZZZfBHvOBpQo82NSFw=
-github.com/desmos-labs/juno v0.0.0-20210923065451-3b09c4e72f19 h1:cZnzOg2DHOKNK8GXanlXpnThmlTIHfP6t+PdzfsCMHw=
-github.com/desmos-labs/juno v0.0.0-20210923065451-3b09c4e72f19/go.mod h1:JSJQ3vi+nzBK5s9+IC7tb5ylhjfeL98Jl9fRncom2Xo=
 github.com/desmos-labs/juno/v2 v2.0.0-20210929101112-c31d087aea9b h1:kf6fOVpM6gDA3C/pW16wa4/V12aaBMs+g4IVtG/JXGw=
 github.com/desmos-labs/juno/v2 v2.0.0-20210929101112-c31d087aea9b/go.mod h1:sPHtVt4/qokAHQm9gxUDY17f3roykKh4nYg1De8OzLU=
 github.com/dgraph-io/badger/v2 v2.2007.2/go.mod h1:26P/7fbL4kUZVEVKLAKXkBXKOydDmM2p1e+NhhnBCAE=
@@ -855,7 +853,6 @@ golang.org/x/sys v0.0.0-20210320140829-1e4c9ba3b0c4/go.mod h1:h1NjWce9XRLGQEsW7w
 golang.org/x/sys v0.0.0-20210423082822-04245dca01da/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20210510120138-977fb7262007/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20210603081109-ebe580a85c40/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
-golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20210927052749-1cf2251ac284 h1:lBPNCmq8u4zFP3huKCmUQ2Fx8kcY4X+O12UgGnyKsrg=
 golang.org/x/sys v0.0.0-20210927052749-1cf2251ac284/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
