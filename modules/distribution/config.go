@@ -4,12 +4,19 @@ import "gopkg.in/yaml.v3"
 
 // Config contains the configuration about distribution frequency
 type Config struct {
-	DistributionFrequency int64 `yaml:"distribution_frequency"`
+	RewardsFrequency int64 `yaml:"rewards_frequency,omitempty"`
 }
 
-// GetDistributionFrequency returns distribution frequency int64 value
-func (b *Config) GetDistributionFrequency() int64 {
-	return b.DistributionFrequency
+// NewConfig returns a new Config instance
+func NewConfig(frequency int64) *Config {
+	return &Config{
+		RewardsFrequency: frequency,
+	}
+}
+
+// DefaultConfig returns the default configuration
+func DefaultConfig() *Config {
+	return NewConfig(100)
 }
 
 func ParseConfig(bz []byte) (*Config, error) {
