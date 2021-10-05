@@ -97,7 +97,7 @@ func (c *Config) GetPricefeedConfig() *PricefeedConfig {
 // GetDistributionConfig return current distribution frequency
 func (c *Config) GetDistributionConfig() *DistributionConfig {
 	if c.DistributionConfig == nil {
-		return &DistributionConfig{DistributionFrequency: 0}
+		return DefaultDistributionConfig()
 	}
 	return c.DistributionConfig
 }
@@ -117,6 +117,11 @@ func (p *PricefeedConfig) GetTokens() []types.Token {
 // DistributionConfig contains the configuration about distribution frequency
 type DistributionConfig struct {
 	DistributionFrequency int64 `toml:"distribution_frequency"`
+}
+
+// DefaultDistributionConfig returns the default distribution config
+func DefaultDistributionConfig() *DistributionConfig {
+	return &DistributionConfig{DistributionFrequency: 100}
 }
 
 // GetDistributionFrequency returns distribution frequency int64 value
