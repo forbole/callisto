@@ -2,6 +2,8 @@ package modules
 
 import (
 	"fmt"
+	"github.com/desmos-labs/juno/v2/modules/pruning"
+	"github.com/desmos-labs/juno/v2/modules/telemetry"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
@@ -114,6 +116,9 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 
 	return []jmodules.Module{
 		messages.NewModule(r.parser, cdc, ctx.Database),
+		telemetry.NewModule(ctx.JunoConfig),
+		pruning.NewModule(ctx.JunoConfig, db, ctx.Logger),
+
 		authModule,
 		bankModule,
 		consensus.NewModule(db),
