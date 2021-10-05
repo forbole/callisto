@@ -11,6 +11,13 @@ type Config struct {
 	Tokens []types.Token `yaml:"tokens"`
 }
 
+// NewConfig returns a new Config instance
+func NewConfig(tokens []types.Token) *Config {
+	return &Config{
+		Tokens: tokens,
+	}
+}
+
 func ParseConfig(bz []byte) (*Config, error) {
 	type T struct {
 		Config *Config `yaml:"pricefeed"`

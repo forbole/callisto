@@ -11,7 +11,7 @@ import (
 // refreshDelegatorsRewardsAmounts refreshes the rewards associated with all the delegators for the given height,
 // deleting the ones existing and downloading them from scratch.
 func (m *Module) refreshDelegatorsRewardsAmounts(height int64) {
-	interval := m.cfg.DistributionFrequency
+	interval := m.cfg.RewardsFrequency
 	if interval == 0 {
 		log.Debug().Str("module", "distribution").Msg("delegator rewards refresh interval set to 0. Skipping refresh")
 		return
