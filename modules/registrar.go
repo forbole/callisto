@@ -2,6 +2,7 @@ package modules
 
 import (
 	"fmt"
+
 	"github.com/desmos-labs/juno/v2/modules/pruning"
 	"github.com/desmos-labs/juno/v2/modules/telemetry"
 
