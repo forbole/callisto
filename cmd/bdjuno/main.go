@@ -7,10 +7,9 @@ import (
 	initcmd "github.com/desmos-labs/juno/v2/cmd/init"
 	parsecmd "github.com/desmos-labs/juno/v2/cmd/parse"
 	"github.com/desmos-labs/juno/v2/modules/messages"
+	"github.com/forbole/bdjuno/v2/types/config"
 
 	migratecmd "github.com/forbole/bdjuno/v2/cmd/migrate"
-
-	"github.com/desmos-labs/juno/cmd"
 
 	"github.com/forbole/bdjuno/v2/database"
 	"github.com/forbole/bdjuno/v2/modules"
