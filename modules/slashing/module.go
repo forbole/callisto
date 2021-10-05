@@ -1,13 +1,11 @@
 package slashing
 
 import (
-	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
+	slashingsource "github.com/forbole/bdjuno/v2/modules/slashing/source"
 
-	"github.com/forbole/bdjuno/database"
+	"github.com/forbole/bdjuno/v2/database"
 
-	"github.com/desmos-labs/juno/modules"
-	"github.com/desmos-labs/juno/types"
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+	"github.com/desmos-labs/juno/v2/modules"
 )
 
 var (
@@ -17,24 +15,19 @@ var (
 
 // Module represent x/slashing module
 type Module struct {
-	slashingClient slashingtypes.QueryClient
-	db             *database.Db
+	db     *database.Db
+	source slashingsource.Source
 }
 
 // NewModule returns a new Module instance
-func NewModule(slashingClient slashingtypes.QueryClient, db *database.Db) *Module {
+func NewModule(source slashingsource.Source, db *database.Db) *Module {
 	return &Module{
-		slashingClient: slashingClient,
-		db:             db,
+		db:     db,
+		source: source,
 	}
 }
 
 // Name implements modules.Module
 func (m *Module) Name() string {
 	return "slashing"
-}
-
-// HandleBlock implements BlockModule
-func (m *Module) HandleBlock(block *tmctypes.ResultBlock, _ []*types.Tx, _ *tmctypes.ResultValidators) error {
-	return HandleBlock(block, m.slashingClient, m.db)
 }

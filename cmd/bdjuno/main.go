@@ -3,14 +3,14 @@ package main
 import (
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/desmos-labs/juno/cmd"
-	parsecmd "github.com/desmos-labs/juno/cmd/parse"
-	"github.com/desmos-labs/juno/modules/messages"
+	"github.com/desmos-labs/juno/v2/cmd"
+	parsecmd "github.com/desmos-labs/juno/v2/cmd/parse"
+	"github.com/desmos-labs/juno/v2/modules/messages"
 
-	"github.com/forbole/bdjuno/types/config"
+	"github.com/forbole/bdjuno/v2/types/config"
 
-	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/modules"
+	"github.com/forbole/bdjuno/v2/database"
+	"github.com/forbole/bdjuno/v2/modules"
 
 	desmosapp "github.com/desmos-labs/desmos/app"
 )
@@ -18,7 +18,6 @@ import (
 func main() {
 	parseCfg := parsecmd.NewConfig().
 		WithDBBuilder(database.Builder).
-		WithConfigParser(config.Parser).
 		WithEncodingConfigBuilder(config.MakeEncodingConfig(getBasicManagers())).
 		WithRegistrar(modules.NewRegistrar(getAddressesParser()))
 
