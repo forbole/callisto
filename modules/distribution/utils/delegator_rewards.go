@@ -7,14 +7,34 @@ import (
 	"github.com/desmos-labs/juno/client"
 
 	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/types"
+	"github.com/forbole/bdjuno/types/config"
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+	"github.com/forbole/bdjuno/types"
 	"github.com/rs/zerolog/log"
 )
 
 // UpdateDelegatorsRewardsAmounts updates the delegators commission amounts
-func UpdateDelegatorsRewardsAmounts(height int64, client distrtypes.QueryClient, db *database.Db) {
+func UpdateDelegatorsRewardsAmounts(cfg *config.Config, height int64, client distrtypes.QueryClient, db *database.Db) {
+	interval := cfg.GetDistributionConfig().GetDistributionFrequency()
+	if interval == 0 {
+		log.Debug().Str("module", "distribution").Msg("delegator rewards refresh interval set to 0. Skipping refresh")
+		return
+	}
+
+	hasRewards, error := db.HasDelegatorRewards()
+	if error != nil {
+		log.Error().Str("module", "distribution").Err(error).Int64("height", height).
+			Msg("error while checking delegators reward")
+	}
+
+	if !hasRewards || height%interval == 0 {
+		go updateDelegatorsRewards(height, client, db)
+	}
+
+}
+
+func updateDelegatorsRewards(height int64, client distrtypes.QueryClient, db *database.Db) {
 	log.Debug().Str("module", "distribution").Int64("height", height).
 		Msg("updating delegators rewards")
 
