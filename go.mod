@@ -4,7 +4,6 @@ go 1.16
 
 require (
 	github.com/cosmos/cosmos-sdk v0.44.0
-	github.com/cosmos/ibc-go v1.2.0
 	github.com/desmos-labs/juno/v2 v2.0.0-20211005132135-bddec19d946f
 	github.com/go-co-op/gocron v0.3.3
 	github.com/gogo/protobuf v1.3.3
@@ -16,8 +15,8 @@ require (
 	github.com/spf13/cobra v1.1.3
 	github.com/stretchr/testify v1.7.0
 	github.com/tendermint/tendermint v0.34.13
-	google.golang.org/grpc v1.38.0
 	github.com/terra-money/core v0.5.2
+	google.golang.org/grpc v1.38.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 
