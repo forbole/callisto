@@ -1,11 +1,10 @@
 package oracle
 
 import (
-	oracletypes "github.com/bandprotocol/chain/v2/x/oracle/types"
-	"github.com/desmos-labs/juno/modules"
-	"github.com/go-co-op/gocron"
+	"github.com/desmos-labs/juno/v2/modules"
 
-	"github.com/forbole/bdjuno/database"
+	"github.com/forbole/bdjuno/v2/database"
+	oraclesource "github.com/forbole/bdjuno/v2/modules/oracle/source"
 )
 
 var (
@@ -15,24 +14,19 @@ var (
 
 // Module represent database/oracle module
 type Module struct {
-	oracleClient oracletypes.QueryClient
-	db           *database.Db
+	db     *database.Db
+	source oraclesource.Source
 }
 
 // NewModule returns a new Module instance
-func NewModule(oracleClient oracletypes.QueryClient, db *database.Db) *Module {
+func NewModule(source oraclesource.Source, db *database.Db) *Module {
 	return &Module{
-		oracleClient: oracleClient,
-		db:           db,
+		db:     db,
+		source: source,
 	}
 }
 
 // Name implements modules.Module
 func (m *Module) Name() string {
 	return "oracle"
-}
-
-// RegisterPeriodicOperations implements modules.PeriodicOperationsModule
-func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
-	return RegisterPeriodicOps(scheduler, m.oracleClient, m.db)
 }

@@ -3,32 +3,29 @@ package modules
 import (
 	"fmt"
 
+	bandapp "github.com/bandprotocol/chain/v2/app"
+	oracletypes "github.com/bandprotocol/chain/v2/x/oracle/types"
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/desmos-labs/juno/v2/modules/pruning"
 	"github.com/desmos-labs/juno/v2/modules/telemetry"
+	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
-	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	"github.com/desmos-labs/juno/v2/node/remote"
 
 	"github.com/forbole/bdjuno/v2/modules/history"
 	"github.com/forbole/bdjuno/v2/modules/slashing"
 
+	oraclekeeper "github.com/bandprotocol/chain/v2/x/oracle/keeper"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-	slashingkeeper "github.com/cosmos/cosmos-sdk/x/slashing/keeper"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	ibctransfertypes "github.com/cosmos/ibc-go/modules/apps/transfer/types"
 	"github.com/desmos-labs/juno/v2/node/local"
 
 	jmodules "github.com/desmos-labs/juno/v2/modules"
@@ -59,6 +56,10 @@ import (
 	localmintsource "github.com/forbole/bdjuno/v2/modules/mint/source/local"
 	remotemintsource "github.com/forbole/bdjuno/v2/modules/mint/source/remote"
 	"github.com/forbole/bdjuno/v2/modules/modules"
+	"github.com/forbole/bdjuno/v2/modules/oracle"
+	oraclesource "github.com/forbole/bdjuno/v2/modules/oracle/source"
+	localoraclesource "github.com/forbole/bdjuno/v2/modules/oracle/source/local"
+	remoteoraclesource "github.com/forbole/bdjuno/v2/modules/oracle/source/remote"
 	"github.com/forbole/bdjuno/v2/modules/pricefeed"
 	slashingsource "github.com/forbole/bdjuno/v2/modules/slashing/source"
 	localslashingsource "github.com/forbole/bdjuno/v2/modules/slashing/source/local"
@@ -131,6 +132,8 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		pricefeed.NewModule(ctx.JunoConfig, historyModule, cdc, db),
 		slashing.NewModule(sources.SlashingSource, db),
 		stakingModule,
+
+		oracle.NewModule(sources.OracleSource, db),
 	}
 }
 
@@ -141,6 +144,8 @@ type Sources struct {
 	MintSource     mintsource.Source
 	SlashingSource slashingsource.Source
 	StakingSource  stakingsource.Source
+
+	OracleSource oraclesource.Source
 }
 
 func buildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -161,24 +166,10 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		return nil, err
 	}
 
-	// Module account permissions
-	maccPerms := map[string][]string{
-		authtypes.FeeCollectorName:     nil,
-		distrtypes.ModuleName:          nil,
-		minttypes.ModuleName:           {authtypes.Minter},
-		stakingtypes.BondedPoolName:    {authtypes.Burner, authtypes.Staking},
-		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
-		govtypes.ModuleName:            {authtypes.Burner},
-		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
-	}
-	ak := authkeeper.NewAccountKeeper(source.Codec, source.RegisterKey(authtypes.StoreKey), source.RegisterSubspace(authtypes.ModuleName), authtypes.ProtoBaseAccount, maccPerms)
-	bk := bankkeeper.NewBaseKeeper(source.Codec, source.RegisterKey(banktypes.StoreKey), ak, source.RegisterSubspace(banktypes.ModuleName), nil)
-
-	sk := stakingkeeper.NewKeeper(source.Codec, source.RegisterKey(stakingtypes.StoreKey), ak, bk, source.RegisterSubspace(stakingtypes.ModuleName))
-	dk := distrkeeper.NewKeeper(source.Codec, source.RegisterKey(distrtypes.StoreKey), source.RegisterSubspace(distrtypes.ModuleName), ak, bk, &sk, authtypes.FeeCollectorName, nil)
-	gk := govkeeper.NewKeeper(source.Codec, source.RegisterKey(govtypes.StoreKey), source.RegisterSubspace(govtypes.ModuleName).WithKeyTable(govtypes.ParamKeyTable()), ak, bk, &sk, govtypes.NewRouter())
-	mk := mintkeeper.NewKeeper(source.Codec, source.RegisterKey(minttypes.StoreKey), source.RegisterSubspace(minttypes.ModuleName), &sk, ak, bk, authtypes.FeeCollectorName)
-	slk := slashingkeeper.NewKeeper(source.Codec, source.RegisterKey(slashingtypes.StoreKey), &sk, source.RegisterSubspace(slashingtypes.ModuleName))
+	app := bandapp.NewBandApp(
+		log.NewNopLogger(), source.StoreDB, nil, false, map[int64]bool{}, cfg.Home, 0,
+		bandapp.MakeEncodingConfig(), simapp.EmptyAppOptions{}, false, 0,
+	)
 
 	// Initialize the stores
 	err = source.InitStores()
@@ -187,12 +178,14 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 	}
 
 	return &Sources{
-		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(bk)),
-		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(dk)),
-		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(gk)),
-		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(mk)),
-		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(slk)),
-		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: sk}),
+		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
+		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
+		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
+		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
+		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
+		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
+
+		OracleSource: localoraclesource.NewSource(source, oraclekeeper.Querier{Keeper: app.OracleKeeper}),
 	}, nil
 }
 
@@ -209,5 +202,7 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
+
+		OracleSource: remoteoraclesource.NewSource(source, oracletypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }
