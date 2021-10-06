@@ -4,33 +4,29 @@ import (
 	"fmt"
 	"time"
 
-	juno "github.com/desmos-labs/juno/types"
-
 	"github.com/gogo/protobuf/proto"
 
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/juno/modules/messages"
+	juno "github.com/desmos-labs/juno/v2/types"
 
-	"github.com/forbole/bdjuno/database"
-	historyutils "github.com/forbole/bdjuno/modules/history/utils"
-	"github.com/forbole/bdjuno/modules/utils"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/forbole/bdjuno/v2/modules/utils"
 )
 
-// HandleMsg handles any message updating the involved accounts
-func HandleMsg(tx *juno.Tx, msg sdk.Msg, getAddresses messages.MessageAddressesParser, cdc codec.Codec, db *database.Db) error {
+// HandleMsg implements modules.MessageModule
+func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
 	timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
 	if err != nil {
 		return fmt.Errorf("error while parsing time: %s", err)
 	}
 
-	addresses, err := getAddresses(cdc, msg)
+	addresses, err := m.getAddresses(m.cdc, msg)
 	if err != nil {
 		return fmt.Errorf("error while getting accounts after message of type %s", proto.MessageName(msg))
 	}
 
 	for _, address := range utils.FilterNonAccountAddresses(addresses) {
-		err = historyutils.UpdateAccountBalanceHistoryWithTime(address, timestamp, db)
+		err = m.UpdateAccountBalanceHistoryWithTime(address, timestamp)
 		if err != nil {
 			return fmt.Errorf("error while updating account balance history: %s", err)
 		}
