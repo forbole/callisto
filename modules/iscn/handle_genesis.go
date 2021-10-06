@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/types"
+	"github.com/forbole/bdjuno/v2/database"
+	"github.com/forbole/bdjuno/v2/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	iscntypes "github.com/likecoin/likechain/x/iscn/types"

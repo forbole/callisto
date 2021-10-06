@@ -1,13 +1,10 @@
 package iscn
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/juno/modules"
-	juno "github.com/desmos-labs/juno/types"
-	iscntypes "github.com/likecoin/likechain/x/iscn/types"
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+	"github.com/desmos-labs/juno/v2/modules"
 
-	"github.com/forbole/bdjuno/database"
+	"github.com/forbole/bdjuno/v2/database"
+	iscnsource "github.com/forbole/bdjuno/v2/modules/iscn/source"
 )
 
 var (
@@ -17,29 +14,19 @@ var (
 
 // Module represent database/iscn module
 type Module struct {
-	iscnClient iscntypes.QueryClient
-	db         *database.Db
+	db     *database.Db
+	source iscnsource.Source
 }
 
 // NewModule returns a new Module instance
-func NewModule(iscnClient iscntypes.QueryClient, db *database.Db) *Module {
+func NewModule(source iscnsource.Source, db *database.Db) *Module {
 	return &Module{
-		iscnClient: iscnClient,
-		db:         db,
+		db:     db,
+		source: source,
 	}
 }
 
 // Name implements modules.Module
 func (m *Module) Name() string {
 	return "iscn"
-}
-
-// HandleBlock implements modules.BlockModule
-func (m *Module) HandleBlock(block *tmctypes.ResultBlock, _ []*juno.Tx, _ *tmctypes.ResultValidators) error {
-	return HandleBlock(block, m.iscnClient, m.db)
-}
-
-// HandleMsg implements modules.MessageModule
-func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
-	return HandleMsg(tx, index, msg, m.iscnClient, m.db)
 }

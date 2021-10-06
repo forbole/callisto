@@ -1,46 +1,40 @@
 package iscn
 
 import (
-	"context"
+	"fmt"
 
-	"github.com/desmos-labs/juno/client"
-	iscntypes "github.com/likecoin/likechain/x/iscn/types"
+	juno "github.com/desmos-labs/juno/v2/types"
+
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
-	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/types"
+	"github.com/forbole/bdjuno/v2/types"
 )
 
-// HandleBlock represents a method that is called each time a new block is created
-func HandleBlock(block *tmctypes.ResultBlock, iscnClient iscntypes.QueryClient, db *database.Db) error {
+// HandleBlock implements modules.BlockModule
+func (m *Module) HandleBlock(block *tmctypes.ResultBlock, _ []*juno.Tx, _ *tmctypes.ResultValidators) error {
 	// Update the params
-	go updateParams(block.Block.Height, iscnClient, db)
+	err := m.updateParams(block.Block.Height)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
 // updateParams gets the updated iscn params and stores them inside the database
-func updateParams(height int64, iscnClient iscntypes.QueryClient, db *database.Db) {
-	log.Debug().Str("module", "iscn").Int64("height", height).
-		Msg("updating iscn params")
+func (m *Module) updateParams(height int64) error {
+	log.Debug().Str("module", "iscn").Int64("height", height).Msg("updating iscn params")
 
-	res, err := iscnClient.Params(
-		context.Background(),
-		&iscntypes.QueryParamsRequest{},
-		client.GetHeightRequestHeader(height),
-	)
+	params, err := m.source.GetParams(height)
 	if err != nil {
-		log.Error().Str("module", "iscn").Err(err).
-			Int64("height", height).
-			Msg("error while getting iscn params")
-		return
+		return fmt.Errorf("error while getting iscn params: %s", err)
 	}
 
-	err = db.SaveIscnParams(types.NewIscnParams(res.Params, height))
+	err = m.db.SaveIscnParams(types.NewIscnParams(params, height))
 	if err != nil {
-		log.Error().Str("module", "iscn").Err(err).
-			Int64("height", height).
-			Msg("error while saving iscn params")
-		return
+		return fmt.Errorf("error while saving iscn params: %s", err)
 	}
+
+	return nil
 }

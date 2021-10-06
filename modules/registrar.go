@@ -2,18 +2,16 @@ package modules
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/tendermint/tendermint/libs/log"
-	"os"
 
 	"github.com/desmos-labs/juno/v2/modules/pruning"
 	"github.com/desmos-labs/juno/v2/modules/telemetry"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/desmos-labs/juno/v2/node/remote"
-
-	"github.com/forbole/bdjuno/v2/modules/history"
-	"github.com/forbole/bdjuno/v2/modules/slashing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -24,8 +22,8 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	iscntypes "github.com/likecoin/likechain/x/iscn/types"
 	"github.com/desmos-labs/juno/v2/node/local"
+	iscntypes "github.com/likecoin/likechain/x/iscn/types"
 
 	jmodules "github.com/desmos-labs/juno/v2/modules"
 	"github.com/desmos-labs/juno/v2/modules/messages"
@@ -50,12 +48,18 @@ import (
 	govsource "github.com/forbole/bdjuno/v2/modules/gov/source"
 	localgovsource "github.com/forbole/bdjuno/v2/modules/gov/source/local"
 	remotegovsource "github.com/forbole/bdjuno/v2/modules/gov/source/remote"
+	"github.com/forbole/bdjuno/v2/modules/history"
+	"github.com/forbole/bdjuno/v2/modules/iscn"
+	iscnsource "github.com/forbole/bdjuno/v2/modules/iscn/source"
+	localiscnsource "github.com/forbole/bdjuno/v2/modules/iscn/source/local"
+	remoteiscnsource "github.com/forbole/bdjuno/v2/modules/iscn/source/remote"
 	"github.com/forbole/bdjuno/v2/modules/mint"
 	mintsource "github.com/forbole/bdjuno/v2/modules/mint/source"
 	localmintsource "github.com/forbole/bdjuno/v2/modules/mint/source/local"
 	remotemintsource "github.com/forbole/bdjuno/v2/modules/mint/source/remote"
 	"github.com/forbole/bdjuno/v2/modules/modules"
 	"github.com/forbole/bdjuno/v2/modules/pricefeed"
+	"github.com/forbole/bdjuno/v2/modules/slashing"
 	slashingsource "github.com/forbole/bdjuno/v2/modules/slashing/source"
 	localslashingsource "github.com/forbole/bdjuno/v2/modules/slashing/source/local"
 	remoteslashingsource "github.com/forbole/bdjuno/v2/modules/slashing/source/remote"
@@ -63,6 +67,8 @@ import (
 	stakingsource "github.com/forbole/bdjuno/v2/modules/staking/source"
 	localstakingsource "github.com/forbole/bdjuno/v2/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v2/modules/staking/source/remote"
+
+	likeapp "github.com/likecoin/likechain/app"
 )
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
@@ -128,7 +134,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		slashing.NewModule(sources.SlashingSource, db),
 		stakingModule,
 
-		iscn.NewModule(iscnClient, bigDipperBd),
+		iscn.NewModule(sources.IscnSource, db),
 	}
 }
 
@@ -139,6 +145,8 @@ type Sources struct {
 	MintSource     mintsource.Source
 	SlashingSource slashingsource.Source
 	StakingSource  stakingsource.Source
+
+	IscnSource iscnsource.Source
 }
 
 func buildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -159,9 +167,9 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		return nil, err
 	}
 
-	app := simapp.NewSimApp(
+	app := likeapp.NewLikeApp(
 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
-		cfg.Home, 0, simapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
+		cfg.Home, 0, likeapp.MakeEncodingConfig(), simapp.EmptyAppOptions{},
 	)
 
 	return &Sources{
@@ -171,6 +179,8 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
 		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
+
+		IscnSource: localiscnsource.NewSource(source, iscntypes.QueryServer(app.IscnKeeper)),
 	}, nil
 }
 
@@ -187,5 +197,7 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
+
+		IscnSource: remoteiscnsource.NewSource(source, iscntypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }
