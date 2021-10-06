@@ -6,9 +6,9 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/forbole/bdjuno/types"
+	"github.com/forbole/bdjuno/v2/types"
 
-	dbtypes "github.com/forbole/bdjuno/database/types"
+	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 )
 
 // SaveDelegations stores inside the database the given delegations data.
@@ -273,7 +273,7 @@ WHERE delegator_address = $1
 // DeleteCompletedRedelegations deletes all the redelegations that have completed
 // on or before the given timestamp
 func (db *Db) DeleteCompletedRedelegations(timestamp time.Time) ([]types.Redelegation, error) {
-	stmt := `DELETE FROM redelegation WHERE completion_time <= $1 RETURNING *`
+	stmt := `DELETE FROM redelegation WHERE completion_time < $1 RETURNING *`
 
 	var rows []dbtypes.RedelegationRow
 	err := db.Sqlx.Select(&rows, stmt, timestamp)
@@ -432,7 +432,7 @@ WHERE delegator_address = $1
 // DeleteCompletedUnbondingDelegations deletes all the unbonding delegations that have completed
 // on or before the given timestamp
 func (db *Db) DeleteCompletedUnbondingDelegations(timestamp time.Time) ([]types.UnbondingDelegation, error) {
-	stmt := `DELETE FROM unbonding_delegation WHERE completion_timestamp <= $1 RETURNING *`
+	stmt := `DELETE FROM unbonding_delegation WHERE completion_timestamp < $1 RETURNING *`
 
 	var rows []dbtypes.UnbondingDelegationRow
 	err := db.Sqlx.Select(&rows, stmt, timestamp)
