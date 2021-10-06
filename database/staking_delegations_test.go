@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/forbole/bdjuno/types"
+	"github.com/forbole/bdjuno/v2/types"
 
-	dbtypes "github.com/forbole/bdjuno/database/types"
+	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	bddbtypes "github.com/forbole/bdjuno/database/types"
+	bddbtypes "github.com/forbole/bdjuno/v2/database/types"
 )
 
 func (suite *DbTestSuite) TestDelegations() {
