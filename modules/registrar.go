@@ -2,12 +2,14 @@ package modules
 
 import (
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/simapp"
+	"github.com/tendermint/tendermint/libs/log"
+	"os"
 
 	"github.com/desmos-labs/juno/v2/modules/pruning"
 	"github.com/desmos-labs/juno/v2/modules/telemetry"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
-	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	"github.com/desmos-labs/juno/v2/node/remote"
 
 	"github.com/forbole/bdjuno/v2/modules/history"
@@ -15,17 +17,10 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	ibctransfertypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
-	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-	slashingkeeper "github.com/cosmos/cosmos-sdk/x/slashing/keeper"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -161,38 +156,18 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		return nil, err
 	}
 
-	// Module account permissions
-	maccPerms := map[string][]string{
-		authtypes.FeeCollectorName:     nil,
-		distrtypes.ModuleName:          nil,
-		minttypes.ModuleName:           {authtypes.Minter},
-		stakingtypes.BondedPoolName:    {authtypes.Burner, authtypes.Staking},
-		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
-		govtypes.ModuleName:            {authtypes.Burner},
-		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
-	}
-	ak := authkeeper.NewAccountKeeper(source.Codec, source.RegisterKey(authtypes.StoreKey), source.RegisterSubspace(authtypes.ModuleName), authtypes.ProtoBaseAccount, maccPerms)
-	bk := bankkeeper.NewBaseKeeper(source.Codec, source.RegisterKey(banktypes.StoreKey), ak, source.RegisterSubspace(banktypes.ModuleName), nil)
-
-	sk := stakingkeeper.NewKeeper(source.Codec, source.RegisterKey(stakingtypes.StoreKey), ak, bk, source.RegisterSubspace(stakingtypes.ModuleName))
-	dk := distrkeeper.NewKeeper(source.Codec, source.RegisterKey(distrtypes.StoreKey), source.RegisterSubspace(distrtypes.ModuleName), ak, bk, &sk, authtypes.FeeCollectorName, nil)
-	gk := govkeeper.NewKeeper(source.Codec, source.RegisterKey(govtypes.StoreKey), source.RegisterSubspace(govtypes.ModuleName).WithKeyTable(govtypes.ParamKeyTable()), ak, bk, &sk, govtypes.NewRouter())
-	mk := mintkeeper.NewKeeper(source.Codec, source.RegisterKey(minttypes.StoreKey), source.RegisterSubspace(minttypes.ModuleName), &sk, ak, bk, authtypes.FeeCollectorName)
-	slk := slashingkeeper.NewKeeper(source.Codec, source.RegisterKey(slashingtypes.StoreKey), &sk, source.RegisterSubspace(slashingtypes.ModuleName))
-
-	// Initialize the stores
-	err = source.InitStores()
-	if err != nil {
-		return nil, err
-	}
+	app := simapp.NewSimApp(
+		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
+		cfg.Home, 0, simapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
+	)
 
 	return &Sources{
-		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(bk)),
-		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(dk)),
-		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(gk)),
-		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(mk)),
-		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(slk)),
-		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: sk}),
+		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
+		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
+		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
+		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
+		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
+		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
 	}, nil
 }
 
