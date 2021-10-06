@@ -3,9 +3,9 @@ package database
 import (
 	"fmt"
 
-	dbutils "github.com/forbole/bdjuno/database/utils"
+	dbutils "github.com/forbole/bdjuno/v2/database/utils"
 
-	"github.com/forbole/bdjuno/types"
+	"github.com/forbole/bdjuno/v2/types"
 )
 
 // SaveAccounts saves the given accounts inside the database
