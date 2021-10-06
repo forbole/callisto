@@ -2,8 +2,9 @@ package database_test
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	dbtypes "github.com/forbole/bdjuno/database/types"
-	"github.com/forbole/bdjuno/types"
+
+	dbtypes "github.com/forbole/bdjuno/v2/database/types"
+	"github.com/forbole/bdjuno/v2/types"
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveEMoneyGasPrices() {

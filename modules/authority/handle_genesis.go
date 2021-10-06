@@ -3,25 +3,23 @@ package authority
 import (
 	"encoding/json"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	authoritytypes "github.com/e-money/em-ledger/x/authority/types"
-	"github.com/forbole/bdjuno/database"
-	"github.com/forbole/bdjuno/types"
 	"github.com/rs/zerolog/log"
 	tmtypes "github.com/tendermint/tendermint/types"
+
+	"github.com/forbole/bdjuno/v2/types"
 )
 
-func HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage, cdc codec.Marshaler, db *database.Db) error {
+// HandleGenesis implements modules.BlockModule
+func (m *Module) HandleGenesis(genesisDoc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
 	log.Debug().Str("module", "authority/gas price").Msg("parsing genesis")
 
 	// Read the genesis state
 	var genState authoritytypes.GenesisState
-	err := cdc.UnmarshalJSON(appState[authoritytypes.ModuleName], &genState)
+	err := m.cdc.UnmarshalJSON(appState[authoritytypes.ModuleName], &genState)
 	if err != nil {
 		return err
 	}
 
-	newEMoneyGasPrices := types.NewEMoneyGasPrices(genState.MinGasPrices, doc.InitialHeight)
-
-	return db.SaveEMoneyGasPrices(newEMoneyGasPrices)
+	return m.db.SaveEMoneyGasPrices(types.NewEMoneyGasPrices(genState.MinGasPrices, genesisDoc.InitialHeight))
 }

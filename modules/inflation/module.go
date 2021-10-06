@@ -1,15 +1,12 @@
 package inflation
 
 import (
-	"encoding/json"
+	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/desmos-labs/juno/modules"
-	inflationtypes "github.com/e-money/em-ledger/x/inflation/types"
-	"github.com/go-co-op/gocron"
-	tmtypes "github.com/tendermint/tendermint/types"
+	"github.com/desmos-labs/juno/v2/modules"
 
-	"github.com/forbole/bdjuno/database"
+	"github.com/forbole/bdjuno/v2/database"
+	inflationsource "github.com/forbole/bdjuno/v2/modules/inflation/source"
 )
 
 var (
@@ -20,35 +17,21 @@ var (
 
 // Module represent database/mint module
 type Module struct {
-	encodingConfig  *params.EncodingConfig
-	inflationClient inflationtypes.QueryClient
-	db              *database.Db
+	cdc    codec.Marshaler
+	db     *database.Db
+	source inflationsource.Source
 }
 
 // NewModule returns a new Module instance
-func NewModule(
-	inflationClient inflationtypes.QueryClient,
-	encodingConfig *params.EncodingConfig,
-	db *database.Db,
-) *Module {
+func NewModule(cdc codec.Marshaler, source inflationsource.Source, db *database.Db) *Module {
 	return &Module{
-		encodingConfig:  encodingConfig,
-		inflationClient: inflationClient,
-		db:              db,
+		cdc:    cdc,
+		db:     db,
+		source: source,
 	}
 }
 
 // Name implements modules.Module
 func (m *Module) Name() string {
 	return "inflation"
-}
-
-// HandleBlock implements modules.BlockModule
-func (m *Module) HandleGenesis(genesisDoc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
-	return HandleGenesis(genesisDoc, appState, m.encodingConfig.Marshaler, m.db)
-}
-
-// RegisterPeriodicOperations implements modules.PeriodicOperationsModule
-func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
-	return RegisterPeriodicOps(scheduler, m.inflationClient, m.db)
 }

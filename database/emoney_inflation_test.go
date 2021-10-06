@@ -5,8 +5,9 @@ import (
 	"time"
 
 	inflationtypes "github.com/e-money/em-ledger/x/inflation/types"
-	dbtypes "github.com/forbole/bdjuno/database/types"
-	"github.com/forbole/bdjuno/types"
+
+	dbtypes "github.com/forbole/bdjuno/v2/database/types"
+	"github.com/forbole/bdjuno/v2/types"
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveEMoneyInflation() {
@@ -19,7 +20,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveEMoneyInflation() {
 		"edkk", "0.005",
 		"ungm", "0.1",
 	)
-	err := suite.database.SaveEMoneyInflation(types.NewEMoneyInfaltion(inflationState, 1))
+	err := suite.database.SaveEMoneyInflation(types.NewEMoneyInflation(inflationState, 1))
 	suite.Require().NoError(err)
 
 	// Get stored data from DB

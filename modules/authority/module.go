@@ -1,15 +1,11 @@
 package authority
 
 import (
-	"encoding/json"
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/desmos-labs/juno/v2/modules"
 
-	"github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/desmos-labs/juno/modules"
-	authoritytypes "github.com/e-money/em-ledger/x/authority/types"
-	"github.com/go-co-op/gocron"
-	tmtypes "github.com/tendermint/tendermint/types"
-
-	"github.com/forbole/bdjuno/database"
+	"github.com/forbole/bdjuno/v2/database"
+	authoritysource "github.com/forbole/bdjuno/v2/modules/authority/source"
 )
 
 var (
@@ -20,35 +16,21 @@ var (
 
 // Module represent database/mint module
 type Module struct {
-	encodingConfig  *params.EncodingConfig
-	authorityClient authoritytypes.QueryClient
-	db              *database.Db
+	cdc    codec.Marshaler
+	db     *database.Db
+	source authoritysource.Source
 }
 
 // NewModule returns a new Module instance
-func NewModule(
-	authorityClient authoritytypes.QueryClient,
-	encodingConfig *params.EncodingConfig,
-	db *database.Db,
-) *Module {
+func NewModule(cdc codec.Marshaler, source authoritysource.Source, db *database.Db) *Module {
 	return &Module{
-		encodingConfig:  encodingConfig,
-		authorityClient: authorityClient,
-		db:              db,
+		cdc:    cdc,
+		db:     db,
+		source: source,
 	}
 }
 
 // Name implements modules.Module
 func (m *Module) Name() string {
 	return "authority"
-}
-
-// HandleGenesis implements modules.BlockModule
-func (m *Module) HandleGenesis(genesisDoc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
-	return HandleGenesis(genesisDoc, appState, m.encodingConfig.Marshaler, m.db)
-}
-
-// RegisterPeriodicOperations implements modules.PeriodicOperationsModule
-func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
-	return RegisterPeriodicOps(scheduler, m.authorityClient, m.db)
 }

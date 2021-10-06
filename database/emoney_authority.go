@@ -3,9 +3,10 @@ package database
 import (
 	"fmt"
 
-	dbtypes "github.com/forbole/bdjuno/database/types"
-	"github.com/forbole/bdjuno/types"
 	"github.com/lib/pq"
+
+	dbtypes "github.com/forbole/bdjuno/v2/database/types"
+	"github.com/forbole/bdjuno/v2/types"
 )
 
 // SaveEMoneyGasPrices allows to save the gas prices set by the authority(key)

@@ -13,8 +13,8 @@ type EMoneyInflation struct {
 	Height            int64
 }
 
-// NewEMoneyInfaltion allows to build a new EMoneyInflation instance
-func NewEMoneyInfaltion(
+// NewEMoneyInflation allows to build a new EMoneyInflation instance
+func NewEMoneyInflation(
 	state inflationtypes.InflationState, height int64,
 ) EMoneyInflation {
 	return EMoneyInflation{
