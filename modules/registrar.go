@@ -1,7 +1,9 @@
 package modules
 
 import (
-	"github.com/cosmos/cosmos-sdk/simapp/params"
+	"fmt"
+
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -11,11 +13,13 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/desmos-labs/juno/client"
-	"github.com/desmos-labs/juno/db"
 	jmodules "github.com/desmos-labs/juno/modules"
 	"github.com/desmos-labs/juno/modules/messages"
 	"github.com/desmos-labs/juno/modules/registrar"
-	juno "github.com/desmos-labs/juno/types"
+
+	"github.com/forbole/bdjuno/types/config"
+
+	"github.com/forbole/bdjuno/utils"
 
 	"github.com/forbole/bdjuno/modules/history"
 
@@ -32,6 +36,20 @@ import (
 	"github.com/forbole/bdjuno/modules/staking"
 )
 
+// UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
+func UniqueAddressesParser(parser messages.MessageAddressesParser) messages.MessageAddressesParser {
+	return func(cdc codec.Marshaler, msg sdk.Msg) ([]string, error) {
+		addresses, err := parser(cdc, msg)
+		if err != nil {
+			return nil, err
+		}
+
+		return utils.RemoveDuplicateValues(addresses), nil
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 var (
 	_ registrar.Registrar = &Registrar{}
 )
@@ -44,16 +62,20 @@ type Registrar struct {
 // NewRegistrar allows to build a new Registrar instance
 func NewRegistrar(parser messages.MessageAddressesParser) *Registrar {
 	return &Registrar{
-		parser: parser,
+		parser: UniqueAddressesParser(parser),
 	}
 }
 
 // BuildModules implements modules.Registrar
-func (r *Registrar) BuildModules(
-	cfg juno.Config, encodingConfig *params.EncodingConfig, _ *sdk.Config, db db.Database, cp *client.Proxy,
-) jmodules.Modules {
-	bigDipperBd := database.Cast(db)
-	grpcConnection := client.MustCreateGrpcConnection(cfg)
+func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
+	bdjunoCfg, ok := ctx.ParsingConfig.(*config.Config)
+	if !ok {
+		panic(fmt.Errorf("invalid configuration type: %T", ctx.ParsingConfig))
+	}
+
+	bigDipperBd := database.Cast(ctx.Database)
+	grpcConnection := client.MustCreateGrpcConnection(ctx.ParsingConfig)
+	encodingConfig := ctx.EncodingConfig
 
 	authClient := authtypes.NewQueryClient(grpcConnection)
 	bankClient := banktypes.NewQueryClient(grpcConnection)
@@ -64,17 +86,18 @@ func (r *Registrar) BuildModules(
 	stakingClient := stakingtypes.NewQueryClient(grpcConnection)
 
 	return []jmodules.Module{
-		messages.NewModule(r.parser, encodingConfig.Marshaler, db),
+		messages.NewModule(r.parser, encodingConfig.Marshaler, ctx.Database),
 		auth.NewModule(r.parser, authClient, encodingConfig, bigDipperBd),
 		bank.NewModule(r.parser, authClient, bankClient, encodingConfig, bigDipperBd),
-		consensus.NewModule(cp, bigDipperBd),
-		distribution.NewModule(distrClient, bigDipperBd),
-		gov.NewModule(bankClient, govClient, stakingClient, authClient, encodingConfig, bigDipperBd),
+
+		consensus.NewModule(ctx.Proxy, bigDipperBd),
+		distribution.NewModule(bdjunoCfg, bankClient, distrClient, bigDipperBd),
+		gov.NewModule(bankClient, govClient, stakingClient, encodingConfig, bigDipperBd),
 		mint.NewModule(mintClient, bigDipperBd),
-		modules.NewModule(cfg, bigDipperBd),
-		pricefeed.NewModule(encodingConfig, bigDipperBd),
+		modules.NewModule(ctx.ParsingConfig, bigDipperBd),
+		pricefeed.NewModule(bdjunoCfg, encodingConfig, bigDipperBd),
 		slashing.NewModule(slashingClient, bigDipperBd),
-		staking.NewModule(cfg, bankClient, stakingClient, encodingConfig, bigDipperBd),
+		staking.NewModule(ctx.ParsingConfig, bankClient, stakingClient, distrClient, encodingConfig, bigDipperBd),
 		history.NewModule(r.parser, encodingConfig, bigDipperBd),
 	}
 }

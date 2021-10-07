@@ -9,22 +9,6 @@ import (
 	dbtypes "github.com/forbole/bdjuno/database/types"
 )
 
-// SaveConsensus allows to properly store the given consensus event into the database.
-// Note that only one consensus event is allowed inside the database at any time.
-func (db *Db) SaveConsensus(event *types.ConsensusEvent) error {
-	stmt := `
-INSERT INTO consensus (height, round, step)
-VALUES ($1, $2, $3)
-ON CONFLICT (one_row_id) DO UPDATE 
-    SET height = excluded.height, 
-        round = excluded.round,
-        step = excluded.step`
-	_, err := db.Sql.Exec(stmt, event.Height, event.Round, event.Step)
-	return err
-}
-
-// -------------------------------------------------------------------------------------------------------------------
-
 // GetLastBlock returns the last block stored inside the database based on the heights
 func (db *Db) GetLastBlock() (*dbtypes.BlockRow, error) {
 	stmt := `SELECT * FROM block ORDER BY height DESC LIMIT 1`
@@ -105,7 +89,11 @@ ON CONFLICT (one_row_id) DO UPDATE
 WHERE average_block_time_per_minute.height <= excluded.height`
 
 	_, err := db.Sqlx.Exec(stmt, averageTime, height)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing average block time per minute: %s", err)
+	}
+
+	return nil
 }
 
 // SaveAverageBlockTimePerHour save the average block time in average_block_time_per_hour table
@@ -119,7 +107,11 @@ ON CONFLICT (one_row_id) DO UPDATE
 WHERE average_block_time_per_hour.height <= excluded.height`
 
 	_, err := db.Sqlx.Exec(stmt, averageTime, height)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing average block time per hour: %s", err)
+	}
+
+	return nil
 }
 
 // SaveAverageBlockTimePerDay save the average block time in average_block_time_per_day table
@@ -133,7 +125,11 @@ ON CONFLICT (one_row_id) DO UPDATE
 WHERE average_block_time_per_day.height <= excluded.height`
 
 	_, err := db.Sqlx.Exec(stmt, averageTime, height)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing average block time per day: %s", err)
+	}
+
+	return nil
 }
 
 // SaveAverageBlockTimeGenesis save the average block time in average_block_time_from_genesis table
@@ -147,7 +143,11 @@ ON CONFLICT (one_row_id) DO UPDATE
 WHERE average_block_time_from_genesis.height <= excluded.height`
 
 	_, err := db.Sqlx.Exec(stmt, averageTime, height)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing average block time since genesis: %s", err)
+	}
+
+	return nil
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -162,15 +162,23 @@ VALUES ($1, $2, $3) ON CONFLICT (one_row_id) DO UPDATE
         chain_id = excluded.chain_id`
 
 	_, err := db.Sqlx.Exec(stmt, genesis.Time, genesis.ChainID, genesis.InitialHeight)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing genesis: %s", err)
+	}
+
+	return nil
 }
 
 // GetGenesis returns the genesis information stored inside the database
 func (db *Db) GetGenesis() (*types.Genesis, error) {
 	var rows []*dbtypes.GenesisRow
 	err := db.Sqlx.Select(&rows, `SELECT * FROM genesis;`)
-	if err != nil || len(rows) == 0 {
+	if err != nil {
 		return nil, err
+	}
+
+	if len(rows) == 0 {
+		return nil, fmt.Errorf("no rows inside the genesis table")
 	}
 
 	row := rows[0]

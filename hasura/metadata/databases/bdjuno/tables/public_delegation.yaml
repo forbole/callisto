@@ -1,10 +1,6 @@
-computed_fields:
-- comment: ""
-  definition:
-    function:
-      name: is_delegation_self_delegate
-      schema: public
-  name: is_self_delegate
+table:
+  name: delegation
+  schema: public
 object_relationships:
 - name: account
   using:
@@ -12,6 +8,13 @@ object_relationships:
 - name: validator
   using:
     foreign_key_constraint_on: validator_address
+computed_fields:
+- comment: ""
+  definition:
+    function:
+      name: is_delegation_self_delegate
+      schema: public
+  name: is_self_delegate
 select_permissions:
 - permission:
     allow_aggregations: true
@@ -25,6 +28,3 @@ select_permissions:
     - is_self_delegate
     filter: {}
   role: anonymous
-table:
-  name: delegation
-  schema: public

@@ -2,6 +2,7 @@ package gov
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -50,7 +51,7 @@ func updateParams(height int64, govClient govtypes.QueryClient, db *database.Db)
 		header,
 	)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting gov deposit params: %s", err)
 	}
 
 	votingRes, err := govClient.Params(
@@ -59,7 +60,7 @@ func updateParams(height int64, govClient govtypes.QueryClient, db *database.Db)
 		header,
 	)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting gov voting params: %s", err)
 	}
 
 	tallyRes, err := govClient.Params(
@@ -68,7 +69,7 @@ func updateParams(height int64, govClient govtypes.QueryClient, db *database.Db)
 		header,
 	)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting gov tally params: %s", err)
 	}
 
 	return db.SaveGovParams(types.NewGovParams(
@@ -93,7 +94,7 @@ func updateProposals(
 	for _, id := range ids {
 		err = govutils.UpdateProposal(height, blockVals, id, govClient, bankClient, stakingClient, authClient, cdc, db)
 		if err != nil {
-			return err
+			return fmt.Errorf("error while updating proposal: %s", err)
 		}
 	}
 	return nil

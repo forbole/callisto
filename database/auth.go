@@ -57,15 +57,15 @@ func (db *Db) saveAccounts(accounts []types.Account) error {
 
 		contentBzstring := string(contentBz)
 
-		params = append(params, account.Address, contentBzstring)
-		stmt = stmt[:len(stmt)-1]
-		stmt += " ON CONFLICT (address) DO UPDATE SET details = excluded.details"
-		_, err = db.Sql.Exec(stmt, params...)
-		if err != nil {
-			return err
-		}
 
+  params = append(params, account.Address, contentBzstring)
+	stmt = stmt[:len(stmt)-1]
+	stmt += " ON CONFLICT DO NOTHING"
+	_, err := db.Sql.Exec(stmt, params...)
+	if err != nil {
+		return fmt.Errorf("error while storing accounts: %s", err)
 	}
+
 	return nil
 }
 

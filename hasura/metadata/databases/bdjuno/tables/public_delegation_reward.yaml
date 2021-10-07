@@ -1,3 +1,6 @@
+table:
+  name: delegation_reward
+  schema: public
 object_relationships:
 - name: account
   using:
@@ -26,6 +29,3 @@ select_permissions:
     - height
     filter: {}
   role: client
-table:
-  name: delegation_reward
-  schema: public

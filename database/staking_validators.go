@@ -58,14 +58,14 @@ VALUES `
 	selfDelegationAccQuery += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(selfDelegationAccQuery, selfDelegationParam...)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while storing accounts: %s", err)
 	}
 
 	validatorQuery = validatorQuery[:len(validatorQuery)-1] // Remove trailing ","
 	validatorQuery += " ON CONFLICT DO NOTHING"
 	_, err = db.Sql.Exec(validatorQuery, validatorParams...)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while storing valdiators: %s", err)
 	}
 
 	validatorInfoQuery = validatorInfoQuery[:len(validatorInfoQuery)-1] // Remove the trailing ","
@@ -79,7 +79,11 @@ ON CONFLICT (consensus_address) DO UPDATE
 		height = excluded.height
 WHERE validator_info.height <= excluded.height`
 	_, err = db.Sql.Exec(validatorInfoQuery, validatorInfoParams...)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing validator infos: %s", err)
+	}
+
+	return nil
 }
 
 // GetValidatorConsensusAddress returns the consensus address of the validator having the given operator address
@@ -215,10 +219,15 @@ func (db *Db) SaveValidatorDescription(description types.ValidatorDescription) e
 	}
 
 	// Update the existing description with this one, if one is already present
+	var avatarURL = description.AvatarURL
 	if existing, found := db.getValidatorDescription(consAddr); found {
 		des, err = existing.Description.UpdateDescription(des)
 		if err != nil {
 			return err
+		}
+
+		if description.AvatarURL == stakingtypes.DoNotModifyDesc {
+			avatarURL = existing.AvatarURL
 		}
 	}
 
@@ -242,13 +251,17 @@ WHERE validator_description.height <= excluded.height`
 		dbtypes.ToNullString(consAddr.String()),
 		dbtypes.ToNullString(des.Moniker),
 		dbtypes.ToNullString(des.Identity),
-		dbtypes.ToNullString(description.AvatarURL),
+		dbtypes.ToNullString(avatarURL),
 		dbtypes.ToNullString(des.Website),
 		dbtypes.ToNullString(des.SecurityContact),
 		dbtypes.ToNullString(des.Details),
 		description.Height,
 	)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing validator description: %s", err)
+	}
+
+	return nil
 }
 
 // getValidatorDescription returns the description of the validator having the given address.
@@ -328,7 +341,11 @@ ON CONFLICT (validator_address) DO UPDATE
         height = excluded.height
 WHERE validator_commission.height <= excluded.height`
 	_, err = db.Sql.Exec(stmt, consAddr.String(), commission, minSelfDelegation, data.Height)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing validator commission: %s", err)
+	}
+
+	return nil
 }
 
 // getValidatorCommission returns the commissions of the validator having the given address.
@@ -351,6 +368,10 @@ func (db *Db) getValidatorCommission(address sdk.ConsAddress) (*dbtypes.Validato
 // proper database table.
 // TIP: To store the validator data call SaveValidatorData.
 func (db *Db) SaveValidatorsVotingPowers(entries []types.ValidatorVotingPower) error {
+	if len(entries) == 0 {
+		return nil
+	}
+
 	stmt := `INSERT INTO validator_voting_power (validator_address, voting_power, height) VALUES `
 	var params []interface{}
 
@@ -368,13 +389,21 @@ ON CONFLICT (validator_address) DO UPDATE
 WHERE validator_voting_power.height <= excluded.height`
 
 	_, err := db.Sql.Exec(stmt, params...)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing validators voting power: %s", err)
+	}
+
+	return nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------
 
 // SaveValidatorsStatuses save validator jail and status in the given height and timestamp
 func (db *Db) SaveValidatorsStatuses(statuses []types.ValidatorStatus) error {
+	if len(statuses) == 0 {
+		return nil
+	}
+
 	validatorStmt := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES`
 	var valParams []interface{}
 
@@ -395,7 +424,7 @@ func (db *Db) SaveValidatorsStatuses(statuses []types.ValidatorStatus) error {
 	validatorStmt += "ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(validatorStmt, valParams...)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while storing validators: %s", err)
 	}
 
 	statusStmt = statusStmt[:len(statusStmt)-1]
@@ -406,7 +435,11 @@ ON CONFLICT (validator_address) DO UPDATE
 	    height = excluded.height
 WHERE validator_status.height <= excluded.height`
 	_, err = db.Sql.Exec(statusStmt, statusParams...)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while stroring validators statuses: %s", err)
+	}
+
+	return nil
 }
 
 // saveDoubleSignVote saves the given vote inside the database, returning the row id
@@ -427,17 +460,21 @@ VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT DO NOTHING RETURNING id`
 func (db *Db) SaveDoubleSignEvidence(evidence types.DoubleSignEvidence) error {
 	voteA, err := db.saveDoubleSignVote(evidence.VoteA)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while storing double sign vote: %s", err)
 	}
 
 	voteB, err := db.saveDoubleSignVote(evidence.VoteB)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while storing double sign vote: %s", err)
 	}
 
 	stmt := `
 INSERT INTO double_sign_evidence (height, vote_a_id, vote_b_id) 
 VALUES ($1, $2, $3) ON CONFLICT DO NOTHING`
 	_, err = db.Sql.Exec(stmt, evidence.Height, voteA, voteB)
-	return err
+	if err != nil {
+		return fmt.Errorf("error while storing double sign evidence: %s", err)
+	}
+
+	return nil
 }

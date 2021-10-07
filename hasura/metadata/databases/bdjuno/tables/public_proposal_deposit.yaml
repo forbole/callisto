@@ -1,7 +1,7 @@
+table:
+  name: proposal_deposit
+  schema: public
 object_relationships:
-- name: block
-  using:
-    foreign_key_constraint_on: height
 - name: depositor
   using:
     foreign_key_constraint_on: depositor_address
@@ -18,6 +18,3 @@ select_permissions:
     - height
     filter: {}
   role: anonymous
-table:
-  name: proposal_deposit
-  schema: public

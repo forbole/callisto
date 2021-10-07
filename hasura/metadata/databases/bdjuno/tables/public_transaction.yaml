@@ -1,3 +1,10 @@
+table:
+  name: transaction
+  schema: public
+object_relationships:
+- name: block
+  using:
+    foreign_key_constraint_on: height
 array_relationships:
 - name: messagesByTransactionHash
   using:
@@ -6,10 +13,6 @@ array_relationships:
       table:
         name: message
         schema: public
-object_relationships:
-- name: block
-  using:
-    foreign_key_constraint_on: height
 select_permissions:
 - permission:
     allow_aggregations: true
@@ -28,6 +31,3 @@ select_permissions:
     - logs
     filter: {}
   role: anonymous
-table:
-  name: transaction
-  schema: public

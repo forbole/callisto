@@ -10,7 +10,10 @@ import (
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
 
-var _ modules.Module = &Module{}
+var (
+	_ modules.Module      = &Module{}
+	_ modules.BlockModule = &Module{}
+)
 
 // Module represent x/slashing module
 type Module struct {

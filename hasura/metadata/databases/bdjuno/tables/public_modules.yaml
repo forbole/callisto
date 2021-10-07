@@ -1,3 +1,6 @@
+table:
+  name: modules
+  schema: public
 select_permissions:
 - permission:
     allow_aggregations: true
@@ -5,6 +8,3 @@ select_permissions:
     - module_name
     filter: {}
   role: anonymous
-table:
-  name: modules
-  schema: public

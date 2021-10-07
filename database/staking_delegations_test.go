@@ -349,6 +349,7 @@ func (suite *DbTestSuite) TestSaveRedelegations() {
 	for index, row := range rows {
 		suite.Require().True(row.Equal(expected[index]))
 	}
+
 }
 
 func (suite *DbTestSuite) TestDeleteCompletedRedelegations() {

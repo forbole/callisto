@@ -2,13 +2,9 @@
 
 CREATE TABLE staking_params
 (
-    one_row_id         BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
-    unbonding_time     BIGINT  NOT NULL,
-    bond_denom         TEXT    NOT NULL,
-    max_entries        BIGINT  NOT NULL,
-    historical_entries BIGINT  NOT NULL,
-    max_validators     BIGINT  NOT NULL,
-    height             BIGINT  NOT NULL,
+    one_row_id BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
+    params     JSONB   NOT NULL,
+    height     BIGINT  NOT NULL,
     CHECK (one_row_id)
 );
 CREATE INDEX staking_params_height_index ON staking_params (height);
@@ -142,7 +138,7 @@ CREATE TABLE redelegation
     completion_time       TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     height                BIGINT                      NOT NULL,
     CONSTRAINT redelegation_validator_delegator_unique UNIQUE (delegator_address, src_validator_address,
-                                                               dst_validator_address, completion_time)
+                                                               dst_validator_address, amount, completion_time)
 );
 CREATE INDEX redelegation_delegator_address_index ON redelegation (delegator_address);
 CREATE INDEX redelegation_src_validator_address_index ON redelegation (src_validator_address);
@@ -160,9 +156,9 @@ CREATE TABLE unbonding_delegation
     delegator_address    TEXT                        NOT NULL REFERENCES account (address),
     amount               COIN                        NOT NUll,
     completion_timestamp TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    height               BIGINT                      NOT NULL REFERENCES block (height),
+    height               BIGINT                      NOT NULL,
     CONSTRAINT unbonding_delegation_validator_delegator_unique UNIQUE (delegator_address, validator_address,
-                                                                       completion_timestamp)
+                                                                       amount, completion_timestamp)
 );
 CREATE INDEX unbonding_delegation_validator_address_index ON unbonding_delegation (validator_address);
 CREATE INDEX unbonding_delegation_delegator_address_index ON unbonding_delegation (delegator_address);

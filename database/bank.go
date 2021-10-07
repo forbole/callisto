@@ -15,6 +15,10 @@ import (
 
 // SaveAccountBalances allows to store the given balances inside the database
 func (db *Db) SaveAccountBalances(balances []types.AccountBalance) error {
+	if len(balances) == 0 {
+		return nil
+	}
+
 	paramsNumber := 3
 	slices := dbutils.SplitBalances(balances, paramsNumber)
 
@@ -54,8 +58,9 @@ WHERE account_balance.height <= excluded.height`
 
 	_, err := db.Sql.Exec(stmt, params...)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while storing up-to-date balances: %s", err)
 	}
+
 	return nil
 }
 
@@ -90,24 +95,8 @@ WHERE supply.height <= excluded.height`
 
 	_, err := db.Sql.Exec(query, pq.Array(dbtypes.NewDbCoins(coins)), height)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while storing supply: %s", err)
 	}
+
 	return nil
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-// GetTokenNames returns the list of token names stored inside the supply table
-func (db *Db) GetTokenNames() ([]string, error) {
-	var names []string
-	query := `
-SELECT (coin).denom FROM (
-    SELECT unnest(coins) AS coin FROM supply WHERE height = (
-        SELECT max(height) FROM supply
-	) 
-) AS unnested`
-	if err := db.Sqlx.Select(&names, query); err != nil {
-		return nil, err
-	}
-	return names, nil
 }

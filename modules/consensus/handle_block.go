@@ -27,7 +27,7 @@ func updateBlockTimeFromGenesis(block *tmctypes.ResultBlock, db *database.Db) er
 
 	genesis, err := db.GetGenesis()
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting genesis: %s", err)
 	}
 	if genesis == nil {
 		return fmt.Errorf("genesis table is empty")

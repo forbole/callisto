@@ -1,3 +1,6 @@
+table:
+  name: staking_pool
+  schema: public
 select_permissions:
 - permission:
     allow_aggregations: true
@@ -7,6 +10,3 @@ select_permissions:
     - not_bonded_tokens
     filter: {}
   role: anonymous
-table:
-  name: staking_pool
-  schema: public

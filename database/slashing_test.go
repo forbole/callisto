@@ -1,6 +1,7 @@
 package database_test
 
 import (
+	"encoding/json"
 	"time"
 
 	"github.com/forbole/bdjuno/types"
@@ -136,34 +137,27 @@ func (suite *DbTestSuite) TestBigDipperDb_ValidatorSigningInfo() {
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveSlashingParams() {
 	// Save data
-	params := types.NewSlashingParams(
-		slashingtypes.Params{
-			SignedBlocksWindow:      10,
-			MinSignedPerWindow:      sdk.NewDecWithPrec(100, 2),
-			DowntimeJailDuration:    10000,
-			SlashFractionDoubleSign: sdk.NewDecWithPrec(100, 2),
-			SlashFractionDowntime:   sdk.NewDecWithPrec(100, 4),
-		},
-		10,
-	)
+	slashingParams := slashingtypes.Params{
+		SignedBlocksWindow:      10,
+		MinSignedPerWindow:      sdk.NewDecWithPrec(100, 2),
+		DowntimeJailDuration:    10000,
+		SlashFractionDoubleSign: sdk.NewDecWithPrec(100, 2),
+		SlashFractionDowntime:   sdk.NewDecWithPrec(100, 4),
+	}
+	params := types.NewSlashingParams(slashingParams, 10)
 	err := suite.database.SaveSlashingParams(params)
 	suite.Require().NoError(err)
 
 	// Verify data
-	expected := dbtypes.NewSlashingParamsRow(
-		10,
-		"1.000000000000000000",
-		10000,
-		"1.000000000000000000",
-		"0.010000000000000000",
-		10,
-	)
-
 	var rows []dbtypes.SlashingParamsRow
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM slashing_params`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
-	suite.Require().Equal(expected, rows[0])
+
+	var stored slashingtypes.Params
+	err = json.Unmarshal([]byte(rows[0].Params), &stored)
+	suite.Require().NoError(err)
+	suite.Require().Equal(slashingParams, stored)
 
 	// --- Try updating with a lower height ---
 	err = suite.database.SaveSlashingParams(types.NewSlashingParams(
@@ -182,61 +176,48 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSlashingParams() {
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM slashing_params`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
-	suite.Require().Equal(expected, rows[0])
+
+	err = json.Unmarshal([]byte(rows[0].Params), &stored)
+	suite.Require().NoError(err)
+	suite.Require().Equal(slashingParams, stored)
 
 	// Try updating with same height
-	err = suite.database.SaveSlashingParams(types.NewSlashingParams(
-		slashingtypes.Params{
-			SignedBlocksWindow:      5,
-			MinSignedPerWindow:      sdk.NewDecWithPrec(50, 2),
-			DowntimeJailDuration:    10000,
-			SlashFractionDoubleSign: sdk.NewDecWithPrec(50, 2),
-			SlashFractionDowntime:   sdk.NewDecWithPrec(50, 4),
-		},
-		10,
-	))
+	slashingParams = slashingtypes.Params{
+		SignedBlocksWindow:      5,
+		MinSignedPerWindow:      sdk.NewDecWithPrec(50, 2),
+		DowntimeJailDuration:    10000,
+		SlashFractionDoubleSign: sdk.NewDecWithPrec(50, 2),
+		SlashFractionDowntime:   sdk.NewDecWithPrec(50, 4),
+	}
+	err = suite.database.SaveSlashingParams(types.NewSlashingParams(slashingParams, 10))
 	suite.Require().NoError(err)
-
-	expected = dbtypes.NewSlashingParamsRow(
-		5,
-		"0.500000000000000000",
-		10000,
-		"0.500000000000000000",
-		"0.005000000000000000",
-		10,
-	)
 
 	rows = []dbtypes.SlashingParamsRow{}
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM slashing_params`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
-	suite.Require().Equal(expected, rows[0])
+
+	err = json.Unmarshal([]byte(rows[0].Params), &stored)
+	suite.Require().NoError(err)
+	suite.Require().Equal(slashingParams, stored)
 
 	// Try updating with higher height
-	err = suite.database.SaveSlashingParams(types.NewSlashingParams(
-		slashingtypes.Params{
-			SignedBlocksWindow:      6,
-			MinSignedPerWindow:      sdk.NewDecWithPrec(60, 2),
-			DowntimeJailDuration:    10000,
-			SlashFractionDoubleSign: sdk.NewDecWithPrec(60, 2),
-			SlashFractionDowntime:   sdk.NewDecWithPrec(60, 4),
-		},
-		11,
-	))
+	slashingParams = slashingtypes.Params{
+		SignedBlocksWindow:      6,
+		MinSignedPerWindow:      sdk.NewDecWithPrec(60, 2),
+		DowntimeJailDuration:    10000,
+		SlashFractionDoubleSign: sdk.NewDecWithPrec(60, 2),
+		SlashFractionDowntime:   sdk.NewDecWithPrec(60, 4),
+	}
+	err = suite.database.SaveSlashingParams(types.NewSlashingParams(slashingParams, 11))
 	suite.Require().NoError(err)
-
-	expected = dbtypes.NewSlashingParamsRow(
-		6,
-		"0.600000000000000000",
-		10000,
-		"0.600000000000000000",
-		"0.006000000000000000",
-		11,
-	)
 
 	rows = []dbtypes.SlashingParamsRow{}
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM slashing_params`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
-	suite.Require().Equal(expected, rows[0])
+
+	err = json.Unmarshal([]byte(rows[0].Params), &stored)
+	suite.Require().NoError(err)
+	suite.Require().Equal(slashingParams, stored)
 }

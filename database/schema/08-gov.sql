@@ -30,7 +30,7 @@ CREATE TABLE proposal_deposit
     proposal_id       INTEGER REFERENCES proposal (id) NOT NULL,
     depositor_address TEXT REFERENCES account (address),
     amount            COIN[],
-    height            BIGINT REFERENCES block (height),
+    height            BIGINT,
     CONSTRAINT unique_deposit UNIQUE (proposal_id, depositor_address)
 );
 CREATE INDEX proposal_deposit_proposal_id_index ON proposal_deposit (proposal_id);
@@ -42,7 +42,7 @@ CREATE TABLE proposal_vote
     proposal_id   INTEGER NOT NULL REFERENCES proposal (id),
     voter_address TEXT    NOT NULL REFERENCES account (address),
     option        TEXT    NOT NULL,
-    height        BIGINT  NOT NULL REFERENCES block (height),
+    height        BIGINT  NOT NULL,
     CONSTRAINT unique_vote UNIQUE (proposal_id, voter_address)
 );
 CREATE INDEX proposal_vote_proposal_id_index ON proposal_vote (proposal_id);

@@ -17,19 +17,19 @@ func Register(scheduler *gocron.Scheduler, db *database.Db) error {
 	if _, err := scheduler.Every(1).Minute().Do(func() {
 		utils.WatchMethod(func() error { return updateBlockTimeInMinute(db) })
 	}); err != nil {
-		return err
+		return fmt.Errorf("error while setting up consensus periodic operation: %s", err)
 	}
 
 	if _, err := scheduler.Every(1).Hour().StartImmediately().Do(func() {
 		utils.WatchMethod(func() error { return updateBlockTimeInHour(db) })
 	}); err != nil {
-		return err
+		return fmt.Errorf("error while setting up consensus periodic operation: %s", err)
 	}
 
 	if _, err := scheduler.Every(1).Day().StartImmediately().Do(func() {
 		utils.WatchMethod(func() error { return updateBlockTimeInDay(db) })
 	}); err != nil {
-		return err
+		return fmt.Errorf("error while setting up consensus periodic operation: %s", err)
 	}
 
 	return nil
@@ -42,7 +42,7 @@ func updateBlockTimeInMinute(db *database.Db) error {
 
 	block, err := db.GetLastBlock()
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting last block: %s", err)
 	}
 	if block == nil {
 		return fmt.Errorf("block table are empty")
@@ -50,7 +50,7 @@ func updateBlockTimeInMinute(db *database.Db) error {
 
 	genesis, err := db.GetGenesis()
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting genesis: %s", err)
 	}
 	if genesis == nil {
 		return fmt.Errorf("genesis table are empty")
@@ -68,7 +68,7 @@ func updateBlockTimeInMinute(db *database.Db) error {
 
 	minute, err := db.GetBlockHeightTimeMinuteAgo(block.Timestamp)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while gettting block height a minute ago: %s", err)
 	}
 	newBlockTime := block.Timestamp.Sub(minute.Timestamp).Seconds() / float64(block.Height-minute.Height)
 
@@ -82,7 +82,7 @@ func updateBlockTimeInHour(db *database.Db) error {
 
 	block, err := db.GetLastBlock()
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting last block: %s", err)
 	}
 	if block == nil {
 		return fmt.Errorf("block table is empty")
@@ -90,7 +90,7 @@ func updateBlockTimeInHour(db *database.Db) error {
 
 	genesis, err := db.GetGenesis()
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting genesis: %s", err)
 	}
 	if genesis == nil {
 		return fmt.Errorf("genesis table is empty")
@@ -108,7 +108,7 @@ func updateBlockTimeInHour(db *database.Db) error {
 
 	hour, err := db.GetBlockHeightTimeHourAgo(block.Timestamp)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting block height an hour ago: %s", err)
 	}
 	newBlockTime := block.Timestamp.Sub(hour.Timestamp).Seconds() / float64(block.Height-hour.Height)
 
@@ -123,7 +123,7 @@ func updateBlockTimeInDay(db *database.Db) error {
 	block, err := db.GetLastBlock()
 
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting last block: %s", err)
 	}
 	if block == nil {
 		return fmt.Errorf("block table is empty")
@@ -132,7 +132,7 @@ func updateBlockTimeInDay(db *database.Db) error {
 	genesis, err := db.GetGenesis()
 
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting genesis: %s", err)
 	}
 	if genesis == nil {
 		return fmt.Errorf("genesis table is empty")
@@ -150,7 +150,7 @@ func updateBlockTimeInDay(db *database.Db) error {
 
 	day, err := db.GetBlockHeightTimeDayAgo(block.Timestamp)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while getting block time a day ago: %s", err)
 	}
 	newBlockTime := block.Timestamp.Sub(day.Timestamp).Seconds() / float64(block.Height-day.Height)
 
