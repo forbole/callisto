@@ -18,7 +18,7 @@ func (m *Module) HandleBlock(b *tmctypes.ResultBlock, _ []*juno.Tx, _ *tmctypes.
 	go m.updateValidatorsCommissionAmounts(b.Block.Height)
 
 	// Update the delegators commissions amounts
-	go m.refreshDelegatorsRewardsAmounts(b.Block.Height)
+	go m.refreshDelegatorsRewardsAmounts(b.Block.Height, true)
 
 	return nil
 }
