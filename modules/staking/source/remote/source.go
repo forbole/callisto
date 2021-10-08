@@ -1,6 +1,8 @@
 package remote
 
 import (
+	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/types/query"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/desmos-labs/juno/v2/node/remote"
@@ -26,52 +28,18 @@ func NewSource(source *remote.Source, stakingClient stakingtypes.QueryClient) *S
 	}
 }
 
-// GetDelegation implements stakingsource.Source
-func (s Source) GetDelegation(height int64, delegator string, validator string) (stakingtypes.DelegationResponse, error) {
-	res, err := s.stakingClient.Delegation(
+// GetValidator implements stakingsource.Source
+func (s Source) GetValidator(height int64, valOper string) (stakingtypes.Validator, error) {
+	res, err := s.stakingClient.Validator(
 		s.Ctx,
-		&stakingtypes.QueryDelegationRequest{
-			ValidatorAddr: validator,
-			DelegatorAddr: delegator,
-		},
+		&stakingtypes.QueryValidatorRequest{ValidatorAddr: valOper},
 		remote.GetHeightRequestHeader(height),
 	)
 	if err != nil {
-		return stakingtypes.DelegationResponse{}, err
+		return stakingtypes.Validator{}, fmt.Errorf("error while getting validator: %s", err)
 	}
 
-	return *res.DelegationResponse, nil
-}
-
-// GetDelegatorDelegations implements stakingsource.Source
-func (s Source) GetDelegatorDelegations(height int64, delegator string) ([]stakingtypes.DelegationResponse, error) {
-	header := remote.GetHeightRequestHeader(height)
-
-	var delegations []stakingtypes.DelegationResponse
-	var nextKey []byte
-	var stop = false
-	for !stop {
-		res, err := s.stakingClient.DelegatorDelegations(
-			s.Ctx,
-			&stakingtypes.QueryDelegatorDelegationsRequest{
-				DelegatorAddr: delegator,
-				Pagination: &query.PageRequest{
-					Key:   nextKey,
-					Limit: 100, // Query 100 delegations at time
-				},
-			},
-			header,
-		)
-		if err != nil {
-			return nil, err
-		}
-
-		nextKey = res.Pagination.NextKey
-		stop = len(res.Pagination.NextKey) == 0
-		delegations = append(delegations, res.DelegationResponses...)
-	}
-
-	return delegations, nil
+	return res.Validator, nil
 }
 
 // GetValidatorsWithStatus implements stakingsource.Source
@@ -103,6 +71,85 @@ func (s Source) GetValidatorsWithStatus(height int64, status string) ([]stakingt
 	}
 
 	return validators, nil
+}
+
+// GetDelegation implements stakingsource.Source
+func (s Source) GetDelegation(height int64, delegator string, validator string) (stakingtypes.DelegationResponse, error) {
+	res, err := s.stakingClient.Delegation(
+		s.Ctx,
+		&stakingtypes.QueryDelegationRequest{
+			ValidatorAddr: validator,
+			DelegatorAddr: delegator,
+		},
+		remote.GetHeightRequestHeader(height),
+	)
+	if err != nil {
+		return stakingtypes.DelegationResponse{}, err
+	}
+
+	return *res.DelegationResponse, nil
+}
+
+// GetValidatorDelegations implements stakingsource.Source
+func (s Source) GetValidatorDelegations(height int64, validator string) ([]stakingtypes.DelegationResponse, error) {
+	header := remote.GetHeightRequestHeader(height)
+
+	var delegations []stakingtypes.DelegationResponse
+	var nextKey []byte
+	var stop = false
+	for !stop {
+		res, err := s.stakingClient.ValidatorDelegations(
+			s.Ctx,
+			&stakingtypes.QueryValidatorDelegationsRequest{
+				ValidatorAddr: validator,
+				Pagination: &query.PageRequest{
+					Key:   nextKey,
+					Limit: 100, // Query 100 delegations at time
+				},
+			},
+			header,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		nextKey = res.Pagination.NextKey
+		stop = len(res.Pagination.NextKey) == 0
+		delegations = append(delegations, res.DelegationResponses...)
+	}
+
+	return delegations, nil
+}
+
+// GetDelegatorDelegations implements stakingsource.Source
+func (s Source) GetDelegatorDelegations(height int64, delegator string) ([]stakingtypes.DelegationResponse, error) {
+	header := remote.GetHeightRequestHeader(height)
+
+	var delegations []stakingtypes.DelegationResponse
+	var nextKey []byte
+	var stop = false
+	for !stop {
+		res, err := s.stakingClient.DelegatorDelegations(
+			s.Ctx,
+			&stakingtypes.QueryDelegatorDelegationsRequest{
+				DelegatorAddr: delegator,
+				Pagination: &query.PageRequest{
+					Key:   nextKey,
+					Limit: 100, // Query 100 delegations at time
+				},
+			},
+			header,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		nextKey = res.Pagination.NextKey
+		stop = len(res.Pagination.NextKey) == 0
+		delegations = append(delegations, res.DelegationResponses...)
+	}
+
+	return delegations, nil
 }
 
 // GetPool implements stakingsource.Source

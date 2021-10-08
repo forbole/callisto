@@ -2,9 +2,10 @@ package modules
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/tendermint/tendermint/libs/log"
-	"os"
 
 	"github.com/desmos-labs/juno/v2/modules/pruning"
 	"github.com/desmos-labs/juno/v2/modules/telemetry"

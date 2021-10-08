@@ -29,6 +29,21 @@ func NewSource(source *local.Source, querier stakingtypes.QueryServer) *Source {
 	}
 }
 
+// GetValidator implements stakingsource.Source
+func (s Source) GetValidator(height int64, valOper string) (stakingtypes.Validator, error) {
+	ctx, err := s.LoadHeight(height)
+	if err != nil {
+		return stakingtypes.Validator{}, fmt.Errorf("error while loading height: %s", err)
+	}
+
+	res, err := s.q.Validator(sdk.WrapSDKContext(ctx), &stakingtypes.QueryValidatorRequest{ValidatorAddr: valOper})
+	if err != nil {
+		return stakingtypes.Validator{}, fmt.Errorf("error while reading validator: %s", err)
+	}
+
+	return res.Validator, nil
+}
+
 // GetDelegation implements stakingsource.Source
 func (s Source) GetDelegation(height int64, delegator string, validator string) (stakingtypes.DelegationResponse, error) {
 	ctx, err := s.LoadHeight(height)
@@ -45,6 +60,39 @@ func (s Source) GetDelegation(height int64, delegator string, validator string) 
 	}
 
 	return *res.DelegationResponse, nil
+}
+
+// GetValidatorDelegations implements stakingsource.Source
+func (s Source) GetValidatorDelegations(height int64, validator string) ([]stakingtypes.DelegationResponse, error) {
+	ctx, err := s.LoadHeight(height)
+	if err != nil {
+		return nil, fmt.Errorf("error while loading height: %s", err)
+	}
+
+	var delegations []stakingtypes.DelegationResponse
+	var nextKey []byte
+	var stop = false
+	for !stop {
+		res, err := s.q.ValidatorDelegations(
+			sdk.WrapSDKContext(ctx),
+			&stakingtypes.QueryValidatorDelegationsRequest{
+				ValidatorAddr: validator,
+				Pagination: &query.PageRequest{
+					Key:   nextKey,
+					Limit: 100, // Query 100 delegations at time
+				},
+			},
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		nextKey = res.Pagination.NextKey
+		stop = len(res.Pagination.NextKey) == 0
+		delegations = append(delegations, res.DelegationResponses...)
+	}
+
+	return delegations, nil
 }
 
 // GetDelegatorDelegations implements stakingsource.Source
