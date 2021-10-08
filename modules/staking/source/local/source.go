@@ -47,6 +47,39 @@ func (s Source) GetDelegation(height int64, delegator string, validator string) 
 	return *res.DelegationResponse, nil
 }
 
+// GetValidatorDelegations implements stakingsource.Source
+func (s Source) GetValidatorDelegations(height int64, valOperAddr string) ([]stakingtypes.DelegationResponse, error) {
+	ctx, err := s.LoadHeight(height)
+	if err != nil {
+		return nil, fmt.Errorf("error while loading height: %s", err)
+	}
+
+	var delegations []stakingtypes.DelegationResponse
+	var nextKey []byte
+	var stop = false
+	for !stop {
+		res, err := s.q.ValidatorDelegations(
+			sdk.WrapSDKContext(ctx),
+			&stakingtypes.QueryValidatorDelegationsRequest{
+				ValidatorAddr: valOperAddr,
+				Pagination: &query.PageRequest{
+					Key:   nextKey,
+					Limit: 100, // Query 100 delegations at time
+				},
+			},
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		nextKey = res.Pagination.NextKey
+		stop = len(res.Pagination.NextKey) == 0
+		delegations = append(delegations, res.DelegationResponses...)
+	}
+
+	return delegations, nil
+}
+
 // GetDelegatorDelegations implements stakingsource.Source
 func (s Source) GetDelegatorDelegations(height int64, delegator string) ([]stakingtypes.DelegationResponse, error) {
 	ctx, err := s.LoadHeight(height)

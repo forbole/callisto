@@ -145,8 +145,8 @@ github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSs
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/decred/dcrd/lru v1.0.0/go.mod h1:mxKOwFd7lFjN2GZYsiz/ecgqR6kkYAl+0pz0tEMk218=
-github.com/desmos-labs/juno/v2 v2.0.0-20211005132114-ecffd42d060e h1:W6V/TyVTQVuRXd7hef01lxeXFz6hZiDeHjaSUMtSrVI=
-github.com/desmos-labs/juno/v2 v2.0.0-20211005132114-ecffd42d060e/go.mod h1:Dl3qB4QnbZpjcmqv0raaJ0Tu5wJhsIiRoNtWUDp2NI4=
+github.com/desmos-labs/juno/v2 v2.0.0-20211008110344-90ae63739f7c h1:rkFd/tGwnku0nksa6X4WqvdUS55nPFuEIzWFdO15Ux8=
+github.com/desmos-labs/juno/v2 v2.0.0-20211008110344-90ae63739f7c/go.mod h1:Dl3qB4QnbZpjcmqv0raaJ0Tu5wJhsIiRoNtWUDp2NI4=
 github.com/dgraph-io/badger/v2 v2.2007.2/go.mod h1:26P/7fbL4kUZVEVKLAKXkBXKOydDmM2p1e+NhhnBCAE=
 github.com/dgraph-io/badger/v2 v2.2007.4 h1:TRWBQg8UrlUhaFdco01nO2uXwzKS7zd+HVdwV/GHc4o=
 github.com/dgraph-io/badger/v2 v2.2007.4/go.mod h1:vSw/ax2qojzbN6eXHIx6KPKtCSHJN/Uz0X0VPruTIhk=
