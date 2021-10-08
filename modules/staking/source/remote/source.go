@@ -1,6 +1,8 @@
 package remote
 
 import (
+	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/types/query"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/desmos-labs/juno/v2/node/remote"
@@ -26,6 +28,51 @@ func NewSource(source *remote.Source, stakingClient stakingtypes.QueryClient) *S
 	}
 }
 
+// GetValidator implements stakingsource.Source
+func (s Source) GetValidator(height int64, valOper string) (stakingtypes.Validator, error) {
+	res, err := s.stakingClient.Validator(
+		s.Ctx,
+		&stakingtypes.QueryValidatorRequest{ValidatorAddr: valOper},
+		remote.GetHeightRequestHeader(height),
+	)
+	if err != nil {
+		return stakingtypes.Validator{}, fmt.Errorf("error while getting validator: %s", err)
+	}
+
+	return res.Validator, nil
+}
+
+// GetValidatorsWithStatus implements stakingsource.Source
+func (s Source) GetValidatorsWithStatus(height int64, status string) ([]stakingtypes.Validator, error) {
+	header := remote.GetHeightRequestHeader(height)
+
+	var validators []stakingtypes.Validator
+	var nextKey []byte
+	var stop = false
+	for !stop {
+		res, err := s.stakingClient.Validators(
+			s.Ctx,
+			&stakingtypes.QueryValidatorsRequest{
+				Status: status,
+				Pagination: &query.PageRequest{
+					Key:   nextKey,
+					Limit: 100, // Query 100 validators at time
+				},
+			},
+			header,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		nextKey = res.Pagination.NextKey
+		stop = len(res.Pagination.NextKey) == 0
+		validators = append(validators, res.Validators...)
+	}
+
+	return validators, nil
+}
+
 // GetDelegation implements stakingsource.Source
 func (s Source) GetDelegation(height int64, delegator string, valOperAddr string) (stakingtypes.DelegationResponse, error) {
 	res, err := s.stakingClient.Delegation(
@@ -44,7 +91,7 @@ func (s Source) GetDelegation(height int64, delegator string, valOperAddr string
 }
 
 // GetValidatorDelegations implements stakingsource.Source
-func (s Source) GetValidatorDelegations(height int64, valOperAddr string) ([]stakingtypes.DelegationResponse, error) {
+func (s Source) GetValidatorDelegations(height int64, validator string) ([]stakingtypes.DelegationResponse, error) {
 	header := remote.GetHeightRequestHeader(height)
 
 	var delegations []stakingtypes.DelegationResponse
@@ -54,7 +101,7 @@ func (s Source) GetValidatorDelegations(height int64, valOperAddr string) ([]sta
 		res, err := s.stakingClient.ValidatorDelegations(
 			s.Ctx,
 			&stakingtypes.QueryValidatorDelegationsRequest{
-				ValidatorAddr: valOperAddr,
+				ValidatorAddr: validator,
 				Pagination: &query.PageRequest{
 					Key:   nextKey,
 					Limit: 100, // Query 100 delegations at time
@@ -103,37 +150,6 @@ func (s Source) GetDelegatorDelegations(height int64, delegator string) ([]staki
 	}
 
 	return delegations, nil
-}
-
-// GetValidatorsWithStatus implements stakingsource.Source
-func (s Source) GetValidatorsWithStatus(height int64, status string) ([]stakingtypes.Validator, error) {
-	header := remote.GetHeightRequestHeader(height)
-
-	var validators []stakingtypes.Validator
-	var nextKey []byte
-	var stop = false
-	for !stop {
-		res, err := s.stakingClient.Validators(
-			s.Ctx,
-			&stakingtypes.QueryValidatorsRequest{
-				Status: status,
-				Pagination: &query.PageRequest{
-					Key:   nextKey,
-					Limit: 100, // Query 100 validators at time
-				},
-			},
-			header,
-		)
-		if err != nil {
-			return nil, err
-		}
-
-		nextKey = res.Pagination.NextKey
-		stop = len(res.Pagination.NextKey) == 0
-		validators = append(validators, res.Validators...)
-	}
-
-	return validators, nil
 }
 
 // GetPool implements stakingsource.Source

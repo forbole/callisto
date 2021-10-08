@@ -29,6 +29,21 @@ func NewSource(source *local.Source, querier stakingtypes.QueryServer) *Source {
 	}
 }
 
+// GetValidator implements stakingsource.Source
+func (s Source) GetValidator(height int64, valOper string) (stakingtypes.Validator, error) {
+	ctx, err := s.LoadHeight(height)
+	if err != nil {
+		return stakingtypes.Validator{}, fmt.Errorf("error while loading height: %s", err)
+	}
+
+	res, err := s.q.Validator(sdk.WrapSDKContext(ctx), &stakingtypes.QueryValidatorRequest{ValidatorAddr: valOper})
+	if err != nil {
+		return stakingtypes.Validator{}, fmt.Errorf("error while reading validator: %s", err)
+	}
+
+	return res.Validator, nil
+}
+
 // GetDelegation implements stakingsource.Source
 func (s Source) GetDelegation(height int64, delegator string, validator string) (stakingtypes.DelegationResponse, error) {
 	ctx, err := s.LoadHeight(height)

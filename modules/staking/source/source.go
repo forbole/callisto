@@ -5,10 +5,11 @@ import (
 )
 
 type Source interface {
-	GetDelegation(height int64, delegator string, valOperAddr string) (stakingtypes.DelegationResponse, error)
-	GetValidatorDelegations(height int64, valOperAddr string) ([]stakingtypes.DelegationResponse, error)
-	GetDelegatorDelegations(height int64, delegator string) ([]stakingtypes.DelegationResponse, error)
+	GetValidator(height int64, valOper string) (stakingtypes.Validator, error)
 	GetValidatorsWithStatus(height int64, status string) ([]stakingtypes.Validator, error)
+	GetDelegation(height int64, delegator string, validator string) (stakingtypes.DelegationResponse, error)
+	GetDelegatorDelegations(height int64, delegator string) ([]stakingtypes.DelegationResponse, error)
+	GetValidatorDelegations(height int64, validator string) ([]stakingtypes.DelegationResponse, error)
 	GetPool(height int64) (stakingtypes.Pool, error)
 	GetParams(height int64) (stakingtypes.Params, error)
 }

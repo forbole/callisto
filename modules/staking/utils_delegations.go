@@ -24,8 +24,8 @@ func convertDelegationResponse(height int64, response stakingtypes.DelegationRes
 	)
 }
 
-// convertDelegationResponse converts the given responses to BDJuno Delegation slice
-func convertDelegationsResponses(height int64, responses []stakingtypes.DelegationResponse) []types.Delegation {
+// convertDelegationResponses converts the given responses to BDJuno Delegation instances
+func convertDelegationResponses(height int64, responses []stakingtypes.DelegationResponse) []types.Delegation {
 	var delegations = make([]types.Delegation, len(responses))
 	for index, delegation := range responses {
 		delegations[index] = convertDelegationResponse(height, delegation)
@@ -35,6 +35,16 @@ func convertDelegationsResponses(height int64, responses []stakingtypes.Delegati
 
 // --------------------------------------------------------------------------------------------------------------------
 
+// getValidatorDelegations returns all the delegations associated to the given validator at a given height
+func (m *Module) getValidatorDelegations(height int64, validator string) ([]types.Delegation, error) {
+	delegations, err := m.source.GetValidatorDelegations(height, validator)
+	if err != nil {
+		return nil, fmt.Errorf("error while getting validator delegations: %s", err)
+	}
+
+	return convertDelegationResponses(height, delegations), nil
+}
+
 // getDelegatorDelegations returns the current delegations for the given delegator
 func (m *Module) getDelegatorDelegations(height int64, delegator string) ([]types.Delegation, error) {
 	responses, err := m.source.GetDelegatorDelegations(height, delegator)
@@ -42,7 +52,7 @@ func (m *Module) getDelegatorDelegations(height int64, delegator string) ([]type
 		return nil, fmt.Errorf("error while getting delegator delegations: %s", err)
 	}
 
-	return convertDelegationsResponses(height, responses), nil
+	return convertDelegationResponses(height, responses), nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------

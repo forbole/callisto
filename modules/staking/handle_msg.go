@@ -3,8 +3,6 @@ package staking
 import (
 	"fmt"
 
-	"github.com/forbole/bdjuno/v2/types"
-
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -42,51 +40,28 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 // handleMsgCreateValidator handles properly a MsgCreateValidator instance by
 // saving into the database all the data associated to such validator
 func (m *Module) handleMsgCreateValidator(height int64, msg *stakingtypes.MsgCreateValidator) error {
-	err := m.storeValidatorFromMsgCreateValidator(height, msg)
+	err := m.refreshValidatorInfos(height, msg.ValidatorAddress)
 	if err != nil {
-		return fmt.Errorf("error while storing validator from MsgCreateValidator: %s", err)
+		return fmt.Errorf("error while refreshing validator from MsgCreateValidator: %s", err)
 	}
 
-	// Save validator description
-	description, err := m.convertValidatorDescription(height, msg.ValidatorAddress, msg.Description)
+	// Get the first self delegation
+	delegations, err := m.getValidatorDelegations(height, msg.ValidatorAddress)
 	if err != nil {
-		return fmt.Errorf("error while converting validator description: %s", err)
+		return nil
 	}
 
-	err = m.db.SaveValidatorDescription(description)
-	if err != nil {
-		return err
-	}
-
-	// Save validator commission
-	return m.db.SaveValidatorCommission(types.NewValidatorCommission(
-		msg.ValidatorAddress,
-		&msg.Commission.Rate,
-		&msg.MinSelfDelegation,
-		height,
-	))
+	return m.db.SaveDelegations(delegations)
 }
 
 // handleEditValidator handles MsgEditValidator utils, updating the validator info and commission
 func (m *Module) handleEditValidator(height int64, msg *stakingtypes.MsgEditValidator) error {
-	// Save validator commission
-	err := m.db.SaveValidatorCommission(types.NewValidatorCommission(
-		msg.ValidatorAddress,
-		msg.CommissionRate,
-		msg.MinSelfDelegation,
-		height,
-	))
+	err := m.refreshValidatorInfos(height, msg.ValidatorAddress)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while refreshing validator from MsgEditValidator: %s", err)
 	}
 
-	// Save validator description
-	desc, err := m.convertValidatorDescription(height, msg.ValidatorAddress, msg.Description)
-	if err != nil {
-		return fmt.Errorf("error while converting validator description: %s", err)
-	}
-
-	return m.db.SaveValidatorDescription(desc)
+	return nil
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
