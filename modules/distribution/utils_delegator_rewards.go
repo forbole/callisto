@@ -12,7 +12,7 @@ import (
 // deleting the ones existing and downloading them from scratch.
 func (m *Module) refreshDelegatorsRewardsAmounts(height int64, checkInterval bool) {
 	if checkInterval {
-		interval := m.cfg.DistributionFrequency
+		interval := m.cfg.RewardsFrequency
 		if interval == 0 {
 			log.Debug().Str("module", "distribution").Msg("delegator rewards refresh interval set to 0. Skipping refresh")
 			return
