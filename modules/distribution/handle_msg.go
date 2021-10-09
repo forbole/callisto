@@ -23,11 +23,11 @@ func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
 	switch cosmosMsg := msg.(type) {
 	case *distrtypes.MsgWithdrawValidatorCommission:
 		delegatorAddr = cosmosMsg.GetSigners()[0].String()
-		go m.refreshDelegatorsRewardsAmounts(tx.Height, false)
+		go m.refreshDelegatorsRewardsAmounts(tx.Height)
 		go m.updateValidatorsCommissionAmounts(tx.Height)
 	case *distrtypes.MsgWithdrawDelegatorReward:
 		delegatorAddr = cosmosMsg.DelegatorAddress
-		go m.refreshDelegatorsRewardsAmounts(tx.Height, false)
+		go m.refreshDelegatorsRewardsAmounts(tx.Height)
 		go m.updateValidatorsCommissionAmounts(tx.Height)
 	default:
 		return nil
