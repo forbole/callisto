@@ -8,6 +8,7 @@ import (
 	parsecmd "github.com/desmos-labs/juno/v2/cmd/parse"
 	"github.com/desmos-labs/juno/v2/modules/messages"
 
+	fixcmd "github.com/forbole/bdjuno/v2/cmd/fix"
 	migratecmd "github.com/forbole/bdjuno/v2/cmd/migrate"
 
 	"github.com/forbole/bdjuno/v2/types/config"
@@ -33,6 +34,7 @@ func main() {
 		initcmd.InitCmd(cfg.GetInitConfig()),
 		parsecmd.ParseCmd(cfg.GetParseConfig()),
 		migratecmd.MigrateCmd(),
+		fixcmd.FixCmd(cfg.GetParseConfig()),
 	)
 
 	executor := cmd.PrepareRootCmd(cfg.GetName(), rootCmd)
