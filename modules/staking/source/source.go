@@ -1,6 +1,8 @@
 package source
 
-import stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+import (
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+)
 
 type Source interface {
 	GetValidator(height int64, valOper string) (stakingtypes.Validator, error)

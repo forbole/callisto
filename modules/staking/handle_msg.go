@@ -74,7 +74,7 @@ func (m *Module) handleMsgBeginRedelegate(tx *juno.Tx, index int, msg *stakingty
 	}
 
 	// Update the current delegations
-	return m.refreshDelegations(tx.Height, msg.DelegatorAddress)
+	return m.refreshDelegatorDelegations(tx.Height, msg.DelegatorAddress)
 }
 
 // handleMsgUndelegate handles a MsgUndelegate storing the data inside the database
@@ -85,5 +85,5 @@ func (m *Module) handleMsgUndelegate(tx *juno.Tx, index int, msg *stakingtypes.M
 	}
 
 	// Update the current delegations
-	return m.refreshDelegations(tx.Height, msg.DelegatorAddress)
+	return m.refreshDelegatorDelegations(tx.Height, msg.DelegatorAddress)
 }
