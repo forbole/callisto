@@ -2,9 +2,10 @@ package modules
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/tendermint/tendermint/libs/log"
-	"os"
 
 	"github.com/desmos-labs/juno/v2/modules/pruning"
 	"github.com/desmos-labs/juno/v2/modules/telemetry"
@@ -124,7 +125,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		mint.NewModule(sources.MintSource, db),
 		modules.NewModule(ctx.JunoConfig.Chain, db),
 		pricefeed.NewModule(ctx.JunoConfig, historyModule, cdc, db),
-		slashing.NewModule(sources.SlashingSource, db),
+		slashing.NewModule(sources.SlashingSource, stakingModule, db),
 		stakingModule,
 	}
 }

@@ -13,7 +13,9 @@ import (
 )
 
 // HandleBlock implements modules.BlockModule
-func (m *Module) HandleBlock(b *tmctypes.ResultBlock, _ []*juno.Tx, vals *tmctypes.ResultValidators) error {
+func (m *Module) HandleBlock(
+	b *tmctypes.ResultBlock, _ *tmctypes.ResultBlockResults, _ []*juno.Tx, vals *tmctypes.ResultValidators,
+) error {
 	err := m.updateProposals(b.Block.Height, vals)
 	if err != nil {
 		log.Error().Str("module", "gov").Int64("height", b.Block.Height).

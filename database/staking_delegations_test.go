@@ -337,7 +337,7 @@ func (suite *DbTestSuite) TestDeleteCompletedRedelegations() {
 			srcValidator1.GetOperator(),
 			dstValidator1.GetOperator(),
 			sdk.NewCoin("cosmos", sdk.NewInt(100)),
-			time.Date(2021, 1, 1, 12, 00, 01, 000, time.UTC),
+			time.Date(2021, 1, 1, 12, 00, 00, 000, time.UTC),
 			10,
 		),
 		types.NewRedelegation(
@@ -537,7 +537,7 @@ func (suite *DbTestSuite) TestDeleteCompletedUnbondingDelegations() {
 			delegator1.String(),
 			validator1.GetOperator(),
 			sdk.NewCoin("cosmos", sdk.NewInt(100)),
-			time.Date(2021, 1, 1, 12, 00, 01, 000, time.UTC),
+			time.Date(2021, 1, 1, 12, 00, 00, 000, time.UTC),
 			10,
 		),
 		types.NewUnbondingDelegation(
