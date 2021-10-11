@@ -124,7 +124,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		historyModule,
 		modules.NewModule(ctx.JunoConfig.Chain, db),
 		pricefeed.NewModule(ctx.JunoConfig, historyModule, cdc, db),
-		slashing.NewModule(sources.SlashingSource, db),
+		slashing.NewModule(sources.SlashingSource, stakingModule, db),
 		stakingModule,
 	}
 }

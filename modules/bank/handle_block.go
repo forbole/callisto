@@ -9,7 +9,9 @@ import (
 )
 
 // HandleBlock implements modules.BlockModule
-func (m *Module) HandleBlock(block *tmctypes.ResultBlock, _ []*types.Tx, _ *tmctypes.ResultValidators) error {
+func (m *Module) HandleBlock(
+	block *tmctypes.ResultBlock, _ *tmctypes.ResultBlockResults, _ []*types.Tx, _ *tmctypes.ResultValidators,
+) error {
 	err := m.updateSupply(block.Block.Height)
 	if err != nil {
 		log.Error().Str("module", "bank").Int64("height", block.Block.Height).
