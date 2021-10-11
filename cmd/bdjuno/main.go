@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/desmos-labs/juno/v2/cmd"
 	initcmd "github.com/desmos-labs/juno/v2/cmd/init"
@@ -9,11 +8,11 @@ import (
 	"github.com/desmos-labs/juno/v2/modules/messages"
 
 	migratecmd "github.com/forbole/bdjuno/v2/cmd/migrate"
-
-	"github.com/forbole/bdjuno/v2/types/config"
-
 	"github.com/forbole/bdjuno/v2/database"
 	"github.com/forbole/bdjuno/v2/modules"
+	"github.com/forbole/bdjuno/v2/types/config"
+
+	gaiaapp "github.com/cosmos/gaia/v6/app"
 
 	bandapp "github.com/bandprotocol/chain/v2/app"
 )
@@ -49,7 +48,7 @@ func main() {
 // This should be edited by custom implementations if needed.
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
-		simapp.ModuleBasics,
+		gaiaapp.ModuleBasics,
 		bandapp.ModuleBasics,
 	}
 }

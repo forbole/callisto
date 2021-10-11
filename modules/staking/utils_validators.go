@@ -80,6 +80,44 @@ func (m *Module) convertValidatorDescription(
 
 // --------------------------------------------------------------------------------------------------------------------
 
+// refreshValidatorInfos refreshes the info for the validator with the given operator address at the provided height
+func (m *Module) refreshValidatorInfos(height int64, valOper string) error {
+	stakingValidator, err := m.source.GetValidator(height, valOper)
+	if err != nil {
+		return err
+	}
+
+	validator, err := m.convertValidator(height, stakingValidator)
+	if err != nil {
+		return fmt.Errorf("error while converting validator: %s", err)
+	}
+
+	desc, err := m.convertValidatorDescription(height, stakingValidator.OperatorAddress, stakingValidator.Description)
+	if err != nil {
+		return fmt.Errorf("error while converting validator description: %s", err)
+	}
+
+	// Save the validator
+	err = m.db.SaveValidatorsData([]types.Validator{validator})
+	if err != nil {
+		return err
+	}
+
+	// Save the description
+	err = m.db.SaveValidatorDescription(desc)
+	if err != nil {
+		return err
+	}
+
+	// Save the commission
+	return m.db.SaveValidatorCommission(types.NewValidatorCommission(
+		stakingValidator.OperatorAddress,
+		&stakingValidator.Commission.Rate,
+		&stakingValidator.MinSelfDelegation,
+		height,
+	))
+}
+
 // GetValidatorsWithStatus returns the list of all the validators having the given status at the given height
 func (m *Module) GetValidatorsWithStatus(height int64, status string) ([]stakingtypes.Validator, []types.Validator, error) {
 	validators, err := m.source.GetValidatorsWithStatus(height, status)
