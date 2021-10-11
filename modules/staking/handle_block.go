@@ -16,7 +16,9 @@ import (
 )
 
 // HandleBlock implements BlockModule
-func (m *Module) HandleBlock(block *tmctypes.ResultBlock, _ []*juno.Tx, vals *tmctypes.ResultValidators) error {
+func (m *Module) HandleBlock(
+	block *tmctypes.ResultBlock, _ *tmctypes.ResultBlockResults, _ []*juno.Tx, vals *tmctypes.ResultValidators,
+) error {
 	// Update the validators
 	validators, err := m.updateValidators(block.Block.Height)
 	if err != nil {
@@ -201,7 +203,7 @@ func (m *Module) updateElapsedDelegations(height int64, blockTime time.Time) {
 
 	// Update the delegations and balances of all the delegators
 	for delegator := range delegators {
-		err = m.refreshDelegations(height, delegator)
+		err = m.refreshDelegatorDelegations(height, delegator)
 		if err != nil {
 			log.Error().Str("module", "staking").Err(err).Int64("height", height).
 				Str("delegator", delegator).Msg("error while refreshing the delegations")
