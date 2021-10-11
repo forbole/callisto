@@ -12,7 +12,7 @@ import (
 )
 
 // HandleBlock implements modules.BlockModule
-func (m *Module) HandleBlock(block *tmctypes.ResultBlock, _ []*juno.Tx, _ *tmctypes.ResultValidators) error {
+func (m *Module) HandleBlock(block *tmctypes.ResultBlock, _ *tmctypes.ResultBlockResults, _ []*juno.Tx, vals *tmctypes.ResultValidators) error {
 	// Update the params
 	err := m.updateParams(block.Block.Height)
 	if err != nil {
