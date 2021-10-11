@@ -151,8 +151,8 @@ github.com/desmos-labs/cosmos-sdk v0.42.5-0.20210826081936-864fc99bab62 h1:DhzAu
 github.com/desmos-labs/cosmos-sdk v0.42.5-0.20210826081936-864fc99bab62/go.mod h1:SrclJP9lMXxz2fCbngxb0brsPNuZXqoQQ9VHuQ3Tpf4=
 github.com/desmos-labs/desmos v1.0.1 h1:94tXXTEVxnqigb1BcIu5ibO8m2udbL1R2r7AbgReynM=
 github.com/desmos-labs/desmos v1.0.1/go.mod h1:msVRCns+CIe6xC6vRTY3l5goRZZZfBHvOBpQo82NSFw=
-github.com/desmos-labs/juno/v2 v2.0.0-20211005132114-ecffd42d060e h1:W6V/TyVTQVuRXd7hef01lxeXFz6hZiDeHjaSUMtSrVI=
-github.com/desmos-labs/juno/v2 v2.0.0-20211005132114-ecffd42d060e/go.mod h1:Dl3qB4QnbZpjcmqv0raaJ0Tu5wJhsIiRoNtWUDp2NI4=
+github.com/desmos-labs/juno/v2 v2.0.0-20211008110344-90ae63739f7c h1:rkFd/tGwnku0nksa6X4WqvdUS55nPFuEIzWFdO15Ux8=
+github.com/desmos-labs/juno/v2 v2.0.0-20211008110344-90ae63739f7c/go.mod h1:Dl3qB4QnbZpjcmqv0raaJ0Tu5wJhsIiRoNtWUDp2NI4=
 github.com/dgraph-io/badger/v2 v2.2007.2/go.mod h1:26P/7fbL4kUZVEVKLAKXkBXKOydDmM2p1e+NhhnBCAE=
 github.com/dgraph-io/badger/v2 v2.2007.4 h1:TRWBQg8UrlUhaFdco01nO2uXwzKS7zd+HVdwV/GHc4o=
 github.com/dgraph-io/badger/v2 v2.2007.4/go.mod h1:vSw/ax2qojzbN6eXHIx6KPKtCSHJN/Uz0X0VPruTIhk=
