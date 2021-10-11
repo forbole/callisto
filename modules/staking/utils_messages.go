@@ -6,75 +6,9 @@ import (
 
 	"github.com/forbole/bdjuno/v2/types"
 
-	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	juno "github.com/desmos-labs/juno/v2/types"
 )
-
-// storeValidatorFromMsgCreateValidator handles properly a MsgCreateValidator instance by
-// saving into the database all the data associated to such validator
-func (m *Module) storeValidatorFromMsgCreateValidator(height int64, msg *stakingtypes.MsgCreateValidator) error {
-	var pubKey cryptotypes.PubKey
-	err := m.cdc.UnpackAny(msg.Pubkey, &pubKey)
-	if err != nil {
-		return fmt.Errorf("error while unpacking pub key: %s", err)
-	}
-
-	operatorAddr, err := sdk.ValAddressFromBech32(msg.ValidatorAddress)
-	if err != nil {
-		return fmt.Errorf("error while converting validator address from bech32: %s", err)
-	}
-
-	stakingValidator, err := stakingtypes.NewValidator(operatorAddr, pubKey, msg.Description)
-	if err != nil {
-		return fmt.Errorf("error while creating validator: %s", err)
-	}
-
-	validator, err := m.convertValidator(height, stakingValidator)
-	if err != nil {
-		return fmt.Errorf("error while converting validator: %s", err)
-	}
-
-	desc, err := m.convertValidatorDescription(height, msg.ValidatorAddress, msg.Description)
-	if err != nil {
-		return fmt.Errorf("error while converting validator description: %s", err)
-	}
-
-	// Save the validator
-	err = m.db.SaveValidatorsData([]types.Validator{validator})
-	if err != nil {
-		return err
-	}
-
-	// Save the description
-	err = m.db.SaveValidatorDescription(desc)
-	if err != nil {
-		return err
-	}
-
-	// Save the first self-delegation
-	err = m.db.SaveDelegations([]types.Delegation{
-		types.NewDelegation(
-			msg.DelegatorAddress,
-			msg.ValidatorAddress,
-			msg.Value,
-			height,
-		),
-	})
-	if err != nil {
-		return err
-	}
-
-	// Save the commission
-	return m.db.SaveValidatorCommission(types.NewValidatorCommission(
-		msg.ValidatorAddress,
-		&msg.Commission.Rate,
-		&msg.MinSelfDelegation,
-		height,
-	))
-}
 
 // storeDelegationFromMessage handles a MsgDelegate and saves the delegation inside the database
 func (m *Module) storeDelegationFromMessage(height int64, msg *stakingtypes.MsgDelegate) error {
