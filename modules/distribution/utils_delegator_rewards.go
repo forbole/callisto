@@ -44,12 +44,14 @@ func (m *Module) shouldUpdateDelegatorRewardsAmounts(height int64) bool {
 	interval := m.cfg.RewardsFrequency
 	if interval == 0 {
 		log.Debug().Str("module", "distribution").Msg("delegator rewards refresh interval set to 0. Skipping refresh")
+		return false
 	}
 
 	hasRewards, err := m.db.HasDelegatorRewards()
 	if err != nil {
 		log.Error().Str("module", "distribution").Err(err).Int64("height", height).
 			Msg("error while checking delegators reward")
+		return false
 	}
 
 	return !hasRewards || height%interval == 0
