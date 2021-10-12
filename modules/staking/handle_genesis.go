@@ -100,7 +100,7 @@ func (m *Module) parseGenesisTransactions(doc *tmtypes.GenesisDoc, appState map[
 				continue
 			}
 
-			err = m.storeValidatorFromMsgCreateValidator(doc.InitialHeight, createValMsg)
+			err = m.handleMsgCreateValidator(doc.InitialHeight, createValMsg)
 			if err != nil {
 				return fmt.Errorf("error while storing validators from MsgCreateValidator: %s", err)
 			}
