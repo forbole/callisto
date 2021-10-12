@@ -11,21 +11,6 @@ import (
 // refreshDelegatorsRewardsAmounts refreshes the rewards associated with all the delegators for the given height,
 // deleting the ones existing and downloading them from scratch.
 func (m *Module) refreshDelegatorsRewardsAmounts(height int64) {
-	interval := m.cfg.RewardsFrequency
-	if interval == 0 {
-		log.Debug().Str("module", "distribution").Msg("delegator rewards refresh interval set to 0. Skipping refresh")
-		return
-	}
-
-	hasRewards, err := m.db.HasDelegatorRewards()
-	if err != nil {
-		log.Error().Str("module", "distribution").Err(err).Int64("height", height).
-			Msg("error while checking delegators reward")
-	}
-
-	if hasRewards && height%interval != 0 {
-		return
-	}
 
 	// Get the delegators
 	delegators, err := m.db.GetDelegators()
@@ -52,6 +37,24 @@ func (m *Module) refreshDelegatorsRewardsAmounts(height int64) {
 			}
 		}(delegator)
 	}
+}
+
+// shouldUpdateDelegatorRewardsAmounts tells whether or not the delegatos rewards amounts should be updated at the given height
+func (m *Module) shouldUpdateDelegatorRewardsAmounts(height int64) bool {
+	interval := m.cfg.RewardsFrequency
+	if interval == 0 {
+		log.Debug().Str("module", "distribution").Msg("delegator rewards refresh interval set to 0. Skipping refresh")
+		return false
+	}
+
+	hasRewards, err := m.db.HasDelegatorRewards()
+	if err != nil {
+		log.Error().Str("module", "distribution").Err(err).Int64("height", height).
+			Msg("error while checking delegators reward")
+		return false
+	}
+
+	return !hasRewards || height%interval == 0
 }
 
 // RefreshDelegatorRewards refreshes the rewards associated to the given delegator for the given height,
