@@ -39,6 +39,22 @@ func (m *Module) refreshDelegatorsRewardsAmounts(height int64) {
 	}
 }
 
+// shouldUpdateDelegatorRewardsAmounts tells whether or not the delegatos rewards amounts should be updated at the given height
+func (m *Module) shouldUpdateDelegatorRewardsAmounts(height int64) bool {
+	interval := m.cfg.RewardsFrequency
+	if interval == 0 {
+		log.Debug().Str("module", "distribution").Msg("delegator rewards refresh interval set to 0. Skipping refresh")
+	}
+
+	hasRewards, err := m.db.HasDelegatorRewards()
+	if err != nil {
+		log.Error().Str("module", "distribution").Err(err).Int64("height", height).
+			Msg("error while checking delegators reward")
+	}
+
+	return !hasRewards || height%interval == 0
+}
+
 // RefreshDelegatorRewards refreshes the rewards associated to the given delegator for the given height,
 // deleting the ones existing and downloading them from scratch.
 func (m *Module) RefreshDelegatorRewards(height int64, delegator string) error {

@@ -17,25 +17,10 @@ func (m *Module) HandleBlock(b *tmctypes.ResultBlock, _ []*juno.Tx, _ *tmctypes.
 	// Update the validator commissions
 	go m.updateValidatorsCommissionAmounts(b.Block.Height)
 
-	// Get interval cfg which decides when to execute "go m.refreshDelegatorsRewardsAmounts(b.Block.Height)"
-	interval := m.cfg.RewardsFrequency
-	if interval == 0 {
-		log.Debug().Str("module", "distribution").Msg("delegator rewards refresh interval set to 0. Skipping refresh")
-		return nil
+	// Update the delegators commissions amounts upon reaching interval or no rewards saved yet
+	if m.shouldUpdateDelegatorRewardsAmounts(b.Block.Height) {
+		go m.refreshDelegatorsRewardsAmounts(b.Block.Height)
 	}
-
-	hasRewards, err := m.db.HasDelegatorRewards()
-	if err != nil {
-		log.Error().Str("module", "distribution").Err(err).Int64("height", b.Block.Height).
-			Msg("error while checking delegators reward")
-	}
-
-	if hasRewards && b.Block.Height%interval != 0 {
-		return nil
-	}
-
-	// Update the delegators commissions amounts
-	go m.refreshDelegatorsRewardsAmounts(b.Block.Height)
 
 	return nil
 }
