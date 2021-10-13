@@ -195,8 +195,8 @@ github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20210623064146-c30bc8196d0f h1:gU
 github.com/desmos-labs/Go-Emoji-Utils v1.1.1-0.20210623064146-c30bc8196d0f/go.mod h1:5TMhouV+kDGQZZrBK+rzBP+Jmeyu0V7WvrBHqukiTv8=
 github.com/desmos-labs/desmos/v2 v2.0.1 h1:TOjZGgCRHBM3Ls155BM96XzX8qojNmr9nUH7LHMJCSU=
 github.com/desmos-labs/desmos/v2 v2.0.1/go.mod h1:ii88xeXgm3N/nBswainOOhVtcbUS6GVWUJBAv60TRRI=
-github.com/desmos-labs/juno/v2 v2.0.0-20211005132135-bddec19d946f h1:m0ZKlyPr9fAPWzfP1yv8Z9WGl0wtKw0dZrZYl366svU=
-github.com/desmos-labs/juno/v2 v2.0.0-20211005132135-bddec19d946f/go.mod h1:+lT1caHqneX2bfGAtBo94MnP1etBhDGwFPCQOmJ8v0E=
+github.com/desmos-labs/juno/v2 v2.0.0-20211008110358-e1a54b6427cf h1:0245F2/wiEo2PNkBsyfhDW7y8oVy3CxBGBK1mQaHXL0=
+github.com/desmos-labs/juno/v2 v2.0.0-20211008110358-e1a54b6427cf/go.mod h1:+lT1caHqneX2bfGAtBo94MnP1etBhDGwFPCQOmJ8v0E=
 github.com/dgraph-io/badger/v2 v2.2007.2/go.mod h1:26P/7fbL4kUZVEVKLAKXkBXKOydDmM2p1e+NhhnBCAE=
 github.com/dgraph-io/badger/v2 v2.2007.4 h1:TRWBQg8UrlUhaFdco01nO2uXwzKS7zd+HVdwV/GHc4o=
 github.com/dgraph-io/badger/v2 v2.2007.4/go.mod h1:vSw/ax2qojzbN6eXHIx6KPKtCSHJN/Uz0X0VPruTIhk=
