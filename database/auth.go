@@ -1,6 +1,7 @@
 package database
 
 import (
+	"encoding/json"
 	"fmt"
 
 	dbutils "github.com/forbole/bdjuno/database/utils"
@@ -47,6 +48,46 @@ func (db *Db) saveAccounts(paramsNumber int, accounts []types.Account) error {
 	_, err := db.Sql.Exec(stmt, params...)
 	if err != nil {
 		return fmt.Errorf("error while storing accounts: %s", err)
+	}
+
+	return nil
+}
+
+func (db *Db) SaveVestingAccounts(paramsNumber int, vestingAccount []types.VestingAccount) error {
+	if len(vestingAccount) == 0 {
+		return nil
+	}
+	stmt := `INSERT INTO vesting_account (address, original_vesting, end_time, start_time, vesting_periods) VALUES `
+	var params []interface{}
+
+	for i, account := range vestingAccount {
+		ai := i * paramsNumber
+		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", ai+1, ai+2, ai+3, ai+4, ai+5)
+
+		originalVestingBz, err := json.Marshal(account.OriginalVesting)
+		if err != nil {
+			return err
+		}
+
+		VestingPeriodsBz, err := json.Marshal(account.VestingPeriods)
+		if err != nil {
+			return err
+		}
+
+		params = append(params, account.Address, string(originalVestingBz), account.EndTime, account.StartTime, string(VestingPeriodsBz))
+	}
+
+	stmt = stmt[:len(stmt)-1]
+	stmt += `
+ON CONFLICT (address) DO UPDATE 
+	SET original_vesting = excluded.original_vesting,
+		end_time = excluded.end_time,
+		start_time = excluded.start_time, 
+		vesting_periods = excluded.vesting_periods`
+
+	_, err := db.Sql.Exec(stmt, params...)
+	if err != nil {
+		return err
 	}
 
 	return nil

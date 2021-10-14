@@ -35,7 +35,8 @@ func Handler(appState map[string]json.RawMessage, cdc codec.Codec, db *database.
 		return fmt.Errorf("error while getting genesis accounts: %s", err)
 	}
 
-	err = db.SaveVestingAccounts(vestingAccounts)
+	paramsNumber := 5
+	err = db.SaveVestingAccounts(paramsNumber, vestingAccounts)
 	if err != nil {
 		return fmt.Errorf("error while storing genesis accounts: %s", err)
 	}
