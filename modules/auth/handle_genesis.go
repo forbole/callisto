@@ -32,13 +32,13 @@ func Handler(appState map[string]json.RawMessage, cdc codec.Codec, db *database.
 	//handle vesting accounts
 	vestingAccounts, err := authutils.GetGenesisVestingAccounts(appState)
 	if err != nil {
-		return fmt.Errorf("error while getting genesis accounts: %s", err)
+		return fmt.Errorf("error while getting genesis vesting accounts: %s", err)
 	}
 
 	paramsNumber := 5
 	err = db.SaveVestingAccounts(paramsNumber, vestingAccounts)
 	if err != nil {
-		return fmt.Errorf("error while storing genesis accounts: %s", err)
+		return fmt.Errorf("error while storing genesis vesting accounts: %s", err)
 	}
 
 	return nil

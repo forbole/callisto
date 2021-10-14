@@ -2,6 +2,8 @@ package utils
 
 import (
 	"encoding/json"
+	"fmt"
+	"reflect"
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -28,6 +30,11 @@ func GetGenesisAccounts(appState map[string]json.RawMessage, cdc codec.Codec) ([
 		if err != nil {
 			return nil, err
 		}
+
+		fmt.Println(reflect.TypeOf(accountI))
+		// str := fmt.Sprintf("%v", accountI)
+		// fmt.Println(str)
+		// fmt.Println(reflect.TypeOf(accountI))
 
 		accounts[index] = types.NewAccount(accountI.GetAddress().String())
 	}
