@@ -57,14 +57,14 @@ func GetGenesisVestingAccounts(appState map[string]json.RawMessage) ([]types.Ves
 			}
 
 			// Create new Account instance
-			Account := types.NewVestingAccount(
+			vestingAccount := types.NewVestingAccount(
 				account.BaseVestingAccount.BaseAccount.Address,
 				account.BaseVestingAccount.OriginalVesting,
 				account.BaseVestingAccount.EndTime,
 				account.StartTime,
 				vestingPeriods,
 			)
-			accounts = append(accounts, Account)
+			accounts = append(accounts, vestingAccount)
 		}
 	}
 
