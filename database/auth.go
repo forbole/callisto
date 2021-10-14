@@ -78,12 +78,7 @@ func (db *Db) SaveVestingAccounts(paramsNumber int, vestingAccount []types.Vesti
 	}
 
 	stmt = stmt[:len(stmt)-1]
-	stmt += `
-ON CONFLICT (address) DO UPDATE 
-	SET original_vesting = excluded.original_vesting,
-		end_time = excluded.end_time,
-		start_time = excluded.start_time, 
-		vesting_periods = excluded.vesting_periods`
+	stmt += `ON CONFLICT (address) DO NOTHING`
 
 	_, err := db.Sql.Exec(stmt, params...)
 	if err != nil {
