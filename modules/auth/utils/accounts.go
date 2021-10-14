@@ -36,7 +36,7 @@ func GetGenesisAccounts(appState map[string]json.RawMessage, cdc codec.Codec) ([
 }
 
 // GetGenesisVestingAccounts parses the given appState and returns the desired genesis vesting account details
-func GetGenesisVestingAccounts(appState map[string]json.RawMessage, cdc codec.Codec) ([]types.VestingAccount, error) {
+func GetGenesisVestingAccounts(appState map[string]json.RawMessage) ([]types.VestingAccount, error) {
 	log.Debug().Str("module", "auth (vesting)").Msg("parsing genesis")
 
 	var authState Accounts

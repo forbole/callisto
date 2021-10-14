@@ -30,7 +30,7 @@ func Handler(appState map[string]json.RawMessage, cdc codec.Codec, db *database.
 	}
 
 	//handle vesting accounts
-	vestingAccounts, err := authutils.GetGenesisVestingAccounts(appState, cdc)
+	vestingAccounts, err := authutils.GetGenesisVestingAccounts(appState)
 	if err != nil {
 		return fmt.Errorf("error while getting genesis accounts: %s", err)
 	}
