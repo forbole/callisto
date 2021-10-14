@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	authttypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -29,6 +30,42 @@ func GetGenesisAccounts(appState map[string]json.RawMessage, cdc codec.Codec) ([
 		}
 
 		accounts[index] = types.NewAccount(accountI.GetAddress().String())
+	}
+
+	return accounts, nil
+}
+
+// GetGenesisVestingAccounts parses the given appState and returns the desired genesis vesting account details
+func GetGenesisVestingAccounts(appState map[string]json.RawMessage, cdc codec.Codec) ([]types.VestingAccount, error) {
+	log.Debug().Str("module", "auth (vesting)").Msg("parsing genesis")
+
+	var authState Accounts
+	if err := json.Unmarshal(appState[authttypes.ModuleName], &authState); err != nil {
+		return nil, err
+	}
+
+	// Store the accounts
+	accounts := []types.VestingAccount{}
+	for _, account := range authState.Accounts {
+		accountType := strings.Split(account.AccountType, ".")[3]
+
+		if accountType == "PeriodicVestingAccount" {
+			// Prepare vesting periods array for creating new Account instance
+			vestingPeriods := make([]types.VestingPeriod, len(account.VestingPeriods))
+			for index, period := range account.VestingPeriods {
+				vestingPeriods[index] = types.NewVestingPeriod(period.Length, period.Amount)
+			}
+
+			// Create new Account instance
+			Account := types.NewVestingAccount(
+				account.BaseVestingAccount.BaseAccount.Address,
+				account.BaseVestingAccount.OriginalVesting,
+				account.BaseVestingAccount.EndTime,
+				account.StartTime,
+				vestingPeriods,
+			)
+			accounts = append(accounts, Account)
+		}
 	}
 
 	return accounts, nil

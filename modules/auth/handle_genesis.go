@@ -18,6 +18,7 @@ import (
 func Handler(appState map[string]json.RawMessage, cdc codec.Codec, db *database.Db) error {
 	log.Debug().Str("module", "auth").Msg("parsing genesis")
 
+	//handle account addresses
 	accounts, err := authutils.GetGenesisAccounts(appState, cdc)
 	if err != nil {
 		return fmt.Errorf("error while getting genesis accounts: %s", err)
@@ -28,6 +29,7 @@ func Handler(appState map[string]json.RawMessage, cdc codec.Codec, db *database.
 		return fmt.Errorf("error while storing genesis accounts: %s", err)
 	}
 
+	//handle vesting accounts
 	vestingAccounts, err := authutils.GetGenesisVestingAccounts(appState, cdc)
 	if err != nil {
 		return fmt.Errorf("error while getting genesis accounts: %s", err)
