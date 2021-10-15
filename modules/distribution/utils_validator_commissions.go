@@ -64,8 +64,7 @@ func (m *Module) shouldUpdateValidatorsCommissionAmounts(height int64) bool {
 
 	commissionSaved, err := m.db.HasValidatorCommission()
 	if err != nil {
-		log.Error().Str("module", "distribution").Err(err).Int64("height", height).
-			Msg("error while checking validator commission amount ")
+		log.Error().Str("module", "distribution").Err(err).Int64("height", height).Msg("error while checking validator commission amount ")
 		return false
 	}
 
