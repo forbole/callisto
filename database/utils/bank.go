@@ -37,3 +37,19 @@ func SplitBalances(balances []types.AccountBalance, paramsNumber int) [][]types.
 
 	return slices
 }
+
+func SplitAccountsInDelegations(accounts []interface{}, paramsNumber int) [][]interface{} {
+	maxBalancesPerSlice := maxPostgreSQLParams / paramsNumber
+	slices := make([][]interface{}, len(accounts)/maxBalancesPerSlice+1)
+
+	sliceIndex := 0
+	for index, account := range accounts {
+		slices[sliceIndex] = append(slices[sliceIndex], account)
+
+		if index > 0 && index%(maxBalancesPerSlice-1) == 0 {
+			sliceIndex++
+		}
+	}
+
+	return slices
+}

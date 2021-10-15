@@ -9,6 +9,7 @@ import (
 	"github.com/forbole/bdjuno/v2/types"
 
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
+	dbutils "github.com/forbole/bdjuno/v2/database/utils"
 )
 
 // SaveDelegations stores inside the database the given delegations data.
@@ -16,20 +17,32 @@ import (
 // the proper database table.
 // TIP: To store the validators data call SaveValidatorsData.
 func (db *Db) SaveDelegations(delegations []types.Delegation) error {
+
+	paramsNumber := 4
+	slices := dbutils.SplitDelegations(delegations, paramsNumber)
+
+	for _, delegationSlice := range slices {
+		if len(delegationSlice) == 0 {
+			continue
+		}
+
+		err := db.storeUpToDateDelegations(paramsNumber, delegationSlice)
+		if err != nil {
+			return fmt.Errorf("error while storing up-to-date delegations: %s", err)
+		}
+	}
+
+	return nil
+
+}
+
+// storeUpToDateDelegations stores the given delegations as the most up-to-date ones
+func (db *Db) storeUpToDateDelegations(paramsNumber int, delegations []types.Delegation) error {
+
 	if len(delegations) == 0 {
 		return nil
 	}
 
-	err := db.storeUpToDateDelegations(delegations)
-	if err != nil {
-		return fmt.Errorf("error while storing up-to-date delegations: %s", err)
-	}
-
-	return nil
-}
-
-// storeUpToDateDelegations stores the given delegations as the most up-to-date ones
-func (db *Db) storeUpToDateDelegations(delegations []types.Delegation) error {
 	accQry := `
 INSERT INTO account (address) VALUES `
 	var accParams []interface{}
@@ -57,19 +70,27 @@ INSERT INTO delegation (validator_address, delegator_address, amount, height) VA
 		}
 
 		// Current delegation query
-		di := i * 4
+		di := i * paramsNumber
 		delQry += fmt.Sprintf("($%d,$%d,$%d,$%d),", di+1, di+2, di+3, di+4)
 		delParams = append(delParams,
 			consAddr.String(), delegation.DelegatorAddress, value, delegation.Height)
 	}
 
-	// Insert the accounts
-	accQry = accQry[:len(accQry)-1] // Remove the trailing ","
-	accQry += " ON CONFLICT DO NOTHING"
+	paramNum := 1
+	slices := dbutils.SplitAccountsInDelegations(accParams, paramNum)
 
-	_, err := db.Sql.Exec(accQry, accParams...)
-	if err != nil {
-		return fmt.Errorf("error while storing accounts: %s", err)
+	for _, address := range slices {
+		if len(address) == 0 {
+			continue
+		}
+		// Insert the accounts
+		accQry = accQry[:len(accQry)-1] // Remove the trailing ","
+		accQry += " ON CONFLICT DO NOTHING"
+
+		_, err := db.Sql.Exec(accQry, address...)
+		if err != nil {
+			return fmt.Errorf("error while storing accounts: %s", err)
+		}
 	}
 
 	// Insert the delegations
@@ -79,7 +100,7 @@ ON CONFLICT ON CONSTRAINT delegation_validator_delegator_unique
 DO UPDATE SET amount = excluded.amount, height = excluded.height
 WHERE delegation.height <= excluded.height`
 
-	_, err = db.Sql.Exec(delQry, delParams...)
+	_, err := db.Sql.Exec(delQry, delParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing delegations: %s", err)
 	}
@@ -157,20 +178,30 @@ func (db *Db) GetDelegators() ([]string, error) {
 // To store the validators data call SaveValidatorData(s).
 // To store the account data call SaveAccount.
 func (db *Db) SaveRedelegations(redelegations []types.Redelegation) error {
-	if len(redelegations) == 0 {
-		return nil
-	}
+	paramsNumber := 6
+	slices := dbutils.SplitRedelegations(redelegations, paramsNumber)
 
-	err := db.storeUpToDateRedelegations(redelegations)
-	if err != nil {
-		return fmt.Errorf("error while storing up-to-date redelegations: %s", err)
+	for _, redelegationSlice := range slices {
+		if len(redelegationSlice) == 0 {
+			continue
+		}
+
+		err := db.storeUpToDateRedelegations(paramsNumber, redelegationSlice)
+		if err != nil {
+			return fmt.Errorf("error while storing up-to-date redelegations: %s", err)
+		}
 	}
 
 	return nil
 }
 
 // storeUpToDateRedelegations allows to store the given redelegations as the most up-to-date ones
-func (db *Db) storeUpToDateRedelegations(redelegations []types.Redelegation) error {
+func (db *Db) storeUpToDateRedelegations(paramsNumber int, redelegations []types.Redelegation) error {
+
+	if len(redelegations) == 0 {
+		return nil
+	}
+
 	accQry := `
 INSERT INTO account (address) VALUES `
 	var accParams []interface{}
@@ -204,7 +235,7 @@ VALUES `
 			return fmt.Errorf("error while converting coin to dbcoin: %s", err)
 		}
 
-		rdi := i * 6
+		rdi := i * paramsNumber
 		rdQry += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d),", rdi+1, rdi+2, rdi+3, rdi+4, rdi+5, rdi+6)
 		rdParams = append(rdParams,
 			redelegation.DelegatorAddress,
@@ -329,21 +360,29 @@ func (db *Db) DeleteCompletedRedelegations(timestamp time.Time) ([]types.Redeleg
 // To store the validators data call SaveValidatorData(s).
 // To store the account data call SaveAccount.
 func (db *Db) SaveUnbondingDelegations(delegations []types.UnbondingDelegation) error {
-	// If the delegations are empty just return
-	if len(delegations) == 0 {
-		return nil
-	}
+	paramsNumber := 5
+	slices := dbutils.SplitUnbondingDelegations(delegations, paramsNumber)
 
-	err := db.storeUpToDateUnbondingDelegations(delegations)
-	if err != nil {
-		return fmt.Errorf("error while storing up-to-date undonding delegations: %s", err)
+	for _, delegationSlice := range slices {
+		if len(delegationSlice) == 0 {
+			continue
+		}
+
+		err := db.storeUpToDateUnbondingDelegations(paramsNumber, delegationSlice)
+		if err != nil {
+			return fmt.Errorf("error while storing up-to-date undonding delegations: %s", err)
+		}
 	}
 
 	return nil
 }
 
 // storeUpToDateUnbondingDelegations allows to store the given unbonding delegations as the most up-to-date ones
-func (db *Db) storeUpToDateUnbondingDelegations(delegations []types.UnbondingDelegation) error {
+func (db *Db) storeUpToDateUnbondingDelegations(paramsNumber int, delegations []types.UnbondingDelegation) error {
+	if len(delegations) == 0 {
+		return nil
+	}
+
 	accQry := `
 INSERT INTO account (address) VALUES `
 	var accParams []interface{}
@@ -369,7 +408,7 @@ VALUES `
 			return fmt.Errorf("error while converting coin to dbcoin: %s", err)
 		}
 
-		udi := i * 5
+		udi := i * paramsNumber
 		udQry += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", udi+1, udi+2, udi+3, udi+4, udi+5)
 		udParams = append(udParams,
 			validator.GetConsAddr(), delegation.DelegatorAddress, amount, delegation.CompletionTimestamp, delegation.Height)
