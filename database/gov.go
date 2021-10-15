@@ -96,6 +96,10 @@ func (db *Db) SaveProposals(proposals []types.Proposal) error {
 		return nil
 	}
 
+	accQry := `
+INSERT INTO account (address) VALUES `
+	var accParams []interface{}
+
 	query := `
 INSERT INTO proposal(
 	id, title, description, content, proposer_address, proposal_route, proposal_type, status, 
@@ -103,6 +107,10 @@ INSERT INTO proposal(
 ) VALUES`
 	var param []interface{}
 	for i, proposal := range proposals {
+		ai := i * 1
+		accQry += fmt.Sprintf("($%d),", ai+1)
+		accParams = append(accParams, proposal.Proposer)
+
 		vi := i * 12
 		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
 			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11, vi+12)
@@ -138,6 +146,16 @@ INSERT INTO proposal(
 			proposal.VotingEndTime,
 		)
 	}
+
+	// Insert the accounts
+	accQry = accQry[:len(accQry)-1] // Remove the trailing ","
+	accQry += " ON CONFLICT DO NOTHING"
+
+	_, accErr := db.Sql.Exec(accQry, accParams...)
+	if accErr != nil {
+		return fmt.Errorf("error while storing accounts: %s", accErr)
+	}
+
 	query = query[:len(query)-1] // Remove trailing ","
 	query += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(query, param...)
