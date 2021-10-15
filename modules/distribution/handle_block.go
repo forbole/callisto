@@ -16,8 +16,10 @@ func (m *Module) HandleBlock(
 	// Update the params
 	go m.updateParams(b.Block.Height)
 
-	// Update the validator commissions
-	go m.updateValidatorsCommissionAmounts(b.Block.Height)
+	// Update the validator commissions amount upon reaching interval or if no commission amount is saved in db
+	if m.shouldUpdateValidatorsCommissionAmounts(b.Block.Height) {
+		go m.updateValidatorsCommissionAmounts(b.Block.Height)
+	}
 
 	// Update the delegators commissions amounts upon reaching interval or no rewards saved yet
 	if m.shouldUpdateDelegatorRewardsAmounts(b.Block.Height) {
