@@ -10,7 +10,9 @@ import (
 )
 
 // HandleBlock implements modules.BlockModule
-func (m *Module) HandleBlock(b *tmctypes.ResultBlock, _ []*juno.Tx, _ *tmctypes.ResultValidators) error {
+func (m *Module) HandleBlock(
+	b *tmctypes.ResultBlock, _ *tmctypes.ResultBlockResults, _ []*juno.Tx, _ *tmctypes.ResultValidators,
+) error {
 	// Update the params
 	go m.updateParams(b.Block.Height)
 
