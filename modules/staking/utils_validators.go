@@ -80,8 +80,8 @@ func (m *Module) convertValidatorDescription(
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// refreshValidatorInfos refreshes the info for the validator with the given operator address at the provided height
-func (m *Module) refreshValidatorInfos(height int64, valOper string) error {
+// RefreshValidatorInfos refreshes the info for the validator with the given operator address at the provided height
+func (m *Module) RefreshValidatorInfos(height int64, valOper string) error {
 	stakingValidator, err := m.source.GetValidator(height, valOper)
 	if err != nil {
 		return err
