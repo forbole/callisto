@@ -2,10 +2,10 @@ package main
 
 import (
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/desmos-labs/juno/v2/cmd"
-	initcmd "github.com/desmos-labs/juno/v2/cmd/init"
-	parsecmd "github.com/desmos-labs/juno/v2/cmd/parse"
-	"github.com/desmos-labs/juno/v2/modules/messages"
+	"github.com/forbole/juno/v2/cmd"
+	initcmd "github.com/forbole/juno/v2/cmd/init"
+	parsecmd "github.com/forbole/juno/v2/cmd/parse"
+	"github.com/forbole/juno/v2/modules/messages"
 
 	migratecmd "github.com/forbole/bdjuno/v2/cmd/migrate"
 	"github.com/forbole/bdjuno/v2/database"
