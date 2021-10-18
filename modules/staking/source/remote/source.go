@@ -74,11 +74,11 @@ func (s Source) GetValidatorsWithStatus(height int64, status string) ([]stakingt
 }
 
 // GetDelegation implements stakingsource.Source
-func (s Source) GetDelegation(height int64, delegator string, validator string) (stakingtypes.DelegationResponse, error) {
+func (s Source) GetDelegation(height int64, delegator string, valOperAddr string) (stakingtypes.DelegationResponse, error) {
 	res, err := s.stakingClient.Delegation(
 		s.Ctx,
 		&stakingtypes.QueryDelegationRequest{
-			ValidatorAddr: validator,
+			ValidatorAddr: valOperAddr,
 			DelegatorAddr: delegator,
 		},
 		remote.GetHeightRequestHeader(height),
