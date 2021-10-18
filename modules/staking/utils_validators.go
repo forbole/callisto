@@ -70,7 +70,7 @@ func (m *Module) convertValidatorDescription(
 	} else {
 		url, err := keybase.GetAvatarURL(description.Identity)
 		if err != nil {
-			return types.ValidatorDescription{}, err
+			url = ""
 		}
 		avatarURL = url
 	}
