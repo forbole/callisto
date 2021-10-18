@@ -16,7 +16,7 @@ import (
 func validatorsCmd(parseConfig *parse.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:   "validators",
-		Short: "Fix the information about validators taking them from the latest height stored inside the database.",
+		Short: "Fix the information about validators taking them from the latest known height",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			parseCtx, err := parse.GetParsingContext(parseConfig)
 			if err != nil {
@@ -35,7 +35,7 @@ func validatorsCmd(parseConfig *parse.Config) *cobra.Command {
 			stakingModule := staking.NewModule(sources.StakingSource, nil, nil, nil, parseCtx.EncodingConfig.Marshaler, db)
 
 			// Get latest height
-			height, err := db.GetLastBlockHeight()
+			height, err := parseCtx.Node.LatestHeight()
 			if err != nil {
 				return fmt.Errorf("error while getting latest block height: %s", err)
 			}
