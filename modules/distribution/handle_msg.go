@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	juno "github.com/desmos-labs/juno/v2/types"
+	juno "github.com/forbole/juno/v2/types"
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 )
@@ -23,8 +23,10 @@ func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
 	switch cosmosMsg := msg.(type) {
 	case *distrtypes.MsgWithdrawValidatorCommission:
 		delegatorAddr = cosmosMsg.GetSigners()[0].String()
+		go m.updateValidatorsCommissionAmounts(tx.Height)
 	case *distrtypes.MsgWithdrawDelegatorReward:
 		delegatorAddr = cosmosMsg.DelegatorAddress
+		go m.refreshDelegatorsRewardsAmounts(tx.Height)
 	default:
 		return nil
 	}

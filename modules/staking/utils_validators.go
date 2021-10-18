@@ -3,7 +3,7 @@ package staking
 import (
 	"fmt"
 
-	juno "github.com/desmos-labs/juno/v2/types"
+	juno "github.com/forbole/juno/v2/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"github.com/forbole/bdjuno/v2/modules/staking/keybase"
