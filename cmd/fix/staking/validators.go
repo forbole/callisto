@@ -12,11 +12,11 @@ import (
 	"github.com/forbole/bdjuno/v2/modules/staking"
 )
 
-// slashesCmd returns a Cobra command that allows to fix the delegations for all the slashed validators.
-func slashesCmd(parseConfig *parse.Config) *cobra.Command {
+// validatorsCmd returns a Cobra command that allows to fix the validator infos for all validators.
+func validatorsCmd(parseConfig *parse.Config) *cobra.Command {
 	return &cobra.Command{
-		Use:   "slashes",
-		Short: "Fix the delegations for all the slashed validators, taking their delegations from the latest height stored inside the database.",
+		Use:   "validators",
+		Short: "Fix the information about validators taking them from the latest height stored inside the database.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			parseCtx, err := parse.GetParsingContext(parseConfig)
 			if err != nil {
@@ -31,6 +31,9 @@ func slashesCmd(parseConfig *parse.Config) *cobra.Command {
 			// Get the database
 			db := database.Cast(parseCtx.Database)
 
+			// Build the staking module
+			stakingModule := staking.NewModule(sources.StakingSource, nil, nil, nil, parseCtx.EncodingConfig.Marshaler, db)
+
 			// Get latest height
 			height, err := db.GetLastBlockHeight()
 			if err != nil {
@@ -43,23 +46,11 @@ func slashesCmd(parseConfig *parse.Config) *cobra.Command {
 				return fmt.Errorf("error while getting validators: %s", err)
 			}
 
+			// Refresh each validator
 			for _, validator := range validators {
-				// Get the validator delegations
-				delegations, err := sources.StakingSource.GetValidatorDelegations(height, validator.OperatorAddress)
+				err = stakingModule.RefreshValidatorInfos(height, validator.OperatorAddress)
 				if err != nil {
-					return fmt.Errorf("error while getting validator delegations: %s", err)
-				}
-
-				// Delete the old delegations
-				err = db.DeleteValidatorDelegations(validator.OperatorAddress)
-				if err != nil {
-					return fmt.Errorf("error while deleting validator delegations: %s", err)
-				}
-
-				// Save the delegations
-				err = db.SaveDelegations(staking.ConvertDelegationsResponses(height, delegations))
-				if err != nil {
-					return fmt.Errorf("error while saving delegations: %s", err)
+					return fmt.Errorf("error while refreshing validator: %s", err)
 				}
 			}
 

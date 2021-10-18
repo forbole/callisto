@@ -179,8 +179,6 @@ github.com/facebookgo/subset v0.0.0-20150612182917-8dac2c3c4870/go.mod h1:5tD+ne
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
 github.com/felixge/httpsnoop v1.0.1 h1:lvB5Jl89CsZtGIWuTcDM1E/vkVs49/Ml7JJe07l8SPQ=
 github.com/felixge/httpsnoop v1.0.1/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
-github.com/forbole/juno/v2 v2.0.0-20211018061320-f4d875de37dc h1:buKWb1npCc+r6oohcAcSRQ8ui1MHcxrTVcjM7cCgElw=
-github.com/forbole/juno/v2 v2.0.0-20211018061320-f4d875de37dc/go.mod h1:nOZEHr5+sZDXEDpV2E+NHkmH0Zvf4prkt5+UVKwScQ8=
 github.com/forbole/juno/v2 v2.0.0-20211018063058-c8a1eb5d5312 h1:trppuVzd+WfS4Y9EWt4THynTExj3XpETElOJEHqOKDA=
 github.com/forbole/juno/v2 v2.0.0-20211018063058-c8a1eb5d5312/go.mod h1:nOZEHr5+sZDXEDpV2E+NHkmH0Zvf4prkt5+UVKwScQ8=
 github.com/forbole/tendermint v0.34.13-0.20210820072129-a2a4af55563d h1:pUqGUgTUU24ibHeloQeg1F2pFbgQllddsuZ+x+CcUzw=

@@ -1,15 +1,14 @@
 package fix
 
 import (
-	"github.com/desmos-labs/juno/v2/cmd/parse"
+	"github.com/forbole/juno/v2/cmd/parse"
 	"github.com/spf13/cobra"
 
 	"github.com/forbole/bdjuno/v2/cmd/fix/staking"
 )
 
-// FixCmd returns the Cobra command allowing to fix some BDJuno bugs without having to re-sync the whole database
-// nolint: golint
-func FixCmd(parseCfg *parse.Config) *cobra.Command {
+// NewFixCmd returns the Cobra command allowing to fix some BDJuno bugs without having to re-sync the whole database
+func NewFixCmd(parseCfg *parse.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:               "fix",
 		Short:             "Apply some fixes without the need to re-syncing the whole database from scratch",
@@ -17,7 +16,7 @@ func FixCmd(parseCfg *parse.Config) *cobra.Command {
 	}
 
 	cmd.AddCommand(
-		staking.StakingCmd(parseCfg),
+		staking.NewStakingCmd(parseCfg),
 	)
 
 	return cmd

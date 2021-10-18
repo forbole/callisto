@@ -33,8 +33,8 @@ func main() {
 		cmd.VersionCmd(),
 		initcmd.InitCmd(cfg.GetInitConfig()),
 		parsecmd.ParseCmd(cfg.GetParseConfig()),
-		migratecmd.MigrateCmd(),
-		fixcmd.FixCmd(cfg.GetParseConfig()),
+		migratecmd.NewMigrateCmd(),
+		fixcmd.NewFixCmd(cfg.GetParseConfig()),
 	)
 
 	executor := cmd.PrepareRootCmd(cfg.GetName(), rootCmd)
