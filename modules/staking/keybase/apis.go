@@ -10,7 +10,7 @@ import (
 // GetAvatarURL returns the avatar URL from the given identity.
 // If no identity is found, it returns an empty string instead.
 func GetAvatarURL(identity string) (string, error) {
-	if len(identity) != 16 {
+	if len(identity) < 16 {
 		return "", nil
 	}
 
@@ -18,7 +18,7 @@ func GetAvatarURL(identity string) (string, error) {
 	endpoint := fmt.Sprintf("/user/lookup.json?key_suffix=%[1]s&fields=basics&fields=pictures", identity)
 	err := queryKeyBase(endpoint, &response)
 	if err != nil {
-		return "", fmt.Errorf("error while querying keybase")
+		return "", fmt.Errorf("error while querying keybase: %s", err)
 	}
 
 	// The server responded with an error
