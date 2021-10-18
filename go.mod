@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/cosmos/cosmos-sdk v0.42.9
-	github.com/forbole/juno/v2 v2.0.0-20211018063058-c8a1eb5d5312
+	github.com/forbole/juno/v2 v2.0.0-20211018083707-de5b5378416e
 	github.com/go-co-op/gocron v0.3.3
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.2.1-0.20200324155115-ee514944af4b
@@ -24,5 +24,3 @@ replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alp
 replace google.golang.org/grpc => google.golang.org/grpc v1.33.2
 
 replace github.com/tendermint/tendermint => github.com/forbole/tendermint v0.34.13-0.20210820072129-a2a4af55563d
-
-replace github.com/forbole/juno/v2 => /home/riccardo/Coding/Forbole/Juno
