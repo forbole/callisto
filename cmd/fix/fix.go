@@ -4,7 +4,8 @@ import (
 	"github.com/forbole/juno/v2/cmd/parse"
 	"github.com/spf13/cobra"
 
-	"github.com/forbole/bdjuno/v2/cmd/fix/staking"
+	fixgov "github.com/forbole/bdjuno/v2/cmd/fix/gov"
+	fixstaking "github.com/forbole/bdjuno/v2/cmd/fix/staking"
 )
 
 // NewFixCmd returns the Cobra command allowing to fix some BDJuno bugs without having to re-sync the whole database
@@ -16,7 +17,8 @@ func NewFixCmd(parseCfg *parse.Config) *cobra.Command {
 	}
 
 	cmd.AddCommand(
-		staking.NewStakingCmd(parseCfg),
+		fixgov.NewGovCmd(parseCfg),
+		fixstaking.NewStakingCmd(parseCfg),
 	)
 
 	return cmd
