@@ -26,7 +26,7 @@ func (a AccountRow) Equal(b AccountRow) bool {
 
 // ContinuousVestingAccountRow represents a single row inside the vesting_account table
 type ContinuousVestingAccountRow struct {
-	Id              int       `db:"id"`
+	ID              int       `db:"id"`
 	Type            string    `db:"type"`
 	Address         string    `db:"address"`
 	OriginalVesting *DbCoins  `db:"original_vesting"`
@@ -44,7 +44,7 @@ func NewContinuousVestingAccountRow(
 	startTime time.Time,
 ) ContinuousVestingAccountRow {
 	return ContinuousVestingAccountRow{
-		Id:              id,
+		ID:              id,
 		Type:            accountType,
 		Address:         address,
 		OriginalVesting: &originalVesting,
@@ -55,7 +55,7 @@ func NewContinuousVestingAccountRow(
 
 // Equal tells whether a and b contain the same data
 func (a ContinuousVestingAccountRow) Equal(b ContinuousVestingAccountRow) bool {
-	return a.Id == b.Id &&
+	return a.ID == b.ID &&
 		a.Type == b.Type &&
 		a.Address == b.Address &&
 		a.OriginalVesting.Equal(b.OriginalVesting)
@@ -63,7 +63,7 @@ func (a ContinuousVestingAccountRow) Equal(b ContinuousVestingAccountRow) bool {
 
 // DelayedVestingAccountRow represents a single row inside the vesting_account table
 type DelayedVestingAccountRow struct {
-	Id              int       `db:"id"`
+	ID              int       `db:"id"`
 	Type            string    `db:"type"`
 	Address         string    `db:"address"`
 	OriginalVesting *DbCoins  `db:"original_vesting"`
@@ -79,7 +79,7 @@ func NewDelayedVestingAccountRow(
 	endTime time.Time,
 ) DelayedVestingAccountRow {
 	return DelayedVestingAccountRow{
-		Id:              id,
+		ID:              id,
 		Type:            accountType,
 		Address:         address,
 		OriginalVesting: &originalVesting,
@@ -89,7 +89,7 @@ func NewDelayedVestingAccountRow(
 
 // Equal tells whether a and b contain the same data
 func (a DelayedVestingAccountRow) Equal(b DelayedVestingAccountRow) bool {
-	return a.Id == b.Id &&
+	return a.ID == b.ID &&
 		a.Type == b.Type &&
 		a.Address == b.Address &&
 		a.OriginalVesting.Equal(b.OriginalVesting)
@@ -97,7 +97,7 @@ func (a DelayedVestingAccountRow) Equal(b DelayedVestingAccountRow) bool {
 
 // PeriodicVestingAccountRow represents a single row inside the vesting_account table
 type PeriodicVestingAccountRow struct {
-	Id              int       `db:"id"`
+	ID              int       `db:"id"`
 	Type            string    `db:"type"`
 	Address         string    `db:"address"`
 	OriginalVesting *DbCoins  `db:"original_vesting"`
@@ -115,7 +115,7 @@ func NewPeriodicVestingAccountRow(
 	startTime time.Time,
 ) PeriodicVestingAccountRow {
 	return PeriodicVestingAccountRow{
-		Id:              id,
+		ID:              id,
 		Type:            accountType,
 		Address:         address,
 		OriginalVesting: &originalVesting,
@@ -126,7 +126,7 @@ func NewPeriodicVestingAccountRow(
 
 // Equal tells whether a and b contain the same data
 func (a PeriodicVestingAccountRow) Equal(b PeriodicVestingAccountRow) bool {
-	return a.Id == b.Id &&
+	return a.ID == b.ID &&
 		a.Type == b.Type &&
 		a.Address == b.Address &&
 		a.OriginalVesting.Equal(b.OriginalVesting)
