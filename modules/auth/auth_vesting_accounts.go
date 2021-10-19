@@ -15,7 +15,7 @@ func GetGenesisVestingAccounts(appState map[string]json.RawMessage, cdc codec.Ma
 		return nil, err
 	}
 
-	// Create VestingAccount array
+	// Build vestingAccounts Array
 	vestingAccounts := []exported.VestingAccount{}
 	for _, account := range authState.Accounts {
 		var accountI authttypes.AccountI
