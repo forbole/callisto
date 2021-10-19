@@ -150,7 +150,7 @@ ON CONFLICT (address) DO UPDATE
 		start_time = excluded.start_time
 		RETURNING id `
 
-	var vestingAccountId int
+	var vestingAccountID int
 	err := db.Sql.QueryRow(
 		stmt,
 		account.Type,
@@ -158,13 +158,13 @@ ON CONFLICT (address) DO UPDATE
 		pq.Array(dbtypes.NewDbCoins(account.OriginalVesting)),
 		time.Unix(account.EndTime, 0).Format(time.RFC3339),
 		time.Unix(account.StartTime, 0).Format(time.RFC3339),
-	).Scan(&vestingAccountId)
+	).Scan(&vestingAccountID)
 
 	if err != nil {
 		return fmt.Errorf("error while saving Periodic Vesting Account: %s", err)
 	}
 
-	err = db.storeVestingPeriods(vestingAccountId, account.VestingPeriods)
+	err = db.storeVestingPeriods(vestingAccountID, account.VestingPeriods)
 	if err != nil {
 		return fmt.Errorf("error while storing vesting periods: %s", err)
 	}
@@ -173,7 +173,7 @@ ON CONFLICT (address) DO UPDATE
 }
 
 //storePeriodicVestingAccount stores the vesting periods of type PeriodicVestingAccount into the database
-func (db *Db) storeVestingPeriods(vestingAccountId int, vestingPeriods []vestingtypes.Period) error {
+func (db *Db) storeVestingPeriods(vestingAccountID int, vestingPeriods []vestingtypes.Period) error {
 	stmt := `
 INSERT INTO vesting_period (vesting_account_id, period_order, length, amount) 
 VALUES `
@@ -185,7 +185,7 @@ VALUES `
 
 		order := i
 		amount := pq.Array(dbtypes.NewDbCoins(period.Amount))
-		params = append(params, vestingAccountId, order, period.Length, amount)
+		params = append(params, vestingAccountID, order, period.Length, amount)
 	}
 	stmt = stmt[:len(stmt)-1]
 
