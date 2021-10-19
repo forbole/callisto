@@ -3,13 +3,14 @@ CREATE TABLE account
     address TEXT NOT NULL PRIMARY KEY
 );
 
-/* ---- Moved from back.sql for vesting account usage ---- */
+/* ---- Moved from bank.sql for vesting account usage ---- */
 CREATE TYPE COIN AS
 (
     denom  TEXT,
     amount TEXT
 );
 
+/* ---- AUTH/ VESTING ACCOUNT ---- */
 CREATE TABLE vesting_account
 (
     id                  SERIAL                          PRIMARY KEY NOT NULL,
