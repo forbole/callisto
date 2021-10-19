@@ -92,7 +92,7 @@ func (db *Db) SaveVestingAccounts(vestingAccounts []exported.VestingAccount) err
 	return nil
 }
 
-//storeContinuousVestingAccount stores the vesting account details of type ContinuousVestingAccount into the database
+// storeContinuousVestingAccount stores the vesting account details of type ContinuousVestingAccount into the database
 func (db *Db) storeContinuousVestingAccount(account types.ContinuousVestingAccount) error {
 	stmt := `
 INSERT INTO vesting_account (type, address, original_vesting, end_time, start_time) 
@@ -115,7 +115,7 @@ ON CONFLICT (address) DO UPDATE
 	return nil
 }
 
-//storeDelayedVestingAccount stores the vesting account details of type DelayedVestingAccount into the database
+// storeDelayedVestingAccount stores the vesting account details of type DelayedVestingAccount into the database
 func (db *Db) storeDelayedVestingAccount(account types.DelayedVestingAccount) error {
 	stmt := `
 INSERT INTO vesting_account (type, address, original_vesting, end_time) 
@@ -138,7 +138,7 @@ ON CONFLICT (address) DO UPDATE
 	return nil
 }
 
-//storePeriodicVestingAccount stores the vesting account details of type PeriodicVestingAccount into the database
+// storePeriodicVestingAccount stores the vesting account details of type PeriodicVestingAccount into the database
 func (db *Db) storePeriodicVestingAccount(account types.PeriodicVestingAccount) error {
 	stmt := `
 INSERT INTO vesting_account (type, address, original_vesting, end_time, start_time) 
@@ -172,7 +172,7 @@ ON CONFLICT (address) DO UPDATE
 	return nil
 }
 
-//storePeriodicVestingAccount stores the vesting periods of type PeriodicVestingAccount into the database
+// storePeriodicVestingAccount stores the vesting periods of type PeriodicVestingAccount into the database
 func (db *Db) storeVestingPeriods(vestingAccountID int, vestingPeriods []vestingtypes.Period) error {
 	stmt := `
 INSERT INTO vesting_period (vesting_account_id, period_order, length, amount) 
