@@ -9,7 +9,7 @@ import (
 )
 
 // GetGenesisVestingAccounts parses the given appState and returns the genesis vesting accounts
-func GetGenesisVestingAccounts(appState map[string]json.RawMessage, cdc codec.Marshaler) ([]exported.VestingAccount, error) {
+func GetGenesisVestingAccounts(appState map[string]json.RawMessage, cdc codec.Codec) ([]exported.VestingAccount, error) {
 	var authState authttypes.GenesisState
 	if err := cdc.UnmarshalJSON(appState[authttypes.ModuleName], &authState); err != nil {
 		return nil, err
