@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	juno "github.com/desmos-labs/juno/v2/types"
+	juno "github.com/forbole/juno/v2/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 

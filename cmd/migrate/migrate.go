@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/desmos-labs/juno/v2/types/config"
+	"github.com/forbole/juno/v2/types/config"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 
@@ -13,8 +13,8 @@ import (
 	"github.com/forbole/bdjuno/v2/modules/pricefeed"
 	"github.com/forbole/bdjuno/v2/types"
 
-	junomigrate "github.com/desmos-labs/juno/v2/cmd/migrate"
-	junov1 "github.com/desmos-labs/juno/v2/cmd/migrate/v1"
+	junomigrate "github.com/forbole/juno/v2/cmd/migrate"
+	junov1 "github.com/forbole/juno/v2/cmd/migrate/v1"
 )
 
 type Config struct {
@@ -23,9 +23,8 @@ type Config struct {
 	DistributionConfig *distribution.Config `yaml:"distribution"`
 }
 
-// MigrateCmd returns the command to be run when migrating the config from v1 to v2
-// nolint: golint
-func MigrateCmd() *cobra.Command {
+// NewMigrateCmd returns the command to be run when migrating the config from v1 to v2
+func NewMigrateCmd() *cobra.Command {
 	return &cobra.Command{
 		Use: "migrate",
 		RunE: func(cmd *cobra.Command, args []string) error {
