@@ -62,7 +62,7 @@ func (m *Module) convertValidator(height int64, validator stakingtypes.Validator
 // using the Keybase APIs
 func (m *Module) convertValidatorDescription(
 	height int64, opAddr string, description stakingtypes.Description,
-) (types.ValidatorDescription, error) {
+) types.ValidatorDescription {
 	var avatarURL string
 
 	if description.Identity == stakingtypes.DoNotModifyDesc {
@@ -70,18 +70,18 @@ func (m *Module) convertValidatorDescription(
 	} else {
 		url, err := keybase.GetAvatarURL(description.Identity)
 		if err != nil {
-			return types.ValidatorDescription{}, err
+			url = ""
 		}
 		avatarURL = url
 	}
 
-	return types.NewValidatorDescription(opAddr, description, avatarURL, height), nil
+	return types.NewValidatorDescription(opAddr, description, avatarURL, height)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// refreshValidatorInfos refreshes the info for the validator with the given operator address at the provided height
-func (m *Module) refreshValidatorInfos(height int64, valOper string) error {
+// RefreshValidatorInfos refreshes the info for the validator with the given operator address at the provided height
+func (m *Module) RefreshValidatorInfos(height int64, valOper string) error {
 	stakingValidator, err := m.source.GetValidator(height, valOper)
 	if err != nil {
 		return err
@@ -92,10 +92,7 @@ func (m *Module) refreshValidatorInfos(height int64, valOper string) error {
 		return fmt.Errorf("error while converting validator: %s", err)
 	}
 
-	desc, err := m.convertValidatorDescription(height, stakingValidator.OperatorAddress, stakingValidator.Description)
-	if err != nil {
-		return fmt.Errorf("error while converting validator description: %s", err)
-	}
+	desc := m.convertValidatorDescription(height, stakingValidator.OperatorAddress, stakingValidator.Description)
 
 	// Save the validator
 	err = m.db.SaveValidatorsData([]types.Validator{validator})

@@ -100,7 +100,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	cdc := ctx.EncodingConfig.Marshaler
 	db := database.Cast(ctx.Database)
 
-	sources, err := buildSources(ctx.JunoConfig.Node, ctx.EncodingConfig)
+	sources, err := BuildSources(ctx.JunoConfig.Node, ctx.EncodingConfig)
 	if err != nil {
 		panic(err)
 	}
@@ -139,7 +139,7 @@ type Sources struct {
 	StakingSource  stakingsource.Source
 }
 
-func buildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
+func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
 	switch cfg := nodeCfg.Details.(type) {
 	case *remote.Details:
 		return buildRemoteSources(cfg)
