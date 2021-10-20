@@ -77,7 +77,7 @@ func (db *Db) SaveVestingAccounts(vestingAccounts []exported.VestingAccount) err
 			if err != nil {
 				return err
 			}
-			db.storeVestingPeriods(vestingAccountRowID, vestingAccount.VestingPeriods)
+			return db.storeVestingPeriods(vestingAccountRowID, vestingAccount.VestingPeriods)
 		}
 	}
 
