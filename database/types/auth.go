@@ -1,7 +1,6 @@
 package types
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -157,7 +156,6 @@ func NewVestingPeriodRow(
 
 // Equal tells whether a and b contain the same data
 func (a VestingPeriodRow) Equal(b VestingPeriodRow) bool {
-	fmt.Println(a, b)
 	return a.VestingAccountID == b.VestingAccountID &&
 		a.PeriodOrder == b.PeriodOrder &&
 		a.Length == b.Length &&
