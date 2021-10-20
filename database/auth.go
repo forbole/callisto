@@ -66,8 +66,7 @@ func (db *Db) SaveVestingAccounts(vestingAccounts []exported.VestingAccount) err
 
 	for _, account := range vestingAccounts {
 		switch vestingAccount := account.(type) {
-		case *vestingtypes.ContinuousVestingAccount:
-		case *vestingtypes.DelayedVestingAccount:
+		case *vestingtypes.ContinuousVestingAccount, *vestingtypes.DelayedVestingAccount:
 			_, err := db.storeVestingAccount(account)
 			if err != nil {
 				return err
