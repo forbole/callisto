@@ -27,8 +27,8 @@ CREATE UNIQUE INDEX vesting_account_address_idx ON vesting_account (address);
 
 CREATE TABLE vesting_period
 (
-    vesting_account_id  INT     NOT NULL REFERENCES vesting_account (id),
-    period_order        INT     NOT NULL,
-    length              TEXT    NOT NULL,
+    vesting_account_id  BIGINT  NOT NULL REFERENCES vesting_account (id),
+    period_order        BIGINT  NOT NULL,
+    length              BIGINT  NOT NULL,
     amount              COIN[]  NOT NULL DEFAULT '{}'
 );
