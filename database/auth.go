@@ -65,31 +65,27 @@ func (db *Db) SaveVestingAccounts(vestingAccounts []exported.VestingAccount) err
 	}
 
 	for _, account := range vestingAccounts {
-		switch account.(type) {
+		switch vestingAccount := account.(type) {
 		case *vestingtypes.ContinuousVestingAccount:
-			err := db.storeVestingAccount(account)
-			if err != nil {
-				return fmt.Errorf("error while storing Continuous Vesting Account: %s", err)
-			}
-
 		case *vestingtypes.DelayedVestingAccount:
-			err := db.storeVestingAccount(account)
+			_, err := db.storeVestingAccount(account)
 			if err != nil {
-				return fmt.Errorf("error while storing Delayed Vesting Account: %s", err)
+				return err
 			}
 
 		case *vestingtypes.PeriodicVestingAccount:
-			err := db.storeVestingAccount(account)
+			vestingAccountRowID, err := db.storeVestingAccount(account)
 			if err != nil {
-				return fmt.Errorf("error while storing Periodic Vesting Account: %s", err)
+				return err
 			}
+			db.storeVestingPeriods(vestingAccountRowID, vestingAccount.VestingPeriods)
 		}
 	}
 
 	return nil
 }
 
-func (db *Db) storeVestingAccount(account exported.VestingAccount) error {
+func (db *Db) storeVestingAccount(account exported.VestingAccount) (int, error) {
 	stmt := `
 	INSERT INTO vesting_account (type, address, original_vesting, end_time, start_time) 
 	VALUES ($1, $2, $3, $4, $5)
@@ -109,14 +105,10 @@ func (db *Db) storeVestingAccount(account exported.VestingAccount) error {
 	).Scan(&vestingAccountRowID)
 
 	if err != nil {
-		return fmt.Errorf("error while saving Vesting Account: %s", err)
+		return vestingAccountRowID, fmt.Errorf("error while saving Vesting Account of type %v: %s", proto.MessageName(account), err)
 	}
 
-	if periodicVestingAccount, ok := account.(*vestingtypes.PeriodicVestingAccount); ok {
-		return db.storeVestingPeriods(vestingAccountRowID, periodicVestingAccount.VestingPeriods)
-	}
-
-	return nil
+	return vestingAccountRowID, nil
 }
 
 // storeVestingPeriods handles storing the vesting periods of PeriodicVestingAccount type
