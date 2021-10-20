@@ -43,18 +43,15 @@ func (db *Db) storeUpToDateDelegations(paramsNumber int, delegations []types.Del
 		return nil
 	}
 
-	accQry := `
-INSERT INTO account (address) VALUES `
-	var accParams []interface{}
+	var accounts []types.Account
 
 	delQry := `
 INSERT INTO delegation (validator_address, delegator_address, amount, height) VALUES `
 	var delParams []interface{}
 
 	for i, delegation := range delegations {
-		ai := i * 1
-		accQry += fmt.Sprintf("($%d),", ai+1)
-		accParams = append(accParams, delegation.DelegatorAddress)
+		// Prepare the account query
+		accounts = append(accounts, types.NewAccount(delegation.DelegatorAddress))
 
 		// Get the validator consensus address
 		consAddr, err := db.GetValidatorConsensusAddress(delegation.ValidatorOperAddr)
@@ -76,21 +73,10 @@ INSERT INTO delegation (validator_address, delegator_address, amount, height) VA
 			consAddr.String(), delegation.DelegatorAddress, value, delegation.Height)
 	}
 
-	paramNum := 1
-	slices := dbutils.SplitAccountsInDelegations(accParams, paramNum)
-
-	for _, address := range slices {
-		if len(address) == 0 {
-			continue
-		}
-		// Insert the accounts
-		accQry = accQry[:len(accQry)-1] // Remove the trailing ","
-		accQry += " ON CONFLICT DO NOTHING"
-
-		_, err := db.Sql.Exec(accQry, address...)
-		if err != nil {
-			return fmt.Errorf("error while storing accounts: %s", err)
-		}
+	// Store the accounts
+	err := db.SaveAccounts(accounts)
+	if err != nil {
+		return fmt.Errorf("error while storing delegators accounts: %s", err)
 	}
 
 	// Insert the delegations
@@ -100,7 +86,7 @@ ON CONFLICT ON CONSTRAINT delegation_validator_delegator_unique
 DO UPDATE SET amount = excluded.amount, height = excluded.height
 WHERE delegation.height <= excluded.height`
 
-	_, err := db.Sql.Exec(delQry, delParams...)
+	_, err = db.Sql.Exec(delQry, delParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing delegations: %s", err)
 	}
@@ -202,9 +188,7 @@ func (db *Db) storeUpToDateRedelegations(paramsNumber int, redelegations []types
 		return nil
 	}
 
-	accQry := `
-INSERT INTO account (address) VALUES `
-	var accParams []interface{}
+	var accounts []types.Account
 
 	rdQry := `
 INSERT INTO redelegation 
@@ -213,9 +197,8 @@ VALUES `
 	var rdParams []interface{}
 
 	for i, redelegation := range redelegations {
-		a1 := i * 1
-		accQry += fmt.Sprintf("($%d),", a1+1)
-		accParams = append(accParams, redelegation.DelegatorAddress)
+		// Prepare the account query
+		accounts = append(accounts, types.NewAccount(redelegation.DelegatorAddress))
 
 		// Get the validators info
 		srcVal, err := db.GetValidator(redelegation.SrcValidator)
@@ -242,12 +225,10 @@ VALUES `
 			srcVal.GetConsAddr(), dstVal.GetConsAddr(), amountValue, redelegation.CompletionTime, redelegation.Height)
 	}
 
-	// Insert the delegators
-	accQry = accQry[:len(accQry)-1] // Remove the trailing ","
-	accQry += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(accQry, accParams...)
+	// Store the accounts
+	err := db.SaveAccounts(accounts)
 	if err != nil {
-		return fmt.Errorf("error while storing accounts: %s", err)
+		return fmt.Errorf("error while storing redelegators accounts: %s", err)
 	}
 
 	// Insert the redelegations
@@ -383,9 +364,7 @@ func (db *Db) storeUpToDateUnbondingDelegations(paramsNumber int, delegations []
 		return nil
 	}
 
-	accQry := `
-INSERT INTO account (address) VALUES `
-	var accParams []interface{}
+	var accounts []types.Account
 
 	udQry := `
 INSERT INTO unbonding_delegation (validator_address, delegator_address, amount, completion_timestamp, height)
@@ -393,9 +372,8 @@ VALUES `
 	var udParams []interface{}
 
 	for i, delegation := range delegations {
-		ai := i * 1
-		accQry += fmt.Sprintf("($%d),", ai+1)
-		accParams = append(accParams, delegation.DelegatorAddress)
+		// Prepare the account query
+		accounts = append(accounts, types.NewAccount(delegation.DelegatorAddress))
 
 		validator, err := db.GetValidator(delegation.ValidatorOperAddr)
 		if err != nil {
@@ -414,12 +392,10 @@ VALUES `
 			validator.GetConsAddr(), delegation.DelegatorAddress, amount, delegation.CompletionTimestamp, delegation.Height)
 	}
 
-	// Insert the delegators
-	accQry = accQry[:len(accQry)-1] // Remove the trailing ","
-	accQry += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(accQry, accParams...)
+	// Store the accounts
+	err := db.SaveAccounts(accounts)
 	if err != nil {
-		return fmt.Errorf("error while storing accounts: %s", err)
+		return fmt.Errorf("error while storing unbonding delegators accounts: %s", err)
 	}
 
 	// Insert the current unbonding delegations
