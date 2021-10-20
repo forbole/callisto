@@ -8,12 +8,13 @@ import (
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 	dbutils "github.com/forbole/bdjuno/v2/database/utils"
+	"github.com/gogo/protobuf/proto"
 	"github.com/lib/pq"
 
 	"github.com/forbole/bdjuno/v2/types"
 )
 
-// SaveAccounts saves the given account addresses inside the database
+// SaveAccounts saves the given accounts inside the database
 func (db *Db) SaveAccounts(accounts []types.Account) error {
 	paramsNumber := 1
 	slices := dbutils.SplitAccounts(accounts, paramsNumber)
@@ -57,32 +58,28 @@ func (db *Db) saveAccounts(paramsNumber int, accounts []types.Account) error {
 	return nil
 }
 
-// SaveVestingAccounts saves the given vesting account details inside the database, including:
-// type, address, original vesting, endTime, startTime, and vesting periods
+// SaveVestingAccounts saves the given vesting accounts inside the database
 func (db *Db) SaveVestingAccounts(vestingAccounts []exported.VestingAccount) error {
 	if len(vestingAccounts) == 0 {
 		return nil
 	}
 
 	for _, account := range vestingAccounts {
-		switch vestingAccount := account.(type) {
+		switch account.(type) {
 		case *vestingtypes.ContinuousVestingAccount:
-			ContinuousVestingAccount := types.NewContinuousVestingAccount(*vestingAccount)
-			err := db.storeContinuousVestingAccount(ContinuousVestingAccount)
+			err := db.storeVestingAccount(account)
 			if err != nil {
 				return fmt.Errorf("error while storing Continuous Vesting Account: %s", err)
 			}
 
 		case *vestingtypes.DelayedVestingAccount:
-			DelayedVestingAccount := types.NewDelayedVestingAccount(*vestingAccount)
-			err := db.storeDelayedVestingAccount(DelayedVestingAccount)
+			err := db.storeVestingAccount(account)
 			if err != nil {
 				return fmt.Errorf("error while storing Delayed Vesting Account: %s", err)
 			}
 
 		case *vestingtypes.PeriodicVestingAccount:
-			PeriodicVestingAccount := types.NewPeriodicVestingAccount(*vestingAccount)
-			err := db.storePeriodicVestingAccount(PeriodicVestingAccount)
+			err := db.storeVestingAccount(account)
 			if err != nil {
 				return fmt.Errorf("error while storing Periodic Vesting Account: %s", err)
 			}
@@ -92,88 +89,38 @@ func (db *Db) SaveVestingAccounts(vestingAccounts []exported.VestingAccount) err
 	return nil
 }
 
-// storeContinuousVestingAccount stores the vesting account details of type ContinuousVestingAccount into the database
-func (db *Db) storeContinuousVestingAccount(account types.ContinuousVestingAccount) error {
+func (db *Db) storeVestingAccount(account exported.VestingAccount) error {
 	stmt := `
-INSERT INTO vesting_account (type, address, original_vesting, end_time, start_time) 
-VALUES ($1, $2, $3, $4, $5)
-ON CONFLICT (address) DO UPDATE 
-    SET original_vesting = excluded.original_vesting, 
-		end_time = excluded.end_time, 
-		start_time = excluded.start_time`
+	INSERT INTO vesting_account (type, address, original_vesting, end_time, start_time) 
+	VALUES ($1, $2, $3, $4, $5)
+	ON CONFLICT (address) DO UPDATE 
+		SET original_vesting = excluded.original_vesting, 
+			end_time = excluded.end_time, 
+			start_time = excluded.start_time
+			RETURNING id `
 
-	_, err := db.Sql.Exec(stmt,
-		account.Type,
-		account.Address,
-		pq.Array(dbtypes.NewDbCoins(account.OriginalVesting)),
-		time.Unix(account.EndTime, 0).Format(time.RFC3339),
-		time.Unix(account.StartTime, 0).Format(time.RFC3339),
-	)
+	var vestingAccountRowID int
+	err := db.Sql.QueryRow(stmt,
+		proto.MessageName(account),
+		account.GetAddress().String(),
+		pq.Array(dbtypes.NewDbCoins(account.GetOriginalVesting())),
+		time.Unix(account.GetEndTime(), 0),
+		time.Unix(account.GetStartTime(), 0),
+	).Scan(&vestingAccountRowID)
+
 	if err != nil {
-		return err
+		return fmt.Errorf("error while saving Vesting Account: %s", err)
 	}
-	return nil
-}
 
-// storeDelayedVestingAccount stores the vesting account details of type DelayedVestingAccount into the database
-func (db *Db) storeDelayedVestingAccount(account types.DelayedVestingAccount) error {
-	stmt := `
-INSERT INTO vesting_account (type, address, original_vesting, end_time) 
-VALUES ($1, $2, $3, $4)
-ON CONFLICT (address) DO UPDATE 
-    SET original_vesting = excluded.original_vesting, 
-		end_time = excluded.end_time`
-
-	_, err := db.Sql.Exec(
-		stmt,
-		account.Type,
-		account.Address,
-		pq.Array(dbtypes.NewDbCoins(account.OriginalVesting)),
-		time.Unix(account.EndTime, 0).Format(time.RFC3339),
-	)
-	if err != nil {
-		return err
+	if periodicVestingAccount, ok := account.(*vestingtypes.PeriodicVestingAccount); ok {
+		return db.storeVestingPeriods(vestingAccountRowID, periodicVestingAccount.VestingPeriods)
 	}
 
 	return nil
 }
 
-// storePeriodicVestingAccount stores the vesting account details of type PeriodicVestingAccount into the database
-func (db *Db) storePeriodicVestingAccount(account types.PeriodicVestingAccount) error {
-	stmt := `
-INSERT INTO vesting_account (type, address, original_vesting, end_time, start_time) 
-VALUES ($1, $2, $3, $4, $5) 
-ON CONFLICT (address) DO UPDATE 
-	SET type = excluded.type,
-		original_vesting = excluded.original_vesting,
-		end_time = excluded.end_time,
-		start_time = excluded.start_time
-		RETURNING id `
-
-	var vestingAccountID int
-	err := db.Sql.QueryRow(
-		stmt,
-		account.Type,
-		account.Address,
-		pq.Array(dbtypes.NewDbCoins(account.OriginalVesting)),
-		time.Unix(account.EndTime, 0).Format(time.RFC3339),
-		time.Unix(account.StartTime, 0).Format(time.RFC3339),
-	).Scan(&vestingAccountID)
-
-	if err != nil {
-		return fmt.Errorf("error while saving Periodic Vesting Account: %s", err)
-	}
-
-	err = db.storeVestingPeriods(vestingAccountID, account.VestingPeriods)
-	if err != nil {
-		return fmt.Errorf("error while storing vesting periods: %s", err)
-	}
-
-	return nil
-}
-
-// storePeriodicVestingAccount stores the vesting periods of type PeriodicVestingAccount into the database
-func (db *Db) storeVestingPeriods(vestingAccountID int, vestingPeriods []vestingtypes.Period) error {
+// storeVestingPeriods handles storing the vesting periods of PeriodicVestingAccount type
+func (db *Db) storeVestingPeriods(id int, vestingPeriods []vestingtypes.Period) error {
 	stmt := `
 INSERT INTO vesting_period (vesting_account_id, period_order, length, amount) 
 VALUES `
@@ -185,13 +132,13 @@ VALUES `
 
 		order := i
 		amount := pq.Array(dbtypes.NewDbCoins(period.Amount))
-		params = append(params, vestingAccountID, order, period.Length, amount)
+		params = append(params, id, order, period.Length, amount)
 	}
 	stmt = stmt[:len(stmt)-1]
 
 	_, err := db.Sql.Exec(stmt, params...)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while saving vesting periods: %s", err)
 	}
 
 	return nil
