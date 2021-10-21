@@ -5,7 +5,7 @@ import (
 
 	oracletypes "github.com/bandprotocol/chain/v2/x/oracle/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/juno/v2/node/local"
+	"github.com/forbole/juno/v2/node/local"
 
 	oraclesource "github.com/forbole/bdjuno/v2/modules/oracle/source"
 )
