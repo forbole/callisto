@@ -96,15 +96,22 @@ func (db *Db) SaveProposals(proposals []types.Proposal) error {
 		return nil
 	}
 
-	query := `
+	var accounts []types.Account
+
+	proposalsQuery := `
 INSERT INTO proposal(
 	id, title, description, content, proposer_address, proposal_route, proposal_type, status, 
     submit_time, deposit_end_time, voting_start_time, voting_end_time
 ) VALUES`
-	var param []interface{}
+	var proposalsParams []interface{}
+
 	for i, proposal := range proposals {
+		// Prepare the account query
+		accounts = append(accounts, types.NewAccount(proposal.Proposer))
+
+		// Prepare the proposal query
 		vi := i * 12
-		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
+		proposalsQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
 			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11, vi+12)
 
 		// Encode the content properly
@@ -123,7 +130,7 @@ INSERT INTO proposal(
 			return fmt.Errorf("error while marshaling proposal content: %s", err)
 		}
 
-		param = append(param,
+		proposalsParams = append(proposalsParams,
 			proposal.ProposalID,
 			proposal.Content.GetTitle(),
 			proposal.Content.GetDescription(),
@@ -138,11 +145,19 @@ INSERT INTO proposal(
 			proposal.VotingEndTime,
 		)
 	}
-	query = query[:len(query)-1] // Remove trailing ","
-	query += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(query, param...)
+
+	// Store the accounts
+	err := db.SaveAccounts(accounts)
 	if err != nil {
-		return fmt.Errorf("error while storing proposal: %s", err)
+		return fmt.Errorf("error while storing proposers accounts: %s", err)
+	}
+
+	// Store the proposals
+	proposalsQuery = proposalsQuery[:len(proposalsQuery)-1] // Remove trailing ","
+	proposalsQuery += " ON CONFLICT DO NOTHING"
+	_, err = db.Sql.Exec(proposalsQuery, proposalsParams...)
+	if err != nil {
+		return fmt.Errorf("error while storing proposals: %s", err)
 	}
 
 	return nil
@@ -259,12 +274,13 @@ ON CONFLICT ON CONSTRAINT unique_vote DO UPDATE
 		height = excluded.height
 WHERE proposal_vote.height <= excluded.height`
 
-	_, err := db.Sql.Exec(query,
-		vote.ProposalID,
-		vote.Voter,
-		vote.Option.String(),
-		vote.Height,
-	)
+	// Store the voter account
+	err := db.SaveAccounts([]types.Account{types.NewAccount(vote.Voter)})
+	if err != nil {
+		return fmt.Errorf("error while storing voter account: %s", err)
+	}
+
+	_, err = db.Sql.Exec(query, vote.ProposalID, vote.Voter, vote.Option.String(), vote.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing vote: %s", err)
 	}

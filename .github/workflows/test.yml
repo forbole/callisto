@@ -29,6 +29,6 @@ jobs:
       - name: Test & Create coverage report
         run: make install test-unit stop-docker-test
       - name: Upload cove coverage
-        uses: codecov/codecov-action@v1.0.7
+        uses: codecov/codecov-action@v2.1.0
         with:
           file: ./coverage.txt

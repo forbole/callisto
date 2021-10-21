@@ -2,7 +2,7 @@ package auth
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	juno "github.com/desmos-labs/juno/v2/types"
+	juno "github.com/forbole/juno/v2/types"
 	"github.com/gogo/protobuf/proto"
 	"github.com/rs/zerolog/log"
 
