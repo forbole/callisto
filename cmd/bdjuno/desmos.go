@@ -4,7 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
-	junomessages "github.com/desmos-labs/juno/v2/modules/messages"
+	junomessages "github.com/forbole/juno/v2/modules/messages"
 )
 
 // desmosMessageAddressesParser represents a parser able to get the addresses of the involved
