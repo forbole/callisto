@@ -9,9 +9,9 @@ select_permissions:
 - permission:
     allow_aggregations: true
     columns:
-    - unit_name
-    - price
     - market_cap
+    - price
     - timestamp
+    - unit_name
     filter: {}
   role: anonymous
