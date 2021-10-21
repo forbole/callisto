@@ -6,12 +6,13 @@ import (
 	bandapp "github.com/bandprotocol/chain/v2/app"
 	oracletypes "github.com/bandprotocol/chain/v2/x/oracle/types"
 	"github.com/cosmos/cosmos-sdk/simapp"
-	"github.com/desmos-labs/juno/v2/modules/pruning"
-	"github.com/desmos-labs/juno/v2/modules/telemetry"
 	"github.com/tendermint/tendermint/libs/log"
 
+	"github.com/forbole/juno/v2/modules/pruning"
+	"github.com/forbole/juno/v2/modules/telemetry"
+
 	"github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/desmos-labs/juno/v2/node/remote"
+	"github.com/forbole/juno/v2/node/remote"
 
 	"github.com/forbole/bdjuno/v2/modules/history"
 	"github.com/forbole/bdjuno/v2/modules/slashing"
@@ -26,15 +27,15 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/desmos-labs/juno/v2/node/local"
+	"github.com/forbole/juno/v2/node/local"
 
-	jmodules "github.com/desmos-labs/juno/v2/modules"
-	"github.com/desmos-labs/juno/v2/modules/messages"
-	"github.com/desmos-labs/juno/v2/modules/registrar"
+	jmodules "github.com/forbole/juno/v2/modules"
+	"github.com/forbole/juno/v2/modules/messages"
+	"github.com/forbole/juno/v2/modules/registrar"
 
 	"github.com/forbole/bdjuno/v2/utils"
 
-	nodeconfig "github.com/desmos-labs/juno/v2/node/config"
+	nodeconfig "github.com/forbole/juno/v2/node/config"
 
 	"github.com/forbole/bdjuno/v2/database"
 	"github.com/forbole/bdjuno/v2/modules/auth"
@@ -105,7 +106,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	cdc := ctx.EncodingConfig.Marshaler
 	db := database.Cast(ctx.Database)
 
-	sources, err := buildSources(ctx.JunoConfig.Node, ctx.EncodingConfig)
+	sources, err := BuildSources(ctx.JunoConfig.Node, ctx.EncodingConfig)
 	if err != nil {
 		panic(err)
 	}
@@ -148,7 +149,7 @@ type Sources struct {
 	OracleSource oraclesource.Source
 }
 
-func buildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
+func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
 	switch cfg := nodeCfg.Details.(type) {
 	case *remote.Details:
 		return buildRemoteSources(cfg)
