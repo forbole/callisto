@@ -1,9 +1,11 @@
 package remote
 
 import (
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	"github.com/desmos-labs/juno/v2/node/remote"
+	"github.com/forbole/juno/v2/node/remote"
 
 	distrsource "github.com/forbole/bdjuno/v2/modules/distribution/source"
 )
@@ -48,7 +50,7 @@ func (s Source) DelegatorTotalRewards(delegator string, height int64) ([]distrty
 		remote.GetHeightRequestHeader(height),
 	)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error while getting delegation total rewards for for delegator %s at height %v: %s", delegator, height, err)
 	}
 
 	return res.Rewards, nil
