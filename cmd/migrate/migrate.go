@@ -23,9 +23,8 @@ type Config struct {
 	DistributionConfig *distribution.Config `yaml:"distribution"`
 }
 
-// MigrateCmd returns the command to be run when migrating the config from v1 to v2
-// nolint: golint
-func MigrateCmd() *cobra.Command {
+// NewMigrateCmd returns the command to be run when migrating the config from v1 to v2
+func NewMigrateCmd() *cobra.Command {
 	return &cobra.Command{
 		Use: "migrate",
 		RunE: func(cmd *cobra.Command, args []string) error {
