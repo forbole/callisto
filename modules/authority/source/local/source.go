@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/juno/v2/node/local"
+	"github.com/forbole/juno/v2/node/local"
 	authoritytypes "github.com/e-money/em-ledger/x/authority/types"
 
 	authoritysource "github.com/forbole/bdjuno/v2/modules/authority/source"

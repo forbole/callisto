@@ -3,7 +3,7 @@ package remote
 import (
 	"fmt"
 
-	"github.com/desmos-labs/juno/v2/node/remote"
+	"github.com/forbole/juno/v2/node/remote"
 	inflationtypes "github.com/e-money/em-ledger/x/inflation/types"
 
 	inflationsource "github.com/forbole/bdjuno/v2/modules/inflation/source"

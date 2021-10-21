@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/juno/v2/node/local"
+	"github.com/forbole/juno/v2/node/local"
 	inflationtypes "github.com/e-money/em-ledger/x/inflation/types"
 
 	inflationsource "github.com/forbole/bdjuno/v2/modules/inflation/source"
