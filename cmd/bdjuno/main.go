@@ -13,6 +13,7 @@ import (
 
 	"github.com/forbole/bdjuno/v2/types/config"
 
+	bitsongapp "github.com/bitsongofficial/go-bitsong/app"
 	"github.com/forbole/bdjuno/v2/database"
 	"github.com/forbole/bdjuno/v2/modules"
 )
@@ -50,6 +51,7 @@ func main() {
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
 		simapp.ModuleBasics,
+		bitsongapp.ModuleBasics,
 	}
 }
 
