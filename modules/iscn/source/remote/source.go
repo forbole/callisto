@@ -3,7 +3,7 @@ package remote
 import (
 	"fmt"
 
-	"github.com/desmos-labs/juno/v2/node/remote"
+	"github.com/forbole/juno/v2/node/remote"
 	iscntypes "github.com/likecoin/likechain/x/iscn/types"
 
 	iscnsource "github.com/forbole/bdjuno/v2/modules/iscn/source"

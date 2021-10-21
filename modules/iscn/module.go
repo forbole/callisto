@@ -1,7 +1,7 @@
 package iscn
 
 import (
-	"github.com/desmos-labs/juno/v2/modules"
+	"github.com/forbole/juno/v2/modules"
 
 	"github.com/forbole/bdjuno/v2/database"
 	iscnsource "github.com/forbole/bdjuno/v2/modules/iscn/source"
