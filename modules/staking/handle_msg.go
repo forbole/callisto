@@ -6,7 +6,7 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	juno "github.com/desmos-labs/juno/v2/types"
+	juno "github.com/forbole/juno/v2/types"
 )
 
 // HandleMsg implements MessageModule
@@ -40,7 +40,7 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 // handleMsgCreateValidator handles properly a MsgCreateValidator instance by
 // saving into the database all the data associated to such validator
 func (m *Module) handleMsgCreateValidator(height int64, msg *stakingtypes.MsgCreateValidator) error {
-	err := m.refreshValidatorInfos(height, msg.ValidatorAddress)
+	err := m.RefreshValidatorInfos(height, msg.ValidatorAddress)
 	if err != nil {
 		return fmt.Errorf("error while refreshing validator from MsgCreateValidator: %s", err)
 	}
@@ -56,7 +56,7 @@ func (m *Module) handleMsgCreateValidator(height int64, msg *stakingtypes.MsgCre
 
 // handleEditValidator handles MsgEditValidator utils, updating the validator info and commission
 func (m *Module) handleEditValidator(height int64, msg *stakingtypes.MsgEditValidator) error {
-	err := m.refreshValidatorInfos(height, msg.ValidatorAddress)
+	err := m.RefreshValidatorInfos(height, msg.ValidatorAddress)
 	if err != nil {
 		return fmt.Errorf("error while refreshing validator from MsgEditValidator: %s", err)
 	}
