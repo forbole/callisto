@@ -1,7 +1,7 @@
 package distribution
 
 import (
-	juno "github.com/desmos-labs/juno/v2/types"
+	juno "github.com/forbole/juno/v2/types"
 
 	"github.com/forbole/bdjuno/v2/types"
 

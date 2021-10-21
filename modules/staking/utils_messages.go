@@ -7,7 +7,7 @@ import (
 	"github.com/forbole/bdjuno/v2/types"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	juno "github.com/desmos-labs/juno/v2/types"
+	juno "github.com/forbole/juno/v2/types"
 )
 
 // storeDelegationFromMessage handles a MsgDelegate and saves the delegation inside the database
