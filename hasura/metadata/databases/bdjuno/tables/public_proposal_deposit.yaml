@@ -2,6 +2,15 @@ table:
   name: proposal_deposit
   schema: public
 object_relationships:
+- name: block
+  using:
+    manual_configuration:
+      column_mapping:
+        height: height
+      insertion_order: null
+      remote_table:
+        name: block
+        schema: public
 - name: depositor
   using:
     foreign_key_constraint_on: depositor_address

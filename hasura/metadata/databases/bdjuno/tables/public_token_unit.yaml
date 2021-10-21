@@ -33,9 +33,10 @@ select_permissions:
 - permission:
     allow_aggregations: true
     columns:
-    - token_name
+    - aliases
     - denom
     - exponent
-    - aliases
+    - price_id
+    - token_name
     filter: {}
   role: anonymous

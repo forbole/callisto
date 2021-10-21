@@ -1,6 +1,16 @@
 table:
   name: account
   schema: public
+object_relationships:
+- name: vesting_account
+  using:
+    manual_configuration:
+      column_mapping:
+        address: address
+      insertion_order: null
+      remote_table:
+        name: vesting_account
+        schema: public
 array_relationships:
 - name: account_balance_histories
   using:

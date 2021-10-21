@@ -1,0 +1,17 @@
+table:
+  name: vesting_period
+  schema: public
+object_relationships:
+- name: vesting_account
+  using:
+    foreign_key_constraint_on: vesting_account_id
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - vesting_account_id
+    - period_order
+    - length
+    - amount
+    filter: {}
+  role: anonymous
