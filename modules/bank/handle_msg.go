@@ -2,7 +2,7 @@ package bank
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/juno/v2/types"
+	"github.com/forbole/juno/v2/types"
 	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/bdjuno/v2/modules/utils"

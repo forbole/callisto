@@ -2,9 +2,9 @@ package history
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/desmos-labs/juno/v2/modules"
-	"github.com/desmos-labs/juno/v2/modules/messages"
-	"github.com/desmos-labs/juno/v2/types/config"
+	"github.com/forbole/juno/v2/modules"
+	"github.com/forbole/juno/v2/modules/messages"
+	"github.com/forbole/juno/v2/types/config"
 
 	"github.com/forbole/bdjuno/v2/database"
 )
