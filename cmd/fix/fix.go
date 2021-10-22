@@ -4,6 +4,7 @@ import (
 	"github.com/forbole/juno/v2/cmd/parse"
 	"github.com/spf13/cobra"
 
+	fixblocks "github.com/forbole/bdjuno/v2/cmd/fix/blocks"
 	fixgov "github.com/forbole/bdjuno/v2/cmd/fix/gov"
 	fixstaking "github.com/forbole/bdjuno/v2/cmd/fix/staking"
 	fixtxs "github.com/forbole/bdjuno/v2/cmd/fix/txs"
@@ -21,6 +22,7 @@ func NewFixCmd(parseCfg *parse.Config) *cobra.Command {
 		fixgov.NewGovCmd(parseCfg),
 		fixstaking.NewStakingCmd(parseCfg),
 		fixtxs.NewTxsCmd(parseCfg),
+		fixblocks.NewBlocksCmd(parseCfg),
 	)
 
 	return cmd
