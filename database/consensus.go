@@ -188,14 +188,14 @@ func (db *Db) GetGenesis() (*types.Genesis, error) {
 	return types.NewGenesis(row.ChainID, row.Time, row.InitialHeight), nil
 }
 
-// UpdateBlocksInDatabase updates given block in database 
+// UpdateBlocksInDatabase updates given block in database
 func (db *Db) UpdateBlockInDatabase(block *tmctypes.ResultBlock) error {
 	stmt := `
 INSERT INTO block(height, hash, num_txs, total_gas, proposer_address, timestamp)
 VALUES ($1, $2, $3, $4, $5, $6) 
 ON CONFLICT DO NOTHING`
 
-	_, err := db.Sqlx.Exec(stmt, block.Block.Height, strings.ToUpper(hex.EncodeToString(block.Block.Hash())), len(block.Block.Txs), 0, block.Block.ProposerAddress, block.Block.Time)
+	_, err := db.Sqlx.Exec(stmt, block.Block.Height, strings.ToUpper(hex.EncodeToString(block.Block.Hash())), len(block.Block.Txs), 0, block.Block.ProposerAddress.String(), block.Block.Time)
 	if err != nil {
 		return fmt.Errorf("error while storing block %v in database: %s", block.Block.Height, err)
 	}
