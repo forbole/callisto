@@ -29,12 +29,16 @@ func QueryTxs(node node.Node, query string) ([]*coretypes.ResultTx, error) {
 }
 
 // QueryBlock queries block details from the given node
-func QueryBlock(node node.Node, blockHeight int64) (*coretypes.ResultBlock, error) {
-	// var block []*coretypes.ResultBlock
-	result, err := node.Block(blockHeight)
+func QueryBlock(node node.Node, blockHeight int64) (*coretypes.ResultBlock, *coretypes.ResultBlockResults, error) {
+	block, err := node.Block(blockHeight)
 	if err != nil {
-		return nil, fmt.Errorf("error while getting block %v details: %s", blockHeight, err)
+		return nil, nil, fmt.Errorf("error while getting block %v result: %s", blockHeight, err)
 	}
 
-	return result, nil
+	blockResults, err := node.BlockResults(blockHeight)
+	if err != nil {
+		return nil, nil, fmt.Errorf("error while getting block %v details: %s", blockHeight, err)
+	}
+
+	return block, blockResults, nil
 }

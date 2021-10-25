@@ -28,14 +28,15 @@ func blocksCmd(parseConfig *parse.Config) *cobra.Command {
 			// Build the consensus module
 			consensusModule := consensus.NewModule(db)
 
-			// // Get latest height
-			// height, err := parseCtx.Node.LatestHeight()
-			// if err != nil {
-			// 	return fmt.Errorf("error while getting chain latest block height: %s", err)
-			// }
+			// Get latest height
+			height, err := parseCtx.Node.LatestHeight()
+			if err != nil {
+				return fmt.Errorf("error while getting chain latest block height: %s", err)
+			}
 
 			var k int64 = 1
-			for ; k <= 7607; k++ {
+			for ; k <= height; k++ {
+				fmt.Printf("Refetching block %v ... \n", k)
 				err = refreshBlock(parseCtx, k, consensusModule)
 				if err != nil {
 					return err
@@ -49,12 +50,12 @@ func blocksCmd(parseConfig *parse.Config) *cobra.Command {
 
 func refreshBlock(parseCtx *parse.Context, blockHeight int64, consensusModule *consensus.Module) error {
 	// Get the block details
-	blockDetails, err := utils.QueryBlock(parseCtx.Node, blockHeight)
+	block, blockResults, err := utils.QueryBlock(parseCtx.Node, blockHeight)
 	if err != nil {
 		return err
 	}
 
-	err = consensusModule.UpdateBlock(blockDetails)
+	err = consensusModule.UpdateBlock(block, blockResults)
 
 	if err != nil {
 		return fmt.Errorf("error while updating block %v: %s", blockHeight, err)

@@ -5,6 +5,6 @@ import (
 )
 
 // UpdateBlock updated blocks in database
-func (m *Module) UpdateBlock(block *tmctypes.ResultBlock) error {
-	return m.db.UpdateBlockInDatabase(block)
+func (m *Module) UpdateBlock(block *tmctypes.ResultBlock, blockResults *tmctypes.ResultBlockResults) error {
+	return m.db.UpdateBlockInDatabase(block, blockResults)
 }

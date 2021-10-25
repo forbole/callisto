@@ -190,15 +190,21 @@ func (db *Db) GetGenesis() (*types.Genesis, error) {
 }
 
 // UpdateBlocksInDatabase updates given block in database
-func (db *Db) UpdateBlockInDatabase(block *tmctypes.ResultBlock) error {
+func (db *Db) UpdateBlockInDatabase(block *tmctypes.ResultBlock, blockResults *tmctypes.ResultBlockResults) error {
 	stmt := `
 INSERT INTO block(height, hash, num_txs, total_gas, proposer_address, timestamp)
 VALUES ($1, $2, $3, $4, $5, $6) 
 ON CONFLICT DO NOTHING`
 
 	proposerAddress := sdk.ConsAddress(block.Block.ProposerAddress).String()
+	gasUsed := blockResults.TxsResults
 
-	_, err := db.Sqlx.Exec(stmt, block.Block.Height, strings.ToUpper(hex.EncodeToString(block.Block.Hash())), len(block.Block.Txs), 0, proposerAddress, block.Block.Time)
+	var totalGasUsed int64
+	for _, tx := range gasUsed {
+		totalGasUsed += tx.GetGasUsed()
+	}
+
+	_, err := db.Sqlx.Exec(stmt, block.Block.Height, strings.ToUpper(hex.EncodeToString(block.Block.Hash())), len(block.Block.Txs), totalGasUsed, proposerAddress, block.Block.Time)
 	if err != nil {
 		return fmt.Errorf("error while storing block %v for proposer %s, error:  %s", block.Block.Height, proposerAddress, err)
 	}
