@@ -2,6 +2,7 @@ package consensus
 
 import (
 	"github.com/forbole/bdjuno/v2/database"
+	"github.com/forbole/juno/v2/types/config"
 
 	"github.com/forbole/juno/v2/modules"
 )
@@ -15,13 +16,19 @@ var (
 
 // Module implements the consensus utils
 type Module struct {
-	db *database.Db
+	cfg *Config
+	db  *database.Db
 }
 
 // NewModule builds a new Module instance
-func NewModule(db *database.Db) *Module {
+func NewModule(cfg config.Config, db *database.Db) *Module {
+	consCfg, err := ParseConfig(cfg.GetBytes())
+	if err != nil {
+		panic(err)
+	}
 	return &Module{
-		db: db,
+		cfg: consCfg,
+		db:  db,
 	}
 }
 

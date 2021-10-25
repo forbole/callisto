@@ -189,6 +189,22 @@ func (db *Db) GetGenesis() (*types.Genesis, error) {
 	return types.NewGenesis(row.ChainID, row.Time, row.InitialHeight), nil
 }
 
+// CheckIfBlockIsMissing checks if block is stored in database and returns boolean value
+func (db *Db) CheckIfBlockIsMissing(height int64) bool {
+	var block []dbtypes.BlockRow
+	stmt := `SELECT * FROM block WHERE height = $1`
+
+	err := db.Sqlx.Select(&block, stmt, height)
+	if err != nil {
+		return true
+	}
+	if len(block) != 0 {
+		return false
+	}
+
+	return true
+}
+
 // UpdateBlocksInDatabase updates given block in database
 func (db *Db) UpdateBlockInDatabase(block *tmctypes.ResultBlock, blockResults *tmctypes.ResultBlockResults) error {
 	stmt := `
@@ -197,10 +213,10 @@ VALUES ($1, $2, $3, $4, $5, $6)
 ON CONFLICT DO NOTHING`
 
 	proposerAddress := sdk.ConsAddress(block.Block.ProposerAddress).String()
-	gasUsed := blockResults.TxsResults
+	txResults := blockResults.TxsResults
 
 	var totalGasUsed int64
-	for _, tx := range gasUsed {
+	for _, tx := range txResults {
 		totalGasUsed += tx.GetGasUsed()
 	}
 

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/forbole/juno/v2/cmd/parse"
+	"github.com/forbole/juno/v2/types/config"
 	"github.com/spf13/cobra"
 
 	"github.com/forbole/bdjuno/v2/database"
@@ -26,7 +27,7 @@ func blocksCmd(parseConfig *parse.Config) *cobra.Command {
 			db := database.Cast(parseCtx.Database)
 
 			// Build the consensus module
-			consensusModule := consensus.NewModule(db)
+			consensusModule := consensus.NewModule(config.Cfg, db)
 
 			// Get latest height
 			height, err := parseCtx.Node.LatestHeight()
@@ -34,12 +35,16 @@ func blocksCmd(parseConfig *parse.Config) *cobra.Command {
 				return fmt.Errorf("error while getting chain latest block height: %s", err)
 			}
 
-			var k int64 = 1
+			k := consensusModule.GetStartingHeight()
+			fmt.Printf("Starting height is %v ... \n", k)
 			for ; k <= height; k++ {
-				fmt.Printf("Refetching block %v ... \n", k)
-				err = refreshBlock(parseCtx, k, consensusModule)
-				if err != nil {
-					return err
+				missingBlock := consensusModule.IsBlockMissing(k)
+				if missingBlock {
+					fmt.Printf("Refetching block %v ... \n", k)
+					err = refreshBlock(parseCtx, k, consensusModule)
+					if err != nil {
+						return err
+					}
 				}
 			}
 
