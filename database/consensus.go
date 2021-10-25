@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/bdjuno/v2/types"
 
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
@@ -195,9 +196,11 @@ INSERT INTO block(height, hash, num_txs, total_gas, proposer_address, timestamp)
 VALUES ($1, $2, $3, $4, $5, $6) 
 ON CONFLICT DO NOTHING`
 
-	_, err := db.Sqlx.Exec(stmt, block.Block.Height, strings.ToUpper(hex.EncodeToString(block.Block.Hash())), len(block.Block.Txs), 0, block.Block.ProposerAddress.String(), block.Block.Time)
+	proposerAddress := sdk.ConsAddress(block.Block.ProposerAddress).String()
+
+	_, err := db.Sqlx.Exec(stmt, block.Block.Height, strings.ToUpper(hex.EncodeToString(block.Block.Hash())), len(block.Block.Txs), 0, proposerAddress, block.Block.Time)
 	if err != nil {
-		return fmt.Errorf("error while storing block %v in database: %s", block.Block.Height, err)
+		return fmt.Errorf("error while storing block %v for proposer %s, error:  %s", block.Block.Height, proposerAddress, err)
 	}
 
 	return nil
