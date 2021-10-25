@@ -5,7 +5,7 @@ go 1.16
 require (
 	github.com/cosmos/cosmos-sdk v0.44.2
 	github.com/cosmos/gaia/v6 v6.0.0-rc1
-	github.com/desmos-labs/desmos/v2 v2.0.1
+	github.com/desmos-labs/desmos/v2 v2.1.0-testnet
 	github.com/forbole/juno/v2 v2.0.0-20211020184842-e358a33007ff
 	github.com/go-co-op/gocron v0.8.0
 	github.com/gogo/protobuf v1.3.3
@@ -16,8 +16,8 @@ require (
 	github.com/rs/zerolog v1.25.0
 	github.com/spf13/cobra v1.2.1
 	github.com/stretchr/testify v1.7.0
-	github.com/tendermint/tendermint v0.34.13
-	google.golang.org/grpc v1.40.0
+	github.com/tendermint/tendermint v0.34.14
+	google.golang.org/grpc v1.41.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 
