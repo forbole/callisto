@@ -16,7 +16,7 @@ func GetGenesisVestingAccounts(appState map[string]json.RawMessage, cdc codec.Ma
 	}
 
 	// Build vestingAccounts Array
-	vestingAccounts := []exported.VestingAccount{}
+	var vestingAccounts []exported.VestingAccount
 	for _, account := range authState.Accounts {
 		var accountI authttypes.AccountI
 		err := cdc.UnpackAny(account, &accountI)
