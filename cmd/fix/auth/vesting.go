@@ -16,8 +16,8 @@ import (
 // vestingCmd returns a Cobra command that allows to fix the vesting data for the accounts
 func vestingCmd(parseConfig *parse.Config) *cobra.Command {
 	return &cobra.Command{
-		Use:   "slashes",
-		Short: "Fix the delegations for all the slashed validators, taking their delegations from the latest known height",
+		Use:   "vesting-accounts",
+		Short: "Fix the vesting accounts stored by removing duplicated vesting periods",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			parseCtx, err := parse.GetParsingContext(parseConfig)
 			if err != nil {
