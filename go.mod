@@ -18,7 +18,7 @@ require (
 	github.com/tendermint/tendermint v0.34.14
 	github.com/terra-money/core v0.5.6
 	google.golang.org/genproto v0.0.0-20211008145708-270636b82663 // indirect
-	google.golang.org/grpc v1.40.0
+	google.golang.org/grpc v1.41.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 
