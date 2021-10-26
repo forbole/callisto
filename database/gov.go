@@ -6,6 +6,8 @@ import (
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
+
 	"github.com/gogo/protobuf/proto"
 
 	"github.com/forbole/bdjuno/v2/types"
@@ -210,6 +212,56 @@ func (db *Db) GetOpenProposalsIds() ([]uint64, error) {
 	stmt := `SELECT id FROM proposal WHERE status = $1 OR status = $2`
 	err := db.Sqlx.Select(&ids, stmt, govtypes.StatusDepositPeriod.String(), govtypes.StatusVotingPeriod.String())
 	return ids, err
+}
+
+// GetOpenParamChangeProposals returns the open Parameter Change Proposals, or nil if not found
+func (db *Db) GetOpenParamChangeProposals() ([]types.Proposal, error) {
+	var rows []*dbtypes.ProposalRow
+	err := db.Sqlx.Select(&rows, `SELECT * FROM proposal WHERE status = $1`, govtypes.StatusDepositPeriod.String())
+	if err != nil {
+		return nil, err
+	}
+
+	if len(rows) == 0 {
+		return nil, nil
+	}
+
+	var paramChangeProposals []types.Proposal
+	for _, row := range rows {
+		var contentAny codectypes.Any
+		err = db.EncodingConfig.Marshaler.UnmarshalJSON([]byte(row.Content), &contentAny)
+		if err != nil {
+			return nil, err
+		}
+
+		var content govtypes.Content
+		err = db.EncodingConfig.Marshaler.UnpackAny(&contentAny, &content)
+		if err != nil {
+			return nil, err
+		}
+
+		if _, ok := content.(*proposaltypes.ParameterChangeProposal); ok {
+			fmt.Println(content.ProposalType())
+			fmt.Println(content.GetDescription())
+			fmt.Println(content.GetTitle())
+
+			proposal := types.NewProposal(
+				row.ProposalID,
+				row.ProposalRoute,
+				row.ProposalType,
+				content,
+				row.Status,
+				row.SubmitTime,
+				row.DepositEndTime,
+				row.VotingStartTime,
+				row.VotingEndTime,
+				row.Proposer,
+			)
+			paramChangeProposals = append(paramChangeProposals, proposal)
+		}
+	}
+
+	return paramChangeProposals, nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------

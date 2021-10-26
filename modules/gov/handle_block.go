@@ -16,7 +16,13 @@ import (
 func (m *Module) HandleBlock(
 	b *tmctypes.ResultBlock, _ *tmctypes.ResultBlockResults, _ []*juno.Tx, vals *tmctypes.ResultValidators,
 ) error {
-	err := m.updateProposals(b.Block.Height, vals)
+	err := m.updateParamChangeProposals(b.Block.Height)
+	if err != nil {
+		log.Error().Str("module", "gov").Int64("height", b.Block.Height).
+			Err(err).Msg("error while updating parameter change proposals")
+	}
+
+	err = m.updateProposals(b.Block.Height, vals)
 	if err != nil {
 		log.Error().Str("module", "gov").Int64("height", b.Block.Height).
 			Err(err).Msg("error while updating proposals")
@@ -69,5 +75,23 @@ func (m *Module) updateProposals(height int64, blockVals *tmctypes.ResultValidat
 			return fmt.Errorf("error while updating proposal: %s", err)
 		}
 	}
+	return nil
+}
+
+// updateProposals updates the proposals
+func (m *Module) updateParamChangeProposals(height int64) error {
+	// Get the parameter change proposals
+	paramChangeProposals, err := m.db.GetOpenParamChangeProposals()
+	if err != nil {
+		log.Error().Err(err).Str("module", "gov").Msg("error while getting open parameter change proposals")
+	}
+
+	for _, proposal := range paramChangeProposals {
+		err = m.UpdateParamChangeProposal(height, proposal.ProposalID)
+		if err != nil {
+			return fmt.Errorf("error while updating parameter change proposal: %s", err)
+		}
+	}
+
 	return nil
 }

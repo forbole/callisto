@@ -66,6 +66,44 @@ func (m *Module) UpdateProposal(height int64, blockVals *tmctypes.ResultValidato
 	return nil
 }
 
+func (m *Module) UpdateParamChangeProposal(height int64, id uint64) error {
+	// Get the proposal
+	paramChangeProposal, err := m.source.Proposal(height, id)
+	if err != nil {
+		// Get the error code
+		var code string
+		_, err := fmt.Sscanf(err.Error(), ErrProposalNotFound, &code, &code, &id)
+		if err != nil {
+			return err
+		}
+
+		if code == codes.NotFound.String() {
+			// If a proposal is deleted from the chain, do nothing
+			return nil
+		}
+
+		return fmt.Errorf("error while getting proposal: %s", err)
+	}
+
+	if paramChangeProposal.Status.String() == types.ProposalStatusPassed {
+		err = m.updateModulesParams(paramChangeProposal)
+		if err != nil {
+			return fmt.Errorf("error while updating params: %s", err)
+		}
+	}
+
+	return nil
+}
+
+func (m *Module) updateModulesParams(proposal govtypes.Proposal) error {
+	// TO-DO:
+	// Parse the proposal
+	// Get the module to which it refers
+	// Update all the params for such module
+
+	return nil
+}
+
 // updateDeletedProposalStatus updates the proposal having the given id by setting its status
 // to the one that represents a deleted proposal
 func (m *Module) updateDeletedProposalStatus(id uint64) error {
