@@ -66,7 +66,7 @@ func (m *Module) UpdateProposal(height int64, blockVals *tmctypes.ResultValidato
 	return nil
 }
 
-func (m *Module) UpdateParamChangeProposal(height int64, id uint64) error {
+func (m *Module) UpdateParamsFromParamChangeProposal(height int64, id uint64) error {
 	// Get the proposal
 	paramChangeProposal, err := m.source.Proposal(height, id)
 	if err != nil {

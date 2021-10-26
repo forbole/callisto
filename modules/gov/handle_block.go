@@ -87,7 +87,7 @@ func (m *Module) updateParamChangeProposals(height int64) error {
 	}
 
 	for _, proposal := range paramChangeProposals {
-		err = m.UpdateParamChangeProposal(height, proposal.ProposalID)
+		err = m.UpdateParamsFromParamChangeProposal(height, proposal.ProposalID)
 		if err != nil {
 			return fmt.Errorf("error while updating parameter change proposal: %s", err)
 		}
