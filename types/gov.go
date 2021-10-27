@@ -160,9 +160,9 @@ type ParameterChangeProposal struct {
 }
 
 // NewParameterChangeProposal allows to build a new ParameterChangeProposal instance
-func NewParameterChangeProposal(proposalId uint64, title string, description string, changes []proposaltypes.ParamChange) ParameterChangeProposal {
+func NewParameterChangeProposal(proposalID uint64, title string, description string, changes []proposaltypes.ParamChange) ParameterChangeProposal {
 	return ParameterChangeProposal{
-		ProposalID:  proposalId,
+		ProposalID:  proposalID,
 		Title:       title,
 		Description: description,
 		Changes:     changes,
