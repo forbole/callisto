@@ -11,7 +11,6 @@ import (
 	"github.com/forbole/bdjuno/v2/types"
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 )
@@ -68,7 +67,7 @@ func (m *Module) UpdateProposal(height int64, blockVals *tmctypes.ResultValidato
 }
 
 func (m *Module) UpdateParamsFromParamChangeProposal(height int64, id uint64) error {
-	// Get the proposal
+	// Get the proposal of type ParamChangeProposal
 	paramChangeProposal, err := m.source.Proposal(height, id)
 	if err != nil {
 		// Get the error code
@@ -95,13 +94,15 @@ func (m *Module) UpdateParamsFromParamChangeProposal(height int64, id uint64) er
 	return nil
 }
 
-func (m *Module) updateModuleParams(proposal proposaltypes.ParameterChangeProposal) error {
+func (m *Module) updateModuleParams(proposal govtypes.Proposal) error {
 	// TO-DO:
 	// Parse the proposal
-	for _, change := range proposal.Changes {
-		
+	var content govtypes.Content
+	err := m.db.EncodingConfig.Marshaler.UnpackAny(proposal.Content, &content)
+	if err != nil {
+		return err
 	}
-	
+
 	// Get the module to which it refers
 	// Update all the params for such module
 

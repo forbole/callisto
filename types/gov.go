@@ -11,6 +11,7 @@ import (
 const (
 	ProposalStatusInvalid = "PROPOSAL_STATUS_INVALID"
 	ProposalStatusPassed  = "PROPOSAL_STATUS_PASSED"
+	ProposalTypeChange    = "ParameterChange"
 )
 
 // DepositParams contains the data of the deposit parameters of the x/gov module
@@ -148,6 +149,58 @@ func NewProposalUpdate(
 		VotingStartTime: votingStartTime,
 		VotingEndTime:   votingEndTime,
 	}
+}
+
+// ParameterChangeProposal represents a single governance ParameterChangeProposal
+type ParameterChangeProposal struct {
+	Title       string
+	Description string
+	Changes     []ParamChange
+}
+
+// NewParameterChangeProposal allows to build a new ParameterChangeProposal instance
+func NewParameterChangeProposal(title string, description string, changes []ParamChange) ParameterChangeProposal {
+	return ParameterChangeProposal{
+		Title:       title,
+		Description: description,
+		Changes:     changes,
+	}
+}
+
+//Equal tells whether a and b contain the same data
+func (a ParameterChangeProposal) Equal(b ParameterChangeProposal) bool {
+	for index, paramChangeA := range a.Changes {
+		paramChangeB := b.Changes[index]
+		if !paramChangeA.Equal(paramChangeB) {
+			return false
+		}
+	}
+
+	return a.Title == b.Title &&
+		a.Description == b.Description
+}
+
+// ParamChange represents an individual parameter change
+type ParamChange struct {
+	Subspace string
+	Key      string
+	Value    string
+}
+
+// NewParamChange allows to build a new ParamChange instance
+func NewParamChange(subspace string, key string, value string) ParamChange {
+	return ParamChange{
+		Subspace: subspace,
+		Key:      key,
+		Value:    value,
+	}
+}
+
+//Equal tells whether a and b contain the same data
+func (a ParamChange) Equal(b ParamChange) bool {
+	return a.Key == b.Key &&
+		a.Subspace == b.Subspace &&
+		a.Value == b.Value
 }
 
 // -------------------------------------------------------------------------------------------------------------------

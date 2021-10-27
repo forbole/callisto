@@ -215,7 +215,7 @@ func (db *Db) GetOpenProposalsIds() ([]uint64, error) {
 }
 
 // GetOpenParamChangeProposals returns the open Parameter Change Proposals, or nil if not found
-func (db *Db) GetOpenParamChangeProposals() ([]types.Proposal, error) {
+func (db *Db) GetOpenParamChangeProposals() ([]proposaltypes.ParameterChangeProposal, error) {
 	var rows []*dbtypes.ProposalRow
 	err := db.Sqlx.Select(&rows, `SELECT * FROM proposal WHERE status = $1`, govtypes.StatusDepositPeriod.String())
 	if err != nil {
@@ -226,7 +226,7 @@ func (db *Db) GetOpenParamChangeProposals() ([]types.Proposal, error) {
 		return nil, nil
 	}
 
-	var paramChangeProposals []types.Proposal
+	var paramChangeProposals []proposaltypes.ParameterChangeProposal
 	for _, row := range rows {
 		var contentAny codectypes.Any
 		err = db.EncodingConfig.Marshaler.UnmarshalJSON([]byte(row.Content), &contentAny)
@@ -241,10 +241,6 @@ func (db *Db) GetOpenParamChangeProposals() ([]types.Proposal, error) {
 		}
 
 		if _, ok := content.(*proposaltypes.ParameterChangeProposal); ok {
-			fmt.Println(content.ProposalType())
-			fmt.Println(content.GetDescription())
-			fmt.Println(content.GetTitle())
-
 			proposal := types.NewProposal(
 				row.ProposalID,
 				row.ProposalRoute,
