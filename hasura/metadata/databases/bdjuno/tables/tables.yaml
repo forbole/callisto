@@ -44,3 +44,5 @@
 - "!include public_validator_signing_info.yaml"
 - "!include public_validator_status.yaml"
 - "!include public_validator_voting_power.yaml"
+- "!include public_vesting_account.yaml"
+- "!include public_vesting_period.yaml"
