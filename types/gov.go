@@ -178,7 +178,8 @@ func (a ParameterChangeProposal) Equal(b ParameterChangeProposal) bool {
 		}
 	}
 
-	return a.Title == b.Title &&
+	return a.ProposalID == b.ProposalID &&
+		a.Title == b.Title &&
 		a.Description == b.Description
 }
 
