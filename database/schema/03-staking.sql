@@ -166,7 +166,7 @@ CREATE INDEX unbonding_delegation_delegator_address_index ON unbonding_delegatio
 /* ---- ELAPSED DELEGATIONS --- */
 
 /*
- * This holds the list of balances that should be refreshed when a redelegation or unbonding delegation
+ * This holds the list of addresses whose balances that should be refreshed when a redelegation or unbonding delegation
  * has completed. We store them here cause we need to refresh them one block after the delegation has completed.
  */
 CREATE TABLE delegators_to_refresh
