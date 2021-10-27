@@ -214,7 +214,7 @@ func (db *Db) GetOpenProposalsIds() ([]uint64, error) {
 	return ids, err
 }
 
-// GetOpenParamChangeProposals returns the open Parameter Change Proposals, or nil if not found
+// GetOpenParamChangeProposals returns the Parameter Change Proposals in voting period, or nil if not found
 func (db *Db) GetOpenParamChangeProposals() ([]types.ParameterChangeProposal, error) {
 	var rows []*dbtypes.ProposalRow
 	err := db.Sqlx.Select(&rows, `SELECT * FROM proposal WHERE status = $1`, govtypes.StatusVotingPeriod.String())
