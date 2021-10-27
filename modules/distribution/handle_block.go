@@ -13,9 +13,6 @@ import (
 func (m *Module) HandleBlock(
 	b *tmctypes.ResultBlock, _ *tmctypes.ResultBlockResults, _ []*juno.Tx, _ *tmctypes.ResultValidators,
 ) error {
-	// Update the params
-	go m.updateParams(b.Block.Height)
-
 	// Update the validator commissions amount upon reaching interval or if no commission amount is saved in db
 	if m.shouldUpdateValidatorsCommissionAmounts(b.Block.Height) {
 		go m.updateValidatorsCommissionAmounts(b.Block.Height)
@@ -29,7 +26,7 @@ func (m *Module) HandleBlock(
 	return nil
 }
 
-func (m *Module) updateParams(height int64) {
+func (m *Module) UpdateParams(height int64) {
 	log.Debug().Str("module", "distribution").Int64("height", height).
 		Msg("updating params")
 

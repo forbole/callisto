@@ -29,12 +29,6 @@ func (m *Module) HandleBlock(
 		return fmt.Errorf("error while updating slashes: %s", err)
 	}
 
-	// Update the params
-	err = m.updateSlashingParams(block.Block.Height)
-	if err != nil {
-		return fmt.Errorf("error while updating slashing params: %s", err)
-	}
-
 	return nil
 }
 
@@ -76,7 +70,7 @@ func (m *Module) updateSlashedDelegations(height int64, beginBlockEvents []abci.
 }
 
 // updateSlashingParams gets the slashing params for the given height, and stores them inside the database
-func (m *Module) updateSlashingParams(height int64) error {
+func (m *Module) UpdateSlashingParams(height int64) error {
 	log.Debug().Str("module", "slashing").Int64("height", height).Msg("updating slashing params")
 
 	params, err := m.source.GetParams(height)

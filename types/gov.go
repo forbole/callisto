@@ -6,12 +6,13 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 )
 
 const (
 	ProposalStatusInvalid = "PROPOSAL_STATUS_INVALID"
 	ProposalStatusPassed  = "PROPOSAL_STATUS_PASSED"
-	ProposalTypeChange    = "ParameterChange"
+	// ProposalTypeChange    = "ParameterChange"
 )
 
 // DepositParams contains the data of the deposit parameters of the x/gov module
@@ -153,14 +154,16 @@ func NewProposalUpdate(
 
 // ParameterChangeProposal represents a single governance ParameterChangeProposal
 type ParameterChangeProposal struct {
+	ProposalID  uint64
 	Title       string
 	Description string
-	Changes     []ParamChange
+	Changes     []proposaltypes.ParamChange
 }
 
 // NewParameterChangeProposal allows to build a new ParameterChangeProposal instance
-func NewParameterChangeProposal(title string, description string, changes []ParamChange) ParameterChangeProposal {
+func NewParameterChangeProposal(proposalId uint64, title string, description string, changes []proposaltypes.ParamChange) ParameterChangeProposal {
 	return ParameterChangeProposal{
+		ProposalID:  proposalId,
 		Title:       title,
 		Description: description,
 		Changes:     changes,
@@ -178,29 +181,6 @@ func (a ParameterChangeProposal) Equal(b ParameterChangeProposal) bool {
 
 	return a.Title == b.Title &&
 		a.Description == b.Description
-}
-
-// ParamChange represents an individual parameter change
-type ParamChange struct {
-	Subspace string
-	Key      string
-	Value    string
-}
-
-// NewParamChange allows to build a new ParamChange instance
-func NewParamChange(subspace string, key string, value string) ParamChange {
-	return ParamChange{
-		Subspace: subspace,
-		Key:      key,
-		Value:    value,
-	}
-}
-
-//Equal tells whether a and b contain the same data
-func (a ParamChange) Equal(b ParamChange) bool {
-	return a.Key == b.Key &&
-		a.Subspace == b.Subspace &&
-		a.Value == b.Value
 }
 
 // -------------------------------------------------------------------------------------------------------------------

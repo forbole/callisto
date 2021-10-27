@@ -20,4 +20,17 @@ type StakingModule interface {
 	GetValidatorsWithStatus(height int64, status string) ([]stakingtypes.Validator, []types.Validator, error)
 	GetValidatorsVotingPowers(height int64, vals *tmctypes.ResultValidators) []types.ValidatorVotingPower
 	GetValidatorsStatuses(height int64, validators []stakingtypes.Validator) ([]types.ValidatorStatus, error)
+	UpdateParams(height int64)
+}
+
+type SlashingModule interface {
+	UpdateSlashingParams(height int64) error
+}
+
+type MintModule interface {
+	UpdateParams(height int64)
+}
+
+type DistrModule interface {
+	UpdateParams(height int64)
 }

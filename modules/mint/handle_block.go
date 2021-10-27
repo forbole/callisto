@@ -13,14 +13,11 @@ import (
 func (m *Module) HandleBlock(
 	block *tmctypes.ResultBlock, _ *tmctypes.ResultBlockResults, _ []*juno.Tx, _ *tmctypes.ResultValidators,
 ) error {
-	// Update the params
-	go m.updateParams(block.Block.Height)
-
 	return nil
 }
 
 // updateParams gets the updated params and stores them inside the database
-func (m *Module) updateParams(height int64) {
+func (m *Module) UpdateParams(height int64) {
 	log.Debug().Str("module", "mint").Int64("height", height).
 		Msg("updating params")
 

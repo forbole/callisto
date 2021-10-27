@@ -25,9 +25,6 @@ func (m *Module) HandleBlock(
 		return fmt.Errorf("error while updating validators: %s", err)
 	}
 
-	// Get the params
-	go m.updateParams(block.Block.Height)
-
 	// Update the voting powers
 	go m.updateValidatorVotingPower(block.Block.Height, vals)
 
@@ -47,7 +44,7 @@ func (m *Module) HandleBlock(
 }
 
 // updateParams gets the updated params and stores them inside the database
-func (m *Module) updateParams(height int64) {
+func (m *Module) UpdateParams(height int64) {
 	log.Debug().Str("module", "staking").Int64("height", height).
 		Msg("updating params")
 

@@ -3,6 +3,9 @@ package gov
 import (
 	"fmt"
 
+	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
+	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
@@ -66,8 +69,8 @@ func (m *Module) UpdateProposal(height int64, blockVals *tmctypes.ResultValidato
 	return nil
 }
 
-func (m *Module) UpdateParamsFromParamChangeProposal(height int64, id uint64) error {
-	// Get the proposal of type ParamChangeProposal
+func (m *Module) UpdateParamsFromParamChangeProposal(height int64, id uint64, proposal types.ParameterChangeProposal) error {
+	// Get the proposal
 	paramChangeProposal, err := m.source.Proposal(height, id)
 	if err != nil {
 		// Get the error code
@@ -80,12 +83,12 @@ func (m *Module) UpdateParamsFromParamChangeProposal(height int64, id uint64) er
 			// If a proposal is deleted from the chain, do nothing
 			return nil
 		}
-
 		return fmt.Errorf("error while getting proposal: %s", err)
 	}
 
 	if paramChangeProposal.Status.String() == types.ProposalStatusPassed {
-		err = m.updateModuleParams(paramChangeProposal)
+		// If the ParamChangeProposal passed, update params to the corresponding modules
+		err = m.updateModuleParams(height, proposal.Changes)
 		if err != nil {
 			return fmt.Errorf("error while updating params: %s", err)
 		}
@@ -94,17 +97,20 @@ func (m *Module) UpdateParamsFromParamChangeProposal(height int64, id uint64) er
 	return nil
 }
 
-func (m *Module) updateModuleParams(proposal govtypes.Proposal) error {
-	// TO-DO:
-	// Parse the proposal
-	var content govtypes.Content
-	err := m.db.EncodingConfig.Marshaler.UnpackAny(proposal.Content, &content)
-	if err != nil {
-		return err
+func (m *Module) updateModuleParams(height int64, changes []proposaltypes.ParamChange) error {
+	for _, change := range changes {
+		// Update the params for corresponding modules
+		switch change.Subspace {
+		case slashingtypes.ModuleName:
+			m.slashingModule.UpdateSlashingParams(height)
+		case stakingtypes.ModuleName:
+			m.stakingModule.UpdateParams(height)
+		case minttypes.ModuleName:
+			m.mintModule.UpdateParams(height)
+		case distrtypes.ModuleName:
+			m.distrModule.UpdateParams(height)
+		}
 	}
-
-	// Get the module to which it refers
-	// Update all the params for such module
 
 	return nil
 }
