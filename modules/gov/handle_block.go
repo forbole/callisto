@@ -22,12 +22,6 @@ func (m *Module) HandleBlock(
 			Err(err).Msg("error while updating proposals")
 	}
 
-	err = m.updateParams(b.Block.Height)
-	if err != nil {
-		log.Error().Str("module", "gov").Int64("height", b.Block.Height).
-			Err(err).Msg("error while updating params")
-	}
-
 	err = m.updateParamChangeProposals(b.Block.Height)
 	if err != nil {
 		log.Error().Str("module", "gov").Int64("height", b.Block.Height).

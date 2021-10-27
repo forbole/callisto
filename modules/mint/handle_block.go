@@ -16,7 +16,7 @@ func (m *Module) HandleBlock(
 	return nil
 }
 
-// updateParams gets the updated params and stores them inside the database
+// UpdateParams gets the updated params and stores them inside the database
 func (m *Module) UpdateParams(height int64) {
 	log.Debug().Str("module", "mint").Int64("height", height).
 		Msg("updating params")
