@@ -14,7 +14,7 @@ import (
 func (m *Module) HandleBlock(
 	b *tmctypes.ResultBlock, _ *tmctypes.ResultBlockResults, _ []*juno.Tx, vals *tmctypes.ResultValidators,
 ) error {
-	err := m.updateParamChangeProposals(b.Block.Height)
+	err := m.handleParamChangeProposals(b.Block.Height)
 	if err != nil {
 		log.Error().Str("module", "gov").Int64("height", b.Block.Height).
 			Err(err).Msg("error while updating params from ParameterChangeProposals")
@@ -29,7 +29,7 @@ func (m *Module) HandleBlock(
 }
 
 // updateParamChangeProposals updates the params if a ParamChangeProposal passed
-func (m *Module) updateParamChangeProposals(height int64) error {
+func (m *Module) handleParamChangeProposals(height int64) error {
 	// Get the parameter change proposals
 	proposals, err := m.db.GetOpenParamChangeProposals()
 	if err != nil {
