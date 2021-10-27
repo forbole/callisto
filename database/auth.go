@@ -6,10 +6,11 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting/exported"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
-	dbtypes "github.com/forbole/bdjuno/v2/database/types"
-	dbutils "github.com/forbole/bdjuno/v2/database/utils"
 	"github.com/gogo/protobuf/proto"
 	"github.com/lib/pq"
+
+	dbtypes "github.com/forbole/bdjuno/v2/database/types"
+	dbutils "github.com/forbole/bdjuno/v2/database/utils"
 
 	"github.com/forbole/bdjuno/v2/types"
 )
