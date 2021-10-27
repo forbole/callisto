@@ -11,6 +11,7 @@ import (
 	"github.com/forbole/bdjuno/v2/types"
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 )
@@ -76,7 +77,6 @@ func (m *Module) UpdateParamsFromParamChangeProposal(height int64, id uint64) er
 		if err != nil {
 			return err
 		}
-
 		if code == codes.NotFound.String() {
 			// If a proposal is deleted from the chain, do nothing
 			return nil
@@ -86,7 +86,7 @@ func (m *Module) UpdateParamsFromParamChangeProposal(height int64, id uint64) er
 	}
 
 	if paramChangeProposal.Status.String() == types.ProposalStatusPassed {
-		err = m.updateModulesParams(paramChangeProposal)
+		err = m.updateModuleParams(paramChangeProposal)
 		if err != nil {
 			return fmt.Errorf("error while updating params: %s", err)
 		}
@@ -95,9 +95,13 @@ func (m *Module) UpdateParamsFromParamChangeProposal(height int64, id uint64) er
 	return nil
 }
 
-func (m *Module) updateModulesParams(proposal govtypes.Proposal) error {
+func (m *Module) updateModuleParams(proposal proposaltypes.ParameterChangeProposal) error {
 	// TO-DO:
 	// Parse the proposal
+	for _, change := range proposal.Changes {
+		
+	}
+	
 	// Get the module to which it refers
 	// Update all the params for such module
 
