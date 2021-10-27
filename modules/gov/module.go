@@ -34,7 +34,12 @@ type Module struct {
 func NewModule(
 	cdc codec.Marshaler,
 	source govsource.Source,
-	authModule AuthModule, bankModule BankModule, stakingModule StakingModule, slashingModule SlashingModule, mintModule MintModule, distrModule DistrModule,
+	authModule AuthModule,
+	bankModule BankModule,
+	stakingModule StakingModule,
+	slashingModule SlashingModule,
+	mintModule MintModule,
+	distrModule DistrModule,
 	db *database.Db,
 ) *Module {
 	return &Module{
