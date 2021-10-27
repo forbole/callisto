@@ -6,8 +6,6 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	juno "github.com/forbole/juno/v2/types"
 
-	"github.com/forbole/bdjuno/v2/types"
-
 	"github.com/rs/zerolog/log"
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
@@ -67,26 +65,4 @@ func (m *Module) updateSlashedDelegations(height int64, beginBlockEvents []abci.
 	}
 
 	return nil
-}
-
-// UpdateParams gets the slashing params for the given height, and stores them inside the database
-func (m *Module) UpdateParams(height int64) {
-	log.Debug().Str("module", "slashing").Int64("height", height).Msg("updating params")
-
-	params, err := m.source.GetParams(height)
-	if err != nil {
-		log.Error().Str("module", "staking").Err(err).
-			Int64("height", height).
-			Msg("error while getting params")
-		return
-	}
-
-	err = m.db.SaveSlashingParams(types.NewSlashingParams(params, height))
-	if err != nil {
-		log.Error().Str("module", "slashing").Err(err).
-			Int64("height", height).
-			Msg("error while saving params")
-		return
-	}
-
 }
