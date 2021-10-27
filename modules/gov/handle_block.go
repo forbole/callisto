@@ -77,7 +77,7 @@ func (m *Module) updateProposals(height int64, blockVals *tmctypes.ResultValidat
 	return nil
 }
 
-// updateProposals updates the proposals
+// updateParamChangeProposals updates the params if a ParamChangeProposal passed
 func (m *Module) updateParamChangeProposals(height int64) error {
 	// Get the parameter change proposals
 	proposals, err := m.db.GetOpenParamChangeProposals()
