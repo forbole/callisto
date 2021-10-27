@@ -76,7 +76,7 @@ func (m *Module) updateParamChangeProposals(height int64) error {
 	// Get the parameter change proposals
 	proposals, err := m.db.GetOpenParamChangeProposals()
 	if err != nil {
-		log.Error().Err(err).Str("module", "gov").Msg("error while getting open parameter change proposals")
+		log.Error().Err(err).Str("module", "gov").Msg("error while getting ParameterChangeProposal in voting period")
 	}
 
 	for _, proposal := range proposals {
