@@ -24,7 +24,7 @@ type StakingModule interface {
 }
 
 type SlashingModule interface {
-	UpdateParams(height int64) error
+	UpdateParams(height int64)
 }
 
 type MintModule interface {
