@@ -7,7 +7,7 @@ import (
 )
 
 // updateParams updates the governance parameters for the given height
-func (m *Module) updateParams(height int64) error {
+func (m *Module) UpdateParams(height int64) error {
 	depositParams, err := m.source.DepositParams(height)
 	if err != nil {
 		return fmt.Errorf("error while getting gov deposit params: %s", err)

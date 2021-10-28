@@ -102,7 +102,7 @@ func (m *Module) updateModuleParams(height int64, changes []proposaltypes.ParamC
 		// Update the params for corresponding modules
 		switch change.Subspace {
 		case govtypes.ModuleName:
-			m.updateParams(height)
+			m.UpdateParams(height)
 		case slashingtypes.ModuleName:
 			m.slashingModule.UpdateParams(height)
 		case stakingtypes.ModuleName:
