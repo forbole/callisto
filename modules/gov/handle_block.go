@@ -28,7 +28,7 @@ func (m *Module) HandleBlock(
 	return nil
 }
 
-// updateParamChangeProposals updates the params if a ParamChangeProposal passed
+// handleParamChangeProposals updates the params if a ParamChangeProposal passed
 func (m *Module) handleParamChangeProposals(height int64) error {
 	// Get the parameter change proposals
 	proposals, err := m.db.GetOpenParamChangeProposals()
