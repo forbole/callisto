@@ -4,10 +4,14 @@ import (
 	"fmt"
 
 	"github.com/forbole/bdjuno/v2/types"
+	"github.com/rs/zerolog/log"
 )
 
 // updateParams updates the governance parameters for the given height
 func (m *Module) UpdateParams(height int64) error {
+	log.Debug().Str("module", "gov").Int64("height", height).
+		Msg("updating params")
+
 	depositParams, err := m.source.DepositParams(height)
 	if err != nil {
 		return fmt.Errorf("error while getting gov deposit params: %s", err)
