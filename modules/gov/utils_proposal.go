@@ -102,18 +102,17 @@ func (m *Module) updateModuleParams(height int64, changes []proposaltypes.ParamC
 		// Update the params for corresponding modules
 		switch change.Subspace {
 		case govtypes.ModuleName:
-			m.UpdateParams(height)
+			return m.UpdateParams(height)
 		case slashingtypes.ModuleName:
-			m.slashingModule.UpdateParams(height)
+			return m.slashingModule.UpdateParams(height)
 		case stakingtypes.ModuleName:
-			m.stakingModule.UpdateParams(height)
+			return m.stakingModule.UpdateParams(height)
 		case minttypes.ModuleName:
-			m.mintModule.UpdateParams(height)
+			return m.mintModule.UpdateParams(height)
 		case distrtypes.ModuleName:
-			m.distrModule.UpdateParams(height)
+			return m.distrModule.UpdateParams(height)
 		}
 	}
-
 	return nil
 }
 
