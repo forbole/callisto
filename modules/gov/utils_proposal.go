@@ -92,7 +92,7 @@ func (m *Module) updateDeletedProposalStatus(id uint64) error {
 	)
 }
 
-// handleParamChangeProposal handles passed ParamChangeProposal and update params to the corresponding modules
+// handleParamChangeProposal updates params to the corresponding modules if a ParamChangeProposal has passed
 func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Proposal) error {
 	if proposal.Status.String() != types.ProposalStatusPassed {
 		// If the ParamChangeProposal did not pass, do nothing
