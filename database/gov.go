@@ -213,51 +213,6 @@ func (db *Db) GetOpenProposalsIds() ([]uint64, error) {
 	return ids, err
 }
 
-// GetOpenParamChangeProposals returns the Parameter Change Proposals in voting period, or nil if not found
-func (db *Db) GetOpenProposals() ([]types.Proposal, error) {
-	var rows []*dbtypes.ProposalRow
-	stmt := `SELECT * FROM proposal WHERE status = $1 OR status = $2`
-	err := db.Sqlx.Select(&rows, stmt, govtypes.StatusDepositPeriod.String(), govtypes.StatusVotingPeriod.String())
-	if err != nil {
-		return nil, err
-	}
-
-	if len(rows) == 0 {
-		return nil, nil
-	}
-
-	var proposals []types.Proposal
-	for _, row := range rows {
-		var contentAny codectypes.Any
-		err = db.EncodingConfig.Marshaler.UnmarshalJSON([]byte(row.Content), &contentAny)
-		if err != nil {
-			return nil, err
-		}
-
-		var content govtypes.Content
-		err = db.EncodingConfig.Marshaler.UnpackAny(&contentAny, &content)
-		if err != nil {
-			return nil, err
-		}
-
-		proposal := types.NewProposal(
-			row.ProposalID,
-			row.ProposalRoute,
-			row.ProposalType,
-			content,
-			row.Status,
-			row.SubmitTime,
-			row.DepositEndTime,
-			row.VotingStartTime,
-			row.VotingEndTime,
-			row.Proposer,
-		)
-		proposals = append(proposals, proposal)
-	}
-
-	return proposals, nil
-}
-
 // --------------------------------------------------------------------------------------------------------------------
 
 // UpdateProposal updates a proposal stored inside the database
