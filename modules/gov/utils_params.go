@@ -7,7 +7,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// updateParams updates the governance parameters for the given height
+// UpdateParams updates the governance parameters for the given height
 func (m *Module) UpdateParams(height int64) error {
 	log.Debug().Str("module", "gov").Int64("height", height).
 		Msg("updating params")
