@@ -41,6 +41,11 @@ func (m *Module) UpdateProposal(height int64, blockVals *tmctypes.ResultValidato
 		return fmt.Errorf("error while getting proposal: %s", err)
 	}
 
+	err = m.handleParamChangeProposal(height, proposal)
+	if err != nil {
+		return fmt.Errorf("error while updating params from ParamChangeProposal: %s", err)
+	}
+
 	err = m.updateProposalStatus(proposal)
 	if err != nil {
 		return fmt.Errorf("error while updating proposal status: %s", err)
@@ -69,36 +74,42 @@ func (m *Module) UpdateProposal(height int64, blockVals *tmctypes.ResultValidato
 	return nil
 }
 
-func (m *Module) UpdateParamsFromParamChangeProposal(height int64, id uint64, proposal types.ParameterChangeProposal) error {
-	// Get the proposal
-	paramChangeProposal, err := m.source.Proposal(height, id)
+// updateDeletedProposalStatus updates the proposal having the given id by setting its status
+// to the one that represents a deleted proposal
+func (m *Module) updateDeletedProposalStatus(id uint64) error {
+	stored, err := m.db.GetProposal(id)
 	if err != nil {
-		// Get the error code
-		var code string
-		_, err := fmt.Sscanf(err.Error(), ErrProposalNotFound, &code, &code, &id)
-		if err != nil {
-			return err
-		}
-		if code == codes.NotFound.String() {
-			// If a proposal is deleted from the chain, do nothing
-			return nil
-		}
-		return fmt.Errorf("error while getting proposal: %s", err)
+		return err
 	}
 
-	if paramChangeProposal.Status.String() == types.ProposalStatusPassed {
-		// If the ParamChangeProposal passed, update params to the corresponding modules
-		err = m.updateModuleParams(height, proposal.Changes)
-		if err != nil {
-			return fmt.Errorf("error while updating params: %s", err)
-		}
-	}
-
-	return nil
+	return m.db.UpdateProposal(
+		types.NewProposalUpdate(
+			stored.ProposalID,
+			types.ProposalStatusInvalid,
+			stored.VotingStartTime,
+			stored.VotingEndTime,
+		),
+	)
 }
 
-func (m *Module) updateModuleParams(height int64, changes []proposaltypes.ParamChange) error {
-	for _, change := range changes {
+// handleParamChangeProposal handles passed ParamChangeProposal and update params to the corresponding modules
+func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Proposal) error {
+	if proposal.Status.String() != types.ProposalStatusPassed {
+		// If the ParamChangeProposal did not pass, do nothing
+		return nil
+	}
+
+	var content govtypes.Content
+	err := m.db.EncodingConfig.Marshaler.UnpackAny(proposal.Content, &content)
+	if err != nil {
+		return err
+	}
+
+	paramChangeProposal, ok := content.(*proposaltypes.ParameterChangeProposal)
+	if !ok {
+		return nil
+	}
+	for _, change := range paramChangeProposal.Changes {
 		// Update the params for corresponding modules
 		switch change.Subspace {
 		case govtypes.ModuleName:
@@ -129,24 +140,6 @@ func (m *Module) updateModuleParams(height int64, changes []proposaltypes.ParamC
 		}
 	}
 	return nil
-}
-
-// updateDeletedProposalStatus updates the proposal having the given id by setting its status
-// to the one that represents a deleted proposal
-func (m *Module) updateDeletedProposalStatus(id uint64) error {
-	stored, err := m.db.GetProposal(id)
-	if err != nil {
-		return err
-	}
-
-	return m.db.UpdateProposal(
-		types.NewProposalUpdate(
-			stored.ProposalID,
-			types.ProposalStatusInvalid,
-			stored.VotingStartTime,
-			stored.VotingEndTime,
-		),
-	)
 }
 
 // updateProposalStatus updates the given proposal status

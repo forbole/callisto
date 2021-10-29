@@ -6,7 +6,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 )
 
 const (
@@ -149,38 +148,6 @@ func NewProposalUpdate(
 		VotingStartTime: votingStartTime,
 		VotingEndTime:   votingEndTime,
 	}
-}
-
-// ParameterChangeProposal represents a single governance ParameterChangeProposal
-type ParameterChangeProposal struct {
-	ProposalID  uint64
-	Title       string
-	Description string
-	Changes     []proposaltypes.ParamChange
-}
-
-// NewParameterChangeProposal allows to build a new ParameterChangeProposal instance
-func NewParameterChangeProposal(proposalID uint64, title string, description string, changes []proposaltypes.ParamChange) ParameterChangeProposal {
-	return ParameterChangeProposal{
-		ProposalID:  proposalID,
-		Title:       title,
-		Description: description,
-		Changes:     changes,
-	}
-}
-
-//Equal tells whether a and b contain the same data
-func (a ParameterChangeProposal) Equal(b ParameterChangeProposal) bool {
-	for index, paramChangeA := range a.Changes {
-		paramChangeB := b.Changes[index]
-		if !paramChangeA.Equal(paramChangeB) {
-			return false
-		}
-	}
-
-	return a.ProposalID == b.ProposalID &&
-		a.Title == b.Title &&
-		a.Description == b.Description
 }
 
 // -------------------------------------------------------------------------------------------------------------------

@@ -6,7 +6,6 @@ import (
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 
 	"github.com/gogo/protobuf/proto"
 
@@ -215,9 +214,10 @@ func (db *Db) GetOpenProposalsIds() ([]uint64, error) {
 }
 
 // GetOpenParamChangeProposals returns the Parameter Change Proposals in voting period, or nil if not found
-func (db *Db) GetOpenParamChangeProposals() ([]types.ParameterChangeProposal, error) {
+func (db *Db) GetOpenProposals() ([]types.Proposal, error) {
 	var rows []*dbtypes.ProposalRow
-	err := db.Sqlx.Select(&rows, `SELECT * FROM proposal WHERE status = $1`, govtypes.StatusVotingPeriod.String())
+	stmt := `SELECT * FROM proposal WHERE status = $1 OR status = $2`
+	err := db.Sqlx.Select(&rows, stmt, govtypes.StatusDepositPeriod.String(), govtypes.StatusVotingPeriod.String())
 	if err != nil {
 		return nil, err
 	}
@@ -226,7 +226,7 @@ func (db *Db) GetOpenParamChangeProposals() ([]types.ParameterChangeProposal, er
 		return nil, nil
 	}
 
-	var paramChangeProposals []types.ParameterChangeProposal
+	var proposals []types.Proposal
 	for _, row := range rows {
 		var contentAny codectypes.Any
 		err = db.EncodingConfig.Marshaler.UnmarshalJSON([]byte(row.Content), &contentAny)
@@ -240,18 +240,22 @@ func (db *Db) GetOpenParamChangeProposals() ([]types.ParameterChangeProposal, er
 			return nil, err
 		}
 
-		if proposal, ok := content.(*proposaltypes.ParameterChangeProposal); ok {
-			paramChangeProposal := types.NewParameterChangeProposal(
-				row.ProposalID,
-				proposal.Title,
-				proposal.Description,
-				proposal.Changes,
-			)
-			paramChangeProposals = append(paramChangeProposals, paramChangeProposal)
-		}
+		proposal := types.NewProposal(
+			row.ProposalID,
+			row.ProposalRoute,
+			row.ProposalType,
+			content,
+			row.Status,
+			row.SubmitTime,
+			row.DepositEndTime,
+			row.VotingStartTime,
+			row.VotingEndTime,
+			row.Proposer,
+		)
+		proposals = append(proposals, proposal)
 	}
 
-	return paramChangeProposals, nil
+	return proposals, nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------

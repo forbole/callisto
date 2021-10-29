@@ -14,35 +14,11 @@ import (
 func (m *Module) HandleBlock(
 	b *tmctypes.ResultBlock, _ *tmctypes.ResultBlockResults, _ []*juno.Tx, vals *tmctypes.ResultValidators,
 ) error {
-	err := m.handleParamChangeProposals(b.Block.Height)
-	if err != nil {
-		log.Error().Str("module", "gov").Int64("height", b.Block.Height).
-			Err(err).Msg("error while updating params from ParameterChangeProposals")
-	}
-
-	err = m.updateProposals(b.Block.Height, vals)
+	err := m.updateProposals(b.Block.Height, vals)
 	if err != nil {
 		log.Error().Str("module", "gov").Int64("height", b.Block.Height).
 			Err(err).Msg("error while updating proposals")
 	}
-	return nil
-}
-
-// handleParamChangeProposals updates the params if a ParamChangeProposal passed
-func (m *Module) handleParamChangeProposals(height int64) error {
-	// Get the parameter change proposals
-	proposals, err := m.db.GetOpenParamChangeProposals()
-	if err != nil {
-		log.Error().Err(err).Str("module", "gov").Msg("error while getting ParameterChangeProposal in voting period")
-	}
-
-	for _, proposal := range proposals {
-		err = m.UpdateParamsFromParamChangeProposal(height, proposal.ProposalID, proposal)
-		if err != nil {
-			return fmt.Errorf("error while updating parameter change proposal: %s", err)
-		}
-	}
-
 	return nil
 }
 
