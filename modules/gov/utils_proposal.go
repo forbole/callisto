@@ -95,7 +95,7 @@ func (m *Module) updateDeletedProposalStatus(id uint64) error {
 // handleParamChangeProposal updates params to the corresponding modules if a ParamChangeProposal has passed
 func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Proposal) error {
 	if proposal.Status.String() != types.ProposalStatusPassed {
-		// If the ParamChangeProposal did not pass, do nothing
+		// If the status of ParamChangeProposal is not passed, do nothing
 		return nil
 	}
 
@@ -113,30 +113,19 @@ func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Propo
 		// Update the params for corresponding modules
 		switch change.Subspace {
 		case govtypes.ModuleName:
-			err := m.UpdateParams(height)
-			if err != nil {
-				return err
-			}
+			err = m.UpdateParams(height)
 		case slashingtypes.ModuleName:
-			err := m.slashingModule.UpdateParams(height)
-			if err != nil {
-				return err
-			}
+			err = m.slashingModule.UpdateParams(height)
 		case stakingtypes.ModuleName:
-			err := m.stakingModule.UpdateParams(height)
-			if err != nil {
-				return err
-			}
+			err = m.stakingModule.UpdateParams(height)
 		case minttypes.ModuleName:
-			err := m.mintModule.UpdateParams(height)
-			if err != nil {
-				return err
-			}
+			err = m.mintModule.UpdateParams(height)
 		case distrtypes.ModuleName:
-			err := m.distrModule.UpdateParams(height)
-			if err != nil {
-				return err
-			}
+			err = m.distrModule.UpdateParams(height)
+		}
+
+		if err != nil {
+			return err
 		}
 	}
 	return nil
