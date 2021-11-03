@@ -13,6 +13,7 @@ import (
 	"github.com/forbole/bdjuno/v2/modules"
 	"github.com/forbole/bdjuno/v2/types/config"
 
+	agoricapp "github.com/MonikaCat/ag0/v6/app"
 	gaiaapp "github.com/cosmos/gaia/v6/app"
 )
 
@@ -49,6 +50,7 @@ func main() {
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
 		gaiaapp.ModuleBasics,
+		agoricapp.ModuleBasics,
 	}
 }
 
