@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	abci "github.com/tendermint/tendermint/abci/types"
+
 	"github.com/forbole/bdjuno/v2/types"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -17,7 +19,7 @@ import (
 
 // HandleBlock implements BlockModule
 func (m *Module) HandleBlock(
-	block *tmctypes.ResultBlock, _ *tmctypes.ResultBlockResults, _ []*juno.Tx, vals *tmctypes.ResultValidators,
+	block *tmctypes.ResultBlock, res *tmctypes.ResultBlockResults, _ []*juno.Tx, vals *tmctypes.ResultValidators,
 ) error {
 	// Update the validators
 	validators, err := m.updateValidators(block.Block.Height)
@@ -41,7 +43,7 @@ func (m *Module) HandleBlock(
 	go m.updateStakingPool(block.Block.Height)
 
 	// Update redelegations and unbonding delegations
-	go m.updateElapsedDelegations(block.Block.Height, block.Block.Time)
+	go m.updateElapsedDelegations(block.Block.Height, block.Block.Time, res.EndBlockEvents)
 
 	return nil
 }
@@ -167,42 +169,37 @@ func (m *Module) updateStakingPool(height int64) {
 }
 
 // updateElapsedDelegations updates the redelegations and unbonding delegations that have elapsed
-func (m *Module) updateElapsedDelegations(height int64, blockTime time.Time) {
+func (m *Module) updateElapsedDelegations(height int64, blockTime time.Time, events []abci.Event) {
 	log.Debug().Str("module", "staking").Int64("height", height).
 		Msg("updating elapsed redelegations and unbonding delegations")
 
-	deletedRedelegations, err := m.db.DeleteCompletedRedelegations(blockTime)
+	// Get past delegators to be refreshed now
+	delegators, err := m.db.DeleteDelegatorsToRefresh(height)
 	if err != nil {
 		log.Error().Str("module", "staking").Err(err).Int64("height", height).
-			Msg("error while deleting completed redelegations")
+			Msg("error while getting delegators to refresh")
 		return
 	}
 
-	deletedUnbondingDelegations, err := m.db.DeleteCompletedUnbondingDelegations(blockTime)
-	if err != nil {
-		log.Error().Str("module", "staking").Err(err).Int64("height", height).
-			Msg("error while deleting completed unbonding delegations")
-		return
-	}
-
-	var delegators = map[string]bool{}
-
-	// Add all the delegators from the redelegations
-	for _, redelegation := range deletedRedelegations {
-		if _, ok := delegators[redelegation.DelegatorAddress]; !ok {
-			delegators[redelegation.DelegatorAddress] = true
+	// Delete the completed entries if there is someone to refresh it for
+	if len(delegators) > 0 {
+		err = m.db.DeleteCompletedRedelegations(blockTime)
+		if err != nil {
+			log.Error().Str("module", "staking").Err(err).Int64("height", height).
+				Msg("error while deleting completed redelegations")
+			return
 		}
-	}
 
-	// Add all the delegators from unbonding delegations
-	for _, delegation := range deletedUnbondingDelegations {
-		if _, ok := delegators[delegation.DelegatorAddress]; !ok {
-			delegators[delegation.DelegatorAddress] = true
+		err = m.db.DeleteCompletedUnbondingDelegations(blockTime)
+		if err != nil {
+			log.Error().Str("module", "staking").Err(err).Int64("height", height).
+				Msg("error while deleting completed unbonding delegations")
+			return
 		}
 	}
 
 	// Update the delegations and balances of all the delegators
-	for delegator := range delegators {
+	for _, delegator := range delegators {
 		err = m.refreshDelegatorDelegations(height, delegator)
 		if err != nil {
 			log.Error().Str("module", "staking").Err(err).Int64("height", height).
@@ -224,5 +221,30 @@ func (m *Module) updateElapsedDelegations(height int64, blockTime time.Time) {
 			return
 		}
 
+	}
+
+	// Get all the events that identify a completed unbonding delegation or redelegations
+	var completedEvents []abci.Event
+	completedEvents = append(completedEvents, juno.FindEventsByType(events, stakingtypes.EventTypeCompleteUnbonding)...)
+	completedEvents = append(completedEvents, juno.FindEventsByType(events, stakingtypes.EventTypeCompleteRedelegation)...)
+
+	// Get the address of all the delegators to be refreshed
+	var delegatorsToRefresh []string
+	for _, event := range completedEvents {
+		attr, err := juno.FindAttributeByKey(event, stakingtypes.AttributeKeyDelegator)
+		if err != nil {
+			log.Error().Str("module", "staking").Err(err).Int64("height", height).
+				Msgf("error while getting %s attribute", stakingtypes.AttributeKeyDelegator)
+			return
+		}
+		delegatorsToRefresh = append(delegatorsToRefresh, string(attr.Value))
+	}
+
+	// Store the delegators to refresh at the next height
+	err = m.db.SaveDelegatorsToRefresh(height, delegatorsToRefresh)
+	if err != nil {
+		log.Error().Str("module", "staking").Err(err).Int64("height", height).
+			Msg("error while saving delegators to refresh")
+		return
 	}
 }
