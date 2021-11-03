@@ -297,40 +297,12 @@ WHERE delegator_address = $1
 	return nil
 }
 
-// DeleteCompletedRedelegations deletes all the redelegations that have completed
-// on or before the given timestamp
-func (db *Db) DeleteCompletedRedelegations(timestamp time.Time) ([]types.Redelegation, error) {
-	stmt := `DELETE FROM redelegation WHERE completion_time < $1 RETURNING *`
-
-	var rows []dbtypes.RedelegationRow
-	err := db.Sqlx.Select(&rows, stmt, timestamp)
-	if err != nil {
-		return nil, err
-	}
-
-	var redelegations = make([]types.Redelegation, len(rows))
-	for index, row := range rows {
-		srcAddr, err := db.GetValidatorOperatorAddress(row.SrcValidatorAddress)
-		if err != nil {
-			return nil, err
-		}
-
-		dstAddr, err := db.GetValidatorOperatorAddress(row.DstValidatorAddress)
-		if err != nil {
-			return nil, err
-		}
-
-		redelegations[index] = types.NewRedelegation(
-			row.DelegatorAddress,
-			srcAddr.String(),
-			dstAddr.String(),
-			row.Amount.ToCoin(),
-			row.CompletionTime,
-			row.Height,
-		)
-	}
-
-	return redelegations, err
+// DeleteCompletedRedelegations deletes all the redelegations
+// that have completed before the given timestamp
+func (db *Db) DeleteCompletedRedelegations(timestamp time.Time) error {
+	stmt := `DELETE FROM redelegation WHERE completion_time < $1`
+	_, err := db.Sql.Exec(stmt, timestamp)
+	return err
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -459,32 +431,50 @@ WHERE delegator_address = $1
 	return nil
 }
 
-// DeleteCompletedUnbondingDelegations deletes all the unbonding delegations that have completed
-// on or before the given timestamp
-func (db *Db) DeleteCompletedUnbondingDelegations(timestamp time.Time) ([]types.UnbondingDelegation, error) {
+// DeleteCompletedUnbondingDelegations deletes all the unbonding delegations
+// that have completed before the given timestamp
+func (db *Db) DeleteCompletedUnbondingDelegations(timestamp time.Time) error {
 	stmt := `DELETE FROM unbonding_delegation WHERE completion_timestamp < $1 RETURNING *`
+	_, err := db.Sql.Exec(stmt, timestamp)
+	return err
+}
 
-	var rows []dbtypes.UnbondingDelegationRow
-	err := db.Sqlx.Select(&rows, stmt, timestamp)
+// --------------------------------------------------------------------------------------------------------------------
+
+// SaveDelegatorsToRefresh stores the given delegators as accounts to be refreshed on the block at height + 1
+func (db *Db) SaveDelegatorsToRefresh(height int64, delegators []string) error {
+	if len(delegators) == 0 {
+		return nil
+	}
+
+	dQry := `INSERT INTO delegators_to_refresh (address, height) VALUES `
+
+	var params []interface{}
+	for i, delegator := range delegators {
+		di := i * 2
+
+		dQry += fmt.Sprintf("($%d, $%d),", di+1, di+2)
+		params = append(params, delegator, height)
+	}
+
+	dQry = dQry[:len(dQry)-1] // Remove the trailing ","
+	dQry += `
+ON CONFLICT ON CONSTRAINT unique_address
+DO UPDATE SET height = excluded.height
+WHERE delegators_to_refresh.height <= excluded.height`
+
+	_, err := db.Sql.Exec(dQry, params...)
+	return err
+}
+
+// DeleteDelegatorsToRefresh removes and returns the list of delegators whose balance
+// should be updated at the given height
+func (db *Db) DeleteDelegatorsToRefresh(height int64) ([]string, error) {
+	var delegators []string
+	stmt := `DELETE FROM delegators_to_refresh WHERE height < $1 RETURNING address`
+	err := db.Sqlx.Select(&delegators, stmt, height)
 	if err != nil {
 		return nil, err
 	}
-
-	var delegations = make([]types.UnbondingDelegation, len(rows))
-	for index, row := range rows {
-		operAddr, err := db.GetValidatorOperatorAddress(row.ConsensusAddress)
-		if err != nil {
-			return nil, err
-		}
-
-		delegations[index] = types.NewUnbondingDelegation(
-			row.DelegatorAddress,
-			operAddr.String(),
-			row.Amount.ToCoin(),
-			row.CompletionTimestamp,
-			row.Height,
-		)
-	}
-
-	return delegations, nil
+	return delegators, err
 }
