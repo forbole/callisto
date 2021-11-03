@@ -163,6 +163,20 @@ CREATE TABLE unbonding_delegation
 CREATE INDEX unbonding_delegation_validator_address_index ON unbonding_delegation (validator_address);
 CREATE INDEX unbonding_delegation_delegator_address_index ON unbonding_delegation (delegator_address);
 
+/* ---- ELAPSED DELEGATIONS --- */
+
+/*
+ * This holds the list of addresses whose balances that should be refreshed when a redelegation or unbonding delegation
+ * has completed. We store them here cause we need to refresh them one block after the delegation has completed.
+ */
+CREATE TABLE delegators_to_refresh
+(
+    address TEXT   NOT NULL REFERENCES account (address),
+    height  BIGINT NOT NULL,
+    CONSTRAINT unique_address UNIQUE (address)
+);
+
+
 /* ---- DOUBLE SIGN EVIDENCE ---- */
 
 /*

@@ -370,10 +370,8 @@ func (suite *DbTestSuite) TestDeleteCompletedRedelegations() {
 
 	// Delete the data
 	timestamp := time.Date(2021, 1, 1, 12, 00, 01, 000, time.UTC)
-	deleted, err := suite.database.DeleteCompletedRedelegations(timestamp)
+	err = suite.database.DeleteCompletedRedelegations(timestamp)
 	suite.Require().NoError(err)
-	suite.Require().Len(deleted, 1)
-	suite.Require().True(reDelegations[0].Equal(deleted[0]))
 
 	var count int
 	err = suite.database.Sql.QueryRow(`SELECT COUNT(*) FRom redelegation`).Scan(&count)
@@ -567,8 +565,6 @@ func (suite *DbTestSuite) TestDeleteCompletedUnbondingDelegations() {
 
 	// Delete the data
 	timestamp := time.Date(2021, 1, 1, 12, 00, 01, 000, time.UTC)
-	deleted, err := suite.database.DeleteCompletedUnbondingDelegations(timestamp)
+	err = suite.database.DeleteCompletedUnbondingDelegations(timestamp)
 	suite.Require().NoError(err)
-	suite.Require().Len(deleted, 1)
-	suite.Require().True(unbondingDelegations[0].Equal(deleted[0]))
 }
