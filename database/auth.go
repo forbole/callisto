@@ -6,10 +6,11 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting/exported"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
-	dbtypes "github.com/forbole/bdjuno/v2/database/types"
-	dbutils "github.com/forbole/bdjuno/v2/database/utils"
 	"github.com/gogo/protobuf/proto"
 	"github.com/lib/pq"
+
+	dbtypes "github.com/forbole/bdjuno/v2/database/types"
+	dbutils "github.com/forbole/bdjuno/v2/database/utils"
 
 	"github.com/forbole/bdjuno/v2/types"
 )
@@ -115,7 +116,15 @@ func (db *Db) storeVestingAccount(account exported.VestingAccount) (int, error) 
 
 // storeVestingPeriods handles storing the vesting periods of PeriodicVestingAccount type
 func (db *Db) storeVestingPeriods(id int, vestingPeriods []vestingtypes.Period) error {
-	stmt := `
+	// Delete already existing periods
+	stmt := `DELETE FROM vesting_period WHERE vesting_account_id = $1`
+	_, err := db.Sql.Exec(stmt, id)
+	if err != nil {
+		return fmt.Errorf("error while deleting vesting period: %s", err)
+	}
+
+	// Store the new periods
+	stmt = `
 INSERT INTO vesting_period (vesting_account_id, period_order, length, amount) 
 VALUES `
 
@@ -130,7 +139,7 @@ VALUES `
 	}
 	stmt = stmt[:len(stmt)-1]
 
-	_, err := db.Sql.Exec(stmt, params...)
+	_, err = db.Sql.Exec(stmt, params...)
 	if err != nil {
 		return fmt.Errorf("error while saving vesting periods: %s", err)
 	}
