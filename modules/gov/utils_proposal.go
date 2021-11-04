@@ -112,20 +112,31 @@ func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Propo
 	for _, change := range paramChangeProposal.Changes {
 		// Update the params for corresponding modules
 		switch change.Subspace {
-		case govtypes.ModuleName:
-			err = m.UpdateParams(height)
-		case slashingtypes.ModuleName:
-			err = m.slashingModule.UpdateParams(height)
-		case stakingtypes.ModuleName:
-			err = m.stakingModule.UpdateParams(height)
-		case minttypes.ModuleName:
-			err = m.mintModule.UpdateParams(height)
 		case distrtypes.ModuleName:
 			err = m.distrModule.UpdateParams(height)
-		}
-
-		if err != nil {
-			return fmt.Errorf("error while updating ParamChangeProposal params : %s", err)
+			if err != nil {
+				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", distrtypes.ModuleName, err)
+			}
+		case govtypes.ModuleName:
+			err = m.UpdateParams(height)
+			if err != nil {
+				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", govtypes.ModuleName, err)
+			}
+		case minttypes.ModuleName:
+			err = m.mintModule.UpdateParams(height)
+			if err != nil {
+				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", minttypes.ModuleName, err)
+			}
+		case slashingtypes.ModuleName:
+			err = m.slashingModule.UpdateParams(height)
+			if err != nil {
+				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", slashingtypes.ModuleName, err)
+			}
+		case stakingtypes.ModuleName:
+			err = m.stakingModule.UpdateParams(height)
+			if err != nil {
+				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", stakingtypes.ModuleName, err)
+			}
 		}
 	}
 	return nil
