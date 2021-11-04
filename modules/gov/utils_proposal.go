@@ -102,7 +102,7 @@ func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Propo
 	var content govtypes.Content
 	err := m.db.EncodingConfig.Marshaler.UnpackAny(proposal.Content, &content)
 	if err != nil {
-		return err
+		return fmt.Errorf("error while handling ParamChangeProposal: %s", err)
 	}
 
 	paramChangeProposal, ok := content.(*proposaltypes.ParameterChangeProposal)
@@ -125,7 +125,7 @@ func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Propo
 		}
 
 		if err != nil {
-			return err
+			return fmt.Errorf("error while updating ParamChangeProposal params : %s", err)
 		}
 	}
 	return nil

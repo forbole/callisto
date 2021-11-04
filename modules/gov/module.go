@@ -24,10 +24,10 @@ type Module struct {
 	source         govsource.Source
 	authModule     AuthModule
 	bankModule     BankModule
-	stakingModule  StakingModule
 	distrModule    DistrModule
 	mintModule     MintModule
 	slashingModule SlashingModule
+	stakingModule  StakingModule
 }
 
 // NewModule returns a new Module instance
