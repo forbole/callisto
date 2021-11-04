@@ -25,9 +25,9 @@ type Module struct {
 	authModule     AuthModule
 	bankModule     BankModule
 	stakingModule  StakingModule
-	slashingModule SlashingModule
-	mintModule     MintModule
 	distrModule    DistrModule
+	mintModule     MintModule
+	slashingModule SlashingModule
 }
 
 // NewModule returns a new Module instance
@@ -36,22 +36,22 @@ func NewModule(
 	source govsource.Source,
 	authModule AuthModule,
 	bankModule BankModule,
-	stakingModule StakingModule,
-	slashingModule SlashingModule,
-	mintModule MintModule,
 	distrModule DistrModule,
+	mintModule MintModule,
+	slashingModule SlashingModule,
+	stakingModule StakingModule,
 	db *database.Db,
 ) *Module {
 	return &Module{
 		cdc:            cdc,
-		db:             db,
 		source:         source,
 		authModule:     authModule,
 		bankModule:     bankModule,
-		stakingModule:  stakingModule,
-		slashingModule: slashingModule,
-		mintModule:     mintModule,
 		distrModule:    distrModule,
+		mintModule:     mintModule,
+		slashingModule: slashingModule,
+		stakingModule:  stakingModule,
+		db:             db,
 	}
 }
 
