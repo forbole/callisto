@@ -25,7 +25,7 @@ func NewParseGenesisCmd(parseCfg *parse.Config) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			registeredModules, err := GetGenesisModules(parseCfg)
 			if err != nil {
-				return fmt.Errorf("error while getting parsing context: %s", err)
+				return fmt.Errorf("error while getting genesis registered modules: %s", err)
 			}
 
 			genesisFile, err := ioutil.ReadFile(config.GetGenesisFilePath())
