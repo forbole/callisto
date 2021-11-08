@@ -8,6 +8,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/bdjuno/v2/types"
+	"github.com/lib/pq"
 
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
@@ -223,6 +224,20 @@ ON CONFLICT DO NOTHING`
 	_, err := db.Sqlx.Exec(stmt, block.Block.Height, strings.ToUpper(hex.EncodeToString(block.Block.Hash())), len(block.Block.Txs), totalGasUsed, proposerAddress, block.Block.Time)
 	if err != nil {
 		return fmt.Errorf("error while storing block %v for proposer %s, error:  %s", block.Block.Height, proposerAddress, err)
+	}
+
+	return nil
+}
+
+func (db *Db) UpdateTxInDatabase(txHash string, height int64, success bool, messages []string, memo string, signatures []string, signersInfo []byte, fee string, gasWanted int64, gasUsed int64, rawLog string, logs []byte) error {
+	stmt := `
+INSERT INTO transaction(hash, height, success, messages, memo, signatures, signer_infos, fee, gas_wanted, gas_used, raw_log, logs)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) 
+ON CONFLICT DO NOTHING`
+
+	_, err := db.Sqlx.Exec(stmt, txHash, height, success, nil, memo, pq.StringArray(signatures), signersInfo, fee, gasWanted, gasUsed, rawLog, logs)
+	if err != nil {
+		return fmt.Errorf("error while storing tx, error:  %s", err)
 	}
 
 	return nil
