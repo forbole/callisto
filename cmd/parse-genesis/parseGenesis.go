@@ -23,11 +23,6 @@ func NewParseGenesisCmd(parseCfg *parse.Config) *cobra.Command {
 		Short:   "Parse the genesis file",
 		PreRunE: parse.ReadConfig(parseCfg),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			registeredModules, err := GetRegisteredModules(parseCfg)
-			if err != nil {
-				return fmt.Errorf("error while getting genesis registered modules: %s", err)
-			}
-
 			genesisFile, err := ioutil.ReadFile(config.GetGenesisFilePath())
 			if err != nil {
 				return fmt.Errorf("error while reading genesis file: %s", err)
@@ -39,6 +34,11 @@ func NewParseGenesisCmd(parseCfg *parse.Config) *cobra.Command {
 			err = json.Unmarshal(genesisDoc.AppState, &genesisState)
 			if err != nil {
 				return fmt.Errorf("error while unmarshalling genesis state: %s", err)
+			}
+
+			registeredModules, err := GetRegisteredModules(parseCfg)
+			if err != nil {
+				return fmt.Errorf("error while getting genesis registered modules: %s", err)
 			}
 
 			for _, module := range registeredModules {
