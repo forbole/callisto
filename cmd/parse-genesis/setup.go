@@ -10,9 +10,8 @@ import (
 	"github.com/forbole/juno/v2/types/config"
 )
 
-// GetParsingContext setups all the things that should be later passed to StartParsing in order
-// to parse the chain data properly.
-func GetGenesisModules(parseConfig *parsecmd.Config) ([]modules.Module, error) {
+// GetGenesisModules returns the registered modules
+func GetRegisteredModules(parseConfig *parsecmd.Config) ([]modules.Module, error) {
 	// Get the global config
 	cfg := config.Cfg
 

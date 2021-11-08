@@ -23,7 +23,7 @@ func NewParseGenesisCmd(parseCfg *parse.Config) *cobra.Command {
 		Short:   "Parse the genesis file",
 		PreRunE: parse.ReadConfig(parseCfg),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			registeredModules, err := GetGenesisModules(parseCfg)
+			registeredModules, err := GetRegisteredModules(parseCfg)
 			if err != nil {
 				return fmt.Errorf("error while getting genesis registered modules: %s", err)
 			}
