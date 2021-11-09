@@ -116,16 +116,12 @@ func refreshTxs(parseCtx *parse.Context, consensusModule *consensus.Module, bloc
 			stakingModule := staking.NewModule(sources.StakingSource, bankModule, distrModule, historyModule, parseCtx.EncodingConfig.Marshaler, db)
 
 			msg := msg
-			mssg, err := json.Marshal(&msg)
+			message, err := json.Marshal(&msg)
 			if err != nil {
 				return fmt.Errorf("error while marshaling messages: %s", err)
 			}
 
-			var message []string
-
-			message = append(message, string(mssg))
-
-			fee, err := json.Marshal(&txDetails.AuthInfo.Fee)
+			fee, err := json.Marshal(txDetails.AuthInfo.GetFee())
 			if err != nil {
 				return fmt.Errorf("error while marshaling fees: %s", err)
 			}
@@ -145,10 +141,9 @@ func refreshTxs(parseCtx *parse.Context, consensusModule *consensus.Module, bloc
 				signatures = append(signatures, string(eachSignature))
 			}
 
-			signer := txDetails.GetSigners()
-			signers, err := json.Marshal(&signer)
+			signers, err := json.Marshal(txDetails.GetSigners())
 			if err != nil {
-				return fmt.Errorf("error while marshaling signers: %s  ERR: %s", signer, err)
+				return fmt.Errorf("error while marshaling signers: %s  ERR: %s", signers, err)
 			}
 
 			switch msg.(type) {
@@ -161,9 +156,9 @@ func refreshTxs(parseCtx *parse.Context, consensusModule *consensus.Module, bloc
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgSend Handle Message: %s", err)
 				}
-				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, string(fee), txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
+				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
 				if err != nil {
-					return fmt.Errorf("error when updatig MsgSend \ntx: %v , txDetails: %v \ntxdetails gin: %v \nmsg: %s  : %s", tx, txDetails, message, message, err)
+					return fmt.Errorf("error when updatig MsgSend \ntx: %v \nmsg: %s  \nerror: %s", tx, message, err)
 				}
 			case *banktypes.MsgMultiSend:
 				blockErr := bankModule.HandleBlock(block, blockResults, nil, nil)
@@ -174,7 +169,7 @@ func refreshTxs(parseCtx *parse.Context, consensusModule *consensus.Module, bloc
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgMultiSend Handle Message: %s", err)
 				}
-				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, string(fee), txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
+				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
 				if err != nil {
 					return fmt.Errorf("error when updatig MsgMultiSend: %s", err)
 				}
@@ -187,7 +182,7 @@ func refreshTxs(parseCtx *parse.Context, consensusModule *consensus.Module, bloc
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgDeposit Handle Message: %s", err)
 				}
-				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, string(fee), txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
+				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
 				if err != nil {
 					return fmt.Errorf("error when updatig MsgDeposit: %s", err)
 				}
@@ -200,7 +195,7 @@ func refreshTxs(parseCtx *parse.Context, consensusModule *consensus.Module, bloc
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgVote Handle Message: %s", err)
 				}
-				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, string(fee), txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
+				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
 				if err != nil {
 					return fmt.Errorf("error when updatig MsgVote: %s", err)
 				}
@@ -213,7 +208,7 @@ func refreshTxs(parseCtx *parse.Context, consensusModule *consensus.Module, bloc
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgSubmitProposal Handle Message: %s", err)
 				}
-				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, string(fee), txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
+				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
 				if err != nil {
 					return fmt.Errorf("error when updatig MsgSubmitProposal: %s", err)
 				}
@@ -226,7 +221,7 @@ func refreshTxs(parseCtx *parse.Context, consensusModule *consensus.Module, bloc
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgCreateValidator Handle Message: %s", err)
 				}
-				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, string(fee), txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
+				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
 				if err != nil {
 					return fmt.Errorf("error when updatig MsgCreateValidator tx %s", err)
 				}
@@ -235,7 +230,7 @@ func refreshTxs(parseCtx *parse.Context, consensusModule *consensus.Module, bloc
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgBeginRedelegate Handle Message: %s", err)
 				}
-				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, string(fee), txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
+				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
 				if err != nil {
 					return fmt.Errorf("error when updatig MsgBeginRedelegate tx %s", err)
 				}
@@ -244,7 +239,7 @@ func refreshTxs(parseCtx *parse.Context, consensusModule *consensus.Module, bloc
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgDelegate Handle Message: %s", err)
 				}
-				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, string(fee), txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
+				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
 				if err != nil {
 					return fmt.Errorf("error when updatig MsgDelegate tx %s", err)
 				}
@@ -253,7 +248,7 @@ func refreshTxs(parseCtx *parse.Context, consensusModule *consensus.Module, bloc
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgEditValidator Handle Message: %s", err)
 				}
-				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, string(fee), txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
+				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
 				if err != nil {
 					return fmt.Errorf("error when updatig MsgEditValidator tx %s", err)
 				}
@@ -262,7 +257,7 @@ func refreshTxs(parseCtx *parse.Context, consensusModule *consensus.Module, bloc
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgUndelegate Handle Message: %s", err)
 				}
-				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, string(fee), txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
+				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
 				if err != nil {
 					return fmt.Errorf("error when updatig MsgUndelegate tx %s", err)
 				}

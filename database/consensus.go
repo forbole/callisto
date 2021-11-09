@@ -229,13 +229,13 @@ ON CONFLICT DO NOTHING`
 	return nil
 }
 
-func (db *Db) UpdateTxInDatabase(txHash string, height int64, success bool, messages []string, memo string, signatures []string, signersInfo []byte, fee string, gasWanted int64, gasUsed int64, rawLog string, logs []byte) error {
+func (db *Db) UpdateTxInDatabase(txHash string, height int64, success bool, messages []byte, memo string, signatures []string, signersInfo []byte, fee []byte, gasWanted int64, gasUsed int64, rawLog string, logs []byte) error {
 	stmt := `
 INSERT INTO transaction(hash, height, success, messages, memo, signatures, signer_infos, fee, gas_wanted, gas_used, raw_log, logs)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) 
 ON CONFLICT DO NOTHING`
 
-	_, err := db.Sqlx.Exec(stmt, txHash, height, success, nil, memo, pq.StringArray(signatures), signersInfo, fee, gasWanted, gasUsed, rawLog, logs)
+	_, err := db.Sqlx.Exec(stmt, txHash, height, success, messages, memo, pq.StringArray(signatures), signersInfo, fee, gasWanted, gasUsed, rawLog, logs)
 	if err != nil {
 		return fmt.Errorf("error while storing tx, error:  %s", err)
 	}

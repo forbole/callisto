@@ -10,7 +10,7 @@ func (m *Module) UpdateBlock(block *tmctypes.ResultBlock, blockResults *tmctypes
 }
 
 // UpdateTxs updates txs in database
-func (m *Module) UpdateTxs(txHash string, height int64, success bool, messages []string, memo string, signatures []string, signersInfo []byte, fee string, gasWanted int64, gasUsed int64, rawLog string, logs []byte) error {
+func (m *Module) UpdateTxs(txHash string, height int64, success bool, messages []byte, memo string, signatures []string, signersInfo []byte, fee []byte, gasWanted int64, gasUsed int64, rawLog string, logs []byte) error {
 	return m.db.UpdateTxInDatabase(txHash, height, success, messages, memo, signatures, signersInfo, fee, gasWanted, gasUsed, rawLog, logs)
 }
 
