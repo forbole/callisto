@@ -6,11 +6,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/forbole/juno/v2/cmd/parse"
-	"github.com/forbole/juno/v2/types/config"
-	"github.com/spf13/cobra"
-
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -23,7 +20,10 @@ import (
 	"github.com/forbole/bdjuno/v2/modules/history"
 	"github.com/forbole/bdjuno/v2/modules/staking"
 	"github.com/forbole/bdjuno/v2/utils"
+	"github.com/forbole/juno/v2/cmd/parse"
 	junomessages "github.com/forbole/juno/v2/modules/messages"
+	"github.com/forbole/juno/v2/types/config"
+	"github.com/spf13/cobra"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
 
@@ -55,13 +55,14 @@ func blocksCmd(parseConfig *parse.Config) *cobra.Command {
 				return fmt.Errorf("error while getting chain latest block height: %s", err)
 			}
 
-			var k int64 = consensusModule.GetStartingHeight()
+			var k int64 = 11190
+			// consensusModule.GetStartingHeight()
 			fmt.Printf("Starting height is %v ... \n", k)
 			for ; k <= height; k++ {
 				missingBlock := consensusModule.IsBlockMissing(k)
 				if missingBlock {
 					fmt.Printf("Refetching block %v ... \n", k)
-					err = refreshBlock(parseCtx, k, consensusModule, sources, db)
+					err = refreshBlock(parseCtx, sources, k, consensusModule, db)
 					if err != nil {
 						return err
 					}
@@ -73,7 +74,7 @@ func blocksCmd(parseConfig *parse.Config) *cobra.Command {
 	}
 }
 
-func refreshBlock(parseCtx *parse.Context, blockHeight int64, consensusModule *consensus.Module, sources *modules.Sources, db *database.Db) error {
+func refreshBlock(parseCtx *parse.Context, sources *modules.Sources, blockHeight int64, consensusModule *consensus.Module, db *database.Db) error {
 	// Get the block details
 	block, blockResults, err := utils.QueryBlock(parseCtx.Node, blockHeight)
 	if err != nil {
@@ -85,7 +86,7 @@ func refreshBlock(parseCtx *parse.Context, blockHeight int64, consensusModule *c
 	if len(block.Block.Txs) != 0 {
 		for _, tx := range block.Block.Txs {
 			fmt.Printf("Refetching tx %v ... \n", strings.ToUpper(hex.EncodeToString(tx.Hash())))
-			err = refreshTxs(parseCtx, consensusModule, block, blockResults, sources, db)
+			err = refreshTxs(parseCtx, sources, consensusModule, block, blockResults, db)
 			if err != nil {
 				return fmt.Errorf("error when updatig tx %s", err)
 			}
@@ -98,7 +99,7 @@ func refreshBlock(parseCtx *parse.Context, blockHeight int64, consensusModule *c
 	return nil
 }
 
-func refreshTxs(parseCtx *parse.Context, consensusModule *consensus.Module, block *tmctypes.ResultBlock, blockResults *tmctypes.ResultBlockResults, sources *modules.Sources, db *database.Db) error {
+func refreshTxs(parseCtx *parse.Context, sources *modules.Sources, consensusModule *consensus.Module, block *tmctypes.ResultBlock, blockResults *tmctypes.ResultBlockResults, db *database.Db) error {
 
 	for _, tx := range block.Block.Txs {
 		// Get the tx details
@@ -116,20 +117,29 @@ func refreshTxs(parseCtx *parse.Context, consensusModule *consensus.Module, bloc
 			historyModule := history.NewModule(config.Cfg.Chain, junomessages.BankMessagesParser, parseCtx.EncodingConfig.Marshaler, db)
 			stakingModule := staking.NewModule(sources.StakingSource, bankModule, distrModule, historyModule, parseCtx.EncodingConfig.Marshaler, db)
 
-			msg := msg
-			message, err := json.Marshal(&msg)
+			singleMessage, err := json.Marshal(msg)
 			if err != nil {
-				return fmt.Errorf("error while marshaling messages: %s", err)
+				return fmt.Errorf("error while marshaling messages %s: %s", singleMessage, err)
 			}
-
+			message, err := json.Marshal(&txDetails.Body.Messages[index].Value)
+			if err != nil {
+				return fmt.Errorf("error while marshaling messages2: %s err %s", message, err)
+			}
+			typeUrl, err := json.Marshal(txDetails.Body.Messages[index].TypeUrl)
+			if err != nil {
+				return fmt.Errorf("error while marshaling messages2: %s err %s", typeUrl, err)
+			}
 			fee, err := json.Marshal(txDetails.AuthInfo.GetFee())
 			if err != nil {
 				return fmt.Errorf("error while marshaling fees: %s", err)
 			}
-
 			logs, err := json.Marshal(&txDetails.Logs)
 			if err != nil {
 				return fmt.Errorf("error while marshaling logs: %s", err)
+			}
+			signers, err := json.Marshal(txDetails.GetSigners())
+			if err != nil {
+				return fmt.Errorf("error while marshaling signers: %s  ERR: %s", signers, err)
 			}
 
 			var signatures []string
@@ -140,11 +150,6 @@ func refreshTxs(parseCtx *parse.Context, consensusModule *consensus.Module, bloc
 					return fmt.Errorf("error while marshaling signatures: %s", err)
 				}
 				signatures = append(signatures, string(eachSignature))
-			}
-
-			signers, err := json.Marshal(txDetails.GetSigners())
-			if err != nil {
-				return fmt.Errorf("error while marshaling signers: %s  ERR: %s", signers, err)
 			}
 
 			switch msg.(type) {
@@ -243,14 +248,42 @@ func refreshTxs(parseCtx *parse.Context, consensusModule *consensus.Module, bloc
 				if err != nil {
 					return fmt.Errorf("error when updatig MsgUndelegate tx %s", err)
 				}
-				// case *distrtypes.MsgFundCommunityPool:
-			// 	fmt.Printf("%v Module name is %s", index, cosmosMsg)
-			// case *distrtypes.MsgSetWithdrawAddress:
-			// 	fmt.Printf("%v Module name is %s", index, cosmosMsg)
-			// case *distrtypes.MsgWithdrawDelegatorReward:
-			// 	fmt.Printf("%v Module name is %s", index, cosmosMsg)
-			// case *distrtypes.MsgWithdrawValidatorCommission:
-			// 	fmt.Printf("%v Module name is %s", index, cosmosMsg)
+			case *distrtypes.MsgFundCommunityPool:
+				messageErr := distrModule.HandleMsg(index, msg, txDetails)
+				if messageErr != nil {
+					return fmt.Errorf("error when updatig MsgFundCommunityPool Handle Message: %s", err)
+				}
+				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
+				if err != nil {
+					return fmt.Errorf("error when updatig MsgFundCommunityPool tx %s", err)
+				}
+			case *distrtypes.MsgSetWithdrawAddress:
+				messageErr := distrModule.HandleMsg(index, msg, txDetails)
+				if messageErr != nil {
+					return fmt.Errorf("error when updatig MsgSetWithdrawAddress Handle Message: %s", err)
+				}
+				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
+				if err != nil {
+					return fmt.Errorf("error when updatig MsgSetWithdrawAddress tx %s", err)
+				}
+			case *distrtypes.MsgWithdrawDelegatorReward:
+				messageErr := distrModule.HandleMsg(index, msg, txDetails)
+				if messageErr != nil {
+					return fmt.Errorf("error when updatig MsgWithdrawDelegatorReward Handle Message: %s", err)
+				}
+				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
+				if err != nil {
+					return fmt.Errorf("error when updatig MsgWithdrawDelegatorReward tx %s", err)
+				}
+			case *distrtypes.MsgWithdrawValidatorCommission:
+				messageErr := distrModule.HandleMsg(index, msg, txDetails)
+				if messageErr != nil {
+					return fmt.Errorf("error when updatig MsgWithdrawValidatorCommission Handle Message: %s", err)
+				}
+				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
+				if err != nil {
+					return fmt.Errorf("error when updatig MsgWithdrawValidatorCommission tx %s", err)
+				}
 			default:
 				return nil
 
