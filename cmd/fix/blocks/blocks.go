@@ -12,6 +12,7 @@ import (
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/bdjuno/v2/database"
 	"github.com/forbole/bdjuno/v2/modules"
@@ -148,10 +149,6 @@ func refreshTxs(parseCtx *parse.Context, consensusModule *consensus.Module, bloc
 
 			switch msg.(type) {
 			case *banktypes.MsgSend:
-				blockErr := bankModule.HandleBlock(block, blockResults, nil, nil)
-				if blockErr != nil {
-					return fmt.Errorf("error when updatig MsgSend Handle Block: %s", err)
-				}
 				messageErr := bankModule.HandleMsg(index, msg, txDetails)
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgSend Handle Message: %s", err)
@@ -161,10 +158,6 @@ func refreshTxs(parseCtx *parse.Context, consensusModule *consensus.Module, bloc
 					return fmt.Errorf("error when updatig MsgSend \ntx: %v \nmsg: %s  \nerror: %s", tx, message, err)
 				}
 			case *banktypes.MsgMultiSend:
-				blockErr := bankModule.HandleBlock(block, blockResults, nil, nil)
-				if blockErr != nil {
-					return fmt.Errorf("error when updatig MsgMultiSend Handle Block: %s", err)
-				}
 				messageErr := bankModule.HandleMsg(index, msg, txDetails)
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgMultiSend Handle Message: %s", err)
@@ -174,10 +167,6 @@ func refreshTxs(parseCtx *parse.Context, consensusModule *consensus.Module, bloc
 					return fmt.Errorf("error when updatig MsgMultiSend: %s", err)
 				}
 			case *govtypes.MsgDeposit:
-				blockErr := govModule.HandleBlock(block, blockResults, nil, nil)
-				if blockErr != nil {
-					return fmt.Errorf("error when updatig MsgDeposit Handle Block: %s", err)
-				}
 				messageErr := govModule.HandleMsg(index, msg, txDetails)
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgDeposit Handle Message: %s", err)
@@ -187,10 +176,6 @@ func refreshTxs(parseCtx *parse.Context, consensusModule *consensus.Module, bloc
 					return fmt.Errorf("error when updatig MsgDeposit: %s", err)
 				}
 			case *govtypes.MsgVote:
-				blockErr := govModule.HandleBlock(block, blockResults, nil, nil)
-				if blockErr != nil {
-					return fmt.Errorf("error when updatig MsgVote Handle Block: %s", err)
-				}
 				messageErr := govModule.HandleMsg(index, msg, txDetails)
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgVote Handle Message: %s", err)
@@ -200,10 +185,6 @@ func refreshTxs(parseCtx *parse.Context, consensusModule *consensus.Module, bloc
 					return fmt.Errorf("error when updatig MsgVote: %s", err)
 				}
 			case *govtypes.MsgSubmitProposal:
-				blockErr := govModule.HandleBlock(block, blockResults, nil, nil)
-				if blockErr != nil {
-					return fmt.Errorf("error when updatig MsgSubmitProposal Handle Block: %s", err)
-				}
 				messageErr := govModule.HandleMsg(index, msg, txDetails)
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgSubmitProposal Handle Message: %s", err)
@@ -212,10 +193,11 @@ func refreshTxs(parseCtx *parse.Context, consensusModule *consensus.Module, bloc
 				if err != nil {
 					return fmt.Errorf("error when updatig MsgSubmitProposal: %s", err)
 				}
-
-			// case *slashingtypes.MsgUnjail:
-			// 	slashingModule := slashing.NewModule(sources.SlashingSource, nil, nil)
-			// 	err = slashingModule.HandleMsg(index, msg, txDetails)
+			case *slashingtypes.MsgUnjail:
+				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
+				if err != nil {
+					return fmt.Errorf("error when updatig MsgUnjail: %s", err)
+				}
 			case *stakingtypes.MsgCreateValidator:
 				messageErr := stakingModule.HandleMsg(index, msg, txDetails)
 				if messageErr != nil {
