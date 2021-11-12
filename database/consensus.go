@@ -2,6 +2,7 @@ package database
 
 import (
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -11,6 +12,7 @@ import (
 	"github.com/lib/pq"
 
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
+	junotypes "github.com/forbole/juno/v2/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
 
@@ -229,13 +231,55 @@ ON CONFLICT DO NOTHING`
 	return nil
 }
 
-func (db *Db) UpdateTxInDatabase(txHash string, height int64, success bool, messages []byte, memo string, signatures []string, signersInfo []byte, fee []byte, gasWanted int64, gasUsed int64, rawLog string, logs []byte) error {
+func (db *Db) UpdateTxInDatabase(i int, tx *junotypes.Tx) error {
 	stmt := `
 INSERT INTO transaction(hash, height, success, messages, memo, signatures, signer_infos, fee, gas_wanted, gas_used, raw_log, logs)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) 
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 ON CONFLICT DO NOTHING`
 
-	_, err := db.Sqlx.Exec(stmt, txHash, height, success, messages, memo, pq.StringArray(signatures), signersInfo, fee, gasWanted, gasUsed, rawLog, logs)
+	message, err := json.Marshal(tx.GetMsgs())
+	if err != nil {
+		return fmt.Errorf("error while marshaling messages2: %s err %s", message, err)
+	}
+	typeURL, err := json.Marshal(tx.Body.Messages[i].TypeUrl)
+	if err != nil {
+		return fmt.Errorf("error while marshaling messages2: %s err %s", typeURL, err)
+	}
+	fee, err := json.Marshal(tx.AuthInfo.GetFee())
+	if err != nil {
+		return fmt.Errorf("error while marshaling fees: %s", err)
+	}
+	logs, err := json.Marshal(&tx.Logs)
+	if err != nil {
+		return fmt.Errorf("error while marshaling logs: %s", err)
+	}
+	signers, err := json.Marshal(tx.GetSigners())
+	if err != nil {
+		return fmt.Errorf("error while marshaling signers: %s  ERR: %s", signers, err)
+	}
+	var signatures []string
+	for _, signature := range tx.Signatures {
+		signature := signature
+		eachSignature, err := json.Marshal(&signature)
+		if err != nil {
+			return fmt.Errorf("error while marshaling signatures: %s", err)
+		}
+		signatures = append(signatures, string(eachSignature))
+	}
+
+	_, err = db.Sqlx.Exec(stmt,
+		tx.TxHash,
+		tx.Height,
+		tx.Successful(),
+		message,
+		tx.GetBody().Memo,
+		pq.StringArray(signatures),
+		signers,
+		fee,
+		tx.GasWanted,
+		tx.GasUsed,
+		tx.RawLog,
+		logs)
 	if err != nil {
 		return fmt.Errorf("error while storing tx, error:  %s", err)
 	}
