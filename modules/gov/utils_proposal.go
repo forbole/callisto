@@ -111,10 +111,10 @@ func (m *Module) updateProposalTallyResult(proposal govtypes.Proposal) error {
 	return m.db.SaveTallyResults([]types.TallyResult{
 		types.NewTallyResult(
 			proposal.ProposalId,
-			result.Yes.Int64(),
-			result.Abstain.Int64(),
-			result.No.Int64(),
-			result.NoWithVeto.Int64(),
+			result.Yes.String(),
+			result.Abstain.String(),
+			result.No.String(),
+			result.NoWithVeto.String(),
 			height,
 		),
 	})
