@@ -254,11 +254,10 @@ ON CONFLICT DO NOTHING`
 		return fmt.Errorf("error while marshaling logs: %s", err)
 	}
 
-	signer, err := codec.ProtoMarshalJSON(tx.AuthInfo.SignerInfos[0], nil)
+	signers, err := codec.ProtoMarshalJSON(tx.AuthInfo.SignerInfos[0], nil)
 	if err != nil {
 		return fmt.Errorf("error while marshaling signers: %s", err)
 	}
-	signers := []byte(signer)
 
 	var signatures []string
 	for _, signature := range tx.Signatures {
@@ -295,7 +294,7 @@ ON CONFLICT DO NOTHING`
 	return nil
 }
 
-func (db *Db) UpdateMsgsInDatabase(tx *junotypes.Tx, txHash string, i int, typeUrl string, message []byte) error {
+func (db *Db) UpdateMsgsInDatabase(tx *junotypes.Tx, txHash string, i int, typeURL string, message []byte) error {
 	stmt := `
 	INSERT INTO message(transaction_hash, index, type, value, involved_accounts_addresses)
 	VALUES ($1, $2, $3, $4, $5)
@@ -317,10 +316,7 @@ func (db *Db) UpdateMsgsInDatabase(tx *junotypes.Tx, txHash string, i int, typeU
 	attributeKeys = utils.RemoveDuplicateValues(attributeKeys)
 
 	for _, eventType := range eventTypes {
-		event, err := tx.FindEventByType(i, eventType)
-		if err != nil {
-			return fmt.Errorf("error while searching for message event type: %s", err)
-		}
+		event, _ := tx.FindEventByType(i, eventType)
 		for _, key := range attributeKeys {
 			address, _ := tx.FindAttributeByKey(event, key)
 			if len(address) >= 40 {
@@ -333,7 +329,7 @@ func (db *Db) UpdateMsgsInDatabase(tx *junotypes.Tx, txHash string, i int, typeU
 	_, err := db.Sqlx.Exec(stmt,
 		txHash,
 		i,
-		typeUrl,
+		typeURL,
 		message,
 		pq.StringArray(involvedAccounts))
 	if err != nil {
