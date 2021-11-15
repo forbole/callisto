@@ -27,9 +27,6 @@ func (m *Module) HandleBlock(
 		return fmt.Errorf("error while updating validators: %s", err)
 	}
 
-	// Get the params
-	go m.updateParams(block.Block.Height)
-
 	// Update the voting powers
 	go m.updateValidatorVotingPower(block.Block.Height, vals)
 
@@ -46,28 +43,6 @@ func (m *Module) HandleBlock(
 	go m.updateElapsedDelegations(block.Block.Height, block.Block.Time, res.EndBlockEvents)
 
 	return nil
-}
-
-// updateParams gets the updated params and stores them inside the database
-func (m *Module) updateParams(height int64) {
-	log.Debug().Str("module", "staking").Int64("height", height).
-		Msg("updating params")
-
-	params, err := m.source.GetParams(height)
-	if err != nil {
-		log.Error().Str("module", "staking").Err(err).
-			Int64("height", height).
-			Msg("error while getting params")
-		return
-	}
-
-	err = m.db.SaveStakingParams(types.NewStakingParams(params, height))
-	if err != nil {
-		log.Error().Str("module", "staking").Err(err).
-			Int64("height", height).
-			Msg("error while saving params")
-		return
-	}
 }
 
 // updateValidatorsStatus updates all validators' statuses
