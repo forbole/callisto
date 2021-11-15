@@ -22,6 +22,9 @@ func NewParseGenesisCmd(parseCfg *parse.Config) *cobra.Command {
 		Use:     "parse-genesis",
 		Short:   "Parse the genesis file",
 		PreRunE: parse.ReadConfig(parseCfg),
+		PostRun: func(cmd *cobra.Command, args []string) {
+			fmt.Println("\nGenesis file has been parsed")
+		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			genesisFile, err := ioutil.ReadFile(config.GetGenesisFilePath())
 			if err != nil {
