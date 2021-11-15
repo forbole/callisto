@@ -20,6 +20,7 @@ import (
 	"github.com/forbole/bdjuno/v2/utils"
 	"github.com/forbole/juno/v2/cmd/parse"
 	junomessages "github.com/forbole/juno/v2/modules/messages"
+	juno "github.com/forbole/juno/v2/types"
 	"github.com/forbole/juno/v2/types/config"
 	"github.com/spf13/cobra"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
@@ -106,6 +107,7 @@ func refreshTxs(parseCtx *parse.Context, sources *modules.Sources, consensusModu
 	stakingModule := staking.NewModule(sources.StakingSource, bankModule, distrModule, historyModule, parseCtx.EncodingConfig.Marshaler, db)
 
 	for _, tx := range block.Block.Txs {
+		var txDetails *juno.Tx
 		// Get the tx details
 		txDetails, err := parseCtx.Node.Tx(hex.EncodeToString(tx.Hash()))
 		if err != nil {

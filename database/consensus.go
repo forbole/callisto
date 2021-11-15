@@ -233,6 +233,7 @@ ON CONFLICT DO NOTHING`
 	return nil
 }
 
+// UpdateTxInDatabase updates transactions for a given block in database
 func (db *Db) UpdateTxInDatabase(i int, tx *junotypes.Tx) error {
 	stmt := `
 INSERT INTO transaction(hash, height, success, messages, memo, signatures, signer_infos, fee, gas_wanted, gas_used, raw_log, logs)
@@ -294,6 +295,7 @@ ON CONFLICT DO NOTHING`
 	return nil
 }
 
+// UpdateMsgsInDatabase updates messages for a given block in database
 func (db *Db) UpdateMsgsInDatabase(tx *junotypes.Tx, txHash string, i int, typeURL string, message []byte) error {
 	stmt := `
 	INSERT INTO message(transaction_hash, index, type, value, involved_accounts_addresses)
@@ -319,6 +321,7 @@ func (db *Db) UpdateMsgsInDatabase(tx *junotypes.Tx, txHash string, i int, typeU
 		event, _ := tx.FindEventByType(i, eventType)
 		for _, key := range attributeKeys {
 			address, _ := tx.FindAttributeByKey(event, key)
+			// process only addresses
 			if len(address) >= 40 {
 				involvedAccounts = append(involvedAccounts, address)
 			}
