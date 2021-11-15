@@ -3,6 +3,9 @@ package gov
 import (
 	"fmt"
 
+	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
+	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
@@ -36,6 +39,11 @@ func (m *Module) UpdateProposal(height int64, blockVals *tmctypes.ResultValidato
 		}
 
 		return fmt.Errorf("error while getting proposal: %s", err)
+	}
+
+	err = m.handleParamChangeProposal(height, proposal)
+	if err != nil {
+		return fmt.Errorf("error while updating params from ParamChangeProposal: %s", err)
 	}
 
 	err = m.updateProposalStatus(proposal)
@@ -82,6 +90,56 @@ func (m *Module) updateDeletedProposalStatus(id uint64) error {
 			stored.VotingEndTime,
 		),
 	)
+}
+
+// handleParamChangeProposal updates params to the corresponding modules if a ParamChangeProposal has passed
+func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Proposal) error {
+	if proposal.Status.String() != types.ProposalStatusPassed {
+		// If the status of ParamChangeProposal is not passed, do nothing
+		return nil
+	}
+
+	var content govtypes.Content
+	err := m.db.EncodingConfig.Marshaler.UnpackAny(proposal.Content, &content)
+	if err != nil {
+		return fmt.Errorf("error while handling ParamChangeProposal: %s", err)
+	}
+
+	paramChangeProposal, ok := content.(*proposaltypes.ParameterChangeProposal)
+	if !ok {
+		return nil
+	}
+	for _, change := range paramChangeProposal.Changes {
+		// Update the params for corresponding modules
+		switch change.Subspace {
+		case distrtypes.ModuleName:
+			err = m.distrModule.UpdateParams(height)
+			if err != nil {
+				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", distrtypes.ModuleName, err)
+			}
+		case govtypes.ModuleName:
+			err = m.UpdateParams(height)
+			if err != nil {
+				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", govtypes.ModuleName, err)
+			}
+		case minttypes.ModuleName:
+			err = m.mintModule.UpdateParams(height)
+			if err != nil {
+				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", minttypes.ModuleName, err)
+			}
+		case slashingtypes.ModuleName:
+			err = m.slashingModule.UpdateParams(height)
+			if err != nil {
+				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", slashingtypes.ModuleName, err)
+			}
+		case stakingtypes.ModuleName:
+			err = m.stakingModule.UpdateParams(height)
+			if err != nil {
+				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", stakingtypes.ModuleName, err)
+			}
+		}
+	}
+	return nil
 }
 
 // updateProposalStatus updates the given proposal status
