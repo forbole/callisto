@@ -95,12 +95,12 @@ func (m *Module) parseGenesisTransactions(doc *tmtypes.GenesisDoc, appState map[
 
 		for _, msg := range genTx.GetMsgs() {
 			// Handle the message properly
-			msgCreateValidator, ok := msg.(*stakingtypes.MsgCreateValidator)
+			createValMsg, ok := msg.(*stakingtypes.MsgCreateValidator)
 			if !ok {
 				continue
 			}
 
-			err = m.StoreValidatorsFromMsgCreateValidator(doc.InitialHeight, msgCreateValidator)
+			err = m.StoreValidatorsFromMsgCreateValidator(doc.InitialHeight, createValMsg)
 			if err != nil {
 				return fmt.Errorf("error while storing validators from MsgCreateValidator: %s", err)
 			}
