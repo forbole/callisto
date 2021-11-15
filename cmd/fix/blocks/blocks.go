@@ -101,7 +101,7 @@ func refreshTxs(parseCtx *parse.Context, sources *modules.Sources, consensusModu
 
 	// Register modules
 	bankModule := bank.NewModule(junomessages.BankMessagesParser, sources.BankSource, parseCtx.EncodingConfig.Marshaler, db)
-	govModule := gov.NewModule(parseCtx.EncodingConfig.Marshaler, sources.GovSource, nil, nil, nil, db)
+	govModule := gov.NewModule(parseCtx.EncodingConfig.Marshaler, sources.GovSource, nil, nil, nil, nil, nil, nil, db)
 	distrModule := distribution.NewModule(config.Cfg, sources.DistrSource, bankModule, db)
 	historyModule := history.NewModule(config.Cfg.Chain, junomessages.BankMessagesParser, parseCtx.EncodingConfig.Marshaler, db)
 	stakingModule := staking.NewModule(sources.StakingSource, bankModule, distrModule, historyModule, parseCtx.EncodingConfig.Marshaler, db)
