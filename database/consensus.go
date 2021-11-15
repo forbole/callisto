@@ -2,15 +2,19 @@ package database
 
 import (
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/bdjuno/v2/types"
 	"github.com/lib/pq"
 
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
+	"github.com/forbole/bdjuno/v2/utils"
+	junotypes "github.com/forbole/juno/v2/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
 
@@ -229,15 +233,110 @@ ON CONFLICT DO NOTHING`
 	return nil
 }
 
-func (db *Db) UpdateTxInDatabase(txHash string, height int64, success bool, messages []byte, memo string, signatures []string, signersInfo []byte, fee []byte, gasWanted int64, gasUsed int64, rawLog string, logs []byte) error {
+// UpdateTxInDatabase updates transactions for a given block in database
+func (db *Db) UpdateTxInDatabase(i int, tx *junotypes.Tx) error {
 	stmt := `
 INSERT INTO transaction(hash, height, success, messages, memo, signatures, signer_infos, fee, gas_wanted, gas_used, raw_log, logs)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) 
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 ON CONFLICT DO NOTHING`
 
-	_, err := db.Sqlx.Exec(stmt, txHash, height, success, messages, memo, pq.StringArray(signatures), signersInfo, fee, gasWanted, gasUsed, rawLog, logs)
+	message, err := codec.ProtoMarshalJSON(tx.Body.Messages[i], nil)
+	if err != nil {
+		return fmt.Errorf("error while marshaling message: %s", err)
+	}
+
+	fee, err := codec.ProtoMarshalJSON(tx.AuthInfo.Fee, nil)
+	if err != nil {
+		return fmt.Errorf("error while marshaling fees: %s", err)
+	}
+
+	logs, err := json.Marshal(&tx.Logs)
+	if err != nil {
+		return fmt.Errorf("error while marshaling logs: %s", err)
+	}
+
+	signers, err := codec.ProtoMarshalJSON(tx.AuthInfo.SignerInfos[0], nil)
+	if err != nil {
+		return fmt.Errorf("error while marshaling signers: %s", err)
+	}
+
+	var signatures []string
+	for _, signature := range tx.Signatures {
+		signature := signature
+		eachSignature, err := json.Marshal(&signature)
+		if err != nil {
+			return fmt.Errorf("error while marshaling signatures: %s", err)
+		}
+		signatures = append(signatures, string(eachSignature))
+	}
+
+	_, err = db.Sqlx.Exec(stmt,
+		tx.TxHash,
+		tx.Height,
+		tx.Successful(),
+		message,
+		tx.GetBody().Memo,
+		pq.StringArray(signatures),
+		signers,
+		fee,
+		tx.GasWanted,
+		tx.GasUsed,
+		tx.RawLog,
+		logs)
 	if err != nil {
 		return fmt.Errorf("error while storing tx, error:  %s", err)
+	}
+
+	err = db.UpdateMsgsInDatabase(tx, tx.TxHash, i, tx.Body.Messages[i].TypeUrl, message)
+	if err != nil {
+		return fmt.Errorf("error while updating tx message in database: %s", err)
+	}
+
+	return nil
+}
+
+// UpdateMsgsInDatabase updates messages for a given block in database
+func (db *Db) UpdateMsgsInDatabase(tx *junotypes.Tx, txHash string, i int, typeURL string, message []byte) error {
+	stmt := `
+	INSERT INTO message(transaction_hash, index, type, value, involved_accounts_addresses)
+	VALUES ($1, $2, $3, $4, $5)
+	ON CONFLICT DO NOTHING`
+	var eventTypes []string
+	var involvedAccounts []string
+	var attributeKeys []string
+
+	for _, event := range tx.Logs {
+		for _, eventType := range event.Events {
+			eventTypess := eventType.Type
+			eventTypes = append(eventTypes, eventTypess)
+			attributes := eventType.Attributes
+			for _, attribute := range attributes {
+				attributeKeys = append(attributeKeys, attribute.Key)
+			}
+		}
+	}
+	attributeKeys = utils.RemoveDuplicateValues(attributeKeys)
+
+	for _, eventType := range eventTypes {
+		event, _ := tx.FindEventByType(i, eventType)
+		for _, key := range attributeKeys {
+			address, _ := tx.FindAttributeByKey(event, key)
+			// process only addresses
+			if len(address) >= 40 {
+				involvedAccounts = append(involvedAccounts, address)
+			}
+		}
+		involvedAccounts = utils.RemoveDuplicateValues(involvedAccounts)
+	}
+
+	_, err := db.Sqlx.Exec(stmt,
+		txHash,
+		i,
+		typeURL,
+		message,
+		pq.StringArray(involvedAccounts))
+	if err != nil {
+		return fmt.Errorf("error while storing message in database, error:  %s", err)
 	}
 
 	return nil

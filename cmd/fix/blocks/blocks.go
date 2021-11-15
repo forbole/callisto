@@ -2,14 +2,12 @@ package blocks
 
 import (
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
 	"strings"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/bdjuno/v2/database"
 	"github.com/forbole/bdjuno/v2/modules"
@@ -22,6 +20,7 @@ import (
 	"github.com/forbole/bdjuno/v2/utils"
 	"github.com/forbole/juno/v2/cmd/parse"
 	junomessages "github.com/forbole/juno/v2/modules/messages"
+	juno "github.com/forbole/juno/v2/types"
 	"github.com/forbole/juno/v2/types/config"
 	"github.com/spf13/cobra"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
@@ -55,8 +54,7 @@ func blocksCmd(parseConfig *parse.Config) *cobra.Command {
 				return fmt.Errorf("error while getting chain latest block height: %s", err)
 			}
 
-			var k int64 = 11190
-			// consensusModule.GetStartingHeight()
+			k := consensusModule.GetStartingHeight()
 			fmt.Printf("Starting height is %v ... \n", k)
 			for ; k <= height; k++ {
 				missingBlock := consensusModule.IsBlockMissing(k)
@@ -86,7 +84,7 @@ func refreshBlock(parseCtx *parse.Context, sources *modules.Sources, blockHeight
 	if len(block.Block.Txs) != 0 {
 		for _, tx := range block.Block.Txs {
 			fmt.Printf("Refetching tx %v ... \n", strings.ToUpper(hex.EncodeToString(tx.Hash())))
-			err = refreshTxs(parseCtx, sources, consensusModule, block, blockResults, db)
+			err = refreshTxs(parseCtx, sources, consensusModule, block, db)
 			if err != nil {
 				return fmt.Errorf("error when updatig tx %s", err)
 			}
@@ -99,194 +97,108 @@ func refreshBlock(parseCtx *parse.Context, sources *modules.Sources, blockHeight
 	return nil
 }
 
-func refreshTxs(parseCtx *parse.Context, sources *modules.Sources, consensusModule *consensus.Module, block *tmctypes.ResultBlock, blockResults *tmctypes.ResultBlockResults, db *database.Db) error {
+func refreshTxs(parseCtx *parse.Context, sources *modules.Sources, consensusModule *consensus.Module, block *tmctypes.ResultBlock, db *database.Db) error {
+
+	// Register modules
+	bankModule := bank.NewModule(junomessages.BankMessagesParser, sources.BankSource, parseCtx.EncodingConfig.Marshaler, db)
+	govModule := gov.NewModule(parseCtx.EncodingConfig.Marshaler, sources.GovSource, nil, nil, nil, db)
+	distrModule := distribution.NewModule(config.Cfg, sources.DistrSource, bankModule, db)
+	historyModule := history.NewModule(config.Cfg.Chain, junomessages.BankMessagesParser, parseCtx.EncodingConfig.Marshaler, db)
+	stakingModule := staking.NewModule(sources.StakingSource, bankModule, distrModule, historyModule, parseCtx.EncodingConfig.Marshaler, db)
 
 	for _, tx := range block.Block.Txs {
+		var txDetails *juno.Tx
 		// Get the tx details
 		txDetails, err := parseCtx.Node.Tx(hex.EncodeToString(tx.Hash()))
 		if err != nil {
-			return err
+			return fmt.Errorf("error while encoding tx to string %s", err)
 		}
 
 		// Handle messages
 		for index, msg := range txDetails.GetMsgs() {
-			// Register modules
-			bankModule := bank.NewModule(junomessages.BankMessagesParser, sources.BankSource, parseCtx.EncodingConfig.Marshaler, db)
-			govModule := gov.NewModule(parseCtx.EncodingConfig.Marshaler, sources.GovSource, nil, nil, nil, db)
-			distrModule := distribution.NewModule(config.Cfg, sources.DistrSource, bankModule, db)
-			historyModule := history.NewModule(config.Cfg.Chain, junomessages.BankMessagesParser, parseCtx.EncodingConfig.Marshaler, db)
-			stakingModule := staking.NewModule(sources.StakingSource, bankModule, distrModule, historyModule, parseCtx.EncodingConfig.Marshaler, db)
-
-			singleMessage, err := json.Marshal(msg)
-			if err != nil {
-				return fmt.Errorf("error while marshaling messages %s: %s", singleMessage, err)
-			}
-			message, err := json.Marshal(&txDetails.Body.Messages[index].Value)
-			if err != nil {
-				return fmt.Errorf("error while marshaling messages2: %s err %s", message, err)
-			}
-			typeUrl, err := json.Marshal(txDetails.Body.Messages[index].TypeUrl)
-			if err != nil {
-				return fmt.Errorf("error while marshaling messages2: %s err %s", typeUrl, err)
-			}
-			fee, err := json.Marshal(txDetails.AuthInfo.GetFee())
-			if err != nil {
-				return fmt.Errorf("error while marshaling fees: %s", err)
-			}
-			logs, err := json.Marshal(&txDetails.Logs)
-			if err != nil {
-				return fmt.Errorf("error while marshaling logs: %s", err)
-			}
-			signers, err := json.Marshal(txDetails.GetSigners())
-			if err != nil {
-				return fmt.Errorf("error while marshaling signers: %s  ERR: %s", signers, err)
-			}
-
-			var signatures []string
-			for _, signature := range txDetails.Signatures {
-				signature := signature
-				eachSignature, err := json.Marshal(&signature)
-				if err != nil {
-					return fmt.Errorf("error while marshaling signatures: %s", err)
-				}
-				signatures = append(signatures, string(eachSignature))
-			}
-
 			switch msg.(type) {
 			case *banktypes.MsgSend:
 				messageErr := bankModule.HandleMsg(index, msg, txDetails)
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgSend Handle Message: %s", err)
 				}
-				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
-				if err != nil {
-					return fmt.Errorf("error when updatig MsgSend \ntx: %v \nmsg: %s  \nerror: %s", tx, message, err)
-				}
 			case *banktypes.MsgMultiSend:
 				messageErr := bankModule.HandleMsg(index, msg, txDetails)
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgMultiSend Handle Message: %s", err)
-				}
-				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
-				if err != nil {
-					return fmt.Errorf("error when updatig MsgMultiSend: %s", err)
 				}
 			case *govtypes.MsgDeposit:
 				messageErr := govModule.HandleMsg(index, msg, txDetails)
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgDeposit Handle Message: %s", err)
 				}
-				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
-				if err != nil {
-					return fmt.Errorf("error when updatig MsgDeposit: %s", err)
-				}
 			case *govtypes.MsgVote:
 				messageErr := govModule.HandleMsg(index, msg, txDetails)
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgVote Handle Message: %s", err)
-				}
-				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
-				if err != nil {
-					return fmt.Errorf("error when updatig MsgVote: %s", err)
 				}
 			case *govtypes.MsgSubmitProposal:
 				messageErr := govModule.HandleMsg(index, msg, txDetails)
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgSubmitProposal Handle Message: %s", err)
 				}
-				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
-				if err != nil {
-					return fmt.Errorf("error when updatig MsgSubmitProposal: %s", err)
-				}
-			case *slashingtypes.MsgUnjail:
-				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
-				if err != nil {
-					return fmt.Errorf("error when updatig MsgUnjail: %s", err)
-				}
+			// case *slashingtypes.MsgUnjail:
+			// 	err = consensusModule.UpdateTxs2(index, txDetails)
+			// 	if err != nil {
+			// 		return fmt.Errorf("error when updatig MsgUnjail: %s", err)
+			// 	}
 			case *stakingtypes.MsgCreateValidator:
 				messageErr := stakingModule.HandleMsg(index, msg, txDetails)
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgCreateValidator Handle Message: %s", err)
-				}
-				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
-				if err != nil {
-					return fmt.Errorf("error when updatig MsgCreateValidator tx %s", err)
 				}
 			case *stakingtypes.MsgBeginRedelegate:
 				messageErr := stakingModule.HandleMsg(index, msg, txDetails)
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgBeginRedelegate Handle Message: %s", err)
 				}
-				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
-				if err != nil {
-					return fmt.Errorf("error when updatig MsgBeginRedelegate tx %s", err)
-				}
 			case *stakingtypes.MsgDelegate:
 				messageErr := stakingModule.HandleMsg(index, msg, txDetails)
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgDelegate Handle Message: %s", err)
-				}
-				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
-				if err != nil {
-					return fmt.Errorf("error when updatig MsgDelegate tx %s", err)
 				}
 			case *stakingtypes.MsgEditValidator:
 				messageErr := stakingModule.HandleMsg(index, msg, txDetails)
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgEditValidator Handle Message: %s", err)
 				}
-				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
-				if err != nil {
-					return fmt.Errorf("error when updatig MsgEditValidator tx %s", err)
-				}
 			case *stakingtypes.MsgUndelegate:
 				messageErr := stakingModule.HandleMsg(index, msg, txDetails)
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgUndelegate Handle Message: %s", err)
-				}
-				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
-				if err != nil {
-					return fmt.Errorf("error when updatig MsgUndelegate tx %s", err)
 				}
 			case *distrtypes.MsgFundCommunityPool:
 				messageErr := distrModule.HandleMsg(index, msg, txDetails)
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgFundCommunityPool Handle Message: %s", err)
 				}
-				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
-				if err != nil {
-					return fmt.Errorf("error when updatig MsgFundCommunityPool tx %s", err)
-				}
 			case *distrtypes.MsgSetWithdrawAddress:
 				messageErr := distrModule.HandleMsg(index, msg, txDetails)
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgSetWithdrawAddress Handle Message: %s", err)
-				}
-				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
-				if err != nil {
-					return fmt.Errorf("error when updatig MsgSetWithdrawAddress tx %s", err)
 				}
 			case *distrtypes.MsgWithdrawDelegatorReward:
 				messageErr := distrModule.HandleMsg(index, msg, txDetails)
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgWithdrawDelegatorReward Handle Message: %s", err)
 				}
-				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
-				if err != nil {
-					return fmt.Errorf("error when updatig MsgWithdrawDelegatorReward tx %s", err)
-				}
 			case *distrtypes.MsgWithdrawValidatorCommission:
 				messageErr := distrModule.HandleMsg(index, msg, txDetails)
 				if messageErr != nil {
 					return fmt.Errorf("error when updatig MsgWithdrawValidatorCommission Handle Message: %s", err)
 				}
-				err = consensusModule.UpdateTxs(txDetails.TxHash, txDetails.Height, txDetails.Successful(), message, txDetails.GetBody().Memo, signatures, signers, fee, txDetails.GasWanted, txDetails.GasUsed, txDetails.RawLog, logs)
-				if err != nil {
-					return fmt.Errorf("error when updatig MsgWithdrawValidatorCommission tx %s", err)
-				}
 			default:
 				return nil
+			}
 
+			err = consensusModule.UpdateTxs(index, txDetails)
+			if err != nil {
+				return fmt.Errorf("error when updatig transactions tx %s", err)
 			}
 		}
 	}

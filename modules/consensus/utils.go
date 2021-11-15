@@ -1,6 +1,7 @@
 package consensus
 
 import (
+	"github.com/forbole/juno/v2/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
 
@@ -10,8 +11,8 @@ func (m *Module) UpdateBlock(block *tmctypes.ResultBlock, blockResults *tmctypes
 }
 
 // UpdateTxs updates txs in database
-func (m *Module) UpdateTxs(txHash string, height int64, success bool, messages []byte, memo string, signatures []string, signersInfo []byte, fee []byte, gasWanted int64, gasUsed int64, rawLog string, logs []byte) error {
-	return m.db.UpdateTxInDatabase(txHash, height, success, messages, memo, signatures, signersInfo, fee, gasWanted, gasUsed, rawLog, logs)
+func (m *Module) UpdateTxs(i int, tx *types.Tx) error {
+	return m.db.UpdateTxInDatabase(i, tx)
 }
 
 // IsBlockMissing checks if block is missing in database
