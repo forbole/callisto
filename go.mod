@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/cosmos/cosmos-sdk v0.42.10
-	github.com/e-money/em-ledger v1.1.2-0.20210921132726-e8c9f576072b //emoney mod version with public inflation type
+	github.com/e-money/em-ledger v1.1.4 //emoney mod version with public inflation type
 	github.com/forbole/juno/v2 v2.0.0-20211018083707-de5b5378416e
 	github.com/go-co-op/gocron v0.8.0
 	github.com/gogo/protobuf v1.3.3
