@@ -450,9 +450,9 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTallyResults() {
 
 	// Store the data
 	err := suite.database.SaveTallyResults([]types.TallyResult{
-		types.NewTallyResult(1, 1, 1, 1, 1, 2),
-		types.NewTallyResult(2, 2, 2, 2, 2, 2),
-		types.NewTallyResult(3, 3, 3, 3, 3, 2),
+		types.NewTallyResult(1, "1", "1", "1", "1", 2),
+		types.NewTallyResult(2, "2", "2", "2", "2", 2),
+		types.NewTallyResult(3, "3", "3", "3", "3", 2),
 	})
 	suite.Require().NoError(err)
 
@@ -462,9 +462,9 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTallyResults() {
 	suite.Require().NoError(err)
 
 	expected := []dbtypes.TallyResultRow{
-		dbtypes.NewTallyResultRow(1, 1, 1, 1, 1, 2),
-		dbtypes.NewTallyResultRow(2, 2, 2, 2, 2, 2),
-		dbtypes.NewTallyResultRow(3, 3, 3, 3, 3, 2),
+		dbtypes.NewTallyResultRow(1, "1", "1", "1", "1", 2),
+		dbtypes.NewTallyResultRow(2, "2", "2", "2", "2", 2),
+		dbtypes.NewTallyResultRow(3, "3", "3", "3", "3", 2),
 	}
 	for i, r := range result {
 		suite.Require().True(r.Equals(expected[i]))
@@ -473,9 +473,9 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTallyResults() {
 	// ----------------------------------------------------------------------------------------------------------------
 	// Update the data
 	err = suite.database.SaveTallyResults([]types.TallyResult{
-		types.NewTallyResult(1, 10, 10, 10, 10, 1),
-		types.NewTallyResult(2, 20, 20, 20, 20, 2),
-		types.NewTallyResult(3, 30, 30, 30, 30, 3),
+		types.NewTallyResult(1, "10", "10", "10", "10", 1),
+		types.NewTallyResult(2, "20", "20", "20", "20", 2),
+		types.NewTallyResult(3, "30", "30", "30", "30", 3),
 	})
 	suite.Require().NoError(err)
 
@@ -485,9 +485,9 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTallyResults() {
 	suite.Require().NoError(err)
 
 	expected = []dbtypes.TallyResultRow{
-		dbtypes.NewTallyResultRow(1, 1, 1, 1, 1, 2),
-		dbtypes.NewTallyResultRow(2, 20, 20, 20, 20, 2),
-		dbtypes.NewTallyResultRow(3, 30, 30, 30, 30, 3),
+		dbtypes.NewTallyResultRow(1, "1", "1", "1", "1", 2),
+		dbtypes.NewTallyResultRow(2, "20", "20", "20", "20", 2),
+		dbtypes.NewTallyResultRow(3, "30", "30", "30", "30", 3),
 	}
 	for i, r := range result {
 		suite.Require().True(r.Equals(expected[i]))
