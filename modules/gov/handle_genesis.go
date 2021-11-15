@@ -55,10 +55,10 @@ func (m *Module) saveProposals(slice govtypes.Proposals) error {
 
 		tallyResults[index] = types.NewTallyResult(
 			proposal.ProposalId,
-			proposal.FinalTallyResult.Yes.Int64(),
-			proposal.FinalTallyResult.Abstain.Int64(),
-			proposal.FinalTallyResult.No.Int64(),
-			proposal.FinalTallyResult.NoWithVeto.Int64(),
+			proposal.FinalTallyResult.Yes.String(),
+			proposal.FinalTallyResult.Abstain.String(),
+			proposal.FinalTallyResult.No.String(),
+			proposal.FinalTallyResult.NoWithVeto.String(),
 			1,
 		)
 
