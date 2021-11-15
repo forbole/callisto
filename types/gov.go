@@ -10,6 +10,7 @@ import (
 
 const (
 	ProposalStatusInvalid = "PROPOSAL_STATUS_INVALID"
+	ProposalStatusPassed  = "PROPOSAL_STATUS_PASSED"
 )
 
 // DepositParams contains the data of the deposit parameters of the x/gov module
@@ -204,20 +205,20 @@ func NewVote(
 // TallyResult contains the data about the final results of a proposal
 type TallyResult struct {
 	ProposalID uint64
-	Yes        int64
-	Abstain    int64
-	No         int64
-	NoWithVeto int64
+	Yes        string
+	Abstain    string
+	No         string
+	NoWithVeto string
 	Height     int64
 }
 
 // NewTallyResult return a new TallyResult instance
 func NewTallyResult(
 	proposalID uint64,
-	yes int64,
-	abstain int64,
-	no int64,
-	noWithVeto int64,
+	yes string,
+	abstain string,
+	no string,
+	noWithVeto string,
 	height int64,
 ) TallyResult {
 	return TallyResult{
