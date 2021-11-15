@@ -4,20 +4,23 @@ go 1.16
 
 require (
 	github.com/bandprotocol/chain/v2 v2.3.1
-	github.com/cosmos/cosmos-sdk v0.44.2
+	github.com/cosmos/cosmos-sdk v0.44.3
 	github.com/cosmos/gaia/v6 v6.0.0-rc1
 	github.com/forbole/juno/v2 v2.0.0-20211020184842-e358a33007ff
 	github.com/go-co-op/gocron v0.8.0
+	github.com/go-sql-driver/mysql v1.5.0 // indirect
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.2.1-0.20200324155115-ee514944af4b
 	github.com/lib/pq v1.10.4
+	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/pelletier/go-toml v1.9.4
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
 	github.com/rs/zerolog v1.26.0
 	github.com/spf13/cobra v1.2.1
 	github.com/stretchr/testify v1.7.0
-	github.com/tendermint/tendermint v0.34.13
+	github.com/tendermint/tendermint v0.34.14
 	google.golang.org/grpc v1.40.0
+	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 
