@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/bdjuno/v2/types"
 	"github.com/lib/pq"
@@ -237,26 +238,27 @@ INSERT INTO transaction(hash, height, success, messages, memo, signatures, signe
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 ON CONFLICT DO NOTHING`
 
-	message, err := json.Marshal(tx.GetMsgs())
+	message, err := codec.ProtoMarshalJSON(tx.Body.Messages[i], nil)
 	if err != nil {
-		return fmt.Errorf("error while marshaling messages2: %s err %s", message, err)
+		return fmt.Errorf("error while marshaling message: %s", err)
 	}
-	typeURL, err := json.Marshal(tx.Body.Messages[i].TypeUrl)
-	if err != nil {
-		return fmt.Errorf("error while marshaling messages2: %s err %s", typeURL, err)
-	}
-	fee, err := json.Marshal(tx.AuthInfo.GetFee())
+
+	fee, err := codec.ProtoMarshalJSON(tx.AuthInfo.Fee, nil)
 	if err != nil {
 		return fmt.Errorf("error while marshaling fees: %s", err)
 	}
+
 	logs, err := json.Marshal(&tx.Logs)
 	if err != nil {
 		return fmt.Errorf("error while marshaling logs: %s", err)
 	}
-	signers, err := json.Marshal(tx.GetSigners())
+
+	signer, err := codec.ProtoMarshalJSON(tx.AuthInfo.SignerInfos[0], nil)
 	if err != nil {
-		return fmt.Errorf("error while marshaling signers: %s  ERR: %s", signers, err)
+		return fmt.Errorf("error while marshaling signers: %s", err)
 	}
+	signers := []byte(signer)
+
 	var signatures []string
 	for _, signature := range tx.Signatures {
 		signature := signature
