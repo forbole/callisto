@@ -19,13 +19,11 @@ var (
 // NewParseGenesisCmd returns the command to be run for parsing the genesis
 func NewParseGenesisCmd(parseCfg *parse.Config) *cobra.Command {
 	return &cobra.Command{
-		Use:     "parse-genesis",
+		Use:     "parse-genesis [module names]",
 		Short:   "Parse the genesis file",
 		PreRunE: parse.ReadConfig(parseCfg),
-		PostRun: func(cmd *cobra.Command, args []string) {
-			fmt.Println("\nGenesis file has been parsed")
-		},
 		RunE: func(cmd *cobra.Command, args []string) error {
+
 			genesisFile, err := ioutil.ReadFile(config.GetGenesisFilePath())
 			if err != nil {
 				return fmt.Errorf("error while reading genesis file: %s", err)
@@ -44,8 +42,15 @@ func NewParseGenesisCmd(parseCfg *parse.Config) *cobra.Command {
 				return fmt.Errorf("error while getting genesis registered modules: %s", err)
 			}
 
+			argsModules := make(map[string]bool)
+			for _, arg := range args {
+				argsModules[arg] = true
+			}
+
 			for _, module := range registeredModules {
-				if genesisModule, ok := module.(modules.GenesisModule); ok {
+				genesisModule, ok := module.(modules.GenesisModule)
+
+				if ok && argsModules[module.Name()] {
 					err = genesisModule.HandleGenesis(genesisDoc, genesisState)
 					if err != nil {
 						return fmt.Errorf("error while handling genesis of %s module: %s", module.Name(), err)
