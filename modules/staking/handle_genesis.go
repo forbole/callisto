@@ -13,14 +13,10 @@ import (
 
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-
-	"github.com/rs/zerolog/log"
 )
 
 // HandleGenesis implements GenesisModule
 func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
-	log.Debug().Str("module", "staking").Msg("parsing genesis")
-
 	// Read the genesis state
 	var genState stakingtypes.GenesisState
 	err := m.cdc.UnmarshalJSON(appState[stakingtypes.ModuleName], &genState)

@@ -9,14 +9,12 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/bdjuno/v2/types"
 )
 
 // HandleGenesis implements modules.GenesisModule
 func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
-	log.Debug().Str("module", "bank").Msg("parsing genesis")
 
 	// Unmarshal the bank state
 	var bankState banktypes.GenesisState

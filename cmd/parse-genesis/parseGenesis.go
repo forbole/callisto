@@ -24,9 +24,6 @@ func NewParseGenesisCmd(parseCfg *parse.Config) *cobra.Command {
 		Short:   "Parse the genesis file",
 		Example: "bdjuno parse-genesis auth bank consensus gov history staking",
 		PreRunE: parse.ReadConfig(parseCfg),
-		PostRun: func(cmd *cobra.Command, args []string) {
-			fmt.Println("Genesis file has been parsed")
-		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) == 0 {
 				return fmt.Errorf("no module name specified")
@@ -53,26 +50,32 @@ func NewParseGenesisCmd(parseCfg *parse.Config) *cobra.Command {
 			var invalidMods []string
 			var registeredModuleName string
 			for _, argModuleName := range args {
-				// Traverse arguments
+				// Traverse module names in the arguments
+
 				for _, module := range registeredModules {
+					// Traverse registered modules
 					registeredModuleName = module.Name()
 					genesisModule, ok := module.(modules.GenesisModule)
 
 					if ok && argModuleName == registeredModuleName {
+						// Call HandleGenesis if argument module name matches registered module name
+						fmt.Printf("Parsing genesis: %s module \n", registeredModuleName)
 						err = genesisModule.HandleGenesis(genesisDoc, genesisState)
 						if err != nil {
 							return fmt.Errorf("error while handling genesis of %s module: %s", registeredModuleName, err)
 						}
 						break
 					}
-
 				}
+
 				if argModuleName != registeredModuleName {
+					// Store invlaid module names if any
 					invalidMods = append(invalidMods, argModuleName)
 				}
 			}
 
 			if len(invalidMods) != 0 {
+				// Print out inlalid / unregistered module names
 				return fmt.Errorf("not registered or invalid module name(s): %s", strings.Join(invalidMods, ", "))
 			}
 
