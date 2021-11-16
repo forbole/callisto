@@ -14,8 +14,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/forbole/juno/v2/node/remote"
 
+	"github.com/forbole/bdjuno/v2/modules/authority"
 	"github.com/forbole/bdjuno/v2/modules/gov"
 	"github.com/forbole/bdjuno/v2/modules/history"
+	"github.com/forbole/bdjuno/v2/modules/inflation"
 	"github.com/forbole/bdjuno/v2/modules/mint"
 	"github.com/forbole/bdjuno/v2/modules/slashing"
 
@@ -117,9 +119,11 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	}
 
 	authModule := auth.NewModule(r.parser, cdc, db)
+	authorityModule := authority.NewModule(cdc, sources.AuthoritySource, db)
 	bankModule := bank.NewModule(r.parser, sources.BankSource, cdc, db)
 	distrModule := distribution.NewModule(ctx.JunoConfig, sources.DistrSource, bankModule, db)
 	historyModule := history.NewModule(ctx.JunoConfig.Chain, r.parser, cdc, db)
+	inflationModule := inflation.NewModule(cdc, sources.InflationSource, db)
 	mintModule := mint.NewModule(sources.MintSource, db)
 	stakingModule := staking.NewModule(sources.StakingSource, bankModule, distrModule, historyModule, cdc, db)
 	slashingModule := slashing.NewModule(sources.SlashingSource, stakingModule, db)
@@ -130,11 +134,13 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		pruning.NewModule(ctx.JunoConfig, db, ctx.Logger),
 
 		authModule,
+		authorityModule,
 		bankModule,
 		consensus.NewModule(db),
 		distrModule,
 		gov.NewModule(cdc, sources.GovSource, authModule, bankModule, distrModule, mintModule, slashingModule, stakingModule, db),
 		historyModule,
+		inflationModule,
 		modules.NewModule(ctx.JunoConfig.Chain, db),
 		pricefeed.NewModule(ctx.JunoConfig, historyModule, cdc, db),
 		slashing.NewModule(sources.SlashingSource, stakingModule, db),
@@ -174,9 +180,13 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		return nil, err
 	}
 
-	app := emoneyapp.NewApp(
+	emoneyApp := emoneyapp.NewApp(
 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
 		cfg.Home, 0, emoneyapp.MakeEncodingConfig(), simapp.EmptyAppOptions{},
+	)
+	app := simapp.NewSimApp(
+		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
+		cfg.Home, 0, simapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
 	)
 
 	return &Sources{
@@ -187,8 +197,8 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
 		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
 
-		AuthoritySource: localauthoritysource.NewSource(source, authoritytypes.QueryServer(app.AuthorityKeeper)),
-		InflationSource: localinflationsource.NewSource(source, inflationtypes.QueryServer(app.InflationKeeper)),
+		AuthoritySource: localauthoritysource.NewSource(source, authoritytypes.QueryServer(emoneyApp.AuthorityKeeper)),
+		InflationSource: localinflationsource.NewSource(source, inflationtypes.QueryServer(emoneyApp.InflationKeeper)),
 	}, nil
 }
 
