@@ -3,8 +3,8 @@ module github.com/forbole/bdjuno/v2
 go 1.16
 
 require (
-	github.com/cosmos/cosmos-sdk v0.42.9
-	github.com/e-money/em-ledger v1.0.0-RC13
+	github.com/cosmos/cosmos-sdk v0.42.10
+	github.com/e-money/em-ledger v1.1.4 //emoney mod version with public inflation type
 	github.com/forbole/juno/v2 v2.0.0-20211018083707-de5b5378416e
 	github.com/go-co-op/gocron v0.8.0
 	github.com/gogo/protobuf v1.3.3
@@ -15,8 +15,8 @@ require (
 	github.com/rs/zerolog v1.26.0
 	github.com/spf13/cobra v1.2.1
 	github.com/stretchr/testify v1.7.0
-	github.com/tendermint/tendermint v0.34.12
-	google.golang.org/grpc v1.38.0
+	github.com/tendermint/tendermint v0.34.13
+	google.golang.org/grpc v1.40.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 
@@ -26,5 +26,4 @@ replace google.golang.org/grpc => google.golang.org/grpc v1.33.2
 
 replace github.com/tendermint/tendermint => github.com/forbole/tendermint v0.34.13-0.20210820072129-a2a4af55563d
 
-//for emoney
-replace github.com/cosmos/cosmos-sdk => github.com/e-money/cosmos-sdk v0.42.10-rc1
+replace github.com/e-money/em-ledger => github.com/forbole/em-ledger v1.1.4-0.20211006071704-dfa38235c2de
