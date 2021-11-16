@@ -149,17 +149,16 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 }
 
 type Sources struct {
-	BankSource  banksource.Source
-	DistrSource distrsource.Source
+	AuthoritySource authoritysource.Source
+	BankSource      banksource.Source
+	DistrSource     distrsource.Source
 
-	GovSource  govsource.Source
-	MintSource mintsource.Source
+	GovSource       govsource.Source
+	InflationSource inflationsource.Source
+	MintSource      mintsource.Source
 
 	SlashingSource slashingsource.Source
 	StakingSource  stakingsource.Source
-
-	AuthoritySource authoritysource.Source
-	InflationSource inflationsource.Source
 }
 
 func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -190,15 +189,14 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 	)
 
 	return &Sources{
-		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
-		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
-		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
-		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
-		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
-		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
-
 		AuthoritySource: localauthoritysource.NewSource(source, authoritytypes.QueryServer(emoneyApp.AuthorityKeeper)),
+		BankSource:      localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
+		DistrSource:     localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
+		GovSource:       localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
 		InflationSource: localinflationsource.NewSource(source, inflationtypes.QueryServer(emoneyApp.InflationKeeper)),
+		MintSource:      localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
+		SlashingSource:  localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
+		StakingSource:   localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
 	}, nil
 }
 
@@ -209,14 +207,13 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 	}
 
 	return &Sources{
-		BankSource:     remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
-		DistrSource:    remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
-		GovSource:      remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
-		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
-		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
-		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
-
 		AuthoritySource: remoteauthoritysource.NewSource(source, authoritytypes.NewQueryClient(source.GrpcConn)),
+		BankSource:      remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
+		DistrSource:     remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
+		GovSource:       remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
 		InflationSource: remoteinflationsource.NewSource(source, inflationtypes.NewQueryClient(source.GrpcConn)),
+		MintSource:      remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
+		SlashingSource:  remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
+		StakingSource:   remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }
