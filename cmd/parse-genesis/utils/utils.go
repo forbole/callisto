@@ -64,7 +64,7 @@ func GetGenesisDocAndState() (*tmtypes.GenesisDoc, map[string]json.RawMessage, e
 	return genesisDoc, genesisState, nil
 }
 
-// ParseGenesis parses the module implementing HandleGenesis method, and parses only certain modules if specified with arguments
+// ParseGenesis parses the module that implements HandleGenesis method, and parses only certain modules if specified with arguments
 func ParseGenesis(
 	registeredMods []modules.Module, genesisDoc *tmtypes.GenesisDoc,
 	genesisState map[string]json.RawMessage, arguments []string,
@@ -72,24 +72,24 @@ func ParseGenesis(
 	inputArgsLen := len(arguments)
 
 	for _, module := range registeredMods {
+		genesisModule, implemented := module.(modules.GenesisModule)
 		toParse := false
 
 		for i, argModuleName := range arguments {
-			// Find registered module name that matches any provided argument
-			if argModuleName == module.Name() {
+			// Find the registered module name that matches any provided argument, and parse the module
+			if module.Name() == argModuleName {
 				toParse = true
-				// Remove argument from the list if found, return the rest of elements as invalid modules
+				// Remove argument from the list if found
 				arguments[i] = arguments[len(arguments)-1]
 				arguments = arguments[:len(arguments)-1]
 			}
 		}
 
 		if inputArgsLen == 0 {
-			// If no module was specified in argument, parse all genesis modules
+			// If no module was specified in the argument, parse all genesis modules
 			toParse = true
 		}
 
-		genesisModule, implemented := module.(modules.GenesisModule)
 		if implemented && toParse {
 			// Parse the genesis module if argument module name matches registered module name
 			fmt.Printf("Parsing genesis: %s module \n", module.Name())
@@ -100,5 +100,6 @@ func ParseGenesis(
 		}
 	}
 
+	// Return the rest of arguments (invalid modules)
 	return arguments, nil
 }

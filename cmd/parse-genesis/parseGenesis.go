@@ -33,7 +33,7 @@ func NewParseGenesisCmd(parseCfg *parse.Config) *cobra.Command {
 			}
 
 			if len(invalidInputs) != 0 {
-				// Print out inlalid / unregistered module names
+				// Print out invalid / unregistered module names
 				return fmt.Errorf("not registered or invalid module name(s): %s", strings.Join(invalidInputs, ", "))
 			}
 
