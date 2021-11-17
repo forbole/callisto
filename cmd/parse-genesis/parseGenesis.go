@@ -9,16 +9,15 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// NewFixCmd returns the Cobra command allowing to fix some BDJuno bugs without having to re-sync the whole database
+// NewParseGenesisCmd returns the Cobra command allowing to parse the genesis file
 func NewParseGenesisCmd(parseCfg *parse.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:     "parse-genesis [optional: module names]",
-		Short:   "Parse genesis file",
-		Long:    "Parse genesis file, input desired module names as arguments to parse specific modules",
+		Short:   "Parse genesis file. To parse specific modules, input module names as arguments",
 		Example: "bdjuno parse-genesis auth bank consensus gov history staking",
 		PreRunE: parse.ReadConfig(parseCfg),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			genesisDoc, genesisState, err := utils.GetGenesisDocAndState(parseCfg)
+			genesisDoc, genesisState, err := utils.GetGenesisDocAndState()
 			if err != nil {
 				return fmt.Errorf("error while getting genesis doc or state: %s", err)
 			}
@@ -28,14 +27,14 @@ func NewParseGenesisCmd(parseCfg *parse.Config) *cobra.Command {
 				return fmt.Errorf("error while getting genesis registered modules: %s", err)
 			}
 
-			invalidMods, err := utils.ParseGenesis(registeredModules, genesisDoc, genesisState, args)
+			invalidInputs, err := utils.ParseGenesis(registeredModules, genesisDoc, genesisState, args)
 			if err != nil {
 				return fmt.Errorf("error while parsing genesis: %s", err)
 			}
 
-			if len(invalidMods) != 0 {
+			if len(invalidInputs) != 0 {
 				// Print out inlalid / unregistered module names
-				return fmt.Errorf("not registered or invalid module name(s): %s", strings.Join(invalidMods, ", "))
+				return fmt.Errorf("not registered or invalid module name(s): %s", strings.Join(invalidInputs, ", "))
 			}
 
 			return nil

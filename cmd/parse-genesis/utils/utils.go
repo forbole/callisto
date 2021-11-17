@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/forbole/juno/v2/cmd/parse"
 	parsecmd "github.com/forbole/juno/v2/cmd/parse"
 	"github.com/forbole/juno/v2/database"
 	"github.com/forbole/juno/v2/modules"
@@ -15,7 +14,7 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 )
 
-// GetGenesisModules returns the registered modules
+// GetRegisteredModules returns the registered modules from the config file
 func GetRegisteredModules(parseConfig *parsecmd.Config) ([]modules.Module, error) {
 	// Get the global config
 	cfg := config.Cfg
@@ -43,7 +42,8 @@ func GetRegisteredModules(parseConfig *parsecmd.Config) ([]modules.Module, error
 	return registeredModules, nil
 }
 
-func GetGenesisDocAndState(parseCfg *parse.Config) (*tmtypes.GenesisDoc, map[string]json.RawMessage, error) {
+// GetGenesisDocAndState generates and returns the genesis doc and genesis state with genesis.json file
+func GetGenesisDocAndState() (*tmtypes.GenesisDoc, map[string]json.RawMessage, error) {
 	var genesisState map[string]json.RawMessage
 
 	genesisFile, err := ioutil.ReadFile(config.GetGenesisFilePath())
@@ -64,6 +64,7 @@ func GetGenesisDocAndState(parseCfg *parse.Config) (*tmtypes.GenesisDoc, map[str
 	return genesisDoc, genesisState, nil
 }
 
+// ParseGenesis parses the module implementing HandleGenesis method, and parses only certain modules if specified with arguments
 func ParseGenesis(
 	registeredMods []modules.Module, genesisDoc *tmtypes.GenesisDoc,
 	genesisState map[string]json.RawMessage, arguments []string,
