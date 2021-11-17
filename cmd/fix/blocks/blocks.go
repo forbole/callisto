@@ -30,7 +30,7 @@ import (
 func blocksCmd(parseConfig *parse.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:   "refetch",
-		Short: "Fix missing blocks in database from the latest known height",
+		Short: "Fix missing blocks and transactions in database from the latest known height",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			parseCtx, err := parse.GetParsingContext(parseConfig)
 			if err != nil {
