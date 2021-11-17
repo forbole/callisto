@@ -14,12 +14,14 @@ import (
 func (m *Module) storeDelegationFromMessage(height int64, msg *stakingtypes.MsgDelegate) error {
 	delegation, err := m.source.GetDelegation(height, msg.DelegatorAddress, msg.ValidatorAddress)
 	if err != nil {
-		return err
+		return nil
 	}
-
-	return m.db.SaveDelegations([]types.Delegation{
-		convertDelegationResponse(height, delegation),
-	})
+	if delegation.Size() > 0 {
+		return m.db.SaveDelegations([]types.Delegation{
+			convertDelegationResponse(height, delegation),
+		})
+	}
+	return nil
 }
 
 // storeRedelegationFromMessage handles a MsgBeginRedelegate by saving the redelegation inside the database,
