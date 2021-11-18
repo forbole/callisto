@@ -14,7 +14,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 
 	// Setup a cron job to run every midnight
 	if _, err := scheduler.Every(1).Day().At("00:00").Do(func() {
-		utils.WatchMethod(m.updateParam)
+		utils.WatchMethod(m.updateParams)
 	}); err != nil {
 		return err
 	}
@@ -22,9 +22,9 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	return nil
 }
 
-// updateParam fetches from the REST APIs the latest value for the
+// updateParamd fetches from the REST APIs the latest value for the
 // profile params, and saves it inside the database.
-func (m *Module) updateParam() error {
+func (m *Module) updateParams() error {
 	log.Debug().Str("module", "profiles").Str("operation", "profiles").
 		Msg("getting profiles params")
 
