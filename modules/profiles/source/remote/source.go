@@ -34,5 +34,5 @@ func (s *Source) GetParams(height int64) (profilestypes.Params, error) {
 		return profilestypes.Params{}, fmt.Errorf("error while reading profiles params: %s", err)
 	}
 
-	return res.GetParams(), nil
+	return res.Params, nil
 }
