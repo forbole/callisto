@@ -22,8 +22,8 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	return nil
 }
 
-// updateInflation fetches from the REST APIs the latest value for the
-// inflation, and saves it inside the database.
+// updateParam fetches from the REST APIs the latest value for the
+// profile params, and saves it inside the database.
 func (m *Module) updateParam() error {
 	log.Debug().Str("module", "profiles").Str("operation", "profiles").
 		Msg("getting profiles params")
@@ -33,11 +33,11 @@ func (m *Module) updateParam() error {
 		return err
 	}
 
-	// Get the inflation
-	inflation, err := m.source.GetParams(height)
+	// Get the params
+	params, err := m.source.GetParams(height)
 	if err != nil {
 		return err
 	}
 
-	return m.db.SaveProfilesParams(types.NewProfilesParams(inflation, height))
+	return m.db.SaveProfilesParams(types.NewProfilesParams(params, height))
 }

@@ -15,7 +15,7 @@ var (
 	_ modules.PeriodicOperationsModule = &Module{}
 )
 
-// Module represent database/mint module
+// Module represent x/gov module
 type Module struct {
 	cdc    codec.Marshaler
 	db     *database.Db
