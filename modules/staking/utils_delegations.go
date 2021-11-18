@@ -3,15 +3,14 @@ package staking
 import (
 	"fmt"
 
-	"google.golang.org/grpc/codes"
-
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	"google.golang.org/grpc/codes"
 
 	"github.com/forbole/bdjuno/v2/types"
 )
 
 const (
-	ErrDelegationNotFound = "rpc error: code = %s desc = rpc error: code = %s"
+	ErrDelegationNotFound = "error while getting delegator delegations: rpc error: code = %s desc = rpc error: code = %s"
 )
 
 // convertDelegationResponse converts the given response to a BDJuno Delegation instance
