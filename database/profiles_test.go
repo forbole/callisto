@@ -10,15 +10,11 @@ import (
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveProfilesParams() {
-	nickNameParams := profilestypes.NewNicknameParams(sdk.NewInt(1), sdk.NewInt(100))
-	dTagParams := profilestypes.NewDTagParams("abc", sdk.NewInt(1), sdk.NewInt(100))
-	bioParams := profilestypes.NewBioParams(sdk.NewInt(100))
-	oracleParams := profilestypes.NewOracleParams(1, 1, 1, 1, 1, "payer", sdk.NewCoin("band", sdk.NewInt(1)))
 	profilesParams := profilestypes.Params{
-		Nickname: nickNameParams,
-		DTag:     dTagParams,
-		Bio:      bioParams,
-		Oracle:   oracleParams,
+		Nickname: profilestypes.NewNicknameParams(sdk.NewInt(1), sdk.NewInt(100)),
+		DTag:     profilestypes.NewDTagParams("abc", sdk.NewInt(1), sdk.NewInt(100)),
+		Bio:      profilestypes.NewBioParams(sdk.NewInt(100)),
+		Oracle:   profilestypes.NewOracleParams(1, 1, 1, 1, 1, "payer", sdk.NewCoin("band", sdk.NewInt(1))),
 	}
 	err := suite.database.SaveProfilesParams(types.NewProfilesParams(profilesParams, 10))
 	suite.Require().NoError(err)

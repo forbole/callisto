@@ -7,6 +7,7 @@ import (
 	"github.com/forbole/bdjuno/v2/types"
 )
 
+// SaveProfilesParams save the params of profiles module in the database
 func (db *Db) SaveProfilesParams(params types.ProfilesParams) error {
 	nicknameParamsBz, err := json.Marshal(&params.NicknameParams)
 	if err != nil {
@@ -36,7 +37,8 @@ ON CONFLICT (one_row_id) DO UPDATE
       	height = excluded.height
 WHERE profiles_params.height <= excluded.height`
 
-	_, err = db.Sql.Exec(stmt,
+	_, err = db.Sql.Exec(
+		stmt,
 		string(nicknameParamsBz),
 		string(dTagParamsBz),
 		string(bioParamsBz),
