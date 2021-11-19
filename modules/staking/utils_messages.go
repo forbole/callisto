@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/forbole/bdjuno/v2/modules/utils"
 	"github.com/forbole/bdjuno/v2/types"
+	"google.golang.org/grpc/codes"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	juno "github.com/forbole/juno/v2/types"
@@ -14,9 +16,20 @@ import (
 func (m *Module) storeDelegationFromMessage(height int64, msg *stakingtypes.MsgDelegate) error {
 	delegation, err := m.source.GetDelegation(height, msg.DelegatorAddress, msg.ValidatorAddress)
 	if err != nil {
-		return nil
+		// Get the error code
+		var errorCode string
+		_, scanErr := fmt.Sscanf(err.Error(), utils.ErrNotFound, &errorCode, &errorCode)
+		if scanErr != nil {
+			return fmt.Errorf("error while scanning error: %s", scanErr)
+		}
+
+		// If error is different from delegation not found, we need to return it
+		if errorCode != codes.NotFound.String() {
+			return fmt.Errorf("error while searching for delegations %s", err)
+		}
 	}
-	if delegation.Size() > 0 {
+
+	if len(delegation.Delegation.DelegatorAddress) > 0 && len(delegation.Delegation.ValidatorAddress) > 0 {
 		return m.db.SaveDelegations([]types.Delegation{
 			convertDelegationResponse(height, delegation),
 		})
