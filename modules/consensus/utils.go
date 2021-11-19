@@ -1,6 +1,13 @@
 package consensus
 
 import (
+	"fmt"
+
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+
 	"github.com/forbole/juno/v2/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
@@ -25,4 +32,38 @@ func (m *Module) IsBlockMissing(height int64) bool {
 func (m *Module) GetStartingHeight() int64 {
 	startHeight := m.cfg.StartHeight
 	return startHeight
+}
+
+// UpdateTxs updates txs in database
+func (m *Module) HandleMessages(txDetails *types.Tx) error {
+
+	// Handle messages
+	for index, msg := range txDetails.GetTx().GetMsgs() {
+		switch msg.Route() {
+		case banktypes.ModuleName:
+			messageErr := m.bankModule.HandleMsg(index, msg, txDetails)
+			if messageErr != nil {
+				return fmt.Errorf("error when updatig bank module Handle Message: %s", messageErr)
+			}
+		case govtypes.ModuleName:
+			messageErr := m.govModule.HandleMsg(index, msg, txDetails)
+			if messageErr != nil {
+				return fmt.Errorf("error when updatig gov module Handle Message: %s", messageErr)
+			}
+		case stakingtypes.ModuleName:
+			messageErr := m.stakingModule.HandleMsg(index, msg, txDetails)
+			if messageErr != nil {
+				return fmt.Errorf("error when updatig staking module Handle Message: %s", messageErr)
+			}
+		case distrtypes.ModuleName:
+			messageErr := m.distrModule.HandleMsg(index, msg, txDetails)
+			if messageErr != nil {
+				return fmt.Errorf("error when updatig distr module Handle Message: %s", messageErr)
+			}
+		default:
+			return nil
+		}
+	}
+	return nil
+
 }
