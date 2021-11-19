@@ -16,12 +16,24 @@ var (
 
 // Module implements the consensus utils
 type Module struct {
-	cfg *Config
-	db  *database.Db
+	cfg           *Config
+	db            *database.Db
+	authModule    AuthModule
+	bankModule    BankModule
+	distrModule   DistrModule
+	govModule     GovModule
+	stakingModule StakingModule
 }
 
 // NewModule builds a new Module instance
-func NewModule(cfg config.Config, db *database.Db) *Module {
+func NewModule(cfg config.Config,
+	authModule AuthModule,
+	bankModule BankModule,
+	distrModule DistrModule,
+	govModule GovModule,
+	stakingModule StakingModule,
+	db *database.Db,
+) *Module {
 	consCfg, err := ParseConfig(cfg.GetBytes())
 	if err != nil {
 		panic(err)
