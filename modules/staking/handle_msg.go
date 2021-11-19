@@ -4,8 +4,10 @@ import (
 	"fmt"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	"google.golang.org/grpc/codes"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/forbole/bdjuno/v2/modules/utils"
 	juno "github.com/forbole/juno/v2/types"
 )
 
@@ -42,7 +44,17 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 func (m *Module) handleMsgCreateValidator(height int64, msg *stakingtypes.MsgCreateValidator) error {
 	err := m.RefreshValidatorInfos(height, msg.ValidatorAddress)
 	if err != nil {
-		return fmt.Errorf("error while refreshing validator from MsgCreateValidator: %s", err)
+		// Get the error code
+		var errorCode string
+		_, scanErr := fmt.Sscanf(err.Error(), utils.ErrValidatorNotFound, &errorCode, &errorCode)
+		if scanErr != nil {
+			return fmt.Errorf("error while scanning error: %s", scanErr)
+		}
+
+		// If error is diffetent than validator not found, we need to return it
+		if errorCode != codes.NotFound.String() {
+			return fmt.Errorf("error while refreshing validator from MsgCreateValidator %s", err)
+		}
 	}
 
 	// Get the first self delegation
