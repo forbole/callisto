@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 
 	"github.com/forbole/bdjuno/v2/types"
@@ -32,7 +33,7 @@ WHERE community_pool.height <= excluded.height`
 // -------------------------------------------------------------------------------------------------------------------
 
 // SaveDistributionParams allows to store the given distribution parameters inside the database
-func (db *Db) SaveDistributionParams(params types.DistributionParams) error {
+func (db *Db) SaveDistributionParams(params *types.DistributionParams) error {
 	paramsBz, err := json.Marshal(&params.Params)
 	if err != nil {
 		return fmt.Errorf("error while marshaling params: %s", err)
@@ -224,4 +225,27 @@ func (db *Db) HasValidatorCommission() (bool, error) {
 	}
 
 	return count > 0, nil
+}
+
+// GetGovParams returns the most recent governance parameters
+func (db *Db) GetDistributionParams() (*types.DistributionParams, error) {
+	var rows []dbtypes.DistributionParamsRow
+	err := db.Sqlx.Select(&rows, `SELECT * FROM distribution_params`)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(rows) == 0 {
+		return nil, nil
+	}
+
+	row := rows[0]
+
+	var distributionParams distrtypes.Params
+	err = json.Unmarshal([]byte(row.Params), &distributionParams)
+	if err != nil {
+		return nil, err
+	}
+
+	return types.NewDistributionParams(distributionParams, row.Height), nil
 }

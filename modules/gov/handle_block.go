@@ -19,6 +19,7 @@ func (m *Module) HandleBlock(
 		log.Error().Str("module", "gov").Int64("height", b.Block.Height).
 			Err(err).Msg("error while updating proposals")
 	}
+
 	return nil
 }
 

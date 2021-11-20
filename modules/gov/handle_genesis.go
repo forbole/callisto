@@ -13,7 +13,7 @@ import (
 )
 
 // HandleGenesis implements modules.Module
-func (m *Module) HandleGenesis(_ *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
+func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
 	log.Debug().Str("module", "gov").Msg("parsing genesis")
 
 	// Read the genesis state
@@ -27,6 +27,12 @@ func (m *Module) HandleGenesis(_ *tmtypes.GenesisDoc, appState map[string]json.R
 	err = m.saveProposals(genState.Proposals)
 	if err != nil {
 		return fmt.Errorf("error while storing genesis governance proposals: %s", err)
+	}
+
+	// Save the params
+	err = m.SaveGenesisParams(genState, doc.InitialHeight)
+	if err != nil {
+		return fmt.Errorf("error while storing genesis governance params: %s", err)
 	}
 
 	return nil

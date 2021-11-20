@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
+	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
+	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 	"github.com/forbole/bdjuno/v2/types"
 )
 
@@ -50,7 +52,7 @@ WHERE validator_signing_info.height <= excluded.height`
 }
 
 // SaveSlashingParams saves the slashing params for the given height
-func (db *Db) SaveSlashingParams(params types.SlashingParams) error {
+func (db *Db) SaveSlashingParams(params *types.SlashingParams) error {
 	paramsBz, err := json.Marshal(&params.Params)
 	if err != nil {
 		return err
@@ -70,4 +72,27 @@ WHERE slashing_params.height <= excluded.height`
 	}
 
 	return nil
+}
+
+// GetSlashingParams returns the most recent slashing parameters
+func (db *Db) GetSlashingParams() (*types.SlashingParams, error) {
+	var rows []dbtypes.SlashingParamsRow
+	err := db.Sqlx.Select(&rows, `SELECT * FROM slashing_params`)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(rows) == 0 {
+		return nil, nil
+	}
+
+	row := rows[0]
+
+	var slashingParams slashingtypes.Params
+	err = json.Unmarshal([]byte(row.Params), &slashingParams)
+	if err != nil {
+		return nil, err
+	}
+
+	return types.NewSlashingParams(slashingParams, row.Height), nil
 }
