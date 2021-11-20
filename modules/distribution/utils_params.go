@@ -19,12 +19,11 @@ func (m *Module) UpdateParams(height int64) error {
 	}
 
 	return m.db.SaveDistributionParams(types.NewDistributionParams(params, height))
-
 }
 
 // SaveGenesisParams saves the governance parameters at genesis
-func (m *Module) SaveGenesisParams(genState distrtypes.GenesisState, height int64) error {
+func (m *Module) SaveGenesisParams(params distrtypes.Params, height int64) error {
 	return m.db.SaveDistributionParams(types.NewDistributionParams(
-		genState.Params, height,
+		params, height,
 	))
 }

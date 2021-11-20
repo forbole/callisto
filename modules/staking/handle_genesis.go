@@ -29,7 +29,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	}
 
 	// Save the params
-	err = m.saveParams(doc.InitialHeight, genState.Params)
+	err = m.SaveGenesisParams(genState.Params, doc.InitialHeight)
 	if err != nil {
 		return fmt.Errorf("error while storing staking genesis params: %s", err)
 	}
@@ -112,10 +112,10 @@ func (m *Module) parseGenesisTransactions(doc *tmtypes.GenesisDoc, appState map[
 
 // -------------------------------------------------------------------------------------------------------------------
 
-// saveParams saves the given params into the database
-func (m *Module) saveParams(height int64, params stakingtypes.Params) error {
-	return m.db.SaveStakingParams(types.NewStakingParams(params, height))
-}
+// // saveParams saves the given params into the database
+// func (m *Module) saveParams(height int64, params stakingtypes.Params) error {
+// 	return m.db.SaveStakingParams(types.NewStakingParams(params, height))
+// }
 
 // --------------------------------------------------------------------------------------------------------------------
 
