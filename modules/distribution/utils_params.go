@@ -18,4 +18,5 @@ func (m *Module) UpdateParams(height int64) error {
 	}
 
 	return m.db.SaveDistributionParams(types.NewDistributionParams(params, height))
+
 }
