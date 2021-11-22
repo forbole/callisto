@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/forbole/bdjuno/v2/types"
 	tmtypes "github.com/tendermint/tendermint/types"
 
 	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
@@ -22,7 +23,10 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	}
 
 	// Save the params
-	err = m.SaveGenesisParams(genState.Params, doc.InitialHeight)
+	err = m.db.SaveProfilesParams(types.NewProfilesParams(
+		genState.Params,
+		doc.InitialHeight,
+	))
 	if err != nil {
 		return fmt.Errorf("error while storing genesis profiles params: %s", err)
 	}
