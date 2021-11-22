@@ -26,7 +26,7 @@ import (
 func blocksCmd(parseConfig *parse.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:   "refetch",
-		Short: "Fix missing blocks and transactions in database from the latest known height",
+		Short: "Fix missing blocks and transactions in database from the start height",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			parseCtx, err := parse.GetParsingContext(parseConfig)
 			if err != nil {
@@ -58,7 +58,7 @@ func blocksCmd(parseConfig *parse.Config) *cobra.Command {
 			}
 
 			k := consensusModule.GetStartingHeight()
-			fmt.Printf("Starting height is %v ... \n", k)
+			fmt.Printf("Refetching missing blocks and transactions from height %v ... \n", k)
 			for ; k <= height; k++ {
 				missingBlock := consensusModule.IsBlockMissing(k)
 				if missingBlock {
