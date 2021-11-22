@@ -9,7 +9,7 @@ import (
 func NewBlocksCmd(parseConfig *parse.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "blocks",
-		Short: "Fix things related to blocks",
+		Short: "Fix things related to blocks and transactions",
 	}
 
 	cmd.AddCommand(
