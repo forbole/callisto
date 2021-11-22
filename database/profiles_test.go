@@ -22,27 +22,10 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProfilesParams() {
 	var rows []dbtypes.ProfilesParamsRow
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM profiles_params`)
 	suite.Require().NoError(err)
-	suite.Require().Len(rows, 1, "profiles_params table should contain only one row")
+	suite.Require().Len(rows, 1)
 
-	var storedNicknameParams profilestypes.NicknameParams
-	err = json.Unmarshal([]byte(rows[0].NickNameParams), &storedNicknameParams)
+	var stored profilestypes.Params
+	err = json.Unmarshal([]byte(rows[0].Params), &stored)
 	suite.Require().NoError(err)
-	suite.Require().Equal(profilesParams.Nickname, storedNicknameParams)
-
-	var storedDTagParams profilestypes.DTagParams
-	err = json.Unmarshal([]byte(rows[0].DTagParams), &storedDTagParams)
-	suite.Require().NoError(err)
-	suite.Require().Equal(profilesParams.DTag, storedDTagParams)
-
-	var storedBioParams profilestypes.BioParams
-	err = json.Unmarshal([]byte(rows[0].BioParams), &storedBioParams)
-	suite.Require().NoError(err)
-	suite.Require().Equal(profilesParams.Bio, storedBioParams)
-
-	var storedOracleParams profilestypes.OracleParams
-	err = json.Unmarshal([]byte(rows[0].OracleParams), &storedOracleParams)
-	suite.Require().NoError(err)
-	suite.Require().Equal(profilesParams.Oracle, storedOracleParams)
-
-	suite.Require().Equal(int64(10), rows[0].Height)
+	suite.Require().Equal(profilesParams, stored)
 }

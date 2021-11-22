@@ -9,42 +9,20 @@ import (
 
 // SaveProfilesParams save the params of profiles module in the database
 func (db *Db) SaveProfilesParams(params *types.ProfilesParams) error {
-	nicknameParamsBz, err := json.Marshal(&params.NicknameParams)
+	paramsBz, err := json.Marshal(&params.Params)
 	if err != nil {
-		return fmt.Errorf("error while marshaling Nickname params: %s", err)
-	}
-	dTagParamsBz, err := json.Marshal(&params.DTagParams)
-	if err != nil {
-		return fmt.Errorf("error while marshaling DTag params: %s", err)
-	}
-	bioParamsBz, err := json.Marshal(&params.BioParams)
-	if err != nil {
-		return fmt.Errorf("error while marshaling Bio params: %s", err)
-	}
-	oracleParamsBz, err := json.Marshal(&params.OracleParams)
-	if err != nil {
-		return fmt.Errorf("error while marshaling Oracle params: %s", err)
+		return fmt.Errorf("error while marshaling profiles params: %s", err)
 	}
 
 	stmt := `
-INSERT INTO profiles_params (nickname_params, d_tag_params, bio_params, oracle_params, height) 
-VALUES ($1, $2, $3, $4, $5) 
+INSERT INTO profiles_params (params, height) 
+VALUES ($1, $2) 
 ON CONFLICT (one_row_id) DO UPDATE 
-    SET nickname_params = excluded.nickname_params,
-		d_tag_params = excluded.d_tag_params,
-		bio_params = excluded.bio_params,
-		oracle_params = excluded.oracle_params,
+    SET params = excluded.params,
       	height = excluded.height
 WHERE profiles_params.height <= excluded.height`
 
-	_, err = db.Sql.Exec(
-		stmt,
-		string(nicknameParamsBz),
-		string(dTagParamsBz),
-		string(bioParamsBz),
-		string(oracleParamsBz),
-		params.Height,
-	)
+	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
 
 	if err != nil {
 		return fmt.Errorf("error while storing profiles params: %s", err)
