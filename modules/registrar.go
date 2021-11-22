@@ -170,9 +170,14 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		return nil, err
 	}
 
-	app := desmosapp.NewDesmosApp(
+	desmosApp := desmosapp.NewDesmosApp(
 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
 		cfg.Home, 0, desmosapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
+	)
+
+	app := simapp.NewSimApp(
+		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
+		cfg.Home, 0, simapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
 	)
 
 	return &Sources{
@@ -182,7 +187,7 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
 		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
-		ProfilesSource: localprofilessource.NewSource(source, profilestypes.QueryServer(app.ProfileKeeper)),
+		ProfilesSource: localprofilessource.NewSource(source, profilestypes.QueryServer(desmosApp.ProfileKeeper)),
 	}, nil
 }
 
