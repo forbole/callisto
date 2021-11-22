@@ -63,7 +63,7 @@ func blocksCmd(parseConfig *parse.Config) *cobra.Command {
 				missingBlock := consensusModule.IsBlockMissing(k)
 				if missingBlock {
 					fmt.Printf("Refetching block %v ... \n", k)
-					err = refreshBlock(parseCtx, k, consensusModule, db)
+					err = refreshBlock(parseCtx, k, consensusModule)
 					if err != nil {
 						return err
 					}
@@ -75,7 +75,7 @@ func blocksCmd(parseConfig *parse.Config) *cobra.Command {
 	}
 }
 
-func refreshBlock(parseCtx *parse.Context, blockHeight int64, consensusModule *consensus.Module, db *database.Db) error {
+func refreshBlock(parseCtx *parse.Context, blockHeight int64, consensusModule *consensus.Module) error {
 	// Get the block details
 	block, blockResults, err := utils.QueryBlock(parseCtx.Node, blockHeight)
 	if err != nil {
