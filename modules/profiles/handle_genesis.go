@@ -19,7 +19,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	var genState profilestypes.GenesisState
 	err := m.cdc.UnmarshalJSON(appState[profilestypes.ModuleName], &genState)
 	if err != nil {
-		return fmt.Errorf("error while marshalling profiles genesis params: %s", err)
+		return fmt.Errorf("error while unmarshalling profiles genesis params: %s", err)
 	}
 
 	// Save the params
