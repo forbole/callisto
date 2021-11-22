@@ -25,7 +25,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	// Save the params
 	err = m.db.SaveSlashingParams(types.NewSlashingParams(genState.Params, doc.InitialHeight))
 	if err != nil {
-		return fmt.Errorf("error while storing genesis mint params: %s", err)
+		return fmt.Errorf("error while storing genesis slashing params: %s", err)
 	}
 
 	return nil
