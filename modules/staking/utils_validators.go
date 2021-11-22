@@ -185,15 +185,35 @@ func (m *Module) GetValidatorsStatuses(height int64, validators []stakingtypes.V
 	return statuses, nil
 }
 
-func (m *Module) GetValidatorsVotingPowers(height int64, vals *tmctypes.ResultValidators) []types.ValidatorVotingPower {
-	votingPowers := make([]types.ValidatorVotingPower, len(vals.Validators))
-	for index, validator := range vals.Validators {
-		consAddr := juno.ConvertValidatorAddressToBech32String(validator.Address)
-		if found, _ := m.db.HasValidator(consAddr); !found {
+func (m *Module) GetValidatorsVotingPowers(height int64, vals *tmctypes.ResultValidators) ([]types.ValidatorVotingPower, error) {
+	stakingVals, _, err := m.getValidators(height)
+	if err != nil {
+		return nil, err
+	}
+
+	votingPowers := make([]types.ValidatorVotingPower, len(stakingVals))
+	for index, validator := range stakingVals {
+		// Get the validator consensus address
+		consAddr, err := validator.GetConsAddr()
+		if err != nil {
+			return nil, err
+		}
+
+		// Find the voting power of this validator
+		var votingPower int64 = 0
+		for _, blockVal := range vals.Validators {
+			blockValConsAddr := juno.ConvertValidatorAddressToBech32String(blockVal.Address)
+			if blockValConsAddr == consAddr.String() {
+				votingPower = blockVal.VotingPower
+			}
+		}
+
+		if found, _ := m.db.HasValidator(consAddr.String()); !found {
 			continue
 		}
 
-		votingPowers[index] = types.NewValidatorVotingPower(consAddr, validator.VotingPower, height)
+		votingPowers[index] = types.NewValidatorVotingPower(consAddr.String(), votingPower, height)
 	}
-	return votingPowers
+
+	return votingPowers, nil
 }
