@@ -18,7 +18,6 @@ var (
 type Module struct {
 	cfg           *Config
 	db            *database.Db
-	authModule    AuthModule
 	bankModule    BankModule
 	distrModule   DistrModule
 	govModule     GovModule
@@ -27,7 +26,6 @@ type Module struct {
 
 // NewModule builds a new Module instance
 func NewModule(cfg config.Config,
-	authModule AuthModule,
 	bankModule BankModule,
 	distrModule DistrModule,
 	govModule GovModule,
@@ -39,8 +37,12 @@ func NewModule(cfg config.Config,
 		panic(err)
 	}
 	return &Module{
-		cfg: consCfg,
-		db:  db,
+		cfg:           consCfg,
+		bankModule:    bankModule,
+		distrModule:   distrModule,
+		govModule:     govModule,
+		stakingModule: stakingModule,
+		db:            db,
 	}
 }
 

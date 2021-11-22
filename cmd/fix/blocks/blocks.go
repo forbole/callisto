@@ -7,9 +7,15 @@ import (
 
 	"github.com/forbole/bdjuno/v2/database"
 	"github.com/forbole/bdjuno/v2/modules"
+	"github.com/forbole/bdjuno/v2/modules/bank"
 	"github.com/forbole/bdjuno/v2/modules/consensus"
+	"github.com/forbole/bdjuno/v2/modules/distribution"
+	"github.com/forbole/bdjuno/v2/modules/gov"
+	"github.com/forbole/bdjuno/v2/modules/history"
+	"github.com/forbole/bdjuno/v2/modules/staking"
 	"github.com/forbole/bdjuno/v2/utils"
 	"github.com/forbole/juno/v2/cmd/parse"
+	junomessages "github.com/forbole/juno/v2/modules/messages"
 	juno "github.com/forbole/juno/v2/types"
 	"github.com/forbole/juno/v2/types/config"
 	"github.com/spf13/cobra"
@@ -35,8 +41,15 @@ func blocksCmd(parseConfig *parse.Config) *cobra.Command {
 			// Get the database
 			db := database.Cast(parseCtx.Database)
 
+			// Register modules
+			bankModule := bank.NewModule(junomessages.BankMessagesParser, sources.BankSource, parseCtx.EncodingConfig.Marshaler, db)
+			distrModule := distribution.NewModule(config.Cfg, sources.DistrSource, bankModule, db)
+			historyModule := history.NewModule(config.Cfg.Chain, junomessages.BankMessagesParser, parseCtx.EncodingConfig.Marshaler, db)
+			stakingModule := staking.NewModule(sources.StakingSource, bankModule, distrModule, historyModule, parseCtx.EncodingConfig.Marshaler, db)
+			govModule := gov.NewModule(parseCtx.EncodingConfig.Marshaler, sources.GovSource, nil, bankModule, distrModule, nil, nil, stakingModule, db)
+
 			// Build the consensus module
-			consensusModule := consensus.NewModule(config.Cfg, nil, nil, nil, nil, nil, db)
+			consensusModule := consensus.NewModule(config.Cfg, bankModule, distrModule, govModule, stakingModule, db)
 
 			// Get latest height
 			height, err := parseCtx.Node.LatestHeight()
@@ -89,7 +102,7 @@ func refreshBlock(parseCtx *parse.Context, sources *modules.Sources, blockHeight
 
 func refreshTxs(parseCtx *parse.Context, consensusModule *consensus.Module, block *tmctypes.ResultBlock) error {
 
-	for index, tx := range block.Block.Txs {
+	for _, tx := range block.Block.Txs {
 		var txDetails *juno.Tx
 		// Get the tx details
 		txDetails, err := parseCtx.Node.Tx(hex.EncodeToString(tx.Hash()))
@@ -100,10 +113,6 @@ func refreshTxs(parseCtx *parse.Context, consensusModule *consensus.Module, bloc
 		err = consensusModule.HandleMessages(txDetails)
 		if err != nil {
 			return fmt.Errorf("error when updating tx message tx %s", err)
-		}
-		err = consensusModule.UpdateTxs(index, txDetails)
-		if err != nil {
-			return fmt.Errorf("error when updatig transactions tx %s", err)
 		}
 	}
 
