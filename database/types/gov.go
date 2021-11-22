@@ -79,21 +79,21 @@ func (w ProposalRow) Equals(v ProposalRow) bool {
 
 // TallyResultRow represents a single row inside the tally_result table
 type TallyResultRow struct {
-	ProposalID int64 `db:"proposal_id"`
-	Yes        int64 `db:"yes"`
-	Abstain    int64 `db:"abstain"`
-	No         int64 `db:"no"`
-	NoWithVeto int64 `db:"no_with_veto"`
-	Height     int64 `db:"height"`
+	ProposalID int64  `db:"proposal_id"`
+	Yes        string `db:"yes"`
+	Abstain    string `db:"abstain"`
+	No         string `db:"no"`
+	NoWithVeto string `db:"no_with_veto"`
+	Height     int64  `db:"height"`
 }
 
 // NewTallyResultRow return a new TallyResultRow instance
 func NewTallyResultRow(
 	proposalID int64,
-	yes int64,
-	abstain int64,
-	no int64,
-	noWithVeto int64,
+	yes string,
+	abstain string,
+	no string,
+	noWithVeto string,
 	height int64,
 ) TallyResultRow {
 	return TallyResultRow{
