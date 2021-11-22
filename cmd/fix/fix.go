@@ -20,9 +20,9 @@ func NewFixCmd(parseCfg *parse.Config) *cobra.Command {
 
 	cmd.AddCommand(
 		fixauth.NewAuthCmd(parseCfg),
+		fixblocks.NewBlocksCmd(parseCfg),
 		fixgov.NewGovCmd(parseCfg),
 		fixstaking.NewStakingCmd(parseCfg),
-		fixblocks.NewBlocksCmd(parseCfg),
 	)
 
 	return cmd

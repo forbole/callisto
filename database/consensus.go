@@ -194,7 +194,7 @@ func (db *Db) GetGenesis() (*types.Genesis, error) {
 	return types.NewGenesis(row.ChainID, row.Time, row.InitialHeight), nil
 }
 
-// CheckIfBlockIsMissing checks if block is stored in database and returns boolean value
+// CheckIfBlockIsMissing checks if block is already stored in database 
 func (db *Db) CheckIfBlockIsMissing(height int64) bool {
 	var block []dbtypes.BlockRow
 	stmt := `SELECT * FROM block WHERE height = $1`
@@ -203,11 +203,8 @@ func (db *Db) CheckIfBlockIsMissing(height int64) bool {
 	if err != nil {
 		return true
 	}
-	if len(block) != 0 {
-		return false
-	}
 
-	return true
+	return false
 }
 
 // UpdateBlocksInDatabase updates given block in database
