@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 
 	"github.com/forbole/bdjuno/v2/types"
@@ -225,27 +224,4 @@ func (db *Db) HasValidatorCommission() (bool, error) {
 	}
 
 	return count > 0, nil
-}
-
-// GetDistributionParams returns the most recent distribution parameters
-func (db *Db) GetDistributionParams() (*types.DistributionParams, error) {
-	var rows []dbtypes.DistributionParamsRow
-	err := db.Sqlx.Select(&rows, `SELECT * FROM distribution_params`)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(rows) == 0 {
-		return nil, nil
-	}
-
-	row := rows[0]
-
-	var distributionParams distrtypes.Params
-	err = json.Unmarshal([]byte(row.Params), &distributionParams)
-	if err != nil {
-		return nil, err
-	}
-
-	return types.NewDistributionParams(distributionParams, row.Height), nil
 }

@@ -6,8 +6,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 	"github.com/forbole/bdjuno/v2/types"
 )
 
@@ -50,27 +48,4 @@ WHERE mint_params.height <= excluded.height`
 	}
 
 	return nil
-}
-
-// GetMintParams returns the most recent mint parameters
-func (db *Db) GetMintParams() (*types.MintParams, error) {
-	var rows []dbtypes.MintParamsRow
-	err := db.Sqlx.Select(&rows, `SELECT * FROM mint_params`)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(rows) == 0 {
-		return nil, nil
-	}
-
-	row := rows[0]
-
-	var mintParams minttypes.Params
-	err = json.Unmarshal([]byte(row.Params), &mintParams)
-	if err != nil {
-		return nil, err
-	}
-
-	return types.NewMintParams(mintParams, row.Height), nil
 }
