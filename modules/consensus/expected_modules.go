@@ -5,10 +5,6 @@ import (
 	"github.com/forbole/juno/v2/types"
 )
 
-type AuthModule interface {
-	RefreshAccounts(height int64, addresses []string) error
-}
-
 type BankModule interface {
 	HandleMsg(_ int, msg sdk.Msg, tx *types.Tx) error
 }
