@@ -2,7 +2,6 @@ package profiles
 
 import (
 	"github.com/forbole/bdjuno/v2/modules/utils"
-	"github.com/forbole/bdjuno/v2/types"
 
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
@@ -14,30 +13,10 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 
 	// Setup a cron job to run every midnight
 	if _, err := scheduler.Every(1).Day().At("00:00").Do(func() {
-		utils.WatchMethod(m.updateParams)
+		utils.WatchMethod(m.UpdateParams)
 	}); err != nil {
 		return err
 	}
 
 	return nil
-}
-
-// updateParamd fetches from the REST APIs the latest value for the
-// profile params, and saves it inside the database.
-func (m *Module) updateParams() error {
-	log.Debug().Str("module", "profiles").Str("operation", "profiles").
-		Msg("getting profiles params")
-
-	height, err := m.db.GetLastBlockHeight()
-	if err != nil {
-		return err
-	}
-
-	// Get the params
-	params, err := m.source.GetParams(height)
-	if err != nil {
-		return err
-	}
-
-	return m.db.SaveProfilesParams(types.NewProfilesParams(params, height))
 }

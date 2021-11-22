@@ -13,8 +13,8 @@ type ProfilesParams struct {
 }
 
 // NewProfilesParams allows to build a new ProfilesParams instance
-func NewProfilesParams(params profilestypes.Params, height int64) ProfilesParams {
-	return ProfilesParams{
+func NewProfilesParams(params profilestypes.Params, height int64) *ProfilesParams {
+	return &ProfilesParams{
 		NicknameParams: params.Nickname,
 		DTagParams:     params.DTag,
 		BioParams:      params.Bio,

@@ -8,7 +8,7 @@ import (
 )
 
 // SaveProfilesParams save the params of profiles module in the database
-func (db *Db) SaveProfilesParams(params types.ProfilesParams) error {
+func (db *Db) SaveProfilesParams(params *types.ProfilesParams) error {
 	nicknameParamsBz, err := json.Marshal(&params.NicknameParams)
 	if err != nil {
 		return fmt.Errorf("error while marshaling Nickname params: %s", err)
