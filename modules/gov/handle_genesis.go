@@ -30,7 +30,12 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	}
 
 	// Save the params
-	err = m.SaveGenesisParams(genState, doc.InitialHeight)
+	err = m.db.SaveGovParams(types.NewGovParams(
+		types.NewVotingParams(genState.VotingParams),
+		types.NewDepositParam(genState.DepositParams),
+		types.NewTallyParams(genState.TallyParams),
+		doc.InitialHeight,
+	))
 	if err != nil {
 		return fmt.Errorf("error while storing genesis governance params: %s", err)
 	}

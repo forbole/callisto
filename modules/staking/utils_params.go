@@ -3,7 +3,6 @@ package staking
 import (
 	"fmt"
 
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/bdjuno/v2/types"
 	"github.com/rs/zerolog/log"
 )
@@ -19,11 +18,4 @@ func (m *Module) UpdateParams(height int64) error {
 	}
 
 	return m.db.SaveStakingParams(types.NewStakingParams(params, height))
-}
-
-// SaveGenesisParams saves the staking parameters at genesis
-func (m *Module) SaveGenesisParams(params stakingtypes.Params, height int64) error {
-	return m.db.SaveStakingParams(types.NewStakingParams(
-		params, height,
-	))
 }

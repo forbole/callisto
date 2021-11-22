@@ -3,7 +3,6 @@ package mint
 import (
 	"fmt"
 
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	"github.com/forbole/bdjuno/v2/types"
 	"github.com/rs/zerolog/log"
 )
@@ -20,11 +19,4 @@ func (m *Module) UpdateParams(height int64) error {
 
 	return m.db.SaveMintParams(types.NewMintParams(params, height))
 
-}
-
-// SaveGenesisParams saves the mint parameters at genesis
-func (m *Module) SaveGenesisParams(params minttypes.Params, height int64) error {
-	return m.db.SaveMintParams(types.NewMintParams(
-		params, height,
-	))
 }
