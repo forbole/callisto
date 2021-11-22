@@ -17,4 +17,5 @@ func (m *Module) UpdateParams(height int64) error {
 	}
 
 	return m.db.SaveSlashingParams(types.NewSlashingParams(params, height))
+
 }
