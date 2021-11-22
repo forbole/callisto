@@ -38,7 +38,7 @@ func (m *Module) GetStartingHeight() int64 {
 func (m *Module) HandleMessages(txDetails *types.Tx) error {
 
 	// Handle messages
-	for index, msg := range txDetails.GetTx().GetMsgs() {
+	for index, msg := range txDetails.GetMsgs() {
 		switch msg.Route() {
 		case banktypes.ModuleName:
 			messageErr := m.bankModule.HandleMsg(index, msg, txDetails)
@@ -60,8 +60,11 @@ func (m *Module) HandleMessages(txDetails *types.Tx) error {
 			if messageErr != nil {
 				return fmt.Errorf("error when updatig distr module Handle Message: %s", messageErr)
 			}
-		default:
-			return nil
+		}
+
+		err := m.UpdateTxs(index, txDetails)
+		if err != nil {
+			return fmt.Errorf("error when updatig transactions tx %s", err)
 		}
 	}
 	return nil
