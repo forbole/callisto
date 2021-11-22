@@ -17,13 +17,13 @@ var (
 
 // Module represent x/gov module
 type Module struct {
-	cdc    codec.Marshaler
+	cdc    codec.Codec
 	db     *database.Db
 	source profilessource.Source
 }
 
 // NewModule returns a new Module instance
-func NewModule(cdc codec.Marshaler, source profilessource.Source, db *database.Db) *Module {
+func NewModule(cdc codec.Codec, source profilessource.Source, db *database.Db) *Module {
 	return &Module{
 		cdc:    cdc,
 		db:     db,

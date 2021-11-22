@@ -10,7 +10,7 @@ import (
 	"github.com/forbole/juno/v2/modules/pruning"
 	"github.com/forbole/juno/v2/modules/telemetry"
 
-	desmosapp "github.com/desmos-labs/desmos/app"
+	desmosapp "github.com/desmos-labs/desmos/v2/app"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/forbole/juno/v2/node/remote"
@@ -28,7 +28,7 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
+	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
 	"github.com/forbole/juno/v2/node/local"
 
 	jmodules "github.com/forbole/juno/v2/modules"
@@ -75,7 +75,7 @@ import (
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
 func UniqueAddressesParser(parser messages.MessageAddressesParser) messages.MessageAddressesParser {
-	return func(cdc codec.Marshaler, msg sdk.Msg) ([]string, error) {
+	return func(cdc codec.Codec, msg sdk.Msg) ([]string, error) {
 		addresses, err := parser(cdc, msg)
 		if err != nil {
 			return nil, err

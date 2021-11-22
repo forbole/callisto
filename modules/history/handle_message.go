@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/gogo/protobuf/proto"
+
 	juno "github.com/forbole/juno/v2/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -20,7 +22,7 @@ func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
 
 	addresses, err := m.getAddresses(m.cdc, msg)
 	if err != nil {
-		return fmt.Errorf("error while getting accounts after message of type %s", msg.Type())
+		return fmt.Errorf("error while getting accounts after message of type %s", proto.MessageName(msg))
 	}
 
 	for _, address := range utils.FilterNonAccountAddresses(addresses) {

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	profilestypes "github.com/desmos-labs/desmos/x/profiles/types"
+	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 	"github.com/forbole/bdjuno/v2/types"
 )
@@ -14,7 +14,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProfilesParams() {
 		Nickname: profilestypes.NewNicknameParams(sdk.NewInt(1), sdk.NewInt(100)),
 		DTag:     profilestypes.NewDTagParams("abc", sdk.NewInt(1), sdk.NewInt(100)),
 		Bio:      profilestypes.NewBioParams(sdk.NewInt(100)),
-		Oracle:   profilestypes.NewOracleParams(1, 1, 1, 1, 1, "payer", sdk.NewCoin("band", sdk.NewInt(1))),
+		Oracle:   profilestypes.NewOracleParams(1, 1, 1, 1, 1, sdk.NewCoin("band", sdk.NewInt(1))),
 	}
 	err := suite.database.SaveProfilesParams(types.NewProfilesParams(profilesParams, 10))
 	suite.Require().NoError(err)

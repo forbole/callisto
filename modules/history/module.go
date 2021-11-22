@@ -23,14 +23,14 @@ var (
 // Module represents the module that allows to store historic information
 type Module struct {
 	cfg config.ChainConfig
-	cdc codec.Marshaler
+	cdc codec.Codec
 	db  *database.Db
 
 	getAddresses messages.MessageAddressesParser
 }
 
 // NewModule allows to build a new Module instance
-func NewModule(cfg config.ChainConfig, messagesParser messages.MessageAddressesParser, cdc codec.Marshaler, db *database.Db) *Module {
+func NewModule(cfg config.ChainConfig, messagesParser messages.MessageAddressesParser, cdc codec.Codec, db *database.Db) *Module {
 	return &Module{
 		cfg:          cfg,
 		cdc:          cdc,
