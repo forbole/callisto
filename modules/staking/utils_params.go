@@ -21,7 +21,7 @@ func (m *Module) UpdateParams(height int64) error {
 	return m.db.SaveStakingParams(types.NewStakingParams(params, height))
 }
 
-// SaveGenesisParams saves the governance parameters at genesis
+// SaveGenesisParams saves the staking parameters at genesis
 func (m *Module) SaveGenesisParams(params stakingtypes.Params, height int64) error {
 	return m.db.SaveStakingParams(types.NewStakingParams(
 		params, height,

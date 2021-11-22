@@ -21,7 +21,7 @@ func (m *Module) UpdateParams(height int64) error {
 	return m.db.SaveSlashingParams(types.NewSlashingParams(params, height))
 }
 
-// SaveGenesisParams saves the governance parameters at genesis
+// SaveGenesisParams saves the slashing parameters at genesis
 func (m *Module) SaveGenesisParams(params slashingtypes.Params, height int64) error {
 	return m.db.SaveSlashingParams(types.NewSlashingParams(
 		params, height,

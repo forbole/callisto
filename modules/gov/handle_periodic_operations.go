@@ -13,7 +13,7 @@ import (
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	log.Debug().Str("module", "gov").Msg("setting up periodic tasks")
 
-	// Update the community pool every 1 hour
+	// Check missing params daily
 	if _, err := scheduler.Every(1).Day().At("00:00").Do(func() {
 		utils.WatchMethod(m.handleMissingParams)
 	}); err != nil {

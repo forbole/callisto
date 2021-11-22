@@ -227,7 +227,7 @@ func (db *Db) HasValidatorCommission() (bool, error) {
 	return count > 0, nil
 }
 
-// GetGovParams returns the most recent governance parameters
+// GetDistributionParams returns the most recent distribution parameters
 func (db *Db) GetDistributionParams() (*types.DistributionParams, error) {
 	var rows []dbtypes.DistributionParamsRow
 	err := db.Sqlx.Select(&rows, `SELECT * FROM distribution_params`)

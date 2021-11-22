@@ -110,13 +110,6 @@ func (m *Module) parseGenesisTransactions(doc *tmtypes.GenesisDoc, appState map[
 	return nil
 }
 
-// -------------------------------------------------------------------------------------------------------------------
-
-// // saveParams saves the given params into the database
-// func (m *Module) saveParams(height int64, params stakingtypes.Params) error {
-// 	return m.db.SaveStakingParams(types.NewStakingParams(params, height))
-// }
-
 // --------------------------------------------------------------------------------------------------------------------
 
 // saveValidators stores the validators data present inside the given genesis state
