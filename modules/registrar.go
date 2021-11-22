@@ -67,7 +67,7 @@ import (
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
 func UniqueAddressesParser(parser messages.MessageAddressesParser) messages.MessageAddressesParser {
-	return func(cdc codec.Marshaler, msg sdk.Msg) ([]string, error) {
+	return func(cdc codec.Codec, msg sdk.Msg) ([]string, error) {
 		addresses, err := parser(cdc, msg)
 		if err != nil {
 			return nil, err

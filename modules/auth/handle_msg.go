@@ -3,6 +3,7 @@ package auth
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	juno "github.com/forbole/juno/v2/types"
+	"github.com/gogo/protobuf/proto"
 	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/bdjuno/v2/modules/utils"
@@ -14,7 +15,7 @@ func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
 	if err != nil {
 		log.Error().Str("module", "auth").Err(err).
 			Str("operation", "refresh account").
-			Msgf("error while refreshing accounts after message of type %s", msg.Type())
+			Msgf("error while refreshing accounts after message of type %s", proto.MessageName(msg))
 	}
 
 	return m.RefreshAccounts(tx.Height, utils.FilterNonAccountAddresses(addresses))

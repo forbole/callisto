@@ -17,7 +17,7 @@ var (
 
 // Module represents the x/staking module
 type Module struct {
-	cdc           codec.Marshaler
+	cdc           codec.Codec
 	db            *database.Db
 	source        stakingsource.Source
 	bankModule    BankModule
@@ -29,7 +29,7 @@ type Module struct {
 func NewModule(
 	source stakingsource.Source,
 	bankModule BankModule, distrModule DistrModule, historyModule HistoryModule,
-	cdc codec.Marshaler, db *database.Db,
+	cdc codec.Codec, db *database.Db,
 ) *Module {
 	return &Module{
 		cdc:           cdc,
