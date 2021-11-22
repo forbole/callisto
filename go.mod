@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/cosmos/cosmos-sdk v0.42.9
-	github.com/desmos-labs/desmos v1.0.1
+	github.com/desmos-labs/desmos v1.0.4
 	github.com/forbole/juno/v2 v2.0.0-20211018083707-de5b5378416e
 	github.com/go-co-op/gocron v0.8.0
 	github.com/gogo/protobuf v1.3.3
