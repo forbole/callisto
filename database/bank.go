@@ -11,7 +11,6 @@ import (
 	"github.com/lib/pq"
 
 	"github.com/forbole/bdjuno/v2/types"
-	utils "github.com/forbole/bdjuno/v2/utils"
 )
 
 // SaveAccountBalances allows to store the given balances inside the database
@@ -43,7 +42,6 @@ func (db *Db) saveUpToDateBalances(paramsNumber int, balances []types.AccountBal
 	var params []interface{}
 	var accounts []types.Account
 	// remove duplicate values of accounts balance
-	balances = utils.RemoveDuplicateAccountBalance(balances)
 
 	for i, bal := range balances {
 
