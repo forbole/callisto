@@ -194,17 +194,14 @@ func (db *Db) GetGenesis() (*types.Genesis, error) {
 	return types.NewGenesis(row.ChainID, row.Time, row.InitialHeight), nil
 }
 
-// CheckIfBlockIsMissing checks if block is already stored in database 
+// CheckIfBlockIsMissing checks if block is already stored in database
 func (db *Db) CheckIfBlockIsMissing(height int64) bool {
 	var block []dbtypes.BlockRow
 	stmt := `SELECT * FROM block WHERE height = $1`
 
 	err := db.Sqlx.Select(&block, stmt, height)
-	if err != nil {
-		return true
-	}
 
-	return false
+	return err != nil
 }
 
 // UpdateBlocksInDatabase updates given block in database
