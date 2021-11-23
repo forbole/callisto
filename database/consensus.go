@@ -200,8 +200,14 @@ func (db *Db) CheckIfBlockIsMissing(height int64) bool {
 	stmt := `SELECT * FROM block WHERE height = $1`
 
 	err := db.Sqlx.Select(&block, stmt, height)
+	if err != nil {
+		return true
+	}
+	if len(block) != 0 {
+		return false
+	}
 
-	return err != nil
+	return true
 }
 
 // UpdateBlocksInDatabase updates given block in database

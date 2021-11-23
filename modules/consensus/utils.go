@@ -34,7 +34,7 @@ func (m *Module) GetStartingHeight() int64 {
 	return startHeight
 }
 
-// UpdateTxs updates txs in database
+// HandleMessages updates messages in database
 func (m *Module) HandleMessages(txDetails *types.Tx) error {
 
 	// Handle messages
