@@ -15,23 +15,23 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 
 	switch cosmosMsg := msg.(type) {
 	case *feegranttypes.MsgGrantAllowance:
-		return m.handleMsgGrantAllowance(tx, index, cosmosMsg)
+		return m.handleMsgGrantAllowance(tx, cosmosMsg)
 
 	case *feegranttypes.MsgRevokeAllowance:
-		return m.handleMsgRevokeAllowance(tx, index, cosmosMsg)
+		return m.handleMsgRevokeAllowance(cosmosMsg)
 	}
 
 	return nil
 }
 
 // handleMsgGrantAllowance allows to properly handle a MsgGrantAllowance
-func (m *Module) handleMsgGrantAllowance(tx *juno.Tx, index int, msg *feegranttypes.MsgGrantAllowance) error {
+func (m *Module) handleMsgGrantAllowance(tx *juno.Tx, msg *feegranttypes.MsgGrantAllowance) error {
 	grantAllowance := types.NewFeeGrantAllowance(msg.Grantee, msg.Granter, msg.Allowance, tx.Height)
 
-	return m.db.SaveGrantAllowance(types.FeeGrantAllowance(grantAllowance))
+	return m.db.SaveGrantAllowance(grantAllowance)
 }
 
 // handleMsgRevokeAllowance allows to properly handle a MsgRevokeAllowance
-func (m *Module) handleMsgRevokeAllowance(tx *juno.Tx, index int, msg *feegranttypes.MsgRevokeAllowance) error {
+func (m *Module) handleMsgRevokeAllowance(msg *feegranttypes.MsgRevokeAllowance) error {
 	return m.db.RevokeGrantAllowance(msg.Grantee, msg.Granter)
 }
