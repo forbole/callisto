@@ -3,7 +3,9 @@ package remote
 import (
 	"fmt"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
+	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/juno/v2/node/remote"
 
@@ -17,7 +19,8 @@ var (
 // Source implements stakingsource.Source using a remote node
 type Source struct {
 	*remote.Source
-	stakingClient stakingtypes.QueryClient
+	stakingClient  stakingtypes.QueryClient
+	slashingClient slashingtypes.QueryClient
 }
 
 // NewSource returns a new Source instance
@@ -170,4 +173,18 @@ func (s Source) GetParams(height int64) (stakingtypes.Params, error) {
 	}
 
 	return res.Params, nil
+}
+
+func (s Source) GetValidatorSigningInfo(height int64, consAddr sdk.ConsAddress) (slashingtypes.ValidatorSigningInfo, error) {
+	res, err := s.slashingClient.SigningInfo(
+		s.Ctx,
+		&slashingtypes.QuerySigningInfoRequest{
+			ConsAddress: consAddr.String(),
+		},
+	)
+
+	if err != nil {
+		return slashingtypes.ValidatorSigningInfo{}, err
+	}
+	return res.ValSigningInfo, nil
 }
