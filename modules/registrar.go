@@ -118,9 +118,9 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	distrModule := distribution.NewModule(ctx.JunoConfig, sources.DistrSource, bankModule, db)
 	historyModule := history.NewModule(ctx.JunoConfig.Chain, r.parser, cdc, db)
 	mintModule := mint.NewModule(sources.MintSource, db)
+	profilesModule := profiles.NewModule(cdc, sources.ProfilesSource, db)
 	stakingModule := staking.NewModule(sources.StakingSource, bankModule, distrModule, historyModule, cdc, db)
 	slashingModule := slashing.NewModule(sources.SlashingSource, stakingModule, db)
-	profilesModule := profiles.NewModule(cdc, sources.ProfilesSource, db)
 
 	return []jmodules.Module{
 		messages.NewModule(r.parser, cdc, ctx.Database),
@@ -131,14 +131,14 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		bankModule,
 		consensus.NewModule(db),
 		distrModule,
-		gov.NewModule(cdc, sources.GovSource, authModule, bankModule, distrModule, mintModule, slashingModule, stakingModule, db),
+		gov.NewModule(cdc, sources.GovSource, authModule, bankModule, distrModule, mintModule, profilesModule, slashingModule, stakingModule, db),
 		historyModule,
 		mint.NewModule(sources.MintSource, db),
 		modules.NewModule(ctx.JunoConfig.Chain, db),
 		pricefeed.NewModule(ctx.JunoConfig, historyModule, cdc, db),
+		profilesModule,
 		slashing.NewModule(sources.SlashingSource, stakingModule, db),
 		stakingModule,
-		profilesModule,
 	}
 }
 
@@ -147,9 +147,9 @@ type Sources struct {
 	DistrSource    distrsource.Source
 	GovSource      govsource.Source
 	MintSource     mintsource.Source
+	ProfilesSource profilessource.Source
 	SlashingSource slashingsource.Source
 	StakingSource  stakingsource.Source
-	ProfilesSource profilessource.Source
 }
 
 func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -185,9 +185,9 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
 		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
 		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
+		ProfilesSource: localprofilessource.NewSource(source, profilestypes.QueryServer(desmosApp.ProfileKeeper)),
 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
 		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
-		ProfilesSource: localprofilessource.NewSource(source, profilestypes.QueryServer(desmosApp.ProfileKeeper)),
 	}, nil
 }
 

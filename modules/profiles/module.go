@@ -10,12 +10,11 @@ import (
 )
 
 var (
-	_ modules.Module                   = &Module{}
-	_ modules.GenesisModule            = &Module{}
-	_ modules.PeriodicOperationsModule = &Module{}
+	_ modules.Module        = &Module{}
+	_ modules.GenesisModule = &Module{}
 )
 
-// Module represent x/gov module
+// Module represent x/profiles module
 type Module struct {
 	cdc    codec.Codec
 	db     *database.Db
