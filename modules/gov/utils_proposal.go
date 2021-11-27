@@ -128,15 +128,15 @@ func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Propo
 			if err != nil {
 				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", minttypes.ModuleName, err)
 			}
+		case profilestypes.ModuleName:
+			err = m.profilesModule.UpdateParams(height)
+			if err != nil {
+				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", profilestypes.ModuleName, err)
+			}
 		case slashingtypes.ModuleName:
 			err = m.slashingModule.UpdateParams(height)
 			if err != nil {
 				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", slashingtypes.ModuleName, err)
-			}
-		case profilestypes.ModuleName:
-			err = m.profilesModule.UpdateParams(height)
-			if err != nil {
-				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", stakingtypes.ModuleName, err)
 			}
 		case stakingtypes.ModuleName:
 			err = m.stakingModule.UpdateParams(height)
