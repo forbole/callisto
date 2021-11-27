@@ -202,8 +202,8 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		DistrSource:    remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
 		GovSource:      remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
+		ProfilesSource: remoteprofilessource.NewSource(source, profilestypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
-		ProfilesSource: remoteprofilessource.NewSource(source, profilestypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }
