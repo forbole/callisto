@@ -1,4 +1,4 @@
-package parseGenesis
+package parsegenesis
 
 import (
 	"fmt"
