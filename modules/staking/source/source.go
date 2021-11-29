@@ -1,8 +1,6 @@
 package source
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
@@ -14,5 +12,4 @@ type Source interface {
 	GetValidatorDelegations(height int64, validator string) ([]stakingtypes.DelegationResponse, error)
 	GetPool(height int64) (stakingtypes.Pool, error)
 	GetParams(height int64) (stakingtypes.Params, error)
-	GetValidatorSigningInfo(height int64, consAddr sdk.ConsAddress) (slashingtypes.ValidatorSigningInfo, error)
 }

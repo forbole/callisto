@@ -173,7 +173,7 @@ func (m *Module) GetValidatorsStatuses(height int64, validators []stakingtypes.V
 			return nil, fmt.Errorf("error while getting validator consensus public key: %s", err)
 		}
 
-		valSigningInfo, err := m.source.GetValidatorSigningInfo(height, consAddr)
+		valSigningInfo, err := m.slashingModule.GetSigningInfo(height, consAddr)
 		if err != nil {
 			return nil, fmt.Errorf("error while getting validator signing info: %s", err)
 		}

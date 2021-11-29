@@ -1,6 +1,8 @@
 package slashing
 
 import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/forbole/bdjuno/v2/types"
 )
 
@@ -24,4 +26,23 @@ func (m *Module) getSigningInfos(height int64) ([]types.ValidatorSigningInfo, er
 	}
 
 	return infos, nil
+}
+
+func (m *Module) GetSigningInfo(height int64, consAddr sdk.ConsAddress) (types.ValidatorSigningInfo, error) {
+	info, err := m.source.GetSigningInfo(height, consAddr)
+	if err != nil {
+		return types.ValidatorSigningInfo{}, err
+	}
+
+	signingInfo := types.NewValidatorSigningInfo(
+		info.Address,
+		info.StartHeight,
+		info.IndexOffset,
+		info.JailedUntil,
+		info.Tombstoned,
+		info.MissedBlocksCounter,
+		height,
+	)
+
+	return signingInfo, nil
 }

@@ -5,7 +5,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
-	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/juno/v2/node/local"
 
@@ -19,16 +18,14 @@ var (
 // Source implements stakingsource.Source using a local node
 type Source struct {
 	*local.Source
-	q         stakingtypes.QueryServer
-	qslashing slashingtypes.QueryServer
+	q stakingtypes.QueryServer
 }
 
 // NewSource returns a new Source instance
-func NewSource(source *local.Source, querier stakingtypes.QueryServer, slashingQuerier slashingtypes.QueryServer) *Source {
+func NewSource(source *local.Source, querier stakingtypes.QueryServer) *Source {
 	return &Source{
-		Source:    source,
-		q:         querier,
-		qslashing: slashingQuerier,
+		Source: source,
+		q:      querier,
 	}
 }
 
@@ -198,24 +195,4 @@ func (s Source) GetParams(height int64) (stakingtypes.Params, error) {
 	}
 
 	return res.Params, nil
-}
-
-func (s Source) GetValidatorSigningInfo(height int64, consAddr sdk.ConsAddress) (slashingtypes.ValidatorSigningInfo, error) {
-	ctx, err := s.LoadHeight(height)
-	if err != nil {
-		return slashingtypes.ValidatorSigningInfo{}, fmt.Errorf("error while loading height: %s", err)
-	}
-
-	res, err := s.qslashing.SigningInfo(
-		sdk.WrapSDKContext(ctx),
-		&slashingtypes.QuerySigningInfoRequest{
-			ConsAddress: consAddr.String(),
-		},
-	)
-
-	if err != nil {
-		return slashingtypes.ValidatorSigningInfo{}, err
-	}
-
-	return res.ValSigningInfo, nil
 }
