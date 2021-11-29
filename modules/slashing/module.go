@@ -24,7 +24,7 @@ type Module struct {
 }
 
 // NewModule returns a new Module instance
-func NewModule(cdc codec.Marshaler, source slashingsource.Source, stakingModule StakingModule, db *database.Db) *Module {
+func NewModule(source slashingsource.Source, stakingModule StakingModule, cdc codec.Marshaler, db *database.Db) *Module {
 	return &Module{
 		cdc:           cdc,
 		db:            db,
