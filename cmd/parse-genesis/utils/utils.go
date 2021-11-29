@@ -46,7 +46,7 @@ func GetRegisteredModules(parseConfig *parsecmd.Config) ([]modules.Module, error
 func GetGenesisDocAndState() (*tmtypes.GenesisDoc, map[string]json.RawMessage, error) {
 	var genesisState map[string]json.RawMessage
 
-	genesisFile, err := ioutil.ReadFile(config.GetGenesisFilePath())
+	genesisFile, err := ioutil.ReadFile(config.Cfg.Parser.GenesisFilePath)
 	if err != nil {
 		return &tmtypes.GenesisDoc{}, genesisState, fmt.Errorf("error while reading genesis file: %s", err)
 	}
