@@ -24,10 +24,11 @@ type Source struct {
 }
 
 // NewSource returns a new Source instance
-func NewSource(source *local.Source, querier stakingtypes.QueryServer) *Source {
+func NewSource(source *local.Source, querier stakingtypes.QueryServer, slashingQuerier slashingtypes.QueryServer) *Source {
 	return &Source{
-		Source: source,
-		q:      querier,
+		Source:    source,
+		q:         querier,
+		qslashing: slashingQuerier,
 	}
 }
 

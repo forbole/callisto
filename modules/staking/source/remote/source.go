@@ -24,10 +24,11 @@ type Source struct {
 }
 
 // NewSource returns a new Source instance
-func NewSource(source *remote.Source, stakingClient stakingtypes.QueryClient) *Source {
+func NewSource(source *remote.Source, stakingClient stakingtypes.QueryClient, slashingClient slashingtypes.QueryClient) *Source {
 	return &Source{
-		Source:        source,
-		stakingClient: stakingClient,
+		Source:         source,
+		stakingClient:  stakingClient,
+		slashingClient: slashingClient,
 	}
 }
 
