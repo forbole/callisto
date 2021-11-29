@@ -430,9 +430,9 @@ func (db *Db) SaveValidatorsStatuses(statuses []types.ValidatorStatus) error {
 	statusStmt = statusStmt[:len(statusStmt)-1]
 	statusStmt += `
 ON CONFLICT (validator_address) DO UPDATE 
-	SET status = excluded.status, 
+	SET status = excluded.status,
 	    jailed = excluded.jailed,
-		tombstoned = excluded.tombstoned,
+	    tombstoned = excluded.tombstoned,
 	    height = excluded.height
 WHERE validator_status.height <= excluded.height`
 	_, err = db.Sql.Exec(statusStmt, statusParams...)
