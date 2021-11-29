@@ -22,7 +22,7 @@ type Module struct {
 }
 
 // NewModule returns a new Module instance
-func NewModule(cdc codec.Codec, source profilessource.Source, db *database.Db) *Module {
+func NewModule(source profilessource.Source, cdc codec.Codec, db *database.Db) *Module {
 	return &Module{
 		cdc:    cdc,
 		db:     db,
