@@ -122,7 +122,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		bankModule,
 		consensus.NewModule(db),
 		distrModule,
-		gov.NewModule(cdc, sources.GovSource, authModule, bankModule, distrModule, mintModule, slashingModule, stakingModule, db),
+		gov.NewModule(sources.GovSource, authModule, bankModule, distrModule, mintModule, slashingModule, stakingModule, cdc, db),
 		historyModule,
 		mint.NewModule(sources.MintSource, cdc, db),
 		modules.NewModule(ctx.JunoConfig.Chain, db),
