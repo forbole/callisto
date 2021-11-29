@@ -79,7 +79,7 @@ func (m *Module) updateValidatorVotingPower(height int64, vals *tmctypes.ResultV
 		return
 	}
 
-	// Add all the voting powers of
+	// Save all the voting powers
 	err = m.db.SaveValidatorsVotingPowers(votingPowers)
 	if err != nil {
 		log.Error().Str("module", "staking").Err(err).Int64("height", height).
