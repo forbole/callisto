@@ -28,6 +28,7 @@ func (m *Module) getSigningInfos(height int64) ([]types.ValidatorSigningInfo, er
 	return infos, nil
 }
 
+// GetSigningInfo returns the signing info for the validator having the given consensus address at the specified height
 func (m *Module) GetSigningInfo(height int64, consAddr sdk.ConsAddress) (types.ValidatorSigningInfo, error) {
 	info, err := m.source.GetSigningInfo(height, consAddr)
 	if err != nil {
