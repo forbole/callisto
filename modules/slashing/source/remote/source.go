@@ -1,6 +1,8 @@
 package remote
 
 import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/cosmos/cosmos-sdk/types/query"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	"github.com/forbole/juno/v2/node/remote"
@@ -64,4 +66,19 @@ func (s Source) GetParams(height int64) (slashingtypes.Params, error) {
 	}
 
 	return res.Params, nil
+}
+
+// GetSigningInfo implements slashingsource.GetSigningInfo
+func (s Source) GetSigningInfo(height int64, consAddr sdk.ConsAddress) (slashingtypes.ValidatorSigningInfo, error) {
+	res, err := s.querier.SigningInfo(
+		s.Ctx,
+		&slashingtypes.QuerySigningInfoRequest{
+			ConsAddress: consAddr.String(),
+		},
+	)
+
+	if err != nil {
+		return slashingtypes.ValidatorSigningInfo{}, err
+	}
+	return res.ValSigningInfo, nil
 }
