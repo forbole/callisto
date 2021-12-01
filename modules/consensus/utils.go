@@ -28,12 +28,6 @@ func (m *Module) IsBlockMissing(height int64) bool {
 	return blockIsMissing
 }
 
-// GetStartingHeight takes starting height value from the config file
-func (m *Module) GetStartingHeight() int64 {
-	startHeight := m.cfg.StartHeight
-	return startHeight
-}
-
 // HandleMessages updates messages in database
 func (m *Module) HandleMessages(txDetails *types.Tx) error {
 

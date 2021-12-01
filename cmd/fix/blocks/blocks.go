@@ -48,7 +48,7 @@ func blocksCmd(parseConfig *parse.Config) *cobra.Command {
 			govModule := gov.NewModule(parseCtx.EncodingConfig.Marshaler, sources.GovSource, nil, bankModule, distrModule, nil, nil, stakingModule, db)
 
 			// Build the consensus module
-			consensusModule := consensus.NewModule(config.Cfg, bankModule, distrModule, govModule, stakingModule, db)
+			consensusModule := consensus.NewModule(bankModule, distrModule, govModule, stakingModule, db)
 
 			// Get latest height
 			height, err := parseCtx.Node.LatestHeight()
@@ -56,12 +56,12 @@ func blocksCmd(parseConfig *parse.Config) *cobra.Command {
 				return fmt.Errorf("error while getting chain latest block height: %s", err)
 			}
 
-			k := consensusModule.GetStartingHeight()
-			fmt.Printf("Refetching missing blocks and transactions from height %v ... \n", k)
+			k := config.Cfg.Parser.StartHeight
+			fmt.Printf("Refetching missing blocks and transactions from height %d ... \n", k)
 			for ; k <= height; k++ {
 				missingBlock := consensusModule.IsBlockMissing(k)
 				if missingBlock {
-					fmt.Printf("Refetching block %v ... \n", k)
+					fmt.Printf("Refetching block %d ... \n", k)
 					err = refreshBlock(parseCtx, k, consensusModule)
 					if err != nil {
 						return err
@@ -93,7 +93,7 @@ func refreshBlock(parseCtx *parse.Context, blockHeight int64, consensusModule *c
 		}
 	}
 	if err != nil {
-		return fmt.Errorf("error while updating block %v: %s", blockHeight, err)
+		return fmt.Errorf("error while updating block %d: %s", blockHeight, err)
 	}
 
 	return nil
