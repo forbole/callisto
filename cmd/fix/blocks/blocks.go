@@ -76,12 +76,12 @@ func blocksCmd(parseConfig *parse.Config) *cobra.Command {
 
 func refreshBlock(parseCtx *parse.Context, blockHeight int64, consensusModule *consensus.Module) error {
 	// Get the block details
-	block, blockResults, err := utils.QueryBlock(parseCtx.Node, blockHeight)
+	block, err := utils.QueryBlock(parseCtx.Node, blockHeight)
 	if err != nil {
 		return err
 	}
 
-	err = consensusModule.UpdateBlock(block, blockResults)
+	err = consensusModule.UpdateBlock(block)
 
 	if len(block.Block.Txs) != 0 {
 		for _, tx := range block.Block.Txs {

@@ -1,14 +1,10 @@
 package database
 
 import (
-	"encoding/hex"
-	"encoding/json"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/bdjuno/v2/types"
 	"github.com/lib/pq"
 
@@ -211,83 +207,22 @@ func (db *Db) CheckIfBlockIsMissing(height int64) bool {
 }
 
 // UpdateBlocksInDatabase updates given block in database
-func (db *Db) UpdateBlockInDatabase(block *tmctypes.ResultBlock, blockResults *tmctypes.ResultBlockResults) error {
-	stmt := `
-INSERT INTO block(height, hash, num_txs, total_gas, proposer_address, timestamp)
-VALUES ($1, $2, $3, $4, $5, $6) 
-ON CONFLICT DO NOTHING`
-
-	proposerAddress := sdk.ConsAddress(block.Block.ProposerAddress).String()
-	txResults := blockResults.TxsResults
-
-	var totalGasUsed int64
-	for _, tx := range txResults {
-		totalGasUsed += tx.GetGasUsed()
-	}
-
-	_, err := db.Sqlx.Exec(stmt, block.Block.Height, strings.ToUpper(hex.EncodeToString(block.Block.Hash())), len(block.Block.Txs), totalGasUsed, proposerAddress, block.Block.Time)
+func (db *Db) UpdateBlockInDatabase(block *tmctypes.ResultBlock) error {
+	junoBlock := junotypes.NewBlockFromTmBlock(block, uint64(block.Block.Height))
+	err := db.SaveBlock(junoBlock)
 	if err != nil {
-		return fmt.Errorf("error while storing block %v for proposer %s, error:  %s", block.Block.Height, proposerAddress, err)
+		return fmt.Errorf("error while storing block %d, error:  %s", block.Block.Height, err)
 	}
-
 	return nil
 }
 
 // UpdateTxInDatabase updates transactions for a given block in database
 func (db *Db) UpdateTxInDatabase(i int, tx *junotypes.Tx) error {
-	stmt := `
-INSERT INTO transaction(hash, height, success, messages, memo, signatures, signer_infos, fee, gas_wanted, gas_used, raw_log, logs)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-ON CONFLICT DO NOTHING`
-
-	message, err := codec.ProtoMarshalJSON(tx.Body.Messages[i], nil)
+	err := db.SaveTx(tx)
 	if err != nil {
-		return fmt.Errorf("error while marshaling message: %s", err)
+		return fmt.Errorf("error while storing tx in database: %s", err)
 	}
-
-	fee, err := codec.ProtoMarshalJSON(tx.AuthInfo.Fee, nil)
-	if err != nil {
-		return fmt.Errorf("error while marshaling fees: %s", err)
-	}
-
-	logs, err := json.Marshal(&tx.Logs)
-	if err != nil {
-		return fmt.Errorf("error while marshaling logs: %s", err)
-	}
-
-	signers, err := codec.ProtoMarshalJSON(tx.AuthInfo.SignerInfos[0], nil)
-	if err != nil {
-		return fmt.Errorf("error while marshaling signers: %s", err)
-	}
-
-	var signatures []string
-	for _, signature := range tx.Signatures {
-		signature := signature
-		eachSignature, err := json.Marshal(&signature)
-		if err != nil {
-			return fmt.Errorf("error while marshaling signatures: %s", err)
-		}
-		signatures = append(signatures, string(eachSignature))
-	}
-
-	_, err = db.Sqlx.Exec(stmt,
-		tx.TxHash,
-		tx.Height,
-		tx.Successful(),
-		message,
-		tx.GetBody().Memo,
-		pq.StringArray(signatures),
-		signers,
-		fee,
-		tx.GasWanted,
-		tx.GasUsed,
-		tx.RawLog,
-		logs)
-	if err != nil {
-		return fmt.Errorf("error while storing tx, error:  %s", err)
-	}
-
-	err = db.UpdateMsgsInDatabase(tx, tx.TxHash, i, tx.Body.Messages[i].TypeUrl, message)
+	err = db.UpdateMsgsInDatabase(tx, i)
 	if err != nil {
 		return fmt.Errorf("error while updating tx message in database: %s", err)
 	}
@@ -296,14 +231,14 @@ ON CONFLICT DO NOTHING`
 }
 
 // UpdateMsgsInDatabase updates messages for a given block in database
-func (db *Db) UpdateMsgsInDatabase(tx *junotypes.Tx, txHash string, i int, typeURL string, message []byte) error {
-	stmt := `
-	INSERT INTO message(transaction_hash, index, type, value, involved_accounts_addresses)
-	VALUES ($1, $2, $3, $4, $5)
-	ON CONFLICT DO NOTHING`
+func (db *Db) UpdateMsgsInDatabase(tx *junotypes.Tx, i int) error {
 	var eventTypes []string
 	var involvedAccounts []string
 	var attributeKeys []string
+	message, err := codec.ProtoMarshalJSON(tx.Body.Messages[i], nil)
+	if err != nil {
+		return fmt.Errorf("error while marshaling tx message: %s", err)
+	}
 
 	for _, event := range tx.Logs {
 		for _, eventType := range event.Events {
@@ -329,14 +264,10 @@ func (db *Db) UpdateMsgsInDatabase(tx *junotypes.Tx, txHash string, i int, typeU
 		involvedAccounts = utils.RemoveDuplicateValues(involvedAccounts)
 	}
 
-	_, err := db.Sqlx.Exec(stmt,
-		txHash,
-		i,
-		typeURL,
-		message,
-		pq.StringArray(involvedAccounts))
+	junoMsg := junotypes.NewMessage(tx.TxHash, i, tx.Body.Messages[i].TypeUrl, string(message), pq.StringArray(involvedAccounts))
+	err = db.SaveMessage(junoMsg)
 	if err != nil {
-		return fmt.Errorf("error while storing message in database, error:  %s", err)
+		return fmt.Errorf("error while storing tx message in database, error:  %s", err)
 	}
 
 	return nil
