@@ -20,7 +20,7 @@ import (
 func allowanceCmd(parseConfig *parse.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:   "allowance",
-		Short: "Fix the granted and revoked allowances to the latest height",
+		Short: "Fix granted and revoked allowances to the latest height",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			parseCtx, err := parse.GetParsingContext(parseConfig)
 			if err != nil {
