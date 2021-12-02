@@ -5,6 +5,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
+	"github.com/forbole/bdjuno/v2/types"
 )
 
 // SaveGrantAllowance allows to store the fee grant allowances for the given block height
@@ -17,6 +18,14 @@ ON CONFLICT DO NOTHING`
 	allowanceJSON, err := codec.ProtoMarshalJSON(allowance.Allowance, nil)
 	if err != nil {
 		return fmt.Errorf("error while marshaling grant allowance: %s", err)
+	}
+
+	// Store the accounts
+	var accounts []types.Account
+	accounts = append(accounts, types.NewAccount(allowance.Grantee), types.NewAccount(allowance.Granter))
+	err = db.SaveAccounts(accounts)
+	if err != nil {
+		return fmt.Errorf("error while storing fee grant allowance accounts: %s", err)
 	}
 
 	_, err = db.Sql.Exec(stmt, allowance.Grantee, allowance.Granter, allowanceJSON, height)
