@@ -15,7 +15,6 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	switch cosmosMsg := msg.(type) {
 	case *feegranttypes.MsgGrantAllowance:
 		return m.HandleMsgGrantAllowance(tx, cosmosMsg)
-
 	case *feegranttypes.MsgRevokeAllowance:
 		return m.HandleMsgRevokeAllowance(cosmosMsg)
 	}
