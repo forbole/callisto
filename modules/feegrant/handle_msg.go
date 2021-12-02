@@ -25,10 +25,10 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 
 // handleMsgGrantAllowance allows to properly handle a MsgGrantAllowance
 func (m *Module) HandleMsgGrantAllowance(tx *juno.Tx, msg *feegranttypes.MsgGrantAllowance) error {
-	return m.db.SaveGrantAllowance(msg, tx.Height)
+	return m.db.SaveFeeGrantAllowance(msg, tx.Height)
 }
 
 // handleMsgRevokeAllowance allows to properly handle a MsgRevokeAllowance
 func (m *Module) HandleMsgRevokeAllowance(msg *feegranttypes.MsgRevokeAllowance) error {
-	return m.db.RevokeGrantAllowance(msg.Grantee, msg.Granter)
+	return m.db.RevokeFeeGrantAllowance(msg.Grantee, msg.Granter)
 }
