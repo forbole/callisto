@@ -3,7 +3,7 @@ module github.com/forbole/bdjuno/v2
 go 1.16
 
 require (
-	github.com/cosmos/cosmos-sdk v0.42.9
+	github.com/cosmos/cosmos-sdk v0.44.4
 	github.com/forbole/juno/v2 v2.0.0-20211122103116-54945048da0a
 	github.com/go-co-op/gocron v1.10.0
 	github.com/gogo/protobuf v1.3.3
@@ -14,8 +14,8 @@ require (
 	github.com/rs/zerolog v1.26.0
 	github.com/spf13/cobra v1.2.1
 	github.com/stretchr/testify v1.7.0
-	github.com/tendermint/tendermint v0.34.12
-	google.golang.org/grpc v1.38.0
+	github.com/tendermint/tendermint v0.34.14
+	google.golang.org/grpc v1.42.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 
