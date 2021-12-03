@@ -5,7 +5,7 @@ go 1.16
 require (
 	github.com/cosmos/cosmos-sdk v0.44.3
 	github.com/cosmos/gaia/v6 v6.0.0-rc1
-	github.com/forbole/juno/v2 v2.0.0-20211020184842-e358a33007ff
+	github.com/forbole/juno/v2 v2.0.0-20211122103136-7926db0202f2
 	github.com/go-co-op/gocron v1.10.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/google/gofuzz v1.2.0 // indirect
@@ -22,7 +22,7 @@ require (
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 
-replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
+replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.2-alpha.regen.4
 
 replace google.golang.org/grpc => google.golang.org/grpc v1.33.2
 
@@ -39,3 +39,5 @@ replace github.com/regen-network/regen-ledger/x/data => github.com/regen-network
 replace github.com/regen-network/regen-ledger/x/ecocredit => github.com/regen-network/regen-ledger/x/ecocredit v1.0.0
 
 replace github.com/regen-network/regen-ledger/x/group => github.com/regen-network/regen-ledger/x/group v1.0.0-beta1
+
+replace github.com/cosmos/ibc-go/v2 => github.com/cosmos/ibc-go/v2 v2.0.0
