@@ -10,6 +10,15 @@ import (
 
 // SaveFeeGrantAllowance allows to store the fee grant allowances for the given block height
 func (db *Db) SaveFeeGrantAllowance(allowance *feegranttypes.MsgGrantAllowance, height int64) error {
+
+	// Store the accounts
+	var accounts []types.Account
+	accounts = append(accounts, types.NewAccount(allowance.Grantee), types.NewAccount(allowance.Granter))
+	err := db.SaveAccounts(accounts)
+	if err != nil {
+		return fmt.Errorf("error while storing fee grant allowance accounts: %s", err)
+	}
+
 	stmt := `
 INSERT INTO fee_grant_allowance(grantee, granter, allowance, height) 
 VALUES ($1, $2, $3, $4) 
@@ -21,14 +30,6 @@ WHERE fee_grant_allowance.height <= excluded.height`
 	allowanceJSON, err := codec.ProtoMarshalJSON(allowance.Allowance, nil)
 	if err != nil {
 		return fmt.Errorf("error while marshaling grant allowance: %s", err)
-	}
-
-	// Store the accounts
-	var accounts []types.Account
-	accounts = append(accounts, types.NewAccount(allowance.Grantee), types.NewAccount(allowance.Granter))
-	err = db.SaveAccounts(accounts)
-	if err != nil {
-		return fmt.Errorf("error while storing fee grant allowance accounts: %s", err)
 	}
 
 	_, err = db.Sql.Exec(stmt, allowance.Grantee, allowance.Granter, allowanceJSON, height)
