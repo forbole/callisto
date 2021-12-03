@@ -13,7 +13,10 @@ func (db *Db) SaveFeeGrantAllowance(allowance *feegranttypes.MsgGrantAllowance, 
 	stmt := `
 INSERT INTO fee_grant_allowance(grantee, granter, allowance, height) 
 VALUES ($1, $2, $3, $4) 
-ON CONFLICT DO NOTHING`
+ON CONFLICT ON CONSTRAINT unique_fee_grant_allowance DO UPDATE 
+    SET allowance = excluded.allowance,
+        height = excluded.height
+WHERE fee_grant_allowance.height <= excluded.height`
 
 	allowanceJSON, err := codec.ProtoMarshalJSON(allowance.Allowance, nil)
 	if err != nil {
