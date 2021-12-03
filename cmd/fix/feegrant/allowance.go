@@ -84,7 +84,7 @@ func refreshAllowance(parseCtx *parse.Context, blockHeight int64, feegrantModule
 				if msgRevokeAllowance, ok := msg.(*feegranttypes.MsgRevokeAllowance); ok {
 					fmt.Println("handling MsgRevokeAllowance tx hash:", strings.ToUpper(hex.EncodeToString(tx.Hash())))
 
-					err = feegrantModule.HandleMsgRevokeAllowance(msgRevokeAllowance)
+					err = feegrantModule.HandleMsgRevokeAllowance(junoTx, msgRevokeAllowance)
 					if err != nil {
 						return fmt.Errorf("error while handling MsgRevokeAllowance: %s", err)
 					}
