@@ -14,6 +14,7 @@ import (
 	"github.com/forbole/bdjuno/v2/types/config"
 
 	gaiaapp "github.com/cosmos/gaia/v6/app"
+	regenapp "github.com/regen-network/regen-ledger/v2/app"
 )
 
 func main() {
@@ -49,6 +50,7 @@ func main() {
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
 		gaiaapp.ModuleBasics,
+		regenapp.ModuleBasics,
 	}
 }
 
