@@ -22,12 +22,12 @@ func NewParseGenesisCmd(parseCfg *parse.Config) *cobra.Command {
 				return fmt.Errorf("error while getting genesis doc or state: %s", err)
 			}
 
-			registeredModules, err := utils.GetRegisteredModules(parseCfg)
+			parseCtx, err := parse.GetParsingContext(parseCfg)
 			if err != nil {
-				return fmt.Errorf("error while getting genesis registered modules: %s", err)
+				return err
 			}
 
-			invalidInputs, err := utils.ParseGenesis(registeredModules, genesisDoc, genesisState, args)
+			invalidInputs, err := utils.ParseGenesis(parseCtx.Modules, genesisDoc, genesisState, args)
 			if err != nil {
 				return fmt.Errorf("error while parsing genesis: %s", err)
 			}
