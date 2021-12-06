@@ -3,11 +3,11 @@ package staking
 import (
 	"fmt"
 
-	juno "github.com/forbole/juno/v2/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"github.com/forbole/bdjuno/v2/modules/staking/keybase"
 	"github.com/forbole/bdjuno/v2/types"
+	junoutils "github.com/forbole/juno/v2/types/utils"
 
 	"github.com/rs/zerolog/log"
 
@@ -208,7 +208,7 @@ func (m *Module) GetValidatorsVotingPowers(height int64, vals *tmctypes.ResultVa
 		// Find the voting power of this validator
 		var votingPower int64 = 0
 		for _, blockVal := range vals.Validators {
-			blockValConsAddr := juno.ConvertValidatorAddressToBech32String(blockVal.Address)
+			blockValConsAddr := junoutils.ConvertValidatorAddressToBech32String(blockVal.Address)
 			if blockValConsAddr == consAddr.String() {
 				votingPower = blockVal.VotingPower
 			}

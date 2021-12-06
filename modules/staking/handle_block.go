@@ -11,6 +11,7 @@ import (
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	juno "github.com/forbole/juno/v2/types"
+	junoutils "github.com/forbole/juno/v2/types/utils"
 
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
@@ -105,7 +106,7 @@ func (m *Module) updateDoubleSignEvidence(height int64, evidenceList tmtypes.Evi
 				dve.VoteA.Height,
 				dve.VoteA.Round,
 				dve.VoteA.BlockID.String(),
-				juno.ConvertValidatorAddressToBech32String(dve.VoteA.ValidatorAddress),
+				junoutils.ConvertValidatorAddressToBech32String(dve.VoteA.ValidatorAddress),
 				dve.VoteA.ValidatorIndex,
 				hex.EncodeToString(dve.VoteA.Signature),
 			),
@@ -114,7 +115,7 @@ func (m *Module) updateDoubleSignEvidence(height int64, evidenceList tmtypes.Evi
 				dve.VoteB.Height,
 				dve.VoteB.Round,
 				dve.VoteB.BlockID.String(),
-				juno.ConvertValidatorAddressToBech32String(dve.VoteB.ValidatorAddress),
+				junoutils.ConvertValidatorAddressToBech32String(dve.VoteB.ValidatorAddress),
 				dve.VoteB.ValidatorIndex,
 				hex.EncodeToString(dve.VoteB.Signature),
 			),
@@ -207,8 +208,8 @@ func (m *Module) updateElapsedDelegations(height int64, blockTime time.Time, eve
 
 	// Get all the events that identify a completed unbonding delegation or redelegations
 	var completedEvents []abci.Event
-	completedEvents = append(completedEvents, juno.FindEventsByType(events, stakingtypes.EventTypeCompleteUnbonding)...)
-	completedEvents = append(completedEvents, juno.FindEventsByType(events, stakingtypes.EventTypeCompleteRedelegation)...)
+	completedEvents = append(completedEvents, junoutils.FindEventsByType(events, stakingtypes.EventTypeCompleteUnbonding)...)
+	completedEvents = append(completedEvents, junoutils.FindEventsByType(events, stakingtypes.EventTypeCompleteRedelegation)...)
 
 	// Get the address of all the delegators to be refreshed
 	var delegatorsToRefresh []string

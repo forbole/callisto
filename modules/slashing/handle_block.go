@@ -5,6 +5,7 @@ import (
 
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	juno "github.com/forbole/juno/v2/types"
+	junoutils "github.com/forbole/juno/v2/types/utils"
 
 	"github.com/rs/zerolog/log"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -44,10 +45,10 @@ func (m *Module) updateSigningInfo(height int64) error {
 
 // updateSlashedDelegations updates all the delegations of the slashed validators
 func (m *Module) updateSlashedDelegations(height int64, beginBlockEvents []abci.Event) error {
-	events := juno.FindEventsByType(beginBlockEvents, slashingtypes.EventTypeSlash)
+	events := junoutils.FindEventsByType(beginBlockEvents, slashingtypes.EventTypeSlash)
 
 	for _, event := range events {
-		addressAttr, err := juno.FindAttributeByKey(event, slashingtypes.AttributeKeyAddress)
+		addressAttr, err := junoutils.FindAttributeByKey(event, slashingtypes.AttributeKeyAddress)
 		if err != nil {
 			return err
 		}
