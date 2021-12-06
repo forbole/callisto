@@ -12,21 +12,13 @@ require (
 	github.com/lib/pq v1.10.2
 	github.com/pelletier/go-toml v1.9.4
 	github.com/proullon/ramsql v0.0.0-20211120092837-c8d0a408b939
+	github.com/regen-network/regen-ledger/v2 v2.1.0
 	github.com/rs/zerolog v1.23.0
 	github.com/spf13/cobra v1.2.1
 	github.com/stretchr/testify v1.7.0
 	github.com/tendermint/tendermint v0.34.14
-	google.golang.org/genproto v0.0.0-20210920155426-26f343e4c215 // indirect
 	google.golang.org/grpc v1.40.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
-)
-
-require (
-	github.com/fsnotify/fsnotify v1.5.1 // indirect
-	github.com/mitchellh/mapstructure v1.4.2 // indirect
-	github.com/spf13/cast v1.4.1 // indirect
-	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 // indirect
-	gopkg.in/ini.v1 v1.63.2 // indirect
 )
 
 replace google.golang.org/grpc => google.golang.org/grpc v1.33.2
@@ -35,7 +27,7 @@ replace github.com/tendermint/tendermint => github.com/forbole/tendermint v0.34.
 
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.2-alpha.regen.4
 
-replace github.com/cosmos/cosmos-sdk => github.com/regen-network/cosmos-sdk v0.44.2-regen-1
+replace github.com/cosmos/cosmos-sdk => github.com/regen-network/cosmos-sdk v0.44.0-regen-2
 
 replace github.com/regen-network/regen-ledger/x/data => github.com/regen-network/regen-ledger/x/data v0.0.0-20210602121340-fa967f821a6e
 
