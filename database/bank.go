@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
+	"github.com/forbole/bdjuno/v2/utils"
 
 	dbutils "github.com/forbole/bdjuno/v2/database/utils"
 
@@ -41,6 +42,8 @@ func (db *Db) saveUpToDateBalances(paramsNumber int, balances []types.AccountBal
 	stmt := `INSERT INTO account_balance (address, coins, height) VALUES `
 	var params []interface{}
 	var accounts []types.Account
+	// remove duplicate values of accounts balance
+	balances = utils.RemoveDuplicateAccountBalance(balances)
 
 	for i, bal := range balances {
 
