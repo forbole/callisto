@@ -5,9 +5,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"google.golang.org/grpc/codes"
 
-	"github.com/forbole/bdjuno/v2/modules/utils"
 	"github.com/forbole/bdjuno/v2/types"
 
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
@@ -29,20 +27,6 @@ func (db *Db) SaveDelegations(delegations []types.Delegation) error {
 		}
 
 		err := db.storeUpToDateDelegations(paramsNumber, delegationSlice)
-		if err != nil {
-			// Get the error code
-			var errorCode string
-			_, scanErr := fmt.Sscanf(err.Error(), utils.ErrNotFound, &errorCode, &errorCode)
-			if scanErr != nil {
-				return fmt.Errorf("error while scanning error: %s", scanErr)
-			}
-
-			// If error is different than delegation not found, we need to return it
-			if errorCode != codes.NotFound.String() {
-				return fmt.Errorf("error while searching for delegations %s", err)
-			}
-		}
-
 		if err != nil {
 			return fmt.Errorf("error while storing up-to-date delegations: %s", err)
 		}
