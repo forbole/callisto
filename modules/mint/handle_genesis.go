@@ -13,7 +13,7 @@ import (
 
 // HandleGenesis implements modules.Module
 func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
-	log.Debug().Str("module", "distribution").Msg("parsing genesis")
+	log.Debug().Str("module", "mint").Msg("parsing genesis")
 
 	// Read the genesis state
 	var genState minttypes.GenesisState
