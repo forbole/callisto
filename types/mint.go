@@ -9,8 +9,8 @@ type MintParams struct {
 }
 
 // NewMintParams allows to build a new MintParams instance
-func NewMintParams(params minttypes.Params, height int64) MintParams {
-	return MintParams{
+func NewMintParams(params minttypes.Params, height int64) *MintParams {
+	return &MintParams{
 		Params: params,
 		Height: height,
 	}

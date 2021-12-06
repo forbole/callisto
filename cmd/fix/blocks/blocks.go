@@ -42,10 +42,10 @@ func blocksCmd(parseConfig *parse.Config) *cobra.Command {
 
 			// Register modules
 			bankModule := bank.NewModule(junomessages.BankMessagesParser, sources.BankSource, parseCtx.EncodingConfig.Marshaler, db)
-			distrModule := distribution.NewModule(config.Cfg, sources.DistrSource, bankModule, db)
+			distrModule := distribution.NewModule(config.Cfg, sources.DistrSource, bankModule, parseCtx.EncodingConfig.Marshaler, db)
 			historyModule := history.NewModule(config.Cfg.Chain, junomessages.BankMessagesParser, parseCtx.EncodingConfig.Marshaler, db)
 			stakingModule := staking.NewModule(sources.StakingSource, bankModule, distrModule, historyModule, nil, parseCtx.EncodingConfig.Marshaler, db)
-			govModule := gov.NewModule(parseCtx.EncodingConfig.Marshaler, sources.GovSource, nil, bankModule, distrModule, nil, nil, stakingModule, db)
+			govModule := gov.NewModule(sources.GovSource, nil, bankModule, distrModule, nil, nil, stakingModule, parseCtx.EncodingConfig.Marshaler, db)
 
 			// Build the consensus module
 			consensusModule := consensus.NewModule(bankModule, distrModule, govModule, stakingModule, db)

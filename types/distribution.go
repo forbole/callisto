@@ -12,8 +12,8 @@ type DistributionParams struct {
 }
 
 // NewDistributionParams allows to build a new DistributionParams instance
-func NewDistributionParams(params distrtypes.Params, height int64) DistributionParams {
-	return DistributionParams{
+func NewDistributionParams(params distrtypes.Params, height int64) *DistributionParams {
+	return &DistributionParams{
 		Params: params,
 		Height: height,
 	}
