@@ -6,6 +6,7 @@ import (
 
 	"github.com/forbole/bdjuno/v2/cmd/parse-genesis/utils"
 	"github.com/forbole/juno/v2/cmd/parse"
+	juno "github.com/forbole/juno/v2/types/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -17,7 +18,7 @@ func NewParseGenesisCmd(parseCfg *parse.Config) *cobra.Command {
 		Example: "bdjuno parse-genesis auth bank consensus gov history staking",
 		PreRunE: parse.ReadConfig(parseCfg),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			genesisDoc, genesisState, err := utils.GetGenesisDocAndState()
+			genesisDoc, genesisState, err := juno.GetGenesisDocAndState()
 			if err != nil {
 				return fmt.Errorf("error while getting genesis doc or state: %s", err)
 			}
