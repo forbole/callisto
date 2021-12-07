@@ -2,7 +2,6 @@ package feegrant
 
 import (
 	"fmt"
-	"strconv"
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
