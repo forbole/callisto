@@ -1,8 +1,8 @@
 CREATE TABLE fee_grant_allowance
 (
     id                 SERIAL      NOT NULL PRIMARY KEY,
-    grantee            TEXT        NOT NULL REFERENCES account (address),
-    granter            TEXT        NOT NULL REFERENCES account (address),
+    grantee_address    TEXT        NOT NULL REFERENCES account (address),
+    granter_address    TEXT        NOT NULL REFERENCES account (address),
     allowance          JSONB       NOT NULL,
     height             BIGINT      NOT NULL,
     CONSTRAINT unique_fee_grant_allowance UNIQUE(grantee, granter) 
