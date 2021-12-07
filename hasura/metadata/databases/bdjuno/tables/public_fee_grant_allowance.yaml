@@ -2,12 +2,12 @@ table:
   name: fee_grant_allowance
   schema: public
 object_relationships:
-- name: account
+- name: grantee
   using:
-    foreign_key_constraint_on: grantee
-- name: accountGranter
+    foreign_key_constraint_on: grantee_address
+- name: granter
   using:
-    foreign_key_constraint_on: granter
+    foreign_key_constraint_on: granter_address
 select_permissions:
 - permission:
     allow_aggregations: true
