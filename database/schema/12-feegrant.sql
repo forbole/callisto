@@ -5,6 +5,6 @@ CREATE TABLE fee_grant_allowance
     granter_address    TEXT        NOT NULL REFERENCES account (address),
     allowance          JSONB       NOT NULL,
     height             BIGINT      NOT NULL,
-    CONSTRAINT unique_fee_grant_allowance UNIQUE(grantee, granter) 
+    CONSTRAINT unique_fee_grant_allowance UNIQUE(grantee_address, granter_address) 
 );
 CREATE INDEX fee_grant_allowance_height_index ON fee_grant_allowance (height);
