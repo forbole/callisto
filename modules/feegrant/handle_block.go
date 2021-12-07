@@ -43,16 +43,7 @@ func (m *Module) removeExpiredFeeGrantAllowances(height int64, events []abci.Eve
 		if err != nil {
 			return fmt.Errorf("error while getting fee grant grantee address: %s", err)
 		}
-		height, err := juno.FindAttributeByKey(event, "height")
-		if err != nil {
-			return fmt.Errorf("error while getting fee grant height: %s", err)
-		}
-		blockHeight, err := strconv.ParseInt(height.String(), 10, 64)
-		if err != nil {
-			return fmt.Errorf("error while parsing blockHeight: %s", err)
-		}
-
-		allowanceToRemove := types.NewGrantRemoval(granteeAddress.String(), granterAddress.String(), blockHeight)
+		allowanceToRemove := types.NewGrantRemoval(granteeAddress.String(), granterAddress.String(), height)
 		err = m.db.DeleteFeeGrantAllowance(allowanceToRemove)
 		if err != nil {
 			return fmt.Errorf("error while deleting fee grant allowance: %s", err)
