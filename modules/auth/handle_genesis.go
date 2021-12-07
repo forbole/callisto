@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/rs/zerolog/log"
 	tmtypes "github.com/tendermint/tendermint/types"
+
+	"github.com/rs/zerolog/log"
 )
 
 // HandleGenesis implements modules.GenesisModule
