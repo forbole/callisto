@@ -27,6 +27,6 @@ func NewFeeAllowanceRow(
 func (w FeeAllowanceRow) Equals(v FeeAllowanceRow) bool {
 	return w.Grantee == v.Grantee &&
 		w.Granter == v.Granter &&
-		w.Allowance == w.Allowance &&
+		w.Allowance == v.Allowance &&
 		w.Height == v.Height
 }
