@@ -3,34 +3,10 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 
 	"github.com/forbole/juno/v2/modules"
-	"github.com/forbole/juno/v2/types/config"
 	tmtypes "github.com/tendermint/tendermint/types"
 )
-
-// GetGenesisDocAndState generates and returns the genesis doc and genesis state with genesis.json file
-func GetGenesisDocAndState() (*tmtypes.GenesisDoc, map[string]json.RawMessage, error) {
-	var genesisState map[string]json.RawMessage
-
-	genesisFile, err := ioutil.ReadFile(config.Cfg.Parser.GenesisFilePath)
-	if err != nil {
-		return &tmtypes.GenesisDoc{}, genesisState, fmt.Errorf("error while reading genesis file: %s", err)
-	}
-
-	genesisDoc, err := tmtypes.GenesisDocFromJSON(genesisFile)
-	if err != nil {
-		return &tmtypes.GenesisDoc{}, genesisState, fmt.Errorf("error while generating genesis doc from genesis.json: %s", err)
-	}
-
-	err = json.Unmarshal(genesisDoc.AppState, &genesisState)
-	if err != nil {
-		return &tmtypes.GenesisDoc{}, genesisState, fmt.Errorf("error while unmarshalling genesis state: %s", err)
-	}
-
-	return genesisDoc, genesisState, nil
-}
 
 // ParseGenesis parses the module that implements HandleGenesis method, and parses only certain modules if specified with arguments
 func ParseGenesis(
