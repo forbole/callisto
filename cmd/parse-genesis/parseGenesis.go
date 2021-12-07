@@ -2,10 +2,9 @@ package parsegenesis
 
 import (
 	"fmt"
-	"strings"
 
-	"github.com/forbole/bdjuno/v2/cmd/parse-genesis/utils"
 	"github.com/forbole/juno/v2/cmd/parse"
+	"github.com/forbole/juno/v2/modules"
 	"github.com/forbole/juno/v2/types/config"
 	junoutils "github.com/forbole/juno/v2/types/utils"
 	"github.com/spf13/cobra"
@@ -29,14 +28,31 @@ func NewParseGenesisCmd(parseCfg *parse.Config) *cobra.Command {
 				return fmt.Errorf("error while getting genesis doc or state: %s", err)
 			}
 
-			invalidInputs, err := utils.ParseGenesis(parseCtx.Modules, genesisDoc, genesisState, args)
-			if err != nil {
-				return fmt.Errorf("error while parsing genesis: %s", err)
+			var modulesToParse []modules.Module
+			for _, argsModule := range args {
+				var found bool
+				for _, module := range parseCtx.Modules {
+					if argsModule == module.Name() {
+						found = true
+						modulesToParse = append(modulesToParse, module)
+					}
+				}
+				if !found {
+					return fmt.Errorf("module is not registered: %s", argsModule)
+				}
 			}
 
-			if len(invalidInputs) != 0 {
-				// Print out invalid / unregistered module names
-				return fmt.Errorf("not registered or invalid module name(s): %s", strings.Join(invalidInputs, ", "))
+			if len(args) == 0 {
+				modulesToParse = parseCtx.Modules
+			}
+
+			for _, module := range modulesToParse {
+				if genesisModule, ok := module.(modules.GenesisModule); ok {
+					err := genesisModule.HandleGenesis(genesisDoc, genesisState)
+					if err != nil {
+						return fmt.Errorf("error while parsing genesis of %s module: %s", module.Name(), err)
+					}
+				}
 			}
 
 			return nil
