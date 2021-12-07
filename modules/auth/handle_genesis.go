@@ -4,11 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/rs/zerolog/log"
 	tmtypes "github.com/tendermint/tendermint/types"
 )
 
 // HandleGenesis implements modules.GenesisModule
 func (m *Module) HandleGenesis(_ *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
+	log.Debug().Str("module", "auth").Msg("parsing genesis")
+
 	accounts, err := GetGenesisAccounts(appState, m.cdc)
 	if err != nil {
 		return fmt.Errorf("error while getting genesis accounts: %s", err)

@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	authutils "github.com/forbole/bdjuno/v2/modules/auth"
+	"github.com/rs/zerolog/log"
 
 	tmtypes "github.com/tendermint/tendermint/types"
 
@@ -15,6 +16,7 @@ import (
 
 // HandleGenesis implements modules.GenesisModule
 func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
+	log.Debug().Str("module", "auth").Msg("parsing genesis")
 
 	// Unmarshal the bank state
 	var bankState banktypes.GenesisState

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/rs/zerolog/log"
 	tmtypes "github.com/tendermint/tendermint/types"
 
 	"github.com/forbole/bdjuno/v2/types"
@@ -13,6 +14,8 @@ import (
 
 // HandleGenesis implements modules.Module
 func (m *Module) HandleGenesis(_ *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
+	log.Debug().Str("module", "gov").Msg("parsing genesis")
+
 	// Read the genesis state
 	var genState govtypes.GenesisState
 	err := m.cdc.UnmarshalJSON(appState[govtypes.ModuleName], &genState)
