@@ -1,6 +1,7 @@
 package database_test
 
 import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 	"github.com/forbole/bdjuno/v2/types"
@@ -10,7 +11,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveFeeGrantAllowance() {
 
 	// save the data
 	var allowance feegranttypes.FeeAllowanceI
-	feeGrant, err := feegranttypes.NewGrant(suite.getAccount("cosmos1ltzt0z992ke6qgmtjxtygwzn36km4cy6cqdknt"), suite.getAccount("cosmos1re6zjpyczs0w7flrl6uacl0r4teqtyg62crjsn"), allowance)
+	feeGrant, err := feegranttypes.NewGrant(sdk.AccAddress("cosmos1ltzt0z992ke6qgmtjxtygwzn36km4cy6cqdknt"), sdk.AccAddress("cosmos1re6zjpyczs0w7flrl6uacl0r4teqtyg62crjsn"), allowance)
 
 	err = suite.database.SaveFeeGrantAllowance(types.NewFeeGrant(feeGrant, 121622))
 	suite.Require().NoError(err)
@@ -36,7 +37,7 @@ func (suite *DbTestSuite) TestBigDipperDb_RemoveFeeGrantAllowance() {
 
 	// save the data
 	var allowance feegranttypes.FeeAllowanceI
-	feeGrant, err := feegranttypes.NewGrant(suite.getAccount("cosmos1ltzt0z992ke6qgmtjxtygwzn36km4cy6cqdknt"), suite.getAccount("cosmos1re6zjpyczs0w7flrl6uacl0r4teqtyg62crjsn"), allowance)
+	feeGrant, err := feegranttypes.NewGrant(sdk.AccAddress("cosmos1ltzt0z992ke6qgmtjxtygwzn36km4cy6cqdknt"), sdk.AccAddress("cosmos1re6zjpyczs0w7flrl6uacl0r4teqtyg62crjsn"), allowance)
 
 	err = suite.database.SaveFeeGrantAllowance(types.NewFeeGrant(feeGrant, 121622))
 	suite.Require().NoError(err)
@@ -46,7 +47,7 @@ func (suite *DbTestSuite) TestBigDipperDb_RemoveFeeGrantAllowance() {
 	err = suite.database.DeleteFeeGrantAllowance(allowanceToDelete)
 	suite.Require().NoError(err)
 
-	// verify the data 
+	// verify the data
 	var count int
 	err = suite.database.Sql.QueryRow(`SELECT COUNT(*) FROM redelegation`).Scan(&count)
 	suite.Require().NoError(err)
