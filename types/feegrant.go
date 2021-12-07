@@ -4,12 +4,12 @@ import feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
 
 // FeeGrant represents the x/feegrant module
 type FeeGrant struct {
-	*feegranttypes.MsgGrantAllowance
+	feegranttypes.Grant
 	Height int64
 }
 
 // NewFeeGrant allows to build a new FeeGrant instance
-func NewFeeGrant(feegrant *feegranttypes.MsgGrantAllowance, height int64) FeeGrant {
+func NewFeeGrant(feegrant feegranttypes.Grant, height int64) FeeGrant {
 	return FeeGrant{
 		feegrant,
 		height,

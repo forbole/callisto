@@ -1,6 +1,8 @@
 package feegrant
 
 import (
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
 	"github.com/forbole/bdjuno/v2/types"
@@ -25,8 +27,16 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 
 // HandleMsgGrantAllowance allows to properly handle a MsgGrantAllowance
 func (m *Module) HandleMsgGrantAllowance(tx *juno.Tx, msg *feegranttypes.MsgGrantAllowance) error {
-	allowance := types.NewFeeGrant(msg, tx.Height)
-	return m.db.SaveFeeGrantAllowance(allowance)
+	allowance, err := msg.GetFeeAllowanceI()
+	if err != nil {
+		return fmt.Errorf("error while getting fee allowance: %s", err)
+	}
+	feeGrant, err := feegranttypes.NewGrant(sdk.AccAddress(msg.Granter), sdk.AccAddress(msg.Grantee), allowance)
+	if err != nil {
+		return fmt.Errorf("error while getting new grant allowance: %s", err)
+	}
+	feeGrantAllowance := types.NewFeeGrant(feeGrant, tx.Height)
+	return m.db.SaveFeeGrantAllowance(feeGrantAllowance)
 }
 
 // HandleMsgRevokeAllowance allows to properly handle a MsgRevokeAllowance
