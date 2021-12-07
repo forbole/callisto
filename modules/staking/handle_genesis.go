@@ -6,7 +6,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx"
-	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/bdjuno/v2/types"
 
@@ -14,6 +13,8 @@ import (
 
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+
+	"github.com/rs/zerolog/log"
 )
 
 // HandleGenesis implements GenesisModule
