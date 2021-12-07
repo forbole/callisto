@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/forbole/bdjuno/v2/types"
-	"github.com/rs/zerolog/log"
 
+	"github.com/rs/zerolog/log"
 	tmtypes "github.com/tendermint/tendermint/types"
 )
 
