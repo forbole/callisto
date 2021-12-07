@@ -16,7 +16,7 @@ import (
 
 // HandleGenesis implements modules.GenesisModule
 func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
-	log.Debug().Str("module", "auth").Msg("parsing genesis")
+	log.Debug().Str("module", "bank").Msg("parsing genesis")
 
 	// Unmarshal the bank state
 	var bankState banktypes.GenesisState
