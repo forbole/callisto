@@ -26,6 +26,7 @@ type Module struct {
 	bankModule     BankModule
 	distrModule    DistrModule
 	mintModule     MintModule
+	profilesModule ProfilesModule
 	slashingModule SlashingModule
 	stakingModule  StakingModule
 }
@@ -38,6 +39,7 @@ func NewModule(
 	bankModule BankModule,
 	distrModule DistrModule,
 	mintModule MintModule,
+	profilesModule ProfilesModule,
 	slashingModule SlashingModule,
 	stakingModule StakingModule,
 	db *database.Db,
@@ -49,6 +51,7 @@ func NewModule(
 		bankModule:     bankModule,
 		distrModule:    distrModule,
 		mintModule:     mintModule,
+		profilesModule: profilesModule,
 		slashingModule: slashingModule,
 		stakingModule:  stakingModule,
 		db:             db,
