@@ -1,24 +1,35 @@
 package database_test
 
 import (
+	"fmt"
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 	"github.com/forbole/bdjuno/v2/types"
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveFeeGrantAllowance() {
+	spendLimit := sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(1000)))
+	expiration := time.Date(2022, 2, 25, 12, 00, 00, 000, time.UTC)
+	allowance, err := feegranttypes.NewAllowedMsgAllowance(
+		&feegranttypes.BasicAllowance{SpendLimit: spendLimit, Expiration: &expiration},
+		[]string{sdk.MsgTypeURL(&govtypes.MsgSubmitProposal{})},
+	)
+	suite.Require().NoError(err)
 
-	// save the data
-	var allowance feegranttypes.FeeAllowanceI
-	feeGrant, err := feegranttypes.NewGrant(sdk.AccAddress("cosmos1ltzt0z992ke6qgmtjxtygwzn36km4cy6cqdknt"), sdk.AccAddress("cosmos1re6zjpyczs0w7flrl6uacl0r4teqtyg62crjsn"), allowance)
-	feeGrantAllowance := types.NewFeeGrant(feeGrant, 121622)
+	granter := sdk.AccAddress("cosmos1ltzt0z992ke6qgmtjxtygwzn36km4cy6cqdknt")
+	grantee := sdk.AccAddress("cosmos1re6zjpyczs0w7flrl6uacl0r4teqtyg62crjsn")
+	feeGrant, err := feegranttypes.NewGrant(granter, grantee, allowance)
+	feeGrantAllowance := types.NewFeeGrant(feeGrant, 122222)
 
 	err = suite.database.SaveFeeGrantAllowance(feeGrantAllowance)
 	suite.Require().NoError(err)
 
 	// test dobule insertion
-	err = suite.database.SaveFeeGrantAllowance(types.NewFeeGrant(feeGrant, 121622))
+	err = suite.database.SaveFeeGrantAllowance(feeGrantAllowance)
 	suite.Require().NoError(err, "double feegrant allowance insertion should not insert the values again and returns no error")
 
 	// verify the data
@@ -31,15 +42,23 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveFeeGrantAllowance() {
 	for index, row := range result {
 		suite.Require().True(row.Equals(expected[index]))
 	}
-
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_RemoveFeeGrantAllowance() {
 
 	// save the data
-	var allowance feegranttypes.FeeAllowanceI
-	feeGrant, err := feegranttypes.NewGrant(sdk.AccAddress("cosmos1ltzt0z992ke6qgmtjxtygwzn36km4cy6cqdknt"), sdk.AccAddress("cosmos1re6zjpyczs0w7flrl6uacl0r4teqtyg62crjsn"), allowance)
-	feeGrantAllowance := types.NewFeeGrant(feeGrant, 121622)
+	spendLimit := sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(1000)))
+	expiration := time.Date(2022, 2, 25, 12, 00, 00, 000, time.UTC)
+	allowance, err := feegranttypes.NewAllowedMsgAllowance(
+		&feegranttypes.BasicAllowance{SpendLimit: spendLimit, Expiration: &expiration},
+		[]string{sdk.MsgTypeURL(&govtypes.MsgSubmitProposal{})},
+	)
+	suite.Require().NoError(err)
+
+	granter := sdk.AccAddress("cosmos1ltzt0z992ke6qgmtjxtygwzn36km4cy6cqdknt")
+	grantee := sdk.AccAddress("cosmos1re6zjpyczs0w7flrl6uacl0r4teqtyg62crjsn")
+	feeGrant, err := feegranttypes.NewGrant(granter, grantee, allowance)
+	feeGrantAllowance := types.NewFeeGrant(feeGrant, 122222)
 
 	err = suite.database.SaveFeeGrantAllowance(feeGrantAllowance)
 	suite.Require().NoError(err)
