@@ -49,6 +49,5 @@ func (m *Module) HandleMsgGrantAllowance(tx *juno.Tx, msg *feegranttypes.MsgGran
 
 // HandleMsgRevokeAllowance allows to properly handle a MsgRevokeAllowance
 func (m *Module) HandleMsgRevokeAllowance(tx *juno.Tx, msg *feegranttypes.MsgRevokeAllowance) error {
-	allowanceToDelete := types.NewGrantRemoval(msg.Grantee, msg.Granter, tx.Height)
-	return m.db.DeleteFeeGrantAllowance(allowanceToDelete)
+	return m.db.DeleteFeeGrantAllowance(types.NewGrantRemoval(msg.Grantee, msg.Granter, tx.Height))
 }
