@@ -12,8 +12,9 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveFeeGrantAllowance() {
 	// save the data
 	var allowance feegranttypes.FeeAllowanceI
 	feeGrant, err := feegranttypes.NewGrant(sdk.AccAddress("cosmos1ltzt0z992ke6qgmtjxtygwzn36km4cy6cqdknt"), sdk.AccAddress("cosmos1re6zjpyczs0w7flrl6uacl0r4teqtyg62crjsn"), allowance)
+	feeGrantAllowance := types.NewFeeGrant(feeGrant, 121622)
 
-	err = suite.database.SaveFeeGrantAllowance(types.NewFeeGrant(feeGrant, 121622))
+	err = suite.database.SaveFeeGrantAllowance(feeGrantAllowance)
 	suite.Require().NoError(err)
 
 	// test dobule insertion
@@ -38,8 +39,9 @@ func (suite *DbTestSuite) TestBigDipperDb_RemoveFeeGrantAllowance() {
 	// save the data
 	var allowance feegranttypes.FeeAllowanceI
 	feeGrant, err := feegranttypes.NewGrant(sdk.AccAddress("cosmos1ltzt0z992ke6qgmtjxtygwzn36km4cy6cqdknt"), sdk.AccAddress("cosmos1re6zjpyczs0w7flrl6uacl0r4teqtyg62crjsn"), allowance)
+	feeGrantAllowance := types.NewFeeGrant(feeGrant, 121622)
 
-	err = suite.database.SaveFeeGrantAllowance(types.NewFeeGrant(feeGrant, 121622))
+	err = suite.database.SaveFeeGrantAllowance(feeGrantAllowance)
 	suite.Require().NoError(err)
 
 	// delete the data
