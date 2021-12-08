@@ -11,7 +11,7 @@ import (
 )
 
 // HandleMsg implements modules.MessageModule
-func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
+func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
 	if len(tx.Logs) == 0 {
 		return nil
 	}
