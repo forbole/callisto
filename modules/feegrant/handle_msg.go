@@ -5,12 +5,13 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
-	"github.com/forbole/bdjuno/v2/types"
 	juno "github.com/forbole/juno/v2/types"
+
+	"github.com/forbole/bdjuno/v2/types"
 )
 
 // HandleMsg implements modules.MessageModule
-func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
+func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
 	if len(tx.Logs) == 0 {
 		return nil
 	}
@@ -31,16 +32,22 @@ func (m *Module) HandleMsgGrantAllowance(tx *juno.Tx, msg *feegranttypes.MsgGran
 	if err != nil {
 		return fmt.Errorf("error while getting fee allowance: %s", err)
 	}
-	feeGrant, err := feegranttypes.NewGrant(sdk.AccAddress(msg.Granter), sdk.AccAddress(msg.Grantee), allowance)
+	granter, err := sdk.AccAddressFromBech32(msg.Granter)
+	if err != nil {
+		return fmt.Errorf("error while parsing granter address: %s", err)
+	}
+	grantee, err := sdk.AccAddressFromBech32(msg.Grantee)
+	if err != nil {
+		return fmt.Errorf("error while parsing grantee address: %s", err)
+	}
+	feeGrant, err := feegranttypes.NewGrant(granter, grantee, allowance)
 	if err != nil {
 		return fmt.Errorf("error while getting new grant allowance: %s", err)
 	}
-	feeGrantAllowance := types.NewFeeGrant(feeGrant, tx.Height)
-	return m.db.SaveFeeGrantAllowance(feeGrantAllowance)
+	return m.db.SaveFeeGrantAllowance(types.NewFeeGrant(feeGrant, tx.Height))
 }
 
 // HandleMsgRevokeAllowance allows to properly handle a MsgRevokeAllowance
 func (m *Module) HandleMsgRevokeAllowance(tx *juno.Tx, msg *feegranttypes.MsgRevokeAllowance) error {
-	allowanceToDelete := types.NewGrantRemoval(msg.Grantee, msg.Granter, tx.Height)
-	return m.db.DeleteFeeGrantAllowance(allowanceToDelete)
+	return m.db.DeleteFeeGrantAllowance(types.NewGrantRemoval(msg.Grantee, msg.Granter, tx.Height))
 }

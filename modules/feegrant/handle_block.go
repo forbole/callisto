@@ -8,14 +8,15 @@ import (
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
 	juno "github.com/forbole/juno/v2/types"
 
-	"github.com/forbole/bdjuno/v2/types"
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+
+	"github.com/forbole/bdjuno/v2/types"
 )
 
 // HandleBlock implements BlockModule
 func (m *Module) HandleBlock(
-	block *tmctypes.ResultBlock, res *tmctypes.ResultBlockResults, _ []*juno.Tx, vals *tmctypes.ResultValidators,
+	block *tmctypes.ResultBlock, res *tmctypes.ResultBlockResults, _ []*juno.Tx, _ *tmctypes.ResultValidators,
 ) error {
 
 	// Remove expired fee grant allowances
@@ -42,8 +43,7 @@ func (m *Module) removeExpiredFeeGrantAllowances(height int64, events []abci.Eve
 		if err != nil {
 			return fmt.Errorf("error while getting fee grant grantee address: %s", err)
 		}
-		allowanceToRemove := types.NewGrantRemoval(granteeAddress.String(), granterAddress.String(), height)
-		err = m.db.DeleteFeeGrantAllowance(allowanceToRemove)
+		err = m.db.DeleteFeeGrantAllowance(types.NewGrantRemoval(string(granteeAddress.Value), string(granterAddress.Value), height))
 		if err != nil {
 			return fmt.Errorf("error while deleting fee grant allowance: %s", err)
 
