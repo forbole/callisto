@@ -8,9 +8,10 @@ import (
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
 	juno "github.com/forbole/juno/v2/types"
 
-	"github.com/forbole/bdjuno/v2/types"
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+
+	"github.com/forbole/bdjuno/v2/types"
 )
 
 // HandleBlock implements BlockModule

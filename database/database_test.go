@@ -48,7 +48,7 @@ func (suite *DbTestSuite) SetupTest() {
 	dbCfg := dbconfig.NewDatabaseConfig(
 		"bdjuno",
 		"localhost",
-		5433,
+		6433,
 		"bdjuno",
 		"password",
 		"",

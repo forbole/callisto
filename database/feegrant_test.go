@@ -1,70 +1,67 @@
 package database_test
 
 import (
-	"time"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 	"github.com/forbole/bdjuno/v2/types"
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveFeeGrantAllowance() {
-	spendLimit := sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(1000)))
-	expiration := time.Date(2022, 2, 25, 12, 00, 00, 000, time.UTC)
-	allowance, err := feegranttypes.NewAllowedMsgAllowance(
-		&feegranttypes.BasicAllowance{SpendLimit: spendLimit, Expiration: &expiration},
-		[]string{sdk.MsgTypeURL(&govtypes.MsgSubmitProposal{})},
-	)
+	allowance := &feegranttypes.BasicAllowance{SpendLimit: nil, Expiration: nil}
+	granter, err := sdk.AccAddressFromBech32("cosmos1ltzt0z992ke6qgmtjxtygwzn36km4cy6cqdknt")
 	suite.Require().NoError(err)
 
-	granter := sdk.AccAddress("cosmos1ltzt0z992ke6qgmtjxtygwzn36km4cy6cqdknt")
-	grantee := sdk.AccAddress("cosmos1re6zjpyczs0w7flrl6uacl0r4teqtyg62crjsn")
+	grantee, err := sdk.AccAddressFromBech32("cosmos1re6zjpyczs0w7flrl6uacl0r4teqtyg62crjsn")
+	suite.Require().NoError(err)
+
 	feeGrant, err := feegranttypes.NewGrant(granter, grantee, allowance)
-	feeGrantAllowance := types.NewFeeGrant(feeGrant, 122222)
-
-	err = suite.database.SaveFeeGrantAllowance(feeGrantAllowance)
 	suite.Require().NoError(err)
 
-	// test dobule insertion
-	err = suite.database.SaveFeeGrantAllowance(feeGrantAllowance)
-	suite.Require().NoError(err, "double feegrant allowance insertion should not insert the values again and returns no error")
-
-	// verify the data
-	expected := []dbtypes.FeeAllowanceRow{dbtypes.NewFeeAllowanceRow("cosmos1re6zjpyczs0w7flrl6uacl0r4teqtyg62crjsn", "cosmos1ltzt0z992ke6qgmtjxtygwzn36km4cy6cqdknt", "", 122222)}
-
-	var result []dbtypes.FeeAllowanceRow
-	err = suite.database.Sqlx.Select(&result, `SELECT * FROM fee_grant_allowance`)
+	// Store the allowance
+	err = suite.database.SaveFeeGrantAllowance(types.NewFeeGrant(feeGrant, 121622))
 	suite.Require().NoError(err)
-	suite.Require().Len(result, len(expected))
-	for index, row := range result {
-		suite.Require().True(row.Equals(expected[index]))
-	}
+
+	// Test double insertion
+	err = suite.database.SaveFeeGrantAllowance(types.NewFeeGrant(feeGrant, 121622))
+	suite.Require().NoError(err, "storing existing grant allowance should return no error")
+
+	// Verify the data
+	var rows []dbtypes.FeeAllowanceRow
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM fee_grant_allowance`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	suite.Require().Equal(rows[0].Granter, granter.String())
+	suite.Require().Equal(rows[0].Grantee, grantee.String())
+	suite.Require().Equal(rows[0].Height, int64(121622))
+
+	var stored feegranttypes.FeeAllowanceI
+	err = suite.database.EncodingConfig.Marshaler.UnmarshalInterfaceJSON([]byte(rows[0].Allowance), &stored)
+	suite.Require().NoError(err)
+	suite.Require().Equal(allowance, stored)
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_RemoveFeeGrantAllowance() {
-
-	// save the data
-	spendLimit := sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(1000)))
-	expiration := time.Date(2022, 2, 25, 12, 00, 00, 000, time.UTC)
-	allowance, err := feegranttypes.NewAllowedMsgAllowance(
-		&feegranttypes.BasicAllowance{SpendLimit: spendLimit, Expiration: &expiration},
-		[]string{sdk.MsgTypeURL(&govtypes.MsgSubmitProposal{})},
-	)
+	allowance := &feegranttypes.BasicAllowance{SpendLimit: nil, Expiration: nil}
+	granter, err := sdk.AccAddressFromBech32("cosmos1ltzt0z992ke6qgmtjxtygwzn36km4cy6cqdknt")
 	suite.Require().NoError(err)
 
-	granter := sdk.AccAddress("cosmos1ltzt0z992ke6qgmtjxtygwzn36km4cy6cqdknt")
-	grantee := sdk.AccAddress("cosmos1re6zjpyczs0w7flrl6uacl0r4teqtyg62crjsn")
+	grantee, err := sdk.AccAddressFromBech32("cosmos1re6zjpyczs0w7flrl6uacl0r4teqtyg62crjsn")
+	suite.Require().NoError(err)
+
 	feeGrant, err := feegranttypes.NewGrant(granter, grantee, allowance)
-	feeGrantAllowance := types.NewFeeGrant(feeGrant, 122222)
-
-	err = suite.database.SaveFeeGrantAllowance(feeGrantAllowance)
 	suite.Require().NoError(err)
 
-	// delete the data
-	allowanceToDelete := types.NewGrantRemoval("cosmos1re6zjpyczs0w7flrl6uacl0r4teqtyg62crjsn", "cosmos1ltzt0z992ke6qgmtjxtygwzn36km4cy6cqdknt", 122222)
-	err = suite.database.DeleteFeeGrantAllowance(allowanceToDelete)
+	err = suite.database.SaveFeeGrantAllowance(types.NewFeeGrant(feeGrant, 121622))
+	suite.Require().NoError(err)
+
+	// Delete the data
+	err = suite.database.DeleteFeeGrantAllowance(types.NewGrantRemoval(
+		"cosmos1re6zjpyczs0w7flrl6uacl0r4teqtyg62crjsn",
+		"cosmos1ltzt0z992ke6qgmtjxtygwzn36km4cy6cqdknt",
+		122222,
+	))
 	suite.Require().NoError(err)
 
 	// verify the data
@@ -72,5 +69,4 @@ func (suite *DbTestSuite) TestBigDipperDb_RemoveFeeGrantAllowance() {
 	err = suite.database.Sql.QueryRow(`SELECT COUNT(*) FROM redelegation`).Scan(&count)
 	suite.Require().NoError(err)
 	suite.Require().Equal(0, count)
-
 }

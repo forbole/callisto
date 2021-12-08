@@ -8,10 +8,11 @@ import (
 	"github.com/forbole/bdjuno/v2/modules/feegrant"
 	"github.com/forbole/bdjuno/v2/utils"
 
-	"github.com/forbole/bdjuno/v2/database"
 	"github.com/forbole/juno/v2/cmd/parse"
 	"github.com/forbole/juno/v2/types/config"
 	"github.com/spf13/cobra"
+
+	"github.com/forbole/bdjuno/v2/database"
 
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
 )

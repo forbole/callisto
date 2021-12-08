@@ -5,11 +5,6 @@ type ModuleRow struct {
 	Module string `db:"module_name"`
 }
 
-//NewModuleRow return a new instance of ModuleRow
-func NewModuleRow(name string) ModuleRow {
-	return ModuleRow{Module: name}
-}
-
 // Equal return true if two moduleRow is equal
 func (v ModuleRow) Equal(w ModuleRow) bool {
 	return v.Module == w.Module
@@ -18,7 +13,7 @@ func (v ModuleRow) Equal(w ModuleRow) bool {
 // ModuleRows represent an array of ModulerRow
 type ModuleRows []*ModuleRow
 
-//NewModuleRows return a new instance of ModuleRows
+// NewModuleRows return a new instance of ModuleRows
 func NewModuleRows(names []string) ModuleRows {
 	rows := make([]*ModuleRow, 0)
 	for _, name := range names {
