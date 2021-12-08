@@ -16,7 +16,7 @@ import (
 
 // HandleBlock implements BlockModule
 func (m *Module) HandleBlock(
-	block *tmctypes.ResultBlock, res *tmctypes.ResultBlockResults, _ []*juno.Tx, vals *tmctypes.ResultValidators,
+	block *tmctypes.ResultBlock, res *tmctypes.ResultBlockResults, _ []*juno.Tx, _ *tmctypes.ResultValidators,
 ) error {
 
 	// Remove expired fee grant allowances
