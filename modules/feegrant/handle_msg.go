@@ -44,8 +44,7 @@ func (m *Module) HandleMsgGrantAllowance(tx *juno.Tx, msg *feegranttypes.MsgGran
 	if err != nil {
 		return fmt.Errorf("error while getting new grant allowance: %s", err)
 	}
-	feeGrantAllowance := types.NewFeeGrant(feeGrant, tx.Height)
-	return m.db.SaveFeeGrantAllowance(feeGrantAllowance)
+	return m.db.SaveFeeGrantAllowance(types.NewFeeGrant(feeGrant, tx.Height))
 }
 
 // HandleMsgRevokeAllowance allows to properly handle a MsgRevokeAllowance
