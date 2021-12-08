@@ -32,7 +32,15 @@ func (m *Module) HandleMsgGrantAllowance(tx *juno.Tx, msg *feegranttypes.MsgGran
 	if err != nil {
 		return fmt.Errorf("error while getting fee allowance: %s", err)
 	}
-	feeGrant, err := feegranttypes.NewGrant(sdk.AccAddress(msg.Granter), sdk.AccAddress(msg.Grantee), allowance)
+	granter, err := sdk.AccAddressFromBech32(msg.Granter)
+	if err != nil {
+		return fmt.Errorf("error while parsing granter address: %s", err)
+	}
+	grantee, err := sdk.AccAddressFromBech32(msg.Grantee)
+	if err != nil {
+		return fmt.Errorf("error while parsing grantee address: %s", err)
+	}
+	feeGrant, err := feegranttypes.NewGrant(granter, grantee, allowance)
 	if err != nil {
 		return fmt.Errorf("error while getting new grant allowance: %s", err)
 	}
