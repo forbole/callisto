@@ -3,18 +3,21 @@ package feegrant
 import (
 	"encoding/hex"
 	"fmt"
-	"strings"
 
 	"github.com/forbole/bdjuno/v2/modules/feegrant"
 	"github.com/forbole/bdjuno/v2/utils"
 
 	"github.com/forbole/juno/v2/cmd/parse"
-	"github.com/forbole/juno/v2/types/config"
 	"github.com/spf13/cobra"
 
 	"github.com/forbole/bdjuno/v2/database"
 
+	"sort"
+
+	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
+	"github.com/rs/zerolog/log"
 )
 
 // allowanceCmd returns the Cobra command allowing to fix all things related to fee grant allowance
@@ -34,67 +37,77 @@ func allowanceCmd(parseConfig *parse.Config) *cobra.Command {
 			// Build feegrant module
 			feegrantModule := feegrant.NewModule(parseCtx.EncodingConfig.Marshaler, db)
 
-			// Get latest height
-			height, err := parseCtx.Node.LatestHeight()
+			// Get the accounts
+			addresses, err := db.GetAccounts()
 			if err != nil {
-				return fmt.Errorf("error while getting chain latest block height: %s", err)
+				return err
 			}
 
-			startHeight := config.Cfg.Parser.StartHeight
+			for _, address := range addresses {
+				// Collect all the transactions
+				var txs []*tmctypes.ResultTx
 
-			// Handle messages realated to feegrant allowance of each block from the start height
-			for h := startHeight; h <= height; h++ {
-				err = refreshAllowance(parseCtx, h, feegrantModule)
+				// Get all the MsgGrantAllowance txs
+				query := fmt.Sprintf("set_feegrant.granter='%s'", address)
+				grantAllowanceTxs, err := utils.QueryTxs(parseCtx.Node, query)
 				if err != nil {
-					fmt.Printf("error while refreshing allowance: %s \n", err)
+					return err
+				}
+				txs = append(txs, grantAllowanceTxs...)
+
+				query = fmt.Sprintf("set_feegrant.grantee='%s'", address)
+				grantAllowanceTxs, err = utils.QueryTxs(parseCtx.Node, query)
+				if err != nil {
+					return err
+				}
+				txs = append(txs, grantAllowanceTxs...)
+
+				// Get all the MsgRevokeAllowance txs
+				query = fmt.Sprintf("revoke_feegrant.granter='%s'", address)
+				revokeAllowanceTxs, err := utils.QueryTxs(parseCtx.Node, query)
+				if err != nil {
+					return err
+				}
+				txs = append(txs, revokeAllowanceTxs...)
+
+				query = fmt.Sprintf("revoke_feegrant.grantee='%s'", address)
+				revokeAllowanceTxs, err = utils.QueryTxs(parseCtx.Node, query)
+				if err != nil {
+					return err
+				}
+				txs = append(txs, revokeAllowanceTxs...)
+
+				// Sort the txs based on their ascending height
+				sort.Slice(txs, func(i, j int) bool {
+					return txs[i].Height < txs[j].Height
+				})
+
+				for _, tx := range txs {
+					log.Debug().Int64("height", tx.Height).Msg("parsing transaction")
+
+					transaction, err := parseCtx.Node.Tx(hex.EncodeToString(tx.Tx.Hash()))
+					if err != nil {
+						return err
+					}
+
+					// Handle only the MsgGrantAllowance and MsgRevokeAllowance instances
+					for index, msg := range transaction.GetMsgs() {
+						_, isMsgGrantAllowance := msg.(*feegranttypes.MsgGrantAllowance)
+						_, isMsgRevokeAllowance := msg.(*feegranttypes.MsgRevokeAllowance)
+
+						if !isMsgGrantAllowance && !isMsgRevokeAllowance {
+							continue
+						}
+
+						err = feegrantModule.HandleMsg(index, msg, transaction)
+						if err != nil {
+							return fmt.Errorf("error while handling feegrant module message: %s", err)
+						}
+					}
 				}
 			}
 
 			return nil
 		},
 	}
-}
-
-func refreshAllowance(parseCtx *parse.Context, blockHeight int64, feegrantModule *feegrant.Module) error {
-	// Get the block details
-	block, err := utils.QueryBlock(parseCtx.Node, blockHeight)
-	if err != nil {
-		return err
-	}
-
-	if len(block.Block.Txs) != 0 {
-		for _, tx := range block.Block.Txs {
-
-			// Get the tx details
-			junoTx, err := parseCtx.Node.Tx(hex.EncodeToString(tx.Hash()))
-			if err != nil {
-				return fmt.Errorf("error while getting tx details: %s", err)
-			}
-
-			// Handle feegrant module messages
-			for _, msg := range junoTx.GetMsgs() {
-				if msgGrantAllowance, ok := msg.(*feegranttypes.MsgGrantAllowance); ok {
-					fmt.Println("handling MsgGrantAllowance tx hash:", strings.ToUpper(hex.EncodeToString(tx.Hash())))
-
-					err = feegrantModule.HandleMsgGrantAllowance(junoTx, msgGrantAllowance)
-					if err != nil {
-						return fmt.Errorf("error while handling MsgGrantAllowance: %s", err)
-					}
-				}
-
-				if msgRevokeAllowance, ok := msg.(*feegranttypes.MsgRevokeAllowance); ok {
-					fmt.Println("handling MsgRevokeAllowance tx hash:", strings.ToUpper(hex.EncodeToString(tx.Hash())))
-
-					err = feegrantModule.HandleMsgRevokeAllowance(junoTx, msgRevokeAllowance)
-					if err != nil {
-						return fmt.Errorf("error while handling MsgRevokeAllowance: %s", err)
-					}
-				}
-
-			}
-
-		}
-	}
-
-	return nil
 }
