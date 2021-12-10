@@ -84,7 +84,6 @@ func allowanceCmd(parseConfig *parse.Config) *cobra.Command {
 					}
 				}
 			}
-		}
 
 			return nil
 		},
