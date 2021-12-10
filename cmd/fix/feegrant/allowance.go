@@ -38,74 +38,53 @@ func allowanceCmd(parseConfig *parse.Config) *cobra.Command {
 			feegrantModule := feegrant.NewModule(parseCtx.EncodingConfig.Marshaler, db)
 
 			// Get the accounts
-			addresses, err := db.GetAccounts()
+			// Collect all the transactions
+			var txs []*tmctypes.ResultTx
+
+			// Get all the MsgGrantAllowance txs
+			query := fmt.Sprintf("message.action='%s'", feegranttypes.EventTypeSetFeeGrant)
+			grantAllowanceTxs, err := utils.QueryTxs(parseCtx.Node, query)
 			if err != nil {
 				return err
 			}
+			txs = append(txs, grantAllowanceTxs...)
 
-			for _, address := range addresses {
-				// Collect all the transactions
-				var txs []*tmctypes.ResultTx
+			// Get all the MsgRevokeAllowance txs
+			query = fmt.Sprintf("message.action='%s'", feegranttypes.EventTypeRevokeFeeGrant)
+			revokeAllowanceTxs, err := utils.QueryTxs(parseCtx.Node, query)
+			if err != nil {
+				return err
+			}
+			txs = append(txs, revokeAllowanceTxs...)
 
-				// Get all the MsgGrantAllowance txs
-				query := fmt.Sprintf("set_feegrant.granter='%s'", address)
-				grantAllowanceTxs, err := utils.QueryTxs(parseCtx.Node, query)
+			// Sort the txs based on their ascending height
+			sort.Slice(txs, func(i, j int) bool {
+				return txs[i].Height < txs[j].Height
+			})
+
+			for _, tx := range txs {
+				log.Debug().Int64("height", tx.Height).Msg("parsing transaction")
+				transaction, err := parseCtx.Node.Tx(hex.EncodeToString(tx.Tx.Hash()))
 				if err != nil {
 					return err
 				}
-				txs = append(txs, grantAllowanceTxs...)
 
-				query = fmt.Sprintf("set_feegrant.grantee='%s'", address)
-				grantAllowanceTxs, err = utils.QueryTxs(parseCtx.Node, query)
-				if err != nil {
-					return err
-				}
-				txs = append(txs, grantAllowanceTxs...)
+				// Handle only the MsgGrantAllowance and MsgRevokeAllowance instances
+				for index, msg := range transaction.GetMsgs() {
+					_, isMsgGrantAllowance := msg.(*feegranttypes.MsgGrantAllowance)
+					_, isMsgRevokeAllowance := msg.(*feegranttypes.MsgRevokeAllowance)
 
-				// Get all the MsgRevokeAllowance txs
-				query = fmt.Sprintf("revoke_feegrant.granter='%s'", address)
-				revokeAllowanceTxs, err := utils.QueryTxs(parseCtx.Node, query)
-				if err != nil {
-					return err
-				}
-				txs = append(txs, revokeAllowanceTxs...)
-
-				query = fmt.Sprintf("revoke_feegrant.grantee='%s'", address)
-				revokeAllowanceTxs, err = utils.QueryTxs(parseCtx.Node, query)
-				if err != nil {
-					return err
-				}
-				txs = append(txs, revokeAllowanceTxs...)
-
-				// Sort the txs based on their ascending height
-				sort.Slice(txs, func(i, j int) bool {
-					return txs[i].Height < txs[j].Height
-				})
-
-				for _, tx := range txs {
-					log.Debug().Int64("height", tx.Height).Msg("parsing transaction")
-
-					transaction, err := parseCtx.Node.Tx(hex.EncodeToString(tx.Tx.Hash()))
-					if err != nil {
-						return err
+					if !isMsgGrantAllowance && !isMsgRevokeAllowance {
+						continue
 					}
 
-					// Handle only the MsgGrantAllowance and MsgRevokeAllowance instances
-					for index, msg := range transaction.GetMsgs() {
-						_, isMsgGrantAllowance := msg.(*feegranttypes.MsgGrantAllowance)
-						_, isMsgRevokeAllowance := msg.(*feegranttypes.MsgRevokeAllowance)
-
-						if !isMsgGrantAllowance && !isMsgRevokeAllowance {
-							continue
-						}
-
-						err = feegrantModule.HandleMsg(index, msg, transaction)
-						if err != nil {
-							return fmt.Errorf("error while handling feegrant module message: %s", err)
-						}
+					err = feegrantModule.HandleMsg(index, msg, transaction)
+					if err != nil {
+						return fmt.Errorf("error while handling feegrant module message: %s", err)
 					}
 				}
 			}
+		}
 
 			return nil
 		},
