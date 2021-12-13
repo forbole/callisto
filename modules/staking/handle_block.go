@@ -71,9 +71,16 @@ func (m *Module) updateValidatorVotingPower(height int64, vals *tmctypes.ResultV
 	log.Debug().Str("module", "staking").Int64("height", height).
 		Msg("updating validators voting powers")
 
-	votingPowers := m.GetValidatorsVotingPowers(height, vals)
+	// Get the voting powers
+	votingPowers, err := m.GetValidatorsVotingPowers(height, vals)
+	if err != nil {
+		log.Error().Str("module", "staking").Err(err).Int64("height", height).
+			Msg("error while getting validators voting powers")
+		return
+	}
 
-	err := m.db.SaveValidatorsVotingPowers(votingPowers)
+	// Save all the voting powers
+	err = m.db.SaveValidatorsVotingPowers(votingPowers)
 	if err != nil {
 		log.Error().Str("module", "staking").Err(err).Int64("height", height).
 			Msg("error while saving validators voting powers")
