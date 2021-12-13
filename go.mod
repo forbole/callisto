@@ -5,8 +5,8 @@ go 1.16
 require (
 	github.com/cosmos/cosmos-sdk v0.44.3
 	github.com/cosmos/gaia/v6 v6.0.0-rc1
-	github.com/forbole/juno/v2 v2.0.0-20211020184842-e358a33007ff
-	github.com/go-co-op/gocron v0.8.0
+	github.com/forbole/juno/v2 v2.0.0-20211206070555-52255f4d3019
+	github.com/go-co-op/gocron v1.11.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.2.1-0.20200324155115-ee514944af4b
 	github.com/lib/pq v1.10.4
@@ -18,7 +18,7 @@ require (
 	github.com/tendermint/tendermint v0.34.14
 	github.com/terra-money/core v0.5.6
 	google.golang.org/genproto v0.0.0-20211008145708-270636b82663 // indirect
-	google.golang.org/grpc v1.41.0
+	google.golang.org/grpc v1.42.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 
