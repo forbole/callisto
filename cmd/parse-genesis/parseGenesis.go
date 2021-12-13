@@ -13,7 +13,7 @@ import (
 // NewParseGenesisCmd returns the Cobra command allowing to parse the genesis file
 func NewParseGenesisCmd(parseCfg *parse.Config) *cobra.Command {
 	return &cobra.Command{
-		Use:     "parse-genesis [optional: module names]",
+		Use:     "parse-genesis [[module names]]",
 		Short:   "Parse genesis file. To parse specific modules, input module names as arguments",
 		Example: "bdjuno parse-genesis auth bank consensus gov history staking",
 		PreRunE: parse.ReadConfig(parseCfg),
@@ -23,32 +23,32 @@ func NewParseGenesisCmd(parseCfg *parse.Config) *cobra.Command {
 				return err
 			}
 
+			// Get the modules to parse
 			var modulesToParse []modules.Module
-			for _, argsModule := range args {
-				var found bool
-				for _, module := range parseCtx.Modules {
-					if argsModule == module.Name() {
-						found = true
-						modulesToParse = append(modulesToParse, module)
-					}
-				}
+			for _, moduleName := range args {
+				module, found := getModule(moduleName, parseCtx)
 				if !found {
-					return fmt.Errorf("module is not registered: %s", argsModule)
+					return fmt.Errorf("module %s is not registered", moduleName)
 				}
+
+				modulesToParse = append(modulesToParse, module)
 			}
 
-			genesisDoc, genesisState, err := junoutils.GetGenesisDocAndState(config.Cfg.Parser.GenesisFilePath, parseCtx.Node)
-			if err != nil {
-				return fmt.Errorf("error while getting genesis doc or state: %s", err)
-			}
-
-			if len(args) == 0 {
+			// Default to all the modules
+			if len(modulesToParse) == 0 {
 				modulesToParse = parseCtx.Modules
 			}
 
+			// Get the genesis doc and state
+			genesisDoc, genesisState, err := junoutils.GetGenesisDocAndState(config.Cfg.Parser.GenesisFilePath, parseCtx.Node)
+			if err != nil {
+				return fmt.Errorf("error while getting genesis doc and state: %s", err)
+			}
+
+			// For each module, parse the genesis
 			for _, module := range modulesToParse {
 				if genesisModule, ok := module.(modules.GenesisModule); ok {
-					err := genesisModule.HandleGenesis(genesisDoc, genesisState)
+					err = genesisModule.HandleGenesis(genesisDoc, genesisState)
 					if err != nil {
 						return fmt.Errorf("error while parsing genesis of %s module: %s", module.Name(), err)
 					}
@@ -58,4 +58,14 @@ func NewParseGenesisCmd(parseCfg *parse.Config) *cobra.Command {
 			return nil
 		},
 	}
+}
+
+// doesModuleExist tells whether a module with the given name exist inside the specified context ot not
+func getModule(module string, parseCtx *parse.Context) (modules.Module, bool) {
+	for _, mod := range parseCtx.Modules {
+		if module == mod.Name() {
+			return mod, true
+		}
+	}
+	return nil, false
 }
