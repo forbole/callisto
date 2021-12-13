@@ -3,8 +3,9 @@ package mint
 import (
 	"fmt"
 
-	"github.com/forbole/bdjuno/v2/types"
 	"github.com/rs/zerolog/log"
+
+	"github.com/forbole/bdjuno/v2/types"
 )
 
 // UpdateParams gets the updated params and stores them inside the database
