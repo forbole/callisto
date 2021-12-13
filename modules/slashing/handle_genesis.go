@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/forbole/bdjuno/v2/types"
 	tmtypes "github.com/tendermint/tendermint/types"
+
+	"github.com/forbole/bdjuno/v2/types"
 
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	"github.com/rs/zerolog/log"
