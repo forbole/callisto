@@ -147,7 +147,7 @@ func (coins DbCoins) ToCoins() sdk.Coins {
 	return sdkCoins
 }
 
-//_______________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 // DbDecCoin represents the information stored inside the database about a single coin
 type DbDecCoin struct {
