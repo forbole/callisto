@@ -4,14 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/forbole/bdjuno/v2/types"
-	"github.com/lib/pq"
 
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
-	"github.com/forbole/bdjuno/v2/utils"
-	junotypes "github.com/forbole/juno/v2/types"
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
 
 // GetLastBlock returns the last block stored inside the database based on the heights
@@ -188,87 +183,4 @@ func (db *Db) GetGenesis() (*types.Genesis, error) {
 
 	row := rows[0]
 	return types.NewGenesis(row.ChainID, row.Time, row.InitialHeight), nil
-}
-
-// CheckIfBlockIsMissing checks if block is already stored in database
-func (db *Db) CheckIfBlockIsMissing(height int64) bool {
-	var block []dbtypes.BlockRow
-	stmt := `SELECT * FROM block WHERE height = $1`
-
-	err := db.Sqlx.Select(&block, stmt, height)
-	if err != nil {
-		return true
-	}
-	if len(block) != 0 {
-		return false
-	}
-
-	return true
-}
-
-// UpdateBlocksInDatabase updates given block in database
-func (db *Db) UpdateBlockInDatabase(block *tmctypes.ResultBlock) error {
-	junoBlock := junotypes.NewBlockFromTmBlock(block, uint64(block.Block.Height))
-	err := db.SaveBlock(junoBlock)
-	if err != nil {
-		return fmt.Errorf("error while storing block %d, error:  %s", block.Block.Height, err)
-	}
-	return nil
-}
-
-// UpdateTxInDatabase updates transactions for a given block in database
-func (db *Db) UpdateTxInDatabase(i int, tx *junotypes.Tx) error {
-	err := db.SaveTx(tx)
-	if err != nil {
-		return fmt.Errorf("error while storing tx in database: %s", err)
-	}
-	err = db.UpdateMsgsInDatabase(tx, i)
-	if err != nil {
-		return fmt.Errorf("error while updating tx message in database: %s", err)
-	}
-
-	return nil
-}
-
-// UpdateMsgsInDatabase updates messages for a given block in database
-func (db *Db) UpdateMsgsInDatabase(tx *junotypes.Tx, i int) error {
-	var eventTypes []string
-	var involvedAccounts []string
-	var attributeKeys []string
-	message, err := codec.ProtoMarshalJSON(tx.Body.Messages[i], nil)
-	if err != nil {
-		return fmt.Errorf("error while marshaling tx message: %s", err)
-	}
-
-	for _, event := range tx.Logs {
-		for _, eventType := range event.Events {
-			eventTypess := eventType.Type
-			eventTypes = append(eventTypes, eventTypess)
-			attributes := eventType.Attributes
-			for _, attribute := range attributes {
-				attributeKeys = append(attributeKeys, attribute.Key)
-			}
-		}
-	}
-	attributeKeys = utils.RemoveDuplicateValues(attributeKeys)
-
-	for _, eventType := range eventTypes {
-		event, _ := tx.FindEventByType(i, eventType)
-		for _, key := range attributeKeys {
-			address, _ := tx.FindAttributeByKey(event, key)
-			// process only addresses
-			if len(address) >= 40 {
-				involvedAccounts = append(involvedAccounts, address)
-			}
-		}
-		involvedAccounts = utils.RemoveDuplicateValues(involvedAccounts)
-	}
-
-	junoMsg := junotypes.NewMessage(tx.TxHash, i, tx.Body.Messages[i].TypeUrl, string(message), pq.StringArray(involvedAccounts))
-	err = db.SaveMessage(junoMsg)
-	if err != nil {
-		return fmt.Errorf("error while storing tx message in database, error:  %s", err)
-	}
-
-	return nil
 }

@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
-	"github.com/forbole/bdjuno/v2/utils"
 
 	dbutils "github.com/forbole/bdjuno/v2/database/utils"
 
@@ -41,24 +40,13 @@ func (db *Db) SaveAccountBalances(balances []types.AccountBalance) error {
 func (db *Db) saveUpToDateBalances(paramsNumber int, balances []types.AccountBalance) error {
 	stmt := `INSERT INTO account_balance (address, coins, height) VALUES `
 	var params []interface{}
-	var accounts []types.Account
-	// remove duplicate values of accounts balance
-	balances = utils.RemoveDuplicateAccountBalance(balances)
 
 	for i, bal := range balances {
-
 		bi := i * paramsNumber
 		stmt += fmt.Sprintf("($%d, $%d, $%d),", bi+1, bi+2, bi+3)
-		accounts = append(accounts, types.NewAccount(bal.Address))
 
 		coins := pq.Array(dbtypes.NewDbCoins(bal.Balance))
 		params = append(params, bal.Address, coins, bal.Height)
-	}
-
-	// Store the accounts
-	err := db.SaveAccounts(accounts)
-	if err != nil {
-		return fmt.Errorf("error while storing account balance : %s", err)
 	}
 
 	stmt = stmt[:len(stmt)-1]
@@ -68,7 +56,7 @@ ON CONFLICT (address) DO UPDATE
 	    height = excluded.height 
 WHERE account_balance.height <= excluded.height`
 
-	_, err = db.Sql.Exec(stmt, params...)
+	_, err := db.Sql.Exec(stmt, params...)
 	if err != nil {
 		return fmt.Errorf("error while storing up-to-date balances: %s", err)
 	}

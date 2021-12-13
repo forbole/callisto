@@ -15,25 +15,13 @@ var (
 
 // Module implements the consensus utils
 type Module struct {
-	db            *database.Db
-	bankModule    BankModule
-	distrModule   DistrModule
-	govModule     GovModule
-	stakingModule StakingModule
+	db *database.Db
 }
 
 // NewModule builds a new Module instance
-func NewModule(bankModule BankModule,
-	distrModule DistrModule,
-	govModule GovModule,
-	stakingModule StakingModule,
-	db *database.Db) *Module {
+func NewModule(db *database.Db) *Module {
 	return &Module{
-		bankModule:    bankModule,
-		distrModule:   distrModule,
-		govModule:     govModule,
-		stakingModule: stakingModule,
-		db:            db,
+		db: db,
 	}
 }
 
