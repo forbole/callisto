@@ -5,8 +5,8 @@ go 1.16
 require (
 	github.com/cosmos/cosmos-sdk v0.42.10
 	github.com/e-money/em-ledger v1.1.4 //emoney mod version with public inflation type
-	github.com/forbole/juno/v2 v2.0.0-20211018083707-de5b5378416e
-	github.com/go-co-op/gocron v0.8.0
+	github.com/forbole/juno/v2 v2.0.0-20211206070432-9314a5057955
+	github.com/go-co-op/gocron v1.11.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.2.1-0.20200324155115-ee514944af4b
 	github.com/lib/pq v1.10.4
@@ -15,8 +15,8 @@ require (
 	github.com/rs/zerolog v1.26.0
 	github.com/spf13/cobra v1.2.1
 	github.com/stretchr/testify v1.7.0
-	github.com/tendermint/tendermint v0.34.13
-	google.golang.org/grpc v1.40.0
+	github.com/tendermint/tendermint v0.34.14
+	google.golang.org/grpc v1.42.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 

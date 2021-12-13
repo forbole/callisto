@@ -121,12 +121,12 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	authModule := auth.NewModule(r.parser, cdc, db)
 	authorityModule := authority.NewModule(cdc, sources.AuthoritySource, db)
 	bankModule := bank.NewModule(r.parser, sources.BankSource, cdc, db)
-	distrModule := distribution.NewModule(ctx.JunoConfig, sources.DistrSource, bankModule, db)
+	distrModule := distribution.NewModule(ctx.JunoConfig, sources.DistrSource, bankModule, cdc, db)
 	historyModule := history.NewModule(ctx.JunoConfig.Chain, r.parser, cdc, db)
 	inflationModule := inflation.NewModule(cdc, sources.InflationSource, db)
-	mintModule := mint.NewModule(sources.MintSource, db)
-	stakingModule := staking.NewModule(sources.StakingSource, bankModule, distrModule, historyModule, cdc, db)
-	slashingModule := slashing.NewModule(sources.SlashingSource, stakingModule, db)
+	mintModule := mint.NewModule(sources.MintSource, cdc, db)
+	slashingModule := slashing.NewModule(sources.SlashingSource, nil, cdc, db)
+	stakingModule := staking.NewModule(sources.StakingSource, bankModule, distrModule, historyModule, slashingModule, cdc, db)
 
 	return []jmodules.Module{
 		messages.NewModule(r.parser, cdc, ctx.Database),
@@ -138,12 +138,13 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		bankModule,
 		consensus.NewModule(db),
 		distrModule,
-		gov.NewModule(cdc, sources.GovSource, authModule, bankModule, distrModule, mintModule, slashingModule, stakingModule, db),
+		gov.NewModule(sources.GovSource, authModule, bankModule, distrModule, mintModule, slashingModule, stakingModule, cdc, db),
 		historyModule,
 		inflationModule,
+		mintModule,
 		modules.NewModule(ctx.JunoConfig.Chain, db),
 		pricefeed.NewModule(ctx.JunoConfig, historyModule, cdc, db),
-		slashing.NewModule(sources.SlashingSource, stakingModule, db),
+		slashing.NewModule(sources.SlashingSource, stakingModule, cdc, db),
 		stakingModule,
 	}
 }

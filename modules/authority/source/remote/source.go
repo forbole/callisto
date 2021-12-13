@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/forbole/juno/v2/node/remote"
 	authoritytypes "github.com/e-money/em-ledger/x/authority/types"
+	"github.com/forbole/juno/v2/node/remote"
 
 	authoritysource "github.com/forbole/bdjuno/v2/modules/authority/source"
 )
