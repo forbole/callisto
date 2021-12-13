@@ -10,6 +10,7 @@ import (
 
 	fixcmd "github.com/forbole/bdjuno/v2/cmd/fix"
 	migratecmd "github.com/forbole/bdjuno/v2/cmd/migrate"
+	parsegenesiscmd "github.com/forbole/bdjuno/v2/cmd/parse-genesis"
 
 	"github.com/forbole/bdjuno/v2/types/config"
 
@@ -35,6 +36,7 @@ func main() {
 		parsecmd.ParseCmd(cfg.GetParseConfig()),
 		migratecmd.NewMigrateCmd(),
 		fixcmd.NewFixCmd(cfg.GetParseConfig()),
+		parsegenesiscmd.NewParseGenesisCmd(cfg.GetParseConfig()),
 	)
 
 	executor := cmd.PrepareRootCmd(cfg.GetName(), rootCmd)
