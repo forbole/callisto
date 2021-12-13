@@ -28,7 +28,7 @@ WHERE inflation.height <= excluded.height`
 }
 
 // SaveMintParams allows to store the given params inside the database
-func (db *Db) SaveMintParams(params types.MintParams) error {
+func (db *Db) SaveMintParams(params *types.MintParams) error {
 	paramsBz, err := json.Marshal(&params.Params)
 	if err != nil {
 		return fmt.Errorf("error while marshaling mint params: %s", err)
