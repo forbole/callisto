@@ -138,7 +138,7 @@ func (v ValidatorInfoRow) Equal(w ValidatorInfoRow) bool {
 		v.Height == w.Height
 }
 
-//________________________________________________________________
+// --------------------------------------------------------------------------------------------------------------------
 
 // ValidatorDescriptionRow represent a row in validator_description
 type ValidatorDescriptionRow struct {

@@ -9,9 +9,12 @@ import (
 
 	fixcmd "github.com/forbole/bdjuno/v2/cmd/fix"
 	migratecmd "github.com/forbole/bdjuno/v2/cmd/migrate"
+	parsegenesiscmd "github.com/forbole/bdjuno/v2/cmd/parse-genesis"
+
+	"github.com/forbole/bdjuno/v2/types/config"
+
 	"github.com/forbole/bdjuno/v2/database"
 	"github.com/forbole/bdjuno/v2/modules"
-	"github.com/forbole/bdjuno/v2/types/config"
 
 	gaiaapp "github.com/cosmos/gaia/v6/app"
 	regenapp "github.com/regen-network/regen-ledger/v2/app"
@@ -35,6 +38,7 @@ func main() {
 		parsecmd.ParseCmd(cfg.GetParseConfig()),
 		migratecmd.NewMigrateCmd(),
 		fixcmd.NewFixCmd(cfg.GetParseConfig()),
+		parsegenesiscmd.NewParseGenesisCmd(cfg.GetParseConfig()),
 	)
 
 	executor := cmd.PrepareRootCmd(cfg.GetName(), rootCmd)
