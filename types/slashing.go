@@ -58,8 +58,8 @@ type SlashingParams struct {
 }
 
 // NewSlashingParams allows to build a new SlashingParams instance
-func NewSlashingParams(params slashingtypes.Params, height int64) SlashingParams {
-	return SlashingParams{
+func NewSlashingParams(params slashingtypes.Params, height int64) *SlashingParams {
+	return &SlashingParams{
 		Params: params,
 		Height: height,
 	}

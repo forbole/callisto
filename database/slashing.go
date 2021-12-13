@@ -50,7 +50,7 @@ WHERE validator_signing_info.height <= excluded.height`
 }
 
 // SaveSlashingParams saves the slashing params for the given height
-func (db *Db) SaveSlashingParams(params types.SlashingParams) error {
+func (db *Db) SaveSlashingParams(params *types.SlashingParams) error {
 	paramsBz, err := json.Marshal(&params.Params)
 	if err != nil {
 		return err

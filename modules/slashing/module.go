@@ -1,6 +1,7 @@
 package slashing
 
 import (
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/forbole/juno/v2/modules"
 
 	"github.com/forbole/bdjuno/v2/database"
@@ -8,12 +9,14 @@ import (
 )
 
 var (
-	_ modules.Module      = &Module{}
-	_ modules.BlockModule = &Module{}
+	_ modules.Module        = &Module{}
+	_ modules.GenesisModule = &Module{}
+	_ modules.BlockModule   = &Module{}
 )
 
 // Module represent x/slashing module
 type Module struct {
+	cdc    codec.Marshaler
 	db     *database.Db
 	source slashingsource.Source
 
@@ -21,8 +24,9 @@ type Module struct {
 }
 
 // NewModule returns a new Module instance
-func NewModule(source slashingsource.Source, stakingModule StakingModule, db *database.Db) *Module {
+func NewModule(source slashingsource.Source, stakingModule StakingModule, cdc codec.Marshaler, db *database.Db) *Module {
 	return &Module{
+		cdc:           cdc,
 		db:            db,
 		source:        source,
 		stakingModule: stakingModule,
