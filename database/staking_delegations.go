@@ -56,7 +56,7 @@ INSERT INTO delegation (validator_address, delegator_address, amount, height) VA
 		// Get the validator consensus address
 		consAddr, err := db.GetValidatorConsensusAddress(delegation.ValidatorOperAddr)
 		if err != nil {
-			return err
+			return fmt.Errorf("error while gettting validator consensus address: %s", err)
 		}
 
 		// Convert the amount

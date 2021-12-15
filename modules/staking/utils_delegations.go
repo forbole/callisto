@@ -6,8 +6,11 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"google.golang.org/grpc/codes"
 
-	"github.com/forbole/bdjuno/v2/modules/utils"
 	"github.com/forbole/bdjuno/v2/types"
+)
+
+const (
+	ErrDelegationNotFound = "rpc error: code = %s desc = rpc error: code = %s"
 )
 
 // convertDelegationResponse converts the given response to a BDJuno Delegation instance
@@ -45,7 +48,7 @@ func (m *Module) getValidatorDelegations(height int64, validator string) ([]type
 func (m *Module) getDelegatorDelegations(height int64, delegator string) ([]types.Delegation, error) {
 	responses, err := m.source.GetDelegatorDelegations(height, delegator)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error while getting delegator delegations: %s", err)
 	}
 
 	return ConvertDelegationsResponses(height, responses), nil
@@ -81,7 +84,7 @@ func (m *Module) refreshDelegatorDelegations(height int64, delegator string) err
 	if err != nil {
 		// Get the error code
 		var code string
-		_, scanErr := fmt.Sscanf(err.Error(), utils.ErrNotFound, &code, &code)
+		_, scanErr := fmt.Sscanf(err.Error(), ErrDelegationNotFound, &code, &code)
 		if scanErr != nil {
 			return fmt.Errorf("error while scanning error: %s", scanErr)
 		}

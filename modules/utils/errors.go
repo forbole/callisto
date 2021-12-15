@@ -4,8 +4,6 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-const ErrNotFound = "rpc error: code = %s desc = rpc error: code = %s desc ="
-
 // WatchMethod allows to watch for a method that returns an error.
 // It executes the given method in a goroutine, logging any error that might raise.
 func WatchMethod(method func() error) {
