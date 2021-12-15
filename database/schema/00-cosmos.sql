@@ -28,6 +28,13 @@ CREATE TABLE block
 CREATE INDEX block_height_index ON block (height);
 CREATE INDEX block_hash_index ON block (hash);
 CREATE INDEX block_proposer_address_index ON block (proposer_address);
+ALTER TABLE block
+    SET (
+        autovacuum_vacuum_scale_factor = 0,
+        autovacuum_analyze_scale_factor = 0,
+        autovacuum_vacuum_threshold = 10000,
+        autovacuum_analyze_threshold = 10000
+        );
 
 CREATE TABLE transaction
 (
@@ -52,6 +59,13 @@ CREATE TABLE transaction
 );
 CREATE INDEX transaction_hash_index ON transaction (hash);
 CREATE INDEX transaction_height_index ON transaction (height);
+ALTER TABLE transaction
+    SET (
+        autovacuum_vacuum_scale_factor = 0,
+        autovacuum_analyze_scale_factor = 0,
+        autovacuum_vacuum_threshold = 10000,
+        autovacuum_analyze_threshold = 10000
+        );
 
 CREATE TABLE message
 (
