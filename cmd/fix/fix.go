@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/cobra"
 
 	fixauth "github.com/forbole/bdjuno/v2/cmd/fix/auth"
+	fixblocks "github.com/forbole/bdjuno/v2/cmd/fix/blocks"
 	fixgov "github.com/forbole/bdjuno/v2/cmd/fix/gov"
 	fixstaking "github.com/forbole/bdjuno/v2/cmd/fix/staking"
 )
@@ -19,6 +20,7 @@ func NewFixCmd(parseCfg *parse.Config) *cobra.Command {
 
 	cmd.AddCommand(
 		fixauth.NewAuthCmd(parseCfg),
+		fixblocks.NewBlocksCmd(parseCfg),
 		fixgov.NewGovCmd(parseCfg),
 		fixstaking.NewStakingCmd(parseCfg),
 	)
