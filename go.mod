@@ -3,10 +3,10 @@ module github.com/forbole/bdjuno/v2
 go 1.16
 
 require (
-	github.com/cosmos/cosmos-sdk v0.44.3
+	github.com/cosmos/cosmos-sdk v0.44.4
 	github.com/cosmos/gaia/v6 v6.0.0-rc1
-	github.com/forbole/juno/v2 v2.0.0-20211206070555-52255f4d3019
-	github.com/go-co-op/gocron v1.11.0
+	github.com/forbole/juno/v2 v2.0.0-20211215111012-a5d979f1e029
+	github.com/go-co-op/gocron v0.3.3
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/lib/pq v1.10.2
@@ -27,8 +27,10 @@ replace github.com/tendermint/tendermint => github.com/forbole/tendermint v0.34.
 
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.2-alpha.regen.4
 
-replace github.com/cosmos/cosmos-sdk => github.com/regen-network/cosmos-sdk v0.44.0-regen-2
+replace github.com/cosmos/cosmos-sdk => github.com/regen-network/cosmos-sdk v0.44.2-regen-1
 
 replace github.com/regen-network/regen-ledger/x/data => github.com/regen-network/regen-ledger/x/data v0.0.0-20210602121340-fa967f821a6e
 
 replace github.com/regen-network/regen-ledger/types => github.com/regen-network/regen-ledger/types v1.0.0
+
+replace github.com/regen-network/regen-ledger/v2 => github.com/MonikaCat/regen-ledger/v2 v2.0.0-beta1.0.20211215114204-13ca322dd73c
