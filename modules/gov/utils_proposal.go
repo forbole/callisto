@@ -222,7 +222,10 @@ func (m *Module) updateProposalValidatorStatusesSnapshot(
 		return fmt.Errorf("error while getting validators with bonded status: %s", err)
 	}
 
-	votingPowers := m.stakingModule.GetValidatorsVotingPowers(height, blockVals)
+	votingPowers, err := m.stakingModule.GetValidatorsVotingPowers(height, blockVals)
+	if err != nil {
+		return fmt.Errorf("error while getting validators voting powers: %s", err)
+	}
 
 	statuses, err := m.stakingModule.GetValidatorsStatuses(height, validators)
 	if err != nil {
