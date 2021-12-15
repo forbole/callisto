@@ -9,6 +9,7 @@ import (
 )
 
 var (
+	_ modules.BlockModule   = &Module{}
 	_ modules.Module        = &Module{}
 	_ modules.MessageModule = &Module{}
 )
@@ -20,10 +21,7 @@ type Module struct {
 }
 
 // NewModule returns a new Module instance
-func NewModule(
-	cdc codec.Codec,
-	db *database.Db,
-) *Module {
+func NewModule(cdc codec.Codec, db *database.Db) *Module {
 	return &Module{
 		cdc: cdc,
 		db:  db,
