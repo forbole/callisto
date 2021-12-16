@@ -2,6 +2,8 @@ package staking
 
 import (
 	"fmt"
+	"google.golang.org/grpc/codes"
+	"strings"
 
 	juno "github.com/forbole/juno/v2/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
@@ -161,7 +163,7 @@ func (m *Module) updateValidators(height int64) ([]stakingtypes.Validator, error
 // --------------------------------------------------------------------------------------------------------------------
 
 func (m *Module) GetValidatorsStatuses(height int64, validators []stakingtypes.Validator) ([]types.ValidatorStatus, error) {
-	statuses := make([]types.ValidatorStatus, len(validators))
+	var statuses []types.ValidatorStatus
 	for index, validator := range validators {
 		consAddr, err := m.getValidatorConsAddr(validator)
 		if err != nil {
@@ -174,7 +176,7 @@ func (m *Module) GetValidatorsStatuses(height int64, validators []stakingtypes.V
 		}
 
 		valSigningInfo, err := m.slashingModule.GetSigningInfo(height, consAddr)
-		if err != nil {
+		if err != nil && !strings.Contains(err.Error(), codes.NotFound.String()) {
 			return nil, fmt.Errorf("error while getting validator signing info: %s", err)
 		}
 
