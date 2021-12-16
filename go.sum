@@ -209,6 +209,10 @@ github.com/felixge/httpsnoop v1.0.1/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSw
 github.com/fjl/memsize v0.0.0-20190710130421-bcb5799ab5e5/go.mod h1:VvhXpOYNQvB+uIk2RvXzuaQtkQJzzIx6lSBe1xv7hi0=
 github.com/forbole/juno/v2 v2.0.0-20211206070432-9314a5057955 h1:a8XH7gpsjUgmXjPkeU2C1b3yRppPxc8nVKWqK4vXAGI=
 github.com/forbole/juno/v2 v2.0.0-20211206070432-9314a5057955/go.mod h1:nOZEHr5+sZDXEDpV2E+NHkmH0Zvf4prkt5+UVKwScQ8=
+github.com/forbole/juno/v2 v2.0.0-20211216095658-80e5041469ab h1:23fZhhq7+k6XMg1Cup49nMz99zRkBh0CeiyaBogagvc=
+github.com/forbole/juno/v2 v2.0.0-20211216095658-80e5041469ab/go.mod h1:nOZEHr5+sZDXEDpV2E+NHkmH0Zvf4prkt5+UVKwScQ8=
+github.com/forbole/juno/v2 v2.0.0-20211216103521-6d933e323721 h1:dxh4GwDYHoYgeJyO4FAlvLEo1XeOZ3Z5x18MkbawIRI=
+github.com/forbole/juno/v2 v2.0.0-20211216103521-6d933e323721/go.mod h1:nOZEHr5+sZDXEDpV2E+NHkmH0Zvf4prkt5+UVKwScQ8=
 github.com/forbole/tendermint v0.34.13-0.20210820072129-a2a4af55563d h1:pUqGUgTUU24ibHeloQeg1F2pFbgQllddsuZ+x+CcUzw=
 github.com/forbole/tendermint v0.34.13-0.20210820072129-a2a4af55563d/go.mod h1:aeHL7alPh4uTBIJQ8mgFEE8VwJLXI1VD3rVOmH2Mcy0=
 github.com/fortytw2/leaktest v1.3.0 h1:u8491cBMTQ8ft8aeV+adlcytMZylmA5nnwwkRZjI8vw=
