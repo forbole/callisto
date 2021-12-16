@@ -23,6 +23,10 @@ type MintModule interface {
 	UpdateParams(height int64) error
 }
 
+type ProfilesModule interface {
+	UpdateParams(height int64) error
+}
+
 type SlashingModule interface {
 	UpdateParams(height int64) error
 }
