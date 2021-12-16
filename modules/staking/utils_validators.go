@@ -163,7 +163,7 @@ func (m *Module) updateValidators(height int64) ([]stakingtypes.Validator, error
 // --------------------------------------------------------------------------------------------------------------------
 
 func (m *Module) GetValidatorsStatuses(height int64, validators []stakingtypes.Validator) ([]types.ValidatorStatus, error) {
-	var statuses []types.ValidatorStatus
+	statuses := make([]types.ValidatorStatus, len(validators))
 	for index, validator := range validators {
 		consAddr, err := m.getValidatorConsAddr(validator)
 		if err != nil {
