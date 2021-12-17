@@ -17,7 +17,7 @@ import (
 // It assumes that the validators addresses are already present inside
 // the proper database table.
 // TIP: To store the validators data call SaveValidatorsData.
-func (db *Db) SaveDelegations(delegations []types.Delegation) error {
+func (db *Db) SaveDelegations(height int64, delegations []types.Delegation) error {
 	// Create a transaction
 	tx, err := db.Sql.Begin()
 	if err != nil {
@@ -25,7 +25,7 @@ func (db *Db) SaveDelegations(delegations []types.Delegation) error {
 	}
 
 	// Try storing the delegations
-	err = db.saveDelegationsWithTx(tx, delegations)
+	err = db.saveDelegationsWithTx(tx, height, delegations)
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -42,7 +42,7 @@ func (db *Db) SaveDelegations(delegations []types.Delegation) error {
 
 // saveDelegationsWithTx stores the given delegations using the given transaction.
 // NOTE: The provided transaction is never committed nor rolled back. The caller must take care of this
-func (db *Db) saveDelegationsWithTx(tx *sql.Tx, delegations []types.Delegation) error {
+func (db *Db) saveDelegationsWithTx(tx *sql.Tx, height int64, delegations []types.Delegation) error {
 	if len(delegations) == 0 {
 		return nil
 	}
@@ -55,7 +55,7 @@ func (db *Db) saveDelegationsWithTx(tx *sql.Tx, delegations []types.Delegation) 
 			continue
 		}
 
-		err := db.storeUpToDateDelegations(tx, paramsNumber, delegationSlice)
+		err := db.storeUpToDateDelegations(tx, paramsNumber, height, delegationSlice)
 		if err != nil {
 			return fmt.Errorf("error while storing up-to-date delegations: %s", err)
 		}
@@ -66,7 +66,7 @@ func (db *Db) saveDelegationsWithTx(tx *sql.Tx, delegations []types.Delegation) 
 
 // storeUpToDateDelegations stores the given delegations as the most up-to-date ones using the provided transaction.
 // NOTE: The provided transaction is never committed nor rolled back. The caller must take care of this
-func (db *Db) storeUpToDateDelegations(tx *sql.Tx, paramsNumber int, delegations []types.Delegation) error {
+func (db *Db) storeUpToDateDelegations(tx *sql.Tx, paramsNumber int, height int64, delegations []types.Delegation) error {
 	if len(delegations) == 0 {
 		return nil
 	}
@@ -97,8 +97,7 @@ INSERT INTO delegation (validator_address, delegator_address, amount, height) VA
 		// Current delegation query
 		di := i * paramsNumber
 		delQry += fmt.Sprintf("($%d,$%d,$%d,$%d),", di+1, di+2, di+3, di+4)
-		delParams = append(delParams,
-			consAddr.String(), delegation.DelegatorAddress, value, delegation.Height)
+		delParams = append(delParams, consAddr.String(), delegation.DelegatorAddress, value, height)
 	}
 
 	// Store the accounts
@@ -145,7 +144,7 @@ func (db *Db) GetUserDelegationsAmount(address string) (sdk.Coins, error) {
 }
 
 // ReplaceValidatorDelegations replaces all the delegations associated with the given validator with the given ones
-func (db *Db) ReplaceValidatorDelegations(valOperAddr string, delegations []types.Delegation) error {
+func (db *Db) ReplaceValidatorDelegations(height int64, valOperAddr string, delegations []types.Delegation) error {
 	tx, err := db.Sql.Begin()
 	if err != nil {
 		return err
@@ -155,15 +154,15 @@ func (db *Db) ReplaceValidatorDelegations(valOperAddr string, delegations []type
 	stmt := `
 DELETE FROM delegation USING validator_info 
 WHERE delegation.validator_address = validator_info.consensus_address 
-  AND validator_info.operator_address = $1`
-	_, err = tx.Exec(stmt, valOperAddr)
+  AND validator_info.operator_address = $1 AND delegation.height <= $2`
+	_, err = tx.Exec(stmt, valOperAddr, height)
 	if err != nil {
 		tx.Rollback()
 		return fmt.Errorf("error while deleting delegations for valdiator: %s", err)
 	}
 
 	// Store the delegations
-	err = db.saveDelegationsWithTx(tx, delegations)
+	err = db.saveDelegationsWithTx(tx, height, delegations)
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -179,22 +178,22 @@ WHERE delegation.validator_address = validator_info.consensus_address
 }
 
 // ReplaceDelegatorDelegations replaces all the delegations associated with the given delegator with the given ones
-func (db *Db) ReplaceDelegatorDelegations(delegator string, delegations []types.Delegation) error {
+func (db *Db) ReplaceDelegatorDelegations(height int64, delegator string, delegations []types.Delegation) error {
 	tx, err := db.Sql.Begin()
 	if err != nil {
 		return err
 	}
 
 	// Delete existing delegations
-	stmt := `DELETE FROM delegation WHERE delegator_address = $1`
-	_, err = tx.Exec(stmt, delegator)
+	stmt := `DELETE FROM delegation WHERE delegator_address = $1 AND height <= $2`
+	_, err = tx.Exec(stmt, delegator, height)
 	if err != nil {
 		tx.Rollback()
 		return fmt.Errorf("error while deleting delegations for delegator: %s", err)
 	}
 
 	// Store the delegations
-	err = db.saveDelegationsWithTx(tx, delegations)
+	err = db.saveDelegationsWithTx(tx, height, delegations)
 	if err != nil {
 		tx.Rollback()
 		return err
