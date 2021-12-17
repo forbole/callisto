@@ -171,7 +171,7 @@ WHERE delegation.validator_address = validator_info.consensus_address
 	// Commit the transaction
 	err = tx.Commit()
 	if err != nil {
-		return fmt.Errorf("error while committing validator deelgations transactionL %s", err)
+		return fmt.Errorf("error while committing validator delegations transaction: %s", err)
 	}
 
 	return nil
