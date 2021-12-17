@@ -1,6 +1,7 @@
 package database
 
 import (
+	"database/sql"
 	"fmt"
 	"time"
 
@@ -17,6 +18,34 @@ import (
 // the proper database table.
 // TIP: To store the validators data call SaveValidatorsData.
 func (db *Db) SaveDelegations(delegations []types.Delegation) error {
+	// Create a transaction
+	tx, err := db.Sql.Begin()
+	if err != nil {
+		return err
+	}
+
+	// Try storing the delegations
+	err = db.saveDelegationsWithTx(tx, delegations)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// Commit the transaction
+	err = tx.Commit()
+	if err != nil {
+		return fmt.Errorf("error while committing delegations transaction: %s", err)
+	}
+
+	return nil
+}
+
+// saveDelegationsWithTx stores the given delegations using the given transaction.
+// NOTE: The provided transaction is never committed nor rolled back. The caller must take care of this
+func (db *Db) saveDelegationsWithTx(tx *sql.Tx, delegations []types.Delegation) error {
+	if len(delegations) == 0 {
+		return nil
+	}
 
 	paramsNumber := 4
 	slices := dbutils.SplitDelegations(delegations, paramsNumber)
@@ -26,19 +55,18 @@ func (db *Db) SaveDelegations(delegations []types.Delegation) error {
 			continue
 		}
 
-		err := db.storeUpToDateDelegations(paramsNumber, delegationSlice)
+		err := db.storeUpToDateDelegations(tx, paramsNumber, delegationSlice)
 		if err != nil {
 			return fmt.Errorf("error while storing up-to-date delegations: %s", err)
 		}
 	}
 
 	return nil
-
 }
 
-// storeUpToDateDelegations stores the given delegations as the most up-to-date ones
-func (db *Db) storeUpToDateDelegations(paramsNumber int, delegations []types.Delegation) error {
-
+// storeUpToDateDelegations stores the given delegations as the most up-to-date ones using the provided transaction.
+// NOTE: The provided transaction is never committed nor rolled back. The caller must take care of this
+func (db *Db) storeUpToDateDelegations(tx *sql.Tx, paramsNumber int, delegations []types.Delegation) error {
 	if len(delegations) == 0 {
 		return nil
 	}
@@ -86,7 +114,7 @@ ON CONFLICT ON CONSTRAINT delegation_validator_delegator_unique
 DO UPDATE SET amount = excluded.amount, height = excluded.height
 WHERE delegation.height <= excluded.height`
 
-	_, err = db.Sql.Exec(delQry, delParams...)
+	_, err = tx.Exec(delQry, delParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing delegations: %s", err)
 	}
@@ -131,16 +159,36 @@ WHERE delegation.validator_address = validator_info.consensus_address
 	return nil
 }
 
-// DeleteDelegatorDelegations removes all the delegations associated with the given delegator
-func (db *Db) DeleteDelegatorDelegations(delegator string) error {
-	stmt := `DELETE FROM delegation WHERE delegator_address = $1`
-
-	_, err := db.Sql.Exec(stmt, delegator)
+// ReplaceDelegatorDelegations replaces all the delegations associated with the given delegator with the given ones
+func (db *Db) ReplaceDelegatorDelegations(delegator string, delegations []types.Delegation) error {
+	tx, err := db.Sql.Begin()
 	if err != nil {
+		return err
+	}
+
+	// Delete existing delegations
+	stmt := `DELETE FROM delegation WHERE delegator_address = $1`
+	_, err = tx.Exec(stmt, delegator)
+	if err != nil {
+		tx.Rollback()
 		return fmt.Errorf("error while deleting delegations for delegator: %s", err)
 	}
 
+	// Store the delegations
+	err = db.saveDelegationsWithTx(tx, delegations)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// Commit the transaction
+	err = tx.Commit()
+	if err != nil {
+		return fmt.Errorf("error while committing delegator delegations transaction: %s", err)
+	}
+
 	return nil
+
 }
 
 // --------------------------------------------------------------------------------------------------------------------

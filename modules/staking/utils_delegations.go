@@ -96,16 +96,10 @@ func (m *Module) refreshDelegatorDelegations(height int64, delegator string) err
 		}
 	}
 
-	// Remove existing delegations
-	err = m.db.DeleteDelegatorDelegations(delegator)
+	// Replace existing delegations
+	err = m.db.ReplaceDelegatorDelegations(delegator, delegations)
 	if err != nil {
-		return fmt.Errorf("error while deleting delegator delegations: %s", err)
-	}
-
-	// Save new delegations
-	err = m.db.SaveDelegations(delegations)
-	if err != nil {
-		return fmt.Errorf("error while saving delegations: %s", err)
+		return fmt.Errorf("error while replacing delegator delegations: %s", err)
 	}
 
 	// Refresh the delegator rewards
