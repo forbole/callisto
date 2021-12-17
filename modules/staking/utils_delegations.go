@@ -63,14 +63,9 @@ func (m *Module) RefreshValidatorDelegations(height int64, valOperAddr string) e
 		return fmt.Errorf("error while getting validator delegations: %s", err)
 	}
 
-	err = m.db.DeleteValidatorDelegations(valOperAddr)
+	err = m.db.ReplaceValidatorDelegations(valOperAddr, ConvertDelegationsResponses(height, responses))
 	if err != nil {
-		return fmt.Errorf("error while deleting validator delegations: %s", err)
-	}
-
-	err = m.db.SaveDelegations(ConvertDelegationsResponses(height, responses))
-	if err != nil {
-		return fmt.Errorf("error while storing validator delegations: %s", err)
+		return fmt.Errorf("error while refreshing validator delegations: %s", err)
 	}
 
 	return nil

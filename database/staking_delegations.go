@@ -144,16 +144,35 @@ func (db *Db) GetUserDelegationsAmount(address string) (sdk.Coins, error) {
 	return amount, nil
 }
 
-// DeleteValidatorDelegations removes all the delegations associated with the given validator consensus address
-func (db *Db) DeleteValidatorDelegations(valOperAddr string) error {
+// ReplaceValidatorDelegations replaces all the delegations associated with the given validator with the given ones
+func (db *Db) ReplaceValidatorDelegations(valOperAddr string, delegations []types.Delegation) error {
+	tx, err := db.Sql.Begin()
+	if err != nil {
+		return err
+	}
+
+	// Delete the existing delegations
 	stmt := `
 DELETE FROM delegation USING validator_info 
 WHERE delegation.validator_address = validator_info.consensus_address 
   AND validator_info.operator_address = $1`
-
-	_, err := db.Sql.Exec(stmt, valOperAddr)
+	_, err = tx.Exec(stmt, valOperAddr)
 	if err != nil {
+		tx.Rollback()
 		return fmt.Errorf("error while deleting delegations for valdiator: %s", err)
+	}
+
+	// Store the delegations
+	err = db.saveDelegationsWithTx(tx, delegations)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// Commit the transaction
+	err = tx.Commit()
+	if err != nil {
+		return fmt.Errorf("error while committing validator deelgations transactionL %s", err)
 	}
 
 	return nil
