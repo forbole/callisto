@@ -65,12 +65,7 @@ func (m *Module) RefreshDelegatorRewards(height int64, delegator string) error {
 		return fmt.Errorf("error while refreshing delegator rewards: %s", err)
 	}
 
-	err = m.db.DeleteDelegatorRewardsAmount(delegator, height)
-	if err != nil {
-		return fmt.Errorf("error deleting the delegator rewards amount: %s", err)
-	}
-
-	err = m.db.SaveDelegatorsRewardsAmounts(rewards)
+	err = m.db.SaveDelegatorsRewardsAmounts(height, delegator, rewards)
 	if err != nil {
 		return fmt.Errorf("error while saving delegators rewards amounts: %s", err)
 	}
@@ -92,13 +87,7 @@ func (m *Module) getDelegatorRewardsAmounts(height int64, delegator string) ([]t
 
 	var rewards = make([]types.DelegatorRewardAmount, len(rews))
 	for index, reward := range rews {
-		rewards[index] = types.NewDelegatorRewardAmount(
-			delegator,
-			reward.ValidatorAddress,
-			withdrawAddr,
-			reward.Reward,
-			height,
-		)
+		rewards[index] = types.NewDelegatorRewardAmount(reward.ValidatorAddress, withdrawAddr, reward.Reward)
 	}
 
 	return rewards, nil
