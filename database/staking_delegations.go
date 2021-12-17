@@ -162,7 +162,7 @@ WHERE delegation.validator_address = validator_info.consensus_address
 		if err = tx.Rollback(); err != nil {
 			return err
 		}
-		return fmt.Errorf("error while deleting delegations for valdiator: %s", err)
+		return fmt.Errorf("error while deleting delegations for validator: %s", err)
 	}
 
 	// Store the delegations
