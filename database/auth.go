@@ -1,6 +1,7 @@
 package database
 
 import (
+	"database/sql"
 	"fmt"
 	"time"
 
@@ -17,43 +18,54 @@ import (
 
 // SaveAccounts saves the given accounts inside the database
 func (db *Db) SaveAccounts(accounts []types.Account) error {
-	paramsNumber := 1
-	slices := dbutils.SplitAccounts(accounts, paramsNumber)
+	tx, err := db.Sql.Begin()
+	if err != nil {
+		return err
+	}
 
-	for _, accounts := range slices {
-		if len(accounts) == 0 {
-			continue
+	err = db.saveAccountsWithTx(tx, accounts)
+	if err != nil {
+		if err = tx.Rollback(); err != nil {
+			return err
 		}
+		return err
+	}
 
-		// Store up-to-date data
-		err := db.saveAccounts(paramsNumber, accounts)
-		if err != nil {
-			return fmt.Errorf("error while storing accounts: %s", err)
-		}
+	err = tx.Commit()
+	if err != nil {
+		return fmt.Errorf("error while committing accounts transaction: %s", err)
 	}
 
 	return nil
 }
 
-func (db *Db) saveAccounts(paramsNumber int, accounts []types.Account) error {
-	if len(accounts) == 0 {
-		return nil
-	}
+// saveAccountsWithTx saves the given accounts using the provided transaction.
+// NOTE: The provided transaction is never committed nor rolled back. The caller must take care of this
+func (db *Db) saveAccountsWithTx(tx *sql.Tx, accounts []types.Account) error {
+	paramsNumber := 1
+	slices := dbutils.SplitAccounts(accounts, paramsNumber)
 
-	stmt := `INSERT INTO account (address) VALUES `
-	var params []interface{}
+	for _, slice := range slices {
+		if len(slice) == 0 {
+			continue
+		}
 
-	for i, account := range accounts {
-		ai := i * paramsNumber
-		stmt += fmt.Sprintf("($%d),", ai+1)
-		params = append(params, account.Address)
-	}
+		// Store the accounts
+		stmt := `INSERT INTO account (address) VALUES `
+		var params []interface{}
 
-	stmt = stmt[:len(stmt)-1]
-	stmt += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(stmt, params...)
-	if err != nil {
-		return fmt.Errorf("error while storing accounts: %s", err)
+		for i, account := range slice {
+			ai := i * paramsNumber
+			stmt += fmt.Sprintf("($%d),", ai+1)
+			params = append(params, account.Address)
+		}
+
+		stmt = stmt[:len(stmt)-1]
+		stmt += " ON CONFLICT DO NOTHING"
+		_, err := tx.Exec(stmt, params...)
+		if err != nil {
+			return fmt.Errorf("error while storing accounts: %s", err)
+		}
 	}
 
 	return nil

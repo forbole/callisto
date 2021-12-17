@@ -27,7 +27,9 @@ func (db *Db) SaveDelegations(height int64, delegations []types.Delegation) erro
 	// Try storing the delegations
 	err = db.saveDelegationsWithTx(tx, height, delegations)
 	if err != nil {
-		tx.Rollback()
+		if err = tx.Rollback(); err != nil {
+			return err
+		}
 		return err
 	}
 
@@ -101,7 +103,7 @@ INSERT INTO delegation (validator_address, delegator_address, amount, height) VA
 	}
 
 	// Store the accounts
-	err := db.SaveAccounts(accounts)
+	err := db.saveAccountsWithTx(tx, accounts)
 	if err != nil {
 		return fmt.Errorf("error while storing delegators accounts: %s", err)
 	}
@@ -157,14 +159,18 @@ WHERE delegation.validator_address = validator_info.consensus_address
   AND validator_info.operator_address = $1 AND delegation.height <= $2`
 	_, err = tx.Exec(stmt, valOperAddr, height)
 	if err != nil {
-		tx.Rollback()
+		if err = tx.Rollback(); err != nil {
+			return err
+		}
 		return fmt.Errorf("error while deleting delegations for valdiator: %s", err)
 	}
 
 	// Store the delegations
 	err = db.saveDelegationsWithTx(tx, height, delegations)
 	if err != nil {
-		tx.Rollback()
+		if err = tx.Rollback(); err != nil {
+			return err
+		}
 		return err
 	}
 
@@ -188,14 +194,18 @@ func (db *Db) ReplaceDelegatorDelegations(height int64, delegator string, delega
 	stmt := `DELETE FROM delegation WHERE delegator_address = $1 AND height <= $2`
 	_, err = tx.Exec(stmt, delegator, height)
 	if err != nil {
-		tx.Rollback()
+		if err = tx.Rollback(); err != nil {
+			return err
+		}
 		return fmt.Errorf("error while deleting delegations for delegator: %s", err)
 	}
 
 	// Store the delegations
 	err = db.saveDelegationsWithTx(tx, height, delegations)
 	if err != nil {
-		tx.Rollback()
+		if err = tx.Rollback(); err != nil {
+			return err
+		}
 		return err
 	}
 

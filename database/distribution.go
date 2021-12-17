@@ -129,7 +129,9 @@ func (db *Db) SaveDelegatorsRewardsAmounts(height int64, delegator string, amoun
 	stmt := `DELETE FROM delegation_reward WHERE delegator_address = $1 AND height <= $2`
 	_, err = tx.Exec(stmt, delegator, height)
 	if err != nil {
-		tx.Rollback()
+		if err = tx.Rollback(); err != nil {
+			return err
+		}
 		return fmt.Errorf("error while deleting delegation rewards: %s", err)
 	}
 
@@ -160,7 +162,9 @@ ON CONFLICT ON CONSTRAINT delegation_reward_validator_delegator_unique DO UPDATE
 WHERE delegation_reward.height <= excluded.height`
 	_, err = tx.Exec(stmt, params...)
 	if err != nil {
-		tx.Rollback()
+		if err = tx.Rollback(); err != nil {
+			return err
+		}
 		return fmt.Errorf("error while storing delegation reward: %s", err)
 	}
 
