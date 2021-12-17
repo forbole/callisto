@@ -336,34 +336,6 @@ func (db *Db) GetUserRedelegationsAmount(address string) (sdk.Coins, error) {
 	return amount, nil
 }
 
-// DeleteRedelegation removes the given redelegation from the database
-func (db *Db) DeleteRedelegation(redelegation types.Redelegation) error {
-	srcVal, err := db.GetValidator(redelegation.SrcValidator)
-	if err != nil {
-		return fmt.Errorf("error while getting validator: %s", err)
-	}
-
-	dstVal, err := db.GetValidator(redelegation.DstValidator)
-	if err != nil {
-		return fmt.Errorf("error while getting validator: %s", err)
-	}
-
-	stmt := `
-DELETE FROM redelegation 
-WHERE delegator_address = $1 
-  AND src_validator_address = $2 
-  AND dst_validator_address = $3 
-  AND completion_time = $4`
-	_, err = db.Sql.Exec(stmt,
-		redelegation.DelegatorAddress, srcVal.GetConsAddr(), dstVal.GetConsAddr(), redelegation.CompletionTime,
-	)
-	if err != nil {
-		return fmt.Errorf("error while deleting redelegations: %s", err)
-	}
-
-	return nil
-}
-
 // DeleteCompletedRedelegations deletes all the redelegations
 // that have completed before the given timestamp
 func (db *Db) DeleteCompletedRedelegations(timestamp time.Time) error {
@@ -473,29 +445,6 @@ func (db *Db) GetUserUnBondingDelegationsAmount(address string) (sdk.Coins, erro
 	}
 
 	return amount, nil
-}
-
-// DeleteUnbondingDelegation removes the given unbonding delegation from the database
-func (db *Db) DeleteUnbondingDelegation(delegation types.UnbondingDelegation) error {
-	val, err := db.GetValidator(delegation.ValidatorOperAddr)
-	if err != nil {
-		return fmt.Errorf("error while getting validator: %s", err)
-	}
-
-	stmt := `
-DELETE FROM unbonding_delegation 
-WHERE delegator_address = $1 
-  AND validator_address = $2 
-  AND completion_timestamp = $3`
-
-	_, err = db.Sql.Exec(stmt,
-		delegation.DelegatorAddress, val.GetConsAddr(), delegation.CompletionTimestamp,
-	)
-	if err != nil {
-		return fmt.Errorf("error while deleting unbonding delegation: %s", err)
-	}
-
-	return nil
 }
 
 // DeleteCompletedUnbondingDelegations deletes all the unbonding delegations
