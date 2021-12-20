@@ -13,17 +13,15 @@ type Delegation struct {
 	DelegatorAddress  string
 	ValidatorOperAddr string
 	Amount            sdk.Coin
-	Height            int64
 }
 
 // NewDelegation creates a new Delegation instance containing
 // the given data
-func NewDelegation(delegator string, validatorOperAddr string, amount sdk.Coin, height int64) Delegation {
+func NewDelegation(delegator string, validatorOperAddr string, amount sdk.Coin) Delegation {
 	return Delegation{
 		DelegatorAddress:  delegator,
 		ValidatorOperAddr: validatorOperAddr,
 		Amount:            amount,
-		Height:            height,
 	}
 }
 
