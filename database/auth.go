@@ -18,25 +18,9 @@ import (
 
 // SaveAccounts saves the given accounts inside the database
 func (db *Db) SaveAccounts(accounts []types.Account) error {
-	tx, err := db.Sql.Begin()
-	if err != nil {
-		return err
-	}
-
-	err = db.saveAccountsWithTx(tx, accounts)
-	if err != nil {
-		if err = tx.Rollback(); err != nil {
-			return err
-		}
-		return err
-	}
-
-	err = tx.Commit()
-	if err != nil {
-		return fmt.Errorf("error while committing accounts transaction: %s", err)
-	}
-
-	return nil
+	return db.RunTx(func(tx *sql.Tx) error {
+		return db.saveAccountsWithTx(tx, accounts)
+	})
 }
 
 // saveAccountsWithTx saves the given accounts using the provided transaction.

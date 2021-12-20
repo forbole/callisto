@@ -18,28 +18,9 @@ import (
 // the proper database table.
 // TIP: To store the validators data call SaveValidatorsData.
 func (db *Db) SaveDelegations(height int64, delegations []types.Delegation) error {
-	// Create a transaction
-	tx, err := db.Sql.Begin()
-	if err != nil {
-		return err
-	}
-
-	// Try storing the delegations
-	err = db.saveDelegationsWithTx(tx, height, delegations)
-	if err != nil {
-		if err = tx.Rollback(); err != nil {
-			return err
-		}
-		return err
-	}
-
-	// Commit the transaction
-	err = tx.Commit()
-	if err != nil {
-		return fmt.Errorf("error while committing delegations transaction: %s", err)
-	}
-
-	return nil
+	return db.RunTx(func(tx *sql.Tx) error {
+		return db.saveDelegationsWithTx(tx, height, delegations)
+	})
 }
 
 // saveDelegationsWithTx stores the given delegations using the given transaction.
@@ -147,75 +128,35 @@ func (db *Db) GetUserDelegationsAmount(address string) (sdk.Coins, error) {
 
 // ReplaceValidatorDelegations replaces all the delegations associated with the given validator with the given ones
 func (db *Db) ReplaceValidatorDelegations(height int64, valOperAddr string, delegations []types.Delegation) error {
-	tx, err := db.Sql.Begin()
-	if err != nil {
-		return err
-	}
-
-	// Delete the existing delegations
-	stmt := `
+	return db.RunTx(func(tx *sql.Tx) error {
+		// Delete the existing delegations
+		stmt := `
 DELETE FROM delegation USING validator_info 
 WHERE delegation.validator_address = validator_info.consensus_address 
   AND validator_info.operator_address = $1 AND delegation.height <= $2`
-	_, err = tx.Exec(stmt, valOperAddr, height)
-	if err != nil {
-		if err = tx.Rollback(); err != nil {
-			return err
+		_, err := tx.Exec(stmt, valOperAddr, height)
+		if err != nil {
+			return fmt.Errorf("error while deleting delegations for validator: %s", err)
 		}
-		return fmt.Errorf("error while deleting delegations for validator: %s", err)
-	}
 
-	// Store the delegations
-	err = db.saveDelegationsWithTx(tx, height, delegations)
-	if err != nil {
-		if err = tx.Rollback(); err != nil {
-			return err
-		}
-		return err
-	}
-
-	// Commit the transaction
-	err = tx.Commit()
-	if err != nil {
-		return fmt.Errorf("error while committing validator delegations transaction: %s", err)
-	}
-
-	return nil
+		// Store the delegations
+		return db.saveDelegationsWithTx(tx, height, delegations)
+	})
 }
 
 // ReplaceDelegatorDelegations replaces all the delegations associated with the given delegator with the given ones
 func (db *Db) ReplaceDelegatorDelegations(height int64, delegator string, delegations []types.Delegation) error {
-	tx, err := db.Sql.Begin()
-	if err != nil {
-		return err
-	}
-
-	// Delete existing delegations
-	stmt := `DELETE FROM delegation WHERE delegator_address = $1 AND height <= $2`
-	_, err = tx.Exec(stmt, delegator, height)
-	if err != nil {
-		if err = tx.Rollback(); err != nil {
-			return err
+	return db.RunTx(func(tx *sql.Tx) error {
+		// Delete existing delegations
+		stmt := `DELETE FROM delegation WHERE delegator_address = $1 AND height <= $2`
+		_, err := tx.Exec(stmt, delegator, height)
+		if err != nil {
+			return fmt.Errorf("error while deleting delegations for delegator: %s", err)
 		}
-		return fmt.Errorf("error while deleting delegations for delegator: %s", err)
-	}
 
-	// Store the delegations
-	err = db.saveDelegationsWithTx(tx, height, delegations)
-	if err != nil {
-		if err = tx.Rollback(); err != nil {
-			return err
-		}
-		return err
-	}
-
-	// Commit the transaction
-	err = tx.Commit()
-	if err != nil {
-		return fmt.Errorf("error while committing delegator delegations transaction: %s", err)
-	}
-
-	return nil
+		// Store the delegations
+		return db.saveDelegationsWithTx(tx, height, delegations)
+	})
 
 }
 

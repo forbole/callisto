@@ -75,7 +75,7 @@ func (m *Module) RefreshDelegatorRewards(height int64, delegator string) error {
 
 // getDelegatorRewardsAmounts returns the rewards for the given delegator at the given height
 func (m *Module) getDelegatorRewardsAmounts(height int64, delegator string) ([]types.DelegatorRewardAmount, error) {
-	rews, err := m.source.DelegatorTotalRewards(delegator, height)
+	rows, err := m.source.DelegatorTotalRewards(delegator, height)
 	if err != nil {
 		return nil, fmt.Errorf("error while getting delegator reward: %s", err)
 	}
@@ -85,8 +85,8 @@ func (m *Module) getDelegatorRewardsAmounts(height int64, delegator string) ([]t
 		return nil, fmt.Errorf("error while getting delegator rewards: %s", err)
 	}
 
-	var rewards = make([]types.DelegatorRewardAmount, len(rews))
-	for index, reward := range rews {
+	var rewards = make([]types.DelegatorRewardAmount, len(rows))
+	for index, reward := range rows {
 		rewards[index] = types.NewDelegatorRewardAmount(reward.ValidatorAddress, withdrawAddr, reward.Reward)
 	}
 

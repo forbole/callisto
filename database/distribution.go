@@ -1,6 +1,7 @@
 package database
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 
@@ -115,66 +116,50 @@ WHERE vi.self_delegate_address = $1`
 
 // SaveDelegatorsRewardsAmounts allows to store the given delegator reward amounts as the most updated ones
 func (db *Db) SaveDelegatorsRewardsAmounts(height int64, delegator string, amounts []types.DelegatorRewardAmount) error {
-	if len(amounts) == 0 {
-		return nil
-	}
-
-	// Begin the transaction
-	tx, err := db.Sql.Begin()
-	if err != nil {
-		return err
-	}
-
-	// Delete all the delegation rewards
-	stmt := `DELETE FROM delegation_reward WHERE delegator_address = $1 AND height <= $2`
-	_, err = tx.Exec(stmt, delegator, height)
-	if err != nil {
-		if err = tx.Rollback(); err != nil {
-			return err
+	return db.RunTx(func(tx *sql.Tx) error {
+		if len(amounts) == 0 {
+			return nil
 		}
-		return fmt.Errorf("error while deleting delegation rewards: %s", err)
-	}
 
-	// Insert the rewards
-	stmt = `INSERT INTO delegation_reward(validator_address, delegator_address, withdraw_address, amount, height) VALUES `
-	var params []interface{}
-
-	for i, amount := range amounts {
-		ai := i * 5
-		stmt += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d),", ai+1, ai+2, ai+3, ai+4, ai+5)
-
-		// Get the validator consensus address
-		consAddr, err := db.GetValidatorConsensusAddress(amount.ValidatorOperAddr)
+		// Delete all the delegation rewards
+		stmt := `DELETE FROM delegation_reward WHERE delegator_address = $1 AND height <= $2`
+		_, err := tx.Exec(stmt, delegator, height)
 		if err != nil {
-			return fmt.Errorf("error while getting validator consensus address: %s", err)
+			return fmt.Errorf("error while deleting delegation rewards: %s", err)
 		}
 
-		coins := pq.Array(dbtypes.NewDbDecCoins(amount.Amount))
-		params = append(params, consAddr.String(), delegator, amount.WithdrawAddress, coins, height)
-	}
+		// Insert the rewards
+		stmt = `INSERT INTO delegation_reward (validator_address, delegator_address, withdraw_address, amount, height) VALUES `
+		var params []interface{}
 
-	stmt = stmt[:len(stmt)-1] // Remove trailing ,
-	stmt += `
+		for i, amount := range amounts {
+			ai := i * 5
+			stmt += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d),", ai+1, ai+2, ai+3, ai+4, ai+5)
+
+			// Get the validator consensus address
+			consAddr, err := db.GetValidatorConsensusAddress(amount.ValidatorOperAddr)
+			if err != nil {
+				return fmt.Errorf("error while getting validator consensus address: %s", err)
+			}
+
+			coins := pq.Array(dbtypes.NewDbDecCoins(amount.Amount))
+			params = append(params, consAddr.String(), delegator, amount.WithdrawAddress, coins, height)
+		}
+
+		stmt = stmt[:len(stmt)-1] // Remove trailing ,
+		stmt += `
 ON CONFLICT ON CONSTRAINT delegation_reward_validator_delegator_unique DO UPDATE 
 	SET withdraw_address = excluded.withdraw_address,
 		amount = excluded.amount,
 		height = excluded.height
 WHERE delegation_reward.height <= excluded.height`
-	_, err = tx.Exec(stmt, params...)
-	if err != nil {
-		if err = tx.Rollback(); err != nil {
-			return err
+		_, err = tx.Exec(stmt, params...)
+		if err != nil {
+			return fmt.Errorf("error while storing delegation reward: %s", err)
 		}
-		return fmt.Errorf("error while storing delegation reward: %s", err)
-	}
 
-	// Commit the transaction applying the changes
-	err = tx.Commit()
-	if err != nil {
-		return err
-	}
-
-	return nil
+		return nil
+	})
 }
 
 // GetUserDelegatorRewardsAmount returns the amount of rewards that the given user has currently associated
