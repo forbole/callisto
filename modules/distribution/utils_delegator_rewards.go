@@ -8,38 +8,7 @@ import (
 	"github.com/forbole/bdjuno/v2/types"
 )
 
-// refreshDelegatorsRewardsAmounts refreshes the rewards associated with all the delegators for the given height,
-// deleting the ones existing and downloading them from scratch.
-func (m *Module) refreshDelegatorsRewardsAmounts(height int64) {
-
-	// Get the delegators
-	delegators, err := m.db.GetDelegators()
-	if err != nil {
-		log.Error().Str("module", "distribution").Err(err).Int64("height", height).
-			Msg("error while getting delegators")
-	}
-
-	if len(delegators) == 0 {
-		log.Debug().Str("module", "distribution").Int64("height", height).
-			Msg("no delegations found, make sure you are calling this module after the staking module")
-		return
-	}
-
-	// Get the rewards
-	for _, delegator := range delegators {
-
-		// Refresh the delegators using a goroutine to improve efficiency
-		go func(delegator string) {
-			err = m.RefreshDelegatorRewards(height, delegator)
-			if err != nil {
-				log.Error().Str("module", "distribution").Err(err).Int64("height", height).
-					Str("delegator", delegator).Msg("error while updating delegator rewards")
-			}
-		}(delegator)
-	}
-}
-
-// shouldUpdateDelegatorRewardsAmounts tells whether or not the delegatos rewards amounts should be updated at the given height
+// shouldUpdateDelegatorRewardsAmounts tells whether the delegators reward amounts should be updated at the given height
 func (m *Module) shouldUpdateDelegatorRewardsAmounts(height int64) bool {
 	interval := m.cfg.RewardsFrequency
 	if interval == 0 {
@@ -55,6 +24,32 @@ func (m *Module) shouldUpdateDelegatorRewardsAmounts(height int64) bool {
 	}
 
 	return !hasRewards || height%interval == 0
+}
+
+// refreshDelegatorsRewardsAmounts refreshes the rewards associated with all the delegators for the given height,
+// deleting the ones existing and downloading them from scratch.
+func (m *Module) refreshDelegatorsRewardsAmounts(height int64) {
+	// Get the delegators
+	delegators, err := m.db.GetDelegators()
+	if err != nil {
+		log.Error().Str("module", "distribution").Err(err).Int64("height", height).
+			Msg("error while getting delegators")
+	}
+
+	if len(delegators) == 0 {
+		log.Debug().Str("module", "distribution").Int64("height", height).
+			Msg("no delegations found, make sure you are calling this module after the staking module")
+		return
+	}
+
+	// Get the rewards
+	for _, delegator := range delegators {
+		err = m.RefreshDelegatorRewards(height, delegator)
+		if err != nil {
+			log.Error().Str("module", "distribution").Err(err).Int64("height", height).
+				Str("delegator", delegator).Msg("error while updating delegator rewards")
+		}
+	}
 }
 
 // RefreshDelegatorRewards refreshes the rewards associated to the given delegator for the given height,
