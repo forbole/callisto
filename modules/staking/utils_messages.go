@@ -17,8 +17,8 @@ func (m *Module) storeDelegationFromMessage(height int64, msg *stakingtypes.MsgD
 		return err
 	}
 
-	return m.db.SaveDelegations([]types.Delegation{
-		convertDelegationResponse(height, delegation),
+	return m.db.SaveDelegations(height, []types.Delegation{
+		convertDelegationResponse(delegation),
 	})
 }
 
