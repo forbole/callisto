@@ -161,12 +161,11 @@ func (m *Module) saveDelegations(doc *tmtypes.GenesisDoc, genState stakingtypes.
 				delegation.DelegatorAddress,
 				validator.OperatorAddress,
 				sdk.NewCoin(genState.Params.BondDenom, delegationAmount),
-				doc.InitialHeight,
 			))
 		}
 	}
 
-	return m.db.SaveDelegations(delegations)
+	return m.db.SaveDelegations(doc.InitialHeight, delegations)
 }
 
 // findDelegations returns the list of all the delegations that are

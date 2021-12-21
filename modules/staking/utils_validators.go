@@ -2,6 +2,9 @@ package staking
 
 import (
 	"fmt"
+	"strings"
+
+	"google.golang.org/grpc/codes"
 
 	juno "github.com/forbole/juno/v2/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
@@ -174,7 +177,7 @@ func (m *Module) GetValidatorsStatuses(height int64, validators []stakingtypes.V
 		}
 
 		valSigningInfo, err := m.slashingModule.GetSigningInfo(height, consAddr)
-		if err != nil {
+		if err != nil && !strings.Contains(err.Error(), codes.NotFound.String()) {
 			return nil, fmt.Errorf("error while getting validator signing info: %s", err)
 		}
 
