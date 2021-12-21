@@ -5,15 +5,15 @@ go 1.16
 require (
 	github.com/cosmos/cosmos-sdk v0.44.4
 	github.com/cosmos/gaia/v6 v6.0.0-rc1
-	github.com/forbole/juno/v2 v2.0.0-20211215134503-2c58dc73913b
-	github.com/go-co-op/gocron v0.3.3
+	github.com/forbole/juno/v2 v2.0.0-20211221122008-f95aacf17add
+	github.com/go-co-op/gocron v1.11.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/lib/pq v1.10.2
 	github.com/pelletier/go-toml v1.9.4
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
 	github.com/regen-network/regen-ledger/v2 v2.1.0
-	github.com/rs/zerolog v1.26.0
+	github.com/rs/zerolog v1.26.1
 	github.com/spf13/cobra v1.3.0
 	github.com/stretchr/testify v1.7.0
 	github.com/tendermint/tendermint v0.34.14
