@@ -2,8 +2,9 @@ package staking
 
 import (
 	"fmt"
-	"google.golang.org/grpc/codes"
 	"strings"
+
+	"google.golang.org/grpc/codes"
 
 	juno "github.com/forbole/juno/v2/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"

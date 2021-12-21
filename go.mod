@@ -5,14 +5,14 @@ go 1.16
 require (
 	github.com/Sifchain/sifnode v0.0.0-20211110000810-22b3ac797839
 	github.com/cosmos/cosmos-sdk v0.42.10
-	github.com/forbole/juno/v2 v2.0.0-20211216103521-6d933e323721
+	github.com/forbole/juno/v2 v2.0.0-20211221121955-cf2fcf04394b
 	github.com/go-co-op/gocron v1.11.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.4
 	github.com/lib/pq v1.10.4
 	github.com/pelletier/go-toml v1.9.4
-	github.com/proullon/ramsql v0.0.0-20211107203818-b1671e30e13c
-	github.com/rs/zerolog v1.26.0
+	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
+	github.com/rs/zerolog v1.26.1
 	github.com/spf13/cobra v1.3.0
 	github.com/stretchr/testify v1.7.0
 	github.com/tendermint/tendermint v0.34.14
