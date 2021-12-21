@@ -1,6 +1,7 @@
 package database
 
 import (
+	"database/sql"
 	"fmt"
 	"time"
 
@@ -16,7 +17,18 @@ import (
 // It assumes that the validators addresses are already present inside
 // the proper database table.
 // TIP: To store the validators data call SaveValidatorsData.
-func (db *Db) SaveDelegations(delegations []types.Delegation) error {
+func (db *Db) SaveDelegations(height int64, delegations []types.Delegation) error {
+	return db.RunTx(func(tx *sql.Tx) error {
+		return db.saveDelegationsWithTx(tx, height, delegations)
+	})
+}
+
+// saveDelegationsWithTx stores the given delegations using the given transaction.
+// NOTE: The provided transaction is never committed nor rolled back. The caller must take care of this
+func (db *Db) saveDelegationsWithTx(tx *sql.Tx, height int64, delegations []types.Delegation) error {
+	if len(delegations) == 0 {
+		return nil
+	}
 
 	paramsNumber := 4
 	slices := dbutils.SplitDelegations(delegations, paramsNumber)
@@ -26,19 +38,18 @@ func (db *Db) SaveDelegations(delegations []types.Delegation) error {
 			continue
 		}
 
-		err := db.storeUpToDateDelegations(paramsNumber, delegationSlice)
+		err := db.storeUpToDateDelegations(tx, paramsNumber, height, delegationSlice)
 		if err != nil {
 			return fmt.Errorf("error while storing up-to-date delegations: %s", err)
 		}
 	}
 
 	return nil
-
 }
 
-// storeUpToDateDelegations stores the given delegations as the most up-to-date ones
-func (db *Db) storeUpToDateDelegations(paramsNumber int, delegations []types.Delegation) error {
-
+// storeUpToDateDelegations stores the given delegations as the most up-to-date ones using the provided transaction.
+// NOTE: The provided transaction is never committed nor rolled back. The caller must take care of this
+func (db *Db) storeUpToDateDelegations(tx *sql.Tx, paramsNumber int, height int64, delegations []types.Delegation) error {
 	if len(delegations) == 0 {
 		return nil
 	}
@@ -69,12 +80,11 @@ INSERT INTO delegation (validator_address, delegator_address, amount, height) VA
 		// Current delegation query
 		di := i * paramsNumber
 		delQry += fmt.Sprintf("($%d,$%d,$%d,$%d),", di+1, di+2, di+3, di+4)
-		delParams = append(delParams,
-			consAddr.String(), delegation.DelegatorAddress, value, delegation.Height)
+		delParams = append(delParams, consAddr.String(), delegation.DelegatorAddress, value, height)
 	}
 
 	// Store the accounts
-	err := db.SaveAccounts(accounts)
+	err := db.saveAccountsWithTx(tx, accounts)
 	if err != nil {
 		return fmt.Errorf("error while storing delegators accounts: %s", err)
 	}
@@ -86,7 +96,7 @@ ON CONFLICT ON CONSTRAINT delegation_validator_delegator_unique
 DO UPDATE SET amount = excluded.amount, height = excluded.height
 WHERE delegation.height <= excluded.height`
 
-	_, err = db.Sql.Exec(delQry, delParams...)
+	_, err = tx.Exec(delQry, delParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing delegations: %s", err)
 	}
@@ -116,31 +126,38 @@ func (db *Db) GetUserDelegationsAmount(address string) (sdk.Coins, error) {
 	return amount, nil
 }
 
-// DeleteValidatorDelegations removes all the delegations associated with the given validator consensus address
-func (db *Db) DeleteValidatorDelegations(valOperAddr string) error {
-	stmt := `
+// ReplaceValidatorDelegations replaces all the delegations associated with the given validator with the given ones
+func (db *Db) ReplaceValidatorDelegations(height int64, valOperAddr string, delegations []types.Delegation) error {
+	return db.RunTx(func(tx *sql.Tx) error {
+		// Delete the existing delegations
+		stmt := `
 DELETE FROM delegation USING validator_info 
 WHERE delegation.validator_address = validator_info.consensus_address 
-  AND validator_info.operator_address = $1`
+  AND validator_info.operator_address = $1 AND delegation.height <= $2`
+		_, err := tx.Exec(stmt, valOperAddr, height)
+		if err != nil {
+			return fmt.Errorf("error while deleting delegations for validator: %s", err)
+		}
 
-	_, err := db.Sql.Exec(stmt, valOperAddr)
-	if err != nil {
-		return fmt.Errorf("error while deleting delegations for valdiator: %s", err)
-	}
-
-	return nil
+		// Store the delegations
+		return db.saveDelegationsWithTx(tx, height, delegations)
+	})
 }
 
-// DeleteDelegatorDelegations removes all the delegations associated with the given delegator
-func (db *Db) DeleteDelegatorDelegations(delegator string) error {
-	stmt := `DELETE FROM delegation WHERE delegator_address = $1`
+// ReplaceDelegatorDelegations replaces all the delegations associated with the given delegator with the given ones
+func (db *Db) ReplaceDelegatorDelegations(height int64, delegator string, delegations []types.Delegation) error {
+	return db.RunTx(func(tx *sql.Tx) error {
+		// Delete existing delegations
+		stmt := `DELETE FROM delegation WHERE delegator_address = $1 AND height <= $2`
+		_, err := tx.Exec(stmt, delegator, height)
+		if err != nil {
+			return fmt.Errorf("error while deleting delegations for delegator: %s", err)
+		}
 
-	_, err := db.Sql.Exec(stmt, delegator)
-	if err != nil {
-		return fmt.Errorf("error while deleting delegations for delegator: %s", err)
-	}
+		// Store the delegations
+		return db.saveDelegationsWithTx(tx, height, delegations)
+	})
 
-	return nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -269,34 +286,6 @@ func (db *Db) GetUserRedelegationsAmount(address string) (sdk.Coins, error) {
 	return amount, nil
 }
 
-// DeleteRedelegation removes the given redelegation from the database
-func (db *Db) DeleteRedelegation(redelegation types.Redelegation) error {
-	srcVal, err := db.GetValidator(redelegation.SrcValidator)
-	if err != nil {
-		return fmt.Errorf("error while getting validator: %s", err)
-	}
-
-	dstVal, err := db.GetValidator(redelegation.DstValidator)
-	if err != nil {
-		return fmt.Errorf("error while getting validator: %s", err)
-	}
-
-	stmt := `
-DELETE FROM redelegation 
-WHERE delegator_address = $1 
-  AND src_validator_address = $2 
-  AND dst_validator_address = $3 
-  AND completion_time = $4`
-	_, err = db.Sql.Exec(stmt,
-		redelegation.DelegatorAddress, srcVal.GetConsAddr(), dstVal.GetConsAddr(), redelegation.CompletionTime,
-	)
-	if err != nil {
-		return fmt.Errorf("error while deleting redelegations: %s", err)
-	}
-
-	return nil
-}
-
 // DeleteCompletedRedelegations deletes all the redelegations
 // that have completed before the given timestamp
 func (db *Db) DeleteCompletedRedelegations(timestamp time.Time) error {
@@ -406,29 +395,6 @@ func (db *Db) GetUserUnBondingDelegationsAmount(address string) (sdk.Coins, erro
 	}
 
 	return amount, nil
-}
-
-// DeleteUnbondingDelegation removes the given unbonding delegation from the database
-func (db *Db) DeleteUnbondingDelegation(delegation types.UnbondingDelegation) error {
-	val, err := db.GetValidator(delegation.ValidatorOperAddr)
-	if err != nil {
-		return fmt.Errorf("error while getting validator: %s", err)
-	}
-
-	stmt := `
-DELETE FROM unbonding_delegation 
-WHERE delegator_address = $1 
-  AND validator_address = $2 
-  AND completion_timestamp = $3`
-
-	_, err = db.Sql.Exec(stmt,
-		delegation.DelegatorAddress, val.GetConsAddr(), delegation.CompletionTimestamp,
-	)
-	if err != nil {
-		return fmt.Errorf("error while deleting unbonding delegation: %s", err)
-	}
-
-	return nil
 }
 
 // DeleteCompletedUnbondingDelegations deletes all the unbonding delegations
