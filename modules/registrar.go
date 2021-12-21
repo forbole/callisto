@@ -166,14 +166,37 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		cfg.Home, 0, simapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
 	)
 
-	return &Sources{
+	sources := &Sources{
 		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
 		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
 		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
 		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
 		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
-	}, nil
+	}
+
+	// Mount and initialize the stores
+	err = source.MountKVStores(app, "keys")
+	if err != nil {
+		return nil, err
+	}
+
+	err = source.MountTransientStores(app, "tkeys")
+	if err != nil {
+		return nil, err
+	}
+
+	err = source.MountMemoryStores(app, "memKeys")
+	if err != nil {
+		return nil, err
+	}
+
+	err = source.InitStores()
+	if err != nil {
+		return nil, err
+	}
+
+	return sources, nil
 }
 
 func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
