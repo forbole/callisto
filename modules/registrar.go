@@ -58,7 +58,6 @@ import (
 	remotedistrsource "github.com/forbole/bdjuno/v2/modules/distribution/source/remote"
 
 	govsource "github.com/forbole/bdjuno/v2/modules/gov/source"
-	localgovsource "github.com/forbole/bdjuno/v2/modules/gov/source/local"
 	remotegovsource "github.com/forbole/bdjuno/v2/modules/gov/source/remote"
 	inflationsource "github.com/forbole/bdjuno/v2/modules/inflation/source"
 	localinflationsource "github.com/forbole/bdjuno/v2/modules/inflation/source/local"
@@ -72,7 +71,6 @@ import (
 	stakingsource "github.com/forbole/bdjuno/v2/modules/staking/source"
 
 	mintsource "github.com/forbole/bdjuno/v2/modules/mint/source"
-	localmintsource "github.com/forbole/bdjuno/v2/modules/mint/source/local"
 	remotemintsource "github.com/forbole/bdjuno/v2/modules/mint/source/remote"
 	localstakingsource "github.com/forbole/bdjuno/v2/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v2/modules/staking/source/remote"
@@ -186,21 +184,38 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
 		cfg.Home, 0, emoneyapp.MakeEncodingConfig(), simapp.EmptyAppOptions{},
 	)
-	app := simapp.NewSimApp(
-		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
-		cfg.Home, 0, simapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
-	)
 
-	return &Sources{
+	sources := &Sources{
 		AuthoritySource: localauthoritysource.NewSource(source, authoritytypes.QueryServer(emoneyApp.AuthorityKeeper)),
-		BankSource:      localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
-		DistrSource:     localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
-		GovSource:       localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
+		BankSource:      localbanksource.NewSource(source, banktypes.QueryServer(emoneyApp.BankKeeper)),
+		DistrSource:     localdistrsource.NewSource(source, distrtypes.QueryServer(emoneyApp.DistrKeeper)),
 		InflationSource: localinflationsource.NewSource(source, inflationtypes.QueryServer(emoneyApp.InflationKeeper)),
-		MintSource:      localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
-		SlashingSource:  localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
-		StakingSource:   localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
-	}, nil
+		SlashingSource:  localslashingsource.NewSource(source, slashingtypes.QueryServer(emoneyApp.SlashingKeeper)),
+		StakingSource:   localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: emoneyApp.StakingKeeper}),
+	}
+
+	// Mount and initialize the stores
+	err = source.MountKVStores(emoneyApp, "keys")
+	if err != nil {
+		return nil, err
+	}
+
+	err = source.MountTransientStores(emoneyApp, "tkeys")
+	if err != nil {
+		return nil, err
+	}
+
+	err = source.MountMemoryStores(emoneyApp, "memKeys")
+	if err != nil {
+		return nil, err
+	}
+
+	err = source.InitStores()
+	if err != nil {
+		return nil, err
+	}
+
+	return sources, nil
 }
 
 func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
