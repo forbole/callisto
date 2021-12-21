@@ -42,22 +42,19 @@ func (suite *DbTestSuite) TestDelegations() {
 			delegator1.String(),
 			validator1.GetOperator(),
 			sdk.NewCoin("cosmos", sdk.NewInt(100)),
-			100,
 		),
 		types.NewDelegation(
 			delegator1.String(),
 			validator2.GetOperator(),
 			sdk.NewCoin("cosmos", sdk.NewInt(100)),
-			50,
 		),
 		types.NewDelegation(
 			delegator2.String(),
 			validator2.GetOperator(),
 			sdk.NewCoin("cosmos", sdk.NewInt(200)),
-			101,
 		),
 	}
-	err := suite.database.SaveDelegations(delegations)
+	err := suite.database.SaveDelegations(50, delegations)
 	suite.Require().NoError(err, "inserting delegations should return no error")
 
 	// ------------------------------
@@ -74,7 +71,7 @@ func (suite *DbTestSuite) TestDelegations() {
 			delegator1.String(),
 			validator1.GetConsAddr(),
 			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(100))),
-			100,
+			50,
 		),
 		bddbtypes.NewDelegationRow(
 			delegator1.String(),
@@ -86,7 +83,7 @@ func (suite *DbTestSuite) TestDelegations() {
 			delegator2.String(),
 			validator2.GetConsAddr(),
 			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(200))),
-			101,
+			50,
 		),
 	}
 
@@ -95,31 +92,28 @@ func (suite *DbTestSuite) TestDelegations() {
 		suite.Require().True(delegation.Equal(delRows[index]))
 	}
 
-	// ------------------------------
-	// --- Update the data
-	// ------------------------------
+	// ----------------------------------
+	// --- Update the data (lower height)
+	// ----------------------------------
 
 	delegations = []types.Delegation{
 		types.NewDelegation(
 			delegator1.String(),
 			validator1.GetOperator(),
 			sdk.NewCoin("cosmos", sdk.NewInt(150)),
-			80,
 		),
 		types.NewDelegation(
 			delegator1.String(),
 			validator2.GetOperator(),
 			sdk.NewCoin("cosmos", sdk.NewInt(120)),
-			50,
 		),
 		types.NewDelegation(
 			delegator2.String(),
 			validator2.GetOperator(),
 			sdk.NewCoin("cosmos", sdk.NewInt(180)),
-			102,
 		),
 	}
-	err = suite.database.SaveDelegations(delegations)
+	err = suite.database.SaveDelegations(40, delegations)
 	suite.Require().NoError(err, "updating delegations should return no error")
 
 	// ------------------------------
@@ -135,19 +129,135 @@ func (suite *DbTestSuite) TestDelegations() {
 			delegator1.String(),
 			validator1.GetConsAddr(),
 			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(100))),
-			100,
+			50,
 		),
 		bddbtypes.NewDelegationRow(
 			delegator1.String(),
 			validator2.GetConsAddr(),
-			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(120))),
+			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(100))),
 			50,
 		),
 		bddbtypes.NewDelegationRow(
 			delegator2.String(),
 			validator2.GetConsAddr(),
-			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(180))),
-			102,
+			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(200))),
+			50,
+		),
+	}
+
+	suite.Require().Len(delRows, len(expectedDelRows))
+	for index, delegation := range expectedDelRows {
+		suite.Require().True(delegation.Equal(delRows[index]))
+	}
+
+	// ----------------------------------
+	// --- Update the data (same height)
+	// ----------------------------------
+
+	delegations = []types.Delegation{
+		types.NewDelegation(
+			delegator1.String(),
+			validator1.GetOperator(),
+			sdk.NewCoin("cosmos", sdk.NewInt(150)),
+		),
+		types.NewDelegation(
+			delegator1.String(),
+			validator2.GetOperator(),
+			sdk.NewCoin("cosmos", sdk.NewInt(120)),
+		),
+		types.NewDelegation(
+			delegator2.String(),
+			validator2.GetOperator(),
+			sdk.NewCoin("cosmos", sdk.NewInt(180)),
+		),
+	}
+	err = suite.database.SaveDelegations(40, delegations)
+	suite.Require().NoError(err, "updating delegations should return no error")
+
+	// ------------------------------
+	// --- Verify the data
+	// ------------------------------
+
+	delRows = []bddbtypes.DelegationRow{}
+	err = suite.database.Sqlx.Select(&delRows, `SELECT * FROM delegation`)
+	suite.Require().NoError(err)
+
+	expectedDelRows = []bddbtypes.DelegationRow{
+		bddbtypes.NewDelegationRow(
+			delegator1.String(),
+			validator1.GetConsAddr(),
+			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(100))),
+			50,
+		),
+		bddbtypes.NewDelegationRow(
+			delegator1.String(),
+			validator2.GetConsAddr(),
+			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(100))),
+			50,
+		),
+		bddbtypes.NewDelegationRow(
+			delegator2.String(),
+			validator2.GetConsAddr(),
+			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(200))),
+			50,
+		),
+	}
+
+	suite.Require().Len(delRows, len(expectedDelRows))
+	for index, delegation := range expectedDelRows {
+		suite.Require().True(delegation.Equal(delRows[index]))
+	}
+
+	// ----------------------------------
+	// --- Update the data (higher height)
+	// ----------------------------------
+
+	delegations = []types.Delegation{
+		types.NewDelegation(
+			delegator1.String(),
+			validator1.GetOperator(),
+			sdk.NewCoin("cosmos", sdk.NewInt(15)),
+		),
+		types.NewDelegation(
+			delegator1.String(),
+			validator2.GetOperator(),
+			sdk.NewCoin("cosmos", sdk.NewInt(12)),
+		),
+		types.NewDelegation(
+			delegator2.String(),
+			validator2.GetOperator(),
+			sdk.NewCoin("cosmos", sdk.NewInt(18)),
+		),
+	}
+	err = suite.database.SaveDelegations(100, delegations)
+	suite.Require().NoError(err, "updating delegations should return no error")
+
+	// ------------------------------
+	// --- Verify the data
+	// ------------------------------
+
+	delRows = []bddbtypes.DelegationRow{}
+	err = suite.database.Sqlx.Select(&delRows, `SELECT * FROM delegation`)
+	suite.Require().NoError(err)
+
+	expectedDelRows = []bddbtypes.DelegationRow{
+		bddbtypes.NewDelegationRow(
+			delegator1.String(),
+			validator1.GetConsAddr(),
+			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(15))),
+			100,
+		),
+		bddbtypes.NewDelegationRow(
+			delegator1.String(),
+			validator2.GetConsAddr(),
+			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(12))),
+			100,
+		),
+		bddbtypes.NewDelegationRow(
+			delegator2.String(),
+			validator2.GetConsAddr(),
+			dbtypes.NewDbCoin(sdk.NewCoin("cosmos", sdk.NewInt(18))),
+			100,
 		),
 	}
 
