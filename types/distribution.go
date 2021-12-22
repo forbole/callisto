@@ -46,15 +46,21 @@ func NewValidatorCommissionAmount(
 // DelegatorRewardAmount contains the data of a delegator commission amount
 type DelegatorRewardAmount struct {
 	ValidatorOperAddr string
+	DelegatorAddress  string
 	WithdrawAddress   string
 	Amount            []sdk.DecCoin
+	Height            int64
 }
 
 // NewDelegatorRewardAmount allows to build a new DelegatorRewardAmount instance
-func NewDelegatorRewardAmount(valOperAddr, withdrawAddress string, amount sdk.DecCoins) DelegatorRewardAmount {
+func NewDelegatorRewardAmount(
+	delegator, valOperAddr, withdrawAddress string, amount sdk.DecCoins, height int64,
+) DelegatorRewardAmount {
 	return DelegatorRewardAmount{
 		ValidatorOperAddr: valOperAddr,
+		DelegatorAddress:  delegator,
 		WithdrawAddress:   withdrawAddress,
 		Amount:            amount,
+		Height:            height,
 	}
 }
