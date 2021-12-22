@@ -15,19 +15,20 @@ const (
 )
 
 // convertDelegationResponse converts the given response to a BDJuno Delegation instance
-func convertDelegationResponse(response stakingtypes.DelegationResponse) types.Delegation {
+func convertDelegationResponse(height int64, response stakingtypes.DelegationResponse) types.Delegation {
 	return types.NewDelegation(
 		response.Delegation.DelegatorAddress,
 		response.Delegation.ValidatorAddress,
 		response.Balance,
+		height,
 	)
 }
 
 // ConvertDelegationsResponses converts the given responses to BDJuno Delegation instances
-func ConvertDelegationsResponses(responses []stakingtypes.DelegationResponse) []types.Delegation {
+func ConvertDelegationsResponses(height int64, responses []stakingtypes.DelegationResponse) []types.Delegation {
 	var delegations = make([]types.Delegation, len(responses))
 	for index, delegation := range responses {
-		delegations[index] = convertDelegationResponse(delegation)
+		delegations[index] = convertDelegationResponse(height, delegation)
 	}
 	return delegations
 }
@@ -41,7 +42,7 @@ func (m *Module) getValidatorDelegations(height int64, validator string) ([]type
 		return nil, fmt.Errorf("error while getting validator delegations: %s", err)
 	}
 
-	return ConvertDelegationsResponses(delegations), nil
+	return ConvertDelegationsResponses(height, delegations), nil
 }
 
 // getDelegatorDelegations returns the current delegations for the given delegator
@@ -51,7 +52,7 @@ func (m *Module) getDelegatorDelegations(height int64, delegator string) ([]type
 		return nil, fmt.Errorf("error while getting delegator delegations: %s", err)
 	}
 
-	return ConvertDelegationsResponses(responses), nil
+	return ConvertDelegationsResponses(height, responses), nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -63,9 +64,14 @@ func (m *Module) RefreshValidatorDelegations(height int64, valOperAddr string) e
 		return fmt.Errorf("error while getting validator delegations: %s", err)
 	}
 
-	err = m.db.ReplaceValidatorDelegations(height, valOperAddr, ConvertDelegationsResponses(responses))
+	err = m.db.DeleteValidatorDelegations(valOperAddr)
 	if err != nil {
-		return fmt.Errorf("error while refreshing validator delegations: %s", err)
+		return fmt.Errorf("error while deleting validator delegations: %s", err)
+	}
+
+	err = m.db.SaveDelegations(ConvertDelegationsResponses(height, responses))
+	if err != nil {
+		return fmt.Errorf("error while storing validator delegations: %s", err)
 	}
 
 	return nil
@@ -81,10 +87,16 @@ func (m *Module) refreshDelegatorDelegations(height int64, delegator string) err
 		return fmt.Errorf("error while getting delegator delegations: %s", err)
 	}
 
-	// Replace existing delegations
-	err = m.db.ReplaceDelegatorDelegations(height, delegator, delegations)
+	// Remove existing delegations
+	err = m.db.DeleteDelegatorDelegations(delegator)
 	if err != nil {
-		return fmt.Errorf("error while replacing delegator delegations: %s", err)
+		return fmt.Errorf("error while deleting delegator delegations: %s", err)
+	}
+
+	// Save new delegations
+	err = m.db.SaveDelegations(delegations)
+	if err != nil {
+		return fmt.Errorf("error while saving delegations: %s", err)
 	}
 
 	// Refresh the delegator rewards
