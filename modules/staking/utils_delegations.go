@@ -2,6 +2,7 @@ package staking
 
 import (
 	"fmt"
+	"strings"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"google.golang.org/grpc/codes"
@@ -75,19 +76,9 @@ func (m *Module) RefreshValidatorDelegations(height int64, valOperAddr string) e
 func (m *Module) refreshDelegatorDelegations(height int64, delegator string) error {
 	// Get current delegations
 	delegations, err := m.getDelegatorDelegations(height, delegator)
-	if err != nil {
-		// Get the error code
-		var code string
-		_, scanErr := fmt.Sscanf(err.Error(), ErrDelegationNotFound, &code, &code)
-		if scanErr != nil {
-			return fmt.Errorf("error while scanning error: %s", scanErr)
-		}
-
-		// If delegations are not found there is no problem.
-		// If it's a different error, we need to return it
-		if code != codes.NotFound.String() {
-			return fmt.Errorf("error while getting delegator delegations: %s", err)
-		}
+	if err != nil && !strings.Contains(err.Error(), codes.NotFound.String()) {
+		// If the error is NOT a NotFound error, we need to return it
+		return fmt.Errorf("error while getting delegator delegations: %s", err)
 	}
 
 	// Replace existing delegations

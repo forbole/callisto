@@ -2,6 +2,7 @@ package gov
 
 import (
 	"fmt"
+	"strings"
 
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
@@ -18,22 +19,11 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 )
 
-const (
-	ErrProposalNotFound = "rpc error: code = %s desc = rpc error: code = %s desc = proposal %d doesn't exist: key not found"
-)
-
 func (m *Module) UpdateProposal(height int64, blockVals *tmctypes.ResultValidators, id uint64) error {
 	// Get the proposal
 	proposal, err := m.source.Proposal(height, id)
 	if err != nil {
-		// Get the error code
-		var code string
-		_, err := fmt.Sscanf(err.Error(), ErrProposalNotFound, &code, &code, &id)
-		if err != nil {
-			return err
-		}
-
-		if code == codes.NotFound.String() {
+		if strings.Contains(err.Error(), codes.NotFound.String()) {
 			// Handle case when a proposal is deleted from the chain (did not pass deposit period)
 			return m.updateDeletedProposalStatus(id)
 		}
