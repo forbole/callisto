@@ -53,11 +53,12 @@ func (m *Module) StoreValidatorsFromMsgCreateValidator(height int64, msg *stakin
 	}
 
 	// Save the first self-delegations
-	err = m.db.SaveDelegations(height, []types.Delegation{
+	err = m.db.SaveDelegations([]types.Delegation{
 		types.NewDelegation(
 			msg.DelegatorAddress,
 			msg.ValidatorAddress,
 			msg.Value,
+			height,
 		),
 	})
 	if err != nil {
