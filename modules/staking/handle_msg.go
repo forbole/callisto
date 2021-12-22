@@ -51,7 +51,7 @@ func (m *Module) handleMsgCreateValidator(height int64, msg *stakingtypes.MsgCre
 		return nil
 	}
 
-	return m.db.SaveDelegations(height, delegations)
+	return m.db.SaveDelegations(delegations)
 }
 
 // handleEditValidator handles MsgEditValidator utils, updating the validator info and commission
