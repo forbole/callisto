@@ -51,9 +51,15 @@ func slashesCmd(parseConfig *parse.Config) *cobra.Command {
 				}
 
 				// Delete the old delegations
-				err = db.ReplaceValidatorDelegations(height, validator.OperatorAddress, staking.ConvertDelegationsResponses(delegations))
+				err = db.DeleteValidatorDelegations(validator.OperatorAddress)
 				if err != nil {
-					return fmt.Errorf("error while refreshing validator delegations: %s", err)
+					return fmt.Errorf("error while deleting validator delegations: %s", err)
+				}
+
+				// Save the delegations
+				err = db.SaveDelegations(staking.ConvertDelegationsResponses(height, delegations))
+				if err != nil {
+					return fmt.Errorf("error while saving delegations: %s", err)
 				}
 			}
 
