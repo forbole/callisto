@@ -1,7 +1,6 @@
 package database
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 
@@ -115,51 +114,56 @@ WHERE vi.self_delegate_address = $1`
 // -------------------------------------------------------------------------------------------------------------------
 
 // SaveDelegatorsRewardsAmounts allows to store the given delegator reward amounts as the most updated ones
-func (db *Db) SaveDelegatorsRewardsAmounts(height int64, delegator string, amounts []types.DelegatorRewardAmount) error {
-	return db.RunTx(func(tx *sql.Tx) error {
-		if len(amounts) == 0 {
-			return nil
-		}
+func (db *Db) SaveDelegatorsRewardsAmounts(amounts []types.DelegatorRewardAmount) error {
+	if len(amounts) == 0 {
+		return nil
+	}
 
-		// Delete all the delegation rewards
-		stmt := `DELETE FROM delegation_reward WHERE delegator_address = $1 AND height <= $2`
-		_, err := tx.Exec(stmt, delegator, height)
+	err := db.storeUpToDateDelegatorsRewardsAmounts(amounts)
+	if err != nil {
+		return fmt.Errorf("error while storing up-to-date delegator rewards amounts: %s", err)
+	}
+
+	return nil
+}
+
+// storeUpToDateDelegatorsRewardsAmounts allows to store the given amounts has the most up-to-date ones
+func (db *Db) storeUpToDateDelegatorsRewardsAmounts(amounts []types.DelegatorRewardAmount) error {
+	if len(amounts) == 0 {
+		return nil
+	}
+
+	stmt := `INSERT INTO delegation_reward(validator_address, delegator_address, withdraw_address, amount, height) VALUES `
+	var params []interface{}
+
+	for i, amount := range amounts {
+		ai := i * 5
+		stmt += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d),", ai+1, ai+2, ai+3, ai+4, ai+5)
+
+		// Get the validator consensus address
+		consAddr, err := db.GetValidatorConsensusAddress(amount.ValidatorOperAddr)
 		if err != nil {
-			return fmt.Errorf("error while deleting delegation rewards: %s", err)
+			return fmt.Errorf("error while getting validator consensus address: %s", err)
 		}
 
-		// Insert the rewards
-		stmt = `INSERT INTO delegation_reward (validator_address, delegator_address, withdraw_address, amount, height) VALUES `
-		var params []interface{}
+		coins := pq.Array(dbtypes.NewDbDecCoins(amount.Amount))
+		params = append(params,
+			consAddr.String(), amount.DelegatorAddress, amount.WithdrawAddress, coins, amount.Height)
+	}
 
-		for i, amount := range amounts {
-			ai := i * 5
-			stmt += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d),", ai+1, ai+2, ai+3, ai+4, ai+5)
-
-			// Get the validator consensus address
-			consAddr, err := db.GetValidatorConsensusAddress(amount.ValidatorOperAddr)
-			if err != nil {
-				return fmt.Errorf("error while getting validator consensus address: %s", err)
-			}
-
-			coins := pq.Array(dbtypes.NewDbDecCoins(amount.Amount))
-			params = append(params, consAddr.String(), delegator, amount.WithdrawAddress, coins, height)
-		}
-
-		stmt = stmt[:len(stmt)-1] // Remove trailing ,
-		stmt += `
+	stmt = stmt[:len(stmt)-1] // Remove trailing ,
+	stmt += `
 ON CONFLICT ON CONSTRAINT delegation_reward_validator_delegator_unique DO UPDATE 
 	SET withdraw_address = excluded.withdraw_address,
 		amount = excluded.amount,
 		height = excluded.height
 WHERE delegation_reward.height <= excluded.height`
-		_, err = tx.Exec(stmt, params...)
-		if err != nil {
-			return fmt.Errorf("error while storing delegation reward: %s", err)
-		}
+	_, err := db.Sql.Exec(stmt, params...)
+	if err != nil {
+		return fmt.Errorf("error while storing delegation reward: %s", err)
+	}
 
-		return nil
-	})
+	return nil
 }
 
 // GetUserDelegatorRewardsAmount returns the amount of rewards that the given user has currently associated
@@ -181,6 +185,17 @@ func (db *Db) GetUserDelegatorRewardsAmount(address string) (sdk.DecCoins, error
 		rewardsAmount = rewardsAmount.Add(row.Amount.ToDecCoins()...)
 	}
 	return rewardsAmount, nil
+}
+
+// DeleteDelegatorRewardsAmount deletes the rewards for the given delegator-validator tuple at the given height
+func (db *Db) DeleteDelegatorRewardsAmount(delegatorAddr string, height int64) error {
+	stmt := `DELETE FROM delegation_reward WHERE delegator_address = $1 AND height <= $2`
+	_, err := db.Sql.Exec(stmt, delegatorAddr, height)
+	if err != nil {
+		return fmt.Errorf("error while deleting delegation reward: %s", err)
+	}
+
+	return nil
 }
 
 // HasDelegatorRewards checks if the database contains any delegation reward
