@@ -3,6 +3,7 @@ module github.com/forbole/bdjuno/v2
 go 1.16
 
 require (
+	cudos.org/cudos-node v0.0.0-00010101000000-000000000000
 	github.com/cosmos/cosmos-sdk v0.44.3
 	github.com/cosmos/gaia/v6 v6.0.0-rc1
 	github.com/forbole/juno/v2 v2.0.0-20211221122008-f95aacf17add
@@ -25,3 +26,9 @@ replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alp
 replace google.golang.org/grpc => google.golang.org/grpc v1.33.2
 
 replace github.com/tendermint/tendermint => github.com/forbole/tendermint v0.34.13-0.20210820072129-a2a4af55563d
+
+replace cudos.org/cudos-node => github.com/CudoVentures/cudos-node v0.0.0-20211104070529-b639d80d4204 // 0.3 tag of cudos-master, latest commit
+
+replace github.com/althea-net/cosmos-gravity-bridge/module => ../CudosGravityBridge/module
+
+replace github.com/CosmWasm/wasmd => github.com/provenance-io/wasmd v0.17.1-0.20210812214331-ce3a93a9268d
