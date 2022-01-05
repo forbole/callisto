@@ -1,0 +1,15 @@
+# sudo tee /etc/systemd/system/bdjuno.service > /dev/null <<EOF
+[Unit]
+Description=BDJuno parser
+After=network-online.target
+
+[Service]
+User=root
+ExecStart=/home/ext_lyubomir_yonchev_limechain_t/go/bin/bdjuno parse --home /home/ext_lyubomir_yonchev_limechain_t/.bdjuno
+Restart=always
+RestartSec=3
+LimitNOFILE=4096
+
+[Install]
+WantedBy=multi-user.target
+# EOF
