@@ -65,8 +65,8 @@ CREATE INDEX proposal_tally_result_height_index ON proposal_tally_result (height
 CREATE TABLE proposal_staking_pool_snapshot
 (
     proposal_id       INTEGER REFERENCES proposal (id) PRIMARY KEY,
-    bonded_tokens     BIGINT NOT NULL,
-    not_bonded_tokens BIGINT NOT NULL,
+    bonded_tokens     TEXT   NOT NULL,
+    not_bonded_tokens TEXT   NOT NULL,
     height            BIGINT NOT NULL,
     CONSTRAINT unique_staking_pool_snapshot UNIQUE (proposal_id)
 );
