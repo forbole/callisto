@@ -7,6 +7,7 @@ import (
 	"github.com/desmos-labs/juno/cmd"
 	parsecmd "github.com/desmos-labs/juno/cmd/parse"
 	"github.com/desmos-labs/juno/modules/messages"
+	dewebapp "github.com/deweb-services/deweb/app"
 
 	"github.com/forbole/bdjuno/types/config"
 
@@ -41,6 +42,7 @@ func getBasicManagers() []module.BasicManager {
 		module.NewBasicManager(
 			ibc.AppModule{},
 		),
+		dewebapp.ModuleBasics,
 	}
 }
 
