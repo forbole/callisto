@@ -78,6 +78,10 @@ github.com/DataDog/zstd v1.4.1/go.mod h1:1jcaCB/ufaK+sKp1NBhlGmpz41jOoPQ35bpF36t
 github.com/DataDog/zstd v1.4.5/go.mod h1:1jcaCB/ufaK+sKp1NBhlGmpz41jOoPQ35bpF36t7BBo=
 github.com/DataDog/zstd v1.4.8/go.mod h1:g4AWEaM3yOg3HYfnJ3YIawPnVdXJh9QME85blwSAmyw=
 github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible/go.mod h1:r7JcOSlj0wfOMncg0iLm8Leh48TZaKVeNIfJntJ2wa0=
+github.com/MonikaCat/ethermint v0.9.1-0.20220111162212-1ccf9f8f7876 h1:BB1pUpQ3MVRi30PkTchn+QIKyBjESSPdGFnoKAsG02Q=
+github.com/MonikaCat/ethermint v0.9.1-0.20220111162212-1ccf9f8f7876/go.mod h1:se56Y4BgctOWmmg9I6xnQLkqYf3BJVeZ8sbFy3W7ALI=
+github.com/MonikaCat/evmos v0.4.3-0.20220111162625-2c81327e8592 h1:OfhpRDNrhDq8dDej8Sl73ZzHvdjX40cOxuw9D2kZT7I=
+github.com/MonikaCat/evmos v0.4.3-0.20220111162625-2c81327e8592/go.mod h1:34Rv5IglQwQKmSlCSuTo2aP9gYpJvm0HoCfHDy1i+LY=
 github.com/OneOfOne/xxhash v1.2.2 h1:KMrpdQIwFcEqXDklaen+P1axHaj9BSKzvpUUfnHldSE=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/Shopify/sarama v1.19.0/go.mod h1:FVkBWblsNy7DGZRfXLU0O9RCGt5g3g3yEuWXgklEdEo=
@@ -227,11 +231,9 @@ github.com/cosmos/iavl v0.17.1/go.mod h1:7aisPZK8yCpQdy3PMvKeO+bhq1NwDjUwjzxwwRO
 github.com/cosmos/iavl v0.17.2/go.mod h1:prJoErZFABYZGDHka1R6Oay4z9PrNeFFiMKHDAMOi4w=
 github.com/cosmos/iavl v0.17.3 h1:s2N819a2olOmiauVa0WAhoIJq9EhSXE9HDBAoR9k+8Y=
 github.com/cosmos/iavl v0.17.3/go.mod h1:prJoErZFABYZGDHka1R6Oay4z9PrNeFFiMKHDAMOi4w=
-github.com/cosmos/ibc-go v1.2.0 h1:0RgxmKzCzIH9SwDp4ckL5VrzlO1KJ5hO0AsOAzOiWE4=
 github.com/cosmos/ibc-go v1.2.0/go.mod h1:wGjeNd+T4kpGrt0OC8DTiE/qXLrlmTPNpdoYsBZUjKI=
-github.com/cosmos/ibc-go/v2 v2.0.0/go.mod h1:n53VhNSUxCtMLysvgyNhwrGHL8OW+318LMjtSmaVe9Q=
-github.com/cosmos/ibc-go/v2 v2.0.1 h1:9UqlTV/3M3JO4x71Hm26yzzYnUryMecvvX+gXyAtXic=
-github.com/cosmos/ibc-go/v2 v2.0.1/go.mod h1:ZfePiHyAVzWvRafjDCI00huUnPjRgOn1FsOklO68AF0=
+github.com/cosmos/ibc-go v1.2.3 h1:+Xdhshvls9c6NQNAj7jz5YUtpqCd7AwadEImpaeVReo=
+github.com/cosmos/ibc-go v1.2.3/go.mod h1:TNJMo+fPU4GmpAGxqedjuA1l6izRLGPvuIRLpWAbXuE=
 github.com/cosmos/keyring v1.1.7-0.20210622111912-ef00f8ac3d76 h1:DdzS1m6o/pCqeZ8VOAit/gyATedRgjvkVI+UCrLpyuU=
 github.com/cosmos/keyring v1.1.7-0.20210622111912-ef00f8ac3d76/go.mod h1:0mkLWIoZuQ7uBoospo5Q9zIpqq6rYCPJDSUdeCJvPM8=
 github.com/cosmos/ledger-cosmos-go v0.11.1 h1:9JIYsGnXP613pb2vPjFeMMjBI5lEDsEaF6oYorTy6J4=
@@ -1042,10 +1044,6 @@ github.com/tendermint/go-amino v0.16.0/go.mod h1:TQU0M1i/ImAo+tYpZi73AU3V/dKeCoM
 github.com/tendermint/tm-db v0.6.3/go.mod h1:lfA1dL9/Y/Y8wwyPp2NMLyn5P5Ptr/gvDFNWtrCWSf8=
 github.com/tendermint/tm-db v0.6.4 h1:3N2jlnYQkXNQclQwd/eKV/NzlqPlfK21cpRRIx80XXQ=
 github.com/tendermint/tm-db v0.6.4/go.mod h1:dptYhIpJ2M5kUuenLr+Yyf3zQOv1SgBZcl8/BmWlMBw=
-github.com/tharsis/ethermint v0.9.0 h1:axCG+4PS5+vFnh+YlquXEbiHNEOsc3KsNwXC7SdjTRE=
-github.com/tharsis/ethermint v0.9.0/go.mod h1:5Nukk6Aobxjnx7HAJTUHqyd7s7zSxbtZ4EWlwGb3pFc=
-github.com/tharsis/evmos v0.4.2 h1:FqYfLRsXCgRW69VyV7/W7ZlQTRvGehDvMLy117k8SfE=
-github.com/tharsis/evmos v0.4.2/go.mod h1:x2nhZfTlMuRhxBjiOd1bEUwj1StIA953qYp+8s0OTxY=
 github.com/tidwall/gjson v1.6.7/go.mod h1:zeFuBCIqD4sN/gmqBzZ4j7Jd6UcA2Fc56x7QFsv+8fI=
 github.com/tidwall/match v1.0.3/go.mod h1:eRSPERbgtNPcGhD8UCthc6PmLEQXEWd3PRB5JTxsfmM=
 github.com/tidwall/pretty v1.0.2/go.mod h1:XNkn88O1ChpSDQmQeStsy+sBenx6DDtFZJxhVysOjyk=
