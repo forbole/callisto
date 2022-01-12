@@ -5,7 +5,7 @@ go 1.16
 require (
 	github.com/cosmos/cosmos-sdk v0.44.5
 	github.com/cosmos/gaia/v6 v6.0.0-rc1
-	github.com/forbole/juno/v2 v2.0.0-20211221122008-f95aacf17add
+	github.com/forbole/juno/v2 v2.0.0-20220112161403-ba046ba72519
 	github.com/go-co-op/gocron v1.11.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.2.1-0.20200324155115-ee514944af4b
@@ -16,6 +16,7 @@ require (
 	github.com/spf13/cobra v1.3.0
 	github.com/stretchr/testify v1.7.0
 	github.com/tendermint/tendermint v0.34.14
+	github.com/tharsis/ethermint v0.9.0
 	github.com/tharsis/evmos v0.4.2
 	google.golang.org/grpc v1.43.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
@@ -34,4 +35,3 @@ replace github.com/cosmos/cosmos-sdk => github.com/cosmos/cosmos-sdk v0.44.6-0.2
 replace github.com/tharsis/evmos => github.com/MonikaCat/evmos v0.4.3-0.20220111162625-2c81327e8592
 
 replace github.com/tharsis/ethermint => github.com/MonikaCat/ethermint v0.9.1-0.20220111162212-1ccf9f8f7876
-

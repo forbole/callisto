@@ -2,19 +2,17 @@ package config
 
 import (
 	"github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	ethermint "github.com/tharsis/ethermint/encoding"
+	evmtypes "github.com/tharsis/ethermint/x/evm/types"
 )
 
 // MakeEncodingConfig creates an EncodingConfig to properly handle all the messages
 func MakeEncodingConfig(managers []module.BasicManager) func() params.EncodingConfig {
 	return func() params.EncodingConfig {
-		encodingConfig := params.MakeTestEncodingConfig()
-		std.RegisterLegacyAminoCodec(encodingConfig.Amino)
-		std.RegisterInterfaces(encodingConfig.InterfaceRegistry)
 		manager := mergeBasicManagers(managers)
-		manager.RegisterLegacyAminoCodec(encodingConfig.Amino)
-		manager.RegisterInterfaces(encodingConfig.InterfaceRegistry)
+		encodingConfig := ethermint.MakeConfig(manager)
+		evmtypes.RegisterInterfaces(encodingConfig.InterfaceRegistry)
 		return encodingConfig
 	}
 }
