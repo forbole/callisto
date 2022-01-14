@@ -12,10 +12,10 @@ import (
 )
 
 var (
-	_ modules.Module        = &Module{}
-	_ modules.GenesisModule = &Module{}
-	_ modules.BlockModule   = &Module{}
-	_ modules.MessageModule = &Module{}
+	_ modules.Module                   = &Module{}
+	_ modules.PeriodicOperationsModule = &Module{}
+	_ modules.GenesisModule            = &Module{}
+	_ modules.MessageModule            = &Module{}
 )
 
 // Module represents the x/bank module
