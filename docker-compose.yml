@@ -6,6 +6,4 @@ services:
       dockerfile: Dockerfile
     restart: always
     # volumes:
-    #   - /usr/local/bdjuno/:/usr/local/bdjuno/
-
-  
+    #   - /usr/local/bdjuno/.bdjuno/:/usr/local/bdjuno/.bdjuno/
