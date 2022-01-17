@@ -209,6 +209,8 @@ github.com/felixge/httpsnoop v1.0.1 h1:lvB5Jl89CsZtGIWuTcDM1E/vkVs49/Ml7JJe07l8S
 github.com/felixge/httpsnoop v1.0.1/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
 github.com/forbole/juno/v2 v2.0.0-20211221121955-cf2fcf04394b h1:RuCbQx+n5+IAu8eFlYGCHLka4IL/Pn6wMe6I5GXz6Kw=
 github.com/forbole/juno/v2 v2.0.0-20211221121955-cf2fcf04394b/go.mod h1:nOZEHr5+sZDXEDpV2E+NHkmH0Zvf4prkt5+UVKwScQ8=
+github.com/forbole/juno/v2 v2.0.0-20220117075314-1d0a50fab7d4 h1:DecddKF5vniOQSW3dwoErzuLaF5tkJGTDVJ35s/04Ew=
+github.com/forbole/juno/v2 v2.0.0-20220117075314-1d0a50fab7d4/go.mod h1:nOZEHr5+sZDXEDpV2E+NHkmH0Zvf4prkt5+UVKwScQ8=
 github.com/forbole/tendermint v0.34.13-0.20210820072129-a2a4af55563d h1:pUqGUgTUU24ibHeloQeg1F2pFbgQllddsuZ+x+CcUzw=
 github.com/forbole/tendermint v0.34.13-0.20210820072129-a2a4af55563d/go.mod h1:aeHL7alPh4uTBIJQ8mgFEE8VwJLXI1VD3rVOmH2Mcy0=
 github.com/fortytw2/leaktest v1.3.0 h1:u8491cBMTQ8ft8aeV+adlcytMZylmA5nnwwkRZjI8vw=

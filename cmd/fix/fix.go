@@ -4,8 +4,9 @@ import (
 	"github.com/forbole/juno/v2/cmd/parse"
 	"github.com/spf13/cobra"
 
+	fixblocks "github.com/forbole/juno/v2/cmd/fix/blocks"
+
 	fixauth "github.com/forbole/bdjuno/v2/cmd/fix/auth"
-	fixblocks "github.com/forbole/bdjuno/v2/cmd/fix/blocks"
 	fixgov "github.com/forbole/bdjuno/v2/cmd/fix/gov"
 	fixstaking "github.com/forbole/bdjuno/v2/cmd/fix/staking"
 )
