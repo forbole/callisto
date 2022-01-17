@@ -5,8 +5,9 @@ go 1.16
 require (
 	github.com/cosmos/cosmos-sdk v0.44.3
 	github.com/cosmos/gaia/v6 v6.0.0-rc1
-	github.com/desmos-labs/desmos/v2 v2.3.0-testnet
-	github.com/forbole/juno/v2 v2.0.0-20211221122008-f95aacf17add
+	github.com/cosmos/ibc-go v1.2.3
+	github.com/desmos-labs/desmos/v2 v2.3.0-mainnet
+	github.com/forbole/juno/v2 v2.0.0-20220117075513-d927d34156a9
 	github.com/go-co-op/gocron v1.11.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.2.1-0.20200324155115-ee514944af4b
@@ -32,5 +33,3 @@ replace github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.43.
 replace github.com/99designs/keyring => github.com/cosmos/keyring v1.1.7-0.20210622111912-ef00f8ac3d76
 
 replace github.com/cosmos/ledger-cosmos-go => github.com/desmos-labs/ledger-desmos-go v0.11.2-0.20210814121638-5d87e392e8a9
-
-replace google.golang.org/genproto => google.golang.org/genproto v0.0.0-20210602131652-f16073e35f0c

@@ -38,25 +38,35 @@ func (db *Db) SaveAccountBalances(balances []types.AccountBalance) error {
 }
 
 func (db *Db) saveUpToDateBalances(paramsNumber int, balances []types.AccountBalance) error {
-	stmt := `INSERT INTO account_balance (address, coins, height) VALUES `
-	var params []interface{}
+	var accounts []types.Account
+
+	balStmt := `INSERT INTO account_balance (address, coins, height) VALUES `
+	var balParams []interface{}
 
 	for i, bal := range balances {
+		accounts = append(accounts, types.NewAccount(bal.Address))
+
 		bi := i * paramsNumber
-		stmt += fmt.Sprintf("($%d, $%d, $%d),", bi+1, bi+2, bi+3)
+		balStmt += fmt.Sprintf("($%d, $%d, $%d),", bi+1, bi+2, bi+3)
 
 		coins := pq.Array(dbtypes.NewDbCoins(bal.Balance))
-		params = append(params, bal.Address, coins, bal.Height)
+		balParams = append(balParams, bal.Address, coins, bal.Height)
 	}
 
-	stmt = stmt[:len(stmt)-1]
-	stmt += `
+	// Store the accounts
+	err := db.SaveAccounts(accounts)
+	if err != nil {
+		return err
+	}
+
+	balStmt = balStmt[:len(balStmt)-1]
+	balStmt += `
 ON CONFLICT (address) DO UPDATE 
 	SET coins = excluded.coins, 
 	    height = excluded.height 
 WHERE account_balance.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt, params...)
+	_, err = db.Sql.Exec(balStmt, balParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing up-to-date balances: %s", err)
 	}

@@ -17,12 +17,6 @@ var desmosMessageAddressesParser = junomessages.JoinMessageParsers(
 func profilesMessageAddressesParser(_ codec.Codec, cosmosMsg sdk.Msg) ([]string, error) {
 	switch msg := cosmosMsg.(type) {
 
-	case *profilestypes.MsgSaveProfile:
-		return []string{msg.Creator}, nil
-
-	case *profilestypes.MsgDeleteProfile:
-		return []string{msg.Creator}, nil
-
 	case *profilestypes.MsgRequestDTagTransfer:
 		return []string{msg.Sender, msg.Receiver}, nil
 
