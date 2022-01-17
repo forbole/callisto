@@ -196,3 +196,37 @@ func (s Source) GetParams(height int64) (stakingtypes.Params, error) {
 
 	return res.Params, nil
 }
+
+// GetUnbondingDelegations implements stakingsource.Source
+func (s Source) GetUnbondingDelegations(height int64, delegator string) ([]stakingtypes.UnbondingDelegation, error) {
+ctx, err := s.LoadHeight(height)
+	if err != nil {
+		return nil, fmt.Errorf("error while loading height: %s", err)
+	}
+
+	var delegations []stakingtypes.UnbondingDelegation
+	var nextKey []byte
+	var stop = false
+	for !stop {
+		res, err := s.q.DelegatorUnbondingDelegations(
+			sdk.WrapSDKContext(ctx),
+			&stakingtypes.QueryDelegatorUnbondingDelegationsRequest{
+				DelegatorAddr: delegator,
+				Pagination: &query.PageRequest{
+					Key:   nextKey,
+					Limit: 100, // Query 100 unbonding delegations at time
+				},
+			},
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		nextKey = res.Pagination.NextKey
+		stop = len(res.Pagination.NextKey) == 0
+		delegations = append(delegations, res.UnbondingResponses...)
+	}
+
+	return delegations, nil
+
+}

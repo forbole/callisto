@@ -1,6 +1,10 @@
 package types
 
-import sdk "github.com/cosmos/cosmos-sdk/types"
+import ( 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+    stakingtype "github.com/cosmos/cosmos-sdk/x/staking/types"
+)
+
 
 type GraphQLError struct {
 	Message string `json:"message"`
@@ -45,6 +49,14 @@ type DecCoins struct {
 // ========================= Validator Commission  =========================
 
 type ValidatorCommission struct {
-	DecCoin   sdk.DecCoin   `json:"dec_coins"`
-	ValAddress string       `json:"validator_address"`
+	DecCoin     sdk.DecCoin  `json:"dec_coins"`
+	ValAddress  string       `json:"validator_address"`
+}
+
+// ========================= Unbonding Delegation  =========================
+
+type UnbondingDelegation struct {
+	DelegatorAddress string                                  `json:"delegator_address"`
+	ValidatorAddress string                                  `json:"validator_address"`
+	Entries          []stakingtype.UnbondingDelegationEntry  `json:"entries"`
 }

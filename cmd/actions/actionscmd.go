@@ -25,11 +25,11 @@ func NewActionsCmd(parseCfg *parse.Config) *cobra.Command {
 			mux.HandleFunc("/account_balance", handlers.AccountBalance)
 			mux.HandleFunc("/delegation_reward", handlers.DelegationReward)
 			mux.HandleFunc("/delegation", handlers.Delegation)
+			mux.HandleFunc("/unbonding_delegations", handlers.UnbondingDelegations)
 			mux.HandleFunc("/validator_commission", handlers.ValidatorCommission)
 
 			// To Do:
 			// mux.HandleFunc("/redelegation", handlers.redelegation)
-			// mux.HandleFunc("/unbonding_delegation", handlers.unbonding_delegation)
 
 			err := http.ListenAndServe(":3000", mux)
 			log.Fatal(err)
