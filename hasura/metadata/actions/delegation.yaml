@@ -23,6 +23,6 @@ custom_types:
     - name: validator_address
       type: String!
     - name: amount
-      type: [Coin]!
+      type: Coin
     - name: height
       type: Int!
