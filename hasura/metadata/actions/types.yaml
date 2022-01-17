@@ -1,4 +1,9 @@
 custom_types:
+  objects:
+  - name: Coins
+    fields:
+    - name: Coins
+      type: [Coin]
   scalars:
   - name: DecCoin
   - name: Coin

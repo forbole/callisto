@@ -3,7 +3,7 @@ actions:
   definition:
     kind: synchronous
     handler: http://localhost:3000/account_balance
-    output_type: [Coin]!
+    output_type: Coins
     arguments:
     - name: address
       type: String!
