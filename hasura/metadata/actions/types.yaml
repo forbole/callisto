@@ -2,8 +2,12 @@ custom_types:
   objects:
   - name: Coins
     fields:
-    - name: Coins
+    - name: coins
       type: [Coin]
+  - name: DecCoins
+    fields:
+    - name: dec_coins
+      type: [DecCoin]
   scalars:
   - name: DecCoin
   - name: Coin
