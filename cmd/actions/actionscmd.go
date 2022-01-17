@@ -18,9 +18,17 @@ func NewActionsCmd(parseCfg *parse.Config) *cobra.Command {
 		PreRunE: parse.ReadConfig(parseCfg),
 		RunE: func(cmd *cobra.Command, args []string) error {
 
-			// HTTP servers for the handler
+			// HTTP server for the handlers
 			mux := http.NewServeMux()
-			mux.HandleFunc("/account_balances", handlers.AccountBalances)
+
+			// End points:
+			mux.HandleFunc("/account_balance", handlers.AccountBalance)
+			mux.HandleFunc("/delegation_reward", handlers.DelegationReward)
+
+			// To Do:
+			// mux.HandleFunc("/delegation", handlers.DelegationRewards)
+			// mux.HandleFunc("/redelegation", handlers.DelegationRewards)
+			// mux.HandleFunc("/unbonding_delegation", handlers.DelegationRewards)
 
 			err := http.ListenAndServe(":3000", mux)
 			log.Fatal(err)

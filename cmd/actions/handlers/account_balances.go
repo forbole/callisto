@@ -10,7 +10,7 @@ import (
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 )
 
-func AccountBalances(w http.ResponseWriter, r *http.Request) {
+func AccountBalance(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
@@ -27,7 +27,7 @@ func AccountBalances(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := getAccountBalances(actionPayload.Input)
+	result, err := getAccountBalance(actionPayload.Input)
 	if err != nil {
 		graphQLError(w, err)
 		return
@@ -37,7 +37,7 @@ func AccountBalances(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func getAccountBalances(input actionstypes.AccountBalancesArgs) (actionstypes.Coins, error) {
+func getAccountBalance(input actionstypes.AccountBalancesArgs) (actionstypes.Coins, error) {
 	parseCtx, sources, err := getCtxAndSources()
 	if err != nil {
 		return actionstypes.Coins{}, err

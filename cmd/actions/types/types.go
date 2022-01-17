@@ -35,3 +35,10 @@ type Coins struct {
 type DecCoins struct {
 	DecCoins []sdk.DecCoin `json:"dec_coins"`
 }
+
+// ========================= Delegator Rewards =========================
+
+type DelegatorReward struct {
+	DecCoins   sdk.DecCoins `json:"dec_coins"`
+	ValAddress string       `json:"validator_address"`
+}
