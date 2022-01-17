@@ -16,8 +16,8 @@ type Address struct {
 	Address string `json:"address"`
 }
 
-// ========================= Account Balances Payload =========================
-type AccountBalancesPayload struct {
+// ========================= Account Balance =========================
+type AccountBalancePayload struct {
 	SessionVariables map[string]interface{} `json:"session_variables"`
 	Input            AccountBalancesArgs    `json:"input"`
 }
@@ -27,18 +27,18 @@ type AccountBalancesArgs struct {
 	Height  int64  `json:"height"`
 }
 
-// ========================= Coins =========================
-type Coins struct {
-	Coins []sdk.Coin `json:"coins"`
+type Coin struct {
+	Amount int64  `json:"amount"`
+	Denom  string `json:"denom"`
 }
 
-type DecCoins struct {
-	DecCoins []sdk.DecCoin `json:"dec_coins"`
-}
-
-// ========================= Delegator Rewards =========================
+// ========================= Delegation Reward =========================
 
 type DelegatorReward struct {
 	DecCoins   sdk.DecCoins `json:"dec_coins"`
 	ValAddress string       `json:"validator_address"`
+}
+
+type DecCoins struct {
+	DecCoins []sdk.DecCoin `json:"dec_coins"`
 }
