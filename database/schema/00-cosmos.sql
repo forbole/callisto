@@ -76,6 +76,8 @@ CREATE TABLE message
     involved_accounts_addresses TEXT[] NULL
 );
 CREATE INDEX message_transaction_hash_index ON message (transaction_hash);
+CREATE INDEX message_type_index ON message (type);
+CREATE INDEX message_involved_accounts_addresses ON message (involved_accounts_addresses);
 
 /**
  * This function is used to find all the utils that involve any of the given addresses and have
