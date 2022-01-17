@@ -1,9 +1,5 @@
 custom_types:
   objects:
-  - name: Address
-    fields:
-    - name: address
-      type: String!
   - name: DelegationReward
     fields:
     - name: dec_coins
