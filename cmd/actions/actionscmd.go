@@ -25,6 +25,7 @@ func NewActionsCmd(parseCfg *parse.Config) *cobra.Command {
 			mux.HandleFunc("/account_balance", handlers.AccountBalance)
 			mux.HandleFunc("/delegation_reward", handlers.DelegationReward)
 			mux.HandleFunc("/delegation", handlers.Delegation)
+			mux.HandleFunc("/validator_commission", handlers.ValidatorCommission)
 
 			// To Do:
 			// mux.HandleFunc("/redelegation", handlers.redelegation)
