@@ -55,10 +55,6 @@ func refreshIBCReceivePacket(parseCtx *parse.Context, bankModule *bank.Module) e
 		return err
 	}
 
-	if len(txs) > 1 {
-		return fmt.Errorf("expecting only one create proposal transaction, found %d", len(txs))
-	}
-
 	// Get the tx details
 	tx, err := parseCtx.Node.Tx(hex.EncodeToString(txs[0].Tx.Hash()))
 	if err != nil {
