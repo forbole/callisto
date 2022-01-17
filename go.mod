@@ -6,7 +6,8 @@ require (
 	github.com/bandprotocol/chain/v2 v2.3.1
 	github.com/cosmos/cosmos-sdk v0.44.3
 	github.com/cosmos/gaia/v6 v6.0.0-rc1
-	github.com/forbole/juno/v2 v2.0.0-20211221122008-f95aacf17add
+	github.com/cosmos/ibc-go v1.2.0
+	github.com/forbole/juno/v2 v2.0.0-20220117075513-d927d34156a9
 	github.com/go-co-op/gocron v1.11.0
 	github.com/go-sql-driver/mysql v1.5.0 // indirect
 	github.com/gogo/protobuf v1.3.3
