@@ -27,9 +27,8 @@ type AccountBalanceArgs struct {
 	Height  int64  `json:"height"`
 }
 
-type Coin struct {
-	Amount int64  `json:"amount"`
-	Denom  string `json:"denom"`
+type Coins struct {
+	Coins sdk.Coins `json:"coins"`
 }
 
 // ========================= Delegation Reward =========================

@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 )
 
@@ -36,7 +38,7 @@ func AccountBalance(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func getAccountBalance(input actionstypes.AccountBalanceArgs) (response []actionstypes.Coin, err error) {
+func getAccountBalance(input actionstypes.AccountBalanceArgs) (response actionstypes.Coins, err error) {
 	parseCtx, sources, err := getCtxAndSources()
 	if err != nil {
 		return response, err
@@ -57,14 +59,14 @@ func getAccountBalance(input actionstypes.AccountBalanceArgs) (response []action
 		return response, err
 	}
 
+	var coins []sdk.Coin
 	for _, bal := range balances {
 		for _, coin := range bal.Balance {
-			response = append(response, actionstypes.Coin{
-				Amount: coin.Amount.Int64(),
-				Denom:  coin.Denom,
-			})
+			coins = append(coins, coin)
 		}
 	}
 
-	return response, nil
+	return actionstypes.Coins{
+		Coins: coins,
+	}, nil
 }
