@@ -3,7 +3,6 @@ package blocks
 import (
 	"encoding/hex"
 	"fmt"
-
 	ibchanneltypes "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/types"
 	"github.com/forbole/juno/v2/modules/messages"
 
@@ -55,25 +54,23 @@ func refreshIBCReceivePacket(parseCtx *parse.Context, bankModule *bank.Module) e
 		return err
 	}
 
-	if len(txs) > 1 {
-		return fmt.Errorf("expecting only one create proposal transaction, found %d", len(txs))
-	}
-
-	// Get the tx details
-	tx, err := parseCtx.Node.Tx(hex.EncodeToString(txs[0].Tx.Hash()))
-	if err != nil {
-		return err
-	}
-
-	// Handle the MsgSubmitProposal messages
-	for index, msg := range tx.GetMsgs() {
-		if _, ok := msg.(*ibchanneltypes.MsgRecvPacket); !ok {
-			continue
+	for _, transaction := range txs {
+		// Get the tx details
+		tx, err := parseCtx.Node.Tx(hex.EncodeToString(transaction.Tx.Hash()))
+		if err != nil {
+			return err
 		}
 
-		err = bankModule.HandleMsg(index, msg, tx)
-		if err != nil {
-			return fmt.Errorf("error while handling MsgSubmitProposal: %s", err)
+		// Handle the MsgSubmitProposal messages
+		for index, msg := range tx.GetMsgs() {
+			if _, ok := msg.(*ibchanneltypes.MsgRecvPacket); !ok {
+				continue
+			}
+
+			err = bankModule.HandleMsg(index, msg, tx)
+			if err != nil {
+				return fmt.Errorf("error while handling MsgSubmitProposal: %s", err)
+			}
 		}
 	}
 
