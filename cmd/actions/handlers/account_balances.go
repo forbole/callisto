@@ -28,7 +28,7 @@ func AccountBalance(w http.ResponseWriter, r *http.Request) {
 
 	result, err := getAccountBalance(actionPayload.Input)
 	if err != nil {
-		graphQLError(w, err)
+		errorHandler(w, err)
 		return
 	}
 
@@ -36,7 +36,7 @@ func AccountBalance(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func getAccountBalance(input actionstypes.AccountBalancesArgs) (response []actionstypes.Coin, err error) {
+func getAccountBalance(input actionstypes.AccountBalanceArgs) (response []actionstypes.Coin, err error) {
 	parseCtx, sources, err := getCtxAndSources()
 	if err != nil {
 		return response, err

@@ -1,9 +1,9 @@
 actions:
-- name: action_delegation_reward
+- name: action_delegation
   definition:
     kind: synchronous
-    handler: http://localhost:3000/delegation_reward
-    output_type: [DelegationReward]
+    handler: http://localhost:3000/delegation
+    output_type: [Delegation]
     arguments:
     - name: address
       type: String!
@@ -16,9 +16,13 @@ actions:
 
 custom_types:
   objects:
-  - name: DelegationReward
+  - name: Delegation
     fields:
-    - name: dec_coins
-      type: [DecCoin]!
+    - name: delegator_address
+      type: String!
     - name: validator_address
       type: String!
+    - name: amount
+      type: [Coin]!
+    - name: height
+      type: Int!

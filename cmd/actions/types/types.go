@@ -19,10 +19,10 @@ type Address struct {
 // ========================= Account Balance =========================
 type AccountBalancePayload struct {
 	SessionVariables map[string]interface{} `json:"session_variables"`
-	Input            AccountBalancesArgs    `json:"input"`
+	Input            AccountBalanceArgs     `json:"input"`
 }
 
-type AccountBalancesArgs struct {
+type AccountBalanceArgs struct {
 	Address string `json:"address"`
 	Height  int64  `json:"height"`
 }

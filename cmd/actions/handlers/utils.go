@@ -38,7 +38,7 @@ func getCtxAndSources() (*parse.Context, *modules.Sources, error) {
 	return parseCtx, sources, nil
 }
 
-func graphQLError(w http.ResponseWriter, err error) {
+func errorHandler(w http.ResponseWriter, err error) {
 	errorObject := actionstypes.GraphQLError{
 		Message: err.Error(),
 	}
