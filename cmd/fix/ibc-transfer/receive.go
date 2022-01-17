@@ -3,6 +3,7 @@ package blocks
 import (
 	"encoding/hex"
 	"fmt"
+
 	ibchanneltypes "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/types"
 	"github.com/forbole/juno/v2/modules/messages"
 
