@@ -3,7 +3,6 @@ package blocks
 import (
 	"encoding/hex"
 	"fmt"
-
 	ibchanneltypes "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/types"
 	"github.com/forbole/juno/v2/modules/messages"
 
@@ -53,10 +52,6 @@ func refreshIBCReceivePacket(parseCtx *parse.Context, bankModule *bank.Module) e
 	txs, err := utils.QueryTxs(parseCtx.Node, "recv_packet.packet_dst_port = 'transfer'")
 	if err != nil {
 		return err
-	}
-
-	if len(txs) > 1 {
-		return fmt.Errorf("expecting only one create proposal transaction, found %d", len(txs))
 	}
 
 	// Get the tx details
