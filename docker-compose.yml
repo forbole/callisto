@@ -5,5 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
     restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     # volumes:
     #   - /usr/local/bdjuno/.bdjuno/:/usr/local/bdjuno/.bdjuno/
