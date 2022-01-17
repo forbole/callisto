@@ -4,9 +4,11 @@ import (
 	"github.com/forbole/juno/v2/cmd/parse"
 	"github.com/spf13/cobra"
 
+	fixblocks "github.com/forbole/juno/v2/cmd/fix/blocks"
+
 	fixauth "github.com/forbole/bdjuno/v2/cmd/fix/auth"
-	fixblocks "github.com/forbole/bdjuno/v2/cmd/fix/blocks"
 	fixgov "github.com/forbole/bdjuno/v2/cmd/fix/gov"
+	fixibctransfers "github.com/forbole/bdjuno/v2/cmd/fix/ibc-transfer"
 	fixstaking "github.com/forbole/bdjuno/v2/cmd/fix/staking"
 )
 
@@ -22,6 +24,7 @@ func NewFixCmd(parseCfg *parse.Config) *cobra.Command {
 		fixauth.NewAuthCmd(parseCfg),
 		fixblocks.NewBlocksCmd(parseCfg),
 		fixgov.NewGovCmd(parseCfg),
+		fixibctransfers.NewIBCTransfersCmd(parseCfg),
 		fixstaking.NewStakingCmd(parseCfg),
 	)
 
