@@ -18,8 +18,12 @@ import (
 func getCtxAndSources() (*parse.Context, *modules.Sources, error) {
 	parseCfg := parse.NewConfig().
 		WithDBBuilder(database.Builder).
-		WithEncodingConfigBuilder(config.MakeEncodingConfig(getBasicManagers())).
-		WithRegistrar(modules.NewRegistrar(getAddressesParser()))
+		WithEncodingConfigBuilder(config.MakeEncodingConfig([]module.BasicManager{
+			simapp.ModuleBasics,
+		})).
+		WithRegistrar(modules.NewRegistrar(messages.JoinMessageParsers(
+			messages.CosmosMessageAddressesParser,
+		)))
 
 	parseCtx, err := parse.GetParsingContext(parseCfg)
 	if err != nil {
@@ -32,18 +36,6 @@ func getCtxAndSources() (*parse.Context, *modules.Sources, error) {
 	}
 
 	return parseCtx, sources, nil
-}
-
-func getBasicManagers() []module.BasicManager {
-	return []module.BasicManager{
-		simapp.ModuleBasics,
-	}
-}
-
-func getAddressesParser() messages.MessageAddressesParser {
-	return messages.JoinMessageParsers(
-		messages.CosmosMessageAddressesParser,
-	)
 }
 
 func graphQLError(w http.ResponseWriter, err error) {
