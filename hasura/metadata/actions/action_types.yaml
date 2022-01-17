@@ -1,17 +1,20 @@
 custom_types:
-  input_objects:
+  objects:
   - name: Address
     fields:
-    - name: Address
+    - name: address
       type: String!
-  - name: Height
-    field:
-    - name: Height
-      type: Int
-  objects:
-  - name: Coins
+  - name: DelegationReward
     fields:
-    - name: Coins
-      type: [Coin]
-  scalars:
+    - name: dec_coins
+      type: [DecCoin]!
+    - name: validator_address
+      type: String!
   - name: Coin
+    fields:
+    - name: amount
+      type: Int!
+    - name: denom
+      type: String!
+  scalars:
+  - name: DecCoin

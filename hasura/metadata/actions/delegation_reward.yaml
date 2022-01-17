@@ -1,14 +1,12 @@
 actions:
-- name: action_account_balance
+- name: action_delegation_reward
   definition:
     kind: synchronous
-    handler: http://localhost:3000/account_balance
-    output_type: [Coin]!
+    handler: http://localhost:3000/delegation_reward
+    output_type: [DelegationReward]
     arguments:
     - name: address
       type: String!
-    - name: height
-      type: Int
     type: query
     headers:
     - value: application/json
