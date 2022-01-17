@@ -4,7 +4,7 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	ibchanneltypes "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/types"
+	ibchanneltypes "github.com/cosmos/ibc-go/modules/core/04-channel/types"
 	"github.com/forbole/juno/v2/modules/messages"
 
 	"github.com/forbole/bdjuno/v2/database"
