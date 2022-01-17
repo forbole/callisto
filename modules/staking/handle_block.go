@@ -180,30 +180,30 @@ func (m *Module) updateElapsedDelegations(height int64, blockTime time.Time, eve
 		}
 	}
 
-	// Update the delegations and balances of all the delegators
-	for _, delegator := range delegators {
-		err = m.refreshDelegatorDelegations(height, delegator)
-		if err != nil {
-			log.Error().Str("module", "staking").Err(err).Int64("height", height).
-				Str("delegator", delegator).Msg("error while refreshing the delegations")
-			return
-		}
+	// // Update the delegations and balances of all the delegators
+	// for _, delegator := range delegators {
+	// 	err = m.refreshDelegatorDelegations(height, delegator)
+	// 	if err != nil {
+	// 		log.Error().Str("module", "staking").Err(err).Int64("height", height).
+	// 			Str("delegator", delegator).Msg("error while refreshing the delegations")
+	// 		return
+	// 	}
 
-		err = m.bankModule.RefreshBalances(height, []string{delegator})
-		if err != nil {
-			log.Error().Str("module", "staking").Err(err).Int64("height", height).
-				Str("delegator", delegator).Msg("error while refreshing the balance")
-			return
-		}
+	// 	err = m.bankModule.RefreshBalances(height, []string{delegator})
+	// 	if err != nil {
+	// 		log.Error().Str("module", "staking").Err(err).Int64("height", height).
+	// 			Str("delegator", delegator).Msg("error while refreshing the balance")
+	// 		return
+	// 	}
 
-		err = m.historyModule.UpdateAccountBalanceHistoryWithTime(delegator, blockTime)
-		if err != nil {
-			log.Error().Str("module", "staking").Err(err).Int64("height", height).
-				Str("delegator", delegator).Msg("error while updating account balance history")
-			return
-		}
+	// 	err = m.historyModule.UpdateAccountBalanceHistoryWithTime(delegator, blockTime)
+	// 	if err != nil {
+	// 		log.Error().Str("module", "staking").Err(err).Int64("height", height).
+	// 			Str("delegator", delegator).Msg("error while updating account balance history")
+	// 		return
+	// 	}
 
-	}
+	// }
 
 	// Get all the events that identify a completed unbonding delegation or redelegations
 	var completedEvents []abci.Event

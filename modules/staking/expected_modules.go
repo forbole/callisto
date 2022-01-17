@@ -8,10 +8,6 @@ import (
 	"github.com/forbole/bdjuno/v2/types"
 )
 
-type BankModule interface {
-	RefreshBalances(height int64, addresses []string) error
-}
-
 type DistrModule interface {
 	RefreshDelegatorRewards(height int64, delegator string) error
 }

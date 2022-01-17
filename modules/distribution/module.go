@@ -16,7 +16,6 @@ var (
 	_ modules.GenesisModule              = &Module{}
 	_ modules.AdditionalOperationsModule = &Module{}
 	_ modules.PeriodicOperationsModule   = &Module{}
-	_ modules.BlockModule                = &Module{}
 	_ modules.MessageModule              = &Module{}
 )
 

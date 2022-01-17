@@ -15,7 +15,6 @@ var (
 	_ modules.Module                   = &Module{}
 	_ modules.PeriodicOperationsModule = &Module{}
 	_ modules.GenesisModule            = &Module{}
-	_ modules.MessageModule            = &Module{}
 )
 
 // Module represents the x/bank module
