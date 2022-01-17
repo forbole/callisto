@@ -2,7 +2,6 @@ package blocks
 
 import (
 	"encoding/hex"
-	"fmt"
 
 	ibchanneltypes "github.com/cosmos/cosmos-sdk/x/ibc/core/04-channel/types"
 	"github.com/forbole/juno/v2/modules/messages"
@@ -63,15 +62,15 @@ func refreshIBCReceivePacket(parseCtx *parse.Context, bankModule *bank.Module) e
 		}
 
 		// Handle the MsgSubmitProposal messages
-		for index, msg := range tx.GetMsgs() {
+		for _, msg := range tx.GetMsgs() {
 			if _, ok := msg.(*ibchanneltypes.MsgRecvPacket); !ok {
 				continue
 			}
 
-			err = bankModule.HandleMsg(index, msg, tx)
-			if err != nil {
-				return fmt.Errorf("error while handling MsgSubmitProposal: %s", err)
-			}
+			// err = bankModule.HandleMsg(index, msg, tx)
+			// if err != nil {
+			// 	return fmt.Errorf("error while handling MsgSubmitProposal: %s", err)
+			// }
 		}
 	}
 
