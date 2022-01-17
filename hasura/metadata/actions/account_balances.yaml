@@ -1,0 +1,17 @@
+actions:
+- name: action_account_balances
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/account_balances
+    output_type: Coins
+    arguments:
+    - name: Address
+      type: String!
+    - name: Height
+      type: Int
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous

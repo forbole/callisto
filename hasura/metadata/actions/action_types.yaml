@@ -1,0 +1,17 @@
+custom_types:
+  input_objects:
+  - name: Address
+    fields:
+    - name: Address
+      type: String!
+  - name: Height
+    field:
+    - name: Height
+      type: Int
+  objects:
+  - name: Coins
+    fields:
+    - name: Coins
+      type: [Coin]
+  scalars:
+  - name: Coin
