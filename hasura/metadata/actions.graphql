@@ -37,7 +37,7 @@ type DelegatorRewards {
 type Delegation {
     delegator_address: String!
     validator_address: String!
-    coin: Coin!
+    coins: Coin!
 }
 
 type Redelegation {
@@ -55,7 +55,7 @@ type UnbondingDelegation {
 
 type ValidatorCommission {
     validator_address: String!
-    dec_coin: DecCoin
+    coins: DecCoin
 }
 
 scalar Coin

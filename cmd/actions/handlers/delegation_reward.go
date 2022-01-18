@@ -63,13 +63,13 @@ func getDelegationReward(address string) (response actionstypes.DelegatorRewards
 	delegatorRewards := make([]actionstypes.DelegationReward, len(rewards))
 	for index, rew := range rewards {
 		delegatorRewards[index] = actionstypes.DelegationReward{
-			DecCoins:   rew.Reward,
-			ValAddress: rew.ValidatorAddress,
+			Coins:            rew.Reward,
+			ValidatorAddress: rew.ValidatorAddress,
 		}
 	}
 
 	return actionstypes.DelegatorRewards{
-		WithdrawAddr: withdrawAddr,
-		Rewards:      delegatorRewards,
+		WithdrawAddress: withdrawAddr,
+		Rewards:         delegatorRewards,
 	}, nil
 }

@@ -37,28 +37,28 @@ type Balance struct {
 // ========================= Delegation =========================
 
 type Delegation struct {
-	DelAddress string   `json:"delegator_address"`
-	ValAddress string   `json:"validator_address"`
-	Coin       sdk.Coin `json:"coin"`
+	DelegatorAddress string   `json:"delegator_address"`
+	ValidatorAddress string   `json:"validator_address"`
+	Coins            sdk.Coin `json:"coins"`
 }
 
 // ========================= Delegator Reward =========================
 
 type DelegatorRewards struct {
-	WithdrawAddr string             `json:"withdraw_address"`
-	Rewards      []DelegationReward `json:"rewards"`
+	WithdrawAddress string             `json:"withdraw_address"`
+	Rewards         []DelegationReward `json:"rewards"`
 }
 
 type DelegationReward struct {
-	DecCoins   sdk.DecCoins `json:"dec_coins"`
-	ValAddress string       `json:"validator_address"`
+	Coins            sdk.DecCoins `json:"coins"`
+	ValidatorAddress string       `json:"validator_address"`
 }
 
 // ========================= Validator Commission  =========================
 
 type ValidatorCommission struct {
-	DecCoin    sdk.DecCoin `json:"dec_coin"`
-	ValAddress string      `json:"validator_address"`
+	Coins            sdk.DecCoin `json:"coins"`
+	ValidatorAddress string      `json:"validator_address"`
 }
 
 // ========================= Unbonding Delegation  =========================

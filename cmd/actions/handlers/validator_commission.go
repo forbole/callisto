@@ -9,9 +9,8 @@ import (
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 )
 
-
 func ValidatorCommission(w http.ResponseWriter, r *http.Request) {
-	
+
 	w.Header().Set("Content-Type", "application/json")
 
 	reqBody, err := ioutil.ReadAll(r.Body)
@@ -37,7 +36,6 @@ func ValidatorCommission(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-
 func getValidatorCommission(address string) (response []actionstypes.ValidatorCommission, err error) {
 	parseCtx, sources, err := getCtxAndSources()
 	if err != nil {
@@ -50,19 +48,19 @@ func getValidatorCommission(address string) (response []actionstypes.ValidatorCo
 		return response, fmt.Errorf("error while getting chain latest block height: %s", err)
 	}
 
-	// Get validator total commission value 
+	// Get validator total commission value
 	commission, err := sources.DistrSource.ValidatorCommission(address, height)
-		if err != nil {
+	if err != nil {
 		return response, err
 	}
 
 	response = make([]actionstypes.ValidatorCommission, len(commission))
 	for index, commission := range commission {
 		response[index] = actionstypes.ValidatorCommission{
-			DecCoin:   commission,
-			ValAddress: address,
+			Coins:            commission,
+			ValidatorAddress: address,
 		}
 	}
-	
+
 	return response, nil
 }

@@ -144,5 +144,5 @@ custom_types:
     fields:
     - name: validator_address
       type: String!
-    - name: dec_coin
+    - name: amount
       type: DecCoin
