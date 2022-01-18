@@ -1,12 +1,3 @@
-type Query {
-    action_account_balance: action_account_balance
-    action_delegation_reward: action_delegation_reward
-    action_delegation: action_delegation
-    action_redelegation: action_redelegation
-    action_unbonding_delegation: action_unbonding_delegation
-    action_validator_commission: action_validator_commission
-}
-
 type action_account_balance{
     address: String!
     height: Int
@@ -30,4 +21,19 @@ type action_unbonding_delegation {
 
 type action_validator_commission {
     address: String!
+}
+
+scalar Coin
+type Coins {
+    coins: [Coin]
+}
+
+scalar DecCoin
+type DecCoins {
+    coins: [DecCoin]
+}
+
+scalar Entry
+type Entries {
+    coins: [Entry]
 }
