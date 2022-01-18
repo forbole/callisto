@@ -6,7 +6,7 @@ type Query {
 
     action_delegation_reward(
         address: String!
-    ): [DelegationReward]
+    ): DelegatorRewards
     
     action_delegation(
         address: String!
@@ -29,9 +29,9 @@ type Balance {
     coins: [Coin]
 }
 
-type DelegationReward {
-    dec_coins: [DecCoin]
-    validator_address: String!
+type DelegatorRewards {
+  withdraw_address: String
+  rewards: [DelegationReward]
 }
 
 type Delegation {
@@ -60,4 +60,6 @@ type ValidatorCommission {
 
 scalar Coin
 scalar DecCoin
+scalar DelegationReward
 scalar Entry
+

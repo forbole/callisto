@@ -20,7 +20,7 @@ actions:
   definition:
     kind: synchronous
     handler: http://localhost:3000/delegation_reward
-    output_type: "[DelegationReward]"
+    output_type: DelegatorRewards
     arguments:
     - name: address
       type: String!
@@ -96,6 +96,7 @@ custom_types:
   - name: DecCoin
   - name: Coin
   - name: Entry
+  - name: DelegationReward
 
   objects:
   - name: Balance
@@ -103,12 +104,12 @@ custom_types:
     - name: coins
       type: [Coin]
 
-  - name: DelegationReward
+  - name: DelegatorRewards
     fields:
-    - name: dec_coins
-      type: [DecCoin]
-    - name: validator_address
+    - name: withdraw_address
       type: String!
+    - name: rewards
+      type: [DelegationReward]
 
   - name: Delegation
     fields:

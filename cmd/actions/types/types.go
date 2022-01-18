@@ -42,9 +42,14 @@ type Delegation struct {
 	Coin       sdk.Coin `json:"coin"`
 }
 
-// ========================= Delegation Reward =========================
+// ========================= Delegator Reward =========================
 
-type DelegatorReward struct {
+type DelegatorRewards struct {
+	WithdrawAddr string             `json:"withdraw_address"`
+	Rewards      []DelegationReward `json:"rewards"`
+}
+
+type DelegationReward struct {
 	DecCoins   sdk.DecCoins `json:"dec_coins"`
 	ValAddress string       `json:"validator_address"`
 }
