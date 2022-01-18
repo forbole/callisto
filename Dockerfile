@@ -12,5 +12,5 @@ WORKDIR /bdjuno
 COPY --from=builder /go/pkg/mod/github.com/!cosm!wasm/wasmvm/api/libwasmvm.so /usr/lib
 COPY --from=builder /go/src/github.com/forbole/bdjuno/build/bdjuno /usr/bin/bdjuno
 COPY bdjuno/ /usr/local/bdjuno/bdjuno/
-CMD ["/bin/bash", "-c", "bdjuno parse --home /usr/local/bdjuno/.bdjuno/"]
+CMD ["/bin/bash", "-c", "bdjuno parse --home /usr/local/bdjuno/bdjuno/"]
 
