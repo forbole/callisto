@@ -38,7 +38,7 @@ func AccountBalance(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func getAccountBalance(input actionstypes.AccountBalanceArgs) (response actionstypes.Coins, err error) {
+func getAccountBalance(input actionstypes.AccountBalanceArgs) (response actionstypes.Balance, err error) {
 	parseCtx, sources, err := getCtxAndSources()
 	if err != nil {
 		return response, err
@@ -66,7 +66,7 @@ func getAccountBalance(input actionstypes.AccountBalanceArgs) (response actionst
 		}
 	}
 
-	return actionstypes.Coins{
+	return actionstypes.Balance{
 		Coins: coins,
 	}, nil
 }

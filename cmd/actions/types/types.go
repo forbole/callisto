@@ -30,8 +30,8 @@ type AccountBalanceArgs struct {
 	Height  int64  `json:"height"`
 }
 
-type Coins struct {
-	Coins sdk.Coins `json:"coins"`
+type Balance struct {
+	Coins sdk.Coins `json:"balance"`
 }
 
 // ========================= Delegation =========================
@@ -47,10 +47,6 @@ type Delegation struct {
 type DelegatorReward struct {
 	DecCoins   sdk.DecCoins `json:"dec_coins"`
 	ValAddress string       `json:"validator_address"`
-}
-
-type DecCoins struct {
-	DecCoins []sdk.DecCoin `json:"dec_coins"`
 }
 
 // ========================= Validator Commission  =========================
