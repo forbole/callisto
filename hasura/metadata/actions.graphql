@@ -1,0 +1,24 @@
+type action_account_balance{
+    address: String!
+    height: Int
+}
+
+type action_delegation_reward {
+    address: String!
+}
+
+type action_delegation {
+    address: String!
+}
+
+type action_redelegation {
+    address: String!
+}
+
+type action_unbonding_delegation {
+    address: String!
+}
+
+type action_validator_commission {
+    address: String!
+}
