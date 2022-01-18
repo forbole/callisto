@@ -59,16 +59,5 @@ type ValidatorCommission {
 }
 
 scalar Coin
-type Coins {
-    coins: [Coin]
-}
-
 scalar DecCoin
-type DecCoins {
-    coins: [DecCoin]
-}
-
 scalar Entry
-type Entries {
-    coins: [Entry]
-}
