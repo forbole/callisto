@@ -135,6 +135,7 @@ custom_types:
       type: String!
     - name: entries
       type: [Entry]
+  
   - name: ValidatorCommission
     fields:
     - name: validator_address

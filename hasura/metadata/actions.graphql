@@ -32,6 +32,37 @@ type action_validator_commission {
     address: String!
 }
 
+type DelegationReward {
+    dec_coins: [DecCoin]
+    validator_address: String!
+}
+
+type Delegation {
+    delegator_address: String!
+    validator_address: String!
+    amount: Coin!
+    height: Int!
+
+}
+
+type Redelegation {
+    delegator_address: String!
+    validator_src_address: String!
+    validator_dst_address: String!
+    entries: [Entry]
+}
+
+type UnbondingDelegation {
+    delegator_address: String!
+    validator_address: String!
+    entries: [Entry]
+}
+
+type ValidatorCommission {
+    validator_address: String!
+    dec_coin: DecCoin
+}
+
 scalar Coin
 type Coins {
     coins: [Coin]
