@@ -14,7 +14,6 @@ import (
 var (
 	_ modules.Module                   = &Module{}
 	_ modules.PeriodicOperationsModule = &Module{}
-	_ modules.GenesisModule            = &Module{}
 )
 
 // Module represents the x/bank module
