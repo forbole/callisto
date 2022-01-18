@@ -2,10 +2,8 @@ package staking
 
 import (
 	"fmt"
-	"strings"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"google.golang.org/grpc/codes"
 
 	"github.com/forbole/bdjuno/v2/types"
 )
@@ -53,52 +51,4 @@ func (m *Module) getDelegatorDelegations(height int64, delegator string) ([]type
 	}
 
 	return ConvertDelegationsResponses(height, responses), nil
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-// RefreshValidatorDelegations refreshes the delegations for the validator with the given consensus address
-func (m *Module) RefreshValidatorDelegations(height int64, valOperAddr string) error {
-	responses, err := m.source.GetValidatorDelegations(height, valOperAddr)
-	if err != nil {
-		return fmt.Errorf("error while getting validator delegations: %s", err)
-	}
-
-	err = m.db.DeleteValidatorDelegations(valOperAddr)
-	if err != nil {
-		return fmt.Errorf("error while deleting validator delegations: %s", err)
-	}
-
-	err = m.db.SaveDelegations(ConvertDelegationsResponses(height, responses))
-	if err != nil {
-		return fmt.Errorf("error while storing validator delegations: %s", err)
-	}
-
-	return nil
-}
-
-// refreshDelegatorDelegations updates the delegations of the given delegator by querying them at the
-// required height, and then stores them inside the database by replacing all existing ones.
-func (m *Module) refreshDelegatorDelegations(height int64, delegator string) error {
-	// Get current delegations
-	delegations, err := m.getDelegatorDelegations(height, delegator)
-	if err != nil && !strings.Contains(err.Error(), codes.NotFound.String()) {
-		// If the error is NOT a NotFound error, we need to return it
-		return fmt.Errorf("error while getting delegator delegations: %s", err)
-	}
-
-	// Remove existing delegations
-	err = m.db.DeleteDelegatorDelegations(delegator)
-	if err != nil {
-		return fmt.Errorf("error while deleting delegator delegations: %s", err)
-	}
-
-	// Save new delegations
-	err = m.db.SaveDelegations(delegations)
-	if err != nil {
-		return fmt.Errorf("error while saving delegations: %s", err)
-	}
-
-	// Refresh the delegator rewards
-	return m.distrModule.RefreshDelegatorRewards(height, delegator)
 }
