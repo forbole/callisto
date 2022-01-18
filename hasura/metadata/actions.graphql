@@ -34,8 +34,6 @@ type Delegation {
     delegator_address: String!
     validator_address: String!
     amount: Coin!
-    height: Int!
-
 }
 
 type Redelegation {

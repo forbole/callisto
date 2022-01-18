@@ -113,8 +113,6 @@ custom_types:
       type: String!
     - name: amount
       type: Coin
-    - name: height
-      type: Int!
 
   - name: Redelegation
     fields:

@@ -7,8 +7,6 @@ import (
 	"net/http"
 
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
-	"github.com/forbole/bdjuno/v2/modules/staking"
-	"github.com/forbole/bdjuno/v2/types"
 )
 
 func Delegation(w http.ResponseWriter, r *http.Request) {
@@ -38,7 +36,7 @@ func Delegation(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func getDelegation(address string) ([]types.Delegation, error) {
+func getDelegation(address string) ([]actionstypes.Delegation, error) {
 	parseCtx, sources, err := getCtxAndSources()
 	if err != nil {
 		return nil, err
@@ -56,5 +54,14 @@ func getDelegation(address string) ([]types.Delegation, error) {
 		return nil, fmt.Errorf("error while getting delegator delegations: %s", err)
 	}
 
-	return staking.ConvertDelegationsResponses(height, delegations), nil
+	response := make([]actionstypes.Delegation, len(delegations))
+	for index, del := range delegations {
+		response[index] = actionstypes.Delegation{
+			DelegatorAddress:  del.Delegation.DelegatorAddress,
+			ValidatorOperAddr: del.Delegation.ValidatorAddress,
+			Amount:            del.Balance,
+		}
+	}
+
+	return response, nil
 }
