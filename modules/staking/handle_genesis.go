@@ -129,34 +129,6 @@ func (m *Module) saveValidatorDescription(doc *tmtypes.GenesisDoc, validators st
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// findDelegations returns the list of all the delegations that are
-// related to the validator having the given validator address
-func findDelegations(genData stakingtypes.Delegations, valAddr string) stakingtypes.Delegations {
-	var delegations stakingtypes.Delegations
-	for _, delegation := range genData {
-		if delegation.ValidatorAddress == valAddr {
-			delegations = append(delegations, delegation)
-		}
-	}
-	return delegations
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-// findUnbondingDelegations returns the list of all the unbonding delegations
-// that are related to the validator having the given validator address
-func findUnbondingDelegations(genData stakingtypes.UnbondingDelegations, valAddr string) stakingtypes.UnbondingDelegations {
-	var unbondingDelegations stakingtypes.UnbondingDelegations
-	for _, unbondingDelegation := range genData {
-		if unbondingDelegation.ValidatorAddress == valAddr {
-			unbondingDelegations = append(unbondingDelegations, unbondingDelegation)
-		}
-	}
-	return unbondingDelegations
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
 // saveValidatorsCommissions save the initial commission for each validator
 func (m *Module) saveValidatorsCommissions(height int64, validators stakingtypes.Validators) error {
 	for _, account := range validators {
