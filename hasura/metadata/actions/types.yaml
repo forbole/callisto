@@ -1,4 +1,7 @@
 custom_types:
+  scalars:
+  - name: DecCoin
+  - name: Coin
   objects:
   - name: Coins
     fields:
@@ -8,6 +11,3 @@ custom_types:
     fields:
     - name: dec_coins
       type: [DecCoin]
-  scalars:
-  - name: DecCoin
-  - name: Coin

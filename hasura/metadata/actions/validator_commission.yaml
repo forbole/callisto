@@ -1,0 +1,24 @@
+actions:
+- name: action_validator_commission
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/validator_commission
+    output_type: [ValidatorCommission]
+    arguments:
+    - name: address
+      type: String!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+custom_types:
+  objects:
+  - name: ValidatorCommission
+    fields:
+    - name: validator_address
+      type: String!
+    - name: dec_coin
+      type: DecCoin
