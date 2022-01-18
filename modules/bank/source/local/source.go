@@ -9,7 +9,6 @@ import (
 	"github.com/forbole/juno/v2/node/local"
 
 	"github.com/forbole/bdjuno/v2/modules/bank/source"
-	"github.com/forbole/bdjuno/v2/types"
 )
 
 var (
@@ -28,26 +27,6 @@ func NewSource(source *local.Source, bk banktypes.QueryServer) *Source {
 		Source: source,
 		q:      bk,
 	}
-}
-
-// GetBalances implements keeper.Source
-func (s Source) GetBalances(addresses []string, height int64) ([]types.AccountBalance, error) {
-	ctx, err := s.LoadHeight(height)
-	if err != nil {
-		return nil, fmt.Errorf("error while loading height: %s", err)
-	}
-
-	var balances []types.AccountBalance
-	for _, address := range addresses {
-		res, err := s.q.AllBalances(sdk.WrapSDKContext(ctx), &banktypes.QueryAllBalancesRequest{Address: address})
-		if err != nil {
-			return nil, err
-		}
-
-		balances = append(balances, types.NewAccountBalance(address, res.Balances, height))
-	}
-
-	return balances, nil
 }
 
 // GetSupply implements keeper.Source
