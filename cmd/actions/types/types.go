@@ -31,7 +31,7 @@ type AccountBalanceArgs struct {
 }
 
 type Balance struct {
-	Coins sdk.Coins `json:"balance"`
+	Coins sdk.Coins `json:"coins"`
 }
 
 // ========================= Delegation =========================

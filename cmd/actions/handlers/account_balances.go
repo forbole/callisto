@@ -45,6 +45,8 @@ func getAccountBalance(input actionstypes.AccountBalanceArgs) (response actionst
 	}
 
 	height := input.Height
+	fmt.Println(height)
+
 	if height == 0 {
 		// Get latest height if height input is empty
 		height, err = parseCtx.Node.LatestHeight()
