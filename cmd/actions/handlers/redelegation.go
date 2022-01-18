@@ -9,7 +9,7 @@ import (
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 )
 
-func Delegation(w http.ResponseWriter, r *http.Request) {
+func Redelegation(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
@@ -26,7 +26,7 @@ func Delegation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := getDelegation(actionPayload.Input.Address)
+	result, err := getRedelegation(actionPayload.Input.Address)
 	if err != nil {
 		errorHandler(w, err)
 		return
@@ -36,7 +36,7 @@ func Delegation(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func getDelegation(address string) ([]actionstypes.Delegation, error) {
+func getRedelegation(address string) ([]actionstypes.Redelegation, error) {
 	parseCtx, sources, err := getCtxAndSources()
 	if err != nil {
 		return nil, err
@@ -48,18 +48,19 @@ func getDelegation(address string) ([]actionstypes.Delegation, error) {
 		return nil, fmt.Errorf("error while getting chain latest block height: %s", err)
 	}
 
-	// Get delegator's total rewards
-	delegations, err := sources.StakingSource.GetDelegatorDelegations(height, address)
+	// Get delegator's redelegations
+	redelegations, err := sources.StakingSource.GetDelegatorRedelegations(height, address)
 	if err != nil {
-		return nil, fmt.Errorf("error while getting delegator delegations: %s", err)
+		return nil, fmt.Errorf("error while getting delegator redelegations: %s", err)
 	}
 
-	response := make([]actionstypes.Delegation, len(delegations))
-	for index, del := range delegations {
-		response[index] = actionstypes.Delegation{
-			DelAddress: del.Delegation.DelegatorAddress,
-			ValAddress: del.Delegation.ValidatorAddress,
-			Coin:       del.Balance,
+	response := make([]actionstypes.Redelegation, len(redelegations))
+	for index, redel := range redelegations {
+		response[index] = actionstypes.Redelegation{
+			DelegatorAddress:    redel.Redelegation.DelegatorAddress,
+			ValidatorSrcAddress: redel.Redelegation.ValidatorSrcAddress,
+			ValidatorDstAddress: redel.Redelegation.ValidatorSrcAddress,
+			Entries:             redel.Redelegation.Entries,
 		}
 	}
 

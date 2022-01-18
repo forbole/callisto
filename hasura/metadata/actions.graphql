@@ -1,0 +1,65 @@
+type Query {
+    action_account_balance(
+        address: String!
+        height: Int
+    ): Balance
+
+    action_delegation_reward(
+        address: String!
+    ): DelegatorRewards
+    
+    action_delegation(
+        address: String!
+    ): [Delegation]
+
+    action_redelegation(
+        address: String!
+    ): [Redelegation]
+
+    action_unbonding_delegation(
+        address: String!
+    ): [UnbondingDelegation]
+
+    action_validator_commission(
+        address: String!
+    ): [ValidatorCommission]
+}
+
+type Balance {
+    coins: [Coin]
+}
+
+type DelegatorRewards {
+  withdraw_address: String
+  rewards: [DelegationReward]
+}
+
+type Delegation {
+    delegator_address: String!
+    validator_address: String!
+    coin: Coin!
+}
+
+type Redelegation {
+    delegator_address: String!
+    validator_src_address: String!
+    validator_dst_address: String!
+    entries: [Entry]
+}
+
+type UnbondingDelegation {
+    delegator_address: String!
+    validator_address: String!
+    entries: [Entry]
+}
+
+type ValidatorCommission {
+    validator_address: String!
+    dec_coin: DecCoin
+}
+
+scalar Coin
+scalar DecCoin
+scalar DelegationReward
+scalar Entry
+
