@@ -2,6 +2,7 @@ custom_types:
   scalars:
   - name: DecCoin
   - name: Coin
+  - name: Entry
   objects:
   - name: Coins
     fields:

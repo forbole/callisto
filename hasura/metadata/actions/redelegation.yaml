@@ -1,9 +1,9 @@
 actions:
-- name: action_unbonding_delegation
+- name: action_redelegation
   definition:
     kind: synchronous
-    handler: http://localhost:3000/unbonding_delegation
-    output_type: [UnbondingDelegation]
+    handler: http://localhost:3000/redelegation
+    output_type: [Redelegation]
     arguments:
     - name: address
       type: String!
@@ -16,11 +16,13 @@ actions:
 
 custom_types:
   objects:
-  - name: UnbondingDelegation
+  - name: Redelegation
     fields:
     - name: delegator_address
       type: String!
-    - name: validator_address
+    - name: validator_src_address
+      type: String!
+    - name: validator_dst_address
       type: String!
     - name: entries
       type: [Entry]
