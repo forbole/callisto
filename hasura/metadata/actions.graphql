@@ -2,7 +2,7 @@ type Query {
     action_account_balance(
         address: String!
         height: Int
-    ): Coins
+    ): Balance
 
     action_delegation_reward(
         address: String!
@@ -23,6 +23,10 @@ type Query {
     action_validator_commission(
         address: String!
     ): [ValidatorCommission]
+}
+
+type Balance {
+    coins: [Coin]
 }
 
 type DelegationReward {

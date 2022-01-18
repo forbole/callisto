@@ -102,6 +102,7 @@ custom_types:
     fields:
     - name: coins
       type: [Coin]
+
   - name: DelegationReward
     fields:
     - name: dec_coins
