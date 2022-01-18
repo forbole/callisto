@@ -59,3 +59,12 @@ type UnbondingDelegation struct {
 	ValidatorAddress string                                 `json:"validator_address"`
 	Entries          []stakingtype.UnbondingDelegationEntry `json:"entries"`
 }
+
+// ========================= Redelegation  =========================
+
+type Redelegation struct {
+	DelegatorAddress    string                          `json:"delegator_address"`
+	ValidatorSrcAddress string                          `json:"validator_src_address"`
+	ValidatorDstAddress string                          `json:"validator_dst_address"`
+	Entries             []stakingtype.RedelegationEntry `json:"entries"`
+}
