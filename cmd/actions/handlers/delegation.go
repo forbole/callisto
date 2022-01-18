@@ -57,9 +57,9 @@ func getDelegation(address string) ([]actionstypes.Delegation, error) {
 	response := make([]actionstypes.Delegation, len(delegations))
 	for index, del := range delegations {
 		response[index] = actionstypes.Delegation{
-			DelegatorAddress:  del.Delegation.DelegatorAddress,
-			ValidatorOperAddr: del.Delegation.ValidatorAddress,
-			Amount:            del.Balance,
+			DelAddress: del.Delegation.DelegatorAddress,
+			ValAddress: del.Delegation.ValidatorAddress,
+			Coin:       del.Balance,
 		}
 	}
 

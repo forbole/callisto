@@ -33,7 +33,7 @@ type DelegationReward {
 type Delegation {
     delegator_address: String!
     validator_address: String!
-    amount: Coin!
+    coin: Coin!
 }
 
 type Redelegation {
