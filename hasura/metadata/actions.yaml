@@ -98,16 +98,6 @@ custom_types:
   - name: Entry
 
   objects:
-  - name: Coins
-    fields:
-    - name: coins
-      type: [Coin]
-
-  - name: DecCoins
-    fields:
-    - name: dec_coins
-      type: [DecCoin]
-
   - name: DelegationReward
     fields:
     - name: dec_coins
