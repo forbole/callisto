@@ -21,10 +21,14 @@ the [docs website](https://docs.bigdipper.live/cosmos-based/parser/overview/).
 1. Setup a local postgres DB
 2. Execute examples/big_dipper_2_init_script_combined.sql on a new DB
 3. Run a local cudos-node on localhost
-3. Rename bdjuno_sample_configs and the files inside it to bdjuno/config.yaml and bdjuno/genesis.json
-4. Fix the configs to match your env ( https://docs.bigdipper.live/cosmos-based/parser/config/config )
-5. Execute ```docker-compose up -d```
-6. BDJuno should start parsing info from your local node and feed it in the specified postgres DB
+4. Rename bdjuno_sample_configs and the files inside it to bdjuno/config.yaml and bdjuno/genesis.json
+5. Fix the configs to match your env ( https://docs.bigdipper.live/cosmos-based/parser/config/config )
+6. Rename .env-dev.sample to .env and configure it as per your needs (default is enough, just replace DB connection info)
+7. Execute ```docker-compose up -d```
+8. cd /path/to/BDJuno/hasura
+9. Run ```curl -L https://github.com/hasura/graphql-engine/raw/stable/cli/get.sh | bash```
+10. Run ```hasura metadata apply --endpoint http://localhost:8080 --admin-secret <hasura_password>``` 
+11. BDJuno should start parsing info from your local node and feed it in the specified postgres DB
 
 ## Testing
 If you want to test the code, you can do so by running
