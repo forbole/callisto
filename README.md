@@ -18,6 +18,7 @@ To know how to setup and run BDJuno, please refer to
 the [docs website](https://docs.bigdipper.live/cosmos-based/parser/overview/).
 
 ## Local env via Docker
+### Does not work on M1 Macs, wasmvm cannot be compiled correctly
 1. Setup a local postgres DB
 2. Execute examples/big_dipper_2_init_script_combined.sql on a new DB
 3. Run a local cudos-node on localhost

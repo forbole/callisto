@@ -7,8 +7,6 @@ services:
     restart: always
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    # volumes:
-    #   - /usr/local/bdjuno/bdjuno/:/usr/local/bdjuno/bdjuno/ # put your bdjuno config on your host machine in /usr/local/bdjuno/bdjuno/
   hasura:
     image: hasura/graphql-engine:v2.1.1
     ports:
