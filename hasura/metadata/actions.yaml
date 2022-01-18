@@ -15,11 +15,12 @@ actions:
       name: Content-Type
   permissions:
   - role: anonymous
+
 - name: action_delegation_reward
   definition:
     kind: synchronous
     handler: http://localhost:3000/delegation_reward
-    output_type: [DelegationReward]
+    output_type: "[DelegationReward]"
     arguments:
     - name: address
       type: String!
@@ -29,11 +30,12 @@ actions:
       name: Content-Type
   permissions:
   - role: anonymous
+
 - name: action_delegation
   definition:
     kind: synchronous
     handler: http://localhost:3000/delegation
-    output_type: [Delegation]
+    output_type: "[Delegation]"
     arguments:
     - name: address
       type: String!
@@ -43,11 +45,12 @@ actions:
       name: Content-Type
   permissions:
   - role: anonymous
+
 - name: action_redelegation
   definition:
     kind: synchronous
     handler: http://localhost:3000/redelegation
-    output_type: [Redelegation]
+    output_type: "[Redelegation]"
     arguments:
     - name: address
       type: String!
@@ -57,11 +60,12 @@ actions:
       name: Content-Type
   permissions:
   - role: anonymous
+
 - name: action_unbonding_delegation
   definition:
     kind: synchronous
     handler: http://localhost:3000/unbonding_delegation
-    output_type: [UnbondingDelegation]
+    output_type: "[UnbondingDelegation]"
     arguments:
     - name: address
       type: String!
@@ -71,11 +75,12 @@ actions:
       name: Content-Type
   permissions:
   - role: anonymous
+
 - name: action_validator_commission
   definition:
     kind: synchronous
     handler: http://localhost:3000/validator_commission
-    output_type: [ValidatorCommission]
+    output_type: "[ValidatorCommission]"
     arguments:
     - name: address
       type: String!
@@ -91,22 +96,25 @@ custom_types:
   - name: DecCoin
   - name: Coin
   - name: Entry
+
   objects:
   - name: Coins
     fields:
     - name: coins
       type: [Coin]
+
   - name: DecCoins
     fields:
     - name: dec_coins
       type: [DecCoin]
-  objects:
+
   - name: DelegationReward
     fields:
     - name: dec_coins
       type: [DecCoin]
     - name: validator_address
       type: String!
+
   - name: Delegation
     fields:
     - name: delegator_address
@@ -117,6 +125,7 @@ custom_types:
       type: Coin
     - name: height
       type: Int!
+
   - name: Redelegation
     fields:
     - name: delegator_address
@@ -127,6 +136,7 @@ custom_types:
       type: String!
     - name: entries
       type: [Entry]
+
   - name: UnbondingDelegation
     fields:
     - name: delegator_address
