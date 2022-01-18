@@ -15,10 +15,10 @@ node:
     config:
         rpc:
             client_name: cudos-network
-            address: localhost:26657
+            address: host.docker.internal:26657
             max_connections: 20
         grpc:
-            address: localhost:9090
+            address: host.docker.internal:9090
             insecure: true
 parsing:
     workers: 2
