@@ -62,7 +62,6 @@ type ActionUnbondingDelegation {
 }
 
 type ActionValidatorCommission {
-    validator_address: String!
     coins: [ActionCoin]
 }
 

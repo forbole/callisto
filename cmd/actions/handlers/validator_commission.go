@@ -36,7 +36,7 @@ func ValidatorCommission(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func getValidatorCommission(address string) (response []actionstypes.ValidatorCommission, err error) {
+func getValidatorCommission(address string) (response actionstypes.ValidatorCommission, err error) {
 	parseCtx, sources, err := getCtxAndSources()
 	if err != nil {
 		return response, err
@@ -54,12 +54,8 @@ func getValidatorCommission(address string) (response []actionstypes.ValidatorCo
 		return response, err
 	}
 
-	response = make([]actionstypes.ValidatorCommission, len(commission))
-	for index, commission := range commission {
-		response[index] = actionstypes.ValidatorCommission{
-			Coins:            commission,
-			ValidatorAddress: address,
-		}
+	response = actionstypes.ValidatorCommission{
+		Coins: commission,
 	}
 
 	return response, nil

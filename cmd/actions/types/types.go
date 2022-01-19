@@ -52,8 +52,7 @@ type DelegationReward struct {
 // ========================= Validator Commission  =========================
 
 type ValidatorCommission struct {
-	Coins            sdk.DecCoin `json:"coins"`
-	ValidatorAddress string      `json:"validator_address"`
+	Coins sdk.DecCoins `json:"coins"`
 }
 
 // ========================= Unbonding Delegation  =========================
