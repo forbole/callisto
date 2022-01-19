@@ -10,7 +10,7 @@ type Query {
 
     action_delegator_withdraw_address(
         address: String!
-    ): String!
+    ): ActionAddress!
     
     action_delegation(
         address: String!
@@ -36,6 +36,10 @@ type ActionBalance {
 type ActionDelegationReward {
   coins: [ActionCoin]
   validator_address: String!
+}
+
+type ActionAddress {
+    address: String!
 }
 
 type ActionDelegation {

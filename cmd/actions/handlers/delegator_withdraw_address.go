@@ -36,23 +36,27 @@ func DelegatorWithdrawAddress(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func getDelegatorWithdrawAddress(address string) (string, error) {
+func getDelegatorWithdrawAddress(address string) (response actionstypes.Address, err error) {
 	parseCtx, sources, err := getCtxAndSources()
 	if err != nil {
-		return "", err
+		return response, err
 	}
 
 	// Get latest node height
 	height, err := parseCtx.Node.LatestHeight()
 	if err != nil {
-		return "", fmt.Errorf("error while getting chain latest block height: %s", err)
+		return response, fmt.Errorf("error while getting chain latest block height: %s", err)
 	}
 
 	// Get delegator's total rewards
 	withdrawAddress, err := sources.DistrSource.DelegatorWithdrawAddress(address, height)
 	if err != nil {
-		return "", err
+		return response, err
 	}
 
-	return withdrawAddress, nil
+	response = actionstypes.Address{
+		Address: withdrawAddress,
+	}
+
+	return response, nil
 }

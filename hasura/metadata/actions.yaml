@@ -35,7 +35,7 @@ actions:
   definition:
     kind: synchronous
     handler: http://localhost:3000/delegator_withdraw_address
-    output_type: String!
+    output_type: ActionAddress
     arguments:
     - name: address
       type: String!
@@ -122,6 +122,11 @@ custom_types:
     - name: coins
       type: [ActionCoin]
     - name: validator_address
+      type: String!
+
+  - name: ActionAddress
+    fields: 
+    - name: address
       type: String!
 
   - name: ActionDelegation
