@@ -4,7 +4,7 @@ type Query {
         height: Int
     ): ActionBalance
 
-    action_delegation_reward(
+    action_delegator_reward(
         address: String!
     ): ActionDelegatorRewards
     

@@ -44,7 +44,7 @@ type Delegation struct {
 
 // ========================= Delegator Reward =========================
 
-type DelegatorRewards struct {
+type DelegatorReward struct {
 	WithdrawAddress string             `json:"withdraw_address"`
 	Rewards         []DelegationReward `json:"rewards"`
 }

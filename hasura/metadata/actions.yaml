@@ -16,7 +16,7 @@ actions:
   permissions:
   - role: anonymous
 
-- name: action_delegation_reward
+- name: action_delegator_reward
   definition:
     kind: synchronous
     handler: http://localhost:3000/delegation_reward
