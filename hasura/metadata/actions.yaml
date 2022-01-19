@@ -20,7 +20,7 @@ actions:
   definition:
     kind: synchronous
     handler: http://localhost:3000/delegation_reward
-    output_type: [ActionDelegationReward]
+    output_type: "[ActionDelegationReward]"
     arguments:
     - name: address
       type: String!
