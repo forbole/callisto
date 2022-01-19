@@ -24,9 +24,9 @@ type Query {
         address: String!
     ): [ActionUnbondingDelegation]
 
-    action_validator_commission(
+    action_validator_commission_amount(
         address: String!
-    ): [ActionValidatorCommission]
+    ): ActionValidatorCommissionAmount
 }
 
 type ActionBalance {
@@ -61,7 +61,7 @@ type ActionUnbondingDelegation {
     entries: [ActionEntry]
 }
 
-type ActionValidatorCommission {
+type ActionValidatorCommissionAmount {
     coins: [ActionCoin]
 }
 

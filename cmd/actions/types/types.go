@@ -51,7 +51,7 @@ type DelegationReward struct {
 
 // ========================= Validator Commission  =========================
 
-type ValidatorCommission struct {
+type ValidatorCommissionAmount struct {
 	Coins sdk.DecCoins `json:"coins"`
 }
 
