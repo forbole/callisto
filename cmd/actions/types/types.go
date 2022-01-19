@@ -42,12 +42,7 @@ type Delegation struct {
 	Coins            sdk.Coin `json:"coins"`
 }
 
-// ========================= Delegator Reward =========================
-
-type DelegatorReward struct {
-	WithdrawAddress string             `json:"withdraw_address"`
-	Rewards         []DelegationReward `json:"rewards"`
-}
+// ========================= Delegation Reward =========================
 
 type DelegationReward struct {
 	Coins            sdk.DecCoins `json:"coins"`

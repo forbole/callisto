@@ -36,7 +36,7 @@ func DelegationReward(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func getDelegationReward(address string) (response actionstypes.DelegatorReward, err error) {
+func getDelegationReward(address string) (response []actionstypes.DelegationReward, err error) {
 	parseCtx, sources, err := getCtxAndSources()
 	if err != nil {
 		return response, err
@@ -54,12 +54,6 @@ func getDelegationReward(address string) (response actionstypes.DelegatorReward,
 		return response, err
 	}
 
-	// Get withdraw address
-	withdrawAddr, err := sources.DistrSource.DelegatorWithdrawAddress(address, height)
-	if err != nil {
-		return response, fmt.Errorf("error while getting delegator rewards: %s", err)
-	}
-
 	delegationRewards := make([]actionstypes.DelegationReward, len(rewards))
 	for index, rew := range rewards {
 		delegationRewards[index] = actionstypes.DelegationReward{
@@ -68,8 +62,5 @@ func getDelegationReward(address string) (response actionstypes.DelegatorReward,
 		}
 	}
 
-	return actionstypes.DelegatorReward{
-		WithdrawAddress: withdrawAddr,
-		Rewards:         delegationRewards,
-	}, nil
+	return delegationRewards, nil
 }

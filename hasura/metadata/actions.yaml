@@ -16,11 +16,11 @@ actions:
   permissions:
   - role: anonymous
 
-- name: action_delegator_reward
+- name: action_delegation_reward
   definition:
     kind: synchronous
     handler: http://localhost:3000/delegation_reward
-    output_type: ActionDelegatorReward
+    output_type: [ActionDelegationReward]
     arguments:
     - name: address
       type: String!
@@ -95,7 +95,6 @@ custom_types:
   scalars:
   - name: ActionCoin
   - name: ActionEntry
-  - name: ActionDelegationReward
 
   objects:
   - name: ActionBalance
@@ -103,12 +102,12 @@ custom_types:
     - name: coins
       type: [ActionCoin]
 
-  - name: ActionDelegatorReward
+  - name: ActionDelegationReward
     fields:
-    - name: withdraw_address
+    - name: coins
+      type: [Coin]
+    - name: validator_address
       type: String!
-    - name: rewards
-      type: [ActionDelegationReward]
 
   - name: ActionDelegation
     fields:
