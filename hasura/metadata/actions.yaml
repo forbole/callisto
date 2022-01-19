@@ -105,7 +105,7 @@ custom_types:
   - name: ActionDelegationReward
     fields:
     - name: coins
-      type: [Coin]
+      type: [ActionCoin]
     - name: validator_address
       type: String!
 
@@ -116,7 +116,7 @@ custom_types:
     - name: validator_address
       type: String!
     - name: amount
-      type: Coin
+      type: ActionCoin
 
   - name: ActionRedelegation
     fields:

@@ -30,7 +30,7 @@ type ActionBalance {
 }
 
 type ActionDelegationReward {
-  coins: [Coin]
+  coins: [ActionCoin]
   validator_address: String!
 }
 
