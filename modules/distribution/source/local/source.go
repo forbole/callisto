@@ -27,60 +27,6 @@ func NewSource(source *local.Source, keeper distrtypes.QueryServer) *Source {
 	}
 }
 
-// ValidatorCommission implements distrsource.Source
-func (s Source) ValidatorCommission(valOperAddr string, height int64) (sdk.DecCoins, error) {
-	ctx, err := s.LoadHeight(height)
-	if err != nil {
-		return nil, fmt.Errorf("error while loading height: %s", err)
-	}
-
-	res, err := s.q.ValidatorCommission(
-		sdk.WrapSDKContext(ctx),
-		&distrtypes.QueryValidatorCommissionRequest{ValidatorAddress: valOperAddr},
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	return res.Commission.Commission, nil
-}
-
-// DelegatorTotalRewards implements distrsource.Source
-func (s Source) DelegatorTotalRewards(delegator string, height int64) ([]distrtypes.DelegationDelegatorReward, error) {
-	ctx, err := s.LoadHeight(height)
-	if err != nil {
-		return nil, fmt.Errorf("error while loading height: %s", err)
-	}
-
-	res, err := s.q.DelegationTotalRewards(
-		sdk.WrapSDKContext(ctx),
-		&distrtypes.QueryDelegationTotalRewardsRequest{DelegatorAddress: delegator},
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	return res.Rewards, nil
-}
-
-// DelegatorWithdrawAddress implements distrsource.Source
-func (s Source) DelegatorWithdrawAddress(delegator string, height int64) (string, error) {
-	ctx, err := s.LoadHeight(height)
-	if err != nil {
-		return "", fmt.Errorf("error while loading height: %s", err)
-	}
-
-	res, err := s.q.DelegatorWithdrawAddress(
-		sdk.WrapSDKContext(ctx),
-		&distrtypes.QueryDelegatorWithdrawAddressRequest{DelegatorAddress: delegator},
-	)
-	if err != nil {
-		return "", err
-	}
-
-	return res.WithdrawAddress, nil
-}
-
 // CommunityPool implements distrsource.Source
 func (s Source) CommunityPool(height int64) (sdk.DecCoins, error) {
 	ctx, err := s.LoadHeight(height)
