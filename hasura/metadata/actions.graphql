@@ -6,7 +6,7 @@ type Query {
 
     action_delegator_reward(
         address: String!
-    ): ActionDelegatorRewards
+    ): ActionDelegatorReward
     
     action_delegation(
         address: String!
@@ -29,7 +29,7 @@ type ActionBalance {
     coins: [ActionCoin]
 }
 
-type ActionDelegatorRewards {
+type ActionDelegatorReward {
   withdraw_address: String!
   rewards: [ActionDelegationReward]
 }
