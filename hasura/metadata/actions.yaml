@@ -3,7 +3,7 @@ actions:
   definition:
     kind: synchronous
     handler: http://localhost:3000/account_balance
-    output_type: Balance
+    output_type: ActionBalance
     arguments:
     - name: address
       type: String!
@@ -20,7 +20,7 @@ actions:
   definition:
     kind: synchronous
     handler: http://localhost:3000/delegation_reward
-    output_type: DelegatorRewards
+    output_type: ActionDelegatorRewards
     arguments:
     - name: address
       type: String!
@@ -35,7 +35,7 @@ actions:
   definition:
     kind: synchronous
     handler: http://localhost:3000/delegation
-    output_type: "[Delegation]"
+    output_type: "[ActionDelegation]"
     arguments:
     - name: address
       type: String!
@@ -50,7 +50,7 @@ actions:
   definition:
     kind: synchronous
     handler: http://localhost:3000/redelegation
-    output_type: "[Redelegation]"
+    output_type: "[ActionRedelegation]"
     arguments:
     - name: address
       type: String!
@@ -65,7 +65,7 @@ actions:
   definition:
     kind: synchronous
     handler: http://localhost:3000/unbonding_delegation
-    output_type: "[UnbondingDelegation]"
+    output_type: "[ActionUnbondingDelegation]"
     arguments:
     - name: address
       type: String!
@@ -80,7 +80,7 @@ actions:
   definition:
     kind: synchronous
     handler: http://localhost:3000/validator_commission
-    output_type: "[ValidatorCommission]"
+    output_type: "[ActionValidatorCommission]"
     arguments:
     - name: address
       type: String!
@@ -93,24 +93,24 @@ actions:
 
 custom_types:
   scalars:
-  - name: Coin
-  - name: Entry
-  - name: DelegationReward
+  - name: ActionCoin
+  - name: ActionEntry
+  - name: ActionDelegationReward
 
   objects:
-  - name: Balance
+  - name: ActionBalance
     fields:
     - name: coins
-      type: [Coin]
+      type: [ActionCoin]
 
-  - name: DelegatorRewards
+  - name: ActionDelegatorRewards
     fields:
     - name: withdraw_address
       type: String!
     - name: rewards
-      type: [DelegationReward]
+      type: [ActionDelegationReward]
 
-  - name: Delegation
+  - name: ActionDelegation
     fields:
     - name: delegator_address
       type: String!
@@ -119,7 +119,7 @@ custom_types:
     - name: amount
       type: Coin
 
-  - name: Redelegation
+  - name: ActionRedelegation
     fields:
     - name: delegator_address
       type: String!
@@ -128,20 +128,20 @@ custom_types:
     - name: validator_dst_address
       type: String!
     - name: entries
-      type: [Entry]
+      type: [ActionEntry]
 
-  - name: UnbondingDelegation
+  - name: ActionUnbondingDelegation
     fields:
     - name: delegator_address
       type: String!
     - name: validator_address
       type: String!
     - name: entries
-      type: [Entry]
+      type: [ActionEntry]
   
-  - name: ValidatorCommission
+  - name: ActionValidatorCommission
     fields:
     - name: validator_address
       type: String!
     - name: coins
-      type: [Coin]
+      type: [ActionCoin]

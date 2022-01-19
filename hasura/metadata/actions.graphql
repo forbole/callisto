@@ -2,63 +2,63 @@ type Query {
     action_account_balance(
         address: String!
         height: Int
-    ): Balance
+    ): ActionBalance
 
     action_delegation_reward(
         address: String!
-    ): DelegatorRewards
+    ): ActionDelegatorRewards
     
     action_delegation(
         address: String!
-    ): [Delegation]
+    ): [ActionDelegation]
 
     action_redelegation(
         address: String!
-    ): [Redelegation]
+    ): [ActionRedelegation]
 
     action_unbonding_delegation(
         address: String!
-    ): [UnbondingDelegation]
+    ): [ActionUnbondingDelegation]
 
     action_validator_commission(
         address: String!
-    ): [ValidatorCommission]
+    ): [ActionValidatorCommission]
 }
 
-type Balance {
-    coins: [Coin]
+type ActionBalance {
+    coins: [ActionCoin]
 }
 
-type DelegatorRewards {
-  withdraw_address: String
-  rewards: [DelegationReward]
+type ActionDelegatorRewards {
+  withdraw_address: String!
+  rewards: [ActionDelegationReward]
 }
 
-type Delegation {
+type ActionDelegation {
     delegator_address: String!
     validator_address: String!
-    coins: Coin!
+    coins: ActionCoin!
 }
 
-type Redelegation {
+type ActionRedelegation {
     delegator_address: String!
     validator_src_address: String!
     validator_dst_address: String!
-    entries: [Entry]
+    entries: [ActionEntry]
 }
 
-type UnbondingDelegation {
+type ActionUnbondingDelegation {
     delegator_address: String!
     validator_address: String!
-    entries: [Entry]
+    entries: [ActionEntry]
 }
 
-type ValidatorCommission {
+type ActionValidatorCommission {
     validator_address: String!
-    coins: [Coin]
+    coins: [ActionCoin]
 }
 
-scalar Coin
-scalar DelegationReward
-scalar Entry
+scalar ActionCoin
+scalar ActionDelegationReward
+scalar ActionEntry
 
