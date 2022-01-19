@@ -93,7 +93,6 @@ actions:
 
 custom_types:
   scalars:
-  - name: DecCoin
   - name: Coin
   - name: Entry
   - name: DelegationReward
@@ -144,5 +143,5 @@ custom_types:
     fields:
     - name: validator_address
       type: String!
-    - name: amount
-      type: DecCoin
+    - name: coins
+      type: [Coin]

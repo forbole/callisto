@@ -55,11 +55,10 @@ type UnbondingDelegation {
 
 type ValidatorCommission {
     validator_address: String!
-    coins: DecCoin
+    coins: [Coin]
 }
 
 scalar Coin
-scalar DecCoin
 scalar DelegationReward
 scalar Entry
 
