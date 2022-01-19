@@ -31,6 +31,21 @@ actions:
   permissions:
   - role: anonymous
 
+- name: action_delegator_withdraw_address
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/delegator_withdraw_address
+    output_type: String!
+    arguments:
+    - name: address
+      type: String!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
 - name: action_delegation
   definition:
     kind: synchronous

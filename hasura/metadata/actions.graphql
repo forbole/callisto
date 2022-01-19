@@ -7,6 +7,10 @@ type Query {
     action_delegation_reward(
         address: String!
     ): [ActionDelegationReward]
+
+    action_delegator_withdraw_address(
+        address: String!
+    ): String!
     
     action_delegation(
         address: String!
