@@ -13,8 +13,6 @@ select_permissions:
     allow_aggregations: true
     columns:
     - id
-    - grantee
-    - granter
     - allowance
     - height
     filter: {}
