@@ -31,7 +31,7 @@ func (m *Module) updatePrice() error {
 		Str("operation", "pricefeed").
 		Msg("getting token price and market cap")
 
-	// Get the list of token units stored in db
+	// Get the list of tokens price id
 	ids, err := m.db.GetTokensPriceID()
 	if err != nil {
 		return fmt.Errorf("error while getting tokens price id: %s", err)
