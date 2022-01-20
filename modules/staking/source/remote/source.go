@@ -152,6 +152,36 @@ func (s Source) GetDelegatorDelegations(height int64, delegator string) ([]staki
 	return delegations, nil
 }
 
+// GetDelegatorRedelegations implements stakingsource.Source
+func (s Source) GetDelegatorRedelegations(height int64, delegator string) ([]stakingtypes.RedelegationResponse, error) {
+	header := remote.GetHeightRequestHeader(height)
+
+	var redelegations []stakingtypes.RedelegationResponse
+	var nextKey []byte
+	var stop = false
+	for !stop {
+		res, err := s.stakingClient.Redelegations(
+			s.Ctx,
+			&stakingtypes.QueryRedelegationsRequest{
+				DelegatorAddr: delegator,
+				Pagination: &query.PageRequest{
+					Key:   nextKey,
+					Limit: 100, // Query 100 delegations at time
+				},
+			},
+			header,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		stop = len(res.Pagination.NextKey) == 0
+		redelegations = append(redelegations, res.RedelegationResponses...)
+	}
+
+	return redelegations, nil
+}
+
 // GetPool implements stakingsource.Source
 func (s Source) GetPool(height int64) (stakingtypes.Pool, error) {
 	res, err := s.stakingClient.Pool(s.Ctx, &stakingtypes.QueryPoolRequest{}, remote.GetHeightRequestHeader(height))
@@ -170,4 +200,35 @@ func (s Source) GetParams(height int64) (stakingtypes.Params, error) {
 	}
 
 	return res.Params, nil
+}
+
+// GetUnbondingDelegations implements stakingsource.Source
+func (s Source) GetUnbondingDelegations(height int64, delegator string) ([]stakingtypes.UnbondingDelegation, error) {
+	header := remote.GetHeightRequestHeader(height)
+
+	var delegations []stakingtypes.UnbondingDelegation
+	var nextKey []byte
+	var stop = false
+	for !stop {
+		res, err := s.stakingClient.DelegatorUnbondingDelegations(
+			s.Ctx,
+			&stakingtypes.QueryDelegatorUnbondingDelegationsRequest{
+				DelegatorAddr: delegator,
+				Pagination: &query.PageRequest{
+					Key:   nextKey,
+					Limit: 100, // Query 100 unbonding delegations at time
+				},
+			},
+			header,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		nextKey = res.Pagination.NextKey
+		stop = len(res.Pagination.NextKey) == 0
+		delegations = append(delegations, res.UnbondingResponses...)
+	}
+
+	return delegations, nil
 }

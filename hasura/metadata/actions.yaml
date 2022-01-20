@@ -1,6 +1,164 @@
-actions: []
+actions:
+- name: action_account_balance
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/account_balance
+    output_type: ActionBalance
+    arguments:
+    - name: address
+      type: String!
+    - name: height
+      type: Int
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: action_delegation_reward
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/delegation_reward
+    output_type: "[ActionDelegationReward]"
+    arguments:
+    - name: address
+      type: String!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: action_delegator_withdraw_address
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/delegator_withdraw_address
+    output_type: ActionAddress
+    arguments:
+    - name: address
+      type: String!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: action_delegation
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/delegation
+    output_type: "[ActionDelegation]"
+    arguments:
+    - name: address
+      type: String!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: action_redelegation
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/redelegation
+    output_type: "[ActionRedelegation]"
+    arguments:
+    - name: address
+      type: String!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: action_unbonding_delegation
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/unbonding_delegation
+    output_type: "[ActionUnbondingDelegation]"
+    arguments:
+    - name: address
+      type: String!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: action_validator_commission_amount
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/validator_commission_amount
+    output_type: "[ActionValidatorCommissionAmount]"
+    arguments:
+    - name: address
+      type: String!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
 custom_types:
-  enums: []
-  input_objects: []
-  objects: []
-  scalars: []
+  scalars:
+  - name: ActionCoin
+  - name: ActionEntry
+
+  objects:
+  - name: ActionBalance
+    fields:
+    - name: coins
+      type: [ActionCoin]
+
+  - name: ActionDelegationReward
+    fields:
+    - name: coins
+      type: [ActionCoin]
+    - name: validator_address
+      type: String!
+
+  - name: ActionAddress
+    fields: 
+    - name: address
+      type: String!
+
+  - name: ActionDelegation
+    fields:
+    - name: delegator_address
+      type: String!
+    - name: validator_address
+      type: String!
+    - name: amount
+      type: ActionCoin
+
+  - name: ActionRedelegation
+    fields:
+    - name: delegator_address
+      type: String!
+    - name: validator_src_address
+      type: String!
+    - name: validator_dst_address
+      type: String!
+    - name: entries
+      type: [ActionEntry]
+
+  - name: ActionUnbondingDelegation
+    fields:
+    - name: delegator_address
+      type: String!
+    - name: validator_address
+      type: String!
+    - name: entries
+      type: [ActionEntry]
+  
+  - name: ActionValidatorCommissionAmount
+    fields:
+    - name: coins
+      type: [ActionCoin]
