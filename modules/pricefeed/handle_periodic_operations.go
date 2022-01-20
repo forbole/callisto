@@ -34,11 +34,11 @@ func (m *Module) updatePrice() error {
 	// Get the list of token units stored in db
 	ids, err := m.db.GetTokensPriceID()
 	if err != nil {
-		return fmt.Errorf("error while getting token units: %s", err)
+		return fmt.Errorf("error while getting tokens price id: %s", err)
 	}
 
 	if len(ids) == 0 {
-		log.Debug().Str("module", "pricefeed").Msg("no traded tokens found")
+		log.Debug().Str("module", "pricefeed").Msg("no traded tokens price id found")
 		return nil
 	}
 
