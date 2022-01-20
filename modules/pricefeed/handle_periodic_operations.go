@@ -54,7 +54,5 @@ func (m *Module) updatePrice() error {
 		return fmt.Errorf("error while saving token prices: %s", err)
 	}
 
-	log.Debug().Str("module", "pricefeed").Msg("SAVED PRICES!!....... ELO .........")
-
 	return m.historyModule.UpdatePricesHistory(prices)
 }
