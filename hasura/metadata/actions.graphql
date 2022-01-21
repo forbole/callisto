@@ -14,9 +14,10 @@ type Query {
     
     action_delegation(
         address: String!
-        offset: Int!
-        limit: Int!
-        count_total: Boolean!
+        key: String
+        offset: Int
+        limit: Int
+        count_total: Boolean
     ): ActionDelegationResponse
 
     action_redelegation(

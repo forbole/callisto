@@ -19,7 +19,7 @@ type DelegationResponse struct {
 }
 
 type Pagination struct {
-	NextKey    int64  `json:"next_key"`
+	NextKey    []byte `json:"next_key"`
 	CountTotal uint64 `json:"count_total"`
 }
 

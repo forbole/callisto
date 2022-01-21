@@ -54,10 +54,12 @@ actions:
     arguments:
     - name: address
       type: String!
+    - name: key
+      type: String
     - name: offset
-      type: Int!
+      type: Int
     - name: Limit
-      type: Int!
+      type: Int
     - name: count_total
       type: Boolean!
     type: query
