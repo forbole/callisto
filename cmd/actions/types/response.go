@@ -2,39 +2,22 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
 	stakingtype "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
-type GraphQLError struct {
-	Message string `json:"message"`
-}
-
-// ========================= Address Payload =========================
-type AddressPayload struct {
-	SessionVariables map[string]interface{} `json:"session_variables"`
-	Input            Address                `json:"input"`
-}
-
-type Address struct {
-	Address string `json:"address"`
-}
-
-// ========================= Account Balance =========================
-type AccountBalancePayload struct {
-	SessionVariables map[string]interface{} `json:"session_variables"`
-	Input            AccountBalanceArgs     `json:"input"`
-}
-
-type AccountBalanceArgs struct {
-	Address string `json:"address"`
-	Height  int64  `json:"height"`
-}
+// ========================= Account Balance Response =========================
 
 type Balance struct {
 	Coins sdk.Coins `json:"coins"`
 }
 
-// ========================= Delegation =========================
+// ========================= Delegation Response =========================
+
+type DelegationResponse struct {
+	Delegations []Delegation        `json:"delegations"`
+	Pagination  *query.PageResponse `json:"pagination"`
+}
 
 type Delegation struct {
 	DelegatorAddress string   `json:"delegator_address"`
@@ -42,20 +25,20 @@ type Delegation struct {
 	Coins            sdk.Coin `json:"coins"`
 }
 
-// ========================= Delegation Reward =========================
+// ========================= Delegation Reward Response =========================
 
 type DelegationReward struct {
 	Coins            sdk.DecCoins `json:"coins"`
 	ValidatorAddress string       `json:"validator_address"`
 }
 
-// ========================= Validator Commission  =========================
+// ========================= Validator Commission Response =========================
 
 type ValidatorCommissionAmount struct {
 	Coins sdk.DecCoins `json:"coins"`
 }
 
-// ========================= Unbonding Delegation  =========================
+// ========================= Unbonding Delegation Response =========================
 
 type UnbondingDelegation struct {
 	DelegatorAddress string                                 `json:"delegator_address"`
@@ -63,7 +46,7 @@ type UnbondingDelegation struct {
 	Entries          []stakingtype.UnbondingDelegationEntry `json:"entries"`
 }
 
-// ========================= Redelegation  =========================
+// ========================= Redelegation Response =========================
 
 type Redelegation struct {
 	DelegatorAddress    string                          `json:"delegator_address"`

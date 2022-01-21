@@ -50,10 +50,16 @@ actions:
   definition:
     kind: synchronous
     handler: http://localhost:3000/delegation
-    output_type: "[ActionDelegation]"
+    output_type: ActionDelegationResponse
     arguments:
     - name: address
       type: String!
+    - name: offset
+      type: Int
+    - name: limit
+      type: Int
+    - name: count_total
+      type: Boolean!
     type: query
     headers:
     - value: application/json
@@ -109,6 +115,8 @@ actions:
 custom_types:
   scalars:
   - name: ActionCoin
+  - name: ActionDelegation
+  - name: ActionPagination
   - name: ActionEntry
 
   objects:
@@ -129,14 +137,12 @@ custom_types:
     - name: address
       type: String!
 
-  - name: ActionDelegation
+  - name: ActionDelegationResponse
     fields:
-    - name: delegator_address
-      type: String!
-    - name: validator_address
-      type: String!
-    - name: amount
-      type: ActionCoin
+    - name: delegations
+      type: [ActionDelegation]
+    - name: pagination
+      type: ActionPagination
 
   - name: ActionRedelegation
     fields:

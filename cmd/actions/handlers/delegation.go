@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/cosmos/cosmos-sdk/types/query"
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 )
 
@@ -19,14 +20,14 @@ func Delegation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var actionPayload actionstypes.AddressPayload
+	var actionPayload actionstypes.DelegationPayload
 	err = json.Unmarshal(reqBody, &actionPayload)
 	if err != nil {
 		http.Error(w, "invalid payload: failed to unmarshal json", http.StatusInternalServerError)
 		return
 	}
 
-	result, err := getDelegation(actionPayload.Input.Address)
+	result, err := getDelegation(actionPayload.Input)
 	if err != nil {
 		errorHandler(w, err)
 		return
@@ -36,32 +37,41 @@ func Delegation(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func getDelegation(address string) ([]actionstypes.Delegation, error) {
+func getDelegation(input actionstypes.DelegationArgs) (actionstypes.DelegationResponse, error) {
 	parseCtx, sources, err := getCtxAndSources()
 	if err != nil {
-		return nil, err
+		return actionstypes.DelegationResponse{}, err
 	}
 
 	// Get latest node height
 	height, err := parseCtx.Node.LatestHeight()
 	if err != nil {
-		return nil, fmt.Errorf("error while getting chain latest block height: %s", err)
+		return actionstypes.DelegationResponse{}, fmt.Errorf("error while getting chain latest block height: %s", err)
+	}
+
+	pagination := &query.PageRequest{
+		Offset:     input.Offset,
+		Limit:      input.Limit,
+		CountTotal: input.CountTotal,
 	}
 
 	// Get delegator's total rewards
-	delegations, err := sources.StakingSource.GetDelegatorDelegations(height, address)
+	res, err := sources.StakingSource.GetDelegationsWithPagination(height, input.Address, pagination)
 	if err != nil {
-		return nil, fmt.Errorf("error while getting delegator delegations: %s", err)
+		return actionstypes.DelegationResponse{}, fmt.Errorf("error while getting delegator delegations: %s", err)
 	}
 
-	response := make([]actionstypes.Delegation, len(delegations))
-	for index, del := range delegations {
-		response[index] = actionstypes.Delegation{
+	delegations := make([]actionstypes.Delegation, len(res.DelegationResponses))
+	for index, del := range res.DelegationResponses {
+		delegations[index] = actionstypes.Delegation{
 			DelegatorAddress: del.Delegation.DelegatorAddress,
 			ValidatorAddress: del.Delegation.ValidatorAddress,
 			Coins:            del.Balance,
 		}
 	}
 
-	return response, nil
+	return actionstypes.DelegationResponse{
+		Delegations: delegations,
+		Pagination:  res.Pagination,
+	}, nil
 }
