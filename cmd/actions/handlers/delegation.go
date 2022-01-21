@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"bytes"
+	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -72,8 +74,15 @@ func getDelegation(input actionstypes.DelegationArgs) (actionstypes.DelegationRe
 		}
 	}
 
+	var nextKey int64
+	bytebuff := bytes.NewBuffer(res.Pagination.NextKey)
+	binary.Read(bytebuff, binary.BigEndian, &nextKey)
+
 	return actionstypes.DelegationResponse{
 		Delegations: delegations,
-		Pagination:  res.Pagination,
+		Pagination: actionstypes.Pagination{
+			NextKey:    nextKey,
+			CountTotal: res.Pagination.Total,
+		},
 	}, nil
 }
