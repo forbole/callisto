@@ -14,7 +14,9 @@ type Query {
     
     action_delegation(
         address: String!
-        pagination: ActionPagination
+        offset: Int!
+        limit: Int!
+        count_total: Boolean!
     ): [ActionDelegation]
 
     action_redelegation(
@@ -67,6 +69,5 @@ type ActionValidatorCommissionAmount {
 }
 
 scalar ActionCoin
-scalar ActionPagination
 scalar ActionEntry
 

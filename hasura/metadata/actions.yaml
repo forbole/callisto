@@ -54,8 +54,12 @@ actions:
     arguments:
     - name: address
       type: String!
-    - name: pagination
-      type: ActionPagination
+    - name: offset
+      type: Int!
+    - name: Limit
+      type: Int!
+    - name: count_total
+      type: Boolean!
     type: query
     headers:
     - value: application/json
@@ -111,7 +115,6 @@ actions:
 custom_types:
   scalars:
   - name: ActionCoin
-  - name: ActionPagination
   - name: ActionEntry
 
   objects:

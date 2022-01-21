@@ -1,7 +1,5 @@
 package types
 
-import "github.com/cosmos/cosmos-sdk/types/query"
-
 // ========================= Address Payload =========================
 type AddressPayload struct {
 	SessionVariables map[string]interface{} `json:"session_variables"`
@@ -32,6 +30,8 @@ type DelegationPayload struct {
 }
 
 type DelegationArgs struct {
-	Address    string             `json:"address"`
-	Pagination *query.PageRequest `json:"pagination"`
+	Address    string `json:"address"`
+	Offset     uint64 `json:"offset"`
+	Limit      uint64 `json:"limit"`
+	CountTotal bool   `json:"count_total"`
 }
