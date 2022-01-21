@@ -54,8 +54,6 @@ actions:
     arguments:
     - name: address
       type: String!
-    - name: key
-      type: String
     - name: offset
       type: Int
     - name: limit

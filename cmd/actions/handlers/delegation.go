@@ -49,11 +49,7 @@ func getDelegation(input actionstypes.DelegationArgs) (actionstypes.DelegationRe
 		return actionstypes.DelegationResponse{}, fmt.Errorf("error while getting chain latest block height: %s", err)
 	}
 
-	fmt.Println("input next key: ", input.Key)
-	fmt.Println("input next key: []byte()", []byte(input.Key))
-
 	pagination := &query.PageRequest{
-		Key:        []byte(input.Key),
 		Offset:     input.Offset,
 		Limit:      input.Limit,
 		CountTotal: input.CountTotal,
@@ -76,9 +72,6 @@ func getDelegation(input actionstypes.DelegationArgs) (actionstypes.DelegationRe
 
 	return actionstypes.DelegationResponse{
 		Delegations: delegations,
-		Pagination: actionstypes.Pagination{
-			NextKey:    res.Pagination.GetNextKey(),
-			CountTotal: res.Pagination.Total,
-		},
+		Pagination:  res.Pagination,
 	}, nil
 }

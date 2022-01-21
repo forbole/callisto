@@ -2,6 +2,7 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
 	stakingtype "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
@@ -14,13 +15,8 @@ type Balance struct {
 // ========================= Delegation Response =========================
 
 type DelegationResponse struct {
-	Delegations []Delegation `json:"delegations"`
-	Pagination  Pagination   `json:"pagination"`
-}
-
-type Pagination struct {
-	NextKey    []byte `json:"next_key"`
-	CountTotal uint64 `json:"count_total"`
+	Delegations []Delegation        `json:"delegations"`
+	Pagination  *query.PageResponse `json:"pagination"`
 }
 
 type Delegation struct {

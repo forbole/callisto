@@ -31,7 +31,6 @@ type DelegationPayload struct {
 
 type DelegationArgs struct {
 	Address    string `json:"address"`
-	Key        string `json:"key"`
 	Offset     uint64 `json:"offset"`
 	Limit      uint64 `json:"limit"`
 	CountTotal bool   `json:"count_total"`
