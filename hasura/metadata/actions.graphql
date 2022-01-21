@@ -19,6 +19,11 @@ type Query {
         count_total: Boolean
     ): ActionDelegationResponse
 
+    action_delegation_total(
+        address: String!
+        height: Int
+    ): ActionBalance
+
     action_redelegation(
         address: String!
         offset: Int

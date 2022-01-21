@@ -67,6 +67,24 @@ actions:
   permissions:
   - role: anonymous
 
+- name: action_delegation_total
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/delegation_total
+    output_type: ActionBalance
+    arguments:
+    - name: address
+      type: String!
+    - name: height
+      type: Int
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+
 - name: action_redelegation
   definition:
     kind: synchronous
