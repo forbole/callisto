@@ -24,11 +24,14 @@ type Query {
         offset: Int
         limit: Int
         count_total: Boolean
-    ): [ActionRedelegationResponse]
+    ): ActionRedelegationResponse
 
     action_unbonding_delegation(
         address: String!
-    ): [ActionUnbondingDelegation]
+        offset: Int
+        limit: Int
+        count_total: Boolean
+    ): ActionUnbondingDelegationResponse
 
     action_validator_commission_amount(
         address: String!
@@ -58,10 +61,9 @@ type ActionRedelegationResponse {
     pagination: ActionPagination
 }
 
-type ActionUnbondingDelegation {
-    delegator_address: String!
-    validator_address: String!
-    entries: [ActionEntry]
+type ActionUnbondingDelegationResponse {
+    unbonding_delegations: [ActionUnbondingDelegation]
+    pagination: ActionPagination
 }
 
 type ActionValidatorCommissionAmount {
@@ -73,4 +75,5 @@ scalar ActionDelegation
 scalar ActionEntry
 scalar ActionPagination
 scalar ActionRedelegation
+scalar ActionUnbondingDelegation
 

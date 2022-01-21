@@ -15,5 +15,5 @@ type Source interface {
 	GetValidatorDelegations(height int64, validator string) ([]stakingtypes.DelegationResponse, error)
 	GetPool(height int64) (stakingtypes.Pool, error)
 	GetParams(height int64) (stakingtypes.Params, error)
-	GetUnbondingDelegations(height int64, delegator string) ([]stakingtypes.UnbondingDelegation, error)
+	GetUnbondingDelegations(height int64, delegator string, pagination *query.PageRequest) (*stakingtypes.QueryDelegatorUnbondingDelegationsResponse, error)
 }
