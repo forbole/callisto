@@ -64,11 +64,11 @@ func getTotalDelegationAmount(input actionstypes.StakingArgs) (actionstypes.Bala
 				coinObject[index].Amount = coinObject[index].Amount.Add(eachDelegation.Balance.Amount)
 			}
 			if eachCoin.Denom != eachDelegation.Balance.Denom {
-				coinObject = append(coinObject, sdk.NewCoin(eachDelegation.Balance.Denom, sdk.NewInt(eachDelegation.Balance.Amount.Int64())))
+				coinObject = append(coinObject, sdk.NewCoin(eachDelegation.Balance.Denom, eachDelegation.Balance.Amount))
 			}
 		}
 		if coinObject == nil {
-			coinObject = append(coinObject, sdk.NewCoin(eachDelegation.Balance.Denom, sdk.NewInt(eachDelegation.Balance.Amount.Int64())))
+			coinObject = append(coinObject, sdk.NewCoin(eachDelegation.Balance.Denom, eachDelegation.Balance.Amount))
 		}
 	}
 
