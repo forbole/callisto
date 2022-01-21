@@ -27,8 +27,6 @@ func Delegation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("actionPayload Delegation: ", actionPayload.Input)
-
 	result, err := getDelegation(actionPayload.Input)
 	if err != nil {
 		errorHandler(w, err)
@@ -51,8 +49,11 @@ func getDelegation(input actionstypes.DelegationArgs) (actionstypes.DelegationRe
 		return actionstypes.DelegationResponse{}, fmt.Errorf("error while getting chain latest block height: %s", err)
 	}
 
+	fmt.Println("input next key: ", input.Key)
+	fmt.Println("input next key: []byte()", []byte(input.Key))
+
 	pagination := &query.PageRequest{
-		Key:        input.Key,
+		Key:        []byte(input.Key),
 		Offset:     input.Offset,
 		Limit:      input.Limit,
 		CountTotal: input.CountTotal,
