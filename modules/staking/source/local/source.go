@@ -154,33 +154,25 @@ func (s Source) GetDelegationsWithPagination(height int64, delegator string, pag
 }
 
 // GetDelegatorRedelegations implements stakingsource.Source
-func (s Source) GetDelegatorRedelegations(height int64, delegator string) ([]stakingtypes.RedelegationResponse, error) {
+func (s Source) GetDelegatorRedelegations(height int64, delegator string, pagination *query.PageRequest) (*stakingtypes.QueryRedelegationsResponse, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
 		return nil, fmt.Errorf("error while loading height: %s", err)
 	}
 
-	var redelegations []stakingtypes.RedelegationResponse
-	var nextKey []byte
-	var stop = false
-	for !stop {
-		res, err := s.q.Redelegations(
-			sdk.WrapSDKContext(ctx),
-			&stakingtypes.QueryRedelegationsRequest{
-				DelegatorAddr: delegator,
-				Pagination: &query.PageRequest{
-					Key:   nextKey,
-					Limit: 100, // Query 100 delegations at time
-				},
+	redelegations, err := s.q.Redelegations(
+		sdk.WrapSDKContext(ctx),
+		&stakingtypes.QueryRedelegationsRequest{
+			DelegatorAddr: delegator,
+			Pagination: &query.PageRequest{
+				Limit:      pagination.GetLimit(),
+				Offset:     pagination.GetOffset(),
+				CountTotal: pagination.GetCountTotal(),
 			},
-		)
-		if err != nil {
-			return nil, err
-		}
-
-		nextKey = res.Pagination.NextKey
-		stop = len(res.Pagination.NextKey) == 0
-		redelegations = append(redelegations, res.RedelegationResponses...)
+		},
+	)
+	if err != nil {
+		return nil, err
 	}
 
 	return redelegations, nil

@@ -22,14 +22,14 @@ type AccountBalanceArgs struct {
 	Height  int64  `json:"height"`
 }
 
-// ========================= Delegation Payload =========================
+// ========================= Staking Payload =========================
 
-type DelegationPayload struct {
+type StakingPayload struct {
 	SessionVariables map[string]interface{} `json:"session_variables"`
-	Input            DelegationArgs         `json:"input"`
+	Input            StakingArgs            `json:"input"`
 }
 
-type DelegationArgs struct {
+type StakingArgs struct {
 	Address    string `json:"address"`
 	Offset     uint64 `json:"offset"`
 	Limit      uint64 `json:"limit"`

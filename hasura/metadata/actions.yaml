@@ -71,10 +71,16 @@ actions:
   definition:
     kind: synchronous
     handler: http://localhost:3000/redelegation
-    output_type: "[ActionRedelegation]"
+    output_type: ActionRedelegationResponse
     arguments:
     - name: address
       type: String!
+    - name: offset
+      type: Int
+    - name: limit
+      type: Int
+    - name: count_total
+      type: Boolean!
     type: query
     headers:
     - value: application/json
@@ -118,6 +124,7 @@ custom_types:
   - name: ActionDelegation
   - name: ActionPagination
   - name: ActionEntry
+  - name: ActionRedelegation
 
   objects:
   - name: ActionBalance
@@ -137,23 +144,14 @@ custom_types:
     - name: address
       type: String!
 
-  - name: ActionDelegationResponse
+  
+      
+  - name: ActionRedelegationResponse
     fields:
-    - name: delegations
-      type: [ActionDelegation]
+    - name: redelegations
+      type: [ActionRedelegation]
     - name: pagination
       type: ActionPagination
-
-  - name: ActionRedelegation
-    fields:
-    - name: delegator_address
-      type: String!
-    - name: validator_src_address
-      type: String!
-    - name: validator_dst_address
-      type: String!
-    - name: entries
-      type: [ActionEntry]
 
   - name: ActionUnbondingDelegation
     fields:

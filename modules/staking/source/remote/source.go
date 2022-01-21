@@ -179,32 +179,24 @@ func (s Source) GetDelegationsWithPagination(
 }
 
 // GetDelegatorRedelegations implements stakingsource.Source
-func (s Source) GetDelegatorRedelegations(height int64, delegator string) ([]stakingtypes.RedelegationResponse, error) {
+func (s Source) GetDelegatorRedelegations(height int64, delegator string, pagination *query.PageRequest) (*stakingtypes.QueryRedelegationsResponse, error) {
 	header := remote.GetHeightRequestHeader(height)
 
-	var redelegations []stakingtypes.RedelegationResponse
-	var nextKey []byte
-	var stop = false
-	for !stop {
-		res, err := s.stakingClient.Redelegations(
-			s.Ctx,
-			&stakingtypes.QueryRedelegationsRequest{
-				DelegatorAddr: delegator,
-				Pagination: &query.PageRequest{
-					Key:   nextKey,
-					Limit: 100, // Query 100 delegations at time
-				},
+	redelegations, err := s.stakingClient.Redelegations(
+		s.Ctx,
+		&stakingtypes.QueryRedelegationsRequest{
+			DelegatorAddr: delegator,
+			Pagination: &query.PageRequest{
+				Limit:      pagination.GetLimit(),
+				Offset:     pagination.GetOffset(),
+				CountTotal: pagination.GetCountTotal(),
 			},
-			header,
-		)
-		if err != nil {
-			return nil, err
-		}
-
-		stop = len(res.Pagination.NextKey) == 0
-		redelegations = append(redelegations, res.RedelegationResponses...)
+		},
+		header,
+	)
+	if err != nil {
+		return nil, err
 	}
-
 	return redelegations, nil
 }
 

@@ -48,6 +48,11 @@ type UnbondingDelegation struct {
 
 // ========================= Redelegation Response =========================
 
+type RedelegationResponse struct {
+	Redelegations []Redelegation      `json:"redelegations"`
+	Pagination    *query.PageResponse `json:"pagination"`
+}
+
 type Redelegation struct {
 	DelegatorAddress    string                          `json:"delegator_address"`
 	ValidatorSrcAddress string                          `json:"validator_src_address"`
