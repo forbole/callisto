@@ -14,11 +14,12 @@ CREATE INDEX staking_params_height_index ON staking_params (height);
 CREATE TABLE staking_pool
 (
     one_row_id        BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
-    bonded_tokens     BIGINT  NOT NULL,
-    not_bonded_tokens BIGINT  NOT NULL,
-    height            BIGINT  NOT NULL,
+    bonded_tokens     DECIMAL  NOT NULL,
+    not_bonded_tokens DECIMAL  NOT NULL,
+    height            DECIMAL  NOT NULL,
     CHECK (one_row_id)
 );
+
 CREATE INDEX staking_pool_height_index ON staking_pool (height);
 
 /* ---- VALIDATORS INFO ---- */
