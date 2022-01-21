@@ -43,13 +43,6 @@ type ActionAddress {
     address: String!
 }
 
-type ActionPagination {
-    key: json
-    offset: Int!
-    limit: Int!
-    count_total: Boolean
-}
-
 type ActionDelegation {
     delegator_address: String!
     validator_address: String!
@@ -74,5 +67,6 @@ type ActionValidatorCommissionAmount {
 }
 
 scalar ActionCoin
+scalar ActionPagination
 scalar ActionEntry
 

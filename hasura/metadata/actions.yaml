@@ -111,6 +111,7 @@ actions:
 custom_types:
   scalars:
   - name: ActionCoin
+  - name: ActionPagination
   - name: ActionEntry
 
   objects:
@@ -130,17 +131,6 @@ custom_types:
     fields: 
     - name: address
       type: String!
-  
-  - name: ActionPagination
-    fields:
-    - name: key
-      type: json
-    - name: offet
-      type: Int!
-    - name: limit
-      type: Int!
-    - name: count_total
-      type: Boolean
 
   - name: ActionDelegation
     fields:
