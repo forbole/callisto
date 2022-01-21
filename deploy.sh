@@ -16,12 +16,12 @@ else
     echo "Wrong env passed: can be either dev or prod"
 fi
 
-# cd ../BigDipper2
-# echo "Starting BigDipper2 docker-compose"
-# if [ $env = "prod" ]; then
-#     docker-compose up -d --file=docker-compose-prod.yml
-# elif [ $env = "dev" ]; then
-#     docker-compose up -d --file=docker-compose-dev.yml
-# else
-#     echo "Wrong env passed: can be either dev or prod"
-# fi
+cd ../BigDipper2
+echo "Starting BigDipper2 docker-compose"
+if [ $env = "prod" ]; then
+    docker-compose up -d --file=docker-compose-prod.yml
+elif [ $env = "dev" ]; then
+    docker-compose up -d --file=docker-compose-dev.yml
+else
+    echo "Wrong env passed: can be either dev or prod"
+fi
