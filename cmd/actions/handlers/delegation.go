@@ -19,14 +19,16 @@ func Delegation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var actionPayload actionstypes.AddressPayload
+	var actionPayload actionstypes.DelegationPayload
 	err = json.Unmarshal(reqBody, &actionPayload)
 	if err != nil {
 		http.Error(w, "invalid payload: failed to unmarshal json", http.StatusInternalServerError)
 		return
 	}
 
-	result, err := getDelegation(actionPayload.Input.Address)
+	fmt.Println("actionPayload Delegation: ", actionPayload.Input)
+
+	result, err := getDelegation(actionPayload.Input)
 	if err != nil {
 		errorHandler(w, err)
 		return
@@ -36,7 +38,7 @@ func Delegation(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func getDelegation(address string) ([]actionstypes.Delegation, error) {
+func getDelegation(input actionstypes.DelegationArgs) ([]actionstypes.Delegation, error) {
 	parseCtx, sources, err := getCtxAndSources()
 	if err != nil {
 		return nil, err
@@ -49,7 +51,7 @@ func getDelegation(address string) ([]actionstypes.Delegation, error) {
 	}
 
 	// Get delegator's total rewards
-	delegations, err := sources.StakingSource.GetDelegatorDelegations(height, address)
+	delegations, err := sources.StakingSource.GetDelegationsWithPagination(height, input.Address, input.Pagination)
 	if err != nil {
 		return nil, fmt.Errorf("error while getting delegator delegations: %s", err)
 	}

@@ -54,6 +54,8 @@ actions:
     arguments:
     - name: address
       type: String!
+    - name: pagination
+      type: ActionPagination
     type: query
     headers:
     - value: application/json
@@ -128,6 +130,17 @@ custom_types:
     fields: 
     - name: address
       type: String!
+  
+  - name: ActionPagination
+    fields:
+    - name: key
+      type: json
+    - name: offet
+      type: Int!
+    - name: limit
+      type: Int!
+    - name: count_total
+      type: Boolean
 
   - name: ActionDelegation
     fields:
