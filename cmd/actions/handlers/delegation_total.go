@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/query"
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 )
 
@@ -50,14 +49,8 @@ func getTotalDelegationAmount(input actionstypes.StakingArgs) (actionstypes.Bala
 		return actionstypes.Balance{}, fmt.Errorf("error while getting chain latest block height: %s", err)
 	}
 
-	pagination := &query.PageRequest{
-		Offset:     input.Offset,
-		Limit:      input.Limit,
-		CountTotal: input.CountTotal,
-	}
-
-	// Get delegator's delegations
-	delegationList, err := sources.StakingSource.GetDelegationsWithPagination(height, input.Address, pagination)
+	// Get all  delegations for given delegator address
+	delegationList, err := sources.StakingSource.GetDelegationsWithPagination(height, input.Address, nil)
 	if err != nil {
 		return actionstypes.Balance{}, fmt.Errorf("error while getting delegator delegations: %s", err)
 	}
