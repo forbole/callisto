@@ -17,7 +17,7 @@ type Query {
         offset: Int!
         limit: Int!
         count_total: Boolean!
-    ): [ActionDelegation]
+    ): ActionDelegationResponse
 
     action_redelegation(
         address: String!
