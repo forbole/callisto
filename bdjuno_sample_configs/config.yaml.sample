@@ -10,6 +10,7 @@ chain:
         - mint
         - slashing 
         - staking
+        - pricefeed
 node:
     type: remote
     config:
