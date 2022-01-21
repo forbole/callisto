@@ -153,7 +153,10 @@ func (s Source) GetDelegatorDelegations(height int64, delegator string) ([]staki
 }
 
 // GetDelegationsWithPagination implements stakingsource.Source
-func (s Source) GetDelegationsWithPagination(height int64, delegator string, pagination *query.PageRequest) ([]stakingtypes.DelegationResponse, error) {
+func (s Source) GetDelegationsWithPagination(
+	height int64, delegator string, pagination *query.PageRequest,
+) (*stakingtypes.QueryDelegatorDelegationsResponse, error) {
+
 	header := remote.GetHeightRequestHeader(height)
 
 	res, err := s.stakingClient.DelegatorDelegations(
@@ -172,7 +175,7 @@ func (s Source) GetDelegationsWithPagination(height int64, delegator string, pag
 		return nil, err
 	}
 
-	return res.DelegationResponses, nil
+	return res, nil
 }
 
 // GetDelegatorRedelegations implements stakingsource.Source

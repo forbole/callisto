@@ -39,16 +39,16 @@ func Delegation(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func getDelegation(input actionstypes.DelegationArgs) ([]actionstypes.Delegation, error) {
+func getDelegation(input actionstypes.DelegationArgs) (actionstypes.DelegationResponse, error) {
 	parseCtx, sources, err := getCtxAndSources()
 	if err != nil {
-		return nil, err
+		return actionstypes.DelegationResponse{}, err
 	}
 
 	// Get latest node height
 	height, err := parseCtx.Node.LatestHeight()
 	if err != nil {
-		return nil, fmt.Errorf("error while getting chain latest block height: %s", err)
+		return actionstypes.DelegationResponse{}, fmt.Errorf("error while getting chain latest block height: %s", err)
 	}
 
 	pagination := &query.PageRequest{
@@ -58,19 +58,22 @@ func getDelegation(input actionstypes.DelegationArgs) ([]actionstypes.Delegation
 	}
 
 	// Get delegator's total rewards
-	delegations, err := sources.StakingSource.GetDelegationsWithPagination(height, input.Address, pagination)
+	res, err := sources.StakingSource.GetDelegationsWithPagination(height, input.Address, pagination)
 	if err != nil {
-		return nil, fmt.Errorf("error while getting delegator delegations: %s", err)
+		return actionstypes.DelegationResponse{}, fmt.Errorf("error while getting delegator delegations: %s", err)
 	}
 
-	response := make([]actionstypes.Delegation, len(delegations))
-	for index, del := range delegations {
-		response[index] = actionstypes.Delegation{
+	delegations := make([]actionstypes.Delegation, len(res.DelegationResponses))
+	for index, del := range res.DelegationResponses {
+		delegations[index] = actionstypes.Delegation{
 			DelegatorAddress: del.Delegation.DelegatorAddress,
 			ValidatorAddress: del.Delegation.ValidatorAddress,
 			Coins:            del.Balance,
 		}
 	}
 
-	return response, nil
+	return actionstypes.DelegationResponse{
+		Delegations: delegations,
+		Pagination:  res.Pagination,
+	}, nil
 }

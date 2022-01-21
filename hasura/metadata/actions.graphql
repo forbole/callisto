@@ -45,10 +45,9 @@ type ActionAddress {
     address: String!
 }
 
-type ActionDelegation {
-    delegator_address: String!
-    validator_address: String!
-    coins: ActionCoin!
+type ActionDelegationResponse {
+    delegations: [ActionDelegation]
+    pagination: ActionPagination
 }
 
 type ActionRedelegation {
@@ -69,5 +68,7 @@ type ActionValidatorCommissionAmount {
 }
 
 scalar ActionCoin
+scalar ActionDelegation
+scalar ActionPagination
 scalar ActionEntry
 

@@ -129,7 +129,7 @@ func (s Source) GetDelegatorDelegations(height int64, delegator string) ([]staki
 }
 
 // GetDelegationsWithPagination implements stakingsource.Source
-func (s Source) GetDelegationsWithPagination(height int64, delegator string, pagination *query.PageRequest) ([]stakingtypes.DelegationResponse, error) {
+func (s Source) GetDelegationsWithPagination(height int64, delegator string, pagination *query.PageRequest) (*stakingtypes.QueryDelegatorDelegationsResponse, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
 		return nil, fmt.Errorf("error while loading height: %s", err)
@@ -150,7 +150,7 @@ func (s Source) GetDelegationsWithPagination(height int64, delegator string, pag
 		return nil, err
 	}
 
-	return res.DelegationResponses, nil
+	return res, nil
 }
 
 // GetDelegatorRedelegations implements stakingsource.Source
