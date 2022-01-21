@@ -6,7 +6,6 @@ type Query {
 
     action_delegation_reward(
         address: String!
-        pagination: ActionPagination
     ): [ActionDelegationReward]
 
     action_delegator_withdraw_address(
@@ -15,6 +14,7 @@ type Query {
     
     action_delegation(
         address: String!
+        pagination: ActionPagination
     ): [ActionDelegation]
 
     action_redelegation(
