@@ -58,7 +58,7 @@ actions:
       type: String
     - name: offset
       type: Int
-    - name: Limit
+    - name: limit
       type: Int
     - name: count_total
       type: Boolean!
