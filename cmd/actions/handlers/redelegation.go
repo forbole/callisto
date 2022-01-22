@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/cosmos/cosmos-sdk/types/query"
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 )
 
@@ -19,14 +20,14 @@ func Redelegation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var actionPayload actionstypes.AddressPayload
+	var actionPayload actionstypes.StakingPayload
 	err = json.Unmarshal(reqBody, &actionPayload)
 	if err != nil {
 		http.Error(w, "invalid payload: failed to unmarshal json", http.StatusInternalServerError)
 		return
 	}
 
-	result, err := getRedelegation(actionPayload.Input.Address)
+	result, err := getRedelegation(actionPayload.Input)
 	if err != nil {
 		errorHandler(w, err)
 		return
@@ -36,33 +37,42 @@ func Redelegation(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func getRedelegation(address string) ([]actionstypes.Redelegation, error) {
+func getRedelegation(input actionstypes.StakingArgs) (actionstypes.RedelegationResponse, error) {
 	parseCtx, sources, err := getCtxAndSources()
 	if err != nil {
-		return nil, err
+		return actionstypes.RedelegationResponse{}, err
 	}
 
 	// Get latest node height
 	height, err := parseCtx.Node.LatestHeight()
 	if err != nil {
-		return nil, fmt.Errorf("error while getting chain latest block height: %s", err)
+		return actionstypes.RedelegationResponse{}, fmt.Errorf("error while getting chain latest block height: %s", err)
+	}
+
+	pagination := &query.PageRequest{
+		Offset:     input.Offset,
+		Limit:      input.Limit,
+		CountTotal: input.CountTotal,
 	}
 
 	// Get delegator's redelegations
-	redelegations, err := sources.StakingSource.GetDelegatorRedelegations(height, address)
+	redelegations, err := sources.StakingSource.GetDelegatorRedelegations(height, input.Address, pagination)
 	if err != nil {
-		return nil, fmt.Errorf("error while getting delegator redelegations: %s", err)
+		return actionstypes.RedelegationResponse{}, fmt.Errorf("error while getting delegator redelegations: %s", err)
 	}
 
-	response := make([]actionstypes.Redelegation, len(redelegations))
-	for index, redel := range redelegations {
-		response[index] = actionstypes.Redelegation{
-			DelegatorAddress:    redel.Redelegation.DelegatorAddress,
-			ValidatorSrcAddress: redel.Redelegation.ValidatorSrcAddress,
-			ValidatorDstAddress: redel.Redelegation.ValidatorSrcAddress,
-			Entries:             redel.Redelegation.Entries,
+	redelegationsList := make([]actionstypes.Redelegation, len(redelegations.RedelegationResponses))
+	for index, del := range redelegations.RedelegationResponses {
+		redelegationsList[index] = actionstypes.Redelegation{
+			DelegatorAddress:    del.Redelegation.DelegatorAddress,
+			ValidatorSrcAddress: del.Redelegation.ValidatorSrcAddress,
+			ValidatorDstAddress: del.Redelegation.ValidatorDstAddress,
+			Entries:             del.Redelegation.Entries,
 		}
 	}
 
-	return response, nil
+	return actionstypes.RedelegationResponse{
+		Redelegations: redelegationsList,
+		Pagination:    redelegations.Pagination,
+	}, nil
 }

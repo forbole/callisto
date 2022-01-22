@@ -40,6 +40,11 @@ type ValidatorCommissionAmount struct {
 
 // ========================= Unbonding Delegation Response =========================
 
+type UnbondingDelegationResponse struct {
+	UnbondingDelegations []UnbondingDelegation `json:"unbonding_delegations"`
+	Pagination           *query.PageResponse   `json:"pagination"`
+}
+
 type UnbondingDelegation struct {
 	DelegatorAddress string                                 `json:"delegator_address"`
 	ValidatorAddress string                                 `json:"validator_address"`
@@ -47,6 +52,11 @@ type UnbondingDelegation struct {
 }
 
 // ========================= Redelegation Response =========================
+
+type RedelegationResponse struct {
+	Redelegations []Redelegation      `json:"redelegations"`
+	Pagination    *query.PageResponse `json:"pagination"`
+}
 
 type Redelegation struct {
 	DelegatorAddress    string                          `json:"delegator_address"`

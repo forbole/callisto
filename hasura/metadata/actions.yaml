@@ -67,14 +67,38 @@ actions:
   permissions:
   - role: anonymous
 
+- name: action_delegation_total
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/delegation_total
+    output_type: ActionBalance
+    arguments:
+    - name: address
+      type: String!
+    - name: height
+      type: Int
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+
 - name: action_redelegation
   definition:
     kind: synchronous
     handler: http://localhost:3000/redelegation
-    output_type: "[ActionRedelegation]"
+    output_type: ActionRedelegationResponse
     arguments:
     - name: address
       type: String!
+    - name: offset
+      type: Int
+    - name: limit
+      type: Int
+    - name: count_total
+      type: Boolean!
     type: query
     headers:
     - value: application/json
@@ -86,10 +110,33 @@ actions:
   definition:
     kind: synchronous
     handler: http://localhost:3000/unbonding_delegation
-    output_type: "[ActionUnbondingDelegation]"
+    output_type: ActionUnbondingDelegationResponse
     arguments:
     - name: address
       type: String!
+    - name: offset
+      type: Int
+    - name: limit
+      type: Int
+    - name: count_total
+      type: Boolean!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: action_unbonding_delegation_total
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/unbonding_delegation_total
+    output_type: ActionBalance
+    arguments:
+    - name: address
+      type: String!
+    - name: height
+      type: Int
     type: query
     headers:
     - value: application/json
@@ -116,8 +163,10 @@ custom_types:
   scalars:
   - name: ActionCoin
   - name: ActionDelegation
-  - name: ActionPagination
   - name: ActionEntry
+  - name: ActionPagination
+  - name: ActionRedelegation
+  - name: ActionUnbondingDelegation
 
   objects:
   - name: ActionBalance
@@ -137,32 +186,19 @@ custom_types:
     - name: address
       type: String!
 
-  - name: ActionDelegationResponse
+  - name: ActionRedelegationResponse
     fields:
-    - name: delegations
-      type: [ActionDelegation]
+    - name: redelegations
+      type: [ActionRedelegation]
     - name: pagination
       type: ActionPagination
 
-  - name: ActionRedelegation
+  - name: ActionUnbondingDelegationResponse
     fields:
-    - name: delegator_address
-      type: String!
-    - name: validator_src_address
-      type: String!
-    - name: validator_dst_address
-      type: String!
-    - name: entries
-      type: [ActionEntry]
-
-  - name: ActionUnbondingDelegation
-    fields:
-    - name: delegator_address
-      type: String!
-    - name: validator_address
-      type: String!
-    - name: entries
-      type: [ActionEntry]
+    - name: unbonding_delegations
+      type: [ActionUnbondingDelegation]
+    - name: pagination
+      type: ActionPagination
   
   - name: ActionValidatorCommissionAmount
     fields:
