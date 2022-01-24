@@ -1,7 +1,6 @@
 package remote
 
 import (
-	"context"
 	"fmt"
 	"strconv"
 
@@ -21,7 +20,7 @@ func (s Source) GetBalances(addresses []string, height int64) ([]types.AccountBa
 	var balances []types.AccountBalance
 	for _, address := range addresses {
 		balRes, err := s.bankClient.AllBalances(
-			metadata.AppendToOutgoingContext(context.Background(), grpctypes.GRPCBlockHeightHeader, strconv.Itoa(int(height))),
+			metadata.AppendToOutgoingContext(s.Ctx, grpctypes.GRPCBlockHeightHeader, strconv.Itoa(int(height))),
 			&banktypes.QueryAllBalancesRequest{Address: address},
 			grpc.Header(&header),
 		)
