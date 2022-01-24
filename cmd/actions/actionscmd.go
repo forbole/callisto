@@ -39,9 +39,9 @@ func NewActionsCmd(parseCfg *parse.Config) *cobra.Command {
 			mux.HandleFunc("/redelegation", handlers.Redelegation)
 
 			// -- Staking Validator --
+			mux.HandleFunc("/validator_delegation", handlers.ValidatorDelegation)
 
 			// To-Do
-			// mux.HandleFunc("/validator_delegation", handlers.ValidatorDelegation)
 			// mux.HandleFunc("/validator_redelegation", handlers.ValidatorRedelegation)
 			// mux.HandleFunc("/validator_unbonding_delegation", handlers.ValidatorUnbondingDelegation)
 

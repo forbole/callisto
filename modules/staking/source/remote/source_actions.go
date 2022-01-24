@@ -76,3 +76,24 @@ func (s Source) GetUnbondingDelegations(height int64, delegator string, paginati
 
 	return unbondingDelegations, nil
 }
+
+// GetValidatorDelegationsWithPagination implements stakingsource.Source
+func (s Source) GetValidatorDelegationsWithPagination(
+	height int64, validator string, pagination *query.PageRequest,
+) (*stakingtypes.QueryValidatorDelegationsResponse, error) {
+	header := remote.GetHeightRequestHeader(height)
+
+	res, err := s.stakingClient.ValidatorDelegations(
+		s.Ctx,
+		&stakingtypes.QueryValidatorDelegationsRequest{
+			ValidatorAddr: validator,
+			Pagination:    pagination,
+		},
+		header,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
