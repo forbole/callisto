@@ -22,15 +22,28 @@ func NewActionsCmd(parseCfg *parse.Config) *cobra.Command {
 			mux := http.NewServeMux()
 
 			// End points:
+
+			// -- Bank --
 			mux.HandleFunc("/account_balance", handlers.AccountBalance)
+
+			// -- Distribution --
 			mux.HandleFunc("/delegation_reward", handlers.DelegationReward)
+			mux.HandleFunc("/delegator_withdraw_address", handlers.DelegatorWithdrawAddress)
+			mux.HandleFunc("/validator_commission_amount", handlers.ValidatorCommissionAmount)
+
+			// -- Staking Delegator --
 			mux.HandleFunc("/delegation", handlers.Delegation)
 			mux.HandleFunc("/delegation_total", handlers.TotalDelegationAmount)
 			mux.HandleFunc("/unbonding_delegation", handlers.UnbondingDelegations)
 			mux.HandleFunc("/unbonding_delegation_total", handlers.UnbondingDelegationsTotal)
-			mux.HandleFunc("/validator_commission_amount", handlers.ValidatorCommissionAmount)
 			mux.HandleFunc("/redelegation", handlers.Redelegation)
-			mux.HandleFunc("/delegator_withdraw_address", handlers.DelegatorWithdrawAddress)
+
+			// -- Staking Validator --
+
+			// To-Do
+			// mux.HandleFunc("/validator_delegation", handlers.ValidatorDelegation)
+			// mux.HandleFunc("/validator_redelegation", handlers.ValidatorRedelegation)
+			// mux.HandleFunc("/validator_unbonding_delegation", handlers.ValidatorUnbondingDelegation)
 
 			err := http.ListenAndServe(":3000", mux)
 			log.Fatal(err)
