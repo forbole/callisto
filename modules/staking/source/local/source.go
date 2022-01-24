@@ -153,8 +153,8 @@ func (s Source) GetDelegationsWithPagination(height int64, delegator string, pag
 	return res, nil
 }
 
-// GetDelegatorRedelegations implements stakingsource.Source
-func (s Source) GetDelegatorRedelegations(height int64, delegator string, pagination *query.PageRequest) (*stakingtypes.QueryRedelegationsResponse, error) {
+// GetRedelegations implements stakingsource.Source
+func (s Source) GetRedelegations(height int64, request *stakingtypes.QueryRedelegationsRequest) (*stakingtypes.QueryRedelegationsResponse, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
 		return nil, fmt.Errorf("error while loading height: %s", err)
@@ -163,11 +163,11 @@ func (s Source) GetDelegatorRedelegations(height int64, delegator string, pagina
 	redelegations, err := s.q.Redelegations(
 		sdk.WrapSDKContext(ctx),
 		&stakingtypes.QueryRedelegationsRequest{
-			DelegatorAddr: delegator,
+			DelegatorAddr: request.DelegatorAddr,
 			Pagination: &query.PageRequest{
-				Limit:      pagination.GetLimit(),
-				Offset:     pagination.GetOffset(),
-				CountTotal: pagination.GetCountTotal(),
+				Limit:      request.Pagination.Limit,
+				Offset:     request.Pagination.Offset,
+				CountTotal: request.Pagination.CountTotal,
 			},
 		},
 	)
