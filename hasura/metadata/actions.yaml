@@ -158,7 +158,7 @@ actions:
   permissions:
   - role: anonymous
 
-- name: action_validator_delegation_to
+- name: action_validator_delegation
   definition:
     kind: synchronous
     handler: http://localhost:3000/validator_delegation
