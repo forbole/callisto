@@ -47,7 +47,7 @@ type Query {
         address: String!
     ): ActionValidatorCommissionAmount
 
-    action_validator_delegation_to(
+    action_validator_redelegation_to(
         address: String!
         offset: Int
         limit: Int
