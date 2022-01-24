@@ -54,13 +54,19 @@ type Query {
         count_total: Boolean
     ): ActionDelegationResponse
 
-    action_redelegation_from_validator(
+    action_validator_redelegation_from(
         address: String!
         offset: Int
         limit: Int
         count_total: Boolean
     ): ActionRedelegationResponse
 
+    action_validator_unbonding_delegations(
+        address: String!
+        offset: Int
+        limit: Int
+        count_total: Boolean
+    ): ActionUnbondingDelegationResponse
 }
 
 type ActionBalance {

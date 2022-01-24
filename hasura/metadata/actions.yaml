@@ -161,7 +161,7 @@ actions:
 - name: action_validator_delegation
   definition:
     kind: synchronous
-    handler: http://localhost:3000/validator_delegation
+    handler: http://localhost:3000/validator_delegations
     output_type: ActionDelegationResponse
     arguments:
     - name: address
@@ -179,11 +179,32 @@ actions:
   permissions:
   - role: anonymous  
 
-- name: action_redelegation_from_validator
+- name: action_validator_redelegation_from
   definition:
     kind: synchronous
-    handler: http://localhost:3000/redelegation_from_validator
+    handler: http://localhost:3000/validator_redelegations_from
     output_type: ActionRedelegationResponse
+    arguments:
+    - name: address
+      type: String!
+    - name: offset
+      type: Int
+    - name: limit
+      type: Int
+    - name: count_total
+      type: Boolean!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: action_validator_unbonding_delegations
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/validator_unbonding_delegations
+    output_type: ActionUnbondingDelegationResponse
     arguments:
     - name: address
       type: String!

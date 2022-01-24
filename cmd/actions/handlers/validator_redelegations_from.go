@@ -11,7 +11,7 @@ import (
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 )
 
-func RedelegationFromValidator(w http.ResponseWriter, r *http.Request) {
+func ValidatorRedelegationsFrom(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
@@ -72,7 +72,6 @@ func getValidatorRedelegation(input actionstypes.StakingArgs) (actionstypes.Rede
 			ValidatorDstAddress: del.Redelegation.ValidatorDstAddress,
 		}
 
-		// Handle Completion Time and Balance
 		RedelegationEntriesList := make([]actionstypes.RedelegationEntry, len(del.Entries))
 		for indexEntry, entry := range del.Entries {
 			RedelegationEntriesList[indexEntry] = actionstypes.RedelegationEntry{

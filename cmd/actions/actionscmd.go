@@ -39,11 +39,9 @@ func NewActionsCmd(parseCfg *parse.Config) *cobra.Command {
 			mux.HandleFunc("/redelegation", handlers.Redelegation)
 
 			// -- Staking Validator --
-			mux.HandleFunc("/validator_delegation", handlers.ValidatorDelegation)
-			mux.HandleFunc("/redelegation_from_validator", handlers.RedelegationFromValidator)
-
-			// To-Do
-			// mux.HandleFunc("/validator_unbonding_delegation", handlers.ValidatorUnbondingDelegation)
+			mux.HandleFunc("/validator_delegations", handlers.ValidatorDelegation)
+			mux.HandleFunc("/validator_redelegations_from", handlers.ValidatorRedelegationsFrom)
+			mux.HandleFunc("/validator_unbonding_delegations", handlers.ValidatorUnbondingDelegations)
 
 			err := http.ListenAndServe(":3000", mux)
 			log.Fatal(err)

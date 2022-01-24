@@ -286,3 +286,26 @@ func (s Source) GetValidatorDelegationsWithPagination(
 
 	return res, nil
 }
+
+// GetUnbondingDelegationsFromValidator implements stakingsource.Source
+func (s Source) GetUnbondingDelegationsFromValidator(
+	height int64, validator string, pagination *query.PageRequest,
+) (*stakingtypes.QueryValidatorUnbondingDelegationsResponse, error) {
+	ctx, err := s.LoadHeight(height)
+	if err != nil {
+		return nil, fmt.Errorf("error while loading height: %s", err)
+	}
+
+	unbondingDelegations, err := s.q.ValidatorUnbondingDelegations(
+		sdk.WrapSDKContext(ctx),
+		&stakingtypes.QueryValidatorUnbondingDelegationsRequest{
+			ValidatorAddr: validator,
+			Pagination:    pagination,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return unbondingDelegations, nil
+}
