@@ -2,7 +2,6 @@ package pricefeed
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
@@ -32,36 +31,14 @@ func (m *Module) updatePrice() error {
 		Str("operation", "pricefeed").
 		Msg("getting token price and market cap")
 
-	// Get the list of coins
-	coins, err := coingecko.GetCoinsList()
+	// Get the list of tokens price id
+	ids, err := m.db.GetTokensPriceID()
 	if err != nil {
-		return fmt.Errorf("error while getting coins list: %s", err)
-	}
-
-	// Get the list of token units
-	units, err := m.db.GetTokenUnits()
-	if err != nil {
-		return fmt.Errorf("error while getting token units: %s", err)
-	}
-
-	// Find the id of the coins
-	var ids []string
-	for _, tradedToken := range units {
-		// Skip the token if the price id is empty
-		if tradedToken.PriceID == "" {
-			continue
-		}
-
-		for _, coin := range coins {
-			if strings.EqualFold(coin.ID, tradedToken.PriceID) {
-				ids = append(ids, coin.ID)
-				break
-			}
-		}
+		return fmt.Errorf("error while getting tokens price id: %s", err)
 	}
 
 	if len(ids) == 0 {
-		log.Debug().Str("module", "pricefeed").Msg("no traded tokens found")
+		log.Debug().Str("module", "pricefeed").Msg("no traded tokens price id found")
 		return nil
 	}
 
