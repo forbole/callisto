@@ -47,14 +47,14 @@ type Query {
         address: String!
     ): ActionValidatorCommissionAmount
 
-    action_validator_delegation(
+    action_validator_delegations(
         address: String!
         offset: Int
         limit: Int
         count_total: Boolean
     ): ActionDelegationResponse
 
-    action_validator_redelegation_from(
+    action_validator_redelegations_from(
         address: String!
         offset: Int
         limit: Int
