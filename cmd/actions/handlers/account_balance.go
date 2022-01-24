@@ -51,12 +51,12 @@ func getAccountBalance(input actionstypes.AccountBalanceArgs) (response actionst
 		}
 	}
 
-	balRes, err := sources.BankSource.GetAccountBalance(input.Address, height)
+	balance, err := sources.BankSource.GetAccountBalance(input.Address, height)
 	if err != nil {
 		return response, err
 	}
 
 	return actionstypes.Balance{
-		Coins: balRes.Balance,
+		Coins: balance,
 	}, nil
 }
