@@ -61,7 +61,7 @@ func getValidatorRedelegation(input actionstypes.StakingArgs) (actionstypes.Rede
 	}
 	redelegations, err := sources.StakingSource.GetRedelegations(height, redelegationRequest)
 	if err != nil {
-		return actionstypes.RedelegationResponse{}, fmt.Errorf("error while getting delegator redelegations: %s", err)
+		return actionstypes.RedelegationResponse{}, fmt.Errorf("error while getting redelegations from validator: %s", err)
 	}
 
 	redelegationsList := make([]actionstypes.Redelegation, len(redelegations.RedelegationResponses))

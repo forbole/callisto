@@ -59,18 +59,7 @@ func (s Source) GetUnbondingDelegations(height int64, delegator string, paginati
 func (s Source) GetRedelegations(height int64, request *stakingtypes.QueryRedelegationsRequest) (*stakingtypes.QueryRedelegationsResponse, error) {
 	header := remote.GetHeightRequestHeader(height)
 
-	redelegations, err := s.stakingClient.Redelegations(
-		s.Ctx,
-		&stakingtypes.QueryRedelegationsRequest{
-			DelegatorAddr: request.DelegatorAddr,
-			Pagination: &query.PageRequest{
-				Limit:      request.Pagination.Limit,
-				Offset:     request.Pagination.Offset,
-				CountTotal: request.Pagination.CountTotal,
-			},
-		},
-		header,
-	)
+	redelegations, err := s.stakingClient.Redelegations(s.Ctx, request, header)
 	if err != nil {
 		return nil, err
 	}

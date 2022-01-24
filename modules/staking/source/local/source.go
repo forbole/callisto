@@ -160,17 +160,7 @@ func (s Source) GetRedelegations(height int64, request *stakingtypes.QueryRedele
 		return nil, fmt.Errorf("error while loading height: %s", err)
 	}
 
-	redelegations, err := s.q.Redelegations(
-		sdk.WrapSDKContext(ctx),
-		&stakingtypes.QueryRedelegationsRequest{
-			DelegatorAddr: request.DelegatorAddr,
-			Pagination: &query.PageRequest{
-				Limit:      request.Pagination.Limit,
-				Offset:     request.Pagination.Offset,
-				CountTotal: request.Pagination.CountTotal,
-			},
-		},
-	)
+	redelegations, err := s.q.Redelegations(sdk.WrapSDKContext(ctx), request)
 	if err != nil {
 		return nil, err
 	}
