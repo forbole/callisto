@@ -67,7 +67,14 @@ func getRedelegation(input actionstypes.StakingArgs) (actionstypes.RedelegationR
 			DelegatorAddress:    del.Redelegation.DelegatorAddress,
 			ValidatorSrcAddress: del.Redelegation.ValidatorSrcAddress,
 			ValidatorDstAddress: del.Redelegation.ValidatorDstAddress,
-			Entries:             del.Redelegation.Entries,
+		}
+
+		for indexEntry, entry := range del.Entries {
+			redelegationsList[index].
+				RedelegationEntries[indexEntry] = actionstypes.RedelegationEntry{
+				CompletionTime: entry.RedelegationEntry.CompletionTime,
+				Balance:        entry.Balance,
+			}
 		}
 	}
 
