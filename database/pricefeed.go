@@ -10,8 +10,8 @@ import (
 	"github.com/lib/pq"
 )
 
-// GetTokenUnits returns the slice of all the names of the different tokens units
-func (db *Db) GetTokenUnits() ([]types.TokenUnit, error) {
+// GetTokensPriceID returns the slice of price ids for all tokens stored in db
+func (db *Db) GetTokensPriceID() ([]string, error) {
 	query := `SELECT * FROM token_unit`
 
 	var dbUnits []dbtypes.TokenUnitRow
@@ -20,14 +20,9 @@ func (db *Db) GetTokenUnits() ([]types.TokenUnit, error) {
 		return nil, err
 	}
 
-	var units = make([]types.TokenUnit, len(dbUnits))
-	for index, unit := range dbUnits {
-		units[index] = types.NewTokenUnit(
-			unit.Denom,
-			unit.Exponent,
-			unit.Aliases,
-			dbtypes.ToString(unit.PriceID),
-		)
+	var units []string
+	for _, unit := range dbUnits {
+		units = append(units, unit.PriceID.String)
 	}
 
 	return units, nil
