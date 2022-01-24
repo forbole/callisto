@@ -8,7 +8,6 @@ import (
 	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"google.golang.org/grpc/codes"
@@ -117,11 +116,6 @@ func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Propo
 			err = m.mintModule.UpdateParams(height)
 			if err != nil {
 				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", minttypes.ModuleName, err)
-			}
-		case profilestypes.ModuleName:
-			err = m.profilesModule.UpdateParams(height)
-			if err != nil {
-				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", profilestypes.ModuleName, err)
 			}
 		case slashingtypes.ModuleName:
 			err = m.slashingModule.UpdateParams(height)

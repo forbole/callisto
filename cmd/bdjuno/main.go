@@ -18,7 +18,6 @@ import (
 	"github.com/forbole/bdjuno/v2/modules"
 
 	gaiaapp "github.com/cosmos/gaia/v6/app"
-	desmosapp "github.com/desmos-labs/desmos/v2/app"
 )
 
 func main() {
@@ -56,7 +55,6 @@ func main() {
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
 		gaiaapp.ModuleBasics,
-		desmosapp.ModuleBasics,
 	}
 }
 
@@ -65,7 +63,6 @@ func getBasicManagers() []module.BasicManager {
 // This should be edited by custom implementations if needed.
 func getAddressesParser() messages.MessageAddressesParser {
 	return messages.JoinMessageParsers(
-		desmosMessageAddressesParser,
 		messages.CosmosMessageAddressesParser,
 	)
 }
