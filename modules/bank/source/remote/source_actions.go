@@ -27,7 +27,5 @@ func (s Source) GetAccountBalance(address string, height int64) ([]sdk.Coin, err
 		return nil, fmt.Errorf("error while getting all balances: %s", err)
 	}
 
-	fmt.Println("Balance response: ", balRes)
-
 	return balRes.Balances, nil
 }
