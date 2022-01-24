@@ -58,7 +58,7 @@ func getValidatorRedelegation(input actionstypes.StakingArgs) (actionstypes.Rede
 
 	// Get redelegations from a source validator address
 	redelegationRequest := &stakingtypes.QueryRedelegationsRequest{
-		DstValidatorAddr: input.Address,
+		SrcValidatorAddr: input.Address,
 		Pagination:       pagination,
 	}
 	redelegations, err := sources.StakingSource.GetRedelegations(height, redelegationRequest)
