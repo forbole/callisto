@@ -182,7 +182,7 @@ actions:
 - name: action_redelegation_from_validator
   definition:
     kind: synchronous
-    handler: http://localhost:3000/redelegation
+    handler: http://localhost:3000/redelegation_from_validator
     output_type: ActionRedelegationResponse
     arguments:
     - name: address

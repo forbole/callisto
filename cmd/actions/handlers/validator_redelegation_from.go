@@ -50,16 +50,14 @@ func getValidatorRedelegation(input actionstypes.StakingArgs) (actionstypes.Rede
 		return actionstypes.RedelegationResponse{}, fmt.Errorf("error while getting chain latest block height: %s", err)
 	}
 
-	pagination := &query.PageRequest{
-		Offset:     input.Offset,
-		Limit:      input.Limit,
-		CountTotal: input.CountTotal,
-	}
-
 	// Get redelegations from a source validator address
 	redelegationRequest := &stakingtypes.QueryRedelegationsRequest{
 		SrcValidatorAddr: input.Address,
-		Pagination:       pagination,
+		Pagination: &query.PageRequest{
+			Offset:     input.Offset,
+			Limit:      input.Limit,
+			CountTotal: input.CountTotal,
+		},
 	}
 	redelegations, err := sources.StakingSource.GetRedelegations(height, redelegationRequest)
 	if err != nil {
