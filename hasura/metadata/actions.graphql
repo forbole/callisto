@@ -54,7 +54,7 @@ type Query {
         count_total: Boolean
     ): ActionDelegationResponse
 
-    action_validator_redelegation_to(
+    action_redelegation_from_validator(
         address: String!
         offset: Int
         limit: Int

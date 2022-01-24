@@ -179,7 +179,7 @@ actions:
   permissions:
   - role: anonymous  
 
-- name: action_validator_redelegation_to
+- name: action_redelegation_from_validator
   definition:
     kind: synchronous
     handler: http://localhost:3000/redelegation
