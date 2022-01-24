@@ -84,7 +84,6 @@ actions:
   permissions:
   - role: anonymous
 
-
 - name: action_redelegation
   definition:
     kind: synchronous
@@ -159,6 +158,27 @@ actions:
   permissions:
   - role: anonymous
 
+- name: action_validator_delegation
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/validator_delegation
+    output_type: ActionDelegationResponse
+    arguments:
+    - name: address
+      type: String!
+    - name: offset
+      type: Int
+    - name: limit
+      type: Int
+    - name: count_total
+      type: Boolean!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous  
+
 custom_types:
   scalars:
   - name: ActionCoin
@@ -180,6 +200,13 @@ custom_types:
       type: [ActionCoin]
     - name: validator_address
       type: String!
+
+  - name: ActionDelegationResponse
+    fields:
+    - name: delegations
+      type: [ActionDelegation]
+    - name: pagination
+      type: ActionPagination
 
   - name: ActionAddress
     fields: 

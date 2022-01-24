@@ -46,6 +46,13 @@ type Query {
     action_validator_commission_amount(
         address: String!
     ): ActionValidatorCommissionAmount
+
+    action_validator_delegation(
+        address: String!
+        offset: Int
+        limit: Int
+        count_total: Boolean
+    ): ActionDelegationResponse
 }
 
 type ActionBalance {
