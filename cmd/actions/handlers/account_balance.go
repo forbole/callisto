@@ -6,8 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 )
 
@@ -45,8 +43,6 @@ func getAccountBalance(input actionstypes.AccountBalanceArgs) (response actionst
 	}
 
 	height := input.Height
-	fmt.Println(height)
-
 	if height == 0 {
 		// Get latest height if height input is empty
 		height, err = parseCtx.Node.LatestHeight()
@@ -55,20 +51,12 @@ func getAccountBalance(input actionstypes.AccountBalanceArgs) (response actionst
 		}
 	}
 
-	balances, err := sources.BankSource.GetBalances([]string{input.Address}, height)
-
+	balRes, err := sources.BankSource.GetAccountBalance(input.Address, height)
 	if err != nil {
 		return response, err
 	}
 
-	var coins []sdk.Coin
-	for _, bal := range balances {
-		for _, coin := range bal.Balance {
-			coins = append(coins, coin)
-		}
-	}
-
 	return actionstypes.Balance{
-		Coins: coins,
+		Coins: balRes.Balance,
 	}, nil
 }
