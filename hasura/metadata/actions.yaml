@@ -179,6 +179,27 @@ actions:
   permissions:
   - role: anonymous  
 
+- name: action_validator_redelegation_to
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/redelegation
+    output_type: ActionRedelegationResponse
+    arguments:
+    - name: address
+      type: String!
+    - name: offset
+      type: Int
+    - name: limit
+      type: Int
+    - name: count_total
+      type: Boolean!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
 custom_types:
   scalars:
   - name: ActionCoin

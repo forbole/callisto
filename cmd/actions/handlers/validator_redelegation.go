@@ -11,7 +11,7 @@ import (
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 )
 
-func ValidatorRedelegation(w http.ResponseWriter, r *http.Request) {
+func ValidatorRedelegationTo(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
