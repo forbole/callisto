@@ -1,4 +1,4 @@
-FROM golang:1.17-buster AS builder
+FROM amd64/golang:1.17-buster AS builder
 RUN apt-get update && apt-get install git
 # RUN curl -L https://github.com/hasura/graphql-engine/raw/stable/cli/get.sh | bash
 WORKDIR /go/src/github.com/forbole/bdjuno
@@ -9,7 +9,7 @@ RUN make build
 RUN FOLDER=$(ls /go/pkg/mod/github.com/\!cosm\!wasm/ | grep wasmvm@v) && ln -s /go/pkg/mod/github.com/\!cosm\!wasm/${FOLDER} /go/pkg/mod/github.com/\!cosm\!wasm/wasmvm
 
 
-FROM golang:1.17-buster
+FROM amd64/golang:1.17-buster
 WORKDIR /bdjuno
 COPY --from=builder /go/pkg/mod/github.com/!cosm!wasm/wasmvm/api/libwasmvm.so /usr/lib
 COPY --from=builder /go/src/github.com/forbole/bdjuno/build/bdjuno /usr/bin/bdjuno
