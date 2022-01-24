@@ -1,6 +1,8 @@
 package types
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	stakingtype "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -59,8 +61,13 @@ type RedelegationResponse struct {
 }
 
 type Redelegation struct {
-	DelegatorAddress    string                          `json:"delegator_address"`
-	ValidatorSrcAddress string                          `json:"validator_src_address"`
-	ValidatorDstAddress string                          `json:"validator_dst_address"`
-	Entries             []stakingtype.RedelegationEntry `json:"entries"`
+	DelegatorAddress    string              `json:"delegator_address"`
+	ValidatorSrcAddress string              `json:"validator_src_address"`
+	ValidatorDstAddress string              `json:"validator_dst_address"`
+	RedelegationEntries []RedelegationEntry `json:"entries"`
+}
+
+type RedelegationEntry struct {
+	CompletionTime time.Time `json:"completion_time"`
+	Balance        sdk.Int   `json:"balance"`
 }
