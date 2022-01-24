@@ -11,7 +11,7 @@ import (
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 )
 
-func Redelegation(w http.ResponseWriter, r *http.Request) {
+func ValidatorRedelegation(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
@@ -28,7 +28,7 @@ func Redelegation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := getRedelegation(actionPayload.Input)
+	result, err := getValidatorRedelegation(actionPayload.Input)
 	if err != nil {
 		errorHandler(w, err)
 		return
@@ -38,7 +38,7 @@ func Redelegation(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func getRedelegation(input actionstypes.StakingArgs) (actionstypes.RedelegationResponse, error) {
+func getValidatorRedelegation(input actionstypes.StakingArgs) (actionstypes.RedelegationResponse, error) {
 	parseCtx, sources, err := getCtxAndSources()
 	if err != nil {
 		return actionstypes.RedelegationResponse{}, err
@@ -56,18 +56,32 @@ func getRedelegation(input actionstypes.StakingArgs) (actionstypes.RedelegationR
 		CountTotal: input.CountTotal,
 	}
 
-	// Get delegator's redelegations
+	// // Get redelegations from a source validator address
+	// redelegationRequest := &stakingtypes.QueryRedelegationsRequest{
+	// 	SrcValidatorAddr: input.Address,
+	// 	Pagination:       pagination,
+	// }
+	// redelegationsFrom, err := sources.StakingSource.GetRedelegations(height, redelegationRequest)
+	// if err != nil {
+	// 	return actionstypes.RedelegationResponse{}, fmt.Errorf("error while getting delegator redelegations: %s", err)
+	// }
+
+	// Get redelegations to a destination validator address
 	redelegationRequest := &stakingtypes.QueryRedelegationsRequest{
-		DelegatorAddr: input.Address,
-		Pagination:    pagination,
+		DstValidatorAddr: input.Address,
+		Pagination:       pagination,
 	}
-	redelegations, err := sources.StakingSource.GetRedelegations(height, redelegationRequest)
+	redelegationsTo, err := sources.StakingSource.GetRedelegations(height, redelegationRequest)
 	if err != nil {
 		return actionstypes.RedelegationResponse{}, fmt.Errorf("error while getting delegator redelegations: %s", err)
 	}
 
-	redelegationsList := make([]actionstypes.Redelegation, len(redelegations.RedelegationResponses))
-	for index, del := range redelegations.RedelegationResponses {
+	redelegationsList := make(
+		[]actionstypes.Redelegation,
+		len(redelegationsTo.RedelegationResponses),
+	)
+
+	for index, del := range redelegationsTo.RedelegationResponses {
 		redelegationsList[index] = actionstypes.Redelegation{
 			DelegatorAddress:    del.Redelegation.DelegatorAddress,
 			ValidatorSrcAddress: del.Redelegation.ValidatorSrcAddress,
@@ -87,6 +101,6 @@ func getRedelegation(input actionstypes.StakingArgs) (actionstypes.RedelegationR
 
 	return actionstypes.RedelegationResponse{
 		Redelegations: redelegationsList,
-		Pagination:    redelegations.Pagination,
+		Pagination:    redelegationsTo.Pagination,
 	}, nil
 }
