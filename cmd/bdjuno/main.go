@@ -16,6 +16,7 @@ import (
 
 	"github.com/forbole/bdjuno/v2/database"
 	"github.com/forbole/bdjuno/v2/modules"
+	rizonapp "github.com/rizon-world/rizon/app"
 )
 
 func main() {
@@ -52,6 +53,7 @@ func main() {
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
 		simapp.ModuleBasics,
+		rizonapp.ModuleBasics,
 	}
 }
 
