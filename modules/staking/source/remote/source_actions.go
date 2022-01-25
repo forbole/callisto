@@ -3,6 +3,7 @@ package remote
 import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	"github.com/forbole/bdjuno/v2/utils"
 	"github.com/forbole/juno/v2/node/remote"
 )
 
@@ -10,20 +11,13 @@ import (
 func (s Source) GetDelegationsWithPagination(
 	height int64, delegator string, pagination *query.PageRequest,
 ) (*stakingtypes.QueryDelegatorDelegationsResponse, error) {
-
-	header := remote.GetHeightRequestHeader(height)
-
+	ctx := utils.GetHeightRequestContext(s.Ctx, height)
 	res, err := s.stakingClient.DelegatorDelegations(
-		s.Ctx,
+		ctx,
 		&stakingtypes.QueryDelegatorDelegationsRequest{
 			DelegatorAddr: delegator,
-			Pagination: &query.PageRequest{
-				Limit:      pagination.GetLimit(),
-				Offset:     pagination.GetOffset(),
-				CountTotal: pagination.GetCountTotal(),
-			},
+			Pagination:    pagination,
 		},
-		header,
 	)
 	if err != nil {
 		return nil, err
@@ -34,15 +28,14 @@ func (s Source) GetDelegationsWithPagination(
 
 // GetUnbondingDelegations implements stakingsource.Source
 func (s Source) GetUnbondingDelegations(height int64, delegator string, pagination *query.PageRequest) (*stakingtypes.QueryDelegatorUnbondingDelegationsResponse, error) {
-	header := remote.GetHeightRequestHeader(height)
+	ctx := utils.GetHeightRequestContext(s.Ctx, height)
 
 	unbondingDelegations, err := s.stakingClient.DelegatorUnbondingDelegations(
-		s.Ctx,
+		ctx,
 		&stakingtypes.QueryDelegatorUnbondingDelegationsRequest{
 			DelegatorAddr: delegator,
 			Pagination:    pagination,
 		},
-		header,
 	)
 	if err != nil {
 		return nil, err
@@ -53,9 +46,9 @@ func (s Source) GetUnbondingDelegations(height int64, delegator string, paginati
 
 // GetRedelegations implements stakingsource.Source
 func (s Source) GetRedelegations(height int64, request *stakingtypes.QueryRedelegationsRequest) (*stakingtypes.QueryRedelegationsResponse, error) {
-	header := remote.GetHeightRequestHeader(height)
+	ctx := utils.GetHeightRequestContext(s.Ctx, height)
 
-	redelegations, err := s.stakingClient.Redelegations(s.Ctx, request, header)
+	redelegations, err := s.stakingClient.Redelegations(ctx, request)
 	if err != nil {
 		return nil, err
 	}

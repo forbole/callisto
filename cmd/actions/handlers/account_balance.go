@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
+	"github.com/forbole/bdjuno/v2/utils"
 )
 
 func AccountBalance(w http.ResponseWriter, r *http.Request) {
@@ -19,7 +20,7 @@ func AccountBalance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var actionPayload actionstypes.AccountBalancePayload
+	var actionPayload actionstypes.AddressPayload
 	err = json.Unmarshal(reqBody, &actionPayload)
 	if err != nil {
 		http.Error(w, "invalid payload: failed to unmarshal json", http.StatusInternalServerError)
@@ -36,19 +37,15 @@ func AccountBalance(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func getAccountBalance(input actionstypes.AccountBalanceArgs) (response actionstypes.Balance, err error) {
+func getAccountBalance(input actionstypes.AddressArgs) (response actionstypes.Balance, err error) {
 	parseCtx, sources, err := getCtxAndSources()
 	if err != nil {
 		return response, err
 	}
 
-	height := input.Height
-	if height == 0 {
-		// Get latest height if height input is empty
-		height, err = parseCtx.Node.LatestHeight()
-		if err != nil {
-			return response, fmt.Errorf("error while getting chain latest block height: %s", err)
-		}
+	height, err := utils.GetHeight(parseCtx, input.Height)
+	if err != nil {
+		return response, fmt.Errorf("error while getting height: %s", err)
 	}
 
 	balance, err := sources.BankSource.GetAccountBalance(input.Address, height)

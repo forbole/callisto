@@ -8,6 +8,12 @@ import (
 	stakingtype "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
+// ========================= Withdraw Address Response =========================
+
+type Address struct {
+	Address string `json:"address"`
+}
+
 // ========================= Account Balance Response =========================
 
 type Balance struct {

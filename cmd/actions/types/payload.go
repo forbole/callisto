@@ -3,21 +3,10 @@ package types
 // ========================= Address Payload =========================
 type AddressPayload struct {
 	SessionVariables map[string]interface{} `json:"session_variables"`
-	Input            Address                `json:"input"`
+	Input            AddressArgs            `json:"input"`
 }
 
-type Address struct {
-	Address string `json:"address"`
-}
-
-// ========================= Account Balance Payload =========================
-
-type AccountBalancePayload struct {
-	SessionVariables map[string]interface{} `json:"session_variables"`
-	Input            AccountBalanceArgs     `json:"input"`
-}
-
-type AccountBalanceArgs struct {
+type AddressArgs struct {
 	Address string `json:"address"`
 	Height  int64  `json:"height"`
 }
@@ -31,6 +20,7 @@ type StakingPayload struct {
 
 type StakingArgs struct {
 	Address    string `json:"address"`
+	Height     int64  `json:"height"`
 	Offset     uint64 `json:"offset"`
 	Limit      uint64 `json:"limit"`
 	CountTotal bool   `json:"count_total"`

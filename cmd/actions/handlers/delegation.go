@@ -8,6 +8,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/types/query"
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
+	"github.com/forbole/bdjuno/v2/utils"
 )
 
 func Delegation(w http.ResponseWriter, r *http.Request) {
@@ -43,10 +44,9 @@ func getDelegation(input actionstypes.StakingArgs) (actionstypes.DelegationRespo
 		return actionstypes.DelegationResponse{}, err
 	}
 
-	// Get latest node height
-	height, err := parseCtx.Node.LatestHeight()
+	height, err := utils.GetHeight(parseCtx, input.Height)
 	if err != nil {
-		return actionstypes.DelegationResponse{}, fmt.Errorf("error while getting chain latest block height: %s", err)
+		return actionstypes.DelegationResponse{}, fmt.Errorf("error while getting height: %s", err)
 	}
 
 	pagination := &query.PageRequest{

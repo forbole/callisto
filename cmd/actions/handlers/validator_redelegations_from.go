@@ -9,6 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
+	"github.com/forbole/bdjuno/v2/utils"
 )
 
 func ValidatorRedelegationsFrom(w http.ResponseWriter, r *http.Request) {
@@ -44,8 +45,7 @@ func getValidatorRedelegation(input actionstypes.StakingArgs) (actionstypes.Rede
 		return actionstypes.RedelegationResponse{}, err
 	}
 
-	// Get latest node height
-	height, err := parseCtx.Node.LatestHeight()
+	height, err := utils.GetHeight(parseCtx, input.Height)
 	if err != nil {
 		return actionstypes.RedelegationResponse{}, fmt.Errorf("error while getting chain latest block height: %s", err)
 	}
