@@ -16,7 +16,7 @@ import (
 	"github.com/forbole/bdjuno/v2/database"
 	"github.com/forbole/bdjuno/v2/modules"
 
-	cudosapp "cudos.org/cudos-node/app"
+	cudosapp "github.com/CudoVentures/cudos-node/app"
 	gaiaapp "github.com/cosmos/gaia/v6/app"
 )
 
