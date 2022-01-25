@@ -1,7 +1,5 @@
 package types
 
-// ========================= Payload =========================
-
 type Payload struct {
 	SessionVariables map[string]interface{} `json:"session_variables"`
 	Input            PayloadArgs            `json:"input"`
