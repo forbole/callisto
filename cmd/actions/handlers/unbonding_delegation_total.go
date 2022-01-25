@@ -8,6 +8,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
+	"github.com/forbole/bdjuno/v2/utils"
 )
 
 func UnbondingDelegationsTotal(w http.ResponseWriter, r *http.Request) {
@@ -20,7 +21,7 @@ func UnbondingDelegationsTotal(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var actionPayload actionstypes.StakingPayload
+	var actionPayload actionstypes.Payload
 	err = json.Unmarshal(reqBody, &actionPayload)
 	if err != nil {
 		http.Error(w, "invalid payload: failed to unmarshal json", http.StatusInternalServerError)
@@ -37,14 +38,13 @@ func UnbondingDelegationsTotal(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func getUnbondingDelegationsTotalAmount(input actionstypes.StakingArgs) (actionstypes.Balance, error) {
+func getUnbondingDelegationsTotalAmount(input actionstypes.PayloadArgs) (actionstypes.Balance, error) {
 	parseCtx, sources, err := getCtxAndSources()
 	if err != nil {
 		return actionstypes.Balance{}, err
 	}
 
-	// Get latest node height
-	height, err := parseCtx.Node.LatestHeight()
+	height, err := utils.GetHeight(parseCtx, input.Height)
 	if err != nil {
 		return actionstypes.Balance{}, fmt.Errorf("error while getting chain latest block height: %s", err)
 	}

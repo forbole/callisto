@@ -8,6 +8,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
+	"github.com/forbole/bdjuno/v2/utils"
 )
 
 func TotalDelegationAmount(w http.ResponseWriter, r *http.Request) {
@@ -20,7 +21,7 @@ func TotalDelegationAmount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var actionPayload actionstypes.StakingPayload
+	var actionPayload actionstypes.Payload
 	err = json.Unmarshal(reqBody, &actionPayload)
 	if err != nil {
 		http.Error(w, "invalid payload: failed to unmarshal json", http.StatusInternalServerError)
@@ -37,16 +38,15 @@ func TotalDelegationAmount(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func getTotalDelegationAmount(input actionstypes.StakingArgs) (actionstypes.Balance, error) {
+func getTotalDelegationAmount(input actionstypes.PayloadArgs) (actionstypes.Balance, error) {
 	parseCtx, sources, err := getCtxAndSources()
 	if err != nil {
 		return actionstypes.Balance{}, err
 	}
 
-	// Get latest node height
-	height, err := parseCtx.Node.LatestHeight()
+	height, err := utils.GetHeight(parseCtx, input.Height)
 	if err != nil {
-		return actionstypes.Balance{}, fmt.Errorf("error while getting chain latest block height: %s", err)
+		return actionstypes.Balance{}, fmt.Errorf("error while getting height: %s", err)
 	}
 
 	// Get all  delegations for given delegator address

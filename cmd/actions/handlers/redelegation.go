@@ -9,6 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
+	"github.com/forbole/bdjuno/v2/utils"
 )
 
 func Redelegation(w http.ResponseWriter, r *http.Request) {
@@ -21,7 +22,7 @@ func Redelegation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var actionPayload actionstypes.StakingPayload
+	var actionPayload actionstypes.Payload
 	err = json.Unmarshal(reqBody, &actionPayload)
 	if err != nil {
 		http.Error(w, "invalid payload: failed to unmarshal json", http.StatusInternalServerError)
@@ -38,28 +39,25 @@ func Redelegation(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func getRedelegation(input actionstypes.StakingArgs) (actionstypes.RedelegationResponse, error) {
+func getRedelegation(input actionstypes.PayloadArgs) (actionstypes.RedelegationResponse, error) {
 	parseCtx, sources, err := getCtxAndSources()
 	if err != nil {
 		return actionstypes.RedelegationResponse{}, err
 	}
 
-	// Get latest node height
-	height, err := parseCtx.Node.LatestHeight()
+	height, err := utils.GetHeight(parseCtx, input.Height)
 	if err != nil {
-		return actionstypes.RedelegationResponse{}, fmt.Errorf("error while getting chain latest block height: %s", err)
+		return actionstypes.RedelegationResponse{}, fmt.Errorf("error while getting height: %s", err)
 	}
 
-	pagination := &query.PageRequest{
-		Offset:     input.Offset,
-		Limit:      input.Limit,
-		CountTotal: input.CountTotal,
-	}
-
-	// Get delegator's redelegations
 	redelegationRequest := &stakingtypes.QueryRedelegationsRequest{
+		// Get delegator's redelegations
 		DelegatorAddr: input.Address,
-		Pagination:    pagination,
+		Pagination: &query.PageRequest{
+			Offset:     input.Offset,
+			Limit:      input.Limit,
+			CountTotal: input.CountTotal,
+		},
 	}
 	redelegations, err := sources.StakingSource.GetRedelegations(height, redelegationRequest)
 	if err != nil {

@@ -3,29 +3,20 @@ package remote
 import (
 	"fmt"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	"github.com/forbole/juno/v2/node/remote"
-
-	"github.com/forbole/bdjuno/v2/types"
+	"github.com/forbole/bdjuno/v2/utils"
 )
 
-// GetBalances implements bankkeeper.Source
-func (s Source) GetBalances(addresses []string, height int64) ([]types.AccountBalance, error) {
-	header := remote.GetHeightRequestHeader(height)
+// GetAccountBalances implements bankkeeper.Source
+func (s Source) GetAccountBalance(address string, height int64) ([]sdk.Coin, error) {
 
-	var balances []types.AccountBalance
-	for _, address := range addresses {
-		balRes, err := s.bankClient.AllBalances(s.Ctx, &banktypes.QueryAllBalancesRequest{Address: address}, header)
-		if err != nil {
-			return nil, fmt.Errorf("error while getting all balances: %s", err)
-		}
-
-		balances = append(balances, types.NewAccountBalance(
-			address,
-			balRes.Balances,
-			height,
-		))
+	// Get account balance at certain height
+	ctx := utils.GetHeightRequestContext(s.Ctx, height)
+	balRes, err := s.bankClient.AllBalances(ctx, &banktypes.QueryAllBalancesRequest{Address: address})
+	if err != nil {
+		return nil, fmt.Errorf("error while getting all balances: %s", err)
 	}
 
-	return balances, nil
+	return balRes.Balances, nil
 }

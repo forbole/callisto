@@ -1,4 +1,7 @@
+############### ACTIONS ###############
 actions:
+
+##### Bank #####
 - name: action_account_balance
   definition:
     kind: synchronous
@@ -16,6 +19,7 @@ actions:
   permissions:
   - role: anonymous
 
+##### Staking / Delegatagor #####
 - name: action_delegation_reward
   definition:
     kind: synchronous
@@ -24,6 +28,8 @@ actions:
     arguments:
     - name: address
       type: String!
+    - name: height
+      type: Int
     type: query
     headers:
     - value: application/json
@@ -54,6 +60,8 @@ actions:
     arguments:
     - name: address
       type: String!
+    - name: height
+      type: Int
     - name: offset
       type: Int
     - name: limit
@@ -92,6 +100,8 @@ actions:
     arguments:
     - name: address
       type: String!
+    - name: height
+      type: Int
     - name: offset
       type: Int
     - name: limit
@@ -113,6 +123,8 @@ actions:
     arguments:
     - name: address
       type: String!
+    - name: height
+      type: Int
     - name: offset
       type: Int
     - name: limit
@@ -143,6 +155,7 @@ actions:
   permissions:
   - role: anonymous
 
+##### Staking / Validator #####
 - name: action_validator_commission_amount
   definition:
     kind: synchronous
@@ -187,6 +200,8 @@ actions:
     arguments:
     - name: address
       type: String!
+    - name: height
+      type: Int
     - name: offset
       type: Int
     - name: limit
@@ -221,6 +236,7 @@ actions:
   permissions:
   - role: anonymous
 
+############### CUSTOM TYPES ###############
 custom_types:
   scalars:
   - name: ActionCoin

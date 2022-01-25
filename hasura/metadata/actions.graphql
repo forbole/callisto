@@ -6,6 +6,7 @@ type Query {
 
     action_delegation_reward(
         address: String!
+        height: Int
     ): [ActionDelegationReward]
 
     action_delegator_withdraw_address(
@@ -14,6 +15,7 @@ type Query {
     
     action_delegation(
         address: String!
+        height: Int
         offset: Int
         limit: Int
         count_total: Boolean
@@ -26,6 +28,7 @@ type Query {
 
     action_redelegation(
         address: String!
+        height: Int
         offset: Int
         limit: Int
         count_total: Boolean
@@ -33,6 +36,7 @@ type Query {
 
     action_unbonding_delegation(
         address: String!
+        height: Int
         offset: Int
         limit: Int
         count_total: Boolean
@@ -56,6 +60,7 @@ type Query {
 
     action_validator_redelegations_from(
         address: String!
+        height: Int
         offset: Int
         limit: Int
         count_total: Boolean

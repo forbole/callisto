@@ -6,9 +6,8 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
+	"github.com/forbole/bdjuno/v2/utils"
 )
 
 func AccountBalance(w http.ResponseWriter, r *http.Request) {
@@ -21,7 +20,7 @@ func AccountBalance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var actionPayload actionstypes.AccountBalancePayload
+	var actionPayload actionstypes.Payload
 	err = json.Unmarshal(reqBody, &actionPayload)
 	if err != nil {
 		http.Error(w, "invalid payload: failed to unmarshal json", http.StatusInternalServerError)
@@ -38,37 +37,23 @@ func AccountBalance(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func getAccountBalance(input actionstypes.AccountBalanceArgs) (response actionstypes.Balance, err error) {
+func getAccountBalance(input actionstypes.PayloadArgs) (response actionstypes.Balance, err error) {
 	parseCtx, sources, err := getCtxAndSources()
 	if err != nil {
 		return response, err
 	}
 
-	height := input.Height
-	fmt.Println(height)
-
-	if height == 0 {
-		// Get latest height if height input is empty
-		height, err = parseCtx.Node.LatestHeight()
-		if err != nil {
-			return response, fmt.Errorf("error while getting chain latest block height: %s", err)
-		}
+	height, err := utils.GetHeight(parseCtx, input.Height)
+	if err != nil {
+		return response, fmt.Errorf("error while getting height: %s", err)
 	}
 
-	balances, err := sources.BankSource.GetBalances([]string{input.Address}, height)
-
+	balance, err := sources.BankSource.GetAccountBalance(input.Address, height)
 	if err != nil {
 		return response, err
 	}
 
-	var coins []sdk.Coin
-	for _, bal := range balances {
-		for _, coin := range bal.Balance {
-			coins = append(coins, coin)
-		}
-	}
-
 	return actionstypes.Balance{
-		Coins: coins,
+		Coins: balance,
 	}, nil
 }

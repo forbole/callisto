@@ -9,6 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
+	"github.com/forbole/bdjuno/v2/utils"
 )
 
 func ValidatorRedelegationsFrom(w http.ResponseWriter, r *http.Request) {
@@ -21,7 +22,7 @@ func ValidatorRedelegationsFrom(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var actionPayload actionstypes.StakingPayload
+	var actionPayload actionstypes.Payload
 	err = json.Unmarshal(reqBody, &actionPayload)
 	if err != nil {
 		http.Error(w, "invalid payload: failed to unmarshal json", http.StatusInternalServerError)
@@ -38,14 +39,13 @@ func ValidatorRedelegationsFrom(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func getValidatorRedelegation(input actionstypes.StakingArgs) (actionstypes.RedelegationResponse, error) {
+func getValidatorRedelegation(input actionstypes.PayloadArgs) (actionstypes.RedelegationResponse, error) {
 	parseCtx, sources, err := getCtxAndSources()
 	if err != nil {
 		return actionstypes.RedelegationResponse{}, err
 	}
 
-	// Get latest node height
-	height, err := parseCtx.Node.LatestHeight()
+	height, err := utils.GetHeight(parseCtx, input.Height)
 	if err != nil {
 		return actionstypes.RedelegationResponse{}, fmt.Errorf("error while getting chain latest block height: %s", err)
 	}

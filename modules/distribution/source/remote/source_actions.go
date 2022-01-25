@@ -5,15 +5,16 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+	"github.com/forbole/bdjuno/v2/utils"
 	"github.com/forbole/juno/v2/node/remote"
 )
 
 // DelegatorTotalRewards implements distrsource.Source
 func (s Source) DelegatorTotalRewards(delegator string, height int64) ([]distrtypes.DelegationDelegatorReward, error) {
+	ctx := utils.GetHeightRequestContext(s.Ctx, height)
 	res, err := s.distrClient.DelegationTotalRewards(
-		s.Ctx,
+		ctx,
 		&distrtypes.QueryDelegationTotalRewardsRequest{DelegatorAddress: delegator},
-		remote.GetHeightRequestHeader(height),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("error while getting delegation total rewards for for delegator %s at height %v: %s", delegator, height, err)

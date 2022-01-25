@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
+	"github.com/forbole/bdjuno/v2/utils"
 )
 
 func DelegationReward(w http.ResponseWriter, r *http.Request) {
@@ -19,14 +20,14 @@ func DelegationReward(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var actionPayload actionstypes.AddressPayload
+	var actionPayload actionstypes.Payload
 	err = json.Unmarshal(reqBody, &actionPayload)
 	if err != nil {
 		http.Error(w, "invalid payload: failed to unmarshal json", http.StatusInternalServerError)
 		return
 	}
 
-	result, err := getDelegationReward(actionPayload.Input.Address)
+	result, err := getDelegationReward(actionPayload.Input)
 	if err != nil {
 		errorHandler(w, err)
 		return
@@ -36,20 +37,19 @@ func DelegationReward(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func getDelegationReward(address string) (response []actionstypes.DelegationReward, err error) {
+func getDelegationReward(input actionstypes.PayloadArgs) (response []actionstypes.DelegationReward, err error) {
 	parseCtx, sources, err := getCtxAndSources()
 	if err != nil {
 		return response, err
 	}
 
-	// Get latest node height
-	height, err := parseCtx.Node.LatestHeight()
+	height, err := utils.GetHeight(parseCtx, input.Height)
 	if err != nil {
 		return response, fmt.Errorf("error while getting chain latest block height: %s", err)
 	}
 
 	// Get delegator's total rewards
-	rewards, err := sources.DistrSource.DelegatorTotalRewards(address, height)
+	rewards, err := sources.DistrSource.DelegatorTotalRewards(input.Address, height)
 	if err != nil {
 		return response, err
 	}
