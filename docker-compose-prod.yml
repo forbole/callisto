@@ -34,7 +34,7 @@ services:
   cloudsql-proxy:
     container_name: cloudsql-proxy
     image: gcr.io/cloudsql-docker/gce-proxy:1.11
-    command: /cloud_sql_proxy --dir=/cloudsql -instances=${GCLOUD_INSTANCE_CONNECTION_NAME}=tcp:0.0.0.0:5444
+    command: /cloud_sql_proxy --dir=/cloudsql -instances=${GCLOUD_INSTANCE_CONNECTION_NAME}=tcp:0.0.0.0:5432
     ports:
       - 5432:5432
     environment:
