@@ -21,7 +21,7 @@ func UnbondingDelegationsTotal(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var actionPayload actionstypes.StakingPayload
+	var actionPayload actionstypes.Payload
 	err = json.Unmarshal(reqBody, &actionPayload)
 	if err != nil {
 		http.Error(w, "invalid payload: failed to unmarshal json", http.StatusInternalServerError)
@@ -38,7 +38,7 @@ func UnbondingDelegationsTotal(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func getUnbondingDelegationsTotalAmount(input actionstypes.StakingArgs) (actionstypes.Balance, error) {
+func getUnbondingDelegationsTotalAmount(input actionstypes.PayloadArgs) (actionstypes.Balance, error) {
 	parseCtx, sources, err := getCtxAndSources()
 	if err != nil {
 		return actionstypes.Balance{}, err

@@ -21,7 +21,7 @@ func Delegation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var actionPayload actionstypes.StakingPayload
+	var actionPayload actionstypes.Payload
 	err = json.Unmarshal(reqBody, &actionPayload)
 	if err != nil {
 		http.Error(w, "invalid payload: failed to unmarshal json", http.StatusInternalServerError)
@@ -38,7 +38,7 @@ func Delegation(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func getDelegation(input actionstypes.StakingArgs) (actionstypes.DelegationResponse, error) {
+func getDelegation(input actionstypes.PayloadArgs) (actionstypes.DelegationResponse, error) {
 	parseCtx, sources, err := getCtxAndSources()
 	if err != nil {
 		return actionstypes.DelegationResponse{}, err

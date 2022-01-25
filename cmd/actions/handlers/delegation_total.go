@@ -21,7 +21,7 @@ func TotalDelegationAmount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var actionPayload actionstypes.StakingPayload
+	var actionPayload actionstypes.Payload
 	err = json.Unmarshal(reqBody, &actionPayload)
 	if err != nil {
 		http.Error(w, "invalid payload: failed to unmarshal json", http.StatusInternalServerError)
@@ -38,7 +38,7 @@ func TotalDelegationAmount(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func getTotalDelegationAmount(input actionstypes.StakingArgs) (actionstypes.Balance, error) {
+func getTotalDelegationAmount(input actionstypes.PayloadArgs) (actionstypes.Balance, error) {
 	parseCtx, sources, err := getCtxAndSources()
 	if err != nil {
 		return actionstypes.Balance{}, err

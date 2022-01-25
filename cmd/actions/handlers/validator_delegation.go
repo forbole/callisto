@@ -20,7 +20,7 @@ func ValidatorDelegation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var actionPayload actionstypes.StakingPayload
+	var actionPayload actionstypes.Payload
 	err = json.Unmarshal(reqBody, &actionPayload)
 	if err != nil {
 		http.Error(w, "invalid payload: failed to unmarshal json", http.StatusInternalServerError)
@@ -37,7 +37,7 @@ func ValidatorDelegation(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-func getValidatorDelegations(input actionstypes.StakingArgs) (response actionstypes.DelegationResponse, err error) {
+func getValidatorDelegations(input actionstypes.PayloadArgs) (response actionstypes.DelegationResponse, err error) {
 	parseCtx, sources, err := getCtxAndSources()
 	if err != nil {
 		return response, err
