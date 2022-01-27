@@ -33,12 +33,19 @@ import (
 	mintsource "github.com/forbole/bdjuno/v3/modules/mint/source"
 	localmintsource "github.com/forbole/bdjuno/v3/modules/mint/source/local"
 	remotemintsource "github.com/forbole/bdjuno/v3/modules/mint/source/remote"
+	providersource "github.com/forbole/bdjuno/v3/modules/provider/source"
+	localprovidersource "github.com/forbole/bdjuno/v3/modules/provider/source/local"
+	remoteprovidersource "github.com/forbole/bdjuno/v3/modules/provider/source/remote"
 	slashingsource "github.com/forbole/bdjuno/v3/modules/slashing/source"
 	localslashingsource "github.com/forbole/bdjuno/v3/modules/slashing/source/local"
 	remoteslashingsource "github.com/forbole/bdjuno/v3/modules/slashing/source/remote"
 	stakingsource "github.com/forbole/bdjuno/v3/modules/staking/source"
 	localstakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/remote"
+	providertypes "github.com/ovrclk/akash/x/provider/types/v1beta2"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	akashprovider "github.com/ovrclk/akash/x/provider"
 )
 
 type Sources struct {
@@ -46,6 +53,7 @@ type Sources struct {
 	DistrSource    distrsource.Source
 	GovSource      govsource.Source
 	MintSource     mintsource.Source
+	ProviderSource providersource.Source
 	SlashingSource slashingsource.Source
 	StakingSource  stakingsource.Source
 }
@@ -78,6 +86,7 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
 		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
 		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
+		ProviderSource: localprovidersource.NewSource(source, akashprovider.NewKeeper(encodingConfig.Marshaler, sdk.NewKVStoreKey(akashprovider.StoreKey)).NewQuerier()),
 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
 		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
 	}
@@ -117,6 +126,7 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		DistrSource:    remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
 		GovSource:      remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
+		ProviderSource: remoteprovidersource.NewSource(source, providertypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
 	}, nil

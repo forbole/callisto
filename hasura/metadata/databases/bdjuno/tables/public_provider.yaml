@@ -1,0 +1,17 @@
+table:
+  name: provider
+  schema: public
+object_relationships:
+- name: account
+  using:
+    foreign_key_constraint_on: owner_address
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - owner_address
+    - host_uri
+    - attributes
+    - info
+    - height
+  role: anonymous
