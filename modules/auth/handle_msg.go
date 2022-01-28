@@ -31,6 +31,9 @@ func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
 		}
 	case *vestingtypes.MsgCreatePeriodicVestingAccount:
 		err = m.handleMsgCreatePeriodicVestingAccount(cosmosMsg)
+		if err != nil {
+			return fmt.Errorf("error while handling to MsgCreatePeriodicVestingAccount %s", err)
+		}
 	}
 
 	return m.RefreshAccounts(tx.Height, utils.FilterNonAccountAddresses(addresses))
