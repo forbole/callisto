@@ -23,37 +23,52 @@ func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
 			Msgf("error while refreshing accounts after message of type %s", proto.MessageName(msg))
 	}
 
-	if cosmosMsg, ok := msg.(*vestingtypes.MsgCreateVestingAccount); ok {
+	switch cosmosMsg := msg.(type) {
+	case *vestingtypes.MsgCreateVestingAccount:
 		err = m.handleMsgCreateVestingAccount(cosmosMsg)
 		if err != nil {
 			return fmt.Errorf("error while handling to MsgCreateVestingAccount %s", err)
 		}
+	case *vestingtypes.MsgCreatePeriodicVestingAccount:
+		err = m.handleMsgCreatePeriodicVestingAccount(cosmosMsg)
 	}
 
 	return m.RefreshAccounts(tx.Height, utils.FilterNonAccountAddresses(addresses))
 }
 
 func (m *Module) handleMsgCreateVestingAccount(msg *vestingtypes.MsgCreateVestingAccount) error {
-	va, err := convertBaseVestingAccountFromMsg(msg)
-	if err != nil {
-		return fmt.Errorf("error while converting MsgCreateVestingAccount to base vesting account %s", err)
-	}
-
-	err = m.db.StoreVestingAccountFromMsg(va)
-	if err != nil {
-		return fmt.Errorf("error while storing to base vesting account from msg %s", err)
-	}
-
-	return nil
-}
-
-func convertBaseVestingAccountFromMsg(msg *vestingtypes.MsgCreateVestingAccount) (*vestingtypes.BaseVestingAccount, error) {
 
 	accAddress, err := sdk.AccAddressFromBech32(msg.ToAddress)
 	if err != nil {
-		return &vestingtypes.BaseVestingAccount{}, fmt.Errorf("error while converting account address %s", err)
+		return fmt.Errorf("error while converting account address %s", err)
 	}
-	account := authttypes.NewBaseAccountWithAddress(accAddress)
 
-	return vestingtypes.NewBaseVestingAccount(account, msg.Amount, msg.EndTime), nil
+	vestingAccount := vestingtypes.NewBaseVestingAccount(
+		authttypes.NewBaseAccountWithAddress(accAddress), msg.Amount, msg.EndTime,
+	)
+
+	err = m.db.StoreBaseVestingAccountFromMsg(vestingAccount)
+	if err != nil {
+		return fmt.Errorf("error while storing to base vesting account from msg %s", err)
+	}
+	return nil
+}
+
+func (m *Module) handleMsgCreatePeriodicVestingAccount(msg *vestingtypes.MsgCreatePeriodicVestingAccount) error {
+
+	accAddress, err := sdk.AccAddressFromBech32(msg.ToAddress)
+	if err != nil {
+		return fmt.Errorf("error while converting account address %s", err)
+	}
+
+	vestingAccount := vestingtypes.NewPeriodicVestingAccount(
+		authttypes.NewBaseAccountWithAddress(accAddress), nil, msg.StartTime, msg.VestingPeriods,
+	)
+
+	err = m.db.StorePeriodicVestingAccountFromMsg(vestingAccount)
+	if err != nil {
+		return fmt.Errorf("error while storing to periodic vesting account from msg %s", err)
+	}
+
+	return nil
 }

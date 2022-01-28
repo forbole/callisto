@@ -114,7 +114,7 @@ func (db *Db) storeVestingAccount(account exported.VestingAccount) (int, error) 
 	return vestingAccountRowID, nil
 }
 
-func (db *Db) StoreVestingAccountFromMsg(bva *vestingtypes.BaseVestingAccount) error {
+func (db *Db) StoreBaseVestingAccountFromMsg(bva *vestingtypes.BaseVestingAccount) error {
 	stmt := `
 	INSERT INTO vesting_account (type, address, original_vesting, end_time) 
 	VALUES ($1, $2, $3, $4)
@@ -131,6 +131,35 @@ func (db *Db) StoreVestingAccountFromMsg(bva *vestingtypes.BaseVestingAccount) e
 	if err != nil {
 		return fmt.Errorf("error while storing vesting account: %s", err)
 	}
+	return nil
+}
+
+func (db *Db) StorePeriodicVestingAccountFromMsg(pva *vestingtypes.PeriodicVestingAccount) error {
+	stmt := `
+	INSERT INTO vesting_account (type, address, start_time) 
+	VALUES ($1, $2, $3, $4)
+	ON CONFLICT (address) DO UPDATE 
+		SET type = excluded.type,
+			original_vesting = excluded.original_vesting, 
+			start_time = excluded.start_time,
+			RETURNING id `
+
+	var vestingAccountRowID int
+	err := db.Sql.QueryRow(stmt,
+		proto.MessageName(pva),
+		pva.GetAddress().String(),
+		time.Unix(pva.GetStartTime(), 0),
+	).Scan(&vestingAccountRowID)
+
+	if err != nil {
+		return fmt.Errorf("error while saving Vesting Account of type %v: %s", proto.MessageName(pva), err)
+	}
+
+	err = db.storeVestingPeriods(vestingAccountRowID, pva.VestingPeriods)
+	if err != nil {
+		return fmt.Errorf("error while saving Vesting periods: %s", err)
+	}
+
 	return nil
 }
 

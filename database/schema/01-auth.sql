@@ -17,7 +17,7 @@ CREATE TABLE vesting_account
     type                TEXT                            NOT NULL,
     address             TEXT                            NOT NULL REFERENCES account (address),
     original_vesting    COIN[]                          NOT NULL DEFAULT '{}',
-    end_time            TIMESTAMP WITHOUT TIME ZONE     NOT NULL,
+    end_time            TIMESTAMP WITHOUT TIME ZONE     ,
     start_time          TIMESTAMP WITHOUT TIME ZONE
 );
 /* ---- start_time can be empty on DelayedVestingAccount ---- */
