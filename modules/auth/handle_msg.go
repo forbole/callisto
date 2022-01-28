@@ -35,12 +35,12 @@ func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
 }
 
 func (m *Module) handleMsgCreateVestingAccount(msg *vestingtypes.MsgCreateVestingAccount) error {
-	baseVestingAccount, err := convertVestingAccountFromMsg(msg)
+	va, err := convertBaseVestingAccountFromMsg(msg)
 	if err != nil {
 		return fmt.Errorf("error while converting from MsgCreateVestingAccount to base vesting account %s", err)
 	}
 
-	err = m.db.StoreVestingAccountFromMsg(baseVestingAccount)
+	err = m.db.StoreVestingAccountFromMsg(va)
 	if err != nil {
 		return fmt.Errorf("error while storing to base vesting account from msg %s", err)
 	}
@@ -48,13 +48,13 @@ func (m *Module) handleMsgCreateVestingAccount(msg *vestingtypes.MsgCreateVestin
 	return nil
 }
 
-func convertVestingAccountFromMsg(msg *vestingtypes.MsgCreateVestingAccount) (*vestingtypes.BaseVestingAccount, error) {
+func convertBaseVestingAccountFromMsg(msg *vestingtypes.MsgCreateVestingAccount) (*vestingtypes.BaseVestingAccount, error) {
+
 	accAddress, err := sdk.AccAddressFromBech32(msg.ToAddress)
 	if err != nil {
 		return &vestingtypes.BaseVestingAccount{}, fmt.Errorf("error while converting account address %s", err)
 	}
 	account := authttypes.NewBaseAccountWithAddress(accAddress)
-	baseVestingAccount := vestingtypes.NewBaseVestingAccount(account, msg.Amount, msg.EndTime)
 
-	return baseVestingAccount, nil
+	return vestingtypes.NewBaseVestingAccount(account, msg.Amount, msg.EndTime), nil
 }

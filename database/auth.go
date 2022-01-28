@@ -114,19 +114,21 @@ func (db *Db) storeVestingAccount(account exported.VestingAccount) (int, error) 
 	return vestingAccountRowID, nil
 }
 
-func (db *Db) StoreVestingAccountFromMsg(b *vestingtypes.BaseVestingAccount) error {
+func (db *Db) StoreVestingAccountFromMsg(bva *vestingtypes.BaseVestingAccount) error {
 	stmt := `
-	INSERT INTO vesting_account (type, address, original_vesting, end_time, start_time) 
-	VALUES ($1, $2, $3, $4, $5)
+	INSERT INTO vesting_account (type, address, original_vesting, end_time) 
+	VALUES ($1, $2, $3, $4)
 	ON CONFLICT (address) DO UPDATE 
-		SET original_vesting = excluded.original_vesting, 
-			end_time = excluded.end_time, 
-			start_time = excluded.start_time
-			RETURNING id `
+		SET type = excluded.type,
+			original_vesting = excluded.original_vesting, 
+			end_time = excluded.end_time`
 
-	b.Address
-	b.EndTime
-	b.GetPubKey().Type()
+	_, err := db.Sql.Exec(stmt,
+		proto.MessageName(bva), bva.Address, pq.Array(dbtypes.NewDbCoins(bva.OriginalVesting)), bva.EndTime,
+	)
+	if err != nil {
+		return fmt.Errorf("error while storing vesting account: %s", err)
+	}
 	return nil
 }
 
