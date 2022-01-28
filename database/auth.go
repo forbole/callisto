@@ -124,8 +124,10 @@ func (db *Db) StoreVestingAccountFromMsg(bva *vestingtypes.BaseVestingAccount) e
 			end_time = excluded.end_time`
 
 	_, err := db.Sql.Exec(stmt,
-		proto.MessageName(bva), bva.Address, pq.Array(dbtypes.NewDbCoins(bva.OriginalVesting)), bva.EndTime,
-	)
+		proto.MessageName(bva),
+		bva.GetAddress().String(),
+		pq.Array(dbtypes.NewDbCoins(bva.OriginalVesting)),
+		time.Unix(bva.EndTime, 0))
 	if err != nil {
 		return fmt.Errorf("error while storing vesting account: %s", err)
 	}
