@@ -23,8 +23,7 @@ func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
 			Msgf("error while refreshing accounts after message of type %s", proto.MessageName(msg))
 	}
 
-	switch cosmosMsg := msg.(type) {
-	case *vestingtypes.MsgCreateVestingAccount:
+	if cosmosMsg, ok := msg.(*vestingtypes.MsgCreateVestingAccount); ok {
 		err = m.handleMsgCreateVestingAccount(cosmosMsg)
 		if err != nil {
 			return fmt.Errorf("error while handling to MsgCreateVestingAccount %s", err)
