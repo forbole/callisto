@@ -3,9 +3,9 @@ services:
   bdjuno:
     build:
       context: .
-      args:
-        HASURA_GRAPHQL_ENDPOINT_URL: ${HASURA_GRAPHQL_ENDPOINT_URL}
-        HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET}
+      # args:
+      #   HASURA_GRAPHQL_ENDPOINT_URL: ${HASURA_GRAPHQL_ENDPOINT_URL}
+      #   HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET}
       dockerfile: Dockerfile
     restart: always
     extra_hosts:

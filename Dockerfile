@@ -18,12 +18,4 @@ COPY --from=builder /go/src/github.com/forbole/bdjuno/build/bdjuno /usr/bin/bdju
 COPY --from=builder /go/src/github.com/forbole/bdjuno/hasura /hasura
 COPY bdjuno/ /usr/local/bdjuno/bdjuno/
 
-ARG HASURA_GRAPHQL_ENDPOINT_URL
-ARG HASURA_GRAPHQL_ADMIN_SECRET
-
-ENV HASURA_GRAPHQL_ENDPOINT_URL ${HASURA_GRAPHQL_ENDPOINT_URL}
-ENV HASURA_GRAPHQL_ADMIN_SECRET ${HASURA_GRAPHQL_ADMIN_SECRET}
-
-# CMD ["/bin/bash", "-c", "bdjuno parse --home /usr/local/bdjuno/bdjuno/"]
-CMD ["/bin/bash", "-c", "sleep infinity"] 
-
+CMD ["/bin/bash", "-c", "bdjuno parse-genesis --home /usr/local/bdjuno/bdjuno/ && bdjuno parse --home /usr/local/bdjuno/bdjuno/"]
