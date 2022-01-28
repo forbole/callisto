@@ -37,7 +37,7 @@ func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
 func (m *Module) handleMsgCreateVestingAccount(msg *vestingtypes.MsgCreateVestingAccount) error {
 	va, err := convertBaseVestingAccountFromMsg(msg)
 	if err != nil {
-		return fmt.Errorf("error while converting from MsgCreateVestingAccount to base vesting account %s", err)
+		return fmt.Errorf("error while converting MsgCreateVestingAccount to base vesting account %s", err)
 	}
 
 	err = m.db.StoreVestingAccountFromMsg(va)
