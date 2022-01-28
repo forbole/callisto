@@ -114,6 +114,22 @@ func (db *Db) storeVestingAccount(account exported.VestingAccount) (int, error) 
 	return vestingAccountRowID, nil
 }
 
+func (db *Db) StoreVestingAccountFromMsg(b *vestingtypes.BaseVestingAccount) error {
+	stmt := `
+	INSERT INTO vesting_account (type, address, original_vesting, end_time, start_time) 
+	VALUES ($1, $2, $3, $4, $5)
+	ON CONFLICT (address) DO UPDATE 
+		SET original_vesting = excluded.original_vesting, 
+			end_time = excluded.end_time, 
+			start_time = excluded.start_time
+			RETURNING id `
+
+	b.Address
+	b.EndTime
+	b.GetPubKey().Type()
+	return nil
+}
+
 // storeVestingPeriods handles storing the vesting periods of PeriodicVestingAccount type
 func (db *Db) storeVestingPeriods(id int, vestingPeriods []vestingtypes.Period) error {
 	// Delete already existing periods
