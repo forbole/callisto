@@ -26,9 +26,8 @@ func (s Source) DelegatorTotalRewards(delegator string, height int64) ([]distrty
 // DelegatorWithdrawAddress implements distrsource.Source
 func (s Source) DelegatorWithdrawAddress(delegator string, height int64) (string, error) {
 	res, err := s.distrClient.DelegatorWithdrawAddress(
-		s.Ctx,
+		remote.GetHeightRequestContext(s.Ctx, height),
 		&distrtypes.QueryDelegatorWithdrawAddressRequest{DelegatorAddress: delegator},
-		remote.GetHeightRequestHeader(height),
 	)
 	if err != nil {
 		return "", err
@@ -40,9 +39,8 @@ func (s Source) DelegatorWithdrawAddress(delegator string, height int64) (string
 // ValidatorCommission implements distrsource.Source
 func (s Source) ValidatorCommission(valOperAddr string, height int64) (sdk.DecCoins, error) {
 	res, err := s.distrClient.ValidatorCommission(
-		s.Ctx,
+		remote.GetHeightRequestContext(s.Ctx, height),
 		&distrtypes.QueryValidatorCommissionRequest{ValidatorAddress: valOperAddr},
-		remote.GetHeightRequestHeader(height),
 	)
 	if err != nil {
 		return nil, err

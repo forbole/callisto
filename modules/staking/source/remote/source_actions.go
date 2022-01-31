@@ -59,15 +59,13 @@ func (s Source) GetRedelegations(height int64, request *stakingtypes.QueryRedele
 func (s Source) GetValidatorDelegationsWithPagination(
 	height int64, validator string, pagination *query.PageRequest,
 ) (*stakingtypes.QueryValidatorDelegationsResponse, error) {
-	header := remote.GetHeightRequestHeader(height)
 
 	res, err := s.stakingClient.ValidatorDelegations(
-		s.Ctx,
+		remote.GetHeightRequestContext(s.Ctx, height),
 		&stakingtypes.QueryValidatorDelegationsRequest{
 			ValidatorAddr: validator,
 			Pagination:    pagination,
 		},
-		header,
 	)
 	if err != nil {
 		return nil, err
@@ -80,15 +78,13 @@ func (s Source) GetValidatorDelegationsWithPagination(
 func (s Source) GetUnbondingDelegationsFromValidator(
 	height int64, validator string, pagination *query.PageRequest,
 ) (*stakingtypes.QueryValidatorUnbondingDelegationsResponse, error) {
-	header := remote.GetHeightRequestHeader(height)
 
 	unbondingDelegations, err := s.stakingClient.ValidatorUnbondingDelegations(
-		s.Ctx,
+		remote.GetHeightRequestContext(s.Ctx, height),
 		&stakingtypes.QueryValidatorUnbondingDelegationsRequest{
 			ValidatorAddr: validator,
 			Pagination:    pagination,
 		},
-		header,
 	)
 	if err != nil {
 		return nil, err

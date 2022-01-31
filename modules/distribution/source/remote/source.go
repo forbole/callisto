@@ -29,9 +29,8 @@ func NewSource(source *remote.Source, distrClient distrtypes.QueryClient) *Sourc
 // CommunityPool implements distrsource.Source
 func (s Source) CommunityPool(height int64) (sdk.DecCoins, error) {
 	res, err := s.distrClient.CommunityPool(
-		s.Ctx,
+		remote.GetHeightRequestContext(s.Ctx, height),
 		&distrtypes.QueryCommunityPoolRequest{},
-		remote.GetHeightRequestHeader(height),
 	)
 	if err != nil {
 		return nil, err
@@ -43,9 +42,8 @@ func (s Source) CommunityPool(height int64) (sdk.DecCoins, error) {
 // Params implements distrsource.Source
 func (s Source) Params(height int64) (distrtypes.Params, error) {
 	res, err := s.distrClient.Params(
-		s.Ctx,
+		remote.GetHeightRequestContext(s.Ctx, height),
 		&distrtypes.QueryParamsRequest{},
-		remote.GetHeightRequestHeader(height),
 	)
 	if err != nil {
 		return distrtypes.Params{}, err
