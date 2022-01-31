@@ -146,10 +146,3 @@ VALUES `
 
 	return nil
 }
-
-// GetAccounts returns all the accounts that are currently stored inside the database.
-func (db *Db) GetAccounts() ([]string, error) {
-	var rows []string
-	err := db.Sqlx.Select(&rows, `SELECT address FROM account`)
-	return rows, err
-}

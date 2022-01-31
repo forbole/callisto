@@ -62,39 +62,6 @@ func (s Source) GetDelegation(height int64, delegator string, validator string) 
 	return *res.DelegationResponse, nil
 }
 
-// GetValidatorDelegations implements stakingsource.Source
-func (s Source) GetValidatorDelegations(height int64, valOperAddr string) ([]stakingtypes.DelegationResponse, error) {
-	ctx, err := s.LoadHeight(height)
-	if err != nil {
-		return nil, fmt.Errorf("error while loading height: %s", err)
-	}
-
-	var delegations []stakingtypes.DelegationResponse
-	var nextKey []byte
-	var stop = false
-	for !stop {
-		res, err := s.q.ValidatorDelegations(
-			sdk.WrapSDKContext(ctx),
-			&stakingtypes.QueryValidatorDelegationsRequest{
-				ValidatorAddr: valOperAddr,
-				Pagination: &query.PageRequest{
-					Key:   nextKey,
-					Limit: 100, // Query 100 delegations at time
-				},
-			},
-		)
-		if err != nil {
-			return nil, err
-		}
-
-		nextKey = res.Pagination.NextKey
-		stop = len(res.Pagination.NextKey) == 0
-		delegations = append(delegations, res.DelegationResponses...)
-	}
-
-	return delegations, nil
-}
-
 // GetDelegatorDelegations implements stakingsource.Source
 func (s Source) GetDelegatorDelegations(height int64, delegator string) ([]stakingtypes.DelegationResponse, error) {
 	ctx, err := s.LoadHeight(height)
@@ -126,6 +93,39 @@ func (s Source) GetDelegatorDelegations(height int64, delegator string) ([]staki
 	}
 
 	return delegations, nil
+}
+
+// GetDelegatorRedelegations implements stakingsource.Source
+func (s Source) GetDelegatorRedelegations(height int64, delegator string) ([]stakingtypes.RedelegationResponse, error) {
+	ctx, err := s.LoadHeight(height)
+	if err != nil {
+		return nil, fmt.Errorf("error while loading height: %s", err)
+	}
+
+	var redelegations []stakingtypes.RedelegationResponse
+	var nextKey []byte
+	var stop = false
+	for !stop {
+		res, err := s.q.Redelegations(
+			sdk.WrapSDKContext(ctx),
+			&stakingtypes.QueryRedelegationsRequest{
+				DelegatorAddr: delegator,
+				Pagination: &query.PageRequest{
+					Key:   nextKey,
+					Limit: 100, // Query 100 delegations at time
+				},
+			},
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		nextKey = res.Pagination.NextKey
+		stop = len(res.Pagination.NextKey) == 0
+		redelegations = append(redelegations, res.RedelegationResponses...)
+	}
+
+	return redelegations, nil
 }
 
 // GetValidatorsWithStatus implements stakingsource.Source
@@ -195,4 +195,38 @@ func (s Source) GetParams(height int64) (stakingtypes.Params, error) {
 	}
 
 	return res.Params, nil
+}
+
+// GetUnbondingDelegations implements stakingsource.Source
+func (s Source) GetUnbondingDelegations(height int64, delegator string) ([]stakingtypes.UnbondingDelegation, error) {
+	ctx, err := s.LoadHeight(height)
+	if err != nil {
+		return nil, fmt.Errorf("error while loading height: %s", err)
+	}
+
+	var delegations []stakingtypes.UnbondingDelegation
+	var nextKey []byte
+	var stop = false
+	for !stop {
+		res, err := s.q.DelegatorUnbondingDelegations(
+			sdk.WrapSDKContext(ctx),
+			&stakingtypes.QueryDelegatorUnbondingDelegationsRequest{
+				DelegatorAddr: delegator,
+				Pagination: &query.PageRequest{
+					Key:   nextKey,
+					Limit: 100, // Query 100 unbonding delegations at time
+				},
+			},
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		nextKey = res.Pagination.NextKey
+		stop = len(res.Pagination.NextKey) == 0
+		delegations = append(delegations, res.UnbondingResponses...)
+	}
+
+	return delegations, nil
+
 }

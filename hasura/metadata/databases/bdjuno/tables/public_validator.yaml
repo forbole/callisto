@@ -19,20 +19,6 @@ array_relationships:
       table:
         name: block
         schema: public
-- name: delegation_rewards
-  using:
-    foreign_key_constraint_on:
-      column: validator_address
-      table:
-        name: delegation_reward
-        schema: public
-- name: delegations
-  using:
-    foreign_key_constraint_on:
-      column: validator_address
-      table:
-        name: delegation
-        schema: public
 - name: double_sign_votes
   using:
     foreign_key_constraint_on:
@@ -46,34 +32,6 @@ array_relationships:
       column: validator_address
       table:
         name: pre_commit
-        schema: public
-- name: redelegationsByDstValidatorAddress
-  using:
-    foreign_key_constraint_on:
-      column: dst_validator_address
-      table:
-        name: redelegation
-        schema: public
-- name: redelegationsBySrcValidatorAddress
-  using:
-    foreign_key_constraint_on:
-      column: src_validator_address
-      table:
-        name: redelegation
-        schema: public
-- name: unbonding_delegations
-  using:
-    foreign_key_constraint_on:
-      column: validator_address
-      table:
-        name: unbonding_delegation
-        schema: public
-- name: validator_commission_amounts
-  using:
-    foreign_key_constraint_on:
-      column: validator_address
-      table:
-        name: validator_commission_amount
         schema: public
 - name: validator_commissions
   using:
