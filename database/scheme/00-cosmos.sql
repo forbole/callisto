@@ -55,7 +55,7 @@ CREATE TABLE transaction
     gas_wanted   BIGINT           DEFAULT 0,
     gas_used     BIGINT           DEFAULT 0,
     raw_log      TEXT,
-    logs         JSONB
+    logs         JSON
 );
 CREATE INDEX transaction_hash_index ON transaction (hash);
 CREATE INDEX transaction_height_index ON transaction (height);
