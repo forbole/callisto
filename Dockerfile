@@ -18,4 +18,4 @@ COPY --from=builder /go/src/github.com/forbole/bdjuno/build/bdjuno /usr/bin/bdju
 COPY --from=builder /go/src/github.com/forbole/bdjuno/hasura /hasura
 COPY bdjuno/ /usr/local/bdjuno/bdjuno/
 
-CMD ["/bin/bash", "-c", "bdjuno parse --home /usr/local/bdjuno/bdjuno/"]
+CMD ["/bin/bash", "-c", "bdjuno parse-genesis --home /usr/local/bdjuno/bdjuno/ && bdjuno parse --home /usr/local/bdjuno/bdjuno/"]
