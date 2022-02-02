@@ -59,7 +59,7 @@ CREATE TABLE transaction
     gas_wanted   BIGINT           DEFAULT 0,
     gas_used     BIGINT           DEFAULT 0,
     raw_log      TEXT,
-    logs         JSONB
+    logs         JSON
 );
 CREATE INDEX transaction_hash_index ON transaction (hash);
 CREATE INDEX transaction_height_index ON transaction (height);
@@ -638,8 +638,8 @@ CREATE INDEX proposal_tally_result_height_index ON proposal_tally_result (height
 CREATE TABLE proposal_staking_pool_snapshot
 (
     proposal_id       INTEGER REFERENCES proposal (id) PRIMARY KEY,
-    bonded_tokens     BIGINT NOT NULL,
-    not_bonded_tokens BIGINT NOT NULL,
+    bonded_tokens     DECIMAL NOT NULL,
+    not_bonded_tokens DECIMAL NOT NULL,
     height            BIGINT NOT NULL,
     CONSTRAINT unique_staking_pool_snapshot UNIQUE (proposal_id)
 );
