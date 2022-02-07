@@ -20,25 +20,18 @@ type Module struct {
 	cdc            codec.Marshaler
 	db             *database.Db
 	source         stakingsource.Source
-	bankModule     BankModule
-	distrModule    DistrModule
-	historyModule  HistoryModule
 	slashingModule SlashingModule
 }
 
 // NewModule returns a new Module instance
 func NewModule(
-	source stakingsource.Source,
-	bankModule BankModule, distrModule DistrModule, historyModule HistoryModule, slashingModule SlashingModule,
+	source stakingsource.Source, slashingModule SlashingModule,
 	cdc codec.Marshaler, db *database.Db,
 ) *Module {
 	return &Module{
 		cdc:            cdc,
 		db:             db,
 		source:         source,
-		bankModule:     bankModule,
-		distrModule:    distrModule,
-		historyModule:  historyModule,
 		slashingModule: slashingModule,
 	}
 }

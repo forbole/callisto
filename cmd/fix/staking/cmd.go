@@ -14,7 +14,6 @@ func NewStakingCmd(parseConfig *parse.Config) *cobra.Command {
 
 	cmd.AddCommand(
 		validatorsCmd(parseConfig),
-		slashesCmd(parseConfig),
 	)
 
 	return cmd

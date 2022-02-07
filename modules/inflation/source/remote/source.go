@@ -7,6 +7,7 @@ import (
 	"github.com/forbole/juno/v2/node/remote"
 
 	inflationsource "github.com/forbole/bdjuno/v2/modules/inflation/source"
+	"github.com/forbole/bdjuno/v2/utils"
 )
 
 var (
@@ -29,7 +30,7 @@ func NewSource(source *remote.Source, client inflationtypes.QueryClient) *Source
 
 // GetInflation implements inflationsource.Source
 func (s *Source) GetInflation(height int64) (inflationtypes.InflationState, error) {
-	res, err := s.client.Inflation(s.Ctx, &inflationtypes.QueryInflationRequest{}, remote.GetHeightRequestHeader(height))
+	res, err := s.client.Inflation(utils.GetHeightRequestContext(s.Ctx, height), &inflationtypes.QueryInflationRequest{})
 	if err != nil {
 		return inflationtypes.InflationState{}, fmt.Errorf("error while querying inflation state: %s", err)
 	}

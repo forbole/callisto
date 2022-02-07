@@ -14,10 +14,7 @@ const (
 )
 
 var (
-	_ modules.Module                   = &Module{}
-	_ modules.PeriodicOperationsModule = &Module{}
-	_ modules.GenesisModule            = &Module{}
-	_ modules.MessageModule            = &Module{}
+	_ modules.Module = &Module{}
 )
 
 // Module represents the module that allows to store historic information

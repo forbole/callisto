@@ -3,7 +3,6 @@ package types
 import (
 	"database/sql"
 	"strconv"
-	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -207,31 +206,6 @@ func (v ValidatorCommissionRow) Equal(w ValidatorCommissionRow) bool {
 		v.Commission == w.Commission &&
 		v.MinSelfDelegation == w.MinSelfDelegation &&
 		v.Height == w.Height
-}
-
-// ValidatorCommissionHistoryRow represents a single row of the validator_commission_history table
-type ValidatorCommissionHistoryRow struct {
-	CommissionID int64     `db:"commission_id"`
-	Height       int64     `db:"height"`
-	Timestamp    time.Time `db:"timestamp"`
-}
-
-// NewValidatorCommissionHistoryRow allows to easily build a new ValidatorCommissionHistoryRow instance
-func NewValidatorCommissionHistoryRow(
-	commissionID int64, height int64, timestamp time.Time,
-) ValidatorCommissionHistoryRow {
-	return ValidatorCommissionHistoryRow{
-		CommissionID: commissionID,
-		Height:       height,
-		Timestamp:    timestamp,
-	}
-}
-
-// Equal tells whether v and w represent the same rows
-func (v ValidatorCommissionHistoryRow) Equal(w ValidatorCommissionHistoryRow) bool {
-	return v.CommissionID == w.CommissionID &&
-		v.Height == w.Height &&
-		v.Timestamp.Equal(w.Timestamp)
 }
 
 // ________________________________________________

@@ -8,6 +8,7 @@ import (
 	"github.com/forbole/juno/v2/node/remote"
 
 	authoritysource "github.com/forbole/bdjuno/v2/modules/authority/source"
+	"github.com/forbole/bdjuno/v2/utils"
 )
 
 var (
@@ -30,7 +31,7 @@ func NewSource(source *remote.Source, client authoritytypes.QueryClient) *Source
 
 // GetMinimumGasPrices implements authoritysource.Source
 func (s *Source) GetMinimumGasPrices(height int64) (sdk.DecCoins, error) {
-	res, err := s.client.GasPrices(s.Ctx, &authoritytypes.QueryGasPricesRequest{}, remote.GetHeightRequestHeader(height))
+	res, err := s.client.GasPrices(utils.GetHeightRequestContext(s.Ctx, height), &authoritytypes.QueryGasPricesRequest{})
 	if err != nil {
 		return nil, fmt.Errorf("errror while querying gas prices: %s", err)
 	}
