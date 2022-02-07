@@ -21,10 +21,10 @@ var (
 
 // Module represents the x/distr module
 type Module struct {
-	cdc        codec.Marshaler
-	cfg        *Config
-	db         *database.Db
-	source     distrsource.Source
+	cdc    codec.Marshaler
+	cfg    *Config
+	db     *database.Db
+	source distrsource.Source
 }
 
 // NewModule returns a new Module instance
@@ -35,10 +35,10 @@ func NewModule(cfg config.Config, source distrsource.Source, cdc codec.Marshaler
 	}
 
 	return &Module{
-		cdc:        cdc,
-		cfg:        distrCfg,
-		db:         db,
-		source:     source,
+		cdc:    cdc,
+		cfg:    distrCfg,
+		db:     db,
+		source: source,
 	}
 }
 
