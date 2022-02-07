@@ -77,13 +77,6 @@ array_relationships:
       table:
         name: validator_voting_power
         schema: public
-computed_fields:
-- comment: ""
-  definition:
-    function:
-      name: self_delegations
-      schema: public
-  name: self_delegations
 select_permissions:
 - permission:
     allow_aggregations: true
