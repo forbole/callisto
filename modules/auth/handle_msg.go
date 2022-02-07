@@ -26,7 +26,7 @@ func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
 	if cosmosMsg, ok := msg.(*vestingtypes.MsgCreateVestingAccount); ok {
 		err = m.handleMsgCreateVestingAccount(cosmosMsg)
 		if err != nil {
-			return fmt.Errorf("error while handling to MsgCreateVestingAccount %s", err)
+			return fmt.Errorf("error while handling MsgCreateVestingAccount %s", err)
 		}
 	}
 
