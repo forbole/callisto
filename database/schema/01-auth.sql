@@ -21,6 +21,7 @@ CREATE TABLE vesting_account
     start_time          TIMESTAMP WITHOUT TIME ZONE
 );
 /* ---- start_time can be empty on DelayedVestingAccount ---- */
+/* ---- end_time can be empty on created PeriodicVestingAccount ---- */
 
 CREATE UNIQUE INDEX vesting_account_address_idx ON vesting_account (address);
 
