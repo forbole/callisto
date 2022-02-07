@@ -13,12 +13,16 @@ services:
     environment:
       HASURA_GRAPHQL_ENDPOINT_URL: ${HASURA_GRAPHQL_ENDPOINT_URL}
       HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET}
+    logging:
+      driver: ${LOGGING_DRIVER}
     depends_on:
       - cloudsql-proxy
   hasura:
     image: hasura/graphql-engine:v2.1.1
     ports:
       - "8080:8080"
+    logging:
+      driver: ${LOGGING_DRIVER}
     restart: always
     extra_hosts:
       - "host.docker.internal:host-gateway"
