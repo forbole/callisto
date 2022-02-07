@@ -137,12 +137,12 @@ func (db *Db) StoreBaseVestingAccountFromMsg(bva *vestingtypes.BaseVestingAccoun
 func (db *Db) StorePeriodicVestingAccountFromMsg(pva *vestingtypes.PeriodicVestingAccount) error {
 	stmt := `
 	INSERT INTO vesting_account (type, address, start_time) 
-	VALUES ($1, $2, $3, $4)
+	VALUES ($1, $2, $3)
 	ON CONFLICT (address) DO UPDATE 
 		SET type = excluded.type,
 			original_vesting = excluded.original_vesting, 
-			start_time = excluded.start_time,
-			RETURNING id `
+			start_time = excluded.start_time
+	RETURNING id `
 
 	var vestingAccountRowID int
 	err := db.Sql.QueryRow(stmt,

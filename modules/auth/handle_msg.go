@@ -27,12 +27,12 @@ func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
 	case *vestingtypes.MsgCreateVestingAccount:
 		err = m.handleMsgCreateVestingAccount(cosmosMsg)
 		if err != nil {
-			return fmt.Errorf("error while handling to MsgCreateVestingAccount %s", err)
+			return fmt.Errorf("error while handling MsgCreateVestingAccount %s", err)
 		}
 	case *vestingtypes.MsgCreatePeriodicVestingAccount:
 		err = m.handleMsgCreatePeriodicVestingAccount(cosmosMsg)
 		if err != nil {
-			return fmt.Errorf("error while handling to MsgCreatePeriodicVestingAccount %s", err)
+			return fmt.Errorf("error while handling MsgCreatePeriodicVestingAccount %s", err)
 		}
 	}
 
@@ -52,7 +52,7 @@ func (m *Module) handleMsgCreateVestingAccount(msg *vestingtypes.MsgCreateVestin
 
 	err = m.db.StoreBaseVestingAccountFromMsg(vestingAccount)
 	if err != nil {
-		return fmt.Errorf("error while storing to base vesting account from msg %s", err)
+		return fmt.Errorf("error while storing base vesting account from msg %s", err)
 	}
 	return nil
 }
@@ -70,7 +70,7 @@ func (m *Module) handleMsgCreatePeriodicVestingAccount(msg *vestingtypes.MsgCrea
 
 	err = m.db.StorePeriodicVestingAccountFromMsg(vestingAccount)
 	if err != nil {
-		return fmt.Errorf("error while storing to periodic vesting account from msg %s", err)
+		return fmt.Errorf("error while storing periodic vesting account from msg %s", err)
 	}
 
 	return nil
