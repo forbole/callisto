@@ -121,7 +121,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	authorityModule := authority.NewModule(cdc, sources.AuthoritySource, db)
 	bankModule := bank.NewModule(r.parser, sources.BankSource, cdc, db)
 	consensusModule := consensus.NewModule(db)
-	distrModule := distribution.NewModule(ctx.JunoConfig, sources.DistrSource, cdc, db)
+	distrModule := distribution.NewModule(sources.DistrSource, cdc, db)
 	historyModule := history.NewModule(ctx.JunoConfig.Chain, r.parser, cdc, db)
 	inflationModule := inflation.NewModule(cdc, sources.InflationSource, db)
 	mintModule := mint.NewModule(sources.MintSource, cdc, db)
