@@ -16,7 +16,6 @@
 - "!include public_mint_params.yaml"
 - "!include public_modules.yaml"
 - "!include public_pre_commit.yaml"
-- "!include public_profiles_params.yaml"
 - "!include public_proposal.yaml"
 - "!include public_proposal_deposit.yaml"
 - "!include public_proposal_staking_pool_snapshot.yaml"
