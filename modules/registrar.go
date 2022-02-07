@@ -43,6 +43,7 @@ import (
 	remotebanksource "github.com/forbole/bdjuno/v2/modules/bank/source/remote"
 	"github.com/forbole/bdjuno/v2/modules/consensus"
 	"github.com/forbole/bdjuno/v2/modules/distribution"
+
 	distrsource "github.com/forbole/bdjuno/v2/modules/distribution/source"
 	localdistrsource "github.com/forbole/bdjuno/v2/modules/distribution/source/local"
 	remotedistrsource "github.com/forbole/bdjuno/v2/modules/distribution/source/remote"
@@ -126,10 +127,10 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		distrModule,
 		govModule,
 		historyModule,
-		mint.NewModule(sources.MintSource, cdc, db),
+		mintModule,
 		modules.NewModule(ctx.JunoConfig.Chain, db),
 		pricefeed.NewModule(ctx.JunoConfig, historyModule, cdc, db),
-		slashing.NewModule(sources.SlashingSource, cdc, db),
+		slashingModule,
 		stakingModule,
 	}
 }
