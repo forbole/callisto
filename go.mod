@@ -6,11 +6,9 @@ require (
 	github.com/MonikaCat/ag0/v6 v6.0.0-20211026142553-1cc79476b438
 	github.com/cosmos/cosmos-sdk v0.44.3
 	github.com/cosmos/gaia/v6 v6.0.0-rc1
-	github.com/cosmos/ibc-go v1.2.3 // indirect
 	github.com/forbole/juno/v2 v2.0.0-20220126170316-a7d4812d6af2
 	github.com/go-co-op/gocron v1.11.0
 	github.com/gogo/protobuf v1.3.3
-	github.com/hashicorp/golang-lru v0.5.5-0.20210104140557-80c98217689d // indirect
 	github.com/jmoiron/sqlx v1.2.1-0.20200324155115-ee514944af4b
 	github.com/lib/pq v1.10.4
 	github.com/pelletier/go-toml v1.9.4
