@@ -75,14 +75,8 @@ func migrateConfig() (Config, error) {
 		pricefeedConfig = pricefeed.NewConfig(tokens)
 	}
 
-	var distributionConfig = distribution.DefaultConfig()
-	if v1BDJunoCfg.DistributionConfig != nil {
-		distributionConfig = distribution.NewConfig(v1BDJunoCfg.DistributionConfig.DistributionFrequency)
-	}
-
 	return Config{
-		Config:             v1JunoCfg,
-		PricefeedConfig:    pricefeedConfig,
-		DistributionConfig: distributionConfig,
+		Config:          v1JunoCfg,
+		PricefeedConfig: pricefeedConfig,
 	}, nil
 }
