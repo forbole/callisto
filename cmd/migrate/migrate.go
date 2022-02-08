@@ -9,7 +9,6 @@ import (
 	"gopkg.in/yaml.v3"
 
 	v1 "github.com/forbole/bdjuno/v2/cmd/migrate/v1"
-	"github.com/forbole/bdjuno/v2/modules/distribution"
 	"github.com/forbole/bdjuno/v2/modules/pricefeed"
 	"github.com/forbole/bdjuno/v2/types"
 
@@ -19,8 +18,7 @@ import (
 
 type Config struct {
 	junomigrate.Config `yaml:",inline"`
-	PricefeedConfig    *pricefeed.Config    `yaml:"pricefeed"`
-	DistributionConfig *distribution.Config `yaml:"distribution"`
+	PricefeedConfig    *pricefeed.Config `yaml:"pricefeed"`
 }
 
 // NewMigrateCmd returns the command to be run when migrating the config from v1 to v2
