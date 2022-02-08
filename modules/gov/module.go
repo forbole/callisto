@@ -23,7 +23,6 @@ type Module struct {
 	db             *database.Db
 	source         govsource.Source
 	authModule     AuthModule
-	bankModule     BankModule
 	distrModule    DistrModule
 	mintModule     MintModule
 	slashingModule SlashingModule
@@ -34,7 +33,6 @@ type Module struct {
 func NewModule(
 	source govsource.Source,
 	authModule AuthModule,
-	bankModule BankModule,
 	distrModule DistrModule,
 	mintModule MintModule,
 	slashingModule SlashingModule,
@@ -46,7 +44,6 @@ func NewModule(
 		cdc:            cdc,
 		source:         source,
 		authModule:     authModule,
-		bankModule:     bankModule,
 		distrModule:    distrModule,
 		mintModule:     mintModule,
 		slashingModule: slashingModule,

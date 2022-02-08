@@ -1,6 +1,291 @@
-actions: []
+############### ACTIONS ###############
+actions:
+
+##### Bank #####
+- name: action_account_balance
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/account_balance
+    output_type: ActionBalance
+    arguments:
+    - name: address
+      type: String!
+    - name: height
+      type: Int
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+##### Staking / Delegatagor #####
+- name: action_delegation_reward
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/delegation_reward
+    output_type: "[ActionDelegationReward]"
+    arguments:
+    - name: address
+      type: String!
+    - name: height
+      type: Int
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: action_delegator_withdraw_address
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/delegator_withdraw_address
+    output_type: ActionAddress
+    arguments:
+    - name: address
+      type: String!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: action_delegation
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/delegation
+    output_type: ActionDelegationResponse
+    arguments:
+    - name: address
+      type: String!
+    - name: height
+      type: Int
+    - name: offset
+      type: Int
+    - name: limit
+      type: Int
+    - name: count_total
+      type: Boolean!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: action_delegation_total
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/delegation_total
+    output_type: ActionBalance
+    arguments:
+    - name: address
+      type: String!
+    - name: height
+      type: Int
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: action_redelegation
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/redelegation
+    output_type: ActionRedelegationResponse
+    arguments:
+    - name: address
+      type: String!
+    - name: height
+      type: Int
+    - name: offset
+      type: Int
+    - name: limit
+      type: Int
+    - name: count_total
+      type: Boolean!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: action_unbonding_delegation
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/unbonding_delegation
+    output_type: ActionUnbondingDelegationResponse
+    arguments:
+    - name: address
+      type: String!
+    - name: height
+      type: Int
+    - name: offset
+      type: Int
+    - name: limit
+      type: Int
+    - name: count_total
+      type: Boolean!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: action_unbonding_delegation_total
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/unbonding_delegation_total
+    output_type: ActionBalance
+    arguments:
+    - name: address
+      type: String!
+    - name: height
+      type: Int
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+##### Staking / Validator #####
+- name: action_validator_commission_amount
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/validator_commission_amount
+    output_type: "[ActionValidatorCommissionAmount]"
+    arguments:
+    - name: address
+      type: String!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: action_validator_delegations
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/validator_delegations
+    output_type: ActionDelegationResponse
+    arguments:
+    - name: address
+      type: String!
+    - name: offset
+      type: Int
+    - name: limit
+      type: Int
+    - name: count_total
+      type: Boolean!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous  
+
+- name: action_validator_redelegations_from
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/validator_redelegations_from
+    output_type: ActionRedelegationResponse
+    arguments:
+    - name: address
+      type: String!
+    - name: height
+      type: Int
+    - name: offset
+      type: Int
+    - name: limit
+      type: Int
+    - name: count_total
+      type: Boolean!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: action_validator_unbonding_delegations
+  definition:
+    kind: synchronous
+    handler: http://localhost:3000/validator_unbonding_delegations
+    output_type: ActionUnbondingDelegationResponse
+    arguments:
+    - name: address
+      type: String!
+    - name: offset
+      type: Int
+    - name: limit
+      type: Int
+    - name: count_total
+      type: Boolean!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+############### CUSTOM TYPES ###############
 custom_types:
-  enums: []
-  input_objects: []
-  objects: []
-  scalars: []
+  scalars:
+  - name: ActionCoin
+  - name: ActionDelegation
+  - name: ActionEntry
+  - name: ActionPagination
+  - name: ActionRedelegation
+  - name: ActionUnbondingDelegation
+
+  objects:
+  - name: ActionBalance
+    fields:
+    - name: coins
+      type: [ActionCoin]
+
+  - name: ActionDelegationReward
+    fields:
+    - name: coins
+      type: [ActionCoin]
+    - name: validator_address
+      type: String!
+
+  - name: ActionDelegationResponse
+    fields:
+    - name: delegations
+      type: [ActionDelegation]
+    - name: pagination
+      type: ActionPagination
+
+  - name: ActionAddress
+    fields: 
+    - name: address
+      type: String!
+
+  - name: ActionRedelegationResponse
+    fields:
+    - name: redelegations
+      type: [ActionRedelegation]
+    - name: pagination
+      type: ActionPagination
+
+  - name: ActionUnbondingDelegationResponse
+    fields:
+    - name: unbonding_delegations
+      type: [ActionUnbondingDelegation]
+    - name: pagination
+      type: ActionPagination
+  
+  - name: ActionValidatorCommissionAmount
+    fields:
+    - name: coins
+      type: [ActionCoin]

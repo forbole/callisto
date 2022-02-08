@@ -64,3 +64,18 @@ func (s Source) GetSupply(height int64) (sdk.Coins, error) {
 
 	return res.Supply, nil
 }
+
+// GetAccountBalances implements bankkeeper.Source
+func (s Source) GetAccountBalance(address string, height int64) ([]sdk.Coin, error) {
+	ctx, err := s.LoadHeight(height)
+	if err != nil {
+		return nil, fmt.Errorf("error while loading height: %s", err)
+	}
+
+	balRes, err := s.q.AllBalances(sdk.WrapSDKContext(ctx), &banktypes.QueryAllBalancesRequest{Address: address})
+	if err != nil {
+		return nil, fmt.Errorf("error while getting all balances: %s", err)
+	}
+
+	return balRes.Balances, nil
+}

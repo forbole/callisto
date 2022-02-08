@@ -184,7 +184,7 @@ func (m *Module) updateAccounts(proposal govtypes.Proposal) error {
 			return err
 		}
 
-		return m.bankModule.RefreshBalances(height, addresses)
+		return nil
 	}
 	return nil
 }

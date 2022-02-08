@@ -5,7 +5,7 @@ go 1.16
 require (
 	github.com/bitsongofficial/go-bitsong v0.8.0
 	github.com/cosmos/cosmos-sdk v0.42.10
-	github.com/forbole/juno/v2 v2.0.0-20220117075314-1d0a50fab7d4
+	github.com/forbole/juno/v2 v2.0.0-20220125161451-4f6319e432a5
 	github.com/go-co-op/gocron v1.11.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.2.1-0.20200324155115-ee514944af4b
