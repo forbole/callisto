@@ -44,9 +44,7 @@ func (db *Db) pruneBank(height int64) error {
 	if err != nil {
 		return fmt.Errorf("error while pruning supply: %s", err)
 	}
-
-	_, err = db.Sql.Exec(`DELETE FROM account_balance WHERE height = $1`, height)
-	return fmt.Errorf("error while pruning account balance: %s", err)
+	return nil
 }
 
 func (db *Db) pruneStaking(height int64) error {
@@ -68,21 +66,6 @@ func (db *Db) pruneStaking(height int64) error {
 	_, err = db.Sql.Exec(`DELETE FROM validator_status WHERE height = $1`, height)
 	if err != nil {
 		return fmt.Errorf("error while pruning validator status: %s", err)
-	}
-
-	_, err = db.Sql.Exec(`DELETE FROM delegation WHERE height = $1`, height)
-	if err != nil {
-		return fmt.Errorf("error while pruning validator delegation: %s", err)
-	}
-
-	_, err = db.Sql.Exec(`DELETE FROM unbonding_delegation WHERE height = $1`, height)
-	if err != nil {
-		return fmt.Errorf("error while pruning unbonding delegation: %s", err)
-	}
-
-	_, err = db.Sql.Exec(`DELETE FROM redelegation WHERE height = $1`, height)
-	if err != nil {
-		return fmt.Errorf("error while pruning redelegation: %s", err)
 	}
 
 	_, err = db.Sql.Exec(`DELETE FROM double_sign_vote WHERE height = $1`, height)
@@ -107,16 +90,6 @@ func (db *Db) pruneDistribution(height int64) error {
 	_, err := db.Sql.Exec(`DELETE FROM community_pool WHERE height = $1`, height)
 	if err != nil {
 		return fmt.Errorf("error while pruning community pool: %s", err)
-	}
-
-	_, err = db.Sql.Exec(`DELETE FROM validator_commission_amount WHERE height = $1`, height)
-	if err != nil {
-		return fmt.Errorf("error while pruning validator commission amount: %s", err)
-	}
-
-	_, err = db.Sql.Exec(`DELETE FROM delegation_reward WHERE height = $1`, height)
-	if err != nil {
-		return fmt.Errorf("error while pruning delegation reward: %s", err)
 	}
 
 	return nil
