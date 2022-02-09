@@ -123,6 +123,12 @@ func (db *Db) StoreBaseVestingAccountFromMsg(bva *vestingtypes.BaseVestingAccoun
 			original_vesting = excluded.original_vesting, 
 			end_time = excluded.end_time`
 
+         // store account in database
+	err := db.SaveAccounts([]types.Account{types.NewAccount(pva.GetAddress().String())})
+	if err != nil {
+		return fmt.Errorf("error while storing vesting account: %s", err)
+	}
+	
 	_, err := db.Sql.Exec(stmt,
 		proto.MessageName(bva),
 		bva.GetAddress().String(),
