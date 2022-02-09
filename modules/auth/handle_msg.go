@@ -2,6 +2,7 @@ package auth
 
 import (
 	"fmt"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	juno "github.com/forbole/juno/v2/types"
@@ -12,6 +13,7 @@ import (
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 
 	"github.com/forbole/bdjuno/v2/modules/utils"
+	"github.com/forbole/bdjuno/v2/types"
 )
 
 // HandleMsg implements modules.MessageModule
@@ -24,7 +26,13 @@ func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
 	}
 
 	if cosmosMsg, ok := msg.(*vestingtypes.MsgCreateVestingAccount); ok {
-		err = m.handleMsgCreateVestingAccount(cosmosMsg)
+		// Store tx timestamp as start_time of the created vesting account
+		timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
+		if err != nil {
+			return fmt.Errorf("error while parsing time: %s", err)
+		}
+
+		err = m.handleMsgCreateVestingAccount(cosmosMsg, timestamp)
 		if err != nil {
 			return fmt.Errorf("error while handling MsgCreateVestingAccount %s", err)
 		}
@@ -33,27 +41,25 @@ func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
 	return m.RefreshAccounts(tx.Height, utils.FilterNonAccountAddresses(addresses))
 }
 
-func (m *Module) handleMsgCreateVestingAccount(msg *vestingtypes.MsgCreateVestingAccount) error {
-	va, err := convertBaseVestingAccountFromMsg(msg)
-	if err != nil {
-		return fmt.Errorf("error while converting MsgCreateVestingAccount to base vesting account %s", err)
-	}
-
-	err = m.db.StoreVestingAccountFromMsg(va)
-	if err != nil {
-		return fmt.Errorf("error while storing base vesting account from msg %s", err)
-	}
-
-	return nil
-}
-
-func convertBaseVestingAccountFromMsg(msg *vestingtypes.MsgCreateVestingAccount) (*vestingtypes.BaseVestingAccount, error) {
+func (m *Module) handleMsgCreateVestingAccount(msg *vestingtypes.MsgCreateVestingAccount, txTimestamp time.Time) error {
 
 	accAddress, err := sdk.AccAddressFromBech32(msg.ToAddress)
 	if err != nil {
-		return &vestingtypes.BaseVestingAccount{}, fmt.Errorf("error while converting account address %s", err)
+		return fmt.Errorf("error while converting account address %s", err)
 	}
-	account := authttypes.NewBaseAccountWithAddress(accAddress)
 
-	return vestingtypes.NewBaseVestingAccount(account, msg.Amount, msg.EndTime), nil
+	// store account in database
+	err = m.db.SaveAccounts([]types.Account{types.NewAccount(accAddress.String())})
+	if err != nil {
+		return fmt.Errorf("error while storing vesting account: %s", err)
+	}
+
+	bva := vestingtypes.NewBaseVestingAccount(
+		authttypes.NewBaseAccountWithAddress(accAddress), msg.Amount, msg.EndTime,
+	)
+	err = m.db.StoreBaseVestingAccountFromMsg(bva, txTimestamp)
+	if err != nil {
+		return fmt.Errorf("error while storing base vesting account from msg %s", err)
+	}
+	return nil
 }
