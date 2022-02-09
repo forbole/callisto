@@ -1,8 +1,6 @@
 package database_test
 
 import (
-	"fmt"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
 
@@ -48,19 +46,15 @@ func (suite *DbTestSuite) TestBigDipperDb_RemoveFeeGrantAllowance() {
 	allowance := &feegranttypes.BasicAllowance{SpendLimit: nil, Expiration: nil}
 	granter, err := sdk.AccAddressFromBech32("cosmos1ltzt0z992ke6qgmtjxtygwzn36km4cy6cqdknt")
 	suite.Require().NoError(err)
-	fmt.Println("err1", err)
 
 	grantee, err := sdk.AccAddressFromBech32("cosmos1re6zjpyczs0w7flrl6uacl0r4teqtyg62crjsn")
 	suite.Require().NoError(err)
-	fmt.Println("err2", err)
 
 	feeGrant, err := feegranttypes.NewGrant(granter, grantee, allowance)
 	suite.Require().NoError(err)
-	fmt.Println("err3", err)
 
 	err = suite.database.SaveFeeGrantAllowance(types.NewFeeGrant(feeGrant, 121622))
 	suite.Require().NoError(err)
-	fmt.Println("err4", err)
 
 	// Delete the data
 	err = suite.database.DeleteFeeGrantAllowance(types.NewGrantRemoval(
@@ -69,14 +63,10 @@ func (suite *DbTestSuite) TestBigDipperDb_RemoveFeeGrantAllowance() {
 		122222,
 	))
 	suite.Require().NoError(err)
-	fmt.Println("err5", err)
 
 	// verify the data
 	var count int
 	err = suite.database.Sql.QueryRow(`SELECT COUNT(*) FROM fee_grant_allowance`).Scan(&count)
 	suite.Require().NoError(err)
-	fmt.Println("err6", err)
-
 	suite.Require().Equal(0, count)
-	fmt.Println("count: ", count)
 }
