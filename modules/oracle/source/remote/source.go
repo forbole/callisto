@@ -30,9 +30,8 @@ func NewSource(source *remote.Source, client oracletypes.QueryClient) *Source {
 // GetParams implements oraclesource.Source
 func (s *Source) GetParams(height int64) (oracletypes.Params, error) {
 	res, err := s.client.Params(
-		s.Ctx,
+		remote.GetHeightRequestContext(s.Ctx, height),
 		&oracletypes.QueryParamsRequest{},
-		remote.GetHeightRequestHeader(height),
 	)
 	if err != nil {
 		return oracletypes.Params{}, fmt.Errorf("error while getting oracle params: %s", err)

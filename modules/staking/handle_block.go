@@ -3,9 +3,6 @@ package staking
 import (
 	"encoding/hex"
 	"fmt"
-	"time"
-
-	abci "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/forbole/bdjuno/v2/types"
 
@@ -38,9 +35,6 @@ func (m *Module) HandleBlock(
 
 	// Update the staking pool
 	go m.updateStakingPool(block.Block.Height)
-
-	// Update redelegations and unbonding delegations
-	go m.updateElapsedDelegations(block.Block.Height, block.Block.Time, res.EndBlockEvents)
 
 	return nil
 }
@@ -146,87 +140,6 @@ func (m *Module) updateStakingPool(height int64) {
 	if err != nil {
 		log.Error().Str("module", "staking").Err(err).Int64("height", height).
 			Msg("error while saving staking pool")
-		return
-	}
-}
-
-// updateElapsedDelegations updates the redelegations and unbonding delegations that have elapsed
-func (m *Module) updateElapsedDelegations(height int64, blockTime time.Time, events []abci.Event) {
-	log.Debug().Str("module", "staking").Int64("height", height).
-		Msg("updating elapsed redelegations and unbonding delegations")
-
-	// Get past delegators to be refreshed now
-	delegators, err := m.db.DeleteDelegatorsToRefresh(height)
-	if err != nil {
-		log.Error().Str("module", "staking").Err(err).Int64("height", height).
-			Msg("error while getting delegators to refresh")
-		return
-	}
-
-	// Delete the completed entries if there is someone to refresh it for
-	if len(delegators) > 0 {
-		err = m.db.DeleteCompletedRedelegations(blockTime)
-		if err != nil {
-			log.Error().Str("module", "staking").Err(err).Int64("height", height).
-				Msg("error while deleting completed redelegations")
-			return
-		}
-
-		err = m.db.DeleteCompletedUnbondingDelegations(blockTime)
-		if err != nil {
-			log.Error().Str("module", "staking").Err(err).Int64("height", height).
-				Msg("error while deleting completed unbonding delegations")
-			return
-		}
-	}
-
-	// Update the delegations and balances of all the delegators
-	for _, delegator := range delegators {
-		err = m.refreshDelegatorDelegations(height, delegator)
-		if err != nil {
-			log.Error().Str("module", "staking").Err(err).Int64("height", height).
-				Str("delegator", delegator).Msg("error while refreshing the delegations")
-			return
-		}
-
-		err = m.bankModule.RefreshBalances(height, []string{delegator})
-		if err != nil {
-			log.Error().Str("module", "staking").Err(err).Int64("height", height).
-				Str("delegator", delegator).Msg("error while refreshing the balance")
-			return
-		}
-
-		err = m.historyModule.UpdateAccountBalanceHistoryWithTime(delegator, blockTime)
-		if err != nil {
-			log.Error().Str("module", "staking").Err(err).Int64("height", height).
-				Str("delegator", delegator).Msg("error while updating account balance history")
-			return
-		}
-
-	}
-
-	// Get all the events that identify a completed unbonding delegation or redelegations
-	var completedEvents []abci.Event
-	completedEvents = append(completedEvents, juno.FindEventsByType(events, stakingtypes.EventTypeCompleteUnbonding)...)
-	completedEvents = append(completedEvents, juno.FindEventsByType(events, stakingtypes.EventTypeCompleteRedelegation)...)
-
-	// Get the address of all the delegators to be refreshed
-	var delegatorsToRefresh []string
-	for _, event := range completedEvents {
-		attr, err := juno.FindAttributeByKey(event, stakingtypes.AttributeKeyDelegator)
-		if err != nil {
-			log.Error().Str("module", "staking").Err(err).Int64("height", height).
-				Msgf("error while getting %s attribute", stakingtypes.AttributeKeyDelegator)
-			return
-		}
-		delegatorsToRefresh = append(delegatorsToRefresh, string(attr.Value))
-	}
-
-	// Store the delegators to refresh at the next height
-	err = m.db.SaveDelegatorsToRefresh(height, delegatorsToRefresh)
-	if err != nil {
-		log.Error().Str("module", "staking").Err(err).Int64("height", height).
-			Msg("error while saving delegators to refresh")
 		return
 	}
 }

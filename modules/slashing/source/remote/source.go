@@ -30,21 +30,20 @@ func NewSource(source *remote.Source, querier slashingtypes.QueryClient) *Source
 
 // GetSigningInfos implements slashingsource.Source
 func (s Source) GetSigningInfos(height int64) ([]slashingtypes.ValidatorSigningInfo, error) {
-	header := remote.GetHeightRequestHeader(height)
+	ctx := remote.GetHeightRequestContext(s.Ctx, height)
 
 	var signingInfos []slashingtypes.ValidatorSigningInfo
 	var nextKey []byte
 	var stop = false
 	for !stop {
 		res, err := s.querier.SigningInfos(
-			s.Ctx,
+			ctx,
 			&slashingtypes.QuerySigningInfosRequest{
 				Pagination: &query.PageRequest{
 					Key:   nextKey,
 					Limit: 1000, // Query 1000 signing infos at a time
 				},
 			},
-			header,
 		)
 		if err != nil {
 			return nil, err
@@ -60,7 +59,7 @@ func (s Source) GetSigningInfos(height int64) ([]slashingtypes.ValidatorSigningI
 
 // GetParams implements slashingsource.Source
 func (s Source) GetParams(height int64) (slashingtypes.Params, error) {
-	res, err := s.querier.Params(s.Ctx, &slashingtypes.QueryParamsRequest{}, remote.GetHeightRequestHeader(height))
+	res, err := s.querier.Params(remote.GetHeightRequestContext(s.Ctx, height), &slashingtypes.QueryParamsRequest{})
 	if err != nil {
 		return slashingtypes.Params{}, nil
 	}
