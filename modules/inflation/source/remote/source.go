@@ -29,7 +29,7 @@ func NewSource(source *remote.Source, client inflationtypes.QueryClient) *Source
 
 // GetInflation implements inflationsource.Source
 func (s *Source) GetInflation(height int64) (inflationtypes.InflationState, error) {
-	res, err := s.client.Inflation(s.Ctx, &inflationtypes.QueryInflationRequest{}, remote.GetHeightRequestHeader(height))
+	res, err := s.client.Inflation(remote.GetHeightRequestContext(s.Ctx, height), &inflationtypes.QueryInflationRequest{})
 	if err != nil {
 		return inflationtypes.InflationState{}, fmt.Errorf("error while querying inflation state: %s", err)
 	}

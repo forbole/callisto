@@ -30,7 +30,7 @@ func NewSource(source *remote.Source, client authoritytypes.QueryClient) *Source
 
 // GetMinimumGasPrices implements authoritysource.Source
 func (s *Source) GetMinimumGasPrices(height int64) (sdk.DecCoins, error) {
-	res, err := s.client.GasPrices(s.Ctx, &authoritytypes.QueryGasPricesRequest{}, remote.GetHeightRequestHeader(height))
+	res, err := s.client.GasPrices(remote.GetHeightRequestContext(s.Ctx, height), &authoritytypes.QueryGasPricesRequest{})
 	if err != nil {
 		return nil, fmt.Errorf("errror while querying gas prices: %s", err)
 	}
