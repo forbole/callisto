@@ -142,7 +142,6 @@ func (db *Db) StorePeriodicVestingAccountFromMsg(pva *vestingtypes.PeriodicVesti
 	VALUES ($1, $2, $3)
 	ON CONFLICT (address) DO UPDATE 
 		SET type = excluded.type,
-			original_vesting = excluded.original_vesting, 
 			start_time = excluded.start_time
 	RETURNING id `
 
