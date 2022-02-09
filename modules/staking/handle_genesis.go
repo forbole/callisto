@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx"
 
 	"github.com/forbole/bdjuno/v2/types"
@@ -44,24 +43,6 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	err = m.saveValidators(doc, genState.Validators)
 	if err != nil {
 		return fmt.Errorf("error while storing staking genesis validators: %s", err)
-	}
-
-	// Save the delegations
-	err = m.saveDelegations(doc, genState)
-	if err != nil {
-		return fmt.Errorf("error while storing staking genesis delegations: %s", err)
-	}
-
-	// Save the unbonding delegations
-	err = m.saveUnbondingDelegations(doc, genState)
-	if err != nil {
-		return fmt.Errorf("error while storing staking genesis unbonding delegations: %s", err)
-	}
-
-	// Save the re-delegations
-	err = m.saveRedelegations(doc, genState)
-	if err != nil {
-		return fmt.Errorf("error while storing staking genesis redelegations: %s", err)
 	}
 
 	// Save the description
@@ -144,97 +125,6 @@ func (m *Module) saveValidatorDescription(doc *tmtypes.GenesisDoc, validators st
 	}
 
 	return nil
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-// saveDelegations stores the delegations data present inside the given genesis state
-func (m *Module) saveDelegations(doc *tmtypes.GenesisDoc, genState stakingtypes.GenesisState) error {
-	var delegations []types.Delegation
-	for _, validator := range genState.Validators {
-		tokens := validator.Tokens
-		delegatorShares := validator.DelegatorShares
-
-		for _, delegation := range findDelegations(genState.Delegations, validator.OperatorAddress) {
-			delegationAmount := tokens.ToDec().Mul(delegation.Shares).Quo(delegatorShares).TruncateInt()
-			delegations = append(delegations, types.NewDelegation(
-				delegation.DelegatorAddress,
-				validator.OperatorAddress,
-				sdk.NewCoin(genState.Params.BondDenom, delegationAmount),
-				doc.InitialHeight,
-			))
-		}
-	}
-
-	return m.db.SaveDelegations(delegations)
-}
-
-// findDelegations returns the list of all the delegations that are
-// related to the validator having the given validator address
-func findDelegations(genData stakingtypes.Delegations, valAddr string) stakingtypes.Delegations {
-	var delegations stakingtypes.Delegations
-	for _, delegation := range genData {
-		if delegation.ValidatorAddress == valAddr {
-			delegations = append(delegations, delegation)
-		}
-	}
-	return delegations
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-// saveUnbondingDelegations stores the unbonding delegations data present inside the given genesis state
-func (m *Module) saveUnbondingDelegations(doc *tmtypes.GenesisDoc, genState stakingtypes.GenesisState) error {
-	var unbondingDelegations []types.UnbondingDelegation
-	for _, validator := range genState.Validators {
-		valUD := findUnbondingDelegations(genState.UnbondingDelegations, validator.OperatorAddress)
-		for _, ud := range valUD {
-			for _, entry := range ud.Entries {
-				unbondingDelegations = append(unbondingDelegations, types.NewUnbondingDelegation(
-					ud.DelegatorAddress,
-					validator.OperatorAddress,
-					sdk.NewCoin(genState.Params.BondDenom, entry.InitialBalance),
-					entry.CompletionTime,
-					doc.InitialHeight,
-				))
-			}
-		}
-	}
-
-	return m.db.SaveUnbondingDelegations(unbondingDelegations)
-}
-
-// findUnbondingDelegations returns the list of all the unbonding delegations
-// that are related to the validator having the given validator address
-func findUnbondingDelegations(genData stakingtypes.UnbondingDelegations, valAddr string) stakingtypes.UnbondingDelegations {
-	var unbondingDelegations stakingtypes.UnbondingDelegations
-	for _, unbondingDelegation := range genData {
-		if unbondingDelegation.ValidatorAddress == valAddr {
-			unbondingDelegations = append(unbondingDelegations, unbondingDelegation)
-		}
-	}
-	return unbondingDelegations
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-// saveRedelegations stores the redelegations data present inside the given genesis state
-func (m *Module) saveRedelegations(doc *tmtypes.GenesisDoc, genState stakingtypes.GenesisState) error {
-	var redelegations []types.Redelegation
-	for _, redelegation := range genState.Redelegations {
-		for _, entry := range redelegation.Entries {
-			redelegations = append(redelegations, types.NewRedelegation(
-				redelegation.DelegatorAddress,
-				redelegation.ValidatorSrcAddress,
-				redelegation.ValidatorDstAddress,
-				sdk.NewCoin(genState.Params.BondDenom, entry.InitialBalance),
-				entry.CompletionTime,
-				doc.InitialHeight,
-			))
-		}
-	}
-
-	return m.db.SaveRedelegations(redelegations)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
