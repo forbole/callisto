@@ -150,6 +150,12 @@ func (db *Db) StorePeriodicVestingAccountFromMsg(pva *vestingtypes.PeriodicVesti
 			start_time = excluded.start_time
 	RETURNING id `
 
+	// store account in database
+	err := db.SaveAccounts([]types.Account{types.NewAccount(pva.GetAddress().String())})
+	if err != nil {
+		return fmt.Errorf("error while storing vesting account: %s", err)
+	}
+	
 	var vestingAccountRowID int
 	err := db.Sql.QueryRow(stmt,
 		proto.MessageName(pva),
