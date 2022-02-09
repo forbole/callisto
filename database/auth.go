@@ -121,6 +121,7 @@ func (db *Db) StoreBaseVestingAccountFromMsg(bva *vestingtypes.BaseVestingAccoun
 	ON CONFLICT (address) DO UPDATE 
 		SET type = excluded.type,
 			original_vesting = excluded.original_vesting, 
+			start_time = excluded.start_time, 
 			end_time = excluded.end_time`
 
 	_, err := db.Sql.Exec(stmt,
