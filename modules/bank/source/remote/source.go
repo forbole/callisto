@@ -30,11 +30,11 @@ func NewSource(source *remote.Source, bankClient banktypes.QueryClient) *Source 
 
 // GetBalances implements bankkeeper.Source
 func (s Source) GetBalances(addresses []string, height int64) ([]types.AccountBalance, error) {
-	header := remote.GetHeightRequestHeader(height)
+	ctx := remote.GetHeightRequestContext(s.Ctx, height)
 
 	var balances []types.AccountBalance
 	for _, address := range addresses {
-		balRes, err := s.bankClient.AllBalances(s.Ctx, &banktypes.QueryAllBalancesRequest{Address: address}, header)
+		balRes, err := s.bankClient.AllBalances(ctx, &banktypes.QueryAllBalancesRequest{Address: address})
 		if err != nil {
 			return nil, fmt.Errorf("error while getting all balances: %s", err)
 		}
@@ -51,8 +51,7 @@ func (s Source) GetBalances(addresses []string, height int64) ([]types.AccountBa
 
 // GetSupply implements bankkeeper.Source
 func (s Source) GetSupply(height int64) (sdk.Coins, error) {
-	header := remote.GetHeightRequestHeader(height)
-	res, err := s.bankClient.TotalSupply(s.Ctx, &banktypes.QueryTotalSupplyRequest{}, header)
+	res, err := s.bankClient.TotalSupply(remote.GetHeightRequestContext(s.Ctx, height), &banktypes.QueryTotalSupplyRequest{})
 	if err != nil {
 		return nil, fmt.Errorf("error while getting total supply: %s", err)
 	}
