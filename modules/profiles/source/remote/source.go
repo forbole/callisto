@@ -29,7 +29,7 @@ func NewSource(source *remote.Source, client profilestypes.QueryClient) *Source 
 
 // GetParams implements profilessource.Source
 func (s *Source) GetParams(height int64) (profilestypes.Params, error) {
-	res, err := s.client.Params(s.Ctx, &profilestypes.QueryParamsRequest{}, remote.GetHeightRequestHeader(height))
+	res, err := s.client.Params(remote.GetHeightRequestContext(s.Ctx, height), &profilestypes.QueryParamsRequest{})
 	if err != nil {
 		return profilestypes.Params{}, fmt.Errorf("error while reading profiles params: %s", err)
 	}
