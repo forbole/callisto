@@ -11,10 +11,6 @@ type AuthModule interface {
 	RefreshAccounts(height int64, addresses []string) error
 }
 
-type BankModule interface {
-	RefreshBalances(height int64, addresses []string) error
-}
-
 type DistrModule interface {
 	UpdateParams(height int64) error
 }
