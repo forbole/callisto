@@ -80,9 +80,9 @@ CREATE TABLE message
     involved_accounts_addresses TEXT[] NULL,
     
     /* Psql partition */
-    partition_id BIGINT NOT NULL,
-    PRIMARY KEY(transaction_hash, partition_id)
+    partition_id BIGINT NOT NULL
 )PARTITION BY LIST(partition_id);
+ALTER TABLE message ADD UNIQUE (transaction_hash, index, partition_id);
 CREATE INDEX message_transaction_hash_index ON message (transaction_hash);
 CREATE INDEX message_type_index ON message (type);
 CREATE INDEX message_involved_accounts_addresses ON message (involved_accounts_addresses);
