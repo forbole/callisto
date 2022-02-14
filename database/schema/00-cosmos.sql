@@ -38,7 +38,7 @@ ALTER TABLE block
 
 CREATE TABLE transaction
 (
-    hash         TEXT    NOT NULL UNIQUE,
+    hash         TEXT    NOT NULL,
     height       BIGINT  NOT NULL REFERENCES block (height),
     success      BOOLEAN NOT NULL,
 
