@@ -81,7 +81,7 @@ CREATE TABLE message
     
     /* Psql partition */
     partition_id BIGINT NOT NULL,
-    PRIMARY KEY(partition_id)
+    PRIMARY KEY(transaction_hash, partition_id)
 )PARTITION BY LIST(partition_id);
 CREATE INDEX message_transaction_hash_index ON message (transaction_hash);
 CREATE INDEX message_type_index ON message (type);
