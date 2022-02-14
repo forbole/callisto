@@ -68,7 +68,7 @@ func refreshIBCReceivePacket(parseCtx *parse.Context, bankModule *bank.Module) e
 				continue
 			}
 
-			err = bankModule.HandleMsg(index, msg, tx)
+			err = bankModule.HandleMsg(index, msg, tx, 0)
 			if err != nil {
 				return fmt.Errorf("error while handling MsgSubmitProposal: %s", err)
 			}

@@ -17,7 +17,7 @@ import (
 )
 
 // HandleMsg implements modules.MessageModule
-func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
+func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx, _ int64) error {
 	addresses, err := m.messagesParser(m.cdc, msg)
 	if err != nil {
 		log.Error().Str("module", "auth").Err(err).

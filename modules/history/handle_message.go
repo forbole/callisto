@@ -12,7 +12,7 @@ import (
 )
 
 // HandleMsg implements modules.MessageModule
-func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
+func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx, _ int64) error {
 	timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
 	if err != nil {
 		return fmt.Errorf("error while parsing time: %s", err)

@@ -10,7 +10,7 @@ import (
 )
 
 // HandleMsg implements MessageModule
-func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
+func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx, _ int64) error {
 	if len(tx.Logs) == 0 {
 		return nil
 	}

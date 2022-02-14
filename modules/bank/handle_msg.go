@@ -9,7 +9,7 @@ import (
 )
 
 // HandleMsg implements modules.MessageModule
-func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *types.Tx) error {
+func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *types.Tx, _ int64) error {
 	addresses, err := m.messageParser(m.cdc, msg)
 	if err != nil {
 		log.Error().Str("module", "bank").Str("operation", "refresh balances").
