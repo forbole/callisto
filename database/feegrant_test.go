@@ -64,4 +64,9 @@ func (suite *DbTestSuite) TestBigDipperDb_RemoveFeeGrantAllowance() {
 	))
 	suite.Require().NoError(err)
 
+	// verify the data
+	var count int
+	err = suite.database.Sql.QueryRow(`SELECT COUNT(*) FROM fee_grant_allowance`).Scan(&count)
+	suite.Require().NoError(err)
+	suite.Require().Equal(0, count)
 }
