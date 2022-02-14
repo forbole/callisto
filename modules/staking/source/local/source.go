@@ -44,8 +44,6 @@ func (s Source) GetValidator(height int64, valOper string) (stakingtypes.Validat
 	return res.Validator, nil
 }
 
-
-
 // GetDelegationsWithPagination implements stakingsource.Source
 func (s Source) GetDelegationsWithPagination(height int64, delegator string, pagination *query.PageRequest) (*stakingtypes.QueryDelegatorDelegationsResponse, error) {
 	ctx, err := s.LoadHeight(height)
