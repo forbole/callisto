@@ -24,3 +24,5 @@ replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alp
 replace google.golang.org/grpc => google.golang.org/grpc v1.33.2
 
 replace github.com/tendermint/tendermint => github.com/forbole/tendermint v0.34.13-0.20210820072129-a2a4af55563d
+
+replace github.com/forbole/juno/v2 => github.com/forbole/juno/v2 v2.0.0-20220214035506-815b5fe14d95
