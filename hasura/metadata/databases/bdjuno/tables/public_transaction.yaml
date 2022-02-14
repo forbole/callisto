@@ -8,11 +8,9 @@ object_relationships:
 array_relationships:
 - name: messagesByTransactionHash
   using:
-    foreign_key_constraint_on:
-      column: transaction_hash
-      table:
-        name: message
-        schema: public
+      column_mapping:
+        hash: transaction_hash
+        partition_id: partition_id
 select_permissions:
 - permission:
     allow_aggregations: true
