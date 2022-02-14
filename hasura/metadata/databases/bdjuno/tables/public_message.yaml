@@ -4,6 +4,11 @@ table:
 object_relationships:
 - name: transaction
   using:
+    manual_configuration:
+      remote_table:
+        schema: public
+        name: transaction
+      insertion_order:
       column_mapping:
         transaction_hash: hash
         partition_id: partition_id
