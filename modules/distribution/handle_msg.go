@@ -1,7 +1,6 @@
 package distribution
 
 import (
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	juno "github.com/forbole/juno/v2/types"
 
@@ -9,7 +8,7 @@ import (
 )
 
 // HandleMsg implements modules.MessageModule
-func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx, _ int64) error {
+func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
 	if len(tx.Logs) == 0 {
 		return nil
 	}
@@ -17,5 +16,5 @@ func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx, _ int64) error {
 	if _, ok := msg.(*distrtypes.MsgFundCommunityPool); ok {
 		return m.updateCommunityPool(tx.Height)
 	}
-	return nil 
+	return nil
 }

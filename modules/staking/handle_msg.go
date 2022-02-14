@@ -10,7 +10,7 @@ import (
 )
 
 // HandleMsg implements MessageModule
-func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx, _ int64) error {
+func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	if len(tx.Logs) == 0 {
 		return nil
 	}
@@ -38,7 +38,7 @@ func (m *Module) handleMsgCreateValidator(height int64, msg *stakingtypes.MsgCre
 	return nil
 }
 
-// handleEditValidator handles MsgEditValidator utils, updating the validator info 
+// handleEditValidator handles MsgEditValidator utils, updating the validator info
 func (m *Module) handleEditValidator(height int64, msg *stakingtypes.MsgEditValidator) error {
 	err := m.RefreshValidatorInfos(height, msg.ValidatorAddress)
 	if err != nil {
