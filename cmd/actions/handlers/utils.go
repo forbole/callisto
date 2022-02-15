@@ -12,7 +12,9 @@ import (
 	"github.com/forbole/bdjuno/v2/types/config"
 	"github.com/forbole/juno/v2/cmd/parse"
 	"github.com/forbole/juno/v2/modules/messages"
-	junoconfig "github.com/forbole/juno/v2/types/config"
+
+	nodeconfig "github.com/forbole/juno/v2/node/config"
+	"github.com/forbole/juno/v2/node/remote"
 )
 
 func getCtxAndSources() (*parse.Context, *modules.Sources, error) {
@@ -30,7 +32,7 @@ func getCtxAndSources() (*parse.Context, *modules.Sources, error) {
 		return nil, nil, err
 	}
 
-	sources, err := modules.BuildSources(junoconfig.Cfg.Node, parseCtx.EncodingConfig)
+	sources, err := modules.BuildSources(getNode(), parseCtx.EncodingConfig)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -45,4 +47,20 @@ func errorHandler(w http.ResponseWriter, err error) {
 	errorBody, _ := json.Marshal(errorObject)
 	w.WriteHeader(http.StatusBadRequest)
 	w.Write(errorBody)
+}
+
+func getNode() nodeconfig.Config {
+	var node nodeconfig.Config
+	if actionstypes.FlagRpc == "" || actionstypes.FlagGRpc == "" {
+		node = nodeconfig.DefaultConfig()
+	}
+
+	node = nodeconfig.NewConfig(
+		nodeconfig.TypeRemote,
+		remote.NewDetails(
+			remote.NewRPCConfig("hasura-actions", actionstypes.FlagRpc, 100),
+			remote.NewGrpcConfig(actionstypes.FlagGRpc, actionstypes.FlagInsecure),
+		),
+	)
+	return node
 }

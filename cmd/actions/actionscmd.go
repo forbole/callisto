@@ -1,6 +1,7 @@
 package actions
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -8,15 +9,23 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/forbole/bdjuno/v2/cmd/actions/handlers"
+	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 )
 
 // NewActionsCmd returns the Cobra command allowing to activate hasura actions
 func NewActionsCmd(parseCfg *parse.Config) *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:     "hasura-actions",
 		Short:   "Activate hasura actions",
 		PreRunE: parse.ReadConfig(parseCfg),
 		RunE: func(cmd *cobra.Command, args []string) error {
+
+			fmt.Printf(
+				"Hasura Action is running on the node(s):\n rpc: %s \n grpc: %s\n insecure: %v\n",
+				actionstypes.FlagRpc,
+				actionstypes.FlagGRpc,
+				actionstypes.FlagInsecure,
+			)
 
 			// HTTP server for the handlers
 			mux := http.NewServeMux()
@@ -49,4 +58,8 @@ func NewActionsCmd(parseCfg *parse.Config) *cobra.Command {
 			return nil
 		},
 	}
+
+	actionstypes.AddNodeFlagsToCmd(cmd)
+
+	return cmd
 }
