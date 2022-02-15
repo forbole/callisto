@@ -22,8 +22,8 @@ func NewActionsCmd(parseCfg *parse.Config) *cobra.Command {
 
 			fmt.Printf(
 				"Hasura Action is running on the node(s):\n rpc: %s \n grpc: %s\n insecure: %v\n",
-				actionstypes.FlagRpc,
-				actionstypes.FlagGRpc,
+				actionstypes.FlagRPC,
+				actionstypes.FlagGRPC,
 				actionstypes.FlagInsecure,
 			)
 
