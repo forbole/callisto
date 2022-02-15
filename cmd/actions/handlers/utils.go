@@ -32,7 +32,15 @@ func getCtxAndSources() (*parse.Context, *modules.Sources, error) {
 		return nil, nil, err
 	}
 
-	sources, err := modules.BuildSources(getNode(), parseCtx.EncodingConfig)
+	node := nodeconfig.NewConfig(
+		nodeconfig.TypeRemote,
+		remote.NewDetails(
+			remote.NewRPCConfig("hasura-actions", actionstypes.FlagRpc, 100),
+			remote.NewGrpcConfig(actionstypes.FlagGRpc, actionstypes.FlagInsecure),
+		),
+	)
+
+	sources, err := modules.BuildSources(node, parseCtx.EncodingConfig)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -47,20 +55,4 @@ func errorHandler(w http.ResponseWriter, err error) {
 	errorBody, _ := json.Marshal(errorObject)
 	w.WriteHeader(http.StatusBadRequest)
 	w.Write(errorBody)
-}
-
-func getNode() nodeconfig.Config {
-	var node nodeconfig.Config
-	if actionstypes.FlagRpc == "" || actionstypes.FlagGRpc == "" {
-		node = nodeconfig.DefaultConfig()
-	}
-
-	node = nodeconfig.NewConfig(
-		nodeconfig.TypeRemote,
-		remote.NewDetails(
-			remote.NewRPCConfig("hasura-actions", actionstypes.FlagRpc, 100),
-			remote.NewGrpcConfig(actionstypes.FlagGRpc, actionstypes.FlagInsecure),
-		),
-	)
-	return node
 }
