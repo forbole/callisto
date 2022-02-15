@@ -19,17 +19,14 @@ type Module struct {
 	cdc    codec.Marshaler
 	db     *database.Db
 	source slashingsource.Source
-
-	stakingModule StakingModule
 }
 
 // NewModule returns a new Module instance
-func NewModule(source slashingsource.Source, stakingModule StakingModule, cdc codec.Marshaler, db *database.Db) *Module {
+func NewModule(source slashingsource.Source, cdc codec.Marshaler, db *database.Db) *Module {
 	return &Module{
-		cdc:           cdc,
-		db:            db,
-		source:        source,
-		stakingModule: stakingModule,
+		cdc:    cdc,
+		db:     db,
+		source: source,
 	}
 }
 
