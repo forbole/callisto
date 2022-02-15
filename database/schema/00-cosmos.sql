@@ -81,7 +81,8 @@ CREATE TABLE message
     involved_accounts_addresses TEXT[] NOT NULL,
 
     /* Psql partition */
-    partition_id                BIGINT REFERENCES transaction (partition_id)
+    partition_id                BIGINT REFERENCES transaction (partition_id),
+    height                      BIGINT NOT NULL
 )PARTITION BY LIST(partition_id);
 ALTER TABLE message ADD UNIQUE (transaction_hash, index, partition_id);
 CREATE INDEX message_transaction_hash_index ON message (transaction_hash);
@@ -99,12 +100,11 @@ CREATE FUNCTION messages_by_address(
     "offset" BIGINT = 0)
     RETURNS SETOF message AS
 $$
-SELECT message.transaction_hash, message.index, message.type, message.value, message.involved_accounts_addresses, message.partition_id
+SELECT message.transaction_hash, message.index, message.type, message.value, message.involved_accounts_addresses, message.partition_id, message.height
 FROM message
-         JOIN transaction t on message.transaction_hash = t.hash
 WHERE (cardinality(types) = 0 OR type = ANY (types))
-  AND addresses && involved_accounts_addresses
-ORDER BY height DESC
+  AND involved_accounts_addresses && addresses 
+ORDER BY height DESC, involved_accounts_addresses
 LIMIT "limit" OFFSET "offset"
 $$ LANGUAGE sql STABLE;
 
