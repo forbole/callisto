@@ -17,7 +17,12 @@ type Address struct {
 // ========================= Account Balance Response =========================
 
 type Balance struct {
-	Coins sdk.Coins `json:"coins"`
+	Coins []Coin `json:"coins"`
+}
+
+type Coin struct {
+	Denom  string `json:"denom"`
+	Amount string `json:"amount"`
 }
 
 // ========================= Delegation Response =========================
