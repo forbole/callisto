@@ -56,10 +56,9 @@ CREATE TABLE transaction
     gas_used     BIGINT           DEFAULT 0,
     raw_log      TEXT,
     logs         JSONB,
-
-    /* Psql partition */
-    partition_id BIGINT NOT NULL PRIMARY KEY
-
+     /* Psql partition */
+    partition_id BIGINT NOT NULL,
+    UNIQUE (hash, partition_id)
 )PARTITION BY LIST(partition_id);
 CREATE INDEX transaction_hash_index ON transaction (hash);
 CREATE INDEX transaction_height_index ON transaction (height);
@@ -81,10 +80,10 @@ CREATE TABLE message
     involved_accounts_addresses TEXT[] NOT NULL,
 
     /* Psql partition */
-    partition_id                BIGINT REFERENCES transaction (partition_id),
-    height                      BIGINT NOT NULL
+    partition_id                BIGINT NOT NULL,
+    height                      BIGINT NOT NULL,
+    FOREIGN KEY (transaction_hash, partition_id) REFERENCES transaction (hash, partition_id)
 )PARTITION BY LIST(partition_id);
-ALTER TABLE message ADD UNIQUE (transaction_hash, index, partition_id);
 CREATE INDEX message_transaction_hash_index ON message (transaction_hash);
 CREATE INDEX message_type_index ON message (type);
 CREATE INDEX message_involved_accounts_index ON message (involved_accounts_addresses);
