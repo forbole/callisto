@@ -33,9 +33,9 @@ type DelegationResponse struct {
 }
 
 type Delegation struct {
-	DelegatorAddress string   `json:"delegator_address"`
-	ValidatorAddress string   `json:"validator_address"`
-	Coins            sdk.Coin `json:"coins"`
+	DelegatorAddress string `json:"delegator_address"`
+	ValidatorAddress string `json:"validator_address"`
+	Coins            []Coin `json:"coins"`
 }
 
 // ========================= Delegation Reward Response =========================
