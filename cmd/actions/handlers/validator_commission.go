@@ -55,7 +55,7 @@ func getValidatorCommissionAmount(address string) (response actionstypes.Validat
 	}
 
 	response = actionstypes.ValidatorCommissionAmount{
-		Coins: commission,
+		Coins: actionstypes.ConvertSdkDecCoins(commission),
 	}
 
 	return response, nil

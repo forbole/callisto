@@ -57,7 +57,7 @@ func getDelegationReward(input actionstypes.PayloadArgs) (response []actionstype
 	delegationRewards := make([]actionstypes.DelegationReward, len(rewards))
 	for index, rew := range rewards {
 		delegationRewards[index] = actionstypes.DelegationReward{
-			Coins:            rew.Reward,
+			Coins:            actionstypes.ConvertSdkDecCoins(rew.Reward),
 			ValidatorAddress: rew.ValidatorAddress,
 		}
 	}

@@ -41,14 +41,14 @@ type Delegation struct {
 // ========================= Delegation Reward Response =========================
 
 type DelegationReward struct {
-	Coins            sdk.DecCoins `json:"coins"`
-	ValidatorAddress string       `json:"validator_address"`
+	Coins            []Coin `json:"coins"`
+	ValidatorAddress string `json:"validator_address"`
 }
 
 // ========================= Validator Commission Response =========================
 
 type ValidatorCommissionAmount struct {
-	Coins sdk.DecCoins `json:"coins"`
+	Coins []Coin `json:"coins"`
 }
 
 // ========================= Unbonding Delegation Response =========================
