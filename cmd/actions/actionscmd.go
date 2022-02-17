@@ -21,10 +21,10 @@ func NewActionsCmd(parseCfg *parse.Config) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			fmt.Printf(
-				"Hasura Action is running on the node(s):\n rpc: %s \n grpc: %s\n insecure: %v\n",
+				"Hasura Action is running on the node(s):\n rpc: %s \n grpc: %s\n secure connection: %v\n",
 				actionstypes.FlagRPC,
 				actionstypes.FlagGRPC,
-				actionstypes.FlagInsecure,
+				actionstypes.FlagSecure,
 			)
 
 			// HTTP server for the handlers

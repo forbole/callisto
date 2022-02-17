@@ -36,7 +36,7 @@ func getCtxAndSources() (*parse.Context, *modules.Sources, error) {
 		nodeconfig.TypeRemote,
 		remote.NewDetails(
 			remote.NewRPCConfig("hasura-actions", actionstypes.FlagRPC, 100),
-			remote.NewGrpcConfig(actionstypes.FlagGRPC, actionstypes.FlagInsecure),
+			remote.NewGrpcConfig(actionstypes.FlagGRPC, !actionstypes.FlagSecure),
 		),
 	)
 
