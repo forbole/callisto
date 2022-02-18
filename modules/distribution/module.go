@@ -2,7 +2,6 @@ package distribution
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/forbole/juno/v2/types/config"
 
 	distrsource "github.com/forbole/bdjuno/v2/modules/distribution/source"
 
@@ -26,7 +25,7 @@ type Module struct {
 }
 
 // NewModule returns a new Module instance
-func NewModule(cfg config.Config, source distrsource.Source, cdc codec.Codec, db *database.Db) *Module {
+func NewModule(source distrsource.Source, cdc codec.Codec, db *database.Db) *Module {
 	return &Module{
 		cdc:    cdc,
 		db:     db,
