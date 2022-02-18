@@ -7,6 +7,8 @@ import (
 	"net/http"
 
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
+	dbtypes "github.com/forbole/bdjuno/v2/database/types"
+
 	"github.com/forbole/bdjuno/v2/utils"
 )
 
@@ -54,6 +56,6 @@ func getAccountBalance(input actionstypes.PayloadArgs) (response actionstypes.Ba
 	}
 
 	return actionstypes.Balance{
-		Coins: actionstypes.ConvertSdkCoins(balance),
+		Coins: dbtypes.NewDbCoins(balance),
 	}, nil
 }

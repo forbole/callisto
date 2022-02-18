@@ -7,6 +7,8 @@ import (
 	"net/http"
 
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
+	dbtypes "github.com/forbole/bdjuno/v2/database/types"
+
 	"github.com/forbole/bdjuno/v2/utils"
 )
 
@@ -57,7 +59,7 @@ func getDelegationReward(input actionstypes.PayloadArgs) (response []actionstype
 	delegationRewards := make([]actionstypes.DelegationReward, len(rewards))
 	for index, rew := range rewards {
 		delegationRewards[index] = actionstypes.DelegationReward{
-			Coins:            actionstypes.ConvertSdkDecCoins(rew.Reward),
+			Coins:            dbtypes.NewDbDecCoins(rew.Reward),
 			ValidatorAddress: rew.ValidatorAddress,
 		}
 	}

@@ -8,6 +8,8 @@ import (
 	"net/http"
 
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
+	dbtypes "github.com/forbole/bdjuno/v2/database/types"
+
 	"github.com/forbole/bdjuno/v2/utils"
 )
 
@@ -55,7 +57,7 @@ func getUnbondingDelegationsTotalAmount(input actionstypes.PayloadArgs) (actions
 		return actionstypes.Balance{}, fmt.Errorf("error while getting delegator delegations: %s", err)
 	}
 
-	var coins []actionstypes.Coin
+	var coins []*dbtypes.DbCoin
 	totalAmount := big.NewInt(0)
 
 	// Get the bond denom type
@@ -71,7 +73,7 @@ func getUnbondingDelegationsTotalAmount(input actionstypes.PayloadArgs) (actions
 		}
 	}
 
-	coins = append(coins, actionstypes.Coin{
+	coins = append(coins, &dbtypes.DbCoin{
 		Denom:  params.BondDenom,
 		Amount: totalAmount.String(),
 	})

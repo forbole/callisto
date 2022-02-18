@@ -8,6 +8,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
+	dbtypes "github.com/forbole/bdjuno/v2/database/types"
+
 	"github.com/forbole/bdjuno/v2/utils"
 )
 
@@ -73,6 +75,6 @@ func getTotalDelegationAmount(input actionstypes.PayloadArgs) (actionstypes.Bala
 	}
 
 	return actionstypes.Balance{
-		Coins: actionstypes.ConvertSdkCoins(coinObject),
+		Coins: dbtypes.NewDbCoins(coinObject),
 	}, nil
 }

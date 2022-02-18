@@ -10,6 +10,8 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/types/query"
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
+	dbtypes "github.com/forbole/bdjuno/v2/database/types"
+
 	"github.com/forbole/bdjuno/v2/utils"
 )
 
@@ -68,7 +70,7 @@ func getDelegation(input actionstypes.PayloadArgs) (actionstypes.DelegationRespo
 		delegations[index] = actionstypes.Delegation{
 			DelegatorAddress: del.Delegation.DelegatorAddress,
 			ValidatorAddress: del.Delegation.ValidatorAddress,
-			Coins:            actionstypes.ConvertSdkCoins([]sdk.Coin{del.Balance}),
+			Coins:            dbtypes.NewDbCoins([]sdk.Coin{del.Balance}),
 		}
 	}
 
