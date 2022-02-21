@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/types/query"
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 	"github.com/forbole/bdjuno/v2/utils"
+	"google.golang.org/grpc/codes"
 )
 
 func Delegation(w http.ResponseWriter, r *http.Request) {
@@ -57,7 +59,12 @@ func getDelegation(input actionstypes.PayloadArgs) (actionstypes.DelegationRespo
 
 	// Get delegator's total rewards
 	res, err := sources.StakingSource.GetDelegationsWithPagination(height, input.Address, pagination)
-	if err != nil {
+
+	// For stargate only, returns empty object without error if delegator delegations are not found on the chain 
+	if err != nil && strings.Contains(err.Error(), codes.NotFound.String()) {
+		return actionstypes.DelegationResponse{}, nil
+	}
+	if err != nil && !strings.Contains(err.Error(), codes.NotFound.String()) {
 		return actionstypes.DelegationResponse{}, fmt.Errorf("error while getting delegator delegations: %s", err)
 	}
 
