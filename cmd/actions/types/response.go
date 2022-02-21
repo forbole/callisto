@@ -6,6 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	stakingtype "github.com/cosmos/cosmos-sdk/x/staking/types"
+	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 )
 
 // ========================= Withdraw Address Response =========================
@@ -17,7 +18,7 @@ type Address struct {
 // ========================= Account Balance Response =========================
 
 type Balance struct {
-	Coins sdk.Coins `json:"coins"`
+	Coins dbtypes.DbCoins `json:"coins"`
 }
 
 // ========================= Delegation Response =========================
@@ -28,22 +29,22 @@ type DelegationResponse struct {
 }
 
 type Delegation struct {
-	DelegatorAddress string   `json:"delegator_address"`
-	ValidatorAddress string   `json:"validator_address"`
-	Coins            sdk.Coin `json:"coins"`
+	DelegatorAddress string          `json:"delegator_address"`
+	ValidatorAddress string          `json:"validator_address"`
+	Coins            dbtypes.DbCoins `json:"coins"`
 }
 
 // ========================= Delegation Reward Response =========================
 
 type DelegationReward struct {
-	Coins            sdk.DecCoins `json:"coins"`
-	ValidatorAddress string       `json:"validator_address"`
+	Coins            dbtypes.DbDecCoins `json:"coins"`
+	ValidatorAddress string             `json:"validator_address"`
 }
 
 // ========================= Validator Commission Response =========================
 
 type ValidatorCommissionAmount struct {
-	Coins sdk.DecCoins `json:"coins"`
+	Coins dbtypes.DbDecCoins `json:"coins"`
 }
 
 // ========================= Unbonding Delegation Response =========================
