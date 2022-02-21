@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"math/big"
 	"net/http"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
+	dbtypes "github.com/forbole/bdjuno/v2/database/types"
+
 	"github.com/forbole/bdjuno/v2/utils"
 )
 
@@ -55,8 +57,8 @@ func getUnbondingDelegationsTotalAmount(input actionstypes.PayloadArgs) (actions
 		return actionstypes.Balance{}, fmt.Errorf("error while getting delegator delegations: %s", err)
 	}
 
-	var coins sdk.Coins
-	var totalAmount int64
+	var coins []*dbtypes.DbCoin
+	totalAmount := big.NewInt(0)
 
 	// Get the bond denom type
 	params, err := sources.StakingSource.GetParams(height)
@@ -67,11 +69,14 @@ func getUnbondingDelegationsTotalAmount(input actionstypes.PayloadArgs) (actions
 	// Add up total value of unbonding delegations
 	for _, eachUnbondingDelegation := range unbondingDelegations.UnbondingResponses {
 		for _, entry := range eachUnbondingDelegation.Entries {
-			totalAmount += entry.Balance.Int64()
+			totalAmount = totalAmount.Add(totalAmount, entry.Balance.BigInt())
 		}
 	}
 
-	coins = append(coins, sdk.NewCoin(params.BondDenom, sdk.NewInt(totalAmount)))
+	coins = append(coins, &dbtypes.DbCoin{
+		Denom:  params.BondDenom,
+		Amount: totalAmount.String(),
+	})
 
 	return actionstypes.Balance{
 		Coins: coins,
