@@ -60,7 +60,7 @@ func getDelegation(input actionstypes.PayloadArgs) (actionstypes.DelegationRespo
 	// Get delegator's total rewards
 	res, err := sources.StakingSource.GetDelegationsWithPagination(height, input.Address, pagination)
 
-	// For stargate only, returns empty object without error if delegator delegations are not found on the chain 
+	// For stargate only, returns empty object without error if delegator delegations are not found on the chain
 	if err != nil && strings.Contains(err.Error(), codes.NotFound.String()) {
 		return actionstypes.DelegationResponse{}, nil
 	}

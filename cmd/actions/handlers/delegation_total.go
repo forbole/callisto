@@ -54,7 +54,7 @@ func getTotalDelegationAmount(input actionstypes.PayloadArgs) (actionstypes.Bala
 	// Get all  delegations for given delegator address
 	delegationList, err := sources.StakingSource.GetDelegationsWithPagination(height, input.Address, nil)
 
-	// For stargate only, returns empty object without error if delegator delegations are not found on the chain 
+	// For stargate only, returns empty object without error if delegator delegations are not found on the chain
 	if err != nil && strings.Contains(err.Error(), codes.NotFound.String()) {
 		return actionstypes.Balance{}, nil
 	}
