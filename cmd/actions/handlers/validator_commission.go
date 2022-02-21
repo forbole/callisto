@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
+	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 )
 
 func ValidatorCommissionAmount(w http.ResponseWriter, r *http.Request) {
@@ -55,7 +56,7 @@ func getValidatorCommissionAmount(address string) (response actionstypes.Validat
 	}
 
 	response = actionstypes.ValidatorCommissionAmount{
-		Coins: commission,
+		Coins: dbtypes.NewDbDecCoins(commission),
 	}
 
 	return response, nil
