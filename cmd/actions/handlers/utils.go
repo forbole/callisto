@@ -12,7 +12,9 @@ import (
 	"github.com/forbole/bdjuno/v2/types/config"
 	"github.com/forbole/juno/v2/cmd/parse"
 	"github.com/forbole/juno/v2/modules/messages"
-	junoconfig "github.com/forbole/juno/v2/types/config"
+
+	nodeconfig "github.com/forbole/juno/v2/node/config"
+	"github.com/forbole/juno/v2/node/remote"
 )
 
 func getCtxAndSources() (*parse.Context, *modules.Sources, error) {
@@ -30,7 +32,15 @@ func getCtxAndSources() (*parse.Context, *modules.Sources, error) {
 		return nil, nil, err
 	}
 
-	sources, err := modules.BuildSources(junoconfig.Cfg.Node, parseCtx.EncodingConfig)
+	node := nodeconfig.NewConfig(
+		nodeconfig.TypeRemote,
+		remote.NewDetails(
+			remote.NewRPCConfig("hasura-actions", actionstypes.FlagRPC, 100),
+			remote.NewGrpcConfig(actionstypes.FlagGRPC, !actionstypes.FlagSecure),
+		),
+	)
+
+	sources, err := modules.BuildSources(node, parseCtx.EncodingConfig)
 	if err != nil {
 		return nil, nil, err
 	}
