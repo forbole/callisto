@@ -1,11 +1,12 @@
 package actions
 
 import (
-	"github.com/rs/zerolog/log"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
+
+	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/juno/v2/cmd/parse"
 	"github.com/forbole/juno/v2/node/builder"
