@@ -9,7 +9,6 @@ import (
 	"gopkg.in/yaml.v3"
 
 	v1 "github.com/forbole/bdjuno/v2/cmd/migrate/v1"
-	"github.com/forbole/bdjuno/v2/modules/distribution"
 	"github.com/forbole/bdjuno/v2/modules/pricefeed"
 	"github.com/forbole/bdjuno/v2/types"
 
@@ -19,8 +18,7 @@ import (
 
 type Config struct {
 	junomigrate.Config `yaml:",inline"`
-	PricefeedConfig    *pricefeed.Config    `yaml:"pricefeed"`
-	DistributionConfig *distribution.Config `yaml:"distribution"`
+	PricefeedConfig    *pricefeed.Config `yaml:"pricefeed"`
 }
 
 // NewMigrateCmd returns the command to be run when migrating the config from v1 to v2
@@ -75,14 +73,8 @@ func migrateConfig() (Config, error) {
 		pricefeedConfig = pricefeed.NewConfig(tokens)
 	}
 
-	var distributionConfig = distribution.DefaultConfig()
-	if v1BDJunoCfg.DistributionConfig != nil {
-		distributionConfig = distribution.NewConfig(v1BDJunoCfg.DistributionConfig.DistributionFrequency)
-	}
-
 	return Config{
-		Config:             v1JunoCfg,
-		PricefeedConfig:    pricefeedConfig,
-		DistributionConfig: distributionConfig,
+		Config:          v1JunoCfg,
+		PricefeedConfig: pricefeedConfig,
 	}, nil
 }
