@@ -13,6 +13,7 @@ type ActionsWorker struct {
 	context *Context
 }
 
+// NewActionsWorker returns a new ActionsWorker instance
 func NewActionsWorker(context *Context) *ActionsWorker {
 	return &ActionsWorker{
 		mux:     http.NewServeMux(),
@@ -20,6 +21,7 @@ func NewActionsWorker(context *Context) *ActionsWorker {
 	}
 }
 
+// RegisterHandler registers the provided handler to be used on each call to the provided path
 func (w *ActionsWorker) RegisterHandler(path string, handler ActionHandler) {
 	w.mux.HandleFunc(path, func(writer http.ResponseWriter, request *http.Request) {
 		// Set the content type
@@ -60,6 +62,7 @@ func (w *ActionsWorker) RegisterHandler(path string, handler ActionHandler) {
 	})
 }
 
+// handleError allows to handle the given error by writing it to the provided writer
 func (w *ActionsWorker) handleError(writer http.ResponseWriter, err error) {
 	errorObject := GraphQLError{
 		Message: err.Error(),

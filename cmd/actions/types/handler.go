@@ -8,11 +8,13 @@ import (
 	"github.com/forbole/bdjuno/v2/modules"
 )
 
+// Context contains the data about a Hasura actions worker execution
 type Context struct {
 	node    node.Node
 	Sources *modules.Sources
 }
 
+// NewContext returns a new Context instance
 func NewContext(node node.Node, sources *modules.Sources) *Context {
 	return &Context{
 		node:    node,
