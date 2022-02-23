@@ -6,7 +6,7 @@ require (
 	github.com/cosmos/cosmos-sdk v0.44.4
 	github.com/cosmos/gaia/v6 v6.0.0-rc1
 	github.com/cosmos/ibc-go v1.2.3 // indirect
-	github.com/forbole/juno/v2 v2.0.0-20220222154103-d0a416d79164
+	github.com/forbole/juno/v2 v2.0.0-20220223115732-dbb226a91ce9
 	github.com/go-co-op/gocron v1.11.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/hashicorp/golang-lru v0.5.5-0.20210104140557-80c98217689d // indirect
