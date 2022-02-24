@@ -1,60 +1,23 @@
 package handlers
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
-	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 
-	"github.com/forbole/bdjuno/v2/utils"
+	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 )
 
-func TotalDelegationAmount(w http.ResponseWriter, r *http.Request) {
-
-	w.Header().Set("Content-Type", "application/json")
-
-	reqBody, err := ioutil.ReadAll(r.Body)
+func TotalDelegationAmountHandler(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
+	height, err := ctx.GetHeight(payload)
 	if err != nil {
-		http.Error(w, "invalid payload", http.StatusBadRequest)
-		return
-	}
-
-	var actionPayload actionstypes.Payload
-	err = json.Unmarshal(reqBody, &actionPayload)
-	if err != nil {
-		http.Error(w, "invalid payload: failed to unmarshal json", http.StatusInternalServerError)
-		return
-	}
-
-	result, err := getTotalDelegationAmount(actionPayload.Input)
-	if err != nil {
-		errorHandler(w, err)
-		return
-	}
-
-	data, _ := json.Marshal(result)
-	w.Write(data)
-}
-
-func getTotalDelegationAmount(input actionstypes.PayloadArgs) (actionstypes.Balance, error) {
-	parseCtx, sources, err := getCtxAndSources()
-	if err != nil {
-		return actionstypes.Balance{}, err
-	}
-
-	height, err := utils.GetHeight(parseCtx, input.Height)
-	if err != nil {
-		return actionstypes.Balance{}, fmt.Errorf("error while getting height: %s", err)
+		return nil, err
 	}
 
 	// Get all  delegations for given delegator address
-	delegationList, err := sources.StakingSource.GetDelegationsWithPagination(height, input.Address, nil)
+	delegationList, err := ctx.Sources.StakingSource.GetDelegationsWithPagination(height, payload.GetAddress(), nil)
 	if err != nil {
-		return actionstypes.Balance{}, fmt.Errorf("error while getting delegator delegations: %s", err)
+		return nil, fmt.Errorf("error while getting delegator delegations: %s", err)
 	}
 
 	var coinObject sdk.Coins
@@ -75,6 +38,6 @@ func getTotalDelegationAmount(input actionstypes.PayloadArgs) (actionstypes.Bala
 	}
 
 	return actionstypes.Balance{
-		Coins: dbtypes.NewDbCoins(coinObject),
+		Coins: actionstypes.ConvertCoins(coinObject),
 	}, nil
 }
