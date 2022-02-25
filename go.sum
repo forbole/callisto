@@ -207,8 +207,8 @@ github.com/fatih/color v1.9.0/go.mod h1:eQcE1qtQxscV5RaZvpXrrb8Drkc3/DdQ+uUYCNjL
 github.com/fatih/color v1.13.0/go.mod h1:kLAiJbzzSOZDVNGyDpeOxJ47H46qBXwg5ILebYFFOfk=
 github.com/felixge/httpsnoop v1.0.1 h1:lvB5Jl89CsZtGIWuTcDM1E/vkVs49/Ml7JJe07l8SPQ=
 github.com/felixge/httpsnoop v1.0.1/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
-github.com/forbole/juno/v2 v2.0.0-20220125161451-4f6319e432a5 h1:c6t/tcuwlaWK0HHZveYFBOGJwR+VCZ3ZhbJVwu3vaUs=
-github.com/forbole/juno/v2 v2.0.0-20220125161451-4f6319e432a5/go.mod h1:nOZEHr5+sZDXEDpV2E+NHkmH0Zvf4prkt5+UVKwScQ8=
+github.com/forbole/juno/v2 v2.0.0-20220223115557-e4ed06a008de h1:Gl6iwwsKIq04Gdg0IQZbvrNw6NSyI1OrX3l9Qgj+hbY=
+github.com/forbole/juno/v2 v2.0.0-20220223115557-e4ed06a008de/go.mod h1:nOZEHr5+sZDXEDpV2E+NHkmH0Zvf4prkt5+UVKwScQ8=
 github.com/forbole/tendermint v0.34.13-0.20210820072129-a2a4af55563d h1:pUqGUgTUU24ibHeloQeg1F2pFbgQllddsuZ+x+CcUzw=
 github.com/forbole/tendermint v0.34.13-0.20210820072129-a2a4af55563d/go.mod h1:aeHL7alPh4uTBIJQ8mgFEE8VwJLXI1VD3rVOmH2Mcy0=
 github.com/fortytw2/leaktest v1.3.0 h1:u8491cBMTQ8ft8aeV+adlcytMZylmA5nnwwkRZjI8vw=
@@ -221,8 +221,8 @@ github.com/fsnotify/fsnotify v1.5.1 h1:mZcQUHVQUQWoPXXtuf9yuEXKudkV2sx1E06UadKWp
 github.com/fsnotify/fsnotify v1.5.1/go.mod h1:T3375wBYaZdLLcVNkcVbzGHY7f1l/uK5T5Ai1i3InKU=
 github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
 github.com/go-co-op/gocron v0.3.3/go.mod h1:Y9PWlYqDChf2Nbgg7kfS+ZsXHDTZbMZYPEQ0MILqH+M=
-github.com/go-co-op/gocron v1.11.0 h1:ujOMubCpGcTxnnR/9vJIPIEpgwuAjbueAYqJRNr+nHg=
-github.com/go-co-op/gocron v1.11.0/go.mod h1:qtlsoMpHlSdIZ3E/xuZzrrAbeX3u5JtPvWf2TcdutU0=
+github.com/go-co-op/gocron v1.13.0 h1:BjkuNImPy5NuIPEifhWItFG7pYyr27cyjS6BN9w/D4c=
+github.com/go-co-op/gocron v1.13.0/go.mod h1:GD5EIEly1YNW+LovFVx5dzbYVcIc8544K99D8UVRpGo=
 github.com/go-gl/glfw v0.0.0-20190409004039-e6da0acd62b1/go.mod h1:vR7hzQXu2zJy9AVAgeJqvqgH9Q5CA+iKCZ2gyEVpxRU=
 github.com/go-gl/glfw/v3.3/glfw v0.0.0-20191125211704-12ad95a8df72/go.mod h1:tQ2UAYgL5IevRw8kRxooKSPJfGvJ9fJQFa0TUsXzTg8=
 github.com/go-gl/glfw/v3.3/glfw v0.0.0-20200222043503-6f7a984d4dc4/go.mod h1:tQ2UAYgL5IevRw8kRxooKSPJfGvJ9fJQFa0TUsXzTg8=

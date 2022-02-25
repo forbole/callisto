@@ -8,6 +8,27 @@ import (
 	stakingtype "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
+type Coin struct {
+	Amount string `json:"amount"`
+	Denom  string `json:"denom"`
+}
+
+func ConvertCoins(coins sdk.Coins) []Coin {
+	amount := make([]Coin, 0)
+	for _, coin := range coins {
+		amount = append(amount, Coin{Amount: coin.Amount.String(), Denom: coin.Denom})
+	}
+	return amount
+}
+
+func ConvertDecCoins(coins sdk.DecCoins) []Coin {
+	amount := make([]Coin, 0)
+	for _, coin := range coins {
+		amount = append(amount, Coin{Amount: coin.Amount.String(), Denom: coin.Denom})
+	}
+	return amount
+}
+
 // ========================= Withdraw Address Response =========================
 
 type Address struct {
@@ -17,7 +38,7 @@ type Address struct {
 // ========================= Account Balance Response =========================
 
 type Balance struct {
-	Coins sdk.Coins `json:"coins"`
+	Coins []Coin `json:"coins"`
 }
 
 // ========================= Delegation Response =========================
@@ -28,22 +49,22 @@ type DelegationResponse struct {
 }
 
 type Delegation struct {
-	DelegatorAddress string   `json:"delegator_address"`
-	ValidatorAddress string   `json:"validator_address"`
-	Coins            sdk.Coin `json:"coins"`
+	DelegatorAddress string `json:"delegator_address"`
+	ValidatorAddress string `json:"validator_address"`
+	Coins            []Coin `json:"coins"`
 }
 
 // ========================= Delegation Reward Response =========================
 
 type DelegationReward struct {
-	Coins            sdk.DecCoins `json:"coins"`
-	ValidatorAddress string       `json:"validator_address"`
+	Coins            []Coin `json:"coins"`
+	ValidatorAddress string `json:"validator_address"`
 }
 
 // ========================= Validator Commission Response =========================
 
 type ValidatorCommissionAmount struct {
-	Coins sdk.DecCoins `json:"coins"`
+	Coins []Coin `json:"coins"`
 }
 
 // ========================= Unbonding Delegation Response =========================
