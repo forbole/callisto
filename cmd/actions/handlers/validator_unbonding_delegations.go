@@ -1,67 +1,27 @@
 package handlers
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 
-	"github.com/cosmos/cosmos-sdk/types/query"
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 )
 
-func ValidatorUnbondingDelegations(w http.ResponseWriter, r *http.Request) {
-
-	w.Header().Set("Content-Type", "application/json")
-
-	reqBody, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, "invalid payload", http.StatusBadRequest)
-		return
-	}
-
-	var actionPayload actionstypes.Payload
-	err = json.Unmarshal(reqBody, &actionPayload)
-	if err != nil {
-		http.Error(w, "invalid payload: failed to unmarshal json", http.StatusInternalServerError)
-		return
-	}
-
-	result, err := getUnbondingDelegationsFromValidator(actionPayload.Input)
-	if err != nil {
-		errorHandler(w, err)
-		return
-	}
-
-	data, _ := json.Marshal(result)
-	w.Write(data)
-}
-
-func getUnbondingDelegationsFromValidator(input actionstypes.PayloadArgs) (actionstypes.UnbondingDelegationResponse, error) {
-	parseCtx, sources, err := getCtxAndSources()
-	if err != nil {
-		return actionstypes.UnbondingDelegationResponse{}, err
-	}
-
+func ValidatorUnbondingDelegationsHandler(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
 	// Get latest node height
-	height, err := parseCtx.Node.LatestHeight()
+	height, err := ctx.GetHeight(payload)
 	if err != nil {
-		return actionstypes.UnbondingDelegationResponse{}, fmt.Errorf("error while getting chain latest block height: %s", err)
+		return nil, err
 	}
 
 	// Get all unbonding delegations from the given validator opr address
-	unbondingDelegations, err := sources.StakingSource.GetUnbondingDelegationsFromValidator(
+	unbondingDelegations, err := ctx.Sources.StakingSource.GetUnbondingDelegationsFromValidator(
 		height,
-		input.Address,
-		&query.PageRequest{
-			Offset:     input.Offset,
-			Limit:      input.Limit,
-			CountTotal: input.CountTotal,
-		},
+		payload.GetAddress(),
+		payload.GetPagination(),
 	)
 	if err != nil {
-		return actionstypes.UnbondingDelegationResponse{},
-			fmt.Errorf("error while getting all unbonding delegations from validator %s: %s", input.Address, err)
+		return nil, fmt.Errorf("error while getting all unbonding delegations from validator %s: %s",
+			payload.GetAddress(), err)
 	}
 
 	unbondingDelegationsList := make([]actionstypes.UnbondingDelegation, len(unbondingDelegations.UnbondingResponses))
