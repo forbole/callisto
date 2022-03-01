@@ -62,6 +62,9 @@ import (
 	remotemintsource "github.com/forbole/bdjuno/v2/modules/mint/source/remote"
 	"github.com/forbole/bdjuno/v2/modules/modules"
 	"github.com/forbole/bdjuno/v2/modules/pricefeed"
+	profilessource "github.com/forbole/bdjuno/v2/modules/profiles/source"
+	localprofilessource "github.com/forbole/bdjuno/v2/modules/profiles/source/local"
+	remoteprofilessource "github.com/forbole/bdjuno/v2/modules/profiles/source/remote"
 	slashingsource "github.com/forbole/bdjuno/v2/modules/slashing/source"
 	localslashingsource "github.com/forbole/bdjuno/v2/modules/slashing/source/local"
 	remoteslashingsource "github.com/forbole/bdjuno/v2/modules/slashing/source/remote"
@@ -69,9 +72,6 @@ import (
 	stakingsource "github.com/forbole/bdjuno/v2/modules/staking/source"
 	localstakingsource "github.com/forbole/bdjuno/v2/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v2/modules/staking/source/remote"
-	profilessource "github.com/forbole/bdjuno/v2/modules/profiles/source"
-	localprofilessource "github.com/forbole/bdjuno/v2/modules/profiles/source/local"
-	remoteprofilessource "github.com/forbole/bdjuno/v2/modules/profiles/source/remote"
 )
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
@@ -117,7 +117,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	authModule := auth.NewModule(r.parser, cdc, db)
 	bankModule := bank.NewModule(r.parser, sources.BankSource, cdc, db)
 	consensusModule := consensus.NewModule(db)
-	distrModule := distribution.NewModule(ctx.JunoConfig, sources.DistrSource, cdc, db)
+	distrModule := distribution.NewModule(sources.DistrSource, cdc, db)
 	feegrantModule := feegrant.NewModule(cdc, db)
 	historyModule := history.NewModule(ctx.JunoConfig.Chain, r.parser, cdc, db)
 	mintModule := mint.NewModule(sources.MintSource, cdc, db)
@@ -175,7 +175,7 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		return nil, err
 	}
 
-		desmosApp := desmosapp.NewDesmosApp(
+	desmosApp := desmosapp.NewDesmosApp(
 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
 		cfg.Home, 0, desmosapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
 	)
