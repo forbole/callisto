@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/forbole/juno/v2/cmd"
 	initcmd "github.com/forbole/juno/v2/cmd/init"
@@ -17,7 +18,6 @@ import (
 	"github.com/forbole/bdjuno/v2/database"
 	"github.com/forbole/bdjuno/v2/modules"
 
-	gaiaapp "github.com/cosmos/gaia/v6/app"
 	evmosapp "github.com/tharsis/evmos/app"
 )
 
@@ -55,7 +55,7 @@ func main() {
 // This should be edited by custom implementations if needed.
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
-		gaiaapp.ModuleBasics,
+		simapp.ModuleBasics,
 		evmosapp.ModuleBasics,
 	}
 }
