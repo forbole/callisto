@@ -31,5 +31,3 @@ replace github.com/tendermint/tendermint => github.com/forbole/tendermint v0.34.
 replace github.com/99designs/keyring => github.com/cosmos/keyring v1.1.7-0.20210622111912-ef00f8ac3d76
 
 replace github.com/cosmos/ledger-cosmos-go => github.com/desmos-labs/ledger-desmos-go v0.11.2-0.20210814121638-5d87e392e8a9
-
-replace github.com/cosmos/cosmos-sdk => github.com/ovrclk/cosmos-sdk v0.44.5-grpc.patches.1
