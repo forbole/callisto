@@ -4,10 +4,10 @@ go 1.16
 
 require (
 	github.com/cosmos/cosmos-sdk v0.42.9
-	github.com/forbole/juno/v2 v2.0.0-20220218161358-802a672d3715
+	github.com/forbole/juno/v2 v2.0.0-20220307170555-a247c48a0caf
 	github.com/go-co-op/gocron v1.13.0
 	github.com/gogo/protobuf v1.3.3
-	github.com/jmoiron/sqlx v1.2.1-0.20200324155115-ee514944af4b
+	github.com/jmoiron/sqlx v1.3.4
 	github.com/lib/pq v1.10.4
 	github.com/pelletier/go-toml v1.9.4
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
