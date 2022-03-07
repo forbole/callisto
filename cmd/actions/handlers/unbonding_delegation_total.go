@@ -5,9 +5,14 @@ import (
 	"math/big"
 
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
+	"github.com/rs/zerolog/log"
 )
 
 func UnbondingDelegationsTotal(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
+	log.Debug().Str("action", "unbonding delegation total").
+		Str("address", payload.GetAddress()).
+		Int64("height", payload.Input.Height)
+
 	height, err := ctx.GetHeight(payload)
 	if err != nil {
 		return nil, err

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/rs/zerolog/log"
 )
 
 // ActionsWorker represents the worker that is used to handle Hasura actions queries
@@ -23,6 +25,9 @@ func NewActionsWorker(context *Context) *ActionsWorker {
 
 // RegisterHandler registers the provided handler to be used on each call to the provided path
 func (w *ActionsWorker) RegisterHandler(path string, handler ActionHandler) {
+	action := path[1:]
+	log.Debug().Str("action", action).Msg("registering actions handler")
+
 	w.mux.HandleFunc(path, func(writer http.ResponseWriter, request *http.Request) {
 		// Set the content type
 		writer.Header().Set("Content-Type", "application/json")
@@ -46,14 +51,14 @@ func (w *ActionsWorker) RegisterHandler(path string, handler ActionHandler) {
 		// Handle the request
 		res, err := handler(w.context, &payload)
 		if err != nil {
-			w.handleError(writer, err)
+			w.handleError(writer, action, err)
 			return
 		}
 
 		// Marshal the response
 		data, err := json.Marshal(res)
 		if err != nil {
-			w.handleError(writer, err)
+			w.handleError(writer, action, err)
 			return
 		}
 
@@ -63,7 +68,7 @@ func (w *ActionsWorker) RegisterHandler(path string, handler ActionHandler) {
 }
 
 // handleError allows to handle the given error by writing it to the provided writer
-func (w *ActionsWorker) handleError(writer http.ResponseWriter, err error) {
+func (w *ActionsWorker) handleError(writer http.ResponseWriter, action string, err error) {
 	errorObject := GraphQLError{
 		Message: err.Error(),
 	}

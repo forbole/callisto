@@ -4,9 +4,15 @@ import (
 	"fmt"
 
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
+	"github.com/rs/zerolog/log"
 )
 
 func UnbondingDelegationsHandler(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
+	log.Debug().Str("action", "unbonding delegations").
+		Str("address", payload.GetAddress()).
+		Int64("height", payload.Input.Height).
+		Msgf("pagination query: %v", payload.GetPagination())
+
 	height, err := ctx.GetHeight(payload)
 	if err != nil {
 		return nil, err

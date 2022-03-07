@@ -4,11 +4,17 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/rs/zerolog/log"
 
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 )
 
 func ValidatorDelegation(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
+	log.Debug().Str("action", "validator delegation").
+		Str("address", payload.GetAddress()).
+		Int64("height", payload.Input.Height).
+		Msgf("pagination query: %v", payload.GetPagination())
+
 	// Get latest node height
 	height, err := ctx.GetHeight(payload)
 	if err != nil {
