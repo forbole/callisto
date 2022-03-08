@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/forbole/juno/v2/cmd"
 	initcmd "github.com/forbole/juno/v2/cmd/init"
@@ -16,9 +17,6 @@ import (
 
 	"github.com/forbole/bdjuno/v2/database"
 	"github.com/forbole/bdjuno/v2/modules"
-
-	"github.com/cosmos/cosmos-sdk/simapp"
-	akashapp "github.com/ovrclk/akash/app"
 )
 
 func main() {
@@ -56,7 +54,7 @@ func main() {
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
 		simapp.ModuleBasics,
-		akashapp.ModuleBasics(),
+		// akashapp.ModuleBasics(),
 	}
 }
 
