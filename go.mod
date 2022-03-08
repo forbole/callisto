@@ -3,8 +3,8 @@ module github.com/forbole/bdjuno/v2
 go 1.16
 
 require (
-	github.com/cosmos/cosmos-sdk v0.44.5
-	github.com/forbole/juno/v2 v2.0.0-20220223115732-dbb226a91ce9
+	github.com/cosmos/cosmos-sdk v0.45.1
+	github.com/forbole/juno/v2 v2.0.0-20220308062554-1d2a48a78139
 	github.com/go-co-op/gocron v1.11.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/google/gofuzz v1.2.0 // indirect
@@ -18,7 +18,7 @@ require (
 	github.com/spf13/cobra v1.3.0
 	github.com/stretchr/testify v1.7.0
 	github.com/tendermint/tendermint v0.34.14
-	google.golang.org/grpc v1.42.0
+	google.golang.org/grpc v1.44.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 
@@ -32,4 +32,4 @@ replace github.com/99designs/keyring => github.com/cosmos/keyring v1.1.7-0.20210
 
 replace github.com/cosmos/ledger-cosmos-go => github.com/desmos-labs/ledger-desmos-go v0.11.2-0.20210814121638-5d87e392e8a9
 
-replace github.com/cosmos/cosmos-sdk => github.com/ovrclk/cosmos-sdk v0.44.5-patches
+replace github.com/cosmos/cosmos-sdk => github.com/huichiaotsou/cosmos-sdk v0.44.5-akash-3
