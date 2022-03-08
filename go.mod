@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/cosmos/cosmos-sdk v0.45.1
-	github.com/forbole/juno/v2 v2.0.0-20220308062554-1d2a48a78139
+	github.com/forbole/juno/v2 v2.0.0-20220308070656-570bc10bf70a
 	github.com/go-co-op/gocron v1.11.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/google/gofuzz v1.2.0 // indirect
@@ -32,4 +32,4 @@ replace github.com/99designs/keyring => github.com/cosmos/keyring v1.1.7-0.20210
 
 replace github.com/cosmos/ledger-cosmos-go => github.com/desmos-labs/ledger-desmos-go v0.11.2-0.20210814121638-5d87e392e8a9
 
-replace github.com/cosmos/cosmos-sdk => github.com/huichiaotsou/cosmos-sdk v0.44.5-akash-3
+replace github.com/cosmos/cosmos-sdk => github.com/ovrclk/cosmos-sdk v0.44.5-patches
