@@ -11,7 +11,7 @@ require (
 	github.com/hashicorp/golang-lru v0.5.5-0.20210104140557-80c98217689d // indirect
 	github.com/jmoiron/sqlx v1.2.1-0.20200324155115-ee514944af4b
 	github.com/lib/pq v1.10.4
-	github.com/ovrclk/akash v0.15.0-rc4
+	github.com/ovrclk/akash v0.15.0-rc14
 	github.com/pelletier/go-toml v1.9.4
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
 	github.com/rs/zerolog v1.26.1
@@ -31,3 +31,5 @@ replace github.com/tendermint/tendermint => github.com/forbole/tendermint v0.34.
 replace github.com/99designs/keyring => github.com/cosmos/keyring v1.1.7-0.20210622111912-ef00f8ac3d76
 
 replace github.com/cosmos/ledger-cosmos-go => github.com/desmos-labs/ledger-desmos-go v0.11.2-0.20210814121638-5d87e392e8a9
+
+replace github.com/cosmos/cosmos-sdk => github.com/ovrclk/cosmos-sdk v0.44.5-patches
