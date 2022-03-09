@@ -2,7 +2,6 @@ package distribution
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/forbole/juno/v2/types/config"
 
 	distrsource "github.com/forbole/bdjuno/v2/modules/distribution/source"
 
@@ -12,36 +11,25 @@ import (
 )
 
 var (
-	_ modules.Module                     = &Module{}
-	_ modules.GenesisModule              = &Module{}
-	_ modules.AdditionalOperationsModule = &Module{}
-	_ modules.PeriodicOperationsModule   = &Module{}
-	_ modules.BlockModule                = &Module{}
-	_ modules.MessageModule              = &Module{}
+	_ modules.Module                   = &Module{}
+	_ modules.GenesisModule            = &Module{}
+	_ modules.PeriodicOperationsModule = &Module{}
+	_ modules.MessageModule            = &Module{}
 )
 
 // Module represents the x/distr module
 type Module struct {
-	cdc        codec.Codec
-	cfg        *Config
-	db         *database.Db
-	source     distrsource.Source
-	bankModule BankModule
+	cdc    codec.Codec
+	db     *database.Db
+	source distrsource.Source
 }
 
 // NewModule returns a new Module instance
-func NewModule(cfg config.Config, source distrsource.Source, bankModule BankModule, cdc codec.Codec, db *database.Db) *Module {
-	distrCfg, err := ParseConfig(cfg.GetBytes())
-	if err != nil {
-		panic(err)
-	}
-
+func NewModule(source distrsource.Source, cdc codec.Codec, db *database.Db) *Module {
 	return &Module{
-		cdc:        cdc,
-		cfg:        distrCfg,
-		db:         db,
-		source:     source,
-		bankModule: bankModule,
+		cdc:    cdc,
+		db:     db,
+		source: source,
 	}
 }
 
