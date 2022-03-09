@@ -22,7 +22,9 @@ func (db *Db) GetTokensPriceID() ([]string, error) {
 
 	var units []string
 	for _, unit := range dbUnits {
-		units = append(units, unit.PriceID.String)
+		if unit.PriceID.String != "" {
+			units = append(units, unit.PriceID.String)
+		}
 	}
 
 	return units, nil
