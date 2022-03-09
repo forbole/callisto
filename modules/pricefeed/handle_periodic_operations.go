@@ -21,13 +21,6 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 		return fmt.Errorf("error while setting up pricefeed period operations: %s", err)
 	}
 
-	// Fetch total supply of tokens every 1hr to store historical price data
-	if _, err := scheduler.Every(1).Hour().Do(func() {
-		utils.WatchMethod(m.updatePricesHistory)
-	}); err != nil {
-		return fmt.Errorf("error while setting up historic pricefeed period operations: %s", err)
-	}
-
 	return nil
 }
 
@@ -62,39 +55,5 @@ func (m *Module) updatePrice() error {
 	}
 
 	return nil
-}
 
-// updatePricesHistory fetch total amount of coins in the system from RPC
-// and store historical perice data inside the database
-func (m *Module) updatePricesHistory() error {
-	historyEnabled := m.historyModule.IsHistoryModuleEnabled()
-
-	if historyEnabled {
-		log.Debug().
-			Str("module", "pricefeed").
-			Str("operation", "pricefeed").
-			Msg("getting hourly token price and market cap")
-
-		// Get the list of tokens price id
-		ids, err := m.db.GetTokensPriceID()
-		if err != nil {
-			return fmt.Errorf("error while getting tokens price id: %s", err)
-		}
-
-		if len(ids) == 0 {
-			log.Debug().Str("module", "pricefeed").Msg("no traded tokens price id found")
-			return nil
-		}
-
-		// Get the tokens prices
-		prices, err := coingecko.GetTokensPrices(ids)
-		if err != nil {
-			return fmt.Errorf("error while getting tokens prices: %s", err)
-		}
-
-		return m.historyModule.UpdatePricesHistory(prices)
-	}
-
-	return nil
-	
 }
