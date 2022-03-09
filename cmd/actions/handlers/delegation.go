@@ -20,7 +20,7 @@ func DelegationHandler(ctx *actionstypes.Context, payload *actionstypes.Payload)
 	// Get delegator's total rewards
 	res, err := ctx.Sources.StakingSource.GetDelegationsWithPagination(height, payload.GetAddress(), payload.GetPagination())
 	if err != nil {
-		// For stargate only, returns empty object without error if delegator delegations are not found on the chain
+		// For stargate only, returns without throwing error if delegator delegations are not found on the chain
 		if strings.Contains(err.Error(), codes.NotFound.String()) {
 			return err, nil
 		}
