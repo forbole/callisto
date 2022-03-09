@@ -8,8 +8,7 @@ import (
 )
 
 func AccountBalanceHandler(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
-	log.Debug().
-		Str("address", payload.GetAddress()).
+	log.Debug().Str("address", payload.GetAddress()).
 		Int64("height", payload.Input.Height).
 		Msg("executing account balance action")
 
