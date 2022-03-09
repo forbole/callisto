@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/forbole/bdjuno/v2/cmd/actions/logging"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/zerolog/log"
@@ -54,7 +55,7 @@ func (w *ActionsWorker) RegisterHandler(path string, handler ActionHandler) {
 		// Handle the request
 		res, err := handler(w.context, &payload)
 		if err != nil {
-			promErrorCounter(path)
+			logging.ErrorCounter(path)
 			w.handleError(writer, path, err)
 			return
 		}
@@ -62,14 +63,14 @@ func (w *ActionsWorker) RegisterHandler(path string, handler ActionHandler) {
 		// Marshal the response
 		data, err := json.Marshal(res)
 		if err != nil {
-			promErrorCounter(path)
+			logging.ErrorCounter(path)
 			w.handleError(writer, path, err)
 			return
 		}
 
 		// Prometheus
-		promActionCounter(path)
-		promReponseTimeLog(path, start)
+		logging.SuccessCounter(path)
+		logging.ReponseTimeBuckets(path, start)
 
 		// Write the response
 		writer.Write(data)
