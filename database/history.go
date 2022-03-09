@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/forbole/bdjuno/v2/types"
 )
@@ -18,7 +19,7 @@ func (db *Db) SaveTokenPricesHistory(prices []types.TokenPrice) error {
 	for i, ticker := range prices {
 		vi := i * 4
 		query += fmt.Sprintf("($%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4)
-		param = append(param, ticker.UnitName, ticker.Price, ticker.MarketCap, ticker.Timestamp)
+		param = append(param, ticker.UnitName, ticker.Price, ticker.MarketCap, time.Now())
 	}
 
 	query = query[:len(query)-1] // Remove trailing ","
