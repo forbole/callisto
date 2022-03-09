@@ -14,14 +14,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 6
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: technote-space/get-diff-action@v6.0.1
         with:
           SUFFIX_FILTER: |
             .go
             .mod
             .sum
-      - uses: golangci/golangci-lint-action@v2
+      - uses: golangci/golangci-lint-action@v3.1.0
         with:
           version: v1.28
           args: --timeout 10m
