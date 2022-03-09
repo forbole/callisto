@@ -1,65 +1,23 @@
 package handlers
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
-	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
-	"github.com/forbole/bdjuno/v2/utils"
-	"google.golang.org/grpc/codes"
 )
 
-func TotalDelegationAmount(w http.ResponseWriter, r *http.Request) {
-
-	w.Header().Set("Content-Type", "application/json")
-
-	reqBody, err := ioutil.ReadAll(r.Body)
+func TotalDelegationAmountHandler(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
+	height, err := ctx.GetHeight(payload)
 	if err != nil {
-		http.Error(w, "invalid payload", http.StatusBadRequest)
-		return
-	}
-
-	var actionPayload actionstypes.Payload
-	err = json.Unmarshal(reqBody, &actionPayload)
-	if err != nil {
-		http.Error(w, "invalid payload: failed to unmarshal json", http.StatusInternalServerError)
-		return
-	}
-
-	result, err := getTotalDelegationAmount(actionPayload.Input)
-	if err != nil {
-		errorHandler(w, err)
-		return
-	}
-
-	data, _ := json.Marshal(result)
-	w.Write(data)
-}
-
-func getTotalDelegationAmount(input actionstypes.PayloadArgs) (actionstypes.Balance, error) {
-	parseCtx, sources, err := getCtxAndSources()
-	if err != nil {
-		return actionstypes.Balance{}, err
-	}
-
-	height, err := utils.GetHeight(parseCtx, input.Height)
-	if err != nil {
-		return actionstypes.Balance{}, fmt.Errorf("error while getting height: %s", err)
+		return nil, err
 	}
 
 	// Get all  delegations for given delegator address
-	delegationList, err := sources.StakingSource.GetDelegationsWithPagination(height, input.Address, nil)
-
-	// For stargate only, returns empty object without error if delegator delegations are not found on the chain
-	if err != nil && strings.Contains(err.Error(), codes.NotFound.String()) {
-		return actionstypes.Balance{}, nil
-	}
-	if err != nil && !strings.Contains(err.Error(), codes.NotFound.String()) {
-		return actionstypes.Balance{}, fmt.Errorf("error while getting delegator delegations: %s", err)
+	delegationList, err := ctx.Sources.StakingSource.GetDelegationsWithPagination(height, payload.GetAddress(), nil)
+	if err != nil {
+		return nil, fmt.Errorf("error while getting delegator delegations: %s", err)
 	}
 
 	var coinObject sdk.Coins
@@ -80,6 +38,6 @@ func getTotalDelegationAmount(input actionstypes.PayloadArgs) (actionstypes.Bala
 	}
 
 	return actionstypes.Balance{
-		Coins: coinObject,
+		Coins: actionstypes.ConvertCoins(coinObject),
 	}, nil
 }
