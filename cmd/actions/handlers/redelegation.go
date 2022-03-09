@@ -10,10 +10,10 @@ import (
 )
 
 func RedelegationHandler(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
-	log.Debug().Str("action", "redelegation").
+	log.Debug().
 		Str("address", payload.GetAddress()).
 		Int64("height", payload.Input.Height).
-		Msgf("pagination query: %v", payload.GetPagination())
+		Msg("executing redelegations action")
 
 	height, err := ctx.GetHeight(payload)
 	if err != nil {

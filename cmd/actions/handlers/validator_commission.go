@@ -8,9 +8,9 @@ import (
 )
 
 func ValidatorCommissionAmountHandler(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
-	log.Debug().Str("action", "validator commission").
-		Str("address", payload.GetAddress()).
-		Int64("height", payload.Input.Height)
+	log.Debug().Str("address", payload.GetAddress()).
+		Int64("height", payload.Input.Height).
+		Msg("executing validator commission action")
 
 	// Get latest node height
 	height, err := ctx.GetHeight(nil)

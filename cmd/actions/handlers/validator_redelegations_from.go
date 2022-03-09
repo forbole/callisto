@@ -10,10 +10,10 @@ import (
 )
 
 func ValidatorRedelegationsFromHandler(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
-	log.Debug().Str("action", "redelegation from validator").
+	log.Debug().
 		Str("address", payload.GetAddress()).
 		Int64("height", payload.Input.Height).
-		Msgf("pagination query: %v", payload.GetPagination())
+		Msg("executing validator redelegation action")
 
 	height, err := ctx.GetHeight(payload)
 	if err != nil {

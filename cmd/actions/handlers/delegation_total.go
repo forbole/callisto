@@ -10,9 +10,10 @@ import (
 )
 
 func TotalDelegationAmountHandler(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
-	log.Debug().Str("action", "total delegation amount").
+	log.Debug().
 		Str("address", payload.GetAddress()).
-		Int64("height", payload.Input.Height)
+		Int64("height", payload.Input.Height).
+		Msg("executing total delegation amount action")
 
 	height, err := ctx.GetHeight(payload)
 	if err != nil {

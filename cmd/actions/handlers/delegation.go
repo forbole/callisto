@@ -10,10 +10,9 @@ import (
 )
 
 func DelegationHandler(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
-	log.Debug().Str("action", "delegation").
+	log.Debug().Str("action", "delegations").
 		Str("address", payload.GetAddress()).
-		Int64("height", payload.Input.Height).
-		Msgf("pagination query: %v", payload.GetPagination())
+		Msg("executing delegations action")
 
 	height, err := ctx.GetHeight(payload)
 	if err != nil {

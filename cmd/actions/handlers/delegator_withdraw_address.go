@@ -8,8 +8,8 @@ import (
 )
 
 func DelegatorWithdrawAddressHandler(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
-	log.Debug().Str("action", "delegator withdraw address").
-		Str("address", payload.GetAddress())
+	log.Debug().Str("address", payload.GetAddress()).
+		Msg("executing delegator withdraw address action")
 
 	// Get latest node height
 	height, err := ctx.GetHeight(nil)

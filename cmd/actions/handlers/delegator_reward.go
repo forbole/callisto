@@ -8,9 +8,10 @@ import (
 )
 
 func DelegationRewardHandler(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
-	log.Debug().Str("action", "delegation reward").
+	log.Debug().
 		Str("address", payload.GetAddress()).
-		Int64("height", payload.Input.Height)
+		Int64("height", payload.Input.Height).
+		Msg("executing delegation rewards action")
 
 	height, err := ctx.GetHeight(payload)
 	if err != nil {

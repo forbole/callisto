@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"time"
 
+	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/zerolog/log"
 )
 
@@ -25,10 +28,10 @@ func NewActionsWorker(context *Context) *ActionsWorker {
 
 // RegisterHandler registers the provided handler to be used on each call to the provided path
 func (w *ActionsWorker) RegisterHandler(path string, handler ActionHandler) {
-	action := path[1:]
-	log.Debug().Str("action", action).Msg("registering actions handler")
-
+	log.Debug().Str("action", path).Msg("registering actions handler")
 	w.mux.HandleFunc(path, func(writer http.ResponseWriter, request *http.Request) {
+		start := time.Now()
+
 		// Set the content type
 		writer.Header().Set("Content-Type", "application/json")
 
@@ -51,16 +54,22 @@ func (w *ActionsWorker) RegisterHandler(path string, handler ActionHandler) {
 		// Handle the request
 		res, err := handler(w.context, &payload)
 		if err != nil {
-			w.handleError(writer, action, err)
+			promErrorCounter(path)
+			w.handleError(writer, path, err)
 			return
 		}
 
 		// Marshal the response
 		data, err := json.Marshal(res)
 		if err != nil {
-			w.handleError(writer, action, err)
+			promErrorCounter(path)
+			w.handleError(writer, path, err)
 			return
 		}
+
+		// Prometheus
+		promActionCounter(path)
+		promReponseTimeLog(path, start)
 
 		// Write the response
 		writer.Write(data)
@@ -68,7 +77,10 @@ func (w *ActionsWorker) RegisterHandler(path string, handler ActionHandler) {
 }
 
 // handleError allows to handle the given error by writing it to the provided writer
-func (w *ActionsWorker) handleError(writer http.ResponseWriter, action string, err error) {
+func (w *ActionsWorker) handleError(writer http.ResponseWriter, path string, err error) {
+	log.Error().Str("action", path).
+		Err(err).Msg("error while executing action")
+
 	errorObject := GraphQLError{
 		Message: err.Error(),
 	}
@@ -84,4 +96,15 @@ func (w *ActionsWorker) handleError(writer http.ResponseWriter, action string, e
 // Start starts the worker
 func (w *ActionsWorker) Start(port uint) {
 	http.ListenAndServe(fmt.Sprintf(":%d", port), w.mux)
+}
+
+// startPrometheus starts a Prometheus server using the given configuration
+func StartPrometheus(port uint) {
+	router := mux.NewRouter()
+	router.Handle("/metrics", promhttp.Handler())
+
+	err := http.ListenAndServe(fmt.Sprintf(":%d", port), router)
+	if err != nil {
+		panic(err)
+	}
 }

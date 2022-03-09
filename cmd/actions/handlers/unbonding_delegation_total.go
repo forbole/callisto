@@ -9,9 +9,9 @@ import (
 )
 
 func UnbondingDelegationsTotal(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
-	log.Debug().Str("action", "unbonding delegation total").
-		Str("address", payload.GetAddress()).
-		Int64("height", payload.Input.Height)
+	log.Debug().Str("address", payload.GetAddress()).
+		Int64("height", payload.Input.Height).
+		Msg("executing unbonding delegation total action")
 
 	height, err := ctx.GetHeight(payload)
 	if err != nil {

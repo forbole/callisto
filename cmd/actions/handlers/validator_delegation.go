@@ -10,10 +10,9 @@ import (
 )
 
 func ValidatorDelegation(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
-	log.Debug().Str("action", "validator delegation").
-		Str("address", payload.GetAddress()).
+	log.Debug().Str("address", payload.GetAddress()).
 		Int64("height", payload.Input.Height).
-		Msgf("pagination query: %v", payload.GetPagination())
+		Msg("executing validator delegation action")
 
 	// Get latest node height
 	height, err := ctx.GetHeight(payload)

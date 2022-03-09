@@ -8,10 +8,10 @@ import (
 )
 
 func UnbondingDelegationsHandler(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
-	log.Debug().Str("action", "unbonding delegations").
+	log.Debug().
 		Str("address", payload.GetAddress()).
 		Int64("height", payload.Input.Height).
-		Msgf("pagination query: %v", payload.GetPagination())
+		Msg("executing unbonding delegations action")
 
 	height, err := ctx.GetHeight(payload)
 	if err != nil {
