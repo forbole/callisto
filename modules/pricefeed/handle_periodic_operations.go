@@ -15,7 +15,7 @@ import (
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	log.Debug().Str("module", "pricefeed").Msg("setting up periodic tasks")
 
-	// Fetch total supply of tokens every 2 mins
+	// Fetch the token prices every 2 mins
 	if _, err := scheduler.Every(2).Minutes().Do(func() {
 		utils.WatchMethod(m.updatePrice)
 	}); err != nil {
