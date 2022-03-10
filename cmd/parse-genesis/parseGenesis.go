@@ -18,7 +18,7 @@ func NewParseGenesisCmd(parseCfg *parse.Config) *cobra.Command {
 		Example: "bdjuno parse-genesis auth bank consensus gov history staking",
 		PreRunE: parse.ReadConfig(parseCfg),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			parseCtx, err := parse.GetParsingContext(parseCfg)
+			parseCtx, err := parse.GetGenesisParsingContext(parseCfg)
 			if err != nil {
 				return err
 			}
