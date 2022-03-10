@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"math/big"
 
-	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 	"github.com/rs/zerolog/log"
+
+	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 )
 
 func UnbondingDelegationsTotal(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {

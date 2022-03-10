@@ -3,8 +3,9 @@ package handlers
 import (
 	"fmt"
 
-	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 	"github.com/rs/zerolog/log"
+
+	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 )
 
 func DelegationRewardHandler(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {

@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"google.golang.org/grpc/codes"
 	"github.com/rs/zerolog/log"
+	"google.golang.org/grpc/codes"
 
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 )

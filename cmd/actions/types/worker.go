@@ -7,10 +7,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/forbole/bdjuno/v2/cmd/actions/logging"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/zerolog/log"
+
+	"github.com/forbole/bdjuno/v2/cmd/actions/logging"
 )
 
 // ActionsWorker represents the worker that is used to handle Hasura actions queries
