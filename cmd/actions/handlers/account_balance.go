@@ -4,9 +4,14 @@ import (
 	"fmt"
 
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
+	"github.com/rs/zerolog/log"
 )
 
 func AccountBalanceHandler(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
+	log.Debug().Str("address", payload.GetAddress()).
+		Int64("height", payload.Input.Height).
+		Msg("executing account balance action")
+
 	height, err := ctx.GetHeight(payload)
 	if err != nil {
 		return nil, err
