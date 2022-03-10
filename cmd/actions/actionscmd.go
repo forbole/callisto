@@ -21,11 +21,12 @@ import (
 )
 
 const (
-	flagGRPC     = "grpc"
-	flagRPC      = "rpc"
-	flagSecure   = "secure"
-	flagPort     = "port"
-	flagPortProm = "promport"
+	flagGRPC            = "grpc"
+	flagRPC             = "rpc"
+	flagSecure          = "secure"
+	flagPort            = "port"
+	flagPortPrometheus  = "prometheus-port"
+	flagEablePrometheus = "enable-prometheus"
 )
 
 var (
@@ -49,7 +50,8 @@ func NewActionsCmd(parseCfg *parse.Config) *cobra.Command {
 			gRPC, _ := cmd.Flags().GetString(flagGRPC)
 			secure, _ := cmd.Flags().GetBool(flagSecure)
 			port, _ := cmd.Flags().GetUint(flagPort)
-			promPort, _ := cmd.Flags().GetUint(flagPortProm)
+			prometheusPort, _ := cmd.Flags().GetUint(flagPortPrometheus)
+			enablePrometheus, _ := cmd.Flags().GetBool(flagEablePrometheus)
 
 			log.Info().Str(flagRPC, rpc).Str(flagGRPC, gRPC).Bool(flagSecure, secure).
 				Msg("Listening to incoming Hasura actions requests....")
@@ -110,7 +112,9 @@ func NewActionsCmd(parseCfg *parse.Config) *cobra.Command {
 			go worker.Start(port)
 
 			// Start Prometheus
-			go actionstypes.StartPrometheus(promPort)
+			if enablePrometheus {
+				go actionstypes.StartPrometheus(prometheusPort)
+			}
 
 			// Block main process (signal capture will call WaitGroup's Done)
 			waitGroup.Wait()
@@ -122,7 +126,8 @@ func NewActionsCmd(parseCfg *parse.Config) *cobra.Command {
 	cmd.Flags().String(flagGRPC, "http://127.0.0.1:9090", "GRPC listen address. Port required")
 	cmd.Flags().Bool(flagSecure, false, "Activate secure connections")
 	cmd.Flags().Uint(flagPort, 3000, "Port to be used to expose the service")
-	cmd.Flags().Uint(flagPortProm, 3001, "Port to be used to run hasura prometheus monitoring")
+	cmd.Flags().Uint(flagPortPrometheus, 3001, "Port to be used to run hasura prometheus monitoring")
+	cmd.Flags().Bool(flagEablePrometheus, false, "Enable prometheus monitoring")
 
 	return cmd
 }
