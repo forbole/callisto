@@ -4,9 +4,14 @@ import (
 	"fmt"
 
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
+	"github.com/rs/zerolog/log"
 )
 
 func ValidatorCommissionAmountHandler(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
+	log.Debug().Str("address", payload.GetAddress()).
+		Int64("height", payload.Input.Height).
+		Msg("executing validator commission action")
+
 	// Get latest node height
 	height, err := ctx.GetHeight(nil)
 	if err != nil {

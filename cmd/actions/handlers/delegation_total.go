@@ -6,11 +6,16 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"google.golang.org/grpc/codes"
+	"github.com/rs/zerolog/log"
 
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 )
 
 func TotalDelegationAmountHandler(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
+	log.Debug().Str("address", payload.GetAddress()).
+		Int64("height", payload.Input.Height).
+		Msg("executing total delegation amount action")
+
 	height, err := ctx.GetHeight(payload)
 	if err != nil {
 		return nil, err

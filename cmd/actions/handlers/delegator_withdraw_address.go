@@ -4,9 +4,13 @@ import (
 	"fmt"
 
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
+	"github.com/rs/zerolog/log"
 )
 
 func DelegatorWithdrawAddressHandler(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
+	log.Debug().Str("address", payload.GetAddress()).
+		Msg("executing delegator withdraw address action")
+
 	// Get latest node height
 	height, err := ctx.GetHeight(nil)
 	if err != nil {

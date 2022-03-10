@@ -7,11 +7,16 @@ import (
 	"google.golang.org/grpc/codes"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/rs/zerolog/log"
 
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 )
 
 func DelegationHandler(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
+	log.Debug().Str("action", "delegations").
+		Str("address", payload.GetAddress()).
+		Msg("executing delegations action")
+
 	height, err := ctx.GetHeight(payload)
 	if err != nil {
 		return nil, err
