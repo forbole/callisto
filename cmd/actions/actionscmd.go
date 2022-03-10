@@ -122,7 +122,7 @@ func NewActionsCmd(parseCfg *parse.Config) *cobra.Command {
 	cmd.Flags().String(flagGRPC, "http://127.0.0.1:9090", "GRPC listen address. Port required")
 	cmd.Flags().Bool(flagSecure, false, "Activate secure connections")
 	cmd.Flags().Uint(flagPort, 3000, "Port to be used to expose the service")
-	cmd.Flags().Uint(flagPortProm, 9093, "Port to be used to run hasura prometheus monitoring")
+	cmd.Flags().Uint(flagPortProm, 3001, "Port to be used to run hasura prometheus monitoring")
 
 	return cmd
 }
