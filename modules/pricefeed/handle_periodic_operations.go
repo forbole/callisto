@@ -22,7 +22,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 		return fmt.Errorf("error while setting up pricefeed period operations: %s", err)
 	}
 
-	// Fetch total supply of tokens every 1hr to store historical price data
+	// Update the historical token prices every 1 hour
 	if _, err := scheduler.Every(1).Hour().Do(func() {
 		utils.WatchMethod(m.updatePricesHistory)
 	}); err != nil {
