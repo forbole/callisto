@@ -2,6 +2,7 @@ package pricefeed
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
@@ -88,6 +89,15 @@ func (m *Module) updatePricesHistory() error {
 	prices, err := m.getTokenPrices()
 	if err != nil {
 		return err
+	}
+
+	// Normally, the last updated value reflects the time when the price was last updated.
+	// If price hasn't changed, the returned timestamp will be the same as one hour ago, and it will not
+	// be stored in db as it will be a duplicated value.
+	// To fix this, we set each price timestamp to be the same as other ones.
+	timestamp := time.Now()
+	for _, price := range prices {
+		price.Timestamp = timestamp
 	}
 
 	err = m.db.SaveTokenPricesHistory(prices)
