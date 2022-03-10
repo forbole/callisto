@@ -128,7 +128,6 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTokenPriceHistory() {
 	suite.insertToken("desmos")
 	suite.insertToken("atom")
 
-
 	// Save data
 	tickers := []types.TokenPrice{
 		types.NewTokenPrice(
@@ -159,7 +158,6 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTokenPriceHistory() {
 	err := suite.database.SaveTokenPricesHistory(tickers)
 	suite.Require().NoError(err)
 
-
 	// Verify data
 	expected := []dbtypes.TokenPriceRow{
 		dbtypes.NewTokenPriceRow(
@@ -188,11 +186,9 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTokenPriceHistory() {
 		),
 	}
 
-
 	var rows []dbtypes.TokenPriceRow
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM token_price_history`)
 	suite.Require().NoError(err)
-
 
 	for i, row := range rows {
 		suite.Require().True(expected[i].Equals(row))
@@ -230,7 +226,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTokenPriceHistory() {
 
 	// Verify data
 	expected = []dbtypes.TokenPriceRow{
-				dbtypes.NewTokenPriceRow(
+		dbtypes.NewTokenPriceRow(
 			"desmos",
 			100.01,
 			10,
@@ -248,7 +244,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTokenPriceHistory() {
 			20,
 			time.Date(2020, 10, 10, 15, 02, 00, 000, time.UTC),
 		),
-		
+
 		dbtypes.NewTokenPriceRow(
 			"atom",
 			10,
