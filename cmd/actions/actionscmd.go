@@ -12,6 +12,7 @@ import (
 	"github.com/forbole/juno/v2/node/builder"
 	nodeconfig "github.com/forbole/juno/v2/node/config"
 	"github.com/forbole/juno/v2/node/remote"
+
 	"github.com/spf13/cobra"
 
 	"github.com/forbole/bdjuno/v2/cmd/actions/handlers"
@@ -20,10 +21,12 @@ import (
 )
 
 const (
-	flagGRPC   = "grpc"
-	flagRPC    = "rpc"
-	flagSecure = "secure"
-	flagPort   = "port"
+	flagGRPC            = "grpc"
+	flagRPC             = "rpc"
+	flagSecure          = "secure"
+	flagPort            = "port"
+	flagPortPrometheus  = "prometheus-port"
+	flagEablePrometheus = "enable-prometheus"
 )
 
 var (
@@ -47,6 +50,8 @@ func NewActionsCmd(parseCfg *parse.Config) *cobra.Command {
 			gRPC, _ := cmd.Flags().GetString(flagGRPC)
 			secure, _ := cmd.Flags().GetBool(flagSecure)
 			port, _ := cmd.Flags().GetUint(flagPort)
+			prometheusPort, _ := cmd.Flags().GetUint(flagPortPrometheus)
+			enablePrometheus, _ := cmd.Flags().GetBool(flagEablePrometheus)
 
 			log.Info().Str(flagRPC, rpc).Str(flagGRPC, gRPC).Bool(flagSecure, secure).
 				Msg("Listening to incoming Hasura actions requests....")
@@ -106,6 +111,11 @@ func NewActionsCmd(parseCfg *parse.Config) *cobra.Command {
 			waitGroup.Add(1)
 			go worker.Start(port)
 
+			// Start Prometheus
+			if enablePrometheus {
+				go actionstypes.StartPrometheus(prometheusPort)
+			}
+
 			// Block main process (signal capture will call WaitGroup's Done)
 			waitGroup.Wait()
 			return nil
@@ -116,6 +126,8 @@ func NewActionsCmd(parseCfg *parse.Config) *cobra.Command {
 	cmd.Flags().String(flagGRPC, "http://127.0.0.1:9090", "GRPC listen address. Port required")
 	cmd.Flags().Bool(flagSecure, false, "Activate secure connections")
 	cmd.Flags().Uint(flagPort, 3000, "Port to be used to expose the service")
+	cmd.Flags().Uint(flagPortPrometheus, 3001, "Port to be used to run hasura prometheus monitoring")
+	cmd.Flags().Bool(flagEablePrometheus, false, "Enable prometheus monitoring")
 
 	return cmd
 }
