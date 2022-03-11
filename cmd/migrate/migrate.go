@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/forbole/juno/v2/types/config"
+	"github.com/forbole/juno/v3/types/config"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 
@@ -12,8 +12,8 @@ import (
 	"github.com/forbole/bdjuno/v2/modules/pricefeed"
 	"github.com/forbole/bdjuno/v2/types"
 
-	junomigrate "github.com/forbole/juno/v2/cmd/migrate"
-	junov1 "github.com/forbole/juno/v2/cmd/migrate/v1"
+	junomigrate "github.com/forbole/juno/v3/cmd/migrate"
+	junov1 "github.com/forbole/juno/v3/cmd/migrate/v1"
 )
 
 type Config struct {

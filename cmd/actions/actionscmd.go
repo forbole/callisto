@@ -8,10 +8,10 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	"github.com/forbole/juno/v2/cmd/parse"
-	"github.com/forbole/juno/v2/node/builder"
-	nodeconfig "github.com/forbole/juno/v2/node/config"
-	"github.com/forbole/juno/v2/node/remote"
+	"github.com/forbole/juno/v3/cmd/parse"
+	"github.com/forbole/juno/v3/node/builder"
+	nodeconfig "github.com/forbole/juno/v3/node/config"
+	"github.com/forbole/juno/v3/node/remote"
 
 	"github.com/spf13/cobra"
 

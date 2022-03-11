@@ -1,10 +1,10 @@
 package fix
 
 import (
-	"github.com/forbole/juno/v2/cmd/parse"
+	"github.com/forbole/juno/v3/cmd/parse"
 	"github.com/spf13/cobra"
 
-	fixblocks "github.com/forbole/juno/v2/cmd/fix/blocks"
+	fixblocks "github.com/forbole/juno/v3/cmd/fix/blocks"
 
 	fixauth "github.com/forbole/bdjuno/v2/cmd/fix/auth"
 	fixgov "github.com/forbole/bdjuno/v2/cmd/fix/gov"
