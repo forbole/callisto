@@ -2,13 +2,20 @@ package handlers
 
 import (
 	"fmt"
+	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/rs/zerolog/log"
+	"google.golang.org/grpc/codes"
 
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 )
 
 func TotalDelegationAmountHandler(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
+	log.Debug().Str("address", payload.GetAddress()).
+		Int64("height", payload.Input.Height).
+		Msg("executing total delegation amount action")
+
 	height, err := ctx.GetHeight(payload)
 	if err != nil {
 		return nil, err
@@ -17,7 +24,11 @@ func TotalDelegationAmountHandler(ctx *actionstypes.Context, payload *actionstyp
 	// Get all  delegations for given delegator address
 	delegationList, err := ctx.Sources.StakingSource.GetDelegationsWithPagination(height, payload.GetAddress(), nil)
 	if err != nil {
-		return nil, fmt.Errorf("error while getting delegator delegations: %s", err)
+		// For stargate only, returns without throwing error if delegator delegations are not found on the chain
+		if strings.Contains(err.Error(), codes.NotFound.String()) {
+			return err, nil
+		}
+		return err, fmt.Errorf("error while getting delegator delegations: %s", err)
 	}
 
 	var coinObject sdk.Coins
