@@ -17,13 +17,13 @@ var (
 
 // Module represents the x/auth module
 type Module struct {
-	cdc            codec.Marshaler
+	cdc            codec.Codec
 	db             *database.Db
 	messagesParser messages.MessageAddressesParser
 }
 
 // NewModule builds a new Module instance
-func NewModule(messagesParser messages.MessageAddressesParser, cdc codec.Marshaler, db *database.Db) *Module {
+func NewModule(messagesParser messages.MessageAddressesParser, cdc codec.Codec, db *database.Db) *Module {
 	return &Module{
 		messagesParser: messagesParser,
 		cdc:            cdc,

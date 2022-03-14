@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/forbole/juno/v2/cmd"
 	initcmd "github.com/forbole/juno/v2/cmd/init"
@@ -18,6 +17,8 @@ import (
 	bitsongapp "github.com/bitsongofficial/go-bitsong/app"
 	"github.com/forbole/bdjuno/v2/database"
 	"github.com/forbole/bdjuno/v2/modules"
+
+	gaiaapp "github.com/cosmos/gaia/v6/app"
 )
 
 func main() {
@@ -54,7 +55,7 @@ func main() {
 // This should be edited by custom implementations if needed.
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
-		simapp.ModuleBasics,
+		gaiaapp.ModuleBasics,
 		bitsongapp.ModuleBasics,
 	}
 }
