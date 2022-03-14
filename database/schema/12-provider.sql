@@ -10,6 +10,7 @@ CREATE TABLE provider
     host_uri        TEXT            NOT NULL,
     attributes      JSONB           NOT NULL DEFAULT '[]'::JSONB,
     info            PROVIDER_INFO   NOT NULL DEFAULT '{}',
+    jwt_host_uri    TEXT            NOT NULL DEFAULT '',
     height          BIGINT          NOT NULL
 );
 CREATE INDEX provider_address_index ON provider (owner_address);

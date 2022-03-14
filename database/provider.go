@@ -10,7 +10,7 @@ import (
 	providertypes "github.com/ovrclk/akash/x/provider/types/v1beta2"
 )
 
-// SaveProviders allows to store the given balances inside the database
+// SaveProviders allows to store the provider information inside the database
 func (db *Db) SaveProviders(providers []providertypes.Provider, height int64) error {
 	if len(providers) == 0 {
 		return nil
@@ -35,13 +35,13 @@ func (db *Db) SaveProviders(providers []providertypes.Provider, height int64) er
 }
 
 func (db *Db) saveProviders(paramsNumber int, providers []providertypes.Provider, height int64) error {
-	stmt := `INSERT INTO provider (owner_address, host_uri, attributes, info, height) VALUES `
+	stmt := `INSERT INTO provider (owner_address, host_uri, attributes, info, jwt_host_uri, height) VALUES `
 	var params []interface{}
 
 	for i, provider := range providers {
 
 		bi := i * paramsNumber
-		stmt += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d),", bi+1, bi+2, bi+3, bi+4, bi+5)
+		stmt += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d),", bi+1, bi+2, bi+3, bi+4, bi+5, bi+6)
 
 		attributesBz, err := json.Marshal(&provider.Attributes)
 		if err != nil {
@@ -54,7 +54,7 @@ func (db *Db) saveProviders(paramsNumber int, providers []providertypes.Provider
 			return fmt.Errorf("error while converting provider info to DbProviderInfo: %s", err)
 		}
 
-		params = append(params, provider.Owner, provider.HostURI, string(attributesBz), infoValue, height)
+		params = append(params, provider.Owner, provider.HostURI, string(attributesBz), infoValue, provider.JWTHostURI, height)
 	}
 
 	stmt = stmt[:len(stmt)-1]
@@ -63,6 +63,7 @@ ON CONFLICT (owner_address) DO UPDATE
 	SET host_uri = excluded.host_uri, 
 		attributes = excluded.attributes,
 		info = excluded.info,
+		jwt_host_uri = excluded.jwt_host_uri,
 	    height = excluded.height 
 WHERE provider.height <= excluded.height`
 
@@ -74,10 +75,10 @@ WHERE provider.height <= excluded.height`
 	return nil
 }
 
-// SaveProviders allows to store the given balances inside the database
-func (db *Db) DeleteProvider(ownerAddress string) error {
-	stmt := `DELETE FROM providers WHERE owner = $1`
-	_, err := db.Sql.Exec(stmt, ownerAddress)
+// DeleteProvider deletes provider from the database
+func (db *Db) DeleteProvider(ownerAddress string, height int64) error {
+	stmt := `DELETE FROM providers WHERE owner = $1 AND height <= $2`
+	_, err := db.Sql.Exec(stmt, ownerAddress, height)
 	if err != nil {
 		return fmt.Errorf("error while deleting provider: %s", err)
 	}

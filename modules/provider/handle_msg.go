@@ -20,7 +20,7 @@ func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *junotypes.Tx) error {
 			},
 		}, tx.Height)
 	case *providertypes.MsgDeleteProvider:
-		return m.db.DeleteProvider(cosmosMsg.Owner)
+		return m.db.DeleteProvider(cosmosMsg.Owner, tx.Height)
 	case *providertypes.MsgUpdateProvider:
 		return m.db.SaveProviders([]providertypes.Provider{
 			{
