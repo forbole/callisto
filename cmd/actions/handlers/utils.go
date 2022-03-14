@@ -6,13 +6,14 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/forbole/juno/v2/cmd/parse"
+	"github.com/forbole/juno/v2/modules/messages"
+	junoconfig "github.com/forbole/juno/v2/types/config"
+
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 	"github.com/forbole/bdjuno/v2/database"
 	"github.com/forbole/bdjuno/v2/modules"
 	"github.com/forbole/bdjuno/v2/types/config"
-	"github.com/forbole/juno/v2/cmd/parse"
-	"github.com/forbole/juno/v2/modules/messages"
-	junoconfig "github.com/forbole/juno/v2/types/config"
 )
 
 func getCtxAndSources() (*parse.Context, *modules.Sources, error) {
