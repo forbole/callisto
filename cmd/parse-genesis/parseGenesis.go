@@ -3,10 +3,10 @@ package parsegenesis
 import (
 	"fmt"
 
-	"github.com/forbole/juno/v2/cmd/parse"
-	"github.com/forbole/juno/v2/modules"
-	"github.com/forbole/juno/v2/types/config"
-	junoutils "github.com/forbole/juno/v2/types/utils"
+	"github.com/forbole/juno/v3/cmd/parse"
+	"github.com/forbole/juno/v3/modules"
+	"github.com/forbole/juno/v3/types/config"
+	junoutils "github.com/forbole/juno/v3/types/utils"
 	"github.com/spf13/cobra"
 )
 

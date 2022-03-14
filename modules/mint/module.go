@@ -2,7 +2,7 @@ package mint
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/forbole/juno/v2/modules"
+	"github.com/forbole/juno/v3/modules"
 
 	"github.com/forbole/bdjuno/v2/database"
 	mintsource "github.com/forbole/bdjuno/v2/modules/mint/source"
