@@ -1,16 +1,14 @@
-package provider
+package market
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/forbole/bdjuno/v2/database"
-	providersource "github.com/forbole/bdjuno/v2/modules/provider/source"
+	marketsource "github.com/forbole/bdjuno/v2/modules/market/source"
 	"github.com/forbole/juno/v3/modules"
 )
 
 var (
 	_ modules.Module                   = &Module{}
-	_ modules.GenesisModule            = &Module{}
-	_ modules.MessageModule            = &Module{}
 	_ modules.PeriodicOperationsModule = &Module{}
 )
 
@@ -18,12 +16,12 @@ var (
 type Module struct {
 	cdc    codec.Codec
 	db     *database.Db
-	source providersource.Source
+	source marketsource.Source
 }
 
 // NewModule returns a new Module instance
 func NewModule(
-	source providersource.Source, cdc codec.Codec, db *database.Db,
+	source marketsource.Source, cdc codec.Codec, db *database.Db,
 ) *Module {
 	return &Module{
 		cdc:    cdc,
@@ -34,5 +32,5 @@ func NewModule(
 
 // Name implements modules.Module
 func (m *Module) Name() string {
-	return "provider"
+	return "market"
 }
