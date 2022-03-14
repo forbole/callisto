@@ -21,18 +21,10 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 		return fmt.Errorf("error while unmarshaling provider state: %s", err)
 	}
 
-	err = m.saveGenesisProviders(genState.Providers, doc.InitialHeight)
+	err = m.db.SaveProviders(genState.Providers, doc.InitialHeight)
 	if err != nil {
 		return fmt.Errorf("error while saving genesis providers: %s", err)
 	}
 
-	return nil
-}
-
-func (m *Module) saveGenesisProviders(genProviders []providertypes.Provider, height int64) error {
-	err := m.db.SaveProviders(genProviders, height)
-	if err != nil {
-		return err
-	}
 	return nil
 }
