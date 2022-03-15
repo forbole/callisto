@@ -48,7 +48,7 @@ func (db *Db) saveProviders(paramsNumber int, providers []providertypes.Provider
 			return fmt.Errorf("error while marshaling provider attributes: %s", err)
 		}
 
-		info := dbtypes.NewDbInfo(provider.Info)
+		info := dbtypes.NewDbProviderInfo(provider.Info)
 		infoValue, err := info.Value()
 		if err != nil {
 			return fmt.Errorf("error while converting provider info to DbProviderInfo: %s", err)

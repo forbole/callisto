@@ -45,8 +45,8 @@ type DbProviderInfo struct {
 	Website string
 }
 
-// NewDbInfo builds a DbInfo starting from an akash provider info
-func NewDbInfo(info providertypes.ProviderInfo) DbProviderInfo {
+// NewDbProviderInfo builds a DbInfo starting from an akash provider info
+func NewDbProviderInfo(info providertypes.ProviderInfo) DbProviderInfo {
 	return DbProviderInfo{
 		EMail:   info.EMail,
 		Website: info.Website,
