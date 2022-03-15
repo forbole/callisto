@@ -7,7 +7,7 @@ import (
 	"github.com/forbole/bdjuno/v2/modules/feegrant"
 	"github.com/forbole/bdjuno/v2/utils"
 
-	"github.com/forbole/juno/v3/cmd/parse"
+	"github.com/forbole/juno/v2/cmd/parse"
 	"github.com/spf13/cobra"
 
 	"github.com/forbole/bdjuno/v2/database"

@@ -4,7 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/forbole/bdjuno/v2/database"
 	providersource "github.com/forbole/bdjuno/v2/modules/provider/source"
-	"github.com/forbole/juno/v3/modules"
+	"github.com/forbole/juno/v2/modules"
 )
 
 var (

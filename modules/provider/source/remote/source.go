@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/types/query"
-	"github.com/forbole/juno/v3/node/remote"
+	"github.com/forbole/juno/v2/node/remote"
 	providertypes "github.com/ovrclk/akash/x/provider/types/v1beta2"
 
 	providersource "github.com/forbole/bdjuno/v2/modules/provider/source"

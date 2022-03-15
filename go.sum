@@ -298,8 +298,8 @@ github.com/fatih/color v1.13.0/go.mod h1:kLAiJbzzSOZDVNGyDpeOxJ47H46qBXwg5ILebYF
 github.com/felixge/httpsnoop v1.0.1 h1:lvB5Jl89CsZtGIWuTcDM1E/vkVs49/Ml7JJe07l8SPQ=
 github.com/felixge/httpsnoop v1.0.1/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
 github.com/fjl/memsize v0.0.0-20180418122429-ca190fb6ffbc/go.mod h1:VvhXpOYNQvB+uIk2RvXzuaQtkQJzzIx6lSBe1xv7hi0=
-github.com/forbole/juno/v3 v3.0.0-20220314033456-3143cedfb0b2 h1:inOFk0RqMZt9sCenWYD+Ez09n7ou491toR3BlQeJ2Eg=
-github.com/forbole/juno/v3 v3.0.0-20220314033456-3143cedfb0b2/go.mod h1:jkI96KAQhcx+ramMz6jPLE7ObXzGOb0KQeyFOdL+l+M=
+github.com/forbole/juno/v2 v2.0.0-20220308070656-570bc10bf70a h1:E4ifU2S284R25Qq5k7AqQOA17GtNFh4YQcwHCKaMw9A=
+github.com/forbole/juno/v2 v2.0.0-20220308070656-570bc10bf70a/go.mod h1:TdNVmjlU7PLzHdu2xYONIRTM1KqpQX9mHtc5H32BRBs=
 github.com/forbole/tendermint v0.34.13-0.20210820072129-a2a4af55563d h1:pUqGUgTUU24ibHeloQeg1F2pFbgQllddsuZ+x+CcUzw=
 github.com/forbole/tendermint v0.34.13-0.20210820072129-a2a4af55563d/go.mod h1:aeHL7alPh4uTBIJQ8mgFEE8VwJLXI1VD3rVOmH2Mcy0=
 github.com/form3tech-oss/jwt-go v3.2.2+incompatible/go.mod h1:pbq4aXjuKjdthFRnoDwaVPLA+WlJuPGy+QneDUgJi2k=

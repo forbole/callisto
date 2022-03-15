@@ -3,7 +3,7 @@ package provider
 import (
 	"fmt"
 
-	juno "github.com/forbole/juno/v3/types"
+	juno "github.com/forbole/juno/v2/types"
 
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
