@@ -13,16 +13,18 @@ type ProviderRow struct {
 	HostURI      string         `db:"host_uri"`
 	Attributes   string         `db:"attributes"`
 	Info         DbProviderInfo `db:"info"`
+	JwtHostUri   string         `db:"jwt_host_uri"`
 	Height       int64          `db:"height"`
 }
 
 // NewAccountBalanceRow allows to build a new AccountBalanceRow instance
-func NewProviderRow(ownerAddress string, hostURI string, attributes string, info DbProviderInfo, height int64) ProviderRow {
+func NewProviderRow(ownerAddress string, hostURI string, attributes string, info DbProviderInfo, jwtHostUri string, height int64) ProviderRow {
 	return ProviderRow{
 		OwnerAddress: ownerAddress,
 		HostURI:      hostURI,
 		Attributes:   attributes,
 		Info:         info,
+		JwtHostUri:   jwtHostUri,
 		Height:       height,
 	}
 }
@@ -31,9 +33,9 @@ func NewProviderRow(ownerAddress string, hostURI string, attributes string, info
 func (a ProviderRow) Equal(b ProviderRow) bool {
 	return a.OwnerAddress == b.OwnerAddress &&
 		a.HostURI == b.HostURI &&
-		// TO-DO: check those stored as JSON, how to equal??
 		a.Attributes == b.Attributes &&
 		a.Info.Equal(b.Info) &&
+		a.JwtHostUri == b.JwtHostUri &&
 		a.Height == b.Height
 }
 

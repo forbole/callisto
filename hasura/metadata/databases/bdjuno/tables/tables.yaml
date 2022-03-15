@@ -17,6 +17,7 @@
 - "!include public_modules.yaml"
 - "!include public_pre_commit.yaml"
 - "!include public_proposal.yaml"
+- "!include public_provider.yaml"
 - "!include public_proposal_deposit.yaml"
 - "!include public_proposal_staking_pool_snapshot.yaml"
 - "!include public_proposal_tally_result.yaml"
