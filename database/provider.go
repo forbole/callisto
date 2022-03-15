@@ -16,7 +16,7 @@ func (db *Db) SaveProviders(providers []providertypes.Provider, height int64) er
 		return nil
 	}
 
-	paramsNumber := 5
+	paramsNumber := 6
 	slices := dbutils.SplitProviders(providers, paramsNumber)
 
 	for _, providers := range slices {
@@ -69,7 +69,7 @@ WHERE provider.height <= excluded.height`
 
 	_, err := db.Sql.Exec(stmt, params...)
 	if err != nil {
-		return fmt.Errorf("error while storing providers: %s", err)
+		return err
 	}
 
 	return nil

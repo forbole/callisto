@@ -16,7 +16,7 @@ func (m *Module) HandleBlock(
 	// Update the provider statuses
 	err := m.updateProviderStatuses(block.Block.Height)
 	if err != nil {
-		return fmt.Errorf("error while updating signing info: %s", err)
+		return fmt.Errorf("error while updating provider statuses: %s", err)
 	}
 
 	return nil
