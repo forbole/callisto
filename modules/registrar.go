@@ -25,6 +25,7 @@ import (
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/juno/v2/node/local"
+	providertypes "github.com/ovrclk/akash/x/provider/types/v1beta2"
 
 	jmodules "github.com/forbole/juno/v2/modules"
 	"github.com/forbole/juno/v2/modules/messages"
@@ -44,6 +45,8 @@ import (
 	"github.com/forbole/bdjuno/v2/modules/distribution"
 	"github.com/forbole/bdjuno/v2/modules/feegrant"
 
+	akashapp "github.com/ovrclk/akash/app"
+
 	distrsource "github.com/forbole/bdjuno/v2/modules/distribution/source"
 	localdistrsource "github.com/forbole/bdjuno/v2/modules/distribution/source/local"
 	remotedistrsource "github.com/forbole/bdjuno/v2/modules/distribution/source/remote"
@@ -57,6 +60,10 @@ import (
 	remotemintsource "github.com/forbole/bdjuno/v2/modules/mint/source/remote"
 	"github.com/forbole/bdjuno/v2/modules/modules"
 	"github.com/forbole/bdjuno/v2/modules/pricefeed"
+	"github.com/forbole/bdjuno/v2/modules/provider"
+	providersource "github.com/forbole/bdjuno/v2/modules/provider/source"
+	localprovidersource "github.com/forbole/bdjuno/v2/modules/provider/source/local"
+	remoteprovidersource "github.com/forbole/bdjuno/v2/modules/provider/source/remote"
 	slashingsource "github.com/forbole/bdjuno/v2/modules/slashing/source"
 	localslashingsource "github.com/forbole/bdjuno/v2/modules/slashing/source/local"
 	remoteslashingsource "github.com/forbole/bdjuno/v2/modules/slashing/source/remote"
@@ -130,6 +137,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		mintModule,
 		modules.NewModule(ctx.JunoConfig.Chain, db),
 		pricefeed.NewModule(ctx.JunoConfig, cdc, db),
+		provider.NewModule(sources.ProviderSource, cdc, db),
 		slashingModule,
 		stakingModule,
 	}
@@ -142,6 +150,7 @@ type Sources struct {
 	MintSource     mintsource.Source
 	SlashingSource slashingsource.Source
 	StakingSource  stakingsource.Source
+	ProviderSource providersource.Source
 }
 
 func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -167,11 +176,17 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		cfg.Home, 0, simapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
 	)
 
+	akashapp := akashapp.NewApp(
+		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, 0, map[int64]bool{},
+		cfg.Home, simapp.EmptyAppOptions{},
+	)
+
 	sources := &Sources{
 		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
 		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
 		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
 		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
+		ProviderSource: localprovidersource.NewSource(source, providertypes.QueryServer(akashapp.Keeper.Provider.NewQuerier())),
 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
 		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
 	}
@@ -211,6 +226,7 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		DistrSource:    remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
 		GovSource:      remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
+		ProviderSource: remoteprovidersource.NewSource(source, providertypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
 	}, nil

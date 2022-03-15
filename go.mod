@@ -132,6 +132,7 @@ replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.1.7-0.20210622111912-ef00f8ac3d76
 	github.com/cosmos/cosmos-sdk => github.com/ovrclk/cosmos-sdk v0.44.5-patches
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
+	github.com/ovrclk/akash => github.com/huichiaotsou/akash v0.15.0-rc14-export.akashmodules
 	github.com/tendermint/tendermint => github.com/forbole/tendermint v0.34.13-0.20210820072129-a2a4af55563d
 	google.golang.org/grpc => google.golang.org/grpc v1.33.2
 )
