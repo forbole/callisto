@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/forbole/juno/v3/cmd/parse"
+	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
 	"github.com/forbole/juno/v3/types/config"
 	"github.com/spf13/cobra"
 
@@ -14,12 +14,12 @@ import (
 )
 
 // vestingCmd returns a Cobra command that allows to fix the vesting data for the accounts
-func vestingCmd(parseConfig *parse.Config) *cobra.Command {
+func vestingCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:   "vesting-accounts",
 		Short: "Fix the vesting accounts stored by removing duplicated vesting periods",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			parseCtx, err := parse.GetParsingContext(parseConfig)
+			parseCtx, err := parsecmdtypes.GetParserContext(config.Cfg, parseConfig)
 			if err != nil {
 				return err
 			}

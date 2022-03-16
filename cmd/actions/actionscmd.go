@@ -20,7 +20,6 @@ import (
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 	"github.com/forbole/bdjuno/v2/modules"
 	"github.com/forbole/juno/v3/types/config"
-
 )
 
 const (
