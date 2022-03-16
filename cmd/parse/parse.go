@@ -4,11 +4,11 @@ import (
 	parse "github.com/forbole/juno/v3/cmd/parse/types"
 	"github.com/spf13/cobra"
 
-	fixblocks "github.com/forbole/juno/v3/cmd/parse/blocks"
+	parseblocks "github.com/forbole/juno/v3/cmd/parse/blocks"
 
-	fixauth "github.com/forbole/bdjuno/v2/cmd/parse/auth"
-	fixgov "github.com/forbole/bdjuno/v2/cmd/parse/gov"
-	fixstaking "github.com/forbole/bdjuno/v2/cmd/parse/staking"
+	parseauth "github.com/forbole/bdjuno/v2/cmd/parse/auth"
+	parsegov "github.com/forbole/bdjuno/v2/cmd/parse/gov"
+	parsestaking "github.com/forbole/bdjuno/v2/cmd/parse/staking"
 	parsegenesis "github.com/forbole/juno/v3/cmd/parse/genesis"
 )
 
@@ -21,10 +21,10 @@ func NewParseCmd(parseCfg *parse.Config) *cobra.Command {
 	}
 
 	cmd.AddCommand(
-		fixauth.NewAuthCmd(parseCfg),
-		fixblocks.NewBlocksCmd(parseCfg),
-		fixgov.NewGovCmd(parseCfg),
-		fixstaking.NewStakingCmd(parseCfg),
+		parseauth.NewAuthCmd(parseCfg),
+		parseblocks.NewBlocksCmd(parseCfg),
+		parsegov.NewGovCmd(parseCfg),
+		parsestaking.NewStakingCmd(parseCfg),
 		parsegenesis.NewGenesisCmd(parseCfg),
 	)
 
