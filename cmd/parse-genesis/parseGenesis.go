@@ -15,7 +15,7 @@ func NewParseGenesisCmd(parseCfg *parse.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:     "parse-genesis [[module names]]",
 		Short:   "Parse genesis file. To parse specific modules, input module names as arguments",
-		Example: "bdjuno parse-genesis auth bank consensus gov history staking",
+		Example: "bdjuno parse-genesis auth bank consensus gov staking",
 		PreRunE: parse.ReadConfig(parseCfg),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			parseCtx, err := parse.GetGenesisParsingContext(parseCfg)
