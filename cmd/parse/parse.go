@@ -23,9 +23,9 @@ func NewParseCmd(parseCfg *parse.Config) *cobra.Command {
 	cmd.AddCommand(
 		parseauth.NewAuthCmd(parseCfg),
 		parseblocks.NewBlocksCmd(parseCfg),
+		parsegenesis.NewGenesisCmd(parseCfg),
 		parsegov.NewGovCmd(parseCfg),
 		parsestaking.NewStakingCmd(parseCfg),
-		parsegenesis.NewGenesisCmd(parseCfg),
 	)
 
 	return cmd
