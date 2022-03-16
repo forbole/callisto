@@ -5,7 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	"github.com/forbole/juno/v2/node/remote"
+	"github.com/forbole/juno/v3/node/remote"
 
 	"github.com/forbole/bdjuno/v2/utils"
 )

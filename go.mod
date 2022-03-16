@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/cosmos/cosmos-sdk v0.42.9
-	github.com/forbole/juno/v2 v2.0.0-20220223115557-e4ed06a008de
+	github.com/forbole/juno/v3 v3.0.0-20220309072106-724189922aa6
 	github.com/go-co-op/gocron v1.13.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/gorilla/mux v1.8.0

@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	"github.com/forbole/juno/v2/cmd/parse"
-	"github.com/forbole/juno/v2/types/config"
+	"github.com/forbole/juno/v3/cmd/parse"
+	"github.com/forbole/juno/v3/types/config"
 	"github.com/spf13/cobra"
 
 	"github.com/forbole/bdjuno/v2/database"

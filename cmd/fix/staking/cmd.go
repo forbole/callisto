@@ -1,7 +1,7 @@
 package staking
 
 import (
-	"github.com/forbole/juno/v2/cmd/parse"
+	"github.com/forbole/juno/v3/cmd/parse"
 	"github.com/spf13/cobra"
 )
 
