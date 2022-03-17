@@ -18,6 +18,7 @@ import (
 	"github.com/forbole/bdjuno/v2/modules"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
+	gaiaapp "github.com/cosmos/gaia/v6/app"
 )
 
 func main() {
@@ -55,6 +56,7 @@ func main() {
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
 		simapp.ModuleBasics,
+		gaiaapp.ModuleBasics,
 	}
 }
 
