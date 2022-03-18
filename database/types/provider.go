@@ -39,13 +39,13 @@ func (a ProviderRow) Equal(b ProviderRow) bool {
 		a.Height == b.Height
 }
 
-// DbProviderInfo represents the information stored inside the database about a single provider info
+// DbProviderInfo represents a single provider info in the database
 type DbProviderInfo struct {
 	EMail   string
 	Website string
 }
 
-// NewDbProviderInfo builds a DbInfo starting from an akash provider info
+// NewDbProviderInfo builds a DbProviderInfo from an akash provider info
 func NewDbProviderInfo(info providertypes.ProviderInfo) DbProviderInfo {
 	return DbProviderInfo{
 		EMail:   info.EMail,
@@ -53,7 +53,7 @@ func NewDbProviderInfo(info providertypes.ProviderInfo) DbProviderInfo {
 	}
 }
 
-// Equal tells whether coin and d represent the same coin with the same amount
+// Equal tells whether a and b represent the same provider info
 func (a DbProviderInfo) Equal(b DbProviderInfo) bool {
 	return a.EMail == b.EMail && a.Website == b.Website
 }

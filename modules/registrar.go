@@ -13,6 +13,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/forbole/juno/v2/node/remote"
 
+	"github.com/forbole/bdjuno/v2/modules/market"
 	"github.com/forbole/bdjuno/v2/modules/slashing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -25,6 +26,7 @@ import (
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/juno/v2/node/local"
+	markettypes "github.com/ovrclk/akash/x/market/types/v1beta2"
 	providertypes "github.com/ovrclk/akash/x/provider/types/v1beta2"
 
 	jmodules "github.com/forbole/juno/v2/modules"
@@ -54,6 +56,9 @@ import (
 	govsource "github.com/forbole/bdjuno/v2/modules/gov/source"
 	localgovsource "github.com/forbole/bdjuno/v2/modules/gov/source/local"
 	remotegovsource "github.com/forbole/bdjuno/v2/modules/gov/source/remote"
+	marketsource "github.com/forbole/bdjuno/v2/modules/market/source"
+	localmarketsource "github.com/forbole/bdjuno/v2/modules/market/source/local"
+	remotemarketsource "github.com/forbole/bdjuno/v2/modules/market/source/remote"
 	"github.com/forbole/bdjuno/v2/modules/mint"
 	mintsource "github.com/forbole/bdjuno/v2/modules/mint/source"
 	localmintsource "github.com/forbole/bdjuno/v2/modules/mint/source/local"
@@ -134,6 +139,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		distrModule,
 		feegrantModule,
 		govModule,
+		market.NewModule(sources.MarketSource, cdc, db),
 		mintModule,
 		modules.NewModule(ctx.JunoConfig.Chain, db),
 		pricefeed.NewModule(ctx.JunoConfig, cdc, db),
@@ -147,6 +153,7 @@ type Sources struct {
 	BankSource     banksource.Source
 	DistrSource    distrsource.Source
 	GovSource      govsource.Source
+	MarketSource   marketsource.Source
 	MintSource     mintsource.Source
 	SlashingSource slashingsource.Source
 	StakingSource  stakingsource.Source
@@ -185,6 +192,7 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
 		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
 		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
+		MarketSource:   localmarketsource.NewSource(source, markettypes.QueryServer(akashapp.Keeper.Market.NewQuerier())),
 		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
 		ProviderSource: localprovidersource.NewSource(source, providertypes.QueryServer(akashapp.Keeper.Provider.NewQuerier())),
 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
@@ -225,6 +233,7 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		BankSource:     remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
 		DistrSource:    remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
 		GovSource:      remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
+		MarketSource:   remotemarketsource.NewSource(source, markettypes.NewQueryClient(source.GrpcConn)),
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
 		ProviderSource: remoteprovidersource.NewSource(source, providertypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),

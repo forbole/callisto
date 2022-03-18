@@ -51,7 +51,7 @@ func (db *Db) saveProviders(paramsNumber int, providers []providertypes.Provider
 		info := dbtypes.NewDbProviderInfo(provider.Info)
 		infoValue, err := info.Value()
 		if err != nil {
-			return fmt.Errorf("error while converting provider info to DbProviderInfo: %s", err)
+			return fmt.Errorf("error while converting provider info to DbProviderInfo value: %s", err)
 		}
 
 		params = append(params, provider.Owner, provider.HostURI, string(attributesBz), infoValue, provider.JWTHostURI, height)
