@@ -153,7 +153,7 @@ func (m *Module) updateValidators(height int64) ([]stakingtypes.Validator, error
 		return nil, fmt.Errorf("error while getting validator: %s", err)
 	}
 
-	err = m.db.SaveValidatorsData(validators)
+	err = m.db.SaveValidatorsData(validators, vals)
 	if err != nil {
 		return nil, err
 	}

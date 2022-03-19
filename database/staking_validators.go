@@ -16,10 +16,18 @@ func (db *Db) SaveValidatorData(validator types.Validator) error {
 	return db.SaveValidatorsData([]types.Validator{validator})
 }
 
-// SaveValidatorsData allows the bulk saving of a list of validators.
-func (db *Db) SaveValidatorsData(validators []types.Validator) error {
+// SaveValidatorsData allows the bulk saving of a list of validators. Variadic function parameter used
+// in order to make the second function argument optional and not disrupting the usage of the function in other parts of the code.
+func (db *Db) SaveValidatorsData(validators []types.Validator, optionalNodeVals ...[]stakingtypes.Validator) error {
 	if len(validators) == 0 {
 		return nil
+	}
+
+	var commissions bool = false
+	var nodeVals []stakingtypes.Validator
+	if len(optionalNodeVals) > 0 {
+		nodeVals = optionalNodeVals[0]
+		commissions = true
 	}
 
 	selfDelegationAccQuery := `
@@ -52,6 +60,20 @@ VALUES `
 			validator.GetConsAddr(), validator.GetOperator(), validator.GetSelfDelegateAddress(),
 			validator.GetMaxChangeRate().String(), validator.GetMaxRate().String(), validator.GetHeight(),
 		)
+
+		if commissions {
+			node_val := nodeVals[i]
+			height := validator.GetHeight()
+			err := db.SaveValidatorCommission(types.ValidatorCommission{
+				ValAddress:        node_val.OperatorAddress,
+				Commission:        &node_val.Commission.Rate,
+				MinSelfDelegation: &node_val.MinSelfDelegation,
+				Height:            height,
+			})
+			if err != nil {
+				return fmt.Errorf("error while storing commissions: %s", err)
+			}
+		}
 	}
 
 	selfDelegationAccQuery = selfDelegationAccQuery[:len(selfDelegationAccQuery)-1] // Remove trailing ","
