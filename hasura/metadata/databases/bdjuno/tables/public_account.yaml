@@ -40,6 +40,20 @@ array_relationships:
       table:
         name: validator_info
         schema: public
+- name: lease_owners
+  using:
+    foreign_key_constraint_on:
+      column: owner_address
+      table:
+        name: lease_id
+        schema: public
+- name: lease_providers
+  using:
+    foreign_key_constraint_on:
+      column: provider_address
+      table:
+        name: lease_id
+        schema: public
 select_permissions:
 - permission:
     allow_aggregations: true

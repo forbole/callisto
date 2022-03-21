@@ -1,0 +1,23 @@
+table:
+  name: lease
+  schema: public
+array_relationships:
+- name: lease_ids
+  using:
+    foreign_key_constraint_on:
+      column: id
+      table:
+        name: lease_id
+        schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - lease_id
+    - lease_state
+    - price
+    - created_at
+    - closed_on
+    - height
+    filter: {}
+  role: anonymous

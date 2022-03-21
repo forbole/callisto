@@ -1,11 +1,11 @@
 CREATE TABLE lease_id
 (
     id                  SERIAL      NOT NULL PRIMARY KEY,
-    owner_address       TEXT        NOT NULL PRIMARY KEY REFERENCES account (address),
+    owner_address       TEXT        NOT NULL REFERENCES account (address),
     dseq                BIGINT      NOT NULL,
     gseq                BIGINT      NOT NULL,
     oseq                BIGINT      NOT NULL,
-    provider_address    TEXT        NOT NULL,
+    provider_address    TEXT        NOT NULL REFERENCES account (address),
     UNIQUE(owner_address, dseq, gseq, oseq, provider_address)
 );
 
@@ -44,7 +44,8 @@ CREATE TABLE market_params
 (
     one_row_id          BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
     bid_min_deposit     COIN    NOT NULL,
-    order_max_bids      INT     NOT NULL
+    order_max_bids      INT     NOT NULL,
+    CHECK (one_row_id)
 );
 CREATE INDEX market_params_height_index ON market_params (height);
 

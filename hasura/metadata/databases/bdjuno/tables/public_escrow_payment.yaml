@@ -1,0 +1,26 @@
+table:
+  name: escrow_payment
+  schema: public
+array_relationships:
+- name: lease_ids
+  using:
+    foreign_key_constraint_on:
+      column: id
+      table:
+        name: lease_id
+        schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - lease_id
+    - account_id
+    - payment_id
+    - owner_address
+    - payment_state
+    - rate
+    - balance
+    - withdrawn
+    - height
+    filter: {}
+  role: anonymous
