@@ -33,5 +33,5 @@ func NewModule(
 
 // Name implements modules.Module
 func (m *Module) Name() string {
-	return "provider"
+	return "market"
 }
