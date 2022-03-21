@@ -46,27 +46,6 @@ func (db *Db) SaveLeases(responses []markettypes.QueryLeaseResponse, height int6
 	return nil
 }
 
-func (db *Db) SaveMarketParams(p markettypes.Params, height int64) error {
-	stmt := `
-	INSERT INTO market_params (bid_min_deposit, order_max_bids, height) 
-	VALUES ($1, $2, $3) 
-	ON CONFLICT (one_row_id) DO UPDATE 
-	SET bid_min_deposit = excluded.bid_min_deposit, 
-	order_max_bids = excluded.order_max_bids, 
-		height = excluded.height 
-	WHERE market_params.height <= excluded.height`
-
-	_, err := db.Sql.Exec(stmt,
-		pq.Array(dbtypes.NewDbCoin(p.BidMinDeposit)),
-		p.OrderMaxBids,
-		height,
-	)
-	if err != nil {
-		return fmt.Errorf("error while storing market params: %s", err)
-	}
-	return nil
-}
-
 func (db *Db) saveLeaseID(lease markettypes.Lease) (int64, error) {
 	stmt := `
 	INSERT INTO lease_id (owner_address, dseq, gseq, oseq, provider_address) 

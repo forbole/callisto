@@ -39,13 +39,3 @@ CREATE TABLE escrow_payment
     withdrawn       COIN        NOT NULL,
     height          BIGINT      NOT NULL
 );
-
-CREATE TABLE market_params
-(
-    one_row_id          BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
-    bid_min_deposit     COIN    NOT NULL,
-    order_max_bids      INT     NOT NULL,
-    CHECK (one_row_id)
-);
-CREATE INDEX market_params_height_index ON market_params (height);
-

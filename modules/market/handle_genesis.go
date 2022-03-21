@@ -26,10 +26,5 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 		return fmt.Errorf("error while saving genesis leases: %s", err)
 	}
 
-	err = m.db.SaveMarketParams(genState.Params, doc.InitialHeight)
-	if err != nil {
-		return fmt.Errorf("error while saving genesis leases: %s", err)
-	}
-
 	return nil
 }
