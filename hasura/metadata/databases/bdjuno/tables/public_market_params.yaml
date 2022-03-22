@@ -1,0 +1,11 @@
+table:
+  name: market_params
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - bid_min_deposit
+    - order_max_bids
+    filter: {}
+  role: anonymous

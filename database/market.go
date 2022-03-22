@@ -4,14 +4,13 @@ import (
 	"fmt"
 
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
-	"github.com/lib/pq"
 	escrowtypes "github.com/ovrclk/akash/x/escrow/types/v1beta2"
 	markettypes "github.com/ovrclk/akash/x/market/types/v1beta2"
 )
 
 func (db *Db) SaveGenesisLeases(leases []markettypes.Lease, height int64) error {
 	for _, lease := range leases {
-		leaseID, err := db.saveLeaseID(lease)
+		leaseID, err := db.saveLeaseID(lease.LeaseID)
 		if err != nil {
 			return fmt.Errorf("error while storing lease ID: %s", err)
 		}
@@ -27,7 +26,7 @@ func (db *Db) SaveGenesisLeases(leases []markettypes.Lease, height int64) error 
 
 func (db *Db) SaveLeases(responses []markettypes.QueryLeaseResponse, height int64) error {
 	for _, res := range responses {
-		leaseID, err := db.saveLeaseID(res.Lease)
+		leaseID, err := db.saveLeaseID(res.Lease.LeaseID)
 		if err != nil {
 			return fmt.Errorf("error while storing lease ID: %s", err)
 		}
@@ -46,25 +45,29 @@ func (db *Db) SaveLeases(responses []markettypes.QueryLeaseResponse, height int6
 	return nil
 }
 
-func (db *Db) saveLeaseID(lease markettypes.Lease) (int64, error) {
+func (db *Db) saveLeaseID(leaseID markettypes.LeaseID) (int64, error) {
+	fmt.Println("saving lease id")
 	stmt := `
 	INSERT INTO lease_id (owner_address, dseq, gseq, oseq, provider_address) 
 	VALUES ($1, $2, $3, $4, $5) 
-	ON CONFLICT DO NOTHING 
+	ON CONFLICT (owner_address, dseq, gseq, oseq, provider_address) DO UPDATE SET 
+		owner_address = excluded.owner_address 
 	RETURNING id`
 
-	var leaseID int64
+	var rowID int64
 	err := db.Sql.QueryRow(stmt,
-		lease.LeaseID.Owner, lease.LeaseID.DSeq, lease.LeaseID.GSeq, lease.LeaseID.OSeq, lease.LeaseID.Provider,
-	).Scan(&leaseID)
+		leaseID.Owner, leaseID.DSeq, leaseID.GSeq, leaseID.OSeq, leaseID.Provider,
+	).Scan(&rowID)
 	if err != nil {
-		return leaseID, fmt.Errorf("error while storing lease ID: %s", err)
+		return rowID, fmt.Errorf("error while storing lease ID: %s", err)
 	}
 
-	return leaseID, nil
+	return rowID, nil
 }
 
 func (db *Db) saveLease(leaseID int64, l markettypes.Lease, height int64) error {
+	fmt.Println("saving lease")
+
 	stmt := `
 	INSERT INTO lease (lease_id, lease_state, price, created_at, closed_on, height) 
 	VALUES ($1, $2, $3, $4, $5, $6) 
@@ -76,10 +79,15 @@ func (db *Db) saveLease(leaseID int64, l markettypes.Lease, height int64) error 
 		height = excluded.height 
 	WHERE lease.height <= excluded.height`
 
+	// price := dbtypes.NewDbDecCoin(l.Price)
+	// priceVal, err := price.Value()
+	// if err != nil {
+	// 	return fmt.Errorf("error while getting price value")
+	// }
 	_, err := db.Sql.Exec(stmt,
 		leaseID,
 		l.State,
-		pq.Array(dbtypes.NewDbDecCoin(l.Price)),
+		fmt.Sprintf("(%s,%s)", l.Price.Denom, l.Price.Amount),
 		l.CreatedAt,
 		l.ClosedOn,
 		height,
@@ -92,17 +100,19 @@ func (db *Db) saveLease(leaseID int64, l markettypes.Lease, height int64) error 
 }
 
 func (db *Db) saveEscrowPayment(leaseID int64, e escrowtypes.FractionalPayment, height int64) error {
+	fmt.Println("saving escrow payment")
+
 	stmt := `
 	INSERT INTO escrow_payment (lease_id, account_id, payment_id, owner_address, payment_state, rate, balance, withdrawn, height) 
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
 	ON CONFLICT (lease_id) DO UPDATE 
 	SET account_id = excluded.account_id, 
 		payment_id = excluded.payment_id, 
 		owner_address = excluded.owner_address, 
 		payment_state = excluded.payment_state, 
-		rate = excluded.rate 
-		balance = excluded.balance 
-		withdrawn = excluded.withdrawn 
+		rate = excluded.rate,
+		balance = excluded.balance, 
+		withdrawn = excluded.withdrawn, 
 		height = excluded.height 
 	WHERE escrow_payment.height <= excluded.height`
 
@@ -118,9 +128,9 @@ func (db *Db) saveEscrowPayment(leaseID int64, e escrowtypes.FractionalPayment, 
 		e.PaymentID,
 		e.Owner,
 		e.State,
-		pq.Array(dbtypes.NewDbDecCoin(e.Rate)),
-		pq.Array(dbtypes.NewDbDecCoin(e.Balance)),
-		pq.Array(dbtypes.NewDbCoin(e.Withdrawn)),
+		fmt.Sprintf("(%s,%s)", e.Rate.Denom, e.Rate.Amount),
+		fmt.Sprintf("(%s,%s)", e.Balance.Denom, e.Balance.Amount),
+		fmt.Sprintf("(%s,%s)", e.Withdrawn.Denom, e.Withdrawn.Amount),
 		height,
 	)
 	if err != nil {
