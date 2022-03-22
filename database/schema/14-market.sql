@@ -22,12 +22,12 @@ CREATE TABLE lease
     closed_on           BIGINT      NOT NULL,
 
     /* Escrow Payment */
-    account_id      ACCOUNT_ID  NOT NULL,
-    payment_id      TEXT        NOT NULL,
-    payment_state   INT         NOT NULL,
-    rate            DEC_COIN    NOT NULL,
-    balance         DEC_COIN    NOT NULL,
-    withdrawn       COIN        NOT NULL,
+    account_id      ACCOUNT_ID,
+    payment_id      TEXT,
+    payment_state   INT,
+    rate            DEC_COIN,
+    balance         DEC_COIN,
+    withdrawn       COIN,
 
     height          BIGINT      NOT NULL
 );
