@@ -4,127 +4,87 @@ import (
 	"fmt"
 
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
-	escrowtypes "github.com/ovrclk/akash/x/escrow/types/v1beta2"
+	dbutils "github.com/forbole/bdjuno/v2/database/utils"
 	markettypes "github.com/ovrclk/akash/x/market/types/v1beta2"
 )
 
 func (db *Db) SaveGenesisLeases(leases []markettypes.Lease, height int64) error {
-	for _, lease := range leases {
-		leaseID, err := db.saveLeaseID(lease.LeaseID)
-		if err != nil {
-			return fmt.Errorf("error while storing lease ID: %s", err)
-		}
-
-		err = db.saveLease(leaseID, lease, height)
-		if err != nil {
-			return fmt.Errorf("error while storing lease: %s", err)
-		}
-	}
 
 	return nil
 }
 
 func (db *Db) SaveLeases(responses []markettypes.QueryLeaseResponse, height int64) error {
-	for _, res := range responses {
-		leaseID, err := db.saveLeaseID(res.Lease.LeaseID)
-		if err != nil {
-			return fmt.Errorf("error while storing lease ID: %s", err)
-		}
+	if len(responses) == 0 {
+		return nil
+	}
 
-		err = db.saveLease(leaseID, res.Lease, height)
+	paramsNumber := 17
+	slices := dbutils.SplitLeases(responses, paramsNumber)
+	for _, s := range slices {
+		err := db.saveLeases(s, paramsNumber, height)
 		if err != nil {
-			return fmt.Errorf("error while storing lease: %s", err)
-		}
-
-		err = db.saveEscrowPayment(leaseID, res.EscrowPayment, height)
-		if err != nil {
-			return fmt.Errorf("error while storing escrow payment: %s", err)
+			return fmt.Errorf("error while saving leases: %s", err)
 		}
 	}
 
 	return nil
 }
 
-func (db *Db) saveLeaseID(leaseID markettypes.LeaseID) (int64, error) {
-	stmt := `
-	INSERT INTO lease_id (owner_address, dseq, gseq, oseq, provider_address) 
-	VALUES ($1, $2, $3, $4, $5) 
-	ON CONFLICT (owner_address, dseq, gseq, oseq, provider_address) DO UPDATE SET 
-		owner_address = excluded.owner_address 
-	RETURNING id`
+func (db *Db) saveLeases(slices []markettypes.QueryLeaseResponse, paramsNumber int, height int64) error {
+	stmt := `INSERT INTO lease ( 
+		owner_address, dseq, gseq, oseq, provider_address, 
+		lease_state, price, created_at, closed_on, 
+		account_id, payment_id, owner_address, payment_state, rate, balance, withdrawn, height 
+		) VALUES `
 
-	var rowID int64
-	err := db.Sql.QueryRow(stmt,
-		leaseID.Owner, leaseID.DSeq, leaseID.GSeq, leaseID.OSeq, leaseID.Provider,
-	).Scan(&rowID)
-	if err != nil {
-		return rowID, fmt.Errorf("error while storing lease ID: %s", err)
+	var params []interface{}
+	for i, s := range slices {
+
+		ai := i * paramsNumber
+
+		stmt += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d),",
+			ai+1, ai+2, ai+3, ai+4, ai+5, ai+6, ai+7, ai+8, ai+9,
+			ai+10, ai+11, ai+12, ai+13, ai+14, ai+15, ai+16, ai+17)
+
+		leaseID := s.Lease.LeaseID
+		lease := s.Lease
+		escrow := s.EscrowPayment
+
+		params = append(params,
+			// Lease ID
+			leaseID.Owner, leaseID.DSeq, leaseID.GSeq, leaseID.OSeq, leaseID.Provider,
+
+			// Lease
+			lease.State, dbtypes.NewDbDecCoin(lease.Price), lease.CreatedAt, lease.ClosedOn,
+
+			// Escrow Payment
+			dbtypes.NewDbLeaseAccountID(escrow.AccountID), escrow.PaymentID, escrow.State, dbtypes.NewDbDecCoin(escrow.Rate),
+			dbtypes.NewDbDecCoin(escrow.Balance), dbtypes.NewDbCoin(escrow.Withdrawn),
+
+			height,
+		)
 	}
 
-	return rowID, nil
-}
+	stmt = stmt[:len(stmt)-1] // Remove trailing ","
+	stmt += `
+ON CONFLICT (owner_address, dseq, gseq, oseq, provider_address) DO UPDATE SET 
+	lease_state = excluded.lease_state,
+	price = excluded.price,
+	created_at = excluded.created_at,
+	closed_on = excluded.closed_on,
+	account_id = excluded.account_id,
+	payment_id = excluded.payment_id,
+	owner_address = excluded.owner_address,
+	payment_state = excluded.payment_state,
+	rate = excluded.rate,
+	balance = excluded.balance,
+	withdrawn = excluded.withdrawn,
+	height = excluded.height
+WHERE lease.height <= excluded.height`
 
-func (db *Db) saveLease(leaseID int64, l markettypes.Lease, height int64) error {
-	stmt := `
-	INSERT INTO lease (lease_id, lease_state, price, created_at, closed_on, height) 
-	VALUES ($1, $2, $3, $4, $5, $6) 
-	ON CONFLICT (lease_id) DO UPDATE 
-	SET lease_state = excluded.lease_state, 
-		price = excluded.price, 
-		created_at = excluded.created_at,  
-		closed_on = excluded.closed_on, 
-		height = excluded.height 
-	WHERE lease.height <= excluded.height`
-
-	_, err := db.Sql.Exec(stmt,
-		leaseID,
-		l.State,
-		fmt.Sprintf("(%s,%s)", l.Price.Denom, l.Price.Amount),
-		l.CreatedAt,
-		l.ClosedOn,
-		height,
-	)
+	_, err := db.Sql.Exec(stmt, params...)
 	if err != nil {
-		return fmt.Errorf("error while storing lease: %s", err)
-	}
-
-	return nil
-}
-
-func (db *Db) saveEscrowPayment(leaseID int64, e escrowtypes.FractionalPayment, height int64) error {
-	stmt := `
-	INSERT INTO escrow_payment (lease_id, account_id, payment_id, owner_address, payment_state, rate, balance, withdrawn, height) 
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
-	ON CONFLICT (lease_id) DO UPDATE 
-	SET account_id = excluded.account_id, 
-		payment_id = excluded.payment_id, 
-		owner_address = excluded.owner_address, 
-		payment_state = excluded.payment_state, 
-		rate = excluded.rate, 
-		balance = excluded.balance, 
-		withdrawn = excluded.withdrawn, 
-		height = excluded.height 
-	WHERE escrow_payment.height <= excluded.height`
-
-	accountID := dbtypes.NewDbLeaseAccountID(e.AccountID)
-	accountIDValue, err := accountID.Value()
-	if err != nil {
-		return fmt.Errorf("error while converting account ID to DbLeaseAccountID value: %s", err)
-	}
-
-	_, err = db.Sql.Exec(stmt,
-		leaseID,
-		accountIDValue,
-		e.PaymentID,
-		e.Owner,
-		e.State,
-		fmt.Sprintf("(%s,%s)", e.Rate.Denom, e.Rate.Amount),
-		fmt.Sprintf("(%s,%s)", e.Balance.Denom, e.Balance.Amount),
-		fmt.Sprintf("(%s,%s)", e.Withdrawn.Denom, e.Withdrawn.Amount),
-		height,
-	)
-	if err != nil {
-		return fmt.Errorf("error while storing escrow payment: %s", err)
+		return fmt.Errorf("error while storing leases: %s", err)
 	}
 
 	return nil

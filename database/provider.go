@@ -20,10 +20,6 @@ func (db *Db) SaveProviders(providers []providertypes.Provider, height int64) er
 	slices := dbutils.SplitProviders(providers, paramsNumber)
 
 	for _, providers := range slices {
-		if len(providers) == 0 {
-			continue
-		}
-
 		// Store providers
 		err := db.saveProviders(paramsNumber, providers, height)
 		if err != nil {

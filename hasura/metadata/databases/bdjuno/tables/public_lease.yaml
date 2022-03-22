@@ -1,23 +1,25 @@
 table:
   name: lease
   schema: public
-array_relationships:
-- name: lease_ids
-  using:
-    foreign_key_constraint_on:
-      column: id
-      table:
-        name: lease_id
-        schema: public
 select_permissions:
 - permission:
     allow_aggregations: true
     columns:
-    - lease_id
+    - owner_address
+    - dseq
+    - gseq
+    - oseq
+    - provider_address
     - lease_state
     - price
     - created_at
     - closed_on
+    - account_id
+    - payment_id
+    - payment_state
+    - rate
+    - balance
+    - withdrawn
     - height
     filter: {}
   role: anonymous
