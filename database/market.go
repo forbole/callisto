@@ -45,7 +45,7 @@ WHERE lease.height <= excluded.height`
 
 	_, err := db.Sql.Exec(stmt, params...)
 	if err != nil {
-		return fmt.Errorf("error while storing leases: %s", err)
+		return fmt.Errorf("error while storing genesis leases: %s", err)
 	}
 
 	return nil
