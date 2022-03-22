@@ -46,7 +46,6 @@ func (db *Db) SaveLeases(responses []markettypes.QueryLeaseResponse, height int6
 }
 
 func (db *Db) saveLeaseID(leaseID markettypes.LeaseID) (int64, error) {
-	fmt.Println("saving lease id")
 	stmt := `
 	INSERT INTO lease_id (owner_address, dseq, gseq, oseq, provider_address) 
 	VALUES ($1, $2, $3, $4, $5) 
@@ -66,8 +65,6 @@ func (db *Db) saveLeaseID(leaseID markettypes.LeaseID) (int64, error) {
 }
 
 func (db *Db) saveLease(leaseID int64, l markettypes.Lease, height int64) error {
-	fmt.Println("saving lease")
-
 	stmt := `
 	INSERT INTO lease (lease_id, lease_state, price, created_at, closed_on, height) 
 	VALUES ($1, $2, $3, $4, $5, $6) 
@@ -79,11 +76,6 @@ func (db *Db) saveLease(leaseID int64, l markettypes.Lease, height int64) error 
 		height = excluded.height 
 	WHERE lease.height <= excluded.height`
 
-	// price := dbtypes.NewDbDecCoin(l.Price)
-	// priceVal, err := price.Value()
-	// if err != nil {
-	// 	return fmt.Errorf("error while getting price value")
-	// }
 	_, err := db.Sql.Exec(stmt,
 		leaseID,
 		l.State,
@@ -100,8 +92,6 @@ func (db *Db) saveLease(leaseID int64, l markettypes.Lease, height int64) error 
 }
 
 func (db *Db) saveEscrowPayment(leaseID int64, e escrowtypes.FractionalPayment, height int64) error {
-	fmt.Println("saving escrow payment")
-
 	stmt := `
 	INSERT INTO escrow_payment (lease_id, account_id, payment_id, owner_address, payment_state, rate, balance, withdrawn, height) 
 	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
@@ -110,7 +100,7 @@ func (db *Db) saveEscrowPayment(leaseID int64, e escrowtypes.FractionalPayment, 
 		payment_id = excluded.payment_id, 
 		owner_address = excluded.owner_address, 
 		payment_state = excluded.payment_state, 
-		rate = excluded.rate,
+		rate = excluded.rate, 
 		balance = excluded.balance, 
 		withdrawn = excluded.withdrawn, 
 		height = excluded.height 
