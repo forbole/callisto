@@ -1,3 +1,4 @@
+-- +migrate Up
 /* ---- TOKENS ---- */
 
 CREATE TABLE token
