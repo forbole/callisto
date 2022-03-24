@@ -1,3 +1,4 @@
+-- +migrate Up
 CREATE TABLE genesis
 (
     one_row_id     BOOL      NOT NULL DEFAULT TRUE PRIMARY KEY,
