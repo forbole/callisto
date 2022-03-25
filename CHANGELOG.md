@@ -3,6 +3,10 @@
 
 
 ### New features
+
+#### Migration
+[Migration reference](https://docs.bigdipper.live/cosmos-based/parser/migrations/v2.0.0)
+
 #### CLI
 - Added parse-genesis command to parse the genesis file
 - Added fix command:
@@ -12,7 +16,7 @@
   - staking: fix validators info at the latest height  
 
 #### Hasura Actions
-- Replaced periodic queries with hasura actions [reference](https://docs.bigdipper.live/cosmos-based/parser/migrations/v2.0.0)
+- Replaced periodic queries with hasura actions 
 - Here's a list of data acquired through Hasura Actions:
   - Of a certain address/delegator:
     - Account balance
