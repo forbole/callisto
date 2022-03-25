@@ -12,7 +12,7 @@
   - staking: fix validators info at the latest height  
 
 #### Hasura Actions
-- Replaced periodic queries with hasura actions 
+- Replaced periodic queries with hasura actions [reference](https://docs.bigdipper.live/cosmos-based/parser/migrations/v2.0.0)
 - Here's a list of data acquired through Hasura Actions:
   - Of a certain address/delegator:
     - Account balance
@@ -30,6 +30,10 @@
     - Unbonding delegations
   - Note: graphQL queries on the frontend should be updated for the above info
 - Added prometheus monitoring to hasura actions
+
+#### Node Type Local
+- Added note.type=local for parsing a static local node without gRPC query
+[config reference](https://docs.bigdipper.live/cosmos-based/parser/config/config#node)
 
 
 #### Modules
