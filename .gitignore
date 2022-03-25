@@ -1,10 +1,13 @@
 .idea/
+.vscode/
 build/
+vendor/
 
 # Configuration
 *.toml
 *.json
 config.yaml
+config.docker.yaml
 
 # Coverage
 coverage.*

@@ -63,6 +63,11 @@ import (
 	stakingsource "github.com/forbole/bdjuno/v2/modules/staking/source"
 	localstakingsource "github.com/forbole/bdjuno/v2/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v2/modules/staking/source/remote"
+
+	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
+	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts"
+	vipcoinaccountssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts/source"
+	remotevipcoinaccountssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts/source/remote"
 )
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
@@ -114,6 +119,8 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	stakingModule := staking.NewModule(sources.StakingSource, slashingModule, cdc, db)
 	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakingModule, cdc, db)
 
+	vipcoinAccountsModule := accounts.NewModule(sources.VipcoinAccountsSource, cdc, db)
+
 	return []jmodules.Module{
 		messages.NewModule(r.parser, cdc, ctx.Database),
 		telemetry.NewModule(ctx.JunoConfig),
@@ -129,16 +136,19 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		pricefeed.NewModule(ctx.JunoConfig, cdc, db),
 		slashingModule,
 		stakingModule,
+
+		vipcoinAccountsModule,
 	}
 }
 
 type Sources struct {
-	BankSource     banksource.Source
-	DistrSource    distrsource.Source
-	GovSource      govsource.Source
-	MintSource     mintsource.Source
-	SlashingSource slashingsource.Source
-	StakingSource  stakingsource.Source
+	BankSource            banksource.Source
+	DistrSource           distrsource.Source
+	GovSource             govsource.Source
+	MintSource            mintsource.Source
+	SlashingSource        slashingsource.Source
+	StakingSource         stakingsource.Source
+	VipcoinAccountsSource vipcoinaccountssource.Source
 }
 
 func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -204,11 +214,12 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 	}
 
 	return &Sources{
-		BankSource:     remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
-		DistrSource:    remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
-		GovSource:      remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
-		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
-		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
-		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
+		BankSource:            remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
+		DistrSource:           remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
+		GovSource:             remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
+		MintSource:            remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
+		SlashingSource:        remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
+		StakingSource:         remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
+		VipcoinAccountsSource: remotevipcoinaccountssource.NewSource(source, accountstypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }

@@ -13,6 +13,8 @@ import (
 	migratecmd "github.com/forbole/bdjuno/v2/cmd/migrate"
 	parsegenesiscmd "github.com/forbole/bdjuno/v2/cmd/parse-genesis"
 
+	chainapp "git.ooo.ua/vipcoin/chain/app"
+
 	"github.com/forbole/bdjuno/v2/types/config"
 
 	"github.com/forbole/bdjuno/v2/database"
@@ -54,6 +56,7 @@ func main() {
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
 		simapp.ModuleBasics,
+		chainapp.ModuleBasics,
 	}
 }
 
