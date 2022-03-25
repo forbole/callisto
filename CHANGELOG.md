@@ -1,12 +1,10 @@
 ## v2.0.0
 
 
-
-### New features
-
-#### Migration
+### Migration
 [Migration reference](https://docs.bigdipper.live/cosmos-based/parser/migrations/v2.0.0)
 
+### New features
 #### CLI
 - Added parse-genesis command to parse the genesis file
 - Added fix command:
