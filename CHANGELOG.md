@@ -6,7 +6,7 @@
 
 ### New features
 #### CLI
-- Added parse-genesis command to parse the genesis file
+- Added `parse-genesis` command to parse the genesis file
 - Added fix command:
   - auth: fix vesting-accounts details
   - blocks: fix missing blocks and transactions from the configured start height
@@ -14,7 +14,7 @@
   - staking: fix validators info at the latest height  
 
 #### Hasura Actions
-- Replaced periodic queries with hasura actions 
+- Replaced some periodic queries with hasura actions 
 - Here's a list of data acquired through Hasura Actions:
   - Of a certain address/delegator:
     - Account balance
@@ -34,16 +34,16 @@
 - Added prometheus monitoring to hasura actions
 
 #### Node Type Local
-- Added note.type=local for parsing a static local node without gRPC query
+- Added note.type=local for parsing a static local node without gRPC query:
 [config reference](https://docs.bigdipper.live/cosmos-based/parser/config/config#node)
 
 
 #### Modules
-- auth: `vesting accounts` and `vesting periods` are being handled and stored in the database 
+- auth: `vesting accounts` and `vesting periods` are handled and stored in the database 
 
 
 ### Changes 
 
 #### Database
-- `bonded_tokens` and `not_bonded_tokens` types in `staking_pool` table are changed to TEXT to avoid digits overflow
+- `bonded_tokens` and `not_bonded_tokens` db types in `staking_pool` table are changed to `TEXT` to avoid digits overflow
 - `tombstone` status is accessible from `validator_status` table
