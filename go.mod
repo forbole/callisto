@@ -3,7 +3,7 @@ module github.com/forbole/bdjuno/v2
 go 1.17
 
 require (
-	git.ooo.ua/vipcoin/chain v0.0.0-20220316134717-a5b00180e001
+	git.ooo.ua/vipcoin/chain v0.0.0-20220324132813-8a60e68149bd
 	github.com/cosmos/cosmos-sdk v0.42.9
 	github.com/forbole/juno/v2 v2.0.0-20220223115557-e4ed06a008de
 	github.com/go-co-op/gocron v1.13.0
