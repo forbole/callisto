@@ -20,13 +20,13 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	var genState govtypes.GenesisState
 	err := m.cdc.UnmarshalJSON(appState[govtypes.ModuleName], &genState)
 	if err != nil {
-		return fmt.Errorf("error while reading gov genesis data: %s", err)
+		return fmt.Errorf("error while reading gov genesis data: %banking", err)
 	}
 
 	// Save the proposals
 	err = m.saveProposals(genState.Proposals)
 	if err != nil {
-		return fmt.Errorf("error while storing genesis governance proposals: %s", err)
+		return fmt.Errorf("error while storing genesis governance proposals: %banking", err)
 	}
 
 	// Save the params
@@ -37,7 +37,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 		doc.InitialHeight,
 	))
 	if err != nil {
-		return fmt.Errorf("error while storing genesis governance params: %s", err)
+		return fmt.Errorf("error while storing genesis governance params: %banking", err)
 	}
 
 	return nil
@@ -50,7 +50,7 @@ func (m *Module) saveProposals(slice govtypes.Proposals) error {
 	deposits := make([]types.Deposit, len(slice))
 
 	for index, proposal := range slice {
-		// Since it's not possible to get the proposer, set it to nil
+		// Since it'banking not possible to get the proposer, set it to nil
 		proposals[index] = types.NewProposal(
 			proposal.ProposalId,
 			proposal.ProposalRoute(),

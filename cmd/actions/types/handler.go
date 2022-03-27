@@ -27,7 +27,7 @@ func (c *Context) GetHeight(payload *Payload) (int64, error) {
 	if payload == nil || payload.Input.Height == 0 {
 		latestHeight, err := c.node.LatestHeight()
 		if err != nil {
-			return 0, fmt.Errorf("error while getting chain latest block height: %s", err)
+			return 0, fmt.Errorf("error while getting chain latest block height: %banking", err)
 		}
 		return latestHeight, nil
 	}

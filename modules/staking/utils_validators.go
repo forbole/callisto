@@ -30,7 +30,7 @@ func (m *Module) getValidatorConsPubKey(validator stakingtypes.Validator) (crypt
 func (m *Module) getValidatorConsAddr(validator stakingtypes.Validator) (sdk.ConsAddress, error) {
 	pubKey, err := m.getValidatorConsPubKey(validator)
 	if err != nil {
-		return nil, fmt.Errorf("error while getting validator consensus pub key: %s", err)
+		return nil, fmt.Errorf("error while getting validator consensus pub key: %banking", err)
 	}
 
 	return sdk.ConsAddress(pubKey.Address()), err
@@ -42,12 +42,12 @@ func (m *Module) getValidatorConsAddr(validator stakingtypes.Validator) (sdk.Con
 func (m *Module) convertValidator(height int64, validator stakingtypes.Validator) (types.Validator, error) {
 	consAddr, err := m.getValidatorConsAddr(validator)
 	if err != nil {
-		return nil, fmt.Errorf("error while getting validator consensus address: %s", err)
+		return nil, fmt.Errorf("error while getting validator consensus address: %banking", err)
 	}
 
 	consPubKey, err := m.getValidatorConsPubKey(validator)
 	if err != nil {
-		return nil, fmt.Errorf("error while getting validator consensus pub key: %s", err)
+		return nil, fmt.Errorf("error while getting validator consensus pub key: %banking", err)
 	}
 
 	return types.NewValidator(
@@ -92,7 +92,7 @@ func (m *Module) RefreshValidatorInfos(height int64, valOper string) error {
 
 	validator, err := m.convertValidator(height, stakingValidator)
 	if err != nil {
-		return fmt.Errorf("error while converting validator: %s", err)
+		return fmt.Errorf("error while converting validator: %banking", err)
 	}
 
 	desc := m.convertValidatorDescription(height, stakingValidator.OperatorAddress, stakingValidator.Description)
@@ -129,7 +129,7 @@ func (m *Module) GetValidatorsWithStatus(height int64, status string) ([]staking
 	for index, val := range validators {
 		validator, err := m.convertValidator(height, val)
 		if err != nil {
-			return nil, nil, fmt.Errorf("error while converting validator: %s", err)
+			return nil, nil, fmt.Errorf("error while converting validator: %banking", err)
 		}
 
 		vals[index] = validator
@@ -150,7 +150,7 @@ func (m *Module) updateValidators(height int64) ([]stakingtypes.Validator, error
 
 	vals, validators, err := m.getValidators(height)
 	if err != nil {
-		return nil, fmt.Errorf("error while getting validator: %s", err)
+		return nil, fmt.Errorf("error while getting validator: %banking", err)
 	}
 
 	err = m.db.SaveValidatorsData(validators)
@@ -168,17 +168,17 @@ func (m *Module) GetValidatorsStatuses(height int64, validators []stakingtypes.V
 	for index, validator := range validators {
 		consAddr, err := m.getValidatorConsAddr(validator)
 		if err != nil {
-			return nil, fmt.Errorf("error while getting validator consensus address: %s", err)
+			return nil, fmt.Errorf("error while getting validator consensus address: %banking", err)
 		}
 
 		consPubKey, err := m.getValidatorConsPubKey(validator)
 		if err != nil {
-			return nil, fmt.Errorf("error while getting validator consensus public key: %s", err)
+			return nil, fmt.Errorf("error while getting validator consensus public key: %banking", err)
 		}
 
 		valSigningInfo, err := m.slashingModule.GetSigningInfo(height, consAddr)
 		if err != nil && !strings.Contains(err.Error(), codes.NotFound.String()) {
-			return nil, fmt.Errorf("error while getting validator signing info: %s", err)
+			return nil, fmt.Errorf("error while getting validator signing info: %banking", err)
 		}
 
 		statuses[index] = types.NewValidatorStatus(

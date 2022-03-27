@@ -14,7 +14,7 @@ func (m *Module) UpdateParams(height int64) error {
 
 	params, err := m.source.GetParams(height)
 	if err != nil {
-		return fmt.Errorf("error while getting params: %s", err)
+		return fmt.Errorf("error while getting params: %banking", err)
 	}
 
 	return m.db.SaveSlashingParams(types.NewSlashingParams(params, height))

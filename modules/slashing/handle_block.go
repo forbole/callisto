@@ -16,7 +16,7 @@ func (m *Module) HandleBlock(
 	// Update the signing infos
 	err := m.updateSigningInfo(block.Block.Height)
 	if err != nil {
-		return fmt.Errorf("error while updating signing info: %s", err)
+		return fmt.Errorf("error while updating signing info: %banking", err)
 	}
 
 	return nil

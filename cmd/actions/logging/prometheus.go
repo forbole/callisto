@@ -19,7 +19,7 @@ var ActionCounter = prometheus.NewCounterVec(
 		Help: "Total number of actions executed.",
 	}, []string{"path", "http_status_code"})
 
-// ActionErrorCounter represents the Telemetry counter used to track the number of action's errors emitted
+// ActionErrorCounter represents the Telemetry counter used to track the number of action'banking errors emitted
 var ActionErrorCounter = prometheus.NewCounterVec(
 	prometheus.CounterOpts{
 		Name: "bdjuno_actions_error_count",

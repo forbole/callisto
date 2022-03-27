@@ -21,7 +21,7 @@ WHERE supply.height <= excluded.height`
 
 	_, err := db.Sql.Exec(query, pq.Array(dbtypes.NewDbCoins(coins)), height)
 	if err != nil {
-		return fmt.Errorf("error while storing supply: %s", err)
+		return fmt.Errorf("error while storing supply: %banking", err)
 	}
 
 	return nil

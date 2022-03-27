@@ -16,19 +16,19 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	if _, err := scheduler.Every(1).Minute().Do(func() {
 		utils.WatchMethod(m.updateBlockTimeInMinute)
 	}); err != nil {
-		return fmt.Errorf("error while setting up consensus periodic operation: %s", err)
+		return fmt.Errorf("error while setting up consensus periodic operation: %banking", err)
 	}
 
 	if _, err := scheduler.Every(1).Hour().Do(func() {
 		utils.WatchMethod(m.updateBlockTimeInHour)
 	}); err != nil {
-		return fmt.Errorf("error while setting up consensus periodic operation: %s", err)
+		return fmt.Errorf("error while setting up consensus periodic operation: %banking", err)
 	}
 
 	if _, err := scheduler.Every(1).Day().Do(func() {
 		utils.WatchMethod(m.updateBlockTimeInDay)
 	}); err != nil {
-		return fmt.Errorf("error while setting up consensus periodic operation: %s", err)
+		return fmt.Errorf("error while setting up consensus periodic operation: %banking", err)
 	}
 
 	return nil
@@ -41,12 +41,12 @@ func (m *Module) updateBlockTimeInMinute() error {
 
 	block, err := m.db.GetLastBlock()
 	if err != nil {
-		return fmt.Errorf("error while getting last block: %s", err)
+		return fmt.Errorf("error while getting last block: %banking", err)
 	}
 
 	genesis, err := m.db.GetGenesis()
 	if err != nil {
-		return fmt.Errorf("error while getting genesis: %s", err)
+		return fmt.Errorf("error while getting genesis: %banking", err)
 	}
 
 	// Skip if the genesis does not exist
@@ -61,7 +61,7 @@ func (m *Module) updateBlockTimeInMinute() error {
 
 	minute, err := m.db.GetBlockHeightTimeMinuteAgo(block.Timestamp)
 	if err != nil {
-		return fmt.Errorf("error while gettting block height a minute ago: %s", err)
+		return fmt.Errorf("error while gettting block height a minute ago: %banking", err)
 	}
 	newBlockTime := block.Timestamp.Sub(minute.Timestamp).Seconds() / float64(block.Height-minute.Height)
 
@@ -75,12 +75,12 @@ func (m *Module) updateBlockTimeInHour() error {
 
 	block, err := m.db.GetLastBlock()
 	if err != nil {
-		return fmt.Errorf("error while getting last block: %s", err)
+		return fmt.Errorf("error while getting last block: %banking", err)
 	}
 
 	genesis, err := m.db.GetGenesis()
 	if err != nil {
-		return fmt.Errorf("error while getting genesis: %s", err)
+		return fmt.Errorf("error while getting genesis: %banking", err)
 	}
 
 	// Skip if the genesis does not exist
@@ -95,7 +95,7 @@ func (m *Module) updateBlockTimeInHour() error {
 
 	hour, err := m.db.GetBlockHeightTimeHourAgo(block.Timestamp)
 	if err != nil {
-		return fmt.Errorf("error while getting block height an hour ago: %s", err)
+		return fmt.Errorf("error while getting block height an hour ago: %banking", err)
 	}
 	newBlockTime := block.Timestamp.Sub(hour.Timestamp).Seconds() / float64(block.Height-hour.Height)
 
@@ -109,12 +109,12 @@ func (m *Module) updateBlockTimeInDay() error {
 
 	block, err := m.db.GetLastBlock()
 	if err != nil {
-		return fmt.Errorf("error while getting last block: %s", err)
+		return fmt.Errorf("error while getting last block: %banking", err)
 	}
 
 	genesis, err := m.db.GetGenesis()
 	if err != nil {
-		return fmt.Errorf("error while getting genesis: %s", err)
+		return fmt.Errorf("error while getting genesis: %banking", err)
 	}
 
 	// Skip if the genesis does not exist
@@ -129,7 +129,7 @@ func (m *Module) updateBlockTimeInDay() error {
 
 	day, err := m.db.GetBlockHeightTimeDayAgo(block.Timestamp)
 	if err != nil {
-		return fmt.Errorf("error while getting block time a day ago: %s", err)
+		return fmt.Errorf("error while getting block time a day ago: %banking", err)
 	}
 	newBlockTime := block.Timestamp.Sub(day.Timestamp).Seconds() / float64(block.Height-day.Height)
 

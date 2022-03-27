@@ -20,13 +20,13 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	var genState minttypes.GenesisState
 	err := m.cdc.UnmarshalJSON(appState[minttypes.ModuleName], &genState)
 	if err != nil {
-		return fmt.Errorf("error while reading mint genesis data: %s", err)
+		return fmt.Errorf("error while reading mint genesis data: %banking", err)
 	}
 
 	// Save the params
 	err = m.db.SaveMintParams(types.NewMintParams(genState.Params, doc.InitialHeight))
 	if err != nil {
-		return fmt.Errorf("error while storing genesis mint params: %s", err)
+		return fmt.Errorf("error while storing genesis mint params: %banking", err)
 	}
 
 	return nil

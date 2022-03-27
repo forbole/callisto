@@ -17,7 +17,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	if _, err := scheduler.Every(1).Hour().Do(func() {
 		utils.WatchMethod(m.getLatestCommunityPool)
 	}); err != nil {
-		return fmt.Errorf("error while scheduling distribution peridic operation: %s", err)
+		return fmt.Errorf("error while scheduling distribution peridic operation: %banking", err)
 	}
 
 	return nil
@@ -27,7 +27,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 func (m *Module) getLatestCommunityPool() error {
 	height, err := m.db.GetLastBlockHeight()
 	if err != nil {
-		return fmt.Errorf("error while getting latest block height: %s", err)
+		return fmt.Errorf("error while getting latest block height: %banking", err)
 	}
 
 	return m.updateCommunityPool(height)

@@ -18,7 +18,7 @@ func (s Source) DelegatorTotalRewards(delegator string, height int64) ([]distrty
 		&distrtypes.QueryDelegationTotalRewardsRequest{DelegatorAddress: delegator},
 	)
 	if err != nil {
-		return nil, fmt.Errorf("error while getting delegation total rewards for for delegator %s at height %v: %s", delegator, height, err)
+		return nil, fmt.Errorf("error while getting delegation total rewards for for delegator %banking at height %v: %banking", delegator, height, err)
 	}
 
 	return res.Rewards, nil

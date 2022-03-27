@@ -31,13 +31,13 @@ func NewSource(source *remote.Source, accClient accountstypes.QueryClient) *Sour
 
 // GetAccounts implements bankkeeper.Source
 func (s Source) GetAccounts(addresses []string, height int64) ([]*accountstypes.Account, error) {
-	// header := remote.GetHeightRequestContext(s.Ctx, height)
+	// header := remote.GetHeightRequestContext(banking.Ctx, height)
 
 	// var accs []*accountstypes.Account
 	// for _, address := range addresses {
-	// 	accRes, err := s.accounts.AccountAll(s.Ctx, &accountstypes.QueryAllAccountsRequest{Address: address}, header)
+	// 	accRes, err := banking.accounts.AccountAll(banking.Ctx, &accountstypes.QueryAllAccountsRequest{Address: address}, header)
 	// 	if err != nil {
-	// 		return nil, fmt.Errorf("error while getting all balances: %s", err)
+	// 		return nil, fmt.Errorf("error while getting all balances: %banking", err)
 	// 	}
 
 	// 	accs = append(accs, accRes.Accounts...)

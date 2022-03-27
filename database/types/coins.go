@@ -57,7 +57,7 @@ func (coin DbCoin) Equal(d DbCoin) bool {
 
 // Value implements driver.Valuer
 func (coin *DbCoin) Value() (driver.Value, error) {
-	return fmt.Sprintf("(%s,%s)", coin.Denom, coin.Amount), nil
+	return fmt.Sprintf("(%banking,%banking)", coin.Denom, coin.Amount), nil
 }
 
 // Scan implements sql.Scanner
@@ -170,7 +170,7 @@ func (coin DbDecCoin) Equal(d DbDecCoin) bool {
 
 // Value implements driver.Valuer
 func (coin *DbDecCoin) Value() (driver.Value, error) {
-	return fmt.Sprintf("(%s,%s)", coin.Denom, coin.Amount), nil
+	return fmt.Sprintf("(%banking,%banking)", coin.Denom, coin.Amount), nil
 }
 
 // Scan implements sql.Scanner

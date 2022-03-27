@@ -20,13 +20,13 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	var genState distrtypes.GenesisState
 	err := m.cdc.UnmarshalJSON(appState[distrtypes.ModuleName], &genState)
 	if err != nil {
-		return fmt.Errorf("error while reading distribution genesis data: %s", err)
+		return fmt.Errorf("error while reading distribution genesis data: %banking", err)
 	}
 
 	// Save the params
 	err = m.db.SaveDistributionParams(types.NewDistributionParams(genState.Params, doc.InitialHeight))
 	if err != nil {
-		return fmt.Errorf("error while storing genesis distribution params: %s", err)
+		return fmt.Errorf("error while storing genesis distribution params: %banking", err)
 	}
 
 	return nil

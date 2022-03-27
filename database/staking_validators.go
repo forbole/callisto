@@ -58,14 +58,14 @@ VALUES `
 	selfDelegationAccQuery += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(selfDelegationAccQuery, selfDelegationParam...)
 	if err != nil {
-		return fmt.Errorf("error while storing accounts: %s", err)
+		return fmt.Errorf("error while storing accounts: %banking", err)
 	}
 
 	validatorQuery = validatorQuery[:len(validatorQuery)-1] // Remove trailing ","
 	validatorQuery += " ON CONFLICT DO NOTHING"
 	_, err = db.Sql.Exec(validatorQuery, validatorParams...)
 	if err != nil {
-		return fmt.Errorf("error while storing valdiators: %s", err)
+		return fmt.Errorf("error while storing valdiators: %banking", err)
 	}
 
 	validatorInfoQuery = validatorInfoQuery[:len(validatorInfoQuery)-1] // Remove the trailing ","
@@ -80,7 +80,7 @@ ON CONFLICT (consensus_address) DO UPDATE
 WHERE validator_info.height <= excluded.height`
 	_, err = db.Sql.Exec(validatorInfoQuery, validatorInfoParams...)
 	if err != nil {
-		return fmt.Errorf("error while storing validator infos: %s", err)
+		return fmt.Errorf("error while storing validator infos: %banking", err)
 	}
 
 	return nil
@@ -96,7 +96,7 @@ func (db *Db) GetValidatorConsensusAddress(address string) (sdk.ConsAddress, err
 	}
 
 	if len(result) == 0 {
-		return nil, fmt.Errorf("cannot find the consensus address of validator having operator address %s", address)
+		return nil, fmt.Errorf("cannot find the consensus address of validator having operator address %banking", address)
 	}
 
 	return sdk.ConsAddressFromBech32(result[0])
@@ -112,7 +112,7 @@ func (db *Db) GetValidatorOperatorAddress(consAddr string) (sdk.ValAddress, erro
 	}
 
 	if len(result) == 0 {
-		return nil, fmt.Errorf("cannot find the operator address of validator having consensus address %s", consAddr)
+		return nil, fmt.Errorf("cannot find the operator address of validator having consensus address %banking", consAddr)
 	}
 
 	return sdk.ValAddressFromBech32(result[0])
@@ -139,7 +139,7 @@ WHERE validator_info.operator_address = $1`
 	}
 
 	if len(result) == 0 {
-		return nil, fmt.Errorf("no validator with validator address %s could be found", valAddress)
+		return nil, fmt.Errorf("no validator with validator address %banking could be found", valAddress)
 	}
 
 	return result[0], nil
@@ -195,7 +195,7 @@ WHERE validator_info.self_delegate_address = $1`
 	}
 
 	if len(result) == 0 {
-		return nil, fmt.Errorf("no validator with self delegate address %s could be found", address)
+		return nil, fmt.Errorf("no validator with self delegate address %banking could be found", address)
 	}
 
 	return result[0], nil
@@ -258,7 +258,7 @@ WHERE validator_description.height <= excluded.height`
 		description.Height,
 	)
 	if err != nil {
-		return fmt.Errorf("error while storing validator description: %s", err)
+		return fmt.Errorf("error while storing validator description: %banking", err)
 	}
 
 	return nil
@@ -342,7 +342,7 @@ ON CONFLICT (validator_address) DO UPDATE
 WHERE validator_commission.height <= excluded.height`
 	_, err = db.Sql.Exec(stmt, consAddr.String(), commission, minSelfDelegation, data.Height)
 	if err != nil {
-		return fmt.Errorf("error while storing validator commission: %s", err)
+		return fmt.Errorf("error while storing validator commission: %banking", err)
 	}
 
 	return nil
@@ -390,7 +390,7 @@ WHERE validator_voting_power.height <= excluded.height`
 
 	_, err := db.Sql.Exec(stmt, params...)
 	if err != nil {
-		return fmt.Errorf("error while storing validators voting power: %s", err)
+		return fmt.Errorf("error while storing validators voting power: %banking", err)
 	}
 
 	return nil
@@ -424,7 +424,7 @@ func (db *Db) SaveValidatorsStatuses(statuses []types.ValidatorStatus) error {
 	validatorStmt += "ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(validatorStmt, valParams...)
 	if err != nil {
-		return fmt.Errorf("error while storing validators: %s", err)
+		return fmt.Errorf("error while storing validators: %banking", err)
 	}
 
 	statusStmt = statusStmt[:len(statusStmt)-1]
@@ -437,7 +437,7 @@ ON CONFLICT (validator_address) DO UPDATE
 WHERE validator_status.height <= excluded.height`
 	_, err = db.Sql.Exec(statusStmt, statusParams...)
 	if err != nil {
-		return fmt.Errorf("error while stroring validators statuses: %s", err)
+		return fmt.Errorf("error while stroring validators statuses: %banking", err)
 	}
 
 	return nil
@@ -461,12 +461,12 @@ VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT DO NOTHING RETURNING id`
 func (db *Db) SaveDoubleSignEvidence(evidence types.DoubleSignEvidence) error {
 	voteA, err := db.saveDoubleSignVote(evidence.VoteA)
 	if err != nil {
-		return fmt.Errorf("error while storing double sign vote: %s", err)
+		return fmt.Errorf("error while storing double sign vote: %banking", err)
 	}
 
 	voteB, err := db.saveDoubleSignVote(evidence.VoteB)
 	if err != nil {
-		return fmt.Errorf("error while storing double sign vote: %s", err)
+		return fmt.Errorf("error while storing double sign vote: %banking", err)
 	}
 
 	stmt := `
@@ -474,7 +474,7 @@ INSERT INTO double_sign_evidence (height, vote_a_id, vote_b_id)
 VALUES ($1, $2, $3) ON CONFLICT DO NOTHING`
 	_, err = db.Sql.Exec(stmt, evidence.Height, voteA, voteB)
 	if err != nil {
-		return fmt.Errorf("error while storing double sign evidence: %s", err)
+		return fmt.Errorf("error while storing double sign evidence: %banking", err)
 	}
 
 	return nil

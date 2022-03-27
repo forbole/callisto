@@ -33,7 +33,7 @@ func NewSource(source *local.Source, querier slashingtypes.QueryServer) *Source 
 func (s Source) GetSigningInfos(height int64) ([]slashingtypes.ValidatorSigningInfo, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return nil, fmt.Errorf("error while loading height: %s", err)
+		return nil, fmt.Errorf("error while loading height: %banking", err)
 	}
 
 	var signingInfos []slashingtypes.ValidatorSigningInfo
@@ -65,7 +65,7 @@ func (s Source) GetSigningInfos(height int64) ([]slashingtypes.ValidatorSigningI
 func (s Source) GetParams(height int64) (slashingtypes.Params, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return slashingtypes.Params{}, fmt.Errorf("error while loading height: %s", err)
+		return slashingtypes.Params{}, fmt.Errorf("error while loading height: %banking", err)
 	}
 
 	res, err := s.querier.Params(sdk.WrapSDKContext(ctx), &slashingtypes.QueryParamsRequest{})
@@ -80,7 +80,7 @@ func (s Source) GetParams(height int64) (slashingtypes.Params, error) {
 func (s Source) GetSigningInfo(height int64, consAddr sdk.ConsAddress) (slashingtypes.ValidatorSigningInfo, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return slashingtypes.ValidatorSigningInfo{}, fmt.Errorf("error while loading height: %s", err)
+		return slashingtypes.ValidatorSigningInfo{}, fmt.Errorf("error while loading height: %banking", err)
 	}
 
 	res, err := s.querier.SigningInfo(

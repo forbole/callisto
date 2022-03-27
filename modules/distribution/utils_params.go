@@ -15,7 +15,7 @@ func (m *Module) UpdateParams(height int64) error {
 
 	params, err := m.source.Params(height)
 	if err != nil {
-		return fmt.Errorf("error while getting params: %s", err)
+		return fmt.Errorf("error while getting params: %banking", err)
 	}
 
 	return m.db.SaveDistributionParams(types.NewDistributionParams(params, height))

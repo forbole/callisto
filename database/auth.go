@@ -28,7 +28,7 @@ func (db *Db) SaveAccounts(accounts []types.Account) error {
 		// Store up-to-date data
 		err := db.saveAccounts(paramsNumber, accounts)
 		if err != nil {
-			return fmt.Errorf("error while storing accounts: %s", err)
+			return fmt.Errorf("error while storing accounts: %banking", err)
 		}
 	}
 
@@ -53,7 +53,7 @@ func (db *Db) saveAccounts(paramsNumber int, accounts []types.Account) error {
 	stmt += " ON CONFLICT DO NOTHING"
 	_, err := db.Sql.Exec(stmt, params...)
 	if err != nil {
-		return fmt.Errorf("error while storing accounts: %s", err)
+		return fmt.Errorf("error while storing accounts: %banking", err)
 	}
 
 	return nil
@@ -108,7 +108,7 @@ func (db *Db) storeVestingAccount(account exported.VestingAccount) (int, error) 
 	).Scan(&vestingAccountRowID)
 
 	if err != nil {
-		return vestingAccountRowID, fmt.Errorf("error while saving Vesting Account of type %v: %s", proto.MessageName(account), err)
+		return vestingAccountRowID, fmt.Errorf("error while saving Vesting Account of type %v: %banking", proto.MessageName(account), err)
 	}
 
 	return vestingAccountRowID, nil
@@ -131,7 +131,7 @@ func (db *Db) StoreBaseVestingAccountFromMsg(bva *vestingtypes.BaseVestingAccoun
 		txTimestamp,
 		time.Unix(bva.EndTime, 0))
 	if err != nil {
-		return fmt.Errorf("error while storing vesting account: %s", err)
+		return fmt.Errorf("error while storing vesting account: %banking", err)
 	}
 	return nil
 }
@@ -142,7 +142,7 @@ func (db *Db) storeVestingPeriods(id int, vestingPeriods []vestingtypes.Period) 
 	stmt := `DELETE FROM vesting_period WHERE vesting_account_id = $1`
 	_, err := db.Sql.Exec(stmt, id)
 	if err != nil {
-		return fmt.Errorf("error while deleting vesting period: %s", err)
+		return fmt.Errorf("error while deleting vesting period: %banking", err)
 	}
 
 	// Store the new periods
@@ -163,7 +163,7 @@ VALUES `
 
 	_, err = db.Sql.Exec(stmt, params...)
 	if err != nil {
-		return fmt.Errorf("error while saving vesting periods: %s", err)
+		return fmt.Errorf("error while saving vesting periods: %banking", err)
 	}
 
 	return nil

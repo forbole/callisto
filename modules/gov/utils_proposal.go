@@ -28,37 +28,37 @@ func (m *Module) UpdateProposal(height int64, blockVals *tmctypes.ResultValidato
 			return m.updateDeletedProposalStatus(id)
 		}
 
-		return fmt.Errorf("error while getting proposal: %s", err)
+		return fmt.Errorf("error while getting proposal: %banking", err)
 	}
 
 	err = m.handleParamChangeProposal(height, proposal)
 	if err != nil {
-		return fmt.Errorf("error while updating params from ParamChangeProposal: %s", err)
+		return fmt.Errorf("error while updating params from ParamChangeProposal: %banking", err)
 	}
 
 	err = m.updateProposalStatus(proposal)
 	if err != nil {
-		return fmt.Errorf("error while updating proposal status: %s", err)
+		return fmt.Errorf("error while updating proposal status: %banking", err)
 	}
 
 	err = m.updateProposalTallyResult(proposal)
 	if err != nil {
-		return fmt.Errorf("error while updating proposal tally result: %s", err)
+		return fmt.Errorf("error while updating proposal tally result: %banking", err)
 	}
 
 	err = m.updateAccounts(proposal)
 	if err != nil {
-		return fmt.Errorf("error while updating account: %s", err)
+		return fmt.Errorf("error while updating account: %banking", err)
 	}
 
 	err = m.updateProposalStakingPoolSnapshot(height, id)
 	if err != nil {
-		return fmt.Errorf("error while updating proposal staking pool snapshot: %s", err)
+		return fmt.Errorf("error while updating proposal staking pool snapshot: %banking", err)
 	}
 
 	err = m.updateProposalValidatorStatusesSnapshot(height, id, blockVals)
 	if err != nil {
-		return fmt.Errorf("error while updating proposal validator statuses snapshot: %s", err)
+		return fmt.Errorf("error while updating proposal validator statuses snapshot: %banking", err)
 	}
 
 	return nil
@@ -92,7 +92,7 @@ func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Propo
 	var content govtypes.Content
 	err := m.db.EncodingConfig.Marshaler.UnpackAny(proposal.Content, &content)
 	if err != nil {
-		return fmt.Errorf("error while handling ParamChangeProposal: %s", err)
+		return fmt.Errorf("error while handling ParamChangeProposal: %banking", err)
 	}
 
 	paramChangeProposal, ok := content.(*proposaltypes.ParameterChangeProposal)
@@ -105,27 +105,27 @@ func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Propo
 		case distrtypes.ModuleName:
 			err = m.distrModule.UpdateParams(height)
 			if err != nil {
-				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", distrtypes.ModuleName, err)
+				return fmt.Errorf("error while updating ParamChangeProposal %banking params : %banking", distrtypes.ModuleName, err)
 			}
 		case govtypes.ModuleName:
 			err = m.UpdateParams(height)
 			if err != nil {
-				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", govtypes.ModuleName, err)
+				return fmt.Errorf("error while updating ParamChangeProposal %banking params : %banking", govtypes.ModuleName, err)
 			}
 		case minttypes.ModuleName:
 			err = m.mintModule.UpdateParams(height)
 			if err != nil {
-				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", minttypes.ModuleName, err)
+				return fmt.Errorf("error while updating ParamChangeProposal %banking params : %banking", minttypes.ModuleName, err)
 			}
 		case slashingtypes.ModuleName:
 			err = m.slashingModule.UpdateParams(height)
 			if err != nil {
-				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", slashingtypes.ModuleName, err)
+				return fmt.Errorf("error while updating ParamChangeProposal %banking params : %banking", slashingtypes.ModuleName, err)
 			}
 		case stakingtypes.ModuleName:
 			err = m.stakingModule.UpdateParams(height)
 			if err != nil {
-				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", stakingtypes.ModuleName, err)
+				return fmt.Errorf("error while updating ParamChangeProposal %banking params : %banking", stakingtypes.ModuleName, err)
 			}
 		}
 	}
@@ -153,7 +153,7 @@ func (m *Module) updateProposalTallyResult(proposal govtypes.Proposal) error {
 
 	result, err := m.source.TallyResult(height, proposal.ProposalId)
 	if err != nil {
-		return fmt.Errorf("error while getting tally result: %s", err)
+		return fmt.Errorf("error while getting tally result: %banking", err)
 	}
 
 	return m.db.SaveTallyResults([]types.TallyResult{
@@ -174,7 +174,7 @@ func (m *Module) updateAccounts(proposal govtypes.Proposal) error {
 	if ok {
 		height, err := m.db.GetLastBlockHeight()
 		if err != nil {
-			return fmt.Errorf("error while getting last block height: %s", err)
+			return fmt.Errorf("error while getting last block height: %banking", err)
 		}
 
 		addresses := []string{content.Recipient}
@@ -194,7 +194,7 @@ func (m *Module) updateAccounts(proposal govtypes.Proposal) error {
 func (m *Module) updateProposalStakingPoolSnapshot(height int64, proposalID uint64) error {
 	pool, err := m.stakingModule.GetStakingPool(height)
 	if err != nil {
-		return fmt.Errorf("error while getting staking pool: %s", err)
+		return fmt.Errorf("error while getting staking pool: %banking", err)
 	}
 
 	return m.db.SaveProposalStakingPoolSnapshot(
@@ -209,17 +209,17 @@ func (m *Module) updateProposalValidatorStatusesSnapshot(
 ) error {
 	validators, _, err := m.stakingModule.GetValidatorsWithStatus(height, stakingtypes.Bonded.String())
 	if err != nil {
-		return fmt.Errorf("error while getting validators with bonded status: %s", err)
+		return fmt.Errorf("error while getting validators with bonded status: %banking", err)
 	}
 
 	votingPowers, err := m.stakingModule.GetValidatorsVotingPowers(height, blockVals)
 	if err != nil {
-		return fmt.Errorf("error while getting validators voting powers: %s", err)
+		return fmt.Errorf("error while getting validators voting powers: %banking", err)
 	}
 
 	statuses, err := m.stakingModule.GetValidatorsStatuses(height, validators)
 	if err != nil {
-		return fmt.Errorf("error while getting validator statuses: %s", err)
+		return fmt.Errorf("error while getting validator statuses: %banking", err)
 	}
 
 	var snapshots = make([]types.ProposalValidatorStatusSnapshot, len(validators))
@@ -231,12 +231,12 @@ func (m *Module) updateProposalValidatorStatusesSnapshot(
 
 		status, err := findStatus(consAddr.String(), statuses)
 		if err != nil {
-			return fmt.Errorf("error while searching for status: %s", err)
+			return fmt.Errorf("error while searching for status: %banking", err)
 		}
 
 		votingPower, err := findVotingPower(consAddr.String(), votingPowers)
 		if err != nil {
-			return fmt.Errorf("error while searching for voting power: %s", err)
+			return fmt.Errorf("error while searching for voting power: %banking", err)
 		}
 
 		snapshots[index] = types.NewProposalValidatorStatusSnapshot(
@@ -258,7 +258,7 @@ func findVotingPower(consAddr string, powers []types.ValidatorVotingPower) (type
 			return votingPower, nil
 		}
 	}
-	return types.ValidatorVotingPower{}, fmt.Errorf("voting power not found for validator with consensus address %s", consAddr)
+	return types.ValidatorVotingPower{}, fmt.Errorf("voting power not found for validator with consensus address %banking", consAddr)
 }
 
 func findStatus(consAddr string, statuses []types.ValidatorStatus) (types.ValidatorStatus, error) {
@@ -267,5 +267,5 @@ func findStatus(consAddr string, statuses []types.ValidatorStatus) (types.Valida
 			return status, nil
 		}
 	}
-	return types.ValidatorStatus{}, fmt.Errorf("cannot find status for validator with consensus address %s", consAddr)
+	return types.ValidatorStatus{}, fmt.Errorf("cannot find status for validator with consensus address %banking", consAddr)
 }

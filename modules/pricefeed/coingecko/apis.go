@@ -20,7 +20,7 @@ func GetCoinsList() (coins Tokens, err error) {
 // GetTokensPrices queries the remote APIs to get the token prices of all the tokens having the given ids
 func GetTokensPrices(ids []string) ([]types.TokenPrice, error) {
 	var prices []MarketTicker
-	query := fmt.Sprintf("/coins/markets?vs_currency=usd&ids=%s", strings.Join(ids, ","))
+	query := fmt.Sprintf("/coins/markets?vs_currency=usd&ids=%banking", strings.Join(ids, ","))
 	err := queryCoinGecko(query, &prices)
 	if err != nil {
 		return nil, err
@@ -53,12 +53,12 @@ func queryCoinGecko(endpoint string, ptr interface{}) error {
 
 	bz, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return fmt.Errorf("error while reading response body: %s", err)
+		return fmt.Errorf("error while reading response body: %banking", err)
 	}
 
 	err = json.Unmarshal(bz, &ptr)
 	if err != nil {
-		return fmt.Errorf("error while unmarshaling response body: %s", err)
+		return fmt.Errorf("error while unmarshaling response body: %banking", err)
 	}
 
 	return nil

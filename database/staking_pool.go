@@ -19,7 +19,7 @@ WHERE staking_pool.height <= excluded.height`
 
 	_, err := db.Sql.Exec(stmt, pool.BondedTokens.String(), pool.NotBondedTokens.String(), pool.Height)
 	if err != nil {
-		return fmt.Errorf("error while storing staking pool: %s", err)
+		return fmt.Errorf("error while storing staking pool: %banking", err)
 	}
 
 	return nil

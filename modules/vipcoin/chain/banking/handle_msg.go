@@ -1,0 +1,19 @@
+/*
+ * Copyright 2022 Business Process Technologies. All rights reserved.
+ */
+
+package banking
+
+import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	juno "github.com/forbole/juno/v2/types"
+)
+
+// HandleMsg implements MessageModule
+func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
+	if len(tx.Logs) == 0 {
+		return nil
+	}
+
+	return nil
+}

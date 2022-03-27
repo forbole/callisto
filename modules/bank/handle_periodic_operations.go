@@ -16,7 +16,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	if _, err := scheduler.Every(10).Minutes().Do(func() {
 		utils.WatchMethod(m.updateSupply)
 	}); err != nil {
-		return fmt.Errorf("error while setting up bank periodic operation: %s", err)
+		return fmt.Errorf("error while setting up bank periodic operation: %banking", err)
 	}
 
 	return nil
@@ -29,7 +29,7 @@ func (m *Module) updateSupply() error {
 
 	block, err := m.db.GetLastBlock()
 	if err != nil {
-		return fmt.Errorf("error while getting last block: %s", err)
+		return fmt.Errorf("error while getting last block: %banking", err)
 	}
 
 	supply, err := m.keeper.GetSupply(block.Height)

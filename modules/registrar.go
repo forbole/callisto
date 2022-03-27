@@ -4,9 +4,18 @@ import (
 	"fmt"
 	"os"
 
+	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/simapp/params"
+	"github.com/forbole/juno/v2/modules/messages"
+	"github.com/forbole/juno/v2/modules/pruning"
+	"github.com/forbole/juno/v2/modules/registrar"
+	"github.com/forbole/juno/v2/modules/telemetry"
+	"github.com/forbole/juno/v2/node/local"
+	"github.com/forbole/juno/v2/node/remote"
+	"github.com/tendermint/tendermint/libs/log"
+
 	"github.com/forbole/bdjuno/v2/database"
 	"github.com/forbole/bdjuno/v2/modules/auth"
 	"github.com/forbole/bdjuno/v2/modules/bank"
@@ -18,15 +27,9 @@ import (
 	"github.com/forbole/bdjuno/v2/modules/pricefeed"
 	"github.com/forbole/bdjuno/v2/modules/slashing"
 	"github.com/forbole/bdjuno/v2/modules/staking"
+	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/banking"
 	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets"
 	"github.com/forbole/bdjuno/v2/utils"
-	"github.com/forbole/juno/v2/modules/messages"
-	"github.com/forbole/juno/v2/modules/pruning"
-	"github.com/forbole/juno/v2/modules/registrar"
-	"github.com/forbole/juno/v2/modules/telemetry"
-	"github.com/forbole/juno/v2/node/local"
-	"github.com/forbole/juno/v2/node/remote"
-	"github.com/tendermint/tendermint/libs/log"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -36,6 +39,7 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+
 	banksource "github.com/forbole/bdjuno/v2/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v2/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v2/modules/bank/source/remote"
@@ -56,16 +60,19 @@ import (
 	remotestakingsource "github.com/forbole/bdjuno/v2/modules/staking/source/remote"
 
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
+
 	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts"
 	vipcoinaccountssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts/source"
 	remotevipcoinaccountssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts/source/remote"
 
-	vipcoinwalletssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets/source"
-	remotevipcoinwalletsssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets/source/remote"
 	jmodules "github.com/forbole/juno/v2/modules"
 	nodeconfig "github.com/forbole/juno/v2/node/config"
 
-	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
+	vipcoinwalletssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets/source"
+	remotevipcoinwalletsssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets/source/remote"
+
+	vipcoinbankingsource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/banking/source"
+	remotevipcoinbankingsource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/banking/source/remote"
 )
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
@@ -119,6 +126,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 
 	vipcoinAccountsModule := accounts.NewModule(sources.VipcoinAccountsSource, cdc, db)
 	vipcoinWalletsModule := wallets.NewModule(r.parser, sources.VipcoinWalletsSource, cdc, db)
+	vipcoinBankingModule := banking.NewModule(sources.VipcoinBankingSource, cdc, db)
 
 	return []jmodules.Module{
 		messages.NewModule(r.parser, cdc, ctx.Database),
@@ -138,6 +146,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 
 		vipcoinAccountsModule,
 		vipcoinWalletsModule,
+		vipcoinBankingModule,
 	}
 }
 
@@ -150,6 +159,7 @@ type Sources struct {
 	StakingSource         stakingsource.Source
 	VipcoinAccountsSource vipcoinaccountssource.Source
 	VipcoinWalletsSource  vipcoinwalletssource.Source
+	VipcoinBankingSource  vipcoinbankingsource.Source
 }
 
 func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -211,7 +221,7 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 	source, err := remote.NewSource(cfg.GRPC)
 	if err != nil {
-		return nil, fmt.Errorf("error while creating remote source: %s", err)
+		return nil, fmt.Errorf("error while creating remote source: %banking", err)
 	}
 
 	return &Sources{
@@ -223,5 +233,6 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		StakingSource:         remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
 		VipcoinAccountsSource: remotevipcoinaccountssource.NewSource(source, accountstypes.NewQueryClient(source.GrpcConn)),
 		VipcoinWalletsSource:  remotevipcoinwalletsssource.NewSource(source, walletstypes.NewQueryClient(source.GrpcConn)),
+		VipcoinBankingSource:  remotevipcoinbankingsource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }

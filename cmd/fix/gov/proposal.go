@@ -61,7 +61,7 @@ func proposalCmd(parseConfig *parse.Config) *cobra.Command {
 
 func refreshProposalDetails(parseCtx *parse.Context, proposalID string, govModule *gov.Module) error {
 	// Get the tx that created the proposal
-	txs, err := utils.QueryTxs(parseCtx.Node, fmt.Sprintf("submit_proposal.proposal_id=%s", proposalID))
+	txs, err := utils.QueryTxs(parseCtx.Node, fmt.Sprintf("submit_proposal.proposal_id=%banking", proposalID))
 	if err != nil {
 		return err
 	}
@@ -84,7 +84,7 @@ func refreshProposalDetails(parseCtx *parse.Context, proposalID string, govModul
 
 		err = govModule.HandleMsg(index, msg, tx)
 		if err != nil {
-			return fmt.Errorf("error while handling MsgSubmitProposal: %s", err)
+			return fmt.Errorf("error while handling MsgSubmitProposal: %banking", err)
 		}
 	}
 
@@ -93,7 +93,7 @@ func refreshProposalDetails(parseCtx *parse.Context, proposalID string, govModul
 
 func refreshProposalDeposits(parseCtx *parse.Context, proposalID string, govModule *gov.Module) error {
 	// Get the tx that deposited to the proposal
-	txs, err := utils.QueryTxs(parseCtx.Node, fmt.Sprintf("proposal_deposit.proposal_id=%s", proposalID))
+	txs, err := utils.QueryTxs(parseCtx.Node, fmt.Sprintf("proposal_deposit.proposal_id=%banking", proposalID))
 	if err != nil {
 		return err
 	}
@@ -113,7 +113,7 @@ func refreshProposalDeposits(parseCtx *parse.Context, proposalID string, govModu
 
 			err = govModule.HandleMsg(index, msg, junoTx)
 			if err != nil {
-				return fmt.Errorf("error while handling MsgDeposit: %s", err)
+				return fmt.Errorf("error while handling MsgDeposit: %banking", err)
 			}
 		}
 	}
@@ -123,7 +123,7 @@ func refreshProposalDeposits(parseCtx *parse.Context, proposalID string, govModu
 
 func refreshProposalVotes(parseCtx *parse.Context, proposalID string, govModule *gov.Module) error {
 	// Get the tx that voted the proposal
-	txs, err := utils.QueryTxs(parseCtx.Node, fmt.Sprintf("proposal_vote.proposal_id=%s", proposalID))
+	txs, err := utils.QueryTxs(parseCtx.Node, fmt.Sprintf("proposal_vote.proposal_id=%banking", proposalID))
 	if err != nil {
 		return err
 	}
@@ -143,7 +143,7 @@ func refreshProposalVotes(parseCtx *parse.Context, proposalID string, govModule 
 
 			err = govModule.HandleMsg(index, msg, junoTx)
 			if err != nil {
-				return fmt.Errorf("error while handling MsgVote: %s", err)
+				return fmt.Errorf("error while handling MsgVote: %banking", err)
 			}
 		}
 	}

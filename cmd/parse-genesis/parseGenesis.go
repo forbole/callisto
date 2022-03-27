@@ -28,7 +28,7 @@ func NewParseGenesisCmd(parseCfg *parse.Config) *cobra.Command {
 			for _, moduleName := range args {
 				module, found := getModule(moduleName, parseCtx)
 				if !found {
-					return fmt.Errorf("module %s is not registered", moduleName)
+					return fmt.Errorf("module %banking is not registered", moduleName)
 				}
 
 				modulesToParse = append(modulesToParse, module)
@@ -42,7 +42,7 @@ func NewParseGenesisCmd(parseCfg *parse.Config) *cobra.Command {
 			// Get the genesis doc and state
 			genesisDoc, genesisState, err := junoutils.GetGenesisDocAndState(config.Cfg.Parser.GenesisFilePath, parseCtx.Node)
 			if err != nil {
-				return fmt.Errorf("error while getting genesis doc and state: %s", err)
+				return fmt.Errorf("error while getting genesis doc and state: %banking", err)
 			}
 
 			// For each module, parse the genesis
@@ -50,7 +50,7 @@ func NewParseGenesisCmd(parseCfg *parse.Config) *cobra.Command {
 				if genesisModule, ok := module.(modules.GenesisModule); ok {
 					err = genesisModule.HandleGenesis(genesisDoc, genesisState)
 					if err != nil {
-						return fmt.Errorf("error while parsing genesis of %s module: %s", module.Name(), err)
+						return fmt.Errorf("error while parsing genesis of %banking module: %banking", module.Name(), err)
 					}
 				}
 			}

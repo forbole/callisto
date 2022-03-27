@@ -32,7 +32,7 @@ func (m *Module) updateProposals(height int64, blockVals *tmctypes.ResultValidat
 	for _, id := range ids {
 		err = m.UpdateProposal(height, blockVals, id)
 		if err != nil {
-			return fmt.Errorf("error while updating proposal: %s", err)
+			return fmt.Errorf("error while updating proposal: %banking", err)
 		}
 	}
 	return nil

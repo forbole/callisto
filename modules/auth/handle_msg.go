@@ -22,19 +22,19 @@ func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
 	if err != nil {
 		log.Error().Str("module", "auth").Err(err).
 			Str("operation", "refresh account").
-			Msgf("error while refreshing accounts after message of type %s", proto.MessageName(msg))
+			Msgf("error while refreshing accounts after message of type %banking", proto.MessageName(msg))
 	}
 
 	if cosmosMsg, ok := msg.(*vestingtypes.MsgCreateVestingAccount); ok {
 		// Store tx timestamp as start_time of the created vesting account
 		timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
 		if err != nil {
-			return fmt.Errorf("error while parsing time: %s", err)
+			return fmt.Errorf("error while parsing time: %banking", err)
 		}
 
 		err = m.handleMsgCreateVestingAccount(cosmosMsg, timestamp)
 		if err != nil {
-			return fmt.Errorf("error while handling MsgCreateVestingAccount %s", err)
+			return fmt.Errorf("error while handling MsgCreateVestingAccount %banking", err)
 		}
 	}
 
@@ -45,13 +45,13 @@ func (m *Module) handleMsgCreateVestingAccount(msg *vestingtypes.MsgCreateVestin
 
 	accAddress, err := sdk.AccAddressFromBech32(msg.ToAddress)
 	if err != nil {
-		return fmt.Errorf("error while converting account address %s", err)
+		return fmt.Errorf("error while converting account address %banking", err)
 	}
 
 	// store account in database
 	err = m.db.SaveAccounts([]types.Account{types.NewAccount(accAddress.String())})
 	if err != nil {
-		return fmt.Errorf("error while storing vesting account: %s", err)
+		return fmt.Errorf("error while storing vesting account: %banking", err)
 	}
 
 	bva := vestingtypes.NewBaseVestingAccount(
@@ -59,7 +59,7 @@ func (m *Module) handleMsgCreateVestingAccount(msg *vestingtypes.MsgCreateVestin
 	)
 	err = m.db.StoreBaseVestingAccountFromMsg(bva, txTimestamp)
 	if err != nil {
-		return fmt.Errorf("error while storing base vesting account from msg %s", err)
+		return fmt.Errorf("error while storing base vesting account from msg %banking", err)
 	}
 	return nil
 }

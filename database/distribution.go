@@ -23,7 +23,7 @@ ON CONFLICT (one_row_id) DO UPDATE
 WHERE community_pool.height <= excluded.height`
 	_, err := db.Sql.Exec(query, pq.Array(dbtypes.NewDbDecCoins(coin)), height)
 	if err != nil {
-		return fmt.Errorf("error while storing community pool: %s", err)
+		return fmt.Errorf("error while storing community pool: %banking", err)
 	}
 
 	return nil
@@ -35,7 +35,7 @@ WHERE community_pool.height <= excluded.height`
 func (db *Db) SaveDistributionParams(params *types.DistributionParams) error {
 	paramsBz, err := json.Marshal(&params.Params)
 	if err != nil {
-		return fmt.Errorf("error while marshaling params: %s", err)
+		return fmt.Errorf("error while marshaling params: %banking", err)
 	}
 
 	stmt := `
@@ -47,7 +47,7 @@ ON CONFLICT (one_row_id) DO UPDATE
 WHERE distribution_params.height <= excluded.height`
 	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
 	if err != nil {
-		return fmt.Errorf("error while storing distribution params: %s", err)
+		return fmt.Errorf("error while storing distribution params: %banking", err)
 	}
 
 	return nil

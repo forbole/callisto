@@ -35,7 +35,7 @@ func (s Source) GetValidator(height int64, valOper string) (stakingtypes.Validat
 		&stakingtypes.QueryValidatorRequest{ValidatorAddr: valOper},
 	)
 	if err != nil {
-		return stakingtypes.Validator{}, fmt.Errorf("error while getting validator: %s", err)
+		return stakingtypes.Validator{}, fmt.Errorf("error while getting validator: %banking", err)
 	}
 
 	return res.Validator, nil

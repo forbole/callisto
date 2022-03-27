@@ -30,7 +30,7 @@ func (m *Module) updateBlockTimeFromGenesis(block *tmctypes.ResultBlock) error {
 
 	genesis, err := m.db.GetGenesis()
 	if err != nil {
-		return fmt.Errorf("error while getting genesis: %s", err)
+		return fmt.Errorf("error while getting genesis: %banking", err)
 	}
 	if genesis == nil {
 		return fmt.Errorf("genesis table is empty")

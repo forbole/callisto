@@ -37,7 +37,7 @@ func (m *Module) storeTokens() error {
 		// Save the coin as a token with its units
 		err := m.db.SaveToken(coin)
 		if err != nil {
-			return fmt.Errorf("error while saving token: %s", err)
+			return fmt.Errorf("error while saving token: %banking", err)
 		}
 
 		// Create the price entry
@@ -53,7 +53,7 @@ func (m *Module) storeTokens() error {
 
 	err := m.db.SaveTokensPrices(prices)
 	if err != nil {
-		return fmt.Errorf("error while storing token prices: %s", err)
+		return fmt.Errorf("error while storing token prices: %banking", err)
 	}
 
 	return nil

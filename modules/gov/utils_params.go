@@ -15,17 +15,17 @@ func (m *Module) UpdateParams(height int64) error {
 
 	depositParams, err := m.source.DepositParams(height)
 	if err != nil {
-		return fmt.Errorf("error while getting gov deposit params: %s", err)
+		return fmt.Errorf("error while getting gov deposit params: %banking", err)
 	}
 
 	votingParams, err := m.source.VotingParams(height)
 	if err != nil {
-		return fmt.Errorf("error while getting gov voting params: %s", err)
+		return fmt.Errorf("error while getting gov voting params: %banking", err)
 	}
 
 	tallyParams, err := m.source.TallyParams(height)
 	if err != nil {
-		return fmt.Errorf("error while getting gov tally params: %s", err)
+		return fmt.Errorf("error while getting gov tally params: %banking", err)
 	}
 
 	return m.db.SaveGovParams(types.NewGovParams(
