@@ -46,8 +46,8 @@ cloud.google.com/go/storage v1.8.0/go.mod h1:Wv1Oy7z6Yz3DshWRJFhqM/UCfaWIRTdp0RX
 cloud.google.com/go/storage v1.10.0/go.mod h1:FLPqc6j+Ki4BU591ie1oL6qBQGu2Bl/tZ9ullr3+Kg0=
 dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
 git.ooo.ua/pub/armory v0.0.0-20201224160633-0efb4c3c59ac/go.mod h1:SmWlpF4d+LxpKhK3aD+mIt1K6sIfdDzCo98LWa+aBAs=
-git.ooo.ua/vipcoin/chain v0.0.0-20220316134717-a5b00180e001 h1:YdbcyIZAyottdjxZKiLM2LpWsz5hB1xb6orkjMBlI6w=
-git.ooo.ua/vipcoin/chain v0.0.0-20220316134717-a5b00180e001/go.mod h1:VWFckWu2anbnWhNXLYcbtPdb9MSjna//1CKIMIt7GzA=
+git.ooo.ua/vipcoin/chain v0.0.0-20220324132813-8a60e68149bd h1:2mE1ggfWfu6pisbja56paeuN8dV0/Xgpe7a/ACZJIw8=
+git.ooo.ua/vipcoin/chain v0.0.0-20220324132813-8a60e68149bd/go.mod h1:VWFckWu2anbnWhNXLYcbtPdb9MSjna//1CKIMIt7GzA=
 git.ooo.ua/vipcoin/go-common v1.1.11/go.mod h1:WPVkGwlQQSaKR4PjaT9UFEN3ooPUaAm10NOAwOAutsg=
 git.ooo.ua/vipcoin/lib/errs v1.0.5/go.mod h1:BSJz4aII05/IYC8qBkCovpqp6GV0JJo3JkceuMrvpqI=
 git.ooo.ua/vipcoin/lib/filter v1.0.4 h1:A53Fj12AxuwUsndQK3CrDTc3sFKqf7NANO9eOk+ffqA=

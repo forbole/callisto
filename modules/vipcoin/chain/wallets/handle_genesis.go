@@ -6,10 +6,10 @@ package wallets
 
 import (
 	"encoding/json"
-
-	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
+  
 	"github.com/rs/zerolog/log"
 	tmtypes "github.com/tendermint/tendermint/types"
+  walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
 )
 
 // HandleGenesis implements modules.GenesisModule
