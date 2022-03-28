@@ -8,6 +8,7 @@ import (
 	"fmt"
 
 	typeswallets "git.ooo.ua/vipcoin/chain/x/wallets/types"
+	"git.ooo.ua/vipcoin/lib/filter"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -23,6 +24,8 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *types.Tx) error {
 	}
 
 	switch walletMsg := msg.(type) {
+	case *typeswallets.MsgSetWalletState:
+		return m.handleMsgSetStates(walletMsg)
 	case *typeswallets.MsgCreateWallet:
 		return m.handleMsgCreateWallet(tx, index, walletMsg)
 	default:
@@ -46,4 +49,24 @@ func (m *Module) handleMsgCreateWallet(tx *juno.Tx, index int, msg *typeswallets
 	}
 
 	return m.walletsRepo.SaveWallets(&newWallet)
+}
+
+// handleMsgSetStates allows to properly handle a MsgSetState
+func (m *Module) handleMsgSetStates(msg *typeswallets.MsgSetWalletState) error {
+	if err := m.walletsRepo.SaveStates(msg); err != nil {
+		return err
+	}
+
+	wallets, err := m.walletsRepo.GetWallets(filter.NewFilter().SetArgument(FieldAddress, msg.Address))
+	if err != nil {
+		return err
+	}
+
+	if len(wallets) != 1 {
+		return typeswallets.ErrInvalidAddressField
+	}
+
+	wallets[0].State = msg.State
+
+	return m.walletsRepo.SaveWallets(wallets...)
 }
