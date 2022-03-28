@@ -5,11 +5,6 @@
 package types
 
 import (
-	"database/sql/driver"
-	"encoding/json"
-	"errors"
-
-	extratypes "git.ooo.ua/vipcoin/chain/x/types"
 	"github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -77,26 +72,4 @@ type (
 	BalanceDB struct {
 		Balance types.Coins
 	}
-
-	// ExtraDB helpers type
-	ExtraDB struct {
-		Extras []extratypes.Extra
-	}
 )
-
-// Make the ExtraDB struct implement the driver.Valuer interface. This method
-// simply returns the JSON-encoded representation of the struct.
-func (e ExtraDB) Value() (driver.Value, error) {
-	return json.Marshal(e.Extras)
-}
-
-// Make the ExtraDB struct implement the sql.Scanner interface. This method
-// simply decodes a JSON-encoded value into the struct fields.
-func (e *ExtraDB) Scan(value interface{}) error {
-	b, ok := value.([]byte)
-	if !ok {
-		return errors.New("type assertion to []byte failed")
-	}
-
-	return json.Unmarshal(b, &e.Extras)
-}

@@ -6,10 +6,12 @@ package wallets
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/forbole/bdjuno/v2/database"
-	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets/source"
 	"github.com/forbole/juno/v2/modules"
 	junomessages "github.com/forbole/juno/v2/modules/messages"
+
+	"github.com/forbole/bdjuno/v2/database"
+	"github.com/forbole/bdjuno/v2/database/vipcoin/chain/wallets"
+	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets/source"
 )
 
 var (
