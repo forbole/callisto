@@ -23,6 +23,7 @@ var (
 type Module struct {
 	cdc           codec.Marshaler
 	db            *database.Db
+	walletsRepo   wallets.Repository
 	messageParser junomessages.MessageAddressesParser
 	keeper        source.Source
 }
@@ -34,6 +35,7 @@ func NewModule(
 	return &Module{
 		cdc:           cdc,
 		db:            db,
+		walletsRepo:   *wallets.NewRepository(db.Sqlx, cdc),
 		messageParser: messageParser,
 		keeper:        keeper,
 	}
