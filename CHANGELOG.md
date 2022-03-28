@@ -31,7 +31,7 @@ This version introduces breaking changes to certain address-specific data that i
     - Redelegations from this validator
     - Unbonding delegations
   - Note: GraphQL queries on the frontend should be updated to display the changes above
-- Added prometheus monitoring to hasura actions
+- ([\#352](https://github.com/forbole/bdjuno/pull/352)) Added prometheus monitoring to hasura actions
 
 #### Node Type Local
 - Added note.type=local for parsing a static local node without gRPC query:
