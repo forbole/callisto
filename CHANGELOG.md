@@ -47,5 +47,5 @@ This version introduces breaking changes to certain address-specific data that i
 ### Changes 
 
 #### Database
-- `bonded_tokens` and `not_bonded_tokens` db types in `staking_pool` table are changed to `TEXT` to avoid digits overflow
+- ([\#300](https://github.com/forbole/bdjuno/pull/300)) Changed `bonded_tokens` and `not_bonded_tokens` type inside `staking_pool` table  to `TEXT` to avoid value overflow
 - `tombstone` status is accessible from `validator_status` table
