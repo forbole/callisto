@@ -1,53 +1,46 @@
 ## Version v2.0.0
-
-
 ### Notes
-This version introduces breaking changes to certain address-specific data that is no longer periodically parsed from the node and stored in the database. Instead the data is now obtained directly from the node when needed using Hasura Actions. Read more details about [migrating to v2.0.0](https://docs.bigdipper.live/cosmos-based/parser/migrations/v2.0.0)```
+This version introduces breaking changes to certain address-specific data that is no longer periodically parsed from the node and stored in the database. Instead, the data is now obtained directly from the node when needed using Hasura Actions. Read more details about [migrating to v2.0.0](https://docs.bigdipper.live/cosmos-based/parser/migrations/v2.0.0)
 
 ### New features
 #### CLI
-- ([\#257](https://github.com/forbole/bdjuno/pull/257)) Added `parse-genesis` command to parse the genesis file```
-- ([\#228](https://github.com/forbole/bdjuno/pull/228)) ([\#248](https://github.com/forbole/bdjuno/pull/248)) Added `fix` command:```
-  - auth: fix vesting accounts details
-  - blocks: fix missing blocks and transactions from given start height
-  - gov: fix proposal with given proposal ID  
-  - staking: fix validators info at the latest height  
+- ([\#257](https://github.com/forbole/bdjuno/pull/257)) Added `parse-genesis` command to parse the genesis file
+- ([\#228](https://github.com/forbole/bdjuno/pull/228)) ([\#248](https://github.com/forbole/bdjuno/pull/248)) Added `fix` command:
+  - `auth`: fix vesting accounts details
+  - `blocks`: fix missing blocks and transactions from given start height
+  - `gov`: fix proposal with given proposal ID  
+  - `staking`: fix validators info at the latest height  
 
 #### Hasura Actions
-- ([\#329](https://github.com/forbole/bdjuno/pull/329)) Implemented Hasura Actions service to replace periodic queries. 
-- Here's a list of data acquired through Hasura Actions:
-  - Of a certain address/delegator:
-    - Account balance
-    - Delegation rewards
-    - Delegator withdraw address
-    - Delegations
-    - Total delegations amount
-    - Unbonding delegations
-    - Total unbonding delegations amount
-    - Redelegations
-  - Of a certain validator:
-    - Commission amount
-    - Delegations to this validator
-    - Redelegations from this validator
-    - Unbonding delegations
-  - Note: GraphQL queries on the frontend should be updated to display the changes above
+- ([\#329](https://github.com/forbole/bdjuno/pull/329)) Implemented Hasura Actions service to replace periodic queries. If you are using GraphQL queries on your application, you should updated the old queries to use the below new actions instead.  
+  Here's a list of data acquired through Hasura Actions:
+    - Of a certain address/delegator:
+      - Account balance (`action_account_balance`)
+      - Delegation rewards (`action_delegation_reward`)
+      - Delegator withdraw address (`action_delegator_withdraw_address`)
+      - Delegations (`action_delegation`)
+      - Total delegations amount (`action_delegation_total`)
+      - Unbonding delegations (`action_unbonding_delegation`)
+      - Total unbonding delegations amount (`action_unbonding_delegation_total`)
+      - Redelegations (`action_redelegation`)
+    - Of a certain validator:
+      - Commission amount (`action_validator_commission_amount`)
+      - Delegations to this validator (`action_validator_delegations`)
+      - Redelegations from this validator (`action_validator_redelegations_from`)
+      - Unbonding delegations (`action_validator_unbonding_delegations`)
 - ([\#352](https://github.com/forbole/bdjuno/pull/352)) Added prometheus monitoring to hasura actions
 
-#### Node Type Local
-- Added note.type=local for parsing a static local node without gRPC query:
-[config reference](https://docs.bigdipper.live/cosmos-based/parser/config/config#node)
-
+#### Local node support
+- Added the support for `node.type = "local"` for parsing a static local node without the usage gRPC queries: [config reference](https://docs.bigdipper.live/cosmos-based/parser/config/config#node).
 
 #### Modules
-- ([\#232](https://github.com/forbole/bdjuno/pull/232)) `auth`: Updated module to handle and store `vesting accounts` and `vesting periods` in the database 
-- ([\#276](https://github.com/forbole/bdjuno/pull/276)) `feegrant`: Added `feegrant` module (v0.44.x)
-
-
+- ([\#232](https://github.com/forbole/bdjuno/pull/232)) Updated the `x/auth` module support to handle and store `vesting accounts` and `vesting periods` inside the database. 
+- ([\#276](https://github.com/forbole/bdjuno/pull/276)) Added the support for the `x/feegrant` module (v0.44.x)
 
 ### Changes 
 
 #### CLI
-- ([\#351](https://github.com/forbole/bdjuno/pull/351))Fixed version display for `bdjuno version` cmd 
+- ([\#351](https://github.com/forbole/bdjuno/pull/351)) Fixed version display for `bdjuno version` cmd 
 
 #### Database
 - ([\#300](https://github.com/forbole/bdjuno/pull/300)) Changed `bonded_tokens` and `not_bonded_tokens` type inside `staking_pool` table  to `TEXT` to avoid value overflow
@@ -55,6 +48,5 @@ This version introduces breaking changes to certain address-specific data that i
 - ([\#232](https://github.com/forbole/bdjuno/pull/232)) Added `vesting_account` and `vesting_period` table
 - ([\#276](https://github.com/forbole/bdjuno/pull/276)) Added `fee_grant_allowance` table (v0.44.x)
 
-
 #### Modules
-- ([\#353](https://github.com/forbole/bdjuno/pull/353)) removed `history` module 
+- ([\#353](https://github.com/forbole/bdjuno/pull/353)) Removed the support for the `history` module
