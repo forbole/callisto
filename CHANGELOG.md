@@ -14,7 +14,7 @@ This version introduces breaking changes to certain address-specific data that i
   - staking: fix validators info at the latest height  
 
 #### Hasura Actions
-- Replaced some periodic queries with hasura actions 
+- ([\#329](https://github.com/forbole/bdjuno/pull/329)) Implemented Hasura Actions service to replace periodic queries. 
 - Here's a list of data acquired through Hasura Actions:
   - Of a certain address/delegator:
     - Account balance
