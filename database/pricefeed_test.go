@@ -11,12 +11,12 @@ import (
 
 func (suite *DbTestSuite) insertToken(name string) {
 	query := fmt.Sprintf(
-		`INSERT INTO token (name) VALUES ('%banking')`, name)
+		`INSERT INTO token (name) VALUES ('%s')`, name)
 	_, err := suite.database.Sql.Query(query)
 	suite.Require().NoError(err)
 
 	query = fmt.Sprintf(
-		`INSERT INTO token_unit (token_name, denom, exponent, price_id) VALUES ('%[1]banking', 'u%[1]banking', 0, 'u%[1]banking'), ('%[1]banking', 'm%[1]banking', 3, 'm%[1]banking'), ('%[1]banking', '%[1]banking', 6, '%[1]banking')`,
+		`INSERT INTO token_unit (token_name, denom, exponent, price_id) VALUES ('%[1]s', 'u%[1]s', 0, 'u%[1]s'), ('%[1]s', 'm%[1]s', 3, 'm%[1]s'), ('%[1]s', '%[1]s', 6, '%[1]s')`,
 		name)
 	_, err = suite.database.Sql.Query(query)
 	suite.Require().NoError(err)

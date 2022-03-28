@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/simapp/params"
@@ -27,6 +26,7 @@ import (
 	"github.com/forbole/bdjuno/v2/modules/pricefeed"
 	"github.com/forbole/bdjuno/v2/modules/slashing"
 	"github.com/forbole/bdjuno/v2/modules/staking"
+	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts"
 	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/banking"
 	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets"
 	"github.com/forbole/bdjuno/v2/utils"
@@ -60,13 +60,14 @@ import (
 	remotestakingsource "github.com/forbole/bdjuno/v2/modules/staking/source/remote"
 
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
-
-	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts"
-	vipcoinaccountssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts/source"
-	remotevipcoinaccountssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts/source/remote"
+	bankingtypes "git.ooo.ua/vipcoin/chain/x/banking/types"
+	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
 
 	jmodules "github.com/forbole/juno/v2/modules"
 	nodeconfig "github.com/forbole/juno/v2/node/config"
+
+	vipcoinaccountssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts/source"
+	remotevipcoinaccountssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts/source/remote"
 
 	vipcoinwalletssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets/source"
 	remotevipcoinwalletsssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets/source/remote"
@@ -221,7 +222,7 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 	source, err := remote.NewSource(cfg.GRPC)
 	if err != nil {
-		return nil, fmt.Errorf("error while creating remote source: %banking", err)
+		return nil, fmt.Errorf("error while creating remote source: %s", err)
 	}
 
 	return &Sources{
@@ -233,6 +234,6 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		StakingSource:         remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
 		VipcoinAccountsSource: remotevipcoinaccountssource.NewSource(source, accountstypes.NewQueryClient(source.GrpcConn)),
 		VipcoinWalletsSource:  remotevipcoinwalletsssource.NewSource(source, walletstypes.NewQueryClient(source.GrpcConn)),
-		VipcoinBankingSource:  remotevipcoinbankingsource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
+		VipcoinBankingSource:  remotevipcoinbankingsource.NewSource(source, bankingtypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }

@@ -28,7 +28,7 @@ func TotalDelegationAmountHandler(ctx *actionstypes.Context, payload *actionstyp
 		if strings.Contains(err.Error(), codes.NotFound.String()) {
 			return err, nil
 		}
-		return err, fmt.Errorf("error while getting delegator delegations: %banking", err)
+		return err, fmt.Errorf("error while getting delegator delegations: %s", err)
 	}
 
 	var coinObject sdk.Coins

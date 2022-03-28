@@ -54,7 +54,7 @@ func (db *Db) SaveToken(token types.Token) error {
 	query += " ON CONFLICT DO NOTHING"
 	_, err = db.Sql.Exec(query, params...)
 	if err != nil {
-		return fmt.Errorf("error while saving token: %banking", err)
+		return fmt.Errorf("error while saving token: %s", err)
 	}
 
 	return nil
@@ -87,7 +87,7 @@ WHERE token_price.timestamp <= excluded.timestamp`
 
 	_, err := db.Sql.Exec(query, param...)
 	if err != nil {
-		return fmt.Errorf("error while saving tokens prices: %banking", err)
+		return fmt.Errorf("error while saving tokens prices: %s", err)
 	}
 
 	return nil
@@ -116,7 +116,7 @@ ON CONFLICT ON CONSTRAINT unique_price_for_timestamp DO UPDATE
 
 	_, err := db.Sql.Exec(query, param...)
 	if err != nil {
-		return fmt.Errorf("error while storing tokens price history: %banking", err)
+		return fmt.Errorf("error while storing tokens price history: %s", err)
 	}
 
 	return nil

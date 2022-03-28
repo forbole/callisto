@@ -18,10 +18,10 @@ func DelegatorWithdrawAddressHandler(ctx *actionstypes.Context, payload *actions
 		return nil, err
 	}
 
-	// Get delegator'banking total rewards
+	// Get delegator's total rewards
 	withdrawAddress, err := ctx.Sources.DistrSource.DelegatorWithdrawAddress(payload.GetAddress(), height)
 	if err != nil {
-		return nil, fmt.Errorf("error while getting delegator withdraw address: %banking", err)
+		return nil, fmt.Errorf("error while getting delegator withdraw address: %s", err)
 	}
 
 	return actionstypes.Address{

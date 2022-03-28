@@ -33,12 +33,12 @@ func NewSource(source *local.Source, querier stakingtypes.QueryServer) *Source {
 func (s Source) GetValidator(height int64, valOper string) (stakingtypes.Validator, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return stakingtypes.Validator{}, fmt.Errorf("error while loading height: %banking", err)
+		return stakingtypes.Validator{}, fmt.Errorf("error while loading height: %s", err)
 	}
 
 	res, err := s.q.Validator(sdk.WrapSDKContext(ctx), &stakingtypes.QueryValidatorRequest{ValidatorAddr: valOper})
 	if err != nil {
-		return stakingtypes.Validator{}, fmt.Errorf("error while reading validator: %banking", err)
+		return stakingtypes.Validator{}, fmt.Errorf("error while reading validator: %s", err)
 	}
 
 	return res.Validator, nil
@@ -48,7 +48,7 @@ func (s Source) GetValidator(height int64, valOper string) (stakingtypes.Validat
 func (s Source) GetDelegationsWithPagination(height int64, delegator string, pagination *query.PageRequest) (*stakingtypes.QueryDelegatorDelegationsResponse, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return nil, fmt.Errorf("error while loading height: %banking", err)
+		return nil, fmt.Errorf("error while loading height: %s", err)
 	}
 
 	res, err := s.q.DelegatorDelegations(
@@ -73,7 +73,7 @@ func (s Source) GetDelegationsWithPagination(height int64, delegator string, pag
 func (s Source) GetRedelegations(height int64, request *stakingtypes.QueryRedelegationsRequest) (*stakingtypes.QueryRedelegationsResponse, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return nil, fmt.Errorf("error while loading height: %banking", err)
+		return nil, fmt.Errorf("error while loading height: %s", err)
 	}
 
 	redelegations, err := s.q.Redelegations(sdk.WrapSDKContext(ctx), request)
@@ -88,7 +88,7 @@ func (s Source) GetRedelegations(height int64, request *stakingtypes.QueryRedele
 func (s Source) GetValidatorsWithStatus(height int64, status string) ([]stakingtypes.Validator, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return nil, fmt.Errorf("error while loading height: %banking", err)
+		return nil, fmt.Errorf("error while loading height: %s", err)
 	}
 
 	var validators []stakingtypes.Validator
@@ -121,7 +121,7 @@ func (s Source) GetValidatorsWithStatus(height int64, status string) ([]stakingt
 func (s Source) GetPool(height int64) (stakingtypes.Pool, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return stakingtypes.Pool{}, fmt.Errorf("error while loading height: %banking", err)
+		return stakingtypes.Pool{}, fmt.Errorf("error while loading height: %s", err)
 	}
 
 	res, err := s.q.Pool(
@@ -139,7 +139,7 @@ func (s Source) GetPool(height int64) (stakingtypes.Pool, error) {
 func (s Source) GetParams(height int64) (stakingtypes.Params, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return stakingtypes.Params{}, fmt.Errorf("error while loading height: %banking", err)
+		return stakingtypes.Params{}, fmt.Errorf("error while loading height: %s", err)
 	}
 
 	res, err := s.q.Params(
@@ -158,7 +158,7 @@ func (s Source) GetUnbondingDelegations(height int64, delegator string, paginati
 
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return nil, fmt.Errorf("error while loading height: %banking", err)
+		return nil, fmt.Errorf("error while loading height: %s", err)
 	}
 
 	unbondingDelegations, err := s.q.DelegatorUnbondingDelegations(
@@ -186,7 +186,7 @@ func (s Source) GetValidatorDelegationsWithPagination(
 ) (*stakingtypes.QueryValidatorDelegationsResponse, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return nil, fmt.Errorf("error while loading height: %banking", err)
+		return nil, fmt.Errorf("error while loading height: %s", err)
 	}
 
 	res, err := s.q.ValidatorDelegations(
@@ -209,7 +209,7 @@ func (s Source) GetUnbondingDelegationsFromValidator(
 ) (*stakingtypes.QueryValidatorUnbondingDelegationsResponse, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return nil, fmt.Errorf("error while loading height: %banking", err)
+		return nil, fmt.Errorf("error while loading height: %s", err)
 	}
 
 	unbondingDelegations, err := s.q.ValidatorUnbondingDelegations(

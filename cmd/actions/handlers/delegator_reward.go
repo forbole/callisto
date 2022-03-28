@@ -18,10 +18,10 @@ func DelegationRewardHandler(ctx *actionstypes.Context, payload *actionstypes.Pa
 		return nil, err
 	}
 
-	// Get delegator'banking total rewards
+	// Get delegator's total rewards
 	rewards, err := ctx.Sources.DistrSource.DelegatorTotalRewards(payload.GetAddress(), height)
 	if err != nil {
-		return nil, fmt.Errorf("error while getting delegator total rewards: %banking", err)
+		return nil, fmt.Errorf("error while getting delegator total rewards: %s", err)
 	}
 
 	delegationRewards := make([]actionstypes.DelegationReward, len(rewards))

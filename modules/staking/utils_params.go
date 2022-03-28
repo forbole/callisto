@@ -15,7 +15,7 @@ func (m *Module) UpdateParams(height int64) error {
 
 	params, err := m.source.GetParams(height)
 	if err != nil {
-		return fmt.Errorf("error while getting params: %banking", err)
+		return fmt.Errorf("error while getting params: %s", err)
 	}
 
 	return m.db.SaveStakingParams(types.NewStakingParams(params, height))

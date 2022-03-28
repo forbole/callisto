@@ -32,7 +32,7 @@ func NewSource(source *local.Source, querier minttypes.QueryServer) *Source {
 func (s Source) GetInflation(height int64) (sdk.Dec, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return sdk.Dec{}, fmt.Errorf("error while loading height: %banking", err)
+		return sdk.Dec{}, fmt.Errorf("error while loading height: %s", err)
 	}
 
 	res, err := s.querier.Inflation(sdk.WrapSDKContext(ctx), &minttypes.QueryInflationRequest{})
@@ -47,7 +47,7 @@ func (s Source) GetInflation(height int64) (sdk.Dec, error) {
 func (s Source) Params(height int64) (minttypes.Params, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return minttypes.Params{}, fmt.Errorf("error while loading height: %banking", err)
+		return minttypes.Params{}, fmt.Errorf("error while loading height: %s", err)
 	}
 
 	res, err := s.querier.Params(sdk.WrapSDKContext(ctx), &minttypes.QueryParamsRequest{})

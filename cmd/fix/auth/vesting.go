@@ -30,22 +30,22 @@ func vestingCmd(parseConfig *parse.Config) *cobra.Command {
 			// Get the genesis
 			genesis, err := utils.ReadGenesis(config.Cfg, parseCtx.Node)
 			if err != nil {
-				return fmt.Errorf("error while reading the genesis: %banking", err)
+				return fmt.Errorf("error while reading the genesis: %s", err)
 			}
 
 			var appState map[string]json.RawMessage
 			if err := json.Unmarshal(genesis.AppState, &appState); err != nil {
-				return fmt.Errorf("error unmarshalling genesis doc: %banking", err)
+				return fmt.Errorf("error unmarshalling genesis doc: %s", err)
 			}
 
 			vestingAccounts, err := authutils.GetGenesisVestingAccounts(appState, parseCtx.EncodingConfig.Marshaler)
 			if err != nil {
-				return fmt.Errorf("error while gestting vesting accounts: %banking", err)
+				return fmt.Errorf("error while gestting vesting accounts: %s", err)
 			}
 
 			err = db.SaveVestingAccounts(vestingAccounts)
 			if err != nil {
-				return fmt.Errorf("error while storing vesting accounts: %banking", err)
+				return fmt.Errorf("error while storing vesting accounts: %s", err)
 			}
 
 			return nil

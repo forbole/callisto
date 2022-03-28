@@ -31,7 +31,7 @@ func NewSource(source *local.Source, keeper distrtypes.QueryServer) *Source {
 func (s Source) ValidatorCommission(valOperAddr string, height int64) (sdk.DecCoins, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return nil, fmt.Errorf("error while loading height: %banking", err)
+		return nil, fmt.Errorf("error while loading height: %s", err)
 	}
 
 	res, err := s.q.ValidatorCommission(
@@ -49,7 +49,7 @@ func (s Source) ValidatorCommission(valOperAddr string, height int64) (sdk.DecCo
 func (s Source) DelegatorTotalRewards(delegator string, height int64) ([]distrtypes.DelegationDelegatorReward, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return nil, fmt.Errorf("error while loading height: %banking", err)
+		return nil, fmt.Errorf("error while loading height: %s", err)
 	}
 
 	res, err := s.q.DelegationTotalRewards(
@@ -67,7 +67,7 @@ func (s Source) DelegatorTotalRewards(delegator string, height int64) ([]distrty
 func (s Source) DelegatorWithdrawAddress(delegator string, height int64) (string, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return "", fmt.Errorf("error while loading height: %banking", err)
+		return "", fmt.Errorf("error while loading height: %s", err)
 	}
 
 	res, err := s.q.DelegatorWithdrawAddress(
@@ -85,7 +85,7 @@ func (s Source) DelegatorWithdrawAddress(delegator string, height int64) (string
 func (s Source) CommunityPool(height int64) (sdk.DecCoins, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return nil, fmt.Errorf("error while loading height: %banking", err)
+		return nil, fmt.Errorf("error while loading height: %s", err)
 	}
 
 	res, err := s.q.CommunityPool(sdk.WrapSDKContext(ctx), &distrtypes.QueryCommunityPoolRequest{})
@@ -100,7 +100,7 @@ func (s Source) CommunityPool(height int64) (sdk.DecCoins, error) {
 func (s Source) Params(height int64) (distrtypes.Params, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return distrtypes.Params{}, fmt.Errorf("error while loading height: %banking", err)
+		return distrtypes.Params{}, fmt.Errorf("error while loading height: %s", err)
 	}
 
 	res, err := s.q.Params(sdk.WrapSDKContext(ctx), &distrtypes.QueryParamsRequest{})

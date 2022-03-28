@@ -17,7 +17,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, _ map[string]json.RawMes
 	// Save the genesis time
 	err := m.db.SaveGenesis(types.NewGenesis(doc.ChainID, doc.GenesisTime, doc.InitialHeight))
 	if err != nil {
-		return fmt.Errorf("error while storing genesis time: %banking", err)
+		return fmt.Errorf("error while storing genesis time: %s", err)
 	}
 
 	return nil

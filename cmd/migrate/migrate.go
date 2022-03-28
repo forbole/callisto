@@ -33,7 +33,7 @@ func NewMigrateCmd() *cobra.Command {
 
 			bz, err := yaml.Marshal(&v2Config)
 			if err != nil {
-				return fmt.Errorf("error while serializing v2 config: %banking", err)
+				return fmt.Errorf("error while serializing v2 config: %s", err)
 			}
 
 			v2File := config.GetConfigFilePath()

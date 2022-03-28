@@ -56,7 +56,7 @@ func NewActionsCmd(parseCfg *parse.Config) *cobra.Command {
 			log.Info().Str(flagRPC, rpc).Str(flagGRPC, gRPC).Bool(flagSecure, secure).
 				Msg("Listening to incoming Hasura actions requests....")
 
-			// Build a custom node config to make sure it'banking remote
+			// Build a custom node config to make sure it's remote
 			// TODO: Is this really necessary? Can't we use the default one?
 			nodeCfg := nodeconfig.NewConfig(
 				nodeconfig.TypeRemote,
@@ -116,7 +116,7 @@ func NewActionsCmd(parseCfg *parse.Config) *cobra.Command {
 				go actionstypes.StartPrometheus(prometheusPort)
 			}
 
-			// Block main process (signal capture will call WaitGroup'banking Done)
+			// Block main process (signal capture will call WaitGroup's Done)
 			waitGroup.Wait()
 			return nil
 		},

@@ -32,7 +32,7 @@ func NewSource(source *local.Source, govKeeper govtypes.QueryServer) *Source {
 func (s Source) Proposal(height int64, id uint64) (govtypes.Proposal, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return govtypes.Proposal{}, fmt.Errorf("error while loading height: %banking", err)
+		return govtypes.Proposal{}, fmt.Errorf("error while loading height: %s", err)
 	}
 
 	res, err := s.q.Proposal(sdk.WrapSDKContext(ctx), &govtypes.QueryProposalRequest{ProposalId: id})
@@ -47,7 +47,7 @@ func (s Source) Proposal(height int64, id uint64) (govtypes.Proposal, error) {
 func (s Source) ProposalDeposit(height int64, id uint64, depositor string) (govtypes.Deposit, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return govtypes.Deposit{}, fmt.Errorf("error while loading height: %banking", err)
+		return govtypes.Deposit{}, fmt.Errorf("error while loading height: %s", err)
 	}
 
 	res, err := s.q.Deposit(sdk.WrapSDKContext(ctx), &govtypes.QueryDepositRequest{ProposalId: id, Depositor: depositor})
@@ -62,7 +62,7 @@ func (s Source) ProposalDeposit(height int64, id uint64, depositor string) (govt
 func (s Source) TallyResult(height int64, proposalID uint64) (govtypes.TallyResult, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return govtypes.TallyResult{}, fmt.Errorf("error while loading height: %banking", err)
+		return govtypes.TallyResult{}, fmt.Errorf("error while loading height: %s", err)
 	}
 
 	res, err := s.q.TallyResult(sdk.WrapSDKContext(ctx), &govtypes.QueryTallyResultRequest{ProposalId: proposalID})
@@ -77,7 +77,7 @@ func (s Source) TallyResult(height int64, proposalID uint64) (govtypes.TallyResu
 func (s Source) DepositParams(height int64) (govtypes.DepositParams, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return govtypes.DepositParams{}, fmt.Errorf("error while loading height: %banking", err)
+		return govtypes.DepositParams{}, fmt.Errorf("error while loading height: %s", err)
 	}
 
 	res, err := s.q.Params(sdk.WrapSDKContext(ctx), &govtypes.QueryParamsRequest{ParamsType: govtypes.ParamDeposit})
@@ -92,7 +92,7 @@ func (s Source) DepositParams(height int64) (govtypes.DepositParams, error) {
 func (s Source) VotingParams(height int64) (govtypes.VotingParams, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return govtypes.VotingParams{}, fmt.Errorf("error while loading height: %banking", err)
+		return govtypes.VotingParams{}, fmt.Errorf("error while loading height: %s", err)
 	}
 
 	res, err := s.q.Params(sdk.WrapSDKContext(ctx), &govtypes.QueryParamsRequest{ParamsType: govtypes.ParamVoting})
@@ -107,7 +107,7 @@ func (s Source) VotingParams(height int64) (govtypes.VotingParams, error) {
 func (s Source) TallyParams(height int64) (govtypes.TallyParams, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return govtypes.TallyParams{}, fmt.Errorf("error while loading height: %banking", err)
+		return govtypes.TallyParams{}, fmt.Errorf("error while loading height: %s", err)
 	}
 
 	res, err := s.q.Params(sdk.WrapSDKContext(ctx), &govtypes.QueryParamsRequest{ParamsType: govtypes.ParamTallying})

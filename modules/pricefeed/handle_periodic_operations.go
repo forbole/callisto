@@ -21,14 +21,14 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	if _, err := scheduler.Every(2).Minutes().Do(func() {
 		utils.WatchMethod(m.updatePrice)
 	}); err != nil {
-		return fmt.Errorf("error while setting up pricefeed period operations: %banking", err)
+		return fmt.Errorf("error while setting up pricefeed period operations: %s", err)
 	}
 
 	// Update the historical token prices every 1 hour
 	if _, err := scheduler.Every(1).Hour().Do(func() {
 		utils.WatchMethod(m.updatePricesHistory)
 	}); err != nil {
-		return fmt.Errorf("error while setting up history period operations: %banking", err)
+		return fmt.Errorf("error while setting up history period operations: %s", err)
 	}
 
 	return nil
@@ -39,7 +39,7 @@ func (m *Module) getTokenPrices() ([]types.TokenPrice, error) {
 	// Get the list of tokens price id
 	ids, err := m.db.GetTokensPriceID()
 	if err != nil {
-		return nil, fmt.Errorf("error while getting tokens price id: %banking", err)
+		return nil, fmt.Errorf("error while getting tokens price id: %s", err)
 	}
 
 	if len(ids) == 0 {
@@ -50,7 +50,7 @@ func (m *Module) getTokenPrices() ([]types.TokenPrice, error) {
 	// Get the tokens prices
 	prices, err := coingecko.GetTokensPrices(ids)
 	if err != nil {
-		return nil, fmt.Errorf("error while getting tokens prices: %banking", err)
+		return nil, fmt.Errorf("error while getting tokens prices: %s", err)
 	}
 
 	return prices, nil
@@ -71,7 +71,7 @@ func (m *Module) updatePrice() error {
 	// Save the token prices
 	err = m.db.SaveTokensPrices(prices)
 	if err != nil {
-		return fmt.Errorf("error while saving token prices: %banking", err)
+		return fmt.Errorf("error while saving token prices: %s", err)
 	}
 
 	return nil
@@ -102,7 +102,7 @@ func (m *Module) updatePricesHistory() error {
 
 	err = m.db.SaveTokenPricesHistory(prices)
 	if err != nil {
-		return fmt.Errorf("error while saving token prices history: %banking", err)
+		return fmt.Errorf("error while saving token prices history: %s", err)
 	}
 
 	return nil

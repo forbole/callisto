@@ -37,30 +37,30 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypes.M
 	// Get the proposal id
 	event, err := tx.FindEventByType(index, govtypes.EventTypeSubmitProposal)
 	if err != nil {
-		return fmt.Errorf("error while searching for EventTypeSubmitProposal: %banking", err)
+		return fmt.Errorf("error while searching for EventTypeSubmitProposal: %s", err)
 	}
 
 	id, err := tx.FindAttributeByKey(event, govtypes.AttributeKeyProposalID)
 	if err != nil {
-		return fmt.Errorf("error while searching for AttributeKeyProposalID: %banking", err)
+		return fmt.Errorf("error while searching for AttributeKeyProposalID: %s", err)
 	}
 
 	proposalID, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
-		return fmt.Errorf("error while parsing proposal id: %banking", err)
+		return fmt.Errorf("error while parsing proposal id: %s", err)
 	}
 
 	// Get the proposal
 	proposal, err := m.source.Proposal(tx.Height, proposalID)
 	if err != nil {
-		return fmt.Errorf("error while getting proposal: %banking", err)
+		return fmt.Errorf("error while getting proposal: %s", err)
 	}
 
 	// Unpack the content
 	var content govtypes.Content
 	err = m.cdc.UnpackAny(proposal.Content, &content)
 	if err != nil {
-		return fmt.Errorf("error while unpacking proposal content: %banking", err)
+		return fmt.Errorf("error while unpacking proposal content: %s", err)
 	}
 
 	// Store the proposal
@@ -90,7 +90,7 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypes.M
 func (m *Module) handleMsgDeposit(tx *juno.Tx, msg *govtypes.MsgDeposit) error {
 	deposit, err := m.source.ProposalDeposit(tx.Height, msg.ProposalId, msg.Depositor)
 	if err != nil {
-		return fmt.Errorf("error while getting proposal deposit: %banking", err)
+		return fmt.Errorf("error while getting proposal deposit: %s", err)
 	}
 
 	return m.db.SaveDeposits([]types.Deposit{

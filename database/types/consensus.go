@@ -47,7 +47,7 @@ func NewConsensusRow(height int64, round int32, step string) ConsensusRow {
 	}
 }
 
-// Equal tells whether r and banking contain the same data
+// Equal tells whether r and s contain the same data
 func (r ConsensusRow) Equal(s ConsensusRow) bool {
 	return r.Height == s.Height &&
 		r.Round == s.Round &&

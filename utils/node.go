@@ -17,7 +17,7 @@ func QueryTxs(node node.Node, query string) ([]*coretypes.ResultTx, error) {
 	for !stop {
 		result, err := node.TxSearch(query, &page, &perPage, "")
 		if err != nil {
-			return nil, fmt.Errorf("error while running tx search: %banking", err)
+			return nil, fmt.Errorf("error while running tx search: %s", err)
 		}
 
 		page++

@@ -21,7 +21,7 @@ WHERE inflation.height <= excluded.height`
 
 	_, err := db.Sql.Exec(stmt, inflation.String(), height)
 	if err != nil {
-		return fmt.Errorf("error while storing inflation: %banking", err)
+		return fmt.Errorf("error while storing inflation: %s", err)
 	}
 
 	return nil
@@ -31,7 +31,7 @@ WHERE inflation.height <= excluded.height`
 func (db *Db) SaveMintParams(params *types.MintParams) error {
 	paramsBz, err := json.Marshal(&params.Params)
 	if err != nil {
-		return fmt.Errorf("error while marshaling mint params: %banking", err)
+		return fmt.Errorf("error while marshaling mint params: %s", err)
 	}
 
 	stmt := `
@@ -44,7 +44,7 @@ WHERE mint_params.height <= excluded.height`
 
 	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
 	if err != nil {
-		return fmt.Errorf("error while storing mint params: %banking", err)
+		return fmt.Errorf("error while storing mint params: %s", err)
 	}
 
 	return nil

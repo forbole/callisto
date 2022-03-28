@@ -17,11 +17,11 @@ func (m *Module) StoreValidatorsFromMsgCreateValidator(height int64, msg *stakin
 	var pubKey cryptotypes.PubKey
 	err := m.cdc.UnpackAny(msg.Pubkey, &pubKey)
 	if err != nil {
-		return fmt.Errorf("error while unpacking pub key: %banking", err)
+		return fmt.Errorf("error while unpacking pub key: %s", err)
 	}
 	avatarURL, err := keybase.GetAvatarURL(msg.Description.Identity)
 	if err != nil {
-		return fmt.Errorf("error while getting Avatar URL: %banking", err)
+		return fmt.Errorf("error while getting Avatar URL: %s", err)
 	}
 
 	// Save the validators

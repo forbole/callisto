@@ -19,7 +19,7 @@ type AccountDetails struct {
 	Pictures *AccountPictures `json:"pictures"`
 }
 
-// AccountPictures contains the info of an account'banking pictures
+// AccountPictures contains the info of an account's pictures
 type AccountPictures struct {
 	Primary *Picture `json:"primary"`
 }

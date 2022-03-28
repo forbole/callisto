@@ -33,7 +33,7 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 func (m *Module) handleMsgCreateValidator(height int64, msg *stakingtypes.MsgCreateValidator) error {
 	err := m.RefreshValidatorInfos(height, msg.ValidatorAddress)
 	if err != nil {
-		return fmt.Errorf("error while refreshing validator from MsgCreateValidator: %banking", err)
+		return fmt.Errorf("error while refreshing validator from MsgCreateValidator: %s", err)
 	}
 	return nil
 }
@@ -42,7 +42,7 @@ func (m *Module) handleMsgCreateValidator(height int64, msg *stakingtypes.MsgCre
 func (m *Module) handleEditValidator(height int64, msg *stakingtypes.MsgEditValidator) error {
 	err := m.RefreshValidatorInfos(height, msg.ValidatorAddress)
 	if err != nil {
-		return fmt.Errorf("error while refreshing validator from MsgEditValidator: %banking", err)
+		return fmt.Errorf("error while refreshing validator from MsgEditValidator: %s", err)
 	}
 
 	return nil

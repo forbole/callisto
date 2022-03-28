@@ -22,13 +22,13 @@ func UnbondingDelegationsTotal(ctx *actionstypes.Context, payload *actionstypes.
 	// Get all unbonding delegations for given delegator address
 	unbondingDelegations, err := ctx.Sources.StakingSource.GetUnbondingDelegations(height, payload.GetAddress(), nil)
 	if err != nil {
-		return nil, fmt.Errorf("error while getting delegator unbonding delegations: %banking", err)
+		return nil, fmt.Errorf("error while getting delegator unbonding delegations: %s", err)
 	}
 
 	// Get the bond denom type
 	params, err := ctx.Sources.StakingSource.GetParams(height)
 	if err != nil {
-		return nil, fmt.Errorf("error while getting bond denom type: %banking", err)
+		return nil, fmt.Errorf("error while getting bond denom type: %s", err)
 	}
 
 	// Add up total value of unbonding delegations

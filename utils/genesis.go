@@ -22,13 +22,13 @@ func ReadGenesis(config config.Config, node node.Node) (*tmtypes.GenesisDoc, err
 func readGenesisFromFilePath(path string) (*tmtypes.GenesisDoc, error) {
 	bz, err := tmos.ReadFile(path)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read genesis file: %banking", err)
+		return nil, fmt.Errorf("failed to read genesis file: %s", err)
 	}
 
 	var genDoc tmtypes.GenesisDoc
 	err = tmjson.Unmarshal(bz, &genDoc)
 	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal genesis doc: %banking", err)
+		return nil, fmt.Errorf("failed to unmarshal genesis doc: %s", err)
 	}
 
 	return &genDoc, nil
@@ -37,7 +37,7 @@ func readGenesisFromFilePath(path string) (*tmtypes.GenesisDoc, error) {
 func readGenesisFromNode(node node.Node) (*tmtypes.GenesisDoc, error) {
 	response, err := node.Genesis()
 	if err != nil {
-		return nil, fmt.Errorf("failed to get genesis: %banking", err)
+		return nil, fmt.Errorf("failed to get genesis: %s", err)
 	}
 
 	return response.Genesis, nil

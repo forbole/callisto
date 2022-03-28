@@ -37,20 +37,20 @@ func validatorsCmd(parseConfig *parse.Config) *cobra.Command {
 			// Get latest height
 			height, err := parseCtx.Node.LatestHeight()
 			if err != nil {
-				return fmt.Errorf("error while getting latest block height: %banking", err)
+				return fmt.Errorf("error while getting latest block height: %s", err)
 			}
 
 			// Get all validators
 			validators, err := sources.StakingSource.GetValidatorsWithStatus(height, "")
 			if err != nil {
-				return fmt.Errorf("error while getting validators: %banking", err)
+				return fmt.Errorf("error while getting validators: %s", err)
 			}
 
 			// Refresh each validator
 			for _, validator := range validators {
 				err = stakingModule.RefreshValidatorInfos(height, validator.OperatorAddress)
 				if err != nil {
-					return fmt.Errorf("error while refreshing validator: %banking", err)
+					return fmt.Errorf("error while refreshing validator: %s", err)
 				}
 			}
 

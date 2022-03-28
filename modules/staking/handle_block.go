@@ -21,7 +21,7 @@ func (m *Module) HandleBlock(
 	// Update the validators
 	validators, err := m.updateValidators(block.Block.Height)
 	if err != nil {
-		return fmt.Errorf("error while updating validators: %banking", err)
+		return fmt.Errorf("error while updating validators: %s", err)
 	}
 
 	// Update the voting powers

@@ -20,13 +20,13 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	var genState slashingtypes.GenesisState
 	err := m.cdc.UnmarshalJSON(appState[slashingtypes.ModuleName], &genState)
 	if err != nil {
-		return fmt.Errorf("error while reading mint genesis data: %banking", err)
+		return fmt.Errorf("error while reading mint genesis data: %s", err)
 	}
 
 	// Save the params
 	err = m.db.SaveSlashingParams(types.NewSlashingParams(genState.Params, doc.InitialHeight))
 	if err != nil {
-		return fmt.Errorf("error while storing genesis slashing params: %banking", err)
+		return fmt.Errorf("error while storing genesis slashing params: %s", err)
 	}
 
 	return nil

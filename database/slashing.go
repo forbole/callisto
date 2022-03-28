@@ -43,7 +43,7 @@ WHERE validator_signing_info.height <= excluded.height`
 
 	_, err := db.Sql.Exec(stmt, args...)
 	if err != nil {
-		return fmt.Errorf("error while storing validators signing infos: %banking", err)
+		return fmt.Errorf("error while storing validators signing infos: %s", err)
 	}
 
 	return nil
@@ -66,7 +66,7 @@ WHERE slashing_params.height <= excluded.height`
 
 	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
 	if err != nil {
-		return fmt.Errorf("error while storing slashing params: %banking", err)
+		return fmt.Errorf("error while storing slashing params: %s", err)
 	}
 
 	return nil

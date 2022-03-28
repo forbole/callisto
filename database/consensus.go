@@ -90,7 +90,7 @@ WHERE average_block_time_per_minute.height <= excluded.height`
 
 	_, err := db.Sqlx.Exec(stmt, averageTime, height)
 	if err != nil {
-		return fmt.Errorf("error while storing average block time per minute: %banking", err)
+		return fmt.Errorf("error while storing average block time per minute: %s", err)
 	}
 
 	return nil
@@ -108,7 +108,7 @@ WHERE average_block_time_per_hour.height <= excluded.height`
 
 	_, err := db.Sqlx.Exec(stmt, averageTime, height)
 	if err != nil {
-		return fmt.Errorf("error while storing average block time per hour: %banking", err)
+		return fmt.Errorf("error while storing average block time per hour: %s", err)
 	}
 
 	return nil
@@ -126,7 +126,7 @@ WHERE average_block_time_per_day.height <= excluded.height`
 
 	_, err := db.Sqlx.Exec(stmt, averageTime, height)
 	if err != nil {
-		return fmt.Errorf("error while storing average block time per day: %banking", err)
+		return fmt.Errorf("error while storing average block time per day: %s", err)
 	}
 
 	return nil
@@ -144,7 +144,7 @@ WHERE average_block_time_from_genesis.height <= excluded.height`
 
 	_, err := db.Sqlx.Exec(stmt, averageTime, height)
 	if err != nil {
-		return fmt.Errorf("error while storing average block time since genesis: %banking", err)
+		return fmt.Errorf("error while storing average block time since genesis: %s", err)
 	}
 
 	return nil
@@ -163,7 +163,7 @@ VALUES ($1, $2, $3) ON CONFLICT (one_row_id) DO UPDATE
 
 	_, err := db.Sqlx.Exec(stmt, genesis.Time, genesis.ChainID, genesis.InitialHeight)
 	if err != nil {
-		return fmt.Errorf("error while storing genesis: %banking", err)
+		return fmt.Errorf("error while storing genesis: %s", err)
 	}
 
 	return nil
