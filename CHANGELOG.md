@@ -8,7 +8,7 @@ This version introduces breaking changes to certain address-specific data that i
 #### CLI
 - ([\#257](https://github.com/forbole/bdjuno/pull/257)) Added `parse-genesis` command to parse the genesis file```
 - ([\#228](https://github.com/forbole/bdjuno/pull/228)) ([\#248](https://github.com/forbole/bdjuno/pull/248)) Added `fix` command:```
-  - auth: fix vesting-accounts details
+  - auth: fix vesting accounts details
   - blocks: fix missing blocks and transactions from the configured start height
   - gov: fix proposal with proposal ID specified  
   - staking: fix validators info at the latest height  
