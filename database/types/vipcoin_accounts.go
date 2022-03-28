@@ -47,6 +47,13 @@ type (
 		ReferrerHash          string  `db:"referrer_hash"`
 	}
 
+	// DBSetKinds represents a single row inside the "vipcoin_chain_accounts_set_kinds" table
+	DBSetKinds struct {
+		Creator string        `db:"creator"`
+		Hash    string        `db:"hash"`
+		Kinds   pq.Int32Array `db:"kinds"`
+	}
+
 	// ExtraDB helprs type
 	ExtraDB struct {
 		Extras []extratypes.Extra

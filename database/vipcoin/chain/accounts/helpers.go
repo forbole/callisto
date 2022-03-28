@@ -166,3 +166,21 @@ func toRegisterUserDomain(user types.DBRegisterUser) *accountstypes.MsgRegisterU
 	}
 
 }
+
+// toSetKindsDatabase - mapping func to database model
+func toSetKindsDatabase(kinds *accountstypes.MsgSetKinds) types.DBSetKinds {
+	return types.DBSetKinds{
+		Creator: kinds.Creator,
+		Hash:    kinds.Hash,
+		Kinds:   toKindsDB(kinds.Kinds),
+	}
+}
+
+// toSetKindsDomain - mapping func to database model
+func toSetKindsDomain(kinds types.DBSetKinds) *accountstypes.MsgSetKinds {
+	return &accountstypes.MsgSetKinds{
+		Creator: kinds.Creator,
+		Hash:    kinds.Hash,
+		Kinds:   toKindsDomain(kinds.Kinds),
+	}
+}

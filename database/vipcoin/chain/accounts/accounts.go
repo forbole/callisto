@@ -64,11 +64,7 @@ func (r Repository) SaveAccounts(accounts ...*accountstypes.Account) error {
 		}
 	}
 
-	if err := tx.Commit(); err != nil {
-		return err
-	}
-
-	return nil
+	return tx.Commit()
 }
 
 func saveAffiliates(tx *sqlx.Tx, affiliates []*accountstypes.Affiliate) (pq.Int64Array, error) {
@@ -146,11 +142,7 @@ func (r Repository) UpdateAccounts(accounts ...*accountstypes.Account) error {
 		}
 	}
 
-	if err := tx.Commit(); err != nil {
-		return err
-	}
-
-	return nil
+	return tx.Commit()
 }
 
 func deleteAffiliates(tx *sqlx.Tx, affiliatesID pq.Int64Array) error {

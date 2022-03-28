@@ -8,6 +8,7 @@ import (
 	"fmt"
 
 	"git.ooo.ua/vipcoin/chain/x/accounts/types"
+	"git.ooo.ua/vipcoin/lib/filter"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	juno "github.com/forbole/juno/v2/types"
 
@@ -21,15 +22,14 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	}
 
 	switch accountMsg := msg.(type) {
+	case *types.MsgSetKinds:
+		return m.handleMsgSetKinds(tx, index, accountMsg)
 	case *types.MsgRegisterUser:
 		return m.handleMsgRegisterUser(tx, index, accountMsg)
 	default:
 		errMsg := fmt.Sprintf("unrecognized %s message type: %T", types.ModuleName, accountMsg)
-		fmt.Println(sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg))
-		// return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
+		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
 	}
-
-	return nil
 }
 
 // handleMsgRegisterUser allows to properly handle a handleMsgRegisterUser
@@ -60,4 +60,24 @@ func (m *Module) handleMsgRegisterUser(tx *juno.Tx, index int, msg *types.MsgReg
 	// TODO: Add write wallets.
 
 	return m.accountRepo.SaveAccounts(&newAcc)
+}
+
+// handleMsgSetKinds allows to properly handle a handleMsgSetKinds
+func (m *Module) handleMsgSetKinds(tx *juno.Tx, index int, msg *types.MsgSetKinds) error {
+	if err := m.accountRepo.SaveKinds(msg); err != nil {
+		return err
+	}
+
+	acc, err := m.accountRepo.GetAccounts(filter.NewFilter().SetArgument(FieldHash, msg.Hash))
+	if err != nil {
+		return err
+	}
+
+	if len(acc) != 1 {
+		return types.ErrInvalidHashField
+	}
+
+	acc[0].Kinds = msg.Kinds
+
+	return m.accountRepo.UpdateAccounts(acc...)
 }

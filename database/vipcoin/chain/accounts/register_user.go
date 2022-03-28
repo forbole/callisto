@@ -13,6 +13,7 @@ import (
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
+// SaveRegisterUser - saves the given user inside the database
 func (r Repository) SaveRegisterUser(msg ...*accountstypes.MsgRegisterUser) error {
 	if len(msg) == 0 {
 		return nil
@@ -38,13 +39,10 @@ func (r Repository) SaveRegisterUser(msg ...*accountstypes.MsgRegisterUser) erro
 		}
 	}
 
-	if err := tx.Commit(); err != nil {
-		return err
-	}
-
-	return nil
+	return tx.Commit()
 }
 
+// GetRegisterUser - get the given user from database
 func (r Repository) GetRegisterUser(accfilter filter.Filter) ([]*accountstypes.MsgRegisterUser, error) {
 	query, args := accfilter.Build("vipcoin_chain_accounts_register_user",
 		`creator, address, hash, public_key, holder_wallet, ref_reward_wallet, 
