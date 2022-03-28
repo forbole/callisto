@@ -46,6 +46,9 @@ This version introduces breaking changes to certain address-specific data that i
 
 ### Changes 
 
+#### CLI
+- ([\#351](https://github.com/forbole/bdjuno/pull/351))Fixed version display for `bdjuno version` cmd 
+
 #### Database
 - ([\#300](https://github.com/forbole/bdjuno/pull/300)) Changed `bonded_tokens` and `not_bonded_tokens` type inside `staking_pool` table  to `TEXT` to avoid value overflow
 - ([\#275](https://github.com/forbole/bdjuno/pull/275)) Added `tombstoned` column inside `validator_status` table
