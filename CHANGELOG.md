@@ -39,7 +39,9 @@ This version introduces breaking changes to certain address-specific data that i
 
 
 #### Modules
-- auth: `vesting accounts` and `vesting periods` are handled and stored in the database 
+- ([\#232](https://github.com/forbole/bdjuno/pull/232)) `auth`: Updated module to handle and store `vesting accounts` and `vesting periods` in the database 
+- ([\#276](https://github.com/forbole/bdjuno/pull/276)) `feegrant`: Added `feegrant` module (v0.44.x)
+
 
 
 ### Changes 
