@@ -30,7 +30,7 @@ This version introduces breaking changes to certain address-specific data that i
     - Delegations to this validator
     - Redelegations from this validator
     - Unbonding delegations
-  - Note: graphQL queries on the frontend should be updated for the above info
+  - Note: GraphQL queries on the frontend should be updated to display the changes above
 - Added prometheus monitoring to hasura actions
 
 #### Node Type Local
