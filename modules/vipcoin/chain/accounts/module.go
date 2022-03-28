@@ -8,6 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/forbole/bdjuno/v2/database"
+	"github.com/forbole/bdjuno/v2/database/vipcoin/chain/accounts"
 	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts/source"
 	"github.com/forbole/juno/v2/modules"
 )
@@ -20,8 +21,9 @@ var (
 
 // Module represents the x/accounts module
 type Module struct {
-	cdc codec.Marshaler
-	db  *database.Db
+	cdc         codec.Marshaler
+	db          *database.Db
+	accountRepo accounts.Repository
 
 	keeper source.Source
 }
@@ -31,9 +33,10 @@ func NewModule(
 	keeper source.Source, cdc codec.Marshaler, db *database.Db,
 ) *Module {
 	return &Module{
-		cdc:    cdc,
-		db:     db,
-		keeper: keeper,
+		cdc:         cdc,
+		db:          db,
+		accountRepo: *accounts.NewRepository(db.Sqlx, cdc),
+		keeper:      keeper,
 	}
 }
 
