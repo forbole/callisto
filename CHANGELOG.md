@@ -48,4 +48,10 @@ This version introduces breaking changes to certain address-specific data that i
 
 #### Database
 - ([\#300](https://github.com/forbole/bdjuno/pull/300)) Changed `bonded_tokens` and `not_bonded_tokens` type inside `staking_pool` table  to `TEXT` to avoid value overflow
-- `tombstone` status is accessible from `validator_status` table
+- ([\#275](https://github.com/forbole/bdjuno/pull/275)) Added `tombstoned` column inside `validator_status` table
+- ([\#232](https://github.com/forbole/bdjuno/pull/232)) Added `vesting_account` and `vesting_period` table
+- ([\#276](https://github.com/forbole/bdjuno/pull/276)) Added `fee_grant_allowance` table (v0.44.x)
+
+
+#### Modules
+- ([\#353](https://github.com/forbole/bdjuno/pull/353)) removed `history` module 
