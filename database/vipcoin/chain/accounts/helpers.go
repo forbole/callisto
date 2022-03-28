@@ -134,3 +134,35 @@ func parseID(data []int64) []interface{} {
 
 	return result
 }
+
+// toRegisterUserDatabase - mapping func to database model
+func toRegisterUserDatabase(user *accountstypes.MsgRegisterUser) types.DBRegisterUser {
+	return types.DBRegisterUser{
+		Creator:               user.Creator,
+		Address:               user.Address,
+		Hash:                  user.Hash,
+		PublicKey:             user.PublicKey,
+		HolderWallet:          user.HolderWallet,
+		RefRewardWallet:       user.RefRewardWallet,
+		HolderWalletExtras:    toExtrasDB(user.HolderWalletExtras),
+		RefRewardWalletExtras: toExtrasDB(user.RefRewardWalletExtras),
+		ReferrerHash:          user.ReferrerHash,
+	}
+
+}
+
+// toRegisterUserDomain - mapping func to database model
+func toRegisterUserDomain(user types.DBRegisterUser) *accountstypes.MsgRegisterUser {
+	return &accountstypes.MsgRegisterUser{
+		Creator:               user.Creator,
+		Address:               user.Address,
+		Hash:                  user.Hash,
+		PublicKey:             user.PublicKey,
+		HolderWallet:          user.HolderWallet,
+		RefRewardWallet:       user.RefRewardWallet,
+		HolderWalletExtras:    fromExtrasDB(user.HolderWalletExtras),
+		RefRewardWalletExtras: fromExtrasDB(user.RefRewardWalletExtras),
+		ReferrerHash:          user.ReferrerHash,
+	}
+
+}

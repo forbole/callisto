@@ -34,6 +34,19 @@ type (
 		Extras          ExtraDB `db:"extras"`
 	}
 
+	// DBRegisterUser represents a single row inside the "vipcoin_chain_accounts_register_user" table
+	DBRegisterUser struct {
+		Creator               string  `db:"creator"`
+		Address               string  `db:"address"`
+		Hash                  string  `db:"hash"`
+		PublicKey             string  `db:"public_key"`
+		HolderWallet          string  `db:"holder_wallet"`
+		RefRewardWallet       string  `db:"ref_reward_wallet"`
+		HolderWalletExtras    ExtraDB `db:"holder_wallet_extras"`
+		RefRewardWalletExtras ExtraDB `db:"ref_reward_wallet_extras"`
+		ReferrerHash          string  `db:"referrer_hash"`
+	}
+
 	// ExtraDB helprs type
 	ExtraDB struct {
 		Extras []extratypes.Extra

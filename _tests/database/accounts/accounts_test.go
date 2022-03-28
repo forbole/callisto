@@ -20,7 +20,6 @@ import (
 )
 
 func TestRepository_SaveAccounts(t *testing.T) {
-	// db, err := sqlx.Connect("pgx", "host=10.10.1.79 port=5432 user=postgres dbname=juno password=postgres sslmode=disable")
 	db, err := sqlx.Connect("pgx", "host=localhost port=5432 user=postgres dbname=juno password=postgres sslmode=disable")
 	if err != nil {
 		t.Fatal(err)
@@ -127,7 +126,6 @@ func TestRepository_SaveAccounts(t *testing.T) {
 }
 
 func TestRepository_UpdateAccounts(t *testing.T) {
-	// db, err := sqlx.Connect("pgx", "host=10.10.1.79 port=5432 user=postgres dbname=juno password=postgres sslmode=disable")
 	db, err := sqlx.Connect("pgx", "host=localhost port=5432 user=postgres dbname=juno password=postgres sslmode=disable")
 	if err != nil {
 		t.Fatal(err)
@@ -234,7 +232,6 @@ func TestRepository_UpdateAccounts(t *testing.T) {
 }
 
 func TestRepository_GetAccounts(t *testing.T) {
-	// db, err := sqlx.Connect("pgx", "host=10.10.1.79 port=5432 user=postgres dbname=juno password=postgres sslmode=disable")
 	db, err := sqlx.Connect("pgx", "host=localhost port=5432 user=postgres dbname=juno password=postgres sslmode=disable")
 	if err != nil {
 		t.Fatal(err)
