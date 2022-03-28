@@ -2,7 +2,7 @@
 
 
 ### Migration
-[Migration reference](https://docs.bigdipper.live/cosmos-based/parser/migrations/v2.0.0)
+This version introduces breaking changes to certain address-specific data that is no longer periodically parsed from the node and stored in the database. Instead the data is now obtained directly from the node when needed using Hasura Actions. Read more details about [migrating to v2.0.0](https://docs.bigdipper.live/cosmos-based/parser/migrations/v2.0.0)```
 
 ### New features
 #### CLI
