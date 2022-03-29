@@ -52,6 +52,40 @@ install: go.sum
 .PHONY: install
 
 ###############################################################################
+###                                   Run                                   ###
+###############################################################################
+
+run:
+ifeq ($(OS),Windows_NT)
+	@echo "running bdjuno for Windows..."
+	@go run cmd/bdjuno/main.go parse --home $(CONFIG)
+else
+	@echo "running bdjuno for Linux..."
+	@go run cmd/bdjuno/main.go parse --home $(CONFIG)
+endif
+.PHONY: run
+
+run-build: build
+ifeq ($(OS),Windows_NT)
+	@echo "running bdjuno for Windows..."
+	@./build/bdjuno.exe parse --home $(CONFIG)
+else
+	@echo "running bdjuno for Linux..."
+	@./build/bdjuno parse --home $(CONFIG)
+endif
+.PHONY: run-build
+
+start:
+ifeq ($(OS),Windows_NT)
+	@echo "running bdjuno for Windows..."
+	@./build/bdjuno.exe parse --home $(CONFIG)
+else
+	@echo "running bdjuno for Linux..."
+	@./build/bdjuno parse --home $(CONFIG)
+endif
+.PHONY: start
+
+###############################################################################
 ###                           Tests & Simulation                            ###
 ###############################################################################
 
