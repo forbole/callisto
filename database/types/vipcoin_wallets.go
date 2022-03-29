@@ -36,11 +36,12 @@ type (
 
 	// DBCreateWallet represents a single row inside the "vipcoin_chain_wallets_create_wallet" table
 	DBCreateWallet struct {
-		Creator        string `db:"creator"`
-		Address        string `db:"address"`
-		AccountAddress string `db:"account_address"`
-		Kind           int32  `db:"kind"`
-		State          int32  `db:"state"`
+		Creator        string  `db:"creator"`
+		Address        string  `db:"address"`
+		AccountAddress string  `db:"account_address"`
+		Kind           int32   `db:"kind"`
+		State          int32   `db:"state"`
+		Extras         ExtraDB `db:"extras"`
 	}
 
 	// DBCreateWalletWithBalance represents a single row inside the "vipcoin_chain_wallets_create_wallet_with_balance" table

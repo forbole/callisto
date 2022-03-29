@@ -7,6 +7,7 @@ package wallets
 import (
 	extratypes "git.ooo.ua/vipcoin/chain/x/types"
 	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
+
 	cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/forbole/bdjuno/v2/database/types"
@@ -71,4 +72,28 @@ func toWalletDomain(wallet types.DBWallets) (*walletstypes.Wallet, error) {
 		Extras:         fromExtrasDB(wallet.Extras),
 		Default:        wallet.DefaultStatus,
 	}, nil
+}
+
+// toCreateWalletDatabase - mapping func to database model
+func toCreateWalletDatabase(wallet *walletstypes.MsgCreateWallet) types.DBCreateWallet {
+	return types.DBCreateWallet{
+		Creator:        wallet.Creator,
+		Address:        wallet.Address,
+		AccountAddress: wallet.AccountAddress,
+		Kind:           int32(wallet.Kind),
+		State:          int32(wallet.State),
+		Extras:         toExtrasDB(wallet.Extras),
+	}
+}
+
+// toCreateWalletDomain - mapping func to database model
+func toCreateWalletDomain(wallet types.DBCreateWallet) *walletstypes.MsgCreateWallet {
+	return &walletstypes.MsgCreateWallet{
+		Creator:        wallet.Creator,
+		Address:        wallet.Address,
+		AccountAddress: wallet.AccountAddress,
+		Kind:           walletstypes.WalletKind(wallet.Kind),
+		State:          walletstypes.WalletState(wallet.State),
+		Extras:         fromExtrasDB(wallet.Extras),
+	}
 }
