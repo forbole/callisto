@@ -54,6 +54,14 @@ type (
 		Kinds   pq.Int32Array `db:"kinds"`
 	}
 
+	// DBSetAffiliateAddress represents a single row inside the "vipcoin_chain_accounts_set_affiliate_address" table
+	DBSetAffiliateAddress struct {
+		Creator    string `db:"creator"`
+		Hash       string `db:"hash"`
+		OldAddress string `db:"old_address"`
+		NewAddress string `db:"new_address"`
+	}
+
 	// ExtraDB helprs type
 	ExtraDB struct {
 		Extras []extratypes.Extra

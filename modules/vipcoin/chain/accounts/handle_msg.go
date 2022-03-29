@@ -24,6 +24,8 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	switch accountMsg := msg.(type) {
 	case *types.MsgSetKinds:
 		return m.handleMsgSetKinds(tx, index, accountMsg)
+	case *types.MsgSetAffiliateAddress:
+		return m.handleMsgSetAffiliateAddress(tx, index, accountMsg)
 	case *types.MsgRegisterUser:
 		return m.handleMsgRegisterUser(tx, index, accountMsg)
 	default:
@@ -78,6 +80,28 @@ func (m *Module) handleMsgSetKinds(tx *juno.Tx, index int, msg *types.MsgSetKind
 	}
 
 	acc[0].Kinds = msg.Kinds
+
+	return m.accountRepo.UpdateAccounts(acc...)
+}
+
+// handleMsgSetAffiliateAddress allows to properly handle a handleMsgSetAffiliateAddress
+func (m *Module) handleMsgSetAffiliateAddress(tx *juno.Tx, index int, msg *types.MsgSetAffiliateAddress) error {
+	if err := m.accountRepo.SaveAffiliateAddress(msg); err != nil {
+		return err
+	}
+
+	acc, err := m.accountRepo.GetAccounts(filter.NewFilter().SetArgument(FieldHash, msg.Hash))
+	if err != nil {
+		return err
+	}
+
+	if len(acc) != 1 {
+		return types.ErrInvalidHashField
+	}
+
+	if err := updateAffiliateAddress(acc[0].Affiliates, msg); err != nil {
+		return err
+	}
 
 	return m.accountRepo.UpdateAccounts(acc...)
 }

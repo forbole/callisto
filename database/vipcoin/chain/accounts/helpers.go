@@ -30,13 +30,13 @@ func toAffiliatesDatabase(affiliate *accountstypes.Affiliate) types.DBAffiliates
 func toAffiliatesDomain(affiliates []types.DBAffiliates) []*accountstypes.Affiliate {
 	result := make([]*accountstypes.Affiliate, 0, len(affiliates))
 	for _, data := range affiliates {
-		afaffiliate := accountstypes.Affiliate{
+		affiliates := accountstypes.Affiliate{
 			Address:     data.Address,
 			Affiliation: accountstypes.AffiliationKind(data.AffiliationKind),
 			Extras:      fromExtrasDB(data.Extras),
 		}
 
-		result = append(result, &afaffiliate)
+		result = append(result, &affiliates)
 	}
 
 	return result
@@ -182,5 +182,25 @@ func toSetKindsDomain(kinds types.DBSetKinds) *accountstypes.MsgSetKinds {
 		Creator: kinds.Creator,
 		Hash:    kinds.Hash,
 		Kinds:   toKindsDomain(kinds.Kinds),
+	}
+}
+
+// toSetAffiliateAddressDatabase - mapping func to database model
+func toSetAffiliateAddressDatabase(msg *accountstypes.MsgSetAffiliateAddress) types.DBSetAffiliateAddress {
+	return types.DBSetAffiliateAddress{
+		Creator:    msg.Creator,
+		Hash:       msg.Hash,
+		OldAddress: msg.OldAddress,
+		NewAddress: msg.NewAddress,
+	}
+}
+
+// toSetAffiliateAddressDomain - mapping func to database model
+func toSetAffiliateAddressDomain(msg types.DBSetAffiliateAddress) *accountstypes.MsgSetAffiliateAddress {
+	return &accountstypes.MsgSetAffiliateAddress{
+		Creator:    msg.Creator,
+		Hash:       msg.Hash,
+		OldAddress: msg.OldAddress,
+		NewAddress: msg.NewAddress,
 	}
 }
