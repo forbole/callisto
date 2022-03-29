@@ -1,6 +1,10 @@
 package types
 
 import (
+	"database/sql/driver"
+	"encoding/json"
+	"errors"
+
 	"github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -42,14 +46,14 @@ type (
 
 	// DBCreateWalletWithBalance represents a single row inside the "vipcoin_chain_wallets_create_wallet_with_balance" table
 	DBCreateWalletWithBalance struct {
-		Creator        string  `db:"creator"`
-		Address        string  `db:"address"`
-		AccountAddress string  `db:"account_address"`
-		Kind           int32   `db:"kind"`
-		State          int32   `db:"state"`
-		Extras         ExtraDB `db:"extras"`
-		DefaultStatus  bool    `db:"default_status"`
-		Balance        ExtraDB `db:"balance"`
+		Creator        string    `db:"creator"`
+		Address        string    `db:"address"`
+		AccountAddress string    `db:"account_address"`
+		Kind           int32     `db:"kind"`
+		State          int32     `db:"state"`
+		Extras         ExtraDB   `db:"extras"`
+		DefaultStatus  bool      `db:"default_status"`
+		Balance        BalanceDB `db:"balance"`
 	}
 
 	// DBSetDefaultWallet represents a single row inside the "vipcoin_chain_wallets_set_default_wallet" table
@@ -70,3 +74,20 @@ type (
 		Balance types.Coins
 	}
 )
+
+// Make the BalanceDB struct implement the driver.Valuer interface. This method
+// simply returns the JSON-encoded representation of the struct.
+func (b BalanceDB) Value() (driver.Value, error) {
+	return json.Marshal(b.Balance)
+}
+
+// Make the BalanceDB struct implement the sql.Scanner interface. This method
+// simply decodes a JSON-encoded value into the struct fields.
+func (b *BalanceDB) Scan(value interface{}) error {
+	v, ok := value.([]byte)
+	if !ok {
+		return errors.New("type assertion to []byte failed")
+	}
+
+	return json.Unmarshal(v, &b.Balance)
+}

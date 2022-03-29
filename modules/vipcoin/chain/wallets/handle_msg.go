@@ -30,6 +30,8 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *types.Tx) error {
 		return m.handleMsgSetDefaultWallet(walletMsg)
 	case *typeswallets.MsgSetExtra:
 		return m.handleMsgSetExtra(walletMsg)
+	case *typeswallets.MsgCreateWalletWithBalance:
+		return m.MsgCreateWalletWithBalance(walletMsg)
 	default:
 		errMsg := fmt.Sprintf("unrecognized %s message type: %T", typeswallets.ModuleName, walletMsg)
 		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
@@ -136,6 +138,32 @@ func (m *Module) handleMsgSetExtra(msg *typeswallets.MsgSetExtra) error {
 	}
 
 	wallets[0].Extras = msg.Extras
+
+	return m.walletsRepo.SaveWallets(wallets...)
+}
+
+// MsgCreateWalletWithBalance allows to properly handle a handleMsgCreateWallet
+func (m *Module) MsgCreateWalletWithBalance(msg *typeswallets.MsgCreateWalletWithBalance) error {
+	if err := m.walletsRepo.SaveCreateWalletWithBalance(msg); err != nil {
+		return err
+	}
+
+	wallets, err := m.walletsRepo.GetWallets(filter.NewFilter().SetArgument(dbtypes.FieldAddress, msg.Address))
+	if err != nil {
+		return err
+	}
+
+	if len(wallets) != 1 {
+		return typeswallets.ErrInvalidAddressField
+	}
+
+	wallets[0].AccountAddress = msg.AccountAddress
+	wallets[0].Kind = msg.Kind
+	wallets[0].State = msg.State
+	wallets[0].Balance = msg.Balance
+	wallets[0].Extras = msg.Extras
+	wallets[0].Default = msg.Default
+	wallets[0].Balance = msg.Balance
 
 	return m.walletsRepo.SaveWallets(wallets...)
 }

@@ -155,3 +155,42 @@ func toSetExtraDomain(wallet types.DBSetExtra) *walletstypes.MsgSetExtra {
 		Extras:  fromExtrasDB(wallet.Extras),
 	}
 }
+
+// toWalletsDatabase - mapping func to database model
+func toCreateWalletWithBalanceDatabase(wallets *walletstypes.MsgCreateWalletWithBalance) types.DBCreateWalletWithBalance {
+	return types.DBCreateWalletWithBalance{
+		Creator:        wallets.Creator,
+		Address:        wallets.Address,
+		AccountAddress: wallets.AccountAddress,
+		Kind:           int32(wallets.Kind),
+		State:          int32(wallets.State),
+		Extras:         toExtrasDB(wallets.Extras),
+		DefaultStatus:  wallets.Default,
+		Balance:        toBalanceDB(wallets.Balance),
+	}
+}
+
+// toCreateWalletsWithBalanceDatabase - mapping func to database model
+func toCreateWalletsWithBalanceDatabase(messages ...*walletstypes.MsgCreateWalletWithBalance) []types.DBCreateWalletWithBalance {
+	result := make([]types.DBCreateWalletWithBalance, 0, len(messages))
+	for _, msg := range messages {
+
+		result = append(result, toCreateWalletWithBalanceDatabase(msg))
+	}
+
+	return result
+}
+
+// toWalletDomain - mapping func to domain model
+func toCreateWalletWithBalanceDomain(wallet types.DBCreateWalletWithBalance) *walletstypes.MsgCreateWalletWithBalance {
+	return &walletstypes.MsgCreateWalletWithBalance{
+		Creator:        wallet.Creator,
+		Address:        wallet.Address,
+		AccountAddress: wallet.AccountAddress,
+		Kind:           walletstypes.WalletKind(wallet.Kind),
+		State:          walletstypes.WalletState(wallet.State),
+		Extras:         fromExtrasDB(wallet.Extras),
+		Default:        wallet.DefaultStatus,
+		Balance:        fromBalanceDB(wallet.Balance),
+	}
+}
