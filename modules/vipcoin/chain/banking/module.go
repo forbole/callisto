@@ -10,6 +10,7 @@ import (
 	"github.com/forbole/juno/v2/modules"
 
 	"github.com/forbole/bdjuno/v2/database"
+	"github.com/forbole/bdjuno/v2/database/vipcoin/chain/banking"
 	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/banking/source"
 )
 
@@ -21,9 +22,10 @@ var (
 
 // Module represents the x/banking module
 type Module struct {
-	cdc    codec.Marshaler
-	db     *database.Db
-	keeper source.Source
+	cdc         codec.Marshaler
+	db          *database.Db
+	bankingRepo banking.Repository
+	keeper      source.Source
 }
 
 // NewModule returns a new Module instance
@@ -31,9 +33,10 @@ func NewModule(
 	keeper source.Source, cdc codec.Marshaler, db *database.Db,
 ) *Module {
 	return &Module{
-		cdc:    cdc,
-		db:     db,
-		keeper: keeper,
+		cdc:         cdc,
+		db:          db,
+		bankingRepo: *banking.NewRepository(db.Sqlx, cdc),
+		keeper:      keeper,
 	}
 }
 
