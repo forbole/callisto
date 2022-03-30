@@ -6,6 +6,7 @@ package accounts
 
 // Defines fields.
 const (
-	FieldID   = "id"
-	FieldHash = "hash"
+	FieldAddress = "address"
+	FieldID      = "id"
+	FieldHash    = "hash"
 )

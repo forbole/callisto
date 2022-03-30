@@ -42,7 +42,9 @@ func (r Repository) SaveAccounts(accounts ...*accountstypes.Account) error {
 		return err
 	}
 
-	defer tx.Rollback()
+	defer func() {
+		_ = tx.Rollback()
+	}()
 
 	query := `INSERT INTO vipcoin_chain_accounts_accounts 
 			 ("address", "hash", "public_key", "kinds", "state", "extras", "affiliates", "wallets") 
@@ -109,14 +111,16 @@ func (r Repository) UpdateAccounts(accounts ...*accountstypes.Account) error {
 		return err
 	}
 
-	defer tx.Rollback()
+	defer func() {
+		_ = tx.Rollback()
+	}()
 
 	query := `UPDATE vipcoin_chain_accounts_accounts SET
-				 hash = :hash, public_key = :public_key, kinds = :kinds,
+				 address = :address, public_key = :public_key, kinds = :kinds,
 				 state = :state, extras = :extras, affiliates = :affiliates, wallets = :wallets
-			 WHERE address = :address`
+			 WHERE hash = :hash`
 
-	queryAffiliates := "SELECT affiliates FROM vipcoin_chain_accounts_accounts WHERE (address IN ($1))"
+	queryAffiliates := "SELECT affiliates FROM vipcoin_chain_accounts_accounts WHERE hash = $1"
 
 	for _, acc := range accounts {
 		accountDB, err := toAccountDatabase(acc, r.cdc)
@@ -125,7 +129,7 @@ func (r Repository) UpdateAccounts(accounts ...*accountstypes.Account) error {
 		}
 
 		var affiliatesID pq.Int64Array
-		if err := tx.Get(&affiliatesID, queryAffiliates, accountDB.Address); err != nil {
+		if err := tx.Get(&affiliatesID, queryAffiliates, accountDB.Hash); err != nil {
 			return err
 		}
 

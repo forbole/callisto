@@ -62,6 +62,14 @@ type (
 		NewAddress string `db:"new_address"`
 	}
 
+	// DBAccountMigrate represents a single row inside the "vipcoin_chain_accounts_account_migrate" table
+	DBAccountMigrate struct {
+		Creator   string `db:"creator"`
+		Address   string `db:"address"`
+		Hash      string `db:"hash"`
+		PublicKey string `db:"public_key"`
+	}
+
 	// ExtraDB helprs type
 	ExtraDB struct {
 		Extras []extratypes.Extra

@@ -147,7 +147,7 @@ func TestRepository_UpdateAccounts(t *testing.T) {
 			args: args{
 				accounts: []*accountstypes.Account{
 					{
-						Hash:    gofakeit.Regex("^0x[a-fA-F0-9]{40}$"),
+						Hash:    "b8b6cb7629d68b3ecf9ce200f631ffc72232bc798a7db755307332a40add5e37",
 						Address: "vcg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdy",
 						PublicKey: &anytype.Any{
 							TypeUrl: "/cosmos.crypto.secp256k1.PubKey",
