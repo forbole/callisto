@@ -97,3 +97,21 @@ func toCreateWalletDomain(wallet types.DBCreateWallet) *walletstypes.MsgCreateWa
 		Extras:         fromExtrasDB(wallet.Extras),
 	}
 }
+
+// toSetWalletStateDatabase - mapping func to database model
+func toSetWalletStateDatabase(wallet *walletstypes.MsgSetWalletState) types.DBSetWalletState {
+	return types.DBSetWalletState{
+		Creator: wallet.Creator,
+		Address: wallet.Address,
+		State:   int32(wallet.State),
+	}
+}
+
+// toSetWalletStateDomain - mapping func to domain model
+func toSetWalletStateDomain(wallet types.DBSetWalletState) *walletstypes.MsgSetWalletState {
+	return &walletstypes.MsgSetWalletState{
+		Creator: wallet.Creator,
+		Address: wallet.Address,
+		State:   walletstypes.WalletState(wallet.State),
+	}
+}

@@ -61,11 +61,7 @@ func (r Repository) SaveWallets(wallets ...*walletstypes.Wallet) error {
 		}
 	}
 
-	if err := tx.Commit(); err != nil {
-		return err
-	}
-
-	return nil
+	return tx.Commit()
 }
 
 // GetWallets - method that get wallets from the "vipcoin_chain_wallets_wallets" table
