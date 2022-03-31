@@ -116,9 +116,5 @@ func (r Repository) UpdateWallets(wallets ...*walletstypes.Wallet) error {
 		}
 	}
 
-	if err := tx.Commit(); err != nil {
-		return err
-	}
-
-	return nil
+	return tx.Commit()
 }

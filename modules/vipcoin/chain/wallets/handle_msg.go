@@ -28,6 +28,8 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *types.Tx) error {
 		return m.handleMsgSetStates(walletMsg)
 	case *typeswallets.MsgCreateWallet:
 		return m.handleMsgCreateWallet(tx, index, walletMsg)
+	case *typeswallets.MsgSetDefaultWallet:
+		return m.handleMsgSetDefaultWallet(walletMsg)
 	default:
 		errMsg := fmt.Sprintf("unrecognized %s message type: %T", typeswallets.ModuleName, walletMsg)
 		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
@@ -69,4 +71,22 @@ func (m *Module) handleMsgSetStates(msg *typeswallets.MsgSetWalletState) error {
 	wallets[0].State = msg.State
 
 	return m.walletsRepo.SaveWallets(wallets...)
+}
+
+// handleMsgSetKinds allows to properly handle a handleMsgSetKinds
+func (m *Module) handleMsgSetDefaultWallet(msg *typeswallets.MsgSetDefaultWallet) error {
+	if err := m.walletsRepo.SaveDefaultWallets(msg); err != nil {
+		return err
+	}
+
+	wallets, err := m.walletsRepo.GetWallets(filter.NewFilter().SetArgument(FieldAddress, msg.Address))
+	if err != nil {
+		return err
+	}
+
+	if len(wallets) != 1 {
+		return typeswallets.ErrInvalidAddressField
+	}
+
+	return m.walletsRepo.UpdateWallets(wallets...)
 }

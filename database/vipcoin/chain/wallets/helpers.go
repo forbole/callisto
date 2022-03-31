@@ -115,3 +115,19 @@ func toSetWalletStateDomain(wallet types.DBSetWalletState) *walletstypes.MsgSetW
 		State:   walletstypes.WalletState(wallet.State),
 	}
 }
+
+// toSetDefaultWalletDatabase - mapping func to database model
+func toSetDefaultWalletDatabase(wallet *walletstypes.MsgSetDefaultWallet) types.DBSetDefaultWallet {
+	return types.DBSetDefaultWallet{
+		Creator: wallet.Creator,
+		Address: wallet.Address,
+	}
+}
+
+// toSetDefaultWalletDomain - mapping func to domain model
+func toSetDefaultWalletDomain(wallet types.DBSetDefaultWallet) *walletstypes.MsgSetDefaultWallet {
+	return &walletstypes.MsgSetDefaultWallet{
+		Creator: wallet.Creator,
+		Address: wallet.Address,
+	}
+}
