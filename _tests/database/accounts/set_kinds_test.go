@@ -42,6 +42,11 @@ func TestRepository_SaveKinds(t *testing.T) {
 						Hash:    "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd1",
 						Kinds:   []accountstypes.AccountKind{accountstypes.ACCOUNT_KIND_SYSTEM},
 					},
+					{
+						Creator: "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv1g",
+						Hash:    "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd2",
+						Kinds:   []accountstypes.AccountKind{accountstypes.ACCOUNT_KIND_SYSTEM},
+					},
 				},
 			},
 		},

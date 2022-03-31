@@ -1,7 +1,3 @@
-/*
- * Copyright 2022 Business Process Technologies. All rights reserved.
- */
-
 package accounts
 
 import (
@@ -56,7 +52,8 @@ func toExtrasDB(extras []*extratypes.Extra) types.ExtraDB {
 func fromExtrasDB(extras types.ExtraDB) []*extratypes.Extra {
 	result := make([]*extratypes.Extra, 0, len(extras.Extras))
 	for _, extra := range extras.Extras {
-		result = append(result, &extra)
+		extraCopy := extra
+		result = append(result, &extraCopy)
 	}
 
 	return result
@@ -151,6 +148,16 @@ func toRegisterUserDatabase(user *accountstypes.MsgRegisterUser) types.DBRegiste
 
 }
 
+// toRegisterUsersDatabase - mapping func to database model
+func toRegisterUsersDatabase(msg ...*accountstypes.MsgRegisterUser) []types.DBRegisterUser {
+	result := make([]types.DBRegisterUser, 0, len(msg))
+	for _, user := range msg {
+		result = append(result, toRegisterUserDatabase(user))
+	}
+
+	return result
+}
+
 // toRegisterUserDomain - mapping func to database model
 func toRegisterUserDomain(user types.DBRegisterUser) *accountstypes.MsgRegisterUser {
 	return &accountstypes.MsgRegisterUser{
@@ -176,6 +183,16 @@ func toSetKindsDatabase(kinds *accountstypes.MsgSetKinds) types.DBSetKinds {
 	}
 }
 
+// toKindsArrDatabase - mapping func to database model
+func toKindsArrDatabase(msg ...*accountstypes.MsgSetKinds) []types.DBSetKinds {
+	result := make([]types.DBSetKinds, 0, len(msg))
+	for _, kind := range msg {
+		result = append(result, toSetKindsDatabase(kind))
+	}
+
+	return result
+}
+
 // toSetKindsDomain - mapping func to database model
 func toSetKindsDomain(kinds types.DBSetKinds) *accountstypes.MsgSetKinds {
 	return &accountstypes.MsgSetKinds{
@@ -193,6 +210,16 @@ func toSetAffiliateAddressDatabase(msg *accountstypes.MsgSetAffiliateAddress) ty
 		OldAddress: msg.OldAddress,
 		NewAddress: msg.NewAddress,
 	}
+}
+
+// toSetAffiliatesAddressDatabase - mapping func to database model
+func toSetAffiliatesAddressDatabase(msg ...*accountstypes.MsgSetAffiliateAddress) []types.DBSetAffiliateAddress {
+	result := make([]types.DBSetAffiliateAddress, 0, len(msg))
+	for _, affiliate := range msg {
+		result = append(result, toSetAffiliateAddressDatabase(affiliate))
+	}
+
+	return result
 }
 
 // toSetAffiliateAddressDomain - mapping func to database model
@@ -220,6 +247,26 @@ func toAccountsMigrateDatabase(msg ...*accountstypes.MsgAccountMigrate) []types.
 	result := make([]types.DBAccountMigrate, 0, len(msg))
 	for _, account := range msg {
 		result = append(result, toAccountMigrateDatabase(account))
+	}
+
+	return result
+}
+
+// toSetAffiliateExtraDatabase - mapping func to database model
+func toSetAffiliateExtraDatabase(msg *accountstypes.MsgSetAffiliateExtra) types.DBSetAffiliateExtra {
+	return types.DBSetAffiliateExtra{
+		Creator:         msg.Creator,
+		AccountHash:     msg.AccountHash,
+		AffiliationHash: msg.AffiliationHash,
+		Extras:          toExtrasDB(msg.Extras),
+	}
+}
+
+// toSetAffiliatesExtraDatabase - mapping func to database model
+func toSetAffiliatesExtraDatabase(msg ...*accountstypes.MsgSetAffiliateExtra) []types.DBSetAffiliateExtra {
+	result := make([]types.DBSetAffiliateExtra, 0, len(msg))
+	for _, extra := range msg {
+		result = append(result, toSetAffiliateExtraDatabase(extra))
 	}
 
 	return result
@@ -260,5 +307,15 @@ func toSetExtraDomain(msg types.DBSetAccountExtra) *accountstypes.MsgSetExtra {
 		Creator: msg.Creator,
 		Hash:    msg.Hash,
 		Extras:  fromExtrasDB(msg.Extras),
+	}
+}
+
+// toSetAffiliateExtraDomain - mapping func to database model
+func toSetAffiliateExtraDomain(msg types.DBSetAffiliateExtra) *accountstypes.MsgSetAffiliateExtra {
+	return &accountstypes.MsgSetAffiliateExtra{
+		Creator:         msg.Creator,
+		AccountHash:     msg.AccountHash,
+		AffiliationHash: msg.AffiliationHash,
+		Extras:          fromExtrasDB(msg.Extras),
 	}
 }

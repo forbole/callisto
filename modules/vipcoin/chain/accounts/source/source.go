@@ -1,7 +1,3 @@
-/*
- * Copyright 2022 Business Process Technologies. All rights reserved.
- */
-
 package source
 
 import (

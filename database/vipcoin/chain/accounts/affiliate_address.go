@@ -1,13 +1,6 @@
-/*
- * Copyright 2022 Business Process Technologies. All rights reserved.
- */
-
 package accounts
 
 import (
-	"context"
-	"database/sql"
-
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
 	"git.ooo.ua/vipcoin/lib/filter"
 	"github.com/forbole/bdjuno/v2/database/types"
@@ -19,27 +12,16 @@ func (r Repository) SaveAffiliateAddress(msg ...*accountstypes.MsgSetAffiliateAd
 		return nil
 	}
 
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return err
-	}
-
-	defer func() {
-		_ = tx.Rollback()
-	}()
-
 	query := `INSERT INTO vipcoin_chain_accounts_set_affiliate_address 
 			(creator, hash, old_address, new_address) 
 		VALUES 
 			(:creator, :hash, :old_address, :new_address)`
 
-	for _, affiliate := range msg {
-		if _, err := tx.NamedExec(query, toSetAffiliateAddressDatabase(affiliate)); err != nil {
-			return err
-		}
+	if _, err := r.db.NamedExec(query, toSetAffiliatesAddressDatabase(msg...)); err != nil {
+		return err
 	}
 
-	return tx.Commit()
+	return nil
 }
 
 // GetAffiliateAddress - get the given affiliate address from database

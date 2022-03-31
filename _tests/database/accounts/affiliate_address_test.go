@@ -43,6 +43,12 @@ func TestRepository_SaveAffiliateAddress(t *testing.T) {
 						OldAddress: "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
 						NewAddress: "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx46q",
 					},
+					{
+						Creator:    "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv1g",
+						Hash:       "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd2",
+						OldAddress: "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx43q",
+						NewAddress: "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx44q",
+					},
 				},
 			},
 			wantErr: false,

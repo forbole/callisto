@@ -1,7 +1,3 @@
-/*
- * Copyright 2022 Business Process Technologies. All rights reserved.
- */
-
 package types
 
 import (
@@ -75,6 +71,14 @@ type (
 		Creator string  `db:"creator"`
 		Hash    string  `db:"hash"`
 		Extras  ExtraDB `db:"extras"`
+	}
+
+	// DBSetAffiliateExtra represents a single row inside the "vipcoin_chain_accounts_set_affiliate_extra" table
+	DBSetAffiliateExtra struct {
+		Creator         string  `db:"creator"`
+		AccountHash     string  `db:"account_hash"`
+		AffiliationHash string  `db:"affiliation_hash"`
+		Extras          ExtraDB `db:"extras"`
 	}
 
 	// ExtraDB helprs type

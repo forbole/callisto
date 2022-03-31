@@ -1,13 +1,6 @@
-/*
- * Copyright 2022 Business Process Technologies. All rights reserved.
- */
-
 package accounts
 
 import (
-	"context"
-	"database/sql"
-
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
 	"git.ooo.ua/vipcoin/lib/filter"
 	"github.com/forbole/bdjuno/v2/database/types"
@@ -19,27 +12,16 @@ func (r Repository) SaveKinds(msg ...*accountstypes.MsgSetKinds) error {
 		return nil
 	}
 
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return err
-	}
-
-	defer func() {
-		_ = tx.Rollback()
-	}()
-
 	query := `INSERT INTO vipcoin_chain_accounts_set_kinds 
 			(creator, hash, kinds) 
 			VALUES 
 			(:creator, :hash, :kinds)`
 
-	for _, kinds := range msg {
-		if _, err := tx.NamedExec(query, toSetKindsDatabase(kinds)); err != nil {
-			return err
-		}
+	if _, err := r.db.NamedExec(query, toKindsArrDatabase(msg...)); err != nil {
+		return err
 	}
 
-	return tx.Commit()
+	return nil
 }
 
 // GetKinds - get the given kinds from database

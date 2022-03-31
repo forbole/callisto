@@ -1,13 +1,6 @@
-/*
- * Copyright 2022 Business Process Technologies. All rights reserved.
- */
-
 package accounts
 
 import (
-	"context"
-	"database/sql"
-
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
 	"git.ooo.ua/vipcoin/lib/filter"
 	"github.com/forbole/bdjuno/v2/database/types"
@@ -19,13 +12,6 @@ func (r Repository) SaveRegisterUser(msg ...*accountstypes.MsgRegisterUser) erro
 		return nil
 	}
 
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return err
-	}
-
-	defer tx.Rollback()
-
 	query := `INSERT INTO vipcoin_chain_accounts_register_user 
 			(creator, address, hash, public_key, holder_wallet, ref_reward_wallet, 
 			holder_wallet_extras, ref_reward_wallet_extras, referrer_hash) 
@@ -33,13 +19,11 @@ func (r Repository) SaveRegisterUser(msg ...*accountstypes.MsgRegisterUser) erro
 			(:creator, :address, :hash, :public_key, :holder_wallet, :ref_reward_wallet, 
 			:holder_wallet_extras, :ref_reward_wallet_extras, :referrer_hash)`
 
-	for _, user := range msg {
-		if _, err := tx.NamedExec(query, toRegisterUserDatabase(user)); err != nil {
-			return err
-		}
+	if _, err := r.db.NamedExec(query, toRegisterUsersDatabase(msg...)); err != nil {
+		return err
 	}
 
-	return tx.Commit()
+	return nil
 }
 
 // GetRegisterUser - get the given user from database
