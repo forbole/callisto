@@ -1,12 +1,9 @@
-/*
- * Copyright 2022 Business Process Technologies. All rights reserved.
- */
-
 package local
 
 import (
-	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets/source"
 	"github.com/forbole/juno/v2/node/local"
+
+	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets/source"
 
 	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
 )

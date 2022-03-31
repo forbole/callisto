@@ -1,7 +1,3 @@
-/*
- * Copyright 2022 Business Process Technologies. All rights reserved.
- */
-
 package wallets
 
 import (
@@ -67,7 +63,7 @@ func (r Repository) SaveWallets(wallets ...*walletstypes.Wallet) error {
 // GetWallets - method that get wallets from the "vipcoin_chain_wallets_wallets" table
 func (r Repository) GetWallets(filter filter.Filter) ([]*walletstypes.Wallet, error) {
 	query, args := filter.Build("vipcoin_chain_wallets_wallets",
-		`address, account_address, kind, state, balance, extras, default_status`)
+		types.FieldAddress, types.FieldAccountAddress, types.FieldKind, types.FieldState, types.FieldBalance, types.FieldExtras, types.FieldDefaultStatus)
 
 	var result []types.DBWallets
 	if err := r.db.Select(&result, query, args...); err != nil {
@@ -116,9 +112,5 @@ func (r Repository) UpdateWallets(wallets ...*walletstypes.Wallet) error {
 		}
 	}
 
-	if err := tx.Commit(); err != nil {
-		return err
-	}
-
-	return nil
+	return tx.Commit()
 }

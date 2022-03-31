@@ -1,7 +1,3 @@
-/*
- * Copyright 2022 Business Process Technologies. All rights reserved.
- */
-
 package wallets
 
 import (
@@ -113,5 +109,21 @@ func toSetWalletStateDomain(wallet types.DBSetWalletState) *walletstypes.MsgSetW
 		Creator: wallet.Creator,
 		Address: wallet.Address,
 		State:   walletstypes.WalletState(wallet.State),
+	}
+}
+
+// toSetDefaultWalletDatabase - mapping func to database model
+func toSetDefaultWalletDatabase(wallet *walletstypes.MsgSetDefaultWallet) types.DBSetDefaultWallet {
+	return types.DBSetDefaultWallet{
+		Creator: wallet.Creator,
+		Address: wallet.Address,
+	}
+}
+
+// toSetDefaultWalletDomain - mapping func to domain model
+func toSetDefaultWalletDomain(wallet types.DBSetDefaultWallet) *walletstypes.MsgSetDefaultWallet {
+	return &walletstypes.MsgSetDefaultWallet{
+		Creator: wallet.Creator,
+		Address: wallet.Address,
 	}
 }

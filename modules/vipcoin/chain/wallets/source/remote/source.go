@@ -1,14 +1,11 @@
-/*
- * Copyright 2022 Business Process Technologies. All rights reserved.
- */
-
 package remote
 
 import (
 	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
 
-	vipcoinwalletskeeper "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets/source"
 	"github.com/forbole/juno/v2/node/remote"
+
+	vipcoinwalletskeeper "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets/source"
 )
 
 var (
