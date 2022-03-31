@@ -3,6 +3,7 @@ package accounts
 import (
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
 	"git.ooo.ua/vipcoin/lib/filter"
+
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
@@ -26,8 +27,11 @@ func (r Repository) SaveAffiliateAddress(msg ...*accountstypes.MsgSetAffiliateAd
 
 // GetAffiliateAddress - get the given affiliate address from database
 func (r Repository) GetAffiliateAddress(accfilter filter.Filter) ([]*accountstypes.MsgSetAffiliateAddress, error) {
-	query, args := accfilter.Build("vipcoin_chain_accounts_set_affiliate_address",
-		`creator, hash, old_address, new_address`)
+	query, args := accfilter.Build(
+		tableAffiliateAddress,
+		types.FieldCreator, types.FieldHash,
+		types.FieldOldAddress, types.FieldNewAddress,
+	)
 
 	var result []types.DBSetAffiliateAddress
 	if err := r.db.Select(&result, query, args...); err != nil {

@@ -3,6 +3,7 @@ package accounts
 import (
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
 	"git.ooo.ua/vipcoin/lib/filter"
+
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
@@ -28,9 +29,12 @@ func (r Repository) SaveRegisterUser(msg ...*accountstypes.MsgRegisterUser) erro
 
 // GetRegisterUser - get the given user from database
 func (r Repository) GetRegisterUser(accfilter filter.Filter) ([]*accountstypes.MsgRegisterUser, error) {
-	query, args := accfilter.Build("vipcoin_chain_accounts_register_user",
-		`creator, address, hash, public_key, holder_wallet, ref_reward_wallet, 
-		holder_wallet_extras, ref_reward_wallet_extras, referrer_hash`)
+	query, args := accfilter.Build(
+		tableRegisterUser,
+		types.FieldCreator, types.FieldAddress, types.FieldHash, types.FieldPublicKey,
+		types.FieldHolderWallet, types.FieldRefRewardWallet, types.FieldHolderWalletExtras,
+		types.FieldRefRewardWalletExtras, types.FieldReferrerHash,
+	)
 
 	var result []types.DBRegisterUser
 	if err := r.db.Select(&result, query, args...); err != nil {

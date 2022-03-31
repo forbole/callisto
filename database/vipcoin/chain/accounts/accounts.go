@@ -7,9 +7,10 @@ import (
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
 	"git.ooo.ua/vipcoin/lib/filter"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/forbole/bdjuno/v2/database/types"
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
+
+	"github.com/forbole/bdjuno/v2/database/types"
 )
 
 type (
@@ -163,8 +164,11 @@ func deleteAffiliates(tx *sqlx.Tx, affiliatesID pq.Int64Array) error {
 }
 
 func (r Repository) GetAccounts(accfilter filter.Filter) ([]*accountstypes.Account, error) {
-	query, args := accfilter.Build("vipcoin_chain_accounts_accounts",
-		`address, hash, public_key, kinds, state, extras, affiliates, wallets`)
+	query, args := accfilter.Build(
+		tableAccounts,
+		types.FieldAddress, types.FieldHash, types.FieldPublicKey, types.FieldKinds,
+		types.FieldState, types.FieldExtra, types.FieldAffiliates, types.FieldWallets,
+	)
 
 	var result []types.DBAccount
 	if err := r.db.Select(&result, query, args...); err != nil {
@@ -193,8 +197,11 @@ func getAffiliates(db *sqlx.DB, affiliatesID pq.Int64Array) ([]*accountstypes.Af
 		return []*accountstypes.Affiliate{}, nil
 	}
 
-	query, args := filter.NewFilter().SetArgument("id", parseID(affiliatesID)...).
-		Build("vipcoin_chain_accounts_affiliates", `id, address, affiliation_kind, extras`)
+	query, args := filter.NewFilter().SetArgument(types.FieldID, parseID(affiliatesID)...).Build(
+		tableAffiliates,
+		types.FieldID, types.FieldAddress,
+		types.FieldAffiliationKind, types.FieldExtra,
+	)
 
 	var result []types.DBAffiliates
 	if err := db.Select(&result, query, args...); err != nil {

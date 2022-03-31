@@ -3,6 +3,7 @@ package accounts
 import (
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
 	"git.ooo.ua/vipcoin/lib/filter"
+
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
@@ -26,8 +27,11 @@ func (r Repository) SaveAffiliateExtra(msg ...*accountstypes.MsgSetAffiliateExtr
 
 // GetAffiliateExtra - get the given affiliate extra from database
 func (r Repository) GetAffiliateExtra(accfilter filter.Filter) ([]*accountstypes.MsgSetAffiliateExtra, error) {
-	query, args := accfilter.Build("vipcoin_chain_accounts_set_affiliate_extra",
-		`creator, account_hash, affiliation_hash, extras`)
+	query, args := accfilter.Build(
+		tableAffiliateExtra,
+		types.FieldCreator, types.FieldAccountHash,
+		types.FieldAffiliationHash, types.FieldExtra,
+	)
 
 	var result []types.DBSetAffiliateExtra
 	if err := r.db.Select(&result, query, args...); err != nil {

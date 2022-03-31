@@ -3,6 +3,7 @@ package accounts
 import (
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
 	"git.ooo.ua/vipcoin/lib/filter"
+
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
@@ -26,8 +27,10 @@ func (r Repository) SaveExtra(msg ...*accountstypes.MsgSetExtra) error {
 
 // GetExtra - get the given extra from database
 func (r Repository) GetExtra(accfilter filter.Filter) ([]*accountstypes.MsgSetExtra, error) {
-	query, args := accfilter.Build("vipcoin_chain_accounts_set_extra",
-		`creator, hash, extras`)
+	query, args := accfilter.Build(
+		tableExtra,
+		types.FieldCreator, types.FieldHash, types.FieldExtra,
+	)
 
 	var result []types.DBSetAccountExtra
 	if err := r.db.Select(&result, query, args...); err != nil {

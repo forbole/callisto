@@ -5,9 +5,8 @@ import (
 
 	"git.ooo.ua/vipcoin/chain/x/accounts/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	juno "github.com/forbole/juno/v2/types"
-
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	juno "github.com/forbole/juno/v2/types"
 )
 
 // HandleMsg implements MessageModule
@@ -19,6 +18,8 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	switch accountMsg := msg.(type) {
 	case *types.MsgSetKinds:
 		return m.handleMsgSetKinds(tx, index, accountMsg)
+	case *types.MsgSetState:
+		return m.handleMsgSetState(tx, index, accountMsg)
 	case *types.MsgSetAffiliateAddress:
 		return m.handleMsgSetAffiliateAddress(tx, index, accountMsg)
 	case *types.MsgAccountMigrate:

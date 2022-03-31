@@ -11,10 +11,11 @@ import (
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
 	"git.ooo.ua/vipcoin/lib/filter"
 	"github.com/cosmos/cosmos-sdk/simapp"
-	accountsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/accounts"
-	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts"
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
+
+	"github.com/forbole/bdjuno/v2/database/types"
+	accountsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/accounts"
 )
 
 func TestRepository_SaveAccountMigrate(t *testing.T) {
@@ -87,7 +88,7 @@ func TestRepository_GetAccountMigrate(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				accfilter: filter.NewFilter().SetArgument(accounts.FieldAddress, "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q"),
+				accfilter: filter.NewFilter().SetArgument(types.FieldAddress, "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q"),
 			},
 			want: []*accountstypes.MsgAccountMigrate{
 				{

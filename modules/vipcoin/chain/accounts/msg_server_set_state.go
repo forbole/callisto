@@ -8,9 +8,9 @@ import (
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 )
 
-// handleMsgSetAffiliateAddress allows to properly handle a handleMsgSetAffiliateAddress
-func (m *Module) handleMsgSetAffiliateAddress(tx *juno.Tx, index int, msg *types.MsgSetAffiliateAddress) error {
-	if err := m.accountRepo.SaveAffiliateAddress(msg); err != nil {
+// handleMsgSetState allows to properly handle a handleMsgSetState
+func (m *Module) handleMsgSetState(tx *juno.Tx, index int, msg *types.MsgSetState) error {
+	if err := m.accountRepo.SaveState(msg); err != nil {
 		return err
 	}
 
@@ -23,9 +23,7 @@ func (m *Module) handleMsgSetAffiliateAddress(tx *juno.Tx, index int, msg *types
 		return types.ErrInvalidHashField
 	}
 
-	if err := updateAffiliateAddress(acc[0].Affiliates, msg); err != nil {
-		return err
-	}
+	acc[0].State = msg.State
 
 	return m.accountRepo.UpdateAccounts(acc...)
 }

@@ -3,6 +3,7 @@ package accounts
 import (
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
 	"git.ooo.ua/vipcoin/lib/filter"
+
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
@@ -26,8 +27,11 @@ func (r Repository) SaveAccountMigrate(msg ...*accountstypes.MsgAccountMigrate) 
 
 // GetAccountMigrate - get the given account migrate from database
 func (r Repository) GetAccountMigrate(accfilter filter.Filter) ([]*accountstypes.MsgAccountMigrate, error) {
-	query, args := accfilter.Build("vipcoin_chain_accounts_account_migrate",
-		`creator, address, hash, public_key`)
+	query, args := accfilter.Build(
+		tableAccountMigrate,
+		types.FieldCreator, types.FieldAddress,
+		types.FieldHash, types.FieldPublicKey,
+	)
 
 	var result []types.DBAccountMigrate
 	if err := r.db.Select(&result, query, args...); err != nil {

@@ -4,9 +4,8 @@ import (
 	"encoding/json"
 
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
-	tmtypes "github.com/tendermint/tendermint/types"
-
 	"github.com/rs/zerolog/log"
+	tmtypes "github.com/tendermint/tendermint/types"
 )
 
 // HandleGenesis implements GenesisModule

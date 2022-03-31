@@ -12,9 +12,11 @@ import (
 	extratypes "git.ooo.ua/vipcoin/chain/x/types"
 	"git.ooo.ua/vipcoin/lib/filter"
 	"github.com/cosmos/cosmos-sdk/simapp"
-	accountsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/accounts"
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
+
+	"github.com/forbole/bdjuno/v2/database/types"
+	accountsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/accounts"
 )
 
 func TestRepository_SaveRegisterUser(t *testing.T) {
@@ -117,7 +119,7 @@ func TestRepository_GetRegisterUser(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				accfilter: filter.NewFilter().SetArgument("address", "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q"),
+				accfilter: filter.NewFilter().SetArgument(types.FieldAddress, "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q"),
 			},
 			want: []*accountstypes.MsgRegisterUser{
 				{

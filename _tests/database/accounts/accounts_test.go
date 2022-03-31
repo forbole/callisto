@@ -14,9 +14,11 @@ import (
 	"github.com/brianvoe/gofakeit/v6"
 	anytype "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/simapp"
-	accountsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/accounts"
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
+
+	"github.com/forbole/bdjuno/v2/database/types"
+	accountsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/accounts"
 )
 
 func TestRepository_SaveAccounts(t *testing.T) {
@@ -252,7 +254,7 @@ func TestRepository_GetAccounts(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				accfilter: filter.NewFilter().SetArgument("address", "vcg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdy"),
+				accfilter: filter.NewFilter().SetArgument(types.FieldAddress, "vcg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdy"),
 			},
 			want: []*accountstypes.Account{
 				{

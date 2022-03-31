@@ -1,7 +1,3 @@
-/*
- * Copyright 2022 Business Process Technologies. All rights reserved.
- */
-
 package accounts
 
 import (
@@ -18,7 +14,7 @@ import (
 	accountsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/accounts"
 )
 
-func TestRepository_SaveKinds(t *testing.T) {
+func TestRepository_SaveState(t *testing.T) {
 	db, err := sqlx.Connect("pgx", "host=localhost port=5432 user=postgres dbname=juno password=postgres sslmode=disable")
 	if err != nil {
 		t.Fatal(err)
@@ -28,7 +24,7 @@ func TestRepository_SaveKinds(t *testing.T) {
 	codec := simapp.MakeTestEncodingConfig()
 
 	type args struct {
-		msg []*accountstypes.MsgSetKinds
+		msg []*accountstypes.MsgSetState
 	}
 	tests := []struct {
 		name    string
@@ -38,33 +34,36 @@ func TestRepository_SaveKinds(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				msg: []*accountstypes.MsgSetKinds{
+				msg: []*accountstypes.MsgSetState{
 					{
 						Creator: "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
 						Hash:    "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd1",
-						Kinds:   []accountstypes.AccountKind{accountstypes.ACCOUNT_KIND_SYSTEM},
+						State:   accountstypes.ACCOUNT_STATE_ACTIVE,
+						Reason:  "valid account",
 					},
 					{
 						Creator: "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv1g",
 						Hash:    "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd2",
-						Kinds:   []accountstypes.AccountKind{accountstypes.ACCOUNT_KIND_SYSTEM},
+						State:   accountstypes.ACCOUNT_STATE_BLOCKED,
+						Reason:  "fraud",
 					},
 				},
 			},
+			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			r := accountsdb.NewRepository(db, codec.Marshaler)
 
-			if err := r.SaveKinds(tt.args.msg...); (err != nil) != tt.wantErr {
-				t.Errorf("Repository.SaveKinds() error = %v, wantErr %v", err, tt.wantErr)
+			if err := r.SaveState(tt.args.msg...); (err != nil) != tt.wantErr {
+				t.Errorf("Repository.SaveState() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
 }
 
-func TestRepository_GetKinds(t *testing.T) {
+func TestRepository_GetState(t *testing.T) {
 	db, err := sqlx.Connect("pgx", "host=localhost port=5432 user=postgres dbname=juno password=postgres sslmode=disable")
 	if err != nil {
 		t.Fatal(err)
@@ -79,19 +78,20 @@ func TestRepository_GetKinds(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    []*accountstypes.MsgSetKinds
+		want    []*accountstypes.MsgSetState
 		wantErr bool
 	}{
 		{
 			name: "valid",
 			args: args{
-				accfilter: filter.NewFilter().SetArgument(types.FieldCreator, "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g"),
+				filter.NewFilter().SetArgument(types.FieldHash, "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd2"),
 			},
-			want: []*accountstypes.MsgSetKinds{
+			want: []*accountstypes.MsgSetState{
 				{
-					Creator: "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
-					Hash:    "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd1",
-					Kinds:   []accountstypes.AccountKind{accountstypes.ACCOUNT_KIND_SYSTEM},
+					Creator: "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv1g",
+					Hash:    "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd2",
+					State:   accountstypes.ACCOUNT_STATE_BLOCKED,
+					Reason:  "fraud",
 				},
 			},
 			wantErr: false,
@@ -101,13 +101,13 @@ func TestRepository_GetKinds(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := accountsdb.NewRepository(db, codec.Marshaler)
 
-			got, err := r.GetKinds(tt.args.accfilter)
+			got, err := r.GetState(tt.args.accfilter)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Repository.GetKinds() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Repository.GetState() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Repository.GetKinds() = %v, want %v", got, tt.want)
+				t.Errorf("Repository.GetState() = %v, want %v", got, tt.want)
 			}
 		})
 	}

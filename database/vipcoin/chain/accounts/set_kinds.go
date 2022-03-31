@@ -3,6 +3,7 @@ package accounts
 import (
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
 	"git.ooo.ua/vipcoin/lib/filter"
+
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
@@ -26,8 +27,10 @@ func (r Repository) SaveKinds(msg ...*accountstypes.MsgSetKinds) error {
 
 // GetKinds - get the given kinds from database
 func (r Repository) GetKinds(accfilter filter.Filter) ([]*accountstypes.MsgSetKinds, error) {
-	query, args := accfilter.Build("vipcoin_chain_accounts_set_kinds",
-		`creator, hash, kinds`)
+	query, args := accfilter.Build(
+		tableKinds,
+		types.FieldCreator, types.FieldHash, types.FieldKinds,
+	)
 
 	var result []types.DBSetKinds
 	if err := r.db.Select(&result, query, args...); err != nil {
