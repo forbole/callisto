@@ -28,6 +28,8 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *types.Tx) error {
 		return m.handleMsgCreateWallet(tx, index, walletMsg)
 	case *typeswallets.MsgSetDefaultWallet:
 		return m.handleMsgSetDefaultWallet(walletMsg)
+	case *typeswallets.MsgSetExtra:
+		return m.handleMsgSetExtra(walletMsg)
 	default:
 		errMsg := fmt.Sprintf("unrecognized %s message type: %T", typeswallets.ModuleName, walletMsg)
 		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
@@ -71,7 +73,7 @@ func (m *Module) handleMsgSetStates(msg *typeswallets.MsgSetWalletState) error {
 	return m.walletsRepo.SaveWallets(wallets...)
 }
 
-// handleMsgSetKinds allows to properly handle a handleMsgSetKinds
+// handleMsgSetDefaultWallet allows to properly handle a MsgSetDefaultWallet
 func (m *Module) handleMsgSetDefaultWallet(msg *typeswallets.MsgSetDefaultWallet) error {
 	if err := m.walletsRepo.SaveDefaultWallets(msg); err != nil {
 		return err
@@ -116,4 +118,24 @@ func (m *Module) handleMsgSetDefaultWallet(msg *typeswallets.MsgSetDefaultWallet
 	targetWallet[0].Default = true
 
 	return m.walletsRepo.SaveWallets(targetWallet[0])
+}
+
+// handleMsgSetExtra allows to properly handle a MsgSetExtra
+func (m *Module) handleMsgSetExtra(msg *typeswallets.MsgSetExtra) error {
+	if err := m.walletsRepo.SaveExtras(msg); err != nil {
+		return err
+	}
+
+	wallets, err := m.walletsRepo.GetWallets(filter.NewFilter().SetArgument(dbtypes.FieldAddress, msg.Address))
+	if err != nil {
+		return err
+	}
+
+	if len(wallets) != 1 {
+		return typeswallets.ErrInvalidAddressField
+	}
+
+	wallets[0].Extras = msg.Extras
+
+	return m.walletsRepo.SaveWallets(wallets...)
 }

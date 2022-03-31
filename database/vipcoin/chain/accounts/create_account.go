@@ -30,7 +30,7 @@ func (r Repository) GetCreateAccount(accfilter filter.Filter) ([]*accountstypes.
 	query, args := accfilter.Build(
 		tableCreateAccount,
 		types.FieldCreator, types.FieldHash, types.FieldAddress, types.FieldPublicKey,
-		types.FieldKinds, types.FieldState, types.FieldExtra,
+		types.FieldKinds, types.FieldState, types.FieldExtras,
 	)
 
 	var result []types.DBCreateAccount

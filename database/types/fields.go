@@ -19,7 +19,6 @@ const (
 	FieldHolderWalletExtras    = "holder_wallet_extras"
 	FieldRefRewardWalletExtras = "ref_reward_wallet_extras"
 	FieldReferrerHash          = "referrer_hash"
-	FieldExtra                 = "extras"
 	FieldAccountHash           = "account_hash"
 	FieldAffiliationHash       = "affiliation_hash"
 	FieldOldAddress            = "old_address"

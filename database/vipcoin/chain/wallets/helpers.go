@@ -127,3 +127,31 @@ func toSetDefaultWalletDomain(wallet types.DBSetDefaultWallet) *walletstypes.Msg
 		Address: wallet.Address,
 	}
 }
+
+// toSetExtraDatabase - mapping func to database model
+func toSetExtraDatabase(wallet *walletstypes.MsgSetExtra) types.DBSetExtra {
+	return types.DBSetExtra{
+		Creator: wallet.Creator,
+		Address: wallet.Address,
+		Extras:  toExtrasDB(wallet.Extras),
+	}
+}
+
+// toSetExtrasDatabase - mapping func to database model
+func toSetExtrasDatabase(messages ...*walletstypes.MsgSetExtra) []types.DBSetExtra {
+	result := make([]types.DBSetExtra, 0, len(messages))
+	for _, msg := range messages {
+		result = append(result, toSetExtraDatabase(msg))
+	}
+
+	return result
+}
+
+// toSetExtraDomain - mapping func to domain model
+func toSetExtraDomain(wallet types.DBSetExtra) *walletstypes.MsgSetExtra {
+	return &walletstypes.MsgSetExtra{
+		Creator: wallet.Creator,
+		Address: wallet.Address,
+		Extras:  fromExtrasDB(wallet.Extras),
+	}
+}

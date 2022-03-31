@@ -29,7 +29,7 @@ func (r Repository) SaveExtra(msg ...*accountstypes.MsgSetExtra) error {
 func (r Repository) GetExtra(accountFilter filter.Filter) ([]*accountstypes.MsgSetExtra, error) {
 	query, args := accountFilter.Build(
 		tableExtra,
-		types.FieldCreator, types.FieldHash, types.FieldExtra,
+		types.FieldCreator, types.FieldHash, types.FieldExtras,
 	)
 
 	var result []types.DBSetAccountExtra

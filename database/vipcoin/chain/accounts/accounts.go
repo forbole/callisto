@@ -167,7 +167,7 @@ func (r Repository) GetAccounts(accountFilter filter.Filter) ([]*accountstypes.A
 	query, args := accountFilter.Build(
 		tableAccounts,
 		types.FieldAddress, types.FieldHash, types.FieldPublicKey, types.FieldKinds,
-		types.FieldState, types.FieldExtra, types.FieldAffiliates, types.FieldWallets,
+		types.FieldState, types.FieldExtras, types.FieldAffiliates, types.FieldWallets,
 	)
 
 	var result []types.DBAccount
@@ -200,7 +200,7 @@ func getAffiliates(db *sqlx.DB, affiliatesID pq.Int64Array) ([]*accountstypes.Af
 	query, args := filter.NewFilter().SetArgument(types.FieldID, parseID(affiliatesID)...).Build(
 		tableAffiliates,
 		types.FieldID, types.FieldAddress,
-		types.FieldAffiliationKind, types.FieldExtra,
+		types.FieldAffiliationKind, types.FieldExtras,
 	)
 
 	var result []types.DBAffiliates
