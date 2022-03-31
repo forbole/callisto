@@ -27,6 +27,7 @@ import (
 	"github.com/forbole/bdjuno/v2/modules/slashing"
 	"github.com/forbole/bdjuno/v2/modules/staking"
 	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts"
+	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/assets"
 	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/banking"
 	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets"
 	"github.com/forbole/bdjuno/v2/utils"
@@ -60,6 +61,7 @@ import (
 	remotestakingsource "github.com/forbole/bdjuno/v2/modules/staking/source/remote"
 
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
+	assetstypes "git.ooo.ua/vipcoin/chain/x/assets/types"
 	bankingtypes "git.ooo.ua/vipcoin/chain/x/banking/types"
 	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
 
@@ -74,6 +76,9 @@ import (
 
 	vipcoinbankingsource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/banking/source"
 	remotevipcoinbankingsource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/banking/source/remote"
+
+	vipcoinassetssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/assets/source"
+	remotevipcoinassetssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/assets/source/remote"
 )
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
@@ -128,6 +133,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	vipcoinAccountsModule := accounts.NewModule(sources.VipcoinAccountsSource, cdc, db)
 	vipcoinWalletsModule := wallets.NewModule(r.parser, sources.VipcoinWalletsSource, cdc, db)
 	vipcoinBankingModule := banking.NewModule(sources.VipcoinBankingSource, cdc, db)
+	vipcoinAssetsModule := assets.NewModule(sources.VipcoinAssetsSource, cdc, db)
 
 	return []jmodules.Module{
 		messages.NewModule(r.parser, cdc, ctx.Database),
@@ -148,6 +154,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		vipcoinAccountsModule,
 		vipcoinWalletsModule,
 		vipcoinBankingModule,
+		vipcoinAssetsModule,
 	}
 }
 
@@ -161,6 +168,7 @@ type Sources struct {
 	VipcoinAccountsSource vipcoinaccountssource.Source
 	VipcoinWalletsSource  vipcoinwalletssource.Source
 	VipcoinBankingSource  vipcoinbankingsource.Source
+	VipcoinAssetsSource   vipcoinassetssource.Source
 }
 
 func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -235,5 +243,6 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		VipcoinAccountsSource: remotevipcoinaccountssource.NewSource(source, accountstypes.NewQueryClient(source.GrpcConn)),
 		VipcoinWalletsSource:  remotevipcoinwalletsssource.NewSource(source, walletstypes.NewQueryClient(source.GrpcConn)),
 		VipcoinBankingSource:  remotevipcoinbankingsource.NewSource(source, bankingtypes.NewQueryClient(source.GrpcConn)),
+		VipcoinAssetsSource:   remotevipcoinassetssource.NewSource(source, assetstypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }

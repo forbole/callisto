@@ -11,6 +11,7 @@ chain:
       - vipcoin_accounts
       - vipcoin_wallets
       - vipcoin_banking
+      - vipcoin_assets
 
 node:
     type: remote
