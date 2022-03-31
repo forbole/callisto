@@ -234,3 +234,31 @@ func toAccountMigrateDomain(msg types.DBAccountMigrate) *accountstypes.MsgAccoun
 		PublicKey: msg.PublicKey,
 	}
 }
+
+// toSetExtraDatabase - mapping func to database model
+func toSetExtraDatabase(msg *accountstypes.MsgSetExtra) types.DBSetAccountExtra {
+	return types.DBSetAccountExtra{
+		Creator: msg.Creator,
+		Hash:    msg.Hash,
+		Extras:  toExtrasDB(msg.Extras),
+	}
+}
+
+// toSetExtrasDatabase - mapping func to database model
+func toSetExtrasDatabase(msg ...*accountstypes.MsgSetExtra) []types.DBSetAccountExtra {
+	result := make([]types.DBSetAccountExtra, 0, len(msg))
+	for _, extra := range msg {
+		result = append(result, toSetExtraDatabase(extra))
+	}
+
+	return result
+}
+
+// toSetExtraDomain - mapping func to database model
+func toSetExtraDomain(msg types.DBSetAccountExtra) *accountstypes.MsgSetExtra {
+	return &accountstypes.MsgSetExtra{
+		Creator: msg.Creator,
+		Hash:    msg.Hash,
+		Extras:  fromExtrasDB(msg.Extras),
+	}
+}

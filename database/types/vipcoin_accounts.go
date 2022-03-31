@@ -70,6 +70,13 @@ type (
 		PublicKey string `db:"public_key"`
 	}
 
+	// DBSetAccountExtra represents a single row inside the "vipcoin_chain_accounts_set_extra" table
+	DBSetAccountExtra struct {
+		Creator string  `db:"creator"`
+		Hash    string  `db:"hash"`
+		Extras  ExtraDB `db:"extras"`
+	}
+
 	// ExtraDB helprs type
 	ExtraDB struct {
 		Extras []extratypes.Extra
