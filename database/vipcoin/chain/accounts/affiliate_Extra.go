@@ -26,8 +26,8 @@ func (r Repository) SaveAffiliateExtra(msg ...*accountstypes.MsgSetAffiliateExtr
 }
 
 // GetAffiliateExtra - get the given affiliate extra from database
-func (r Repository) GetAffiliateExtra(accfilter filter.Filter) ([]*accountstypes.MsgSetAffiliateExtra, error) {
-	query, args := accfilter.Build(
+func (r Repository) GetAffiliateExtra(accountFilter filter.Filter) ([]*accountstypes.MsgSetAffiliateExtra, error) {
+	query, args := accountFilter.Build(
 		tableAffiliateExtra,
 		types.FieldCreator, types.FieldAccountHash,
 		types.FieldAffiliationHash, types.FieldExtra,

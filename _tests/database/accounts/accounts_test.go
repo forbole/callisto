@@ -243,7 +243,7 @@ func TestRepository_GetAccounts(t *testing.T) {
 	codec := simapp.MakeTestEncodingConfig()
 
 	type args struct {
-		accfilter filter.Filter
+		accountFilter filter.Filter
 	}
 	tests := []struct {
 		name    string
@@ -254,7 +254,7 @@ func TestRepository_GetAccounts(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				accfilter: filter.NewFilter().SetArgument(types.FieldAddress, "vcg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdy"),
+				accountFilter: filter.NewFilter().SetArgument(types.FieldAddress, "vcg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdy"),
 			},
 			want: []*accountstypes.Account{
 				{
@@ -279,7 +279,7 @@ func TestRepository_GetAccounts(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := accountsdb.NewRepository(db, codec.Marshaler)
 
-			got, err := r.GetAccounts(tt.args.accfilter)
+			got, err := r.GetAccounts(tt.args.accountFilter)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Repository.GetAccounts() error = %v, wantErr %v", err, tt.wantErr)
 				return

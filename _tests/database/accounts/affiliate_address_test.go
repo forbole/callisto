@@ -77,7 +77,7 @@ func TestRepository_GetAffiliateAddress(t *testing.T) {
 	codec := simapp.MakeTestEncodingConfig()
 
 	type args struct {
-		accfilter filter.Filter
+		accountFilter filter.Filter
 	}
 	tests := []struct {
 		name    string
@@ -88,7 +88,7 @@ func TestRepository_GetAffiliateAddress(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				accfilter: filter.NewFilter().SetArgument(types.FieldHash, "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd1"),
+				accountFilter: filter.NewFilter().SetArgument(types.FieldHash, "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd1"),
 			},
 			want: []*accountstypes.MsgSetAffiliateAddress{
 				{
@@ -105,7 +105,7 @@ func TestRepository_GetAffiliateAddress(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := accountsdb.NewRepository(db, codec.Marshaler)
 
-			got, err := r.GetAffiliateAddress(tt.args.accfilter)
+			got, err := r.GetAffiliateAddress(tt.args.accountFilter)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Repository.GetAffiliateAddress() error = %v, wantErr %v", err, tt.wantErr)
 				return

@@ -74,7 +74,7 @@ func TestRepository_GetKinds(t *testing.T) {
 	codec := simapp.MakeTestEncodingConfig()
 
 	type args struct {
-		accfilter filter.Filter
+		accountFilter filter.Filter
 	}
 	tests := []struct {
 		name    string
@@ -85,7 +85,7 @@ func TestRepository_GetKinds(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				accfilter: filter.NewFilter().SetArgument(types.FieldCreator, "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g"),
+				accountFilter: filter.NewFilter().SetArgument(types.FieldCreator, "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g"),
 			},
 			want: []*accountstypes.MsgSetKinds{
 				{
@@ -101,7 +101,7 @@ func TestRepository_GetKinds(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := accountsdb.NewRepository(db, codec.Marshaler)
 
-			got, err := r.GetKinds(tt.args.accfilter)
+			got, err := r.GetKinds(tt.args.accountFilter)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Repository.GetKinds() error = %v, wantErr %v", err, tt.wantErr)
 				return

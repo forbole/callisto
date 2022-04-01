@@ -94,7 +94,7 @@ func TestRepository_GetExtra(t *testing.T) {
 	codec := simapp.MakeTestEncodingConfig()
 
 	type args struct {
-		accfilter filter.Filter
+		accountFilter filter.Filter
 	}
 	tests := []struct {
 		name    string
@@ -105,7 +105,7 @@ func TestRepository_GetExtra(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				accfilter: filter.NewFilter().SetArgument(types.FieldHash, "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd2"),
+				accountFilter: filter.NewFilter().SetArgument(types.FieldHash, "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd2"),
 			},
 			want: []*accountstypes.MsgSetExtra{
 				{
@@ -130,7 +130,7 @@ func TestRepository_GetExtra(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := accountsdb.NewRepository(db, codec.Marshaler)
 
-			got, err := r.GetExtra(tt.args.accfilter)
+			got, err := r.GetExtra(tt.args.accountFilter)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Repository.GetExtra() error = %v, wantErr %v", err, tt.wantErr)
 				return

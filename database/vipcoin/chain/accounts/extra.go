@@ -26,8 +26,8 @@ func (r Repository) SaveExtra(msg ...*accountstypes.MsgSetExtra) error {
 }
 
 // GetExtra - get the given extra from database
-func (r Repository) GetExtra(accfilter filter.Filter) ([]*accountstypes.MsgSetExtra, error) {
-	query, args := accfilter.Build(
+func (r Repository) GetExtra(accountFilter filter.Filter) ([]*accountstypes.MsgSetExtra, error) {
+	query, args := accountFilter.Build(
 		tableExtra,
 		types.FieldCreator, types.FieldHash, types.FieldExtra,
 	)

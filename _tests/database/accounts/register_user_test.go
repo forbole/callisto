@@ -108,7 +108,7 @@ func TestRepository_GetRegisterUser(t *testing.T) {
 	codec := simapp.MakeTestEncodingConfig()
 
 	type args struct {
-		accfilter filter.Filter
+		accountFilter filter.Filter
 	}
 	tests := []struct {
 		name    string
@@ -119,7 +119,7 @@ func TestRepository_GetRegisterUser(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				accfilter: filter.NewFilter().SetArgument(types.FieldAddress, "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q"),
+				accountFilter: filter.NewFilter().SetArgument(types.FieldAddress, "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q"),
 			},
 			want: []*accountstypes.MsgRegisterUser{
 				{
@@ -151,7 +151,7 @@ func TestRepository_GetRegisterUser(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := accountsdb.NewRepository(db, codec.Marshaler)
 
-			got, err := r.GetRegisterUser(tt.args.accfilter)
+			got, err := r.GetRegisterUser(tt.args.accountFilter)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Repository.GetRegisterUser() error = %v, wantErr %v", err, tt.wantErr)
 				return

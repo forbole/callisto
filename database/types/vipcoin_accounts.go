@@ -100,6 +100,15 @@ type (
 		Extras    ExtraDB       `db:"extras"`
 	}
 
+	// DBAddAffiliate represents a single row inside the "vipcoin_chain_accounts_add_affiliate" table
+	DBAddAffiliate struct {
+		Creator         string  `db:"creator"`
+		AccountHash     string  `db:"account_hash"`
+		AffiliationHash string  `db:"affiliation_hash"`
+		Affiliation     int32   `db:"affiliation"`
+		Extras          ExtraDB `db:"extras"`
+	}
+
 	// ExtraDB helprs type
 	ExtraDB struct {
 		Extras []extratypes.Extra

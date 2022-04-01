@@ -24,6 +24,7 @@ const (
 	tableAffiliates       = "vipcoin_chain_accounts_affiliates"
 	tableAccounts         = "vipcoin_chain_accounts_accounts"
 	tableCreateAccount    = "vipcoin_chain_accounts_create_account"
+	tableAddAffiliate     = "vipcoin_chain_accounts_add_affiliate"
 )
 
 // toAffiliatesDatabase - mapping func to database model
@@ -397,5 +398,37 @@ func toCreateAccountDomain(msg types.DBCreateAccount) *accountstypes.MsgCreateAc
 		Kinds:     toKindsDomain(msg.Kinds),
 		State:     accountstypes.AccountState(msg.State),
 		Extras:    fromExtrasDB(msg.Extras),
+	}
+}
+
+// toAddAffiliateDatabase - mapping func to database model
+func toAddAffiliateDatabase(msg *accountstypes.MsgAddAffiliate) types.DBAddAffiliate {
+	return types.DBAddAffiliate{
+		Creator:         msg.Creator,
+		AccountHash:     msg.AccountHash,
+		AffiliationHash: msg.AffiliationHash,
+		Affiliation:     int32(msg.Affiliation),
+		Extras:          toExtrasDB(msg.Extras),
+	}
+}
+
+// toAddAffiliatesDatabase - mapping func to database model
+func toAddAffiliatesDatabase(msg ...*accountstypes.MsgAddAffiliate) []types.DBAddAffiliate {
+	result := make([]types.DBAddAffiliate, 0, len(msg))
+	for _, affiliate := range msg {
+		result = append(result, toAddAffiliateDatabase(affiliate))
+	}
+
+	return result
+}
+
+// toAddAffiliateDomain - mapping func to database model
+func toAddAffiliateDomain(msg types.DBAddAffiliate) *accountstypes.MsgAddAffiliate {
+	return &accountstypes.MsgAddAffiliate{
+		Creator:         msg.Creator,
+		AccountHash:     msg.AccountHash,
+		AffiliationHash: msg.AffiliationHash,
+		Affiliation:     accountstypes.AffiliationKind(msg.Affiliation),
+		Extras:          fromExtrasDB(msg.Extras),
 	}
 }

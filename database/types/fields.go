@@ -5,7 +5,6 @@ const (
 	FieldAccountAddress        = "account_address"
 	FieldKind                  = "kind"
 	FieldBalance               = "balance"
-	FieldExtras                = "extras"
 	FieldDefaultStatus         = "default_status"
 	FieldAddress               = "address"
 	FieldID                    = "id"
@@ -28,4 +27,5 @@ const (
 	FieldAffiliationKind       = "affiliation_kind"
 	FieldAffiliates            = "affiliates"
 	FieldWallets               = "wallets"
+	FieldAffiliation           = "affiliation"
 )

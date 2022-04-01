@@ -28,8 +28,8 @@ func (r Repository) SaveRegisterUser(msg ...*accountstypes.MsgRegisterUser) erro
 }
 
 // GetRegisterUser - get the given user from database
-func (r Repository) GetRegisterUser(accfilter filter.Filter) ([]*accountstypes.MsgRegisterUser, error) {
-	query, args := accfilter.Build(
+func (r Repository) GetRegisterUser(accountFilter filter.Filter) ([]*accountstypes.MsgRegisterUser, error) {
+	query, args := accountFilter.Build(
 		tableRegisterUser,
 		types.FieldCreator, types.FieldAddress, types.FieldHash, types.FieldPublicKey,
 		types.FieldHolderWallet, types.FieldRefRewardWallet, types.FieldHolderWalletExtras,

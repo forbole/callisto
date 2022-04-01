@@ -3,10 +3,8 @@ package wallets
 import (
 	"context"
 	"database/sql"
-	"fmt"
 
 	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
-
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
@@ -15,7 +13,7 @@ import (
 // SaveCreateWallet saves the given wallets inside the database
 func (r *Repository) SaveCreateWallet(msgWallet ...*walletstypes.MsgCreateWallet) error {
 	if len(msgWallet) == 0 {
-		fmt.Errorf("repository, create wallet, len == 0, empty msgWallet")
+		return nil
 	}
 
 	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})

@@ -26,8 +26,8 @@ func (r Repository) SaveAffiliateAddress(msg ...*accountstypes.MsgSetAffiliateAd
 }
 
 // GetAffiliateAddress - get the given affiliate address from database
-func (r Repository) GetAffiliateAddress(accfilter filter.Filter) ([]*accountstypes.MsgSetAffiliateAddress, error) {
-	query, args := accfilter.Build(
+func (r Repository) GetAffiliateAddress(accountFilter filter.Filter) ([]*accountstypes.MsgSetAffiliateAddress, error) {
+	query, args := accountFilter.Build(
 		tableAffiliateAddress,
 		types.FieldCreator, types.FieldHash,
 		types.FieldOldAddress, types.FieldNewAddress,

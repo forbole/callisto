@@ -163,8 +163,8 @@ func deleteAffiliates(tx *sqlx.Tx, affiliatesID pq.Int64Array) error {
 	return nil
 }
 
-func (r Repository) GetAccounts(accfilter filter.Filter) ([]*accountstypes.Account, error) {
-	query, args := accfilter.Build(
+func (r Repository) GetAccounts(accountFilter filter.Filter) ([]*accountstypes.Account, error) {
+	query, args := accountFilter.Build(
 		tableAccounts,
 		types.FieldAddress, types.FieldHash, types.FieldPublicKey, types.FieldKinds,
 		types.FieldState, types.FieldExtra, types.FieldAffiliates, types.FieldWallets,

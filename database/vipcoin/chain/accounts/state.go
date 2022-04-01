@@ -26,8 +26,8 @@ func (r Repository) SaveState(msg ...*accountstypes.MsgSetState) error {
 }
 
 // GetState - get the given state from database
-func (r Repository) GetState(accfilter filter.Filter) ([]*accountstypes.MsgSetState, error) {
-	query, args := accfilter.Build(
+func (r Repository) GetState(accountFilter filter.Filter) ([]*accountstypes.MsgSetState, error) {
+	query, args := accountFilter.Build(
 		tableState,
 		types.FieldCreator, types.FieldHash,
 		types.FieldState, types.FieldReason,

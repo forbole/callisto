@@ -26,8 +26,8 @@ func (r Repository) SaveKinds(msg ...*accountstypes.MsgSetKinds) error {
 }
 
 // GetKinds - get the given kinds from database
-func (r Repository) GetKinds(accfilter filter.Filter) ([]*accountstypes.MsgSetKinds, error) {
-	query, args := accfilter.Build(
+func (r Repository) GetKinds(accountFilter filter.Filter) ([]*accountstypes.MsgSetKinds, error) {
+	query, args := accountFilter.Build(
 		tableKinds,
 		types.FieldCreator, types.FieldHash, types.FieldKinds,
 	)

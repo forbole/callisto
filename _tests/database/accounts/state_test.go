@@ -73,7 +73,7 @@ func TestRepository_GetState(t *testing.T) {
 	codec := simapp.MakeTestEncodingConfig()
 
 	type args struct {
-		accfilter filter.Filter
+		accountFilter filter.Filter
 	}
 	tests := []struct {
 		name    string
@@ -101,7 +101,7 @@ func TestRepository_GetState(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := accountsdb.NewRepository(db, codec.Marshaler)
 
-			got, err := r.GetState(tt.args.accfilter)
+			got, err := r.GetState(tt.args.accountFilter)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Repository.GetState() error = %v, wantErr %v", err, tt.wantErr)
 				return

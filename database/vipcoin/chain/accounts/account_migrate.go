@@ -26,8 +26,8 @@ func (r Repository) SaveAccountMigrate(msg ...*accountstypes.MsgAccountMigrate) 
 }
 
 // GetAccountMigrate - get the given account migrate from database
-func (r Repository) GetAccountMigrate(accfilter filter.Filter) ([]*accountstypes.MsgAccountMigrate, error) {
-	query, args := accfilter.Build(
+func (r Repository) GetAccountMigrate(accountFilter filter.Filter) ([]*accountstypes.MsgAccountMigrate, error) {
+	query, args := accountFilter.Build(
 		tableAccountMigrate,
 		types.FieldCreator, types.FieldAddress,
 		types.FieldHash, types.FieldPublicKey,
