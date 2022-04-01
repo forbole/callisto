@@ -1,20 +1,18 @@
 table:
-  name: transaction
+  name: transaction_old
   schema: public
 object_relationships:
 - name: block
   using:
     foreign_key_constraint_on: height
 array_relationships:
-- name: messagesByTransactionHash
+- name: messagesByTransactionHashOld
   using:
-    manual_configuration:
-      remote_table:
+    foreign_key_constraint_on:
+      column: transaction_hash
+      table:
+        name: message_old
         schema: public
-        name: message
-      insertion_order:
-      column_mapping:
-        transaction_hash: hash
 select_permissions:
 - permission:
     allow_aggregations: true
@@ -31,6 +29,5 @@ select_permissions:
     - gas_used
     - raw_log
     - logs
-    - partition_id
     filter: {}
   role: anonymous

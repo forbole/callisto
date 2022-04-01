@@ -8,16 +8,18 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	"github.com/forbole/juno/v2/cmd/parse"
-	"github.com/forbole/juno/v2/node/builder"
-	nodeconfig "github.com/forbole/juno/v2/node/config"
-	"github.com/forbole/juno/v2/node/remote"
+	types "github.com/forbole/juno/v3/cmd/parse/types"
+	"github.com/forbole/juno/v3/node/builder"
+	nodeconfig "github.com/forbole/juno/v3/node/config"
+	"github.com/forbole/juno/v3/node/remote"
+	"github.com/forbole/juno/v3/parser"
 
 	"github.com/spf13/cobra"
 
 	"github.com/forbole/bdjuno/v2/cmd/actions/handlers"
 	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 	"github.com/forbole/bdjuno/v2/modules"
+	"github.com/forbole/juno/v3/types/config"
 )
 
 const (
@@ -34,13 +36,13 @@ var (
 )
 
 // NewActionsCmd returns the Cobra command allowing to activate hasura actions
-func NewActionsCmd(parseCfg *parse.Config) *cobra.Command {
+func NewActionsCmd(parseCfg *types.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "hasura-actions",
 		Short:   "Activate hasura actions",
-		PreRunE: parse.ReadConfig(parseCfg),
+		PreRunE: types.ReadConfigPreRunE(parseCfg),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			parseCtx, err := parse.GetParsingContext(parseCfg)
+			parseCtx, err := types.GetParserContext(config.Cfg, parseCfg)
 			if err != nil {
 				return err
 			}
@@ -134,7 +136,7 @@ func NewActionsCmd(parseCfg *parse.Config) *cobra.Command {
 
 // trapSignal will listen for any OS signal and invoke Done on the main
 // WaitGroup allowing the main process to gracefully exit.
-func trapSignal(parseCtx *parse.Context) {
+func trapSignal(parseCtx *parser.Context) {
 	var sigCh = make(chan os.Signal)
 
 	signal.Notify(sigCh, syscall.SIGTERM)

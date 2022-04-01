@@ -5,7 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	"github.com/forbole/juno/v2/node/remote"
+	"github.com/forbole/juno/v3/node/remote"
 
 	bankkeeper "github.com/forbole/bdjuno/v2/modules/bank/source"
 	"github.com/forbole/bdjuno/v2/types"

@@ -11,6 +11,15 @@ object_relationships:
       remote_table:
         name: validator_info
         schema: public
+- name: proposal_validator_status_snapshot
+  using:
+    manual_configuration:
+      column_mapping:
+        consensus_address: validator_address
+      insertion_order: null
+      remote_table:
+        name: proposal_validator_status_snapshot
+        schema: public
 array_relationships:
 - name: blocks
   using:
