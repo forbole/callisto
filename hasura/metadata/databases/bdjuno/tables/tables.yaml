@@ -41,3 +41,5 @@
 - "!include public_validator_voting_power.yaml"
 - "!include public_vesting_account.yaml"
 - "!include public_vesting_period.yaml"
+- "!include public_iscn_params.yaml"
+- "!include public_iscn_record.yaml"

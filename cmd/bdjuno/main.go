@@ -18,6 +18,8 @@ import (
 
 	"github.com/forbole/bdjuno/v2/database"
 	"github.com/forbole/bdjuno/v2/modules"
+
+	likeapp "github.com/likecoin/likechain/app"
 )
 
 func main() {
@@ -54,6 +56,7 @@ func main() {
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
 		simapp.ModuleBasics,
+		likeapp.ModuleBasics,
 	}
 }
 

@@ -25,6 +25,7 @@ import (
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/juno/v3/node/local"
+	iscntypes "github.com/likecoin/likechain/x/iscn/types"
 
 	jmodules "github.com/forbole/juno/v3/modules"
 	"github.com/forbole/juno/v3/modules/messages"
@@ -50,6 +51,10 @@ import (
 	govsource "github.com/forbole/bdjuno/v2/modules/gov/source"
 	localgovsource "github.com/forbole/bdjuno/v2/modules/gov/source/local"
 	remotegovsource "github.com/forbole/bdjuno/v2/modules/gov/source/remote"
+	"github.com/forbole/bdjuno/v2/modules/iscn"
+	iscnsource "github.com/forbole/bdjuno/v2/modules/iscn/source"
+	localiscnsource "github.com/forbole/bdjuno/v2/modules/iscn/source/local"
+	remoteiscnsource "github.com/forbole/bdjuno/v2/modules/iscn/source/remote"
 	"github.com/forbole/bdjuno/v2/modules/mint"
 	mintsource "github.com/forbole/bdjuno/v2/modules/mint/source"
 	localmintsource "github.com/forbole/bdjuno/v2/modules/mint/source/local"
@@ -63,6 +68,8 @@ import (
 	stakingsource "github.com/forbole/bdjuno/v2/modules/staking/source"
 	localstakingsource "github.com/forbole/bdjuno/v2/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v2/modules/staking/source/remote"
+
+	likeapp "github.com/likecoin/likechain/app"
 )
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
@@ -129,6 +136,8 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		pricefeed.NewModule(ctx.JunoConfig, cdc, db),
 		slashingModule,
 		stakingModule,
+
+		iscn.NewModule(sources.IscnSource, db),
 	}
 }
 
@@ -139,6 +148,8 @@ type Sources struct {
 	MintSource     mintsource.Source
 	SlashingSource slashingsource.Source
 	StakingSource  stakingsource.Source
+
+	IscnSource iscnsource.Source
 }
 
 func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -159,15 +170,16 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		return nil, err
 	}
 
-	app := simapp.NewSimApp(
+	app := likeapp.NewLikeApp(
 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
-		cfg.Home, 0, simapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
+		cfg.Home, 0, likeapp.MakeEncodingConfig(), simapp.EmptyAppOptions{},
 	)
 
 	sources := &Sources{
 		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
 		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
 		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
+		IscnSource:     localiscnsource.NewSource(source, iscntypes.QueryServer(app.IscnKeeper)),
 		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
 		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
@@ -210,5 +222,7 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
+
+		IscnSource: remoteiscnsource.NewSource(source, iscntypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }

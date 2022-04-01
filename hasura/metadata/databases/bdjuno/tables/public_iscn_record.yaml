@@ -1,0 +1,15 @@
+table:
+  name: iscn_record
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - iscn_id
+    - owner_address
+    - latest_version
+    - ipld
+    - iscn_data
+    - height
+    filter: {}
+  role: anonymous
