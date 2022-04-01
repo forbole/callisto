@@ -9,31 +9,6 @@ import (
 	"github.com/lib/pq"
 )
 
-// Defines fields.
-const (
-	FieldAddress               = "address"
-	FieldID                    = "id"
-	FieldHash                  = "hash"
-	FieldCreator               = "creator"
-	FieldState                 = "state"
-	FieldReason                = "reason"
-	FieldKinds                 = "kinds"
-	FieldPublicKey             = "public_key"
-	FieldHolderWallet          = "holder_wallet"
-	FieldRefRewardWallet       = "ref_reward_wallet"
-	FieldHolderWalletExtras    = "holder_wallet_extras"
-	FieldRefRewardWalletExtras = "ref_reward_wallet_extras"
-	FieldReferrerHash          = "referrer_hash"
-	FieldExtra                 = "extras"
-	FieldAccountHash           = "account_hash"
-	FieldAffiliationHash       = "affiliation_hash"
-	FieldOldAddress            = "old_address"
-	FieldNewAddress            = "new_address"
-	FieldAffiliationKind       = "affiliation_kind"
-	FieldAffiliates            = "affiliates"
-	FieldWallets               = "wallets"
-)
-
 type (
 	// DBAccount represents a single row inside the "vipcoin_chain_accounts_accounts" table
 	DBAccount struct {
@@ -112,6 +87,17 @@ type (
 		Hash    string `db:"hash"`
 		State   int32  `db:"state"`
 		Reason  string `db:"reason"`
+	}
+
+	// DBCreateAccount represents a single row inside the "vipcoin_chain_accounts_create_account" table
+	DBCreateAccount struct {
+		Creator   string        `db:"creator"`
+		Hash      string        `db:"hash"`
+		Address   string        `db:"address"`
+		PublicKey string        `db:"public_key"`
+		Kinds     pq.Int32Array `db:"kinds"`
+		State     int32         `db:"state"`
+		Extras    ExtraDB       `db:"extras"`
 	}
 
 	// ExtraDB helprs type

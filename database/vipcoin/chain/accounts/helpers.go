@@ -23,6 +23,7 @@ const (
 	tableAccountMigrate   = "vipcoin_chain_accounts_account_migrate"
 	tableAffiliates       = "vipcoin_chain_accounts_affiliates"
 	tableAccounts         = "vipcoin_chain_accounts_accounts"
+	tableCreateAccount    = "vipcoin_chain_accounts_create_account"
 )
 
 // toAffiliatesDatabase - mapping func to database model
@@ -360,5 +361,41 @@ func toSetStateDomain(msg types.DBSetState) *accountstypes.MsgSetState {
 		Hash:    msg.Hash,
 		State:   accountstypes.AccountState(msg.State),
 		Reason:  msg.Reason,
+	}
+}
+
+// toCreateAccountDatabase - mapping func to database model
+func toCreateAccountDatabase(msg *accountstypes.MsgCreateAccount) types.DBCreateAccount {
+	return types.DBCreateAccount{
+		Creator:   msg.Creator,
+		Hash:      msg.Hash,
+		Address:   msg.Address,
+		PublicKey: msg.PublicKey,
+		Kinds:     toKindsDB(msg.Kinds),
+		State:     int32(msg.State),
+		Extras:    toExtrasDB(msg.Extras),
+	}
+}
+
+// toSetStatesDatabase - mapping func to database model
+func toCreateAccountsDatabase(msg ...*accountstypes.MsgCreateAccount) []types.DBCreateAccount {
+	result := make([]types.DBCreateAccount, 0, len(msg))
+	for _, account := range msg {
+		result = append(result, toCreateAccountDatabase(account))
+	}
+
+	return result
+}
+
+// toSetStateDomain - mapping func to database model
+func toCreateAccountDomain(msg types.DBCreateAccount) *accountstypes.MsgCreateAccount {
+	return &accountstypes.MsgCreateAccount{
+		Creator:   msg.Creator,
+		Hash:      msg.Hash,
+		Address:   msg.Address,
+		PublicKey: msg.PublicKey,
+		Kinds:     toKindsDomain(msg.Kinds),
+		State:     accountstypes.AccountState(msg.State),
+		Extras:    fromExtrasDB(msg.Extras),
 	}
 }

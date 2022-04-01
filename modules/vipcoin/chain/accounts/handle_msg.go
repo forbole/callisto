@@ -30,6 +30,8 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return m.handleMsgRegisterUser(tx, index, accountMsg)
 	case *types.MsgSetExtra:
 		return m.handleMsgSetExtra(tx, index, accountMsg)
+	case *types.MsgCreateAccount:
+		return m.handleMsgCreateAccount(tx, index, accountMsg)
 	default:
 		errMsg := fmt.Sprintf("unrecognized %s message type: %T", types.ModuleName, accountMsg)
 		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
