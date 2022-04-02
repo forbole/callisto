@@ -3,6 +3,7 @@ package assets
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/forbole/bdjuno/v2/database"
+	"github.com/forbole/bdjuno/v2/database/vipcoin/chain/assets"
 	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/assets/source"
 	"github.com/forbole/juno/v2/modules"
 )
@@ -15,9 +16,10 @@ var (
 
 // Module represents the x/assets module
 type Module struct {
-	cdc    codec.Marshaler
-	db     *database.Db
-	keeper source.Source
+	assetRepo assets.Repository
+	cdc       codec.Marshaler
+	db        *database.Db
+	keeper    source.Source
 }
 
 // NewModule returns a new Module instance
@@ -25,9 +27,10 @@ func NewModule(
 	keeper source.Source, cdc codec.Marshaler, db *database.Db,
 ) *Module {
 	return &Module{
-		cdc:    cdc,
-		db:     db,
-		keeper: keeper,
+		assetRepo: *assets.NewRepository(db.Sqlx, cdc),
+		cdc:       cdc,
+		db:        db,
+		keeper:    keeper,
 	}
 }
 
