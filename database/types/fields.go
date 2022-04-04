@@ -27,4 +27,5 @@ const (
 	FieldAffiliates            = "affiliates"
 	FieldWallets               = "wallets"
 	FieldAffiliation           = "affiliation"
+	FieldExtras                = "extras"
 )

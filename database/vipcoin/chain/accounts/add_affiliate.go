@@ -30,7 +30,7 @@ func (r Repository) GetAddAffiliate(accountFilter filter.Filter) ([]*accountstyp
 	query, args := accountFilter.Build(
 		tableAddAffiliate,
 		types.FieldCreator, types.FieldAccountHash, types.FieldAffiliationHash,
-		types.FieldAffiliation, types.FieldExtra,
+		types.FieldAffiliation, types.FieldExtras,
 	)
 
 	var result []types.DBAddAffiliate
