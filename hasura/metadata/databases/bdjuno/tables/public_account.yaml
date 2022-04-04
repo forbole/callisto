@@ -40,6 +40,13 @@ array_relationships:
       table:
         name: validator_info
         schema: public
+- name: vesting_accounts
+  using:
+    foreign_key_constraint_on:
+      column: address
+      table:
+        name: vesting_account
+        schema: public
 select_permissions:
 - permission:
     allow_aggregations: true

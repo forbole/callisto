@@ -6,15 +6,16 @@ object_relationships:
   using:
     foreign_key_constraint_on: height
 array_relationships:
-- name: messagesByTransactionHash
+- name: messagesByTransactionHashPartitionId
   using:
     manual_configuration:
-      remote_table:
-        schema: public
-        name: message
-      insertion_order:
       column_mapping:
-        transaction_hash: hash
+        hash: transaction_hash
+        partition_id: partition_id
+      insertion_order: null
+      remote_table:
+        name: message
+        schema: public
 select_permissions:
 - permission:
     allow_aggregations: true
