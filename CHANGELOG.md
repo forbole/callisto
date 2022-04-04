@@ -1,3 +1,18 @@
+## Version v3.0.0
+
+### New features 
+
+#### CLI
+- ([\#356](https://github.com/forbole/bdjuno/pull/356)) Implemented `migrate` command to perform easy upgrade to higher BDJuno versions (from `v1` to `v2` and from `v2` to `v3 `)
+- ([\#356](https://github.com/forbole/bdjuno/pull/356)) Updated `parse-genesis` command to parse genesis file without accessing the node
+
+#### Database
+- ([\#356](https://github.com/forbole/bdjuno/pull/356)) Implemented PostgreSQL table partition to `transaction` and `message` table
+
+### Changes 
+#### Juno
+- Updated juno module to v3 inside `go.mod`
+
 ## Version v2.0.0
 ### Notes
 This version introduces breaking changes to certain address-specific data that is no longer periodically parsed from the node and stored in the database. Instead, the data is now obtained directly from the node when needed using Hasura Actions. Read more details about [migrating to v2.0.0](https://docs.bigdipper.live/cosmos-based/parser/migrations/v2.0.0)
