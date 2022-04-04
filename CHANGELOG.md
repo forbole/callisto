@@ -12,6 +12,8 @@ This version introduces breaking changes to `transaction` and `message` PostgreS
 - ([\#356](https://github.com/forbole/bdjuno/pull/356)) Created new `messages_by_address` function
 
 ### Changes 
+#### Hasura
+- ([\#377](https://github.com/forbole/bdjuno/pull/377)) Updated Hasura metadata
 #### Juno
 - ([\#356](https://github.com/forbole/bdjuno/pull/356)) Updated juno module to v3
 #### BDJuno
