@@ -14,9 +14,8 @@ This version introduces breaking changes to `transaction` and `message` PostgreS
 ### Changes 
 #### Juno
 - ([\#356](https://github.com/forbole/bdjuno/pull/356)) Updated juno module to v3
-
 #### BDJuno
-- Updated go.mod module to v3
+- ([\#356](https://github.com/forbole/bdjuno/pull/356)) Updated go.mod module to v3
 
 ## Version v2.0.0
 ### Notes
