@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_account_migrate (
     creator    TEXT  NOT NULL,                                   -- account migrate creator
     address    TEXT  NOT NULL,                                   -- account migrate address
     hash       TEXT  NOT NULL,                                   -- account migrate hash
-    public_key TEXT  NOT NULL,                                   -- accounts public_key
+    public_key TEXT  NOT NULL                                    -- accounts public_key
 );
 
 CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_set_affiliate_extra (

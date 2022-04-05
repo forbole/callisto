@@ -2,6 +2,7 @@ package accounts
 
 import (
 	"git.ooo.ua/vipcoin/chain/x/accounts/types"
+	wallets "git.ooo.ua/vipcoin/chain/x/wallets/types"
 	juno "github.com/forbole/juno/v2/types"
 )
 
@@ -30,7 +31,32 @@ func (m *Module) handleMsgRegisterUser(tx *juno.Tx, index int, msg *types.MsgReg
 		Wallets:   []string{msg.HolderWallet, msg.RefRewardWallet},
 	}
 
-	// TODO: Add write wallets.
+	if err := m.accountRepo.SaveAccounts(&newAcc); err != nil {
+		return err
+	}
 
-	return m.accountRepo.SaveAccounts(&newAcc)
+	// create wallets
+	holder := wallets.Wallet{
+		Address:        msg.HolderWallet,
+		AccountAddress: msg.Address,
+		Kind:           wallets.WALLET_KIND_HOLDER,
+		State:          wallets.WALLET_STATE_ACTIVE,
+		Extras:         msg.HolderWalletExtras,
+		Default:        true,
+	}
+
+	if err := m.walletsRepo.SaveWallets(&holder); err != nil {
+		return err
+	}
+
+	refReward := wallets.Wallet{
+		Address:        msg.RefRewardWallet,
+		AccountAddress: msg.Address,
+		Kind:           wallets.WALLET_KIND_REFERRER_REWARD,
+		State:          wallets.WALLET_STATE_ACTIVE,
+		Extras:         msg.RefRewardWalletExtras,
+		Default:        false,
+	}
+
+	return m.walletsRepo.SaveWallets(&refReward)
 }

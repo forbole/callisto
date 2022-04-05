@@ -6,6 +6,7 @@ import (
 
 	"github.com/forbole/bdjuno/v2/database"
 	"github.com/forbole/bdjuno/v2/database/vipcoin/chain/accounts"
+	"github.com/forbole/bdjuno/v2/database/vipcoin/chain/wallets"
 	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts/source"
 )
 
@@ -19,6 +20,7 @@ var (
 type Module struct {
 	cdc         codec.Marshaler
 	db          *database.Db
+	walletsRepo wallets.Repository
 	accountRepo accounts.Repository
 
 	keeper source.Source
@@ -32,6 +34,7 @@ func NewModule(
 		cdc:         cdc,
 		db:          db,
 		accountRepo: *accounts.NewRepository(db.Sqlx, cdc),
+		walletsRepo: *wallets.NewRepository(db.Sqlx, cdc),
 		keeper:      keeper,
 	}
 }
