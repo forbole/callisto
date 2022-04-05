@@ -28,4 +28,13 @@ const (
 	FieldWallets               = "wallets"
 	FieldAffiliation           = "affiliation"
 	FieldExtras                = "extras"
+	FieldName                  = "name"
+	FieldIssuer                = "issuer"
+	FieldPolicies              = "policies"
+	FieldPrecision             = "precision"
+	FieldFeePercent            = "fee_percent"
+	FieldIssued                = "issued"
+	FieldBurned                = "burned"
+	FieldWithdrawn             = "withdrawn"
+	FieldInCirculation         = "in_circulation"
 )

@@ -8,6 +8,11 @@ import (
 	"github.com/lib/pq"
 )
 
+const (
+	tableAssets       = "vipcoin_chain_assets_assets"
+	tableCreateAssets = "vipcoin_chain_assets_create"
+)
+
 // toExtrasDB - mapping func to database model
 func toExtrasDB(extras []*extratypes.Extra) types.ExtraDB {
 	result := make([]extratypes.Extra, 0, len(extras))
@@ -73,6 +78,46 @@ func toAssetsArrDatabase(assets ...*assetstypes.Asset) []types.DBAssets {
 	}
 
 	return result
+}
+
+// toCreateAssetsArrDatabase - mapping func to database model
+func toCreateAssetsArrDatabase(msgs ...*assetstypes.MsgAssetCreate) []types.DBAssetCreate {
+	result := make([]types.DBAssetCreate, 0, len(msgs))
+	for _, msg := range msgs {
+		result = append(result, toCreateAssetDatabase(msg))
+	}
+
+	return result
+}
+
+// toCreateAssetDatabase - mapping func to database model
+func toCreateAssetDatabase(msg *assetstypes.MsgAssetCreate) types.DBAssetCreate {
+	return types.DBAssetCreate{
+		Creator:    msg.Creator,
+		Name:       msg.Name,
+		Issuer:     msg.Issuer,
+		Policies:   toPoliciesDB(msg.Policies),
+		State:      int32(msg.State),
+		Precision:  msg.Properties.Precision,
+		FeePercent: msg.Properties.FeePercent,
+		Extras:     toExtrasDB(msg.Extras),
+	}
+}
+
+// toCreateAssetDomain - mapping func from database model
+func toCreateAssetDomain(asset types.DBAssetCreate) *assetstypes.MsgAssetCreate {
+	return &assetstypes.MsgAssetCreate{
+		Creator:  asset.Creator,
+		Name:     asset.Name,
+		Issuer:   asset.Issuer,
+		Policies: toPoliciesDomain(asset.Policies),
+		State:    assetstypes.AssetState(asset.State),
+		Properties: assetstypes.Properties{
+			Precision:  asset.Precision,
+			FeePercent: asset.FeePercent,
+		},
+		Extras: fromExtrasDB(asset.Extras),
+	}
 }
 
 // toAssetDomain - mapping func to domain model

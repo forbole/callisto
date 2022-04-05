@@ -54,8 +54,14 @@ func (r Repository) SaveAssets(assets ...*assetstypes.Asset) error {
 
 // GetAssets - method that get assets from the "vipcoin_chain_assets_assets" table
 func (r Repository) GetAssets(filter filter.Filter) ([]*assetstypes.Asset, error) {
-	query, args := filter.Build("vipcoin_chain_assets_assets",
-		`issuer, name, policies, state, issued, burned, withdrawn, in_circulation, precision, fee_percent, extras`)
+	query, args := filter.Build(tableAssets,
+		types.FieldIssuer, types.FieldName,
+		types.FieldPolicies, types.FieldState,
+		types.FieldIssued, types.FieldBurned,
+		types.FieldWithdrawn, types.FieldInCirculation,
+		types.FieldPrecision, types.FieldFeePercent,
+		types.FieldExtras,
+	)
 
 	var result []types.DBAssets
 	if err := r.db.Select(&result, query, args...); err != nil {
