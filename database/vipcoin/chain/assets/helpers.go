@@ -11,6 +11,7 @@ import (
 const (
 	tableAssets       = "vipcoin_chain_assets_assets"
 	tableCreateAssets = "vipcoin_chain_assets_create"
+	tableManageAsset  = "vipcoin_chain_assets_manage"
 )
 
 // toExtrasDB - mapping func to database model
@@ -117,6 +118,50 @@ func toCreateAssetDomain(asset types.DBAssetCreate) *assetstypes.MsgAssetCreate 
 			FeePercent: asset.FeePercent,
 		},
 		Extras: fromExtrasDB(asset.Extras),
+	}
+}
+
+// toManageAssetsArrDatabase - mapping func to database model
+func toManageAssetsArrDatabase(msgs ...*assetstypes.MsgAssetManage) []types.DBAssetManage {
+	result := make([]types.DBAssetManage, 0, len(msgs))
+	for _, msg := range msgs {
+		result = append(result, toManageAssetDatabase(msg))
+	}
+
+	return result
+}
+
+// toManageAssetDatabase - mapping func to database model
+func toManageAssetDatabase(msg *assetstypes.MsgAssetManage) types.DBAssetManage {
+	return types.DBAssetManage{
+		Creator:       msg.Creator,
+		Name:          msg.Name,
+		Policies:      toPoliciesDB(msg.Policies),
+		State:         int32(msg.State),
+		Issued:        msg.Issued,
+		Burned:        msg.Burned,
+		Withdrawn:     msg.Withdrawn,
+		InCirculation: msg.InCirculation,
+		Precision:     msg.Properties.Precision,
+		FeePercent:    msg.Properties.FeePercent,
+	}
+}
+
+// toManageAssetDomain - mapping func from database model
+func toManageAssetDomain(asset types.DBAssetManage) *assetstypes.MsgAssetManage {
+	return &assetstypes.MsgAssetManage{
+		Creator:  asset.Creator,
+		Name:     asset.Name,
+		Policies: toPoliciesDomain(asset.Policies),
+		State:    assetstypes.AssetState(asset.State),
+		Properties: assetstypes.Properties{
+			Precision:  asset.Precision,
+			FeePercent: asset.FeePercent,
+		},
+		Issued:        asset.Issued,
+		Burned:        asset.Burned,
+		Withdrawn:     asset.Withdrawn,
+		InCirculation: asset.InCirculation,
 	}
 }
 

@@ -19,6 +19,8 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	switch assetMsg := msg.(type) {
 	case *assetstypes.MsgAssetCreate:
 		return m.handleMsgCreateAsset(tx, index, assetMsg)
+	case *assetstypes.MsgAssetManage:
+		return m.handleMsgManageAsset(tx, index, assetMsg)
 	default:
 		errMsg := fmt.Sprintf("unrecognized %s message type: %T", assetstypes.ModuleName, assetMsg)
 		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
