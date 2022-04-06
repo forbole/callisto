@@ -49,10 +49,10 @@ func (r Repository) SaveSystemTransfers(transfers ...*bankingtypes.SystemTransfe
 // GetSystemTransfers - method that get system transfers from the "vipcoin_chain_banking_system_transfer" table
 func (r Repository) GetSystemTransfers(filter filter.Filter) ([]*bankingtypes.SystemTransfer, error) {
 	query, args := filter.ToJoiner().
-		PrepareTable("vipcoin_chain_banking_base_transfers", types.FieldID, types.FieldAsset, types.FieldAmount, types.FieldKind, types.FieldExtras, types.FieldTimestamp, types.FieldTxHash).
-		PrepareTable("vipcoin_chain_banking_system_transfer", types.FieldID, types.FieldWalletFrom, types.FieldWalletTo).
+		PrepareTable(tableTransfers, types.FieldID, types.FieldAsset, types.FieldAmount, types.FieldKind, types.FieldExtras, types.FieldTimestamp, types.FieldTxHash).
+		PrepareTable(tableSystemTransfer, types.FieldID, types.FieldWalletFrom, types.FieldWalletTo).
 		PrepareJoinStatement("INNER JOIN vipcoin_chain_banking_base_transfers on vipcoin_chain_banking_base_transfers.id = vipcoin_chain_banking_system_transfer.id").
-		Build("vipcoin_chain_banking_system_transfer")
+		Build(tableSystemTransfer)
 
 	var transfersDB []types.DBSystemTransfer
 	if err := r.db.Select(&transfersDB, query, args...); err != nil {

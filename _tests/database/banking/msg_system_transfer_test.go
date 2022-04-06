@@ -87,7 +87,7 @@ func TestRepository_SaveMsgSystemTransfers(t *testing.T) {
 	}
 }
 
-func TestRepository_GetSystemTransfers(t *testing.T) {
+func TestRepository_GetMsgSystemTransfers(t *testing.T) {
 	db, err := sqlx.Connect("pgx", "host=localhost port=5432 user=postgres dbname=juno password=postgres sslmode=disable")
 	if err != nil {
 		t.Fatal(err)
@@ -138,11 +138,11 @@ func TestRepository_GetSystemTransfers(t *testing.T) {
 
 			got, err := r.GetMsgSystemTransfers(tt.args.filter)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Repository.GetSystemTransfers() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Repository.GetMsgSystemTransfers() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Repository.GetSystemTransfers() = %v, want %v", got, tt.want)
+				t.Errorf("Repository.GetMsgSystemTransfers() = %v, want %v", got, tt.want)
 			}
 		})
 	}

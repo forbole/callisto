@@ -52,10 +52,10 @@ func (r Repository) SavePayments(payments ...*bankingtypes.Payment) error {
 // GetPayments - method that get payments from the "vipcoin_chain_banking_payment" table
 func (r Repository) GetPayments(filter filter.Filter) ([]*bankingtypes.Payment, error) {
 	query, args := filter.ToJoiner().
-		PrepareTable("vipcoin_chain_banking_base_transfers", types.FieldID, types.FieldAsset, types.FieldAmount, types.FieldKind, types.FieldExtras, types.FieldTimestamp, types.FieldTxHash).
-		PrepareTable("vipcoin_chain_banking_payment", types.FieldID, types.FieldWalletFrom, types.FieldWalletTo, types.FieldFee).
+		PrepareTable(tableTransfers, types.FieldID, types.FieldAsset, types.FieldAmount, types.FieldKind, types.FieldExtras, types.FieldTimestamp, types.FieldTxHash).
+		PrepareTable(tablePayment, types.FieldID, types.FieldWalletFrom, types.FieldWalletTo, types.FieldFee).
 		PrepareJoinStatement("INNER JOIN vipcoin_chain_banking_base_transfers on vipcoin_chain_banking_base_transfers.id = vipcoin_chain_banking_payment.id").
-		Build("vipcoin_chain_banking_payment")
+		Build(tablePayment)
 
 	var result []types.DBPayment
 	if err := r.db.Select(&result, query, args...); err != nil {

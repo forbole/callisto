@@ -11,6 +11,10 @@ import (
 
 const (
 	tableTransfers         = "vipcoin_chain_banking_base_transfers"
+	tableSystemTransfer    = "vipcoin_chain_banking_system_transfer"
+	tablePayment           = "vipcoin_chain_banking_payment"
+	tableWithdraw          = "vipcoin_chain_banking_withdraw"
+	tableIssue             = "vipcoin_chain_banking_issue"
 	tableMsgPayment        = "vipcoin_chain_banking_msg_payment"
 	tableMsgSystemTransfer = "vipcoin_chain_banking_msg_system_transfer"
 )
@@ -204,6 +208,16 @@ func toIssueDatabase(issue *bankingtypes.Issue) types.DBIssue {
 		},
 		Wallet: issue.Wallet,
 	}
+}
+
+// toIssuesDatabase - mapping func to database model
+func toIssuesDatabase(issues ...*bankingtypes.Issue) []types.DBIssue {
+	result := make([]types.DBIssue, 0, len(issues))
+	for _, issue := range issues {
+		result = append(result, toIssueDatabase(issue))
+	}
+
+	return result
 }
 
 // toTransfersDatabase - mapping func to database model
