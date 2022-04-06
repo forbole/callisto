@@ -1,3 +1,23 @@
+## Version v3.0.0
+### Notes
+This version introduces breaking changes to `transaction` and `message` PostgreSQL tables. It implements PostgreSQL table partitioning to fix slow data retrieval from database that stores large amount of transactions and messages. Read more details about [migrating to v3.0.0](https://docs.bigdipper.live/cosmos-based/parser/migrations/v2.0.0)
+
+### New features 
+#### CLI
+- ([\#356](https://github.com/forbole/bdjuno/pull/356)) Implemented `migrate` command to perform easy migration to higher BDJuno versions
+- ([\#356](https://github.com/forbole/bdjuno/pull/356)) Updated `parse-genesis` command to parse genesis file without accessing the node
+
+#### Database
+- ([\#356](https://github.com/forbole/bdjuno/pull/356)) Added PostgreSQL table partition to `transaction` and `message` table
+- ([\#356](https://github.com/forbole/bdjuno/pull/356)) Created new `messages_by_address` function
+
+### Changes 
+#### Hasura
+- ([\#377](https://github.com/forbole/bdjuno/pull/377)) Updated Hasura metadata
+
+### Dependencies
+- ([\#356](https://github.com/forbole/bdjuno/pull/356)) Updated Juno to `v3.0.0`
+
 ## Version v2.0.0
 ### Notes
 This version introduces breaking changes to certain address-specific data that is no longer periodically parsed from the node and stored in the database. Instead, the data is now obtained directly from the node when needed using Hasura Actions. Read more details about [migrating to v2.0.0](https://docs.bigdipper.live/cosmos-based/parser/migrations/v2.0.0)
