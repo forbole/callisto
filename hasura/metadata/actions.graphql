@@ -1,81 +1,103 @@
 type Query {
-    action_account_balance(
-        address: String!
-        height: Int
-    ): ActionBalance
+  action_account_balance(
+    address: String!
+    height: Int
+  ): ActionBalance
+}
 
-    action_delegation_reward(
-        address: String!
-        height: Int
-    ): [ActionDelegationReward]
+type Query {
+  action_delegation(
+    address: String!
+    height: Int
+    offset: Int
+    limit: Int
+    count_total: Boolean
+  ): ActionDelegationResponse
+}
 
-    action_delegator_withdraw_address(
-        address: String!
-    ): ActionAddress!
-    
-    action_delegation(
-        address: String!
-        height: Int
-        offset: Int
-        limit: Int
-        count_total: Boolean
-    ): ActionDelegationResponse
+type Query {
+  action_delegation_reward(
+    address: String!
+    height: Int
+  ): [ActionDelegationReward]
+}
 
-    action_delegation_total(
-        address: String!
-        height: Int
-    ): ActionBalance
+type Query {
+  action_delegation_total(
+    address: String!
+    height: Int
+  ): ActionBalance
+}
 
-    action_redelegation(
-        address: String!
-        height: Int
-        offset: Int
-        limit: Int
-        count_total: Boolean
-    ): ActionRedelegationResponse
+type Query {
+  action_delegator_withdraw_address(
+    address: String!
+  ): ActionAddress!
+}
 
-    action_unbonding_delegation(
-        address: String!
-        height: Int
-        offset: Int
-        limit: Int
-        count_total: Boolean
-    ): ActionUnbondingDelegationResponse
+type Query {
+  action_redelegation(
+    address: String!
+    height: Int
+    offset: Int
+    limit: Int
+    count_total: Boolean
+  ): ActionRedelegationResponse
+}
 
-     action_unbonding_delegation_total(
-        address: String!
-        height: Int
-    ): ActionBalance
+type Query {
+  action_unbonding_delegation(
+    address: String!
+    height: Int
+    offset: Int
+    limit: Int
+    count_total: Boolean
+  ): ActionUnbondingDelegationResponse
+}
 
-    action_validator_commission_amount(
-        address: String!
-    ): ActionValidatorCommissionAmount
+type Query {
+  action_unbonding_delegation_total(
+    address: String!
+    height: Int
+  ): ActionBalance
+}
 
-    action_validator_delegations(
-        address: String!
-        offset: Int
-        limit: Int
-        count_total: Boolean
-    ): ActionDelegationResponse
+type Query {
+  action_validator_commission_amount(
+    address: String!
+  ): ActionValidatorCommissionAmount
+}
 
-    action_validator_redelegations_from(
-        address: String!
-        height: Int
-        offset: Int
-        limit: Int
-        count_total: Boolean
-    ): ActionRedelegationResponse
+type Query {
+  action_validator_delegations(
+    address: String!
+    offset: Int
+    limit: Int
+    count_total: Boolean
+  ): ActionDelegationResponse
+}
 
-    action_validator_unbonding_delegations(
-        address: String!
-        offset: Int
-        limit: Int
-        count_total: Boolean
-    ): ActionUnbondingDelegationResponse
+type Query {
+  action_validator_redelegations_from(
+    address: String!
+    height: Int
+    offset: Int
+    limit: Int
+    count_total: Boolean
+  ): ActionRedelegationResponse
+}
+
+type Query {
+  action_validator_unbonding_delegations(
+    address: String!
+    offset: Int
+    limit: Int
+    count_total: Boolean
+  ): ActionUnbondingDelegationResponse
 }
 
 type ActionBalance {
-    coins: [ActionCoin]
+  coins: [ActionCoin]
 }
 
 type ActionDelegationReward {
@@ -84,32 +106,37 @@ type ActionDelegationReward {
 }
 
 type ActionAddress {
-    address: String!
+  address: String!
 }
 
 type ActionDelegationResponse {
-    delegations: [ActionDelegation]
-    pagination: ActionPagination
+  delegations: [ActionDelegation]
+  pagination: ActionPagination
 }
 
 type ActionRedelegationResponse {
-    redelegations: [ActionRedelegation]
-    pagination: ActionPagination
+  redelegations: [ActionRedelegation]
+  pagination: ActionPagination
 }
 
 type ActionUnbondingDelegationResponse {
-    unbonding_delegations: [ActionUnbondingDelegation]
-    pagination: ActionPagination
+  unbonding_delegations: [ActionUnbondingDelegation]
+  pagination: ActionPagination
 }
 
 type ActionValidatorCommissionAmount {
-    coins: [ActionCoin]
+  coins: [ActionCoin]
 }
 
 scalar ActionCoin
+
 scalar ActionDelegation
+
 scalar ActionEntry
+
 scalar ActionPagination
+
 scalar ActionRedelegation
+
 scalar ActionUnbondingDelegation
 

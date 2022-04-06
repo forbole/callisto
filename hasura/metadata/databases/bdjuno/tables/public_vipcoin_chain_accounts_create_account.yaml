@@ -1,0 +1,3 @@
+table:
+  name: vipcoin_chain_accounts_create_account
+  schema: public
