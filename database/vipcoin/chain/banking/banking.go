@@ -68,9 +68,7 @@ func (r Repository) UpdateBaseTransfers(transfers ...*bankingtypes.BaseTransfer)
 			 WHERE id = :id`
 
 	for _, transfer := range transfers {
-		transferDB := toTransferDatabase(transfer)
-
-		if _, err := tx.NamedExec(query, transferDB); err != nil {
+		if _, err := tx.NamedExec(query, toTransferDatabase(transfer)); err != nil {
 			return err
 		}
 	}

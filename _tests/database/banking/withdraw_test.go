@@ -15,7 +15,7 @@ import (
 	bankingdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/banking"
 )
 
-func TestRepository_SavePayments(t *testing.T) {
+func TestRepository_SaveWithdraws(t *testing.T) {
 	db, err := sqlx.Connect("pgx", "host=localhost port=5432 user=postgres dbname=juno password=postgres sslmode=disable")
 	if err != nil {
 		t.Fatal(err)
@@ -25,7 +25,7 @@ func TestRepository_SavePayments(t *testing.T) {
 	codec := simapp.MakeTestEncodingConfig()
 
 	type args struct {
-		msg []*bankingtypes.Payment
+		msg []*bankingtypes.Withdraw
 	}
 	tests := []struct {
 		name    string
@@ -35,20 +35,23 @@ func TestRepository_SavePayments(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				msg: []*bankingtypes.Payment{
+				msg: []*bankingtypes.Withdraw{
 					{
 						BaseTransfer: bankingtypes.BaseTransfer{
-							Id:        1,
-							Asset:     "asset",
-							Amount:    1000,
-							Kind:      bankingtypes.TRANSFER_KIND_PAYMENT,
-							Extras:    []*extratypes.Extra{},
+							Id:     4,
+							Asset:  "asset",
+							Amount: 4000,
+							Kind:   bankingtypes.TRANSFER_KIND_WITHDRAW,
+							Extras: []*extratypes.Extra{
+								{
+									Kind: extratypes.EXTRA_KIND_COMMENT,
+									Data: "Withdraw test",
+								},
+							},
 							Timestamp: 0,
 							TxHash:    "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd2",
 						},
-						WalletFrom: "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
-						WalletTo:   "aaa5lws9pab9ae3en8d0r3d3ke8srsfcj2zjvefzzz",
-						Fee:        5,
+						Wallet: "wwwwljs7p2p9ae3en8knr3d3ke8srsfcj2zjvewwww",
 					},
 				},
 			},
@@ -59,14 +62,14 @@ func TestRepository_SavePayments(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := bankingdb.NewRepository(db, codec.Marshaler)
 
-			if err := r.SavePayments(tt.args.msg...); (err != nil) != tt.wantErr {
-				t.Errorf("Repository.SavePayments() error = %v, wantErr %v", err, tt.wantErr)
+			if err := r.SaveWithdraws(tt.args.msg...); (err != nil) != tt.wantErr {
+				t.Errorf("Repository.SaveWithdraws() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
 }
 
-func TestRepository_GetPayments(t *testing.T) {
+func TestRepository_GetWithdraws(t *testing.T) {
 	db, err := sqlx.Connect("pgx", "host=localhost port=5432 user=postgres dbname=juno password=postgres sslmode=disable")
 	if err != nil {
 		t.Fatal(err)
@@ -81,28 +84,31 @@ func TestRepository_GetPayments(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		msg     []*bankingtypes.Payment
+		msg     []*bankingtypes.Withdraw
 		wantErr bool
 	}{
 		{
 			name: "valid",
 			args: args{
-				bfilter: filter.NewFilter().SetArgument(types.FieldID, "1"),
+				bfilter: filter.NewFilter().SetArgument(types.FieldID, "4"),
 			},
-			msg: []*bankingtypes.Payment{
+			msg: []*bankingtypes.Withdraw{
 				{
 					BaseTransfer: bankingtypes.BaseTransfer{
-						Id:        1,
-						Asset:     "asset",
-						Amount:    1000,
-						Kind:      bankingtypes.TRANSFER_KIND_PAYMENT,
-						Extras:    []*extratypes.Extra{},
+						Id:     4,
+						Asset:  "asset",
+						Amount: 4000,
+						Kind:   bankingtypes.TRANSFER_KIND_WITHDRAW,
+						Extras: []*extratypes.Extra{
+							{
+								Kind: extratypes.EXTRA_KIND_COMMENT,
+								Data: "Withdraw test",
+							},
+						},
 						Timestamp: 10800,
 						TxHash:    "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd2",
 					},
-					WalletFrom: "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
-					WalletTo:   "aaa5lws9pab9ae3en8d0r3d3ke8srsfcj2zjvefzzz",
-					Fee:        5,
+					Wallet: "wwwwljs7p2p9ae3en8knr3d3ke8srsfcj2zjvewwww",
 				},
 			},
 			wantErr: false,
@@ -112,19 +118,19 @@ func TestRepository_GetPayments(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := bankingdb.NewRepository(db, codec.Marshaler)
 
-			got, err := r.GetPayments(tt.args.bfilter)
+			got, err := r.GetWithdraws(tt.args.bfilter)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Repository.GetPayments() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Repository.GetWithdraws() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.msg) {
-				t.Errorf("Repository.GetPayments() = %v, msg %v", got, tt.msg)
+				t.Errorf("Repository.GetWithdraws() = %v, msg %v", got, tt.msg)
 			}
 		})
 	}
 }
 
-func TestRepository_UpdatePayments(t *testing.T) {
+func TestRepository_UpdateWithdraws(t *testing.T) {
 	db, err := sqlx.Connect("pgx", "host=localhost port=5432 user=postgres dbname=juno password=postgres sslmode=disable")
 	if err != nil {
 		t.Fatal(err)
@@ -133,7 +139,7 @@ func TestRepository_UpdatePayments(t *testing.T) {
 	codec := simapp.MakeTestEncodingConfig()
 
 	type args struct {
-		payments []*bankingtypes.Payment
+		withdraws []*bankingtypes.Withdraw
 	}
 	tests := []struct {
 		name    string
@@ -143,20 +149,23 @@ func TestRepository_UpdatePayments(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				payments: []*bankingtypes.Payment{
+				withdraws: []*bankingtypes.Withdraw{
 					{
 						BaseTransfer: bankingtypes.BaseTransfer{
-							Id:        1,
-							Asset:     "asset",
-							Amount:    1000,
-							Kind:      bankingtypes.TRANSFER_KIND_PAYMENT,
-							Extras:    []*extratypes.Extra{},
+							Id:     4,
+							Asset:  "asset",
+							Amount: 4000,
+							Kind:   bankingtypes.TRANSFER_KIND_WITHDRAW,
+							Extras: []*extratypes.Extra{
+								{
+									Kind: extratypes.EXTRA_KIND_COMMENT,
+									Data: "Withdraw test",
+								},
+							},
 							Timestamp: 10800,
 							TxHash:    "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd2",
 						},
-						WalletFrom: "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
-						WalletTo:   "aaa5lws9pab9ae3en8d0r3d3ke8srsfcj2zjvefzzz",
-						Fee:        5,
+						Wallet: "wwwwljs7p2p9ae3en8knr3d3ke8srsfcj2zjvewwww",
 					},
 				},
 			},
@@ -165,20 +174,23 @@ func TestRepository_UpdatePayments(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				payments: []*bankingtypes.Payment{
+				withdraws: []*bankingtypes.Withdraw{
 					{
 						BaseTransfer: bankingtypes.BaseTransfer{
-							Id:        1,
-							Asset:     "new asset",
-							Amount:    1000,
-							Kind:      bankingtypes.TRANSFER_KIND_PAYMENT,
-							Extras:    []*extratypes.Extra{},
+							Id:     4,
+							Asset:  "asset",
+							Amount: 4000,
+							Kind:   bankingtypes.TRANSFER_KIND_WITHDRAW,
+							Extras: []*extratypes.Extra{
+								{
+									Kind: extratypes.EXTRA_KIND_COMMENT,
+									Data: "Withdraw test (update)",
+								},
+							},
 							Timestamp: 10800,
 							TxHash:    "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd2",
 						},
-						WalletFrom: "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
-						WalletTo:   "aaa5lws9pab9ae3en8d0r3d3ke8srsfcj2zjvefzzz",
-						Fee:        10,
+						Wallet: "vcg12ndz92smw9pz34m7kfr5vqq6qscee7nv83test",
 					},
 				},
 			},
@@ -190,9 +202,9 @@ func TestRepository_UpdatePayments(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := bankingdb.NewRepository(db, codec.Marshaler)
 
-			// update fee and asset
-			if err := r.UpdatePayments(tt.args.payments...); (err != nil) != tt.wantErr {
-				t.Errorf("Repository.UpdatePayments() error = %v, wantErr %v", err, tt.wantErr)
+			// update wallet and extras.data
+			if err := r.UpdateWithdraws(tt.args.withdraws...); (err != nil) != tt.wantErr {
+				t.Errorf("Repository.UpdateWithdraws() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

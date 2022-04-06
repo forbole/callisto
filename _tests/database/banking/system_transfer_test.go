@@ -12,6 +12,7 @@ import (
 
 	_ "github.com/jackc/pgx/stdlib"
 
+	"github.com/forbole/bdjuno/v2/database/types"
 	bankingdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/banking"
 )
 
@@ -86,7 +87,7 @@ func TestRepository_GetSystemTransfers(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				bfilter: filter.NewFilter().SetArgument("id", "2"),
+				bfilter: filter.NewFilter().SetArgument(types.FieldID, "2"),
 			},
 			msg: []*bankingtypes.SystemTransfer{
 				{

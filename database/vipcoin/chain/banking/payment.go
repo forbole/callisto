@@ -33,17 +33,14 @@ func (r Repository) SavePayments(payments ...*bankingtypes.Payment) error {
 			VALUES
 			(:id,:wallet_from,:wallet_to,:fee)`
 
-	for _, p := range payments {
-		paymentDB := toPaymentDatabase(p)
+	paymentDB := toPaymentsDatabase(payments...)
 
-		if _, err := tx.NamedExec(queryBaseTransfer, paymentDB); err != nil {
-			return err
-		}
+	if _, err := tx.NamedExec(queryBaseTransfer, paymentDB); err != nil {
+		return err
+	}
 
-		if _, err := tx.NamedExec(queryPayment, paymentDB); err != nil {
-			return err
-		}
-
+	if _, err := tx.NamedExec(queryPayment, paymentDB); err != nil {
+		return err
 	}
 
 	return tx.Commit()
@@ -57,17 +54,17 @@ func (r Repository) GetPayments(filter filter.Filter) ([]*bankingtypes.Payment, 
 		PrepareJoinStatement("INNER JOIN vipcoin_chain_banking_base_transfers on vipcoin_chain_banking_base_transfers.id = vipcoin_chain_banking_payment.id").
 		Build(tablePayment)
 
-	var result []types.DBPayment
-	if err := r.db.Select(&result, query, args...); err != nil {
+	var paymentsDB []types.DBPayment
+	if err := r.db.Select(&paymentsDB, query, args...); err != nil {
 		return []*bankingtypes.Payment{}, err
 	}
 
-	payments := make([]*bankingtypes.Payment, 0, len(result))
-	for _, payment := range result {
-		payments = append(payments, toPaymentDomain(payment))
+	result := make([]*bankingtypes.Payment, 0, len(paymentsDB))
+	for _, payment := range paymentsDB {
+		result = append(result, toPaymentDomain(payment))
 	}
 
-	return payments, nil
+	return result, nil
 }
 
 // UpdatePayments - method that update the payment in the "vipcoin_chain_banking_payment" table

@@ -102,6 +102,16 @@ func toPaymentDatabase(payment *bankingtypes.Payment) types.DBPayment {
 	}
 }
 
+// toPaymentDatabase - mapping func to database model
+func toPaymentsDatabase(payments ...*bankingtypes.Payment) []types.DBPayment {
+	result := make([]types.DBPayment, 0, len(payments))
+	for _, payment := range payments {
+		result = append(result, toPaymentDatabase(payment))
+	}
+
+	return result
+}
+
 // toSystemTransferDomain - mapping func to domain model
 func toSystemTransferDomain(transfer types.DBSystemTransfer) *bankingtypes.SystemTransfer {
 	return &bankingtypes.SystemTransfer{
@@ -144,7 +154,6 @@ func toSystemTransfersDatabase(transfers ...*bankingtypes.SystemTransfer) []type
 	}
 
 	return result
-
 }
 
 // toWithdrawDomain - mapping func to domain model
@@ -177,6 +186,16 @@ func toWithdrawDatabase(withdraw *bankingtypes.Withdraw) types.DBWithdraw {
 		},
 		Wallet: withdraw.Wallet,
 	}
+}
+
+// toWithdrawsDatabase - mapping func to database model
+func toWithdrawsDatabase(withdraws ...*bankingtypes.Withdraw) []types.DBWithdraw {
+	result := make([]types.DBWithdraw, 0, len(withdraws))
+	for _, withdraw := range withdraws {
+		result = append(result, toWithdrawDatabase(withdraw))
+	}
+
+	return result
 }
 
 // toIssueDomain - mapping func to domain model

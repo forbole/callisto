@@ -33,13 +33,13 @@ func (r Repository) GetMsgSystemTransfers(filter filter.Filter) ([]*bankingtypes
 		types.FieldAsset, types.FieldAmount, types.FieldExtras,
 	)
 
-	var result []types.DBMsgSystemTransfer
-	if err := r.db.Select(&result, query, args...); err != nil {
+	var transfersDB []types.DBMsgSystemTransfer
+	if err := r.db.Select(&transfersDB, query, args...); err != nil {
 		return []*bankingtypes.MsgSystemTransfer{}, err
 	}
 
-	transfers := make([]*bankingtypes.MsgSystemTransfer, 0, len(result))
-	for _, transfer := range result {
+	transfers := make([]*bankingtypes.MsgSystemTransfer, 0, len(transfersDB))
+	for _, transfer := range transfersDB {
 		transfers = append(transfers, toMsgSystemTransferDomain(transfer))
 	}
 
