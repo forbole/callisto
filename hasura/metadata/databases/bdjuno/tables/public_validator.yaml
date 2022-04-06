@@ -86,6 +86,13 @@ array_relationships:
       table:
         name: validator_voting_power
         schema: public
+- name: proposal_validator_status_snapshots
+  using:
+    foreign_key_constraint_on:
+      column: validator_address
+      table:
+        name: proposal_validator_status_snapshot
+        schema: public
 select_permissions:
 - permission:
     allow_aggregations: true
