@@ -42,6 +42,7 @@ import (
 	remotebanksource "github.com/forbole/bdjuno/v2/modules/bank/source/remote"
 	"github.com/forbole/bdjuno/v2/modules/consensus"
 	"github.com/forbole/bdjuno/v2/modules/distribution"
+	"github.com/forbole/bdjuno/v2/modules/feegrant"
 
 	distrsource "github.com/forbole/bdjuno/v2/modules/distribution/source"
 	localdistrsource "github.com/forbole/bdjuno/v2/modules/distribution/source/local"
@@ -67,7 +68,7 @@ import (
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
 func UniqueAddressesParser(parser messages.MessageAddressesParser) messages.MessageAddressesParser {
-	return func(cdc codec.Marshaler, msg sdk.Msg) ([]string, error) {
+	return func(cdc codec.Codec, msg sdk.Msg) ([]string, error) {
 		addresses, err := parser(cdc, msg)
 		if err != nil {
 			return nil, err
@@ -109,6 +110,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	bankModule := bank.NewModule(r.parser, sources.BankSource, cdc, db)
 	consensusModule := consensus.NewModule(db)
 	distrModule := distribution.NewModule(sources.DistrSource, cdc, db)
+	feegrantModule := feegrant.NewModule(cdc, db)
 	mintModule := mint.NewModule(sources.MintSource, cdc, db)
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
 	stakingModule := staking.NewModule(sources.StakingSource, slashingModule, cdc, db)
@@ -123,6 +125,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		bankModule,
 		consensusModule,
 		distrModule,
+		feegrantModule,
 		govModule,
 		mintModule,
 		modules.NewModule(ctx.JunoConfig.Chain, db),
