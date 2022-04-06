@@ -2,11 +2,11 @@ package banking
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-
 	"github.com/forbole/juno/v2/modules"
 
 	"github.com/forbole/bdjuno/v2/database"
 	"github.com/forbole/bdjuno/v2/database/vipcoin/chain/banking"
+	"github.com/forbole/bdjuno/v2/database/vipcoin/chain/wallets"
 	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/banking/source"
 )
 
@@ -21,6 +21,7 @@ type Module struct {
 	cdc         codec.Marshaler
 	db          *database.Db
 	bankingRepo banking.Repository
+	walletsRepo wallets.Repository
 	keeper      source.Source
 }
 
@@ -32,6 +33,7 @@ func NewModule(
 		cdc:         cdc,
 		db:          db,
 		bankingRepo: *banking.NewRepository(db.Sqlx, cdc),
+		walletsRepo: *wallets.NewRepository(db.Sqlx, cdc),
 		keeper:      keeper,
 	}
 }

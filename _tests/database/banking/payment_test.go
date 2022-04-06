@@ -1,4 +1,4 @@
-package payment
+package banking
 
 import (
 	"reflect"
@@ -8,9 +8,8 @@ import (
 	extratypes "git.ooo.ua/vipcoin/chain/x/types"
 	"git.ooo.ua/vipcoin/lib/filter"
 	"github.com/cosmos/cosmos-sdk/simapp"
-	"github.com/jmoiron/sqlx"
-
 	_ "github.com/jackc/pgx/stdlib"
+	"github.com/jmoiron/sqlx"
 
 	bankingdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/banking"
 )

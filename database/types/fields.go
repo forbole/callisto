@@ -37,4 +37,10 @@ const (
 	FieldBurned                = "burned"
 	FieldWithdrawn             = "withdrawn"
 	FieldInCirculation         = "in_circulation"
+	FieldAsset                 = "asset"
+	FieldAmount                = "amount"
+	FieldTimestamp             = "timestamp"
+	FieldTxHash                = "tx_hash"
+	FieldWalletFrom            = "wallet_from"
+	FieldWalletTo              = "wallet_to"
 )

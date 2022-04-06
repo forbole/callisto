@@ -5,7 +5,7 @@ import (
 )
 
 type (
-	// DBTransfer represents a single row inside the "vipcoin_chain_banking_transfers" table
+	// DBTransfer represents a single row inside the "vipcoin_chain_banking_base_transfers" table
 	DBTransfer struct {
 		ID        uint64    `db:"id"`
 		Asset     string    `db:"asset"`
@@ -41,5 +41,66 @@ type (
 	DBIssue struct {
 		DBTransfer
 		Wallet string `db:"wallet"`
+	}
+
+	// DBSystemTransfer represents a single row inside the "vipcoin_chain_banking_msg_system_transfer" table
+	DBMsgSystemTransfer struct {
+		Creator    string  `db:"creator"`
+		WalletFrom string  `db:"wallet_from"`
+		WalletTo   string  `db:"wallet_to"`
+		Asset      string  `db:"asset"`
+		Amount     uint64  `db:"amount"`
+		Extras     ExtraDB `db:"extras"`
+	}
+
+	// DBSystemRewardTransfer represents a single row inside the "vipcoin_chain_banking_system_reward_transfer" table
+	DBSystemRewardTransfer struct {
+		Creator    string  `db:"creator"`
+		WalletFrom string  `db:"wallet_from"`
+		WalletTo   string  `db:"wallet_to"`
+		Asset      string  `db:"asset"`
+		Amount     uint64  `db:"amount"`
+		Extras     ExtraDB `db:"extras"`
+	}
+
+	// DBPayment represents a single row inside the "vipcoin_chain_banking_msg_payment" table
+	DBMsgPayment struct {
+		Creator    string  `db:"creator"`
+		WalletFrom string  `db:"wallet_from"`
+		WalletTo   string  `db:"wallet_to"`
+		Asset      string  `db:"asset"`
+		Amount     uint64  `db:"amount"`
+		Extras     ExtraDB `db:"extras"`
+	}
+
+	// DBWithdraw represents a single row inside the "vipcoin_chain_banking_msg_withdraw" table
+	DBMsgWithdraw struct {
+		Creator string  `db:"creator"`
+		Wallet  string  `db:"wallet"`
+		Asset   string  `db:"asset"`
+		Amount  uint64  `db:"amount"`
+		Extras  ExtraDB `db:"extras"`
+	}
+
+	// DBIssue represents a single row inside the "vipcoin_chain_banking_msg_issue" table
+	DBMsgIssue struct {
+		Creator string  `db:"creator"`
+		Wallet  string  `db:"wallet"`
+		Asset   string  `db:"asset"`
+		Amount  uint64  `db:"amount"`
+		Extras  ExtraDB `db:"extras"`
+	}
+
+	// DBSetTransferExtra represents a single row inside the "vipcoin_chain_banking_set_transfer_extra" table
+	DBSetTransferExtra struct {
+		Creator string  `db:"creator"`
+		Id      uint64  `db:"id"`
+		Extras  ExtraDB `db:"extras"`
+	}
+
+	// DBSetRewardManagerAddress represents a single row inside the "vipcoin_chain_banking_set_reward_manager_address" table
+	DBSetRewardManagerAddress struct {
+		Creator string `db:"creator"`
+		Address string `db:"address"`
 	}
 )

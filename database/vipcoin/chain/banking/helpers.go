@@ -9,6 +9,12 @@ import (
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
+const (
+	tableTransfers         = "vipcoin_chain_banking_base_transfers"
+	tableMsgPayment        = "vipcoin_chain_banking_msg_payment"
+	tableMsgSystemTransfer = "vipcoin_chain_banking_msg_system_transfer"
+)
+
 // toExtrasDB - mapping func to database model
 func toExtrasDB(extras []*extratypes.Extra) types.ExtraDB {
 	result := make([]extratypes.Extra, 0, len(extras))
@@ -22,8 +28,8 @@ func toExtrasDB(extras []*extratypes.Extra) types.ExtraDB {
 // fromExtrasDB - mapping func from database model
 func fromExtrasDB(extras types.ExtraDB) []*extratypes.Extra {
 	result := make([]*extratypes.Extra, 0, len(extras.Extras))
-	for _, extra := range extras.Extras {
-		result = append(result, &extra)
+	for index := range extras.Extras {
+		result = append(result, &extras.Extras[index])
 	}
 
 	return result
@@ -50,7 +56,7 @@ func toTransferDatabase(transfer *bankingtypes.BaseTransfer) types.DBTransfer {
 		Amount:    transfer.Amount,
 		Kind:      int32(transfer.Kind),
 		Extras:    toExtrasDB(transfer.Extras),
-		Timestamp: time.Unix(transfer.Timestamp, 0),
+		Timestamp: time.Unix(transfer.Timestamp, 0).UTC(),
 		TxHash:    transfer.TxHash,
 	}
 }
@@ -186,5 +192,83 @@ func toIssueDatabase(issue *bankingtypes.Issue) types.DBIssue {
 			TxHash:    issue.TxHash,
 		},
 		Wallet: issue.Wallet,
+	}
+}
+
+// toTransfersDatabase - mapping func to database model
+func toTransfersDatabase(transfers ...*bankingtypes.BaseTransfer) []types.DBTransfer {
+	result := make([]types.DBTransfer, 0, len(transfers))
+	for _, transfer := range transfers {
+		result = append(result, toTransferDatabase(transfer))
+	}
+
+	return result
+}
+
+// toPaymentDatabase - mapping func to database model
+func toMsgPaymentDatabase(payments *bankingtypes.MsgPayment) types.DBMsgPayment {
+	return types.DBMsgPayment{
+		Creator:    payments.Creator,
+		WalletFrom: payments.WalletFrom,
+		WalletTo:   payments.WalletTo,
+		Asset:      payments.Asset,
+		Amount:     payments.Amount,
+		Extras:     toExtrasDB(payments.Extras),
+	}
+}
+
+// toPaymentsDatabase - mapping func to database model
+func toMsgPaymentsDatabase(payments ...*bankingtypes.MsgPayment) []types.DBMsgPayment {
+	result := make([]types.DBMsgPayment, 0, len(payments))
+	for _, payment := range payments {
+		result = append(result, toMsgPaymentDatabase(payment))
+	}
+
+	return result
+}
+
+// toPaymentDomain - mapping func to domain model
+func toMsgPaymentDomain(payments types.DBMsgPayment) *bankingtypes.MsgPayment {
+	return &bankingtypes.MsgPayment{
+		Creator:    payments.Creator,
+		WalletFrom: payments.WalletFrom,
+		WalletTo:   payments.WalletTo,
+		Asset:      payments.Asset,
+		Amount:     payments.Amount,
+		Extras:     fromExtrasDB(payments.Extras),
+	}
+}
+
+// toSystemTransferDatabase - mapping func to database model
+func toMsgSystemTransferDatabase(transfer *bankingtypes.MsgSystemTransfer) types.DBMsgSystemTransfer {
+	return types.DBMsgSystemTransfer{
+		Creator:    transfer.Creator,
+		WalletFrom: transfer.WalletFrom,
+		WalletTo:   transfer.WalletTo,
+		Asset:      transfer.Asset,
+		Amount:     transfer.Amount,
+		Extras:     toExtrasDB(transfer.Extras),
+	}
+}
+
+// toSystemTransfersDatabase - mapping func to database model
+func toMsgSystemTransfersDatabase(transfers ...*bankingtypes.MsgSystemTransfer) []types.DBMsgSystemTransfer {
+	result := make([]types.DBMsgSystemTransfer, 0, len(transfers))
+	for _, transfer := range transfers {
+		result = append(result, toMsgSystemTransferDatabase(transfer))
+	}
+
+	return result
+}
+
+// toSystemTransferDomain - mapping func to domain model
+func toMsgSystemTransferDomain(transfer types.DBMsgSystemTransfer) *bankingtypes.MsgSystemTransfer {
+	return &bankingtypes.MsgSystemTransfer{
+		Creator:    transfer.Creator,
+		WalletFrom: transfer.WalletFrom,
+		WalletTo:   transfer.WalletTo,
+		Asset:      transfer.Asset,
+		Amount:     transfer.Amount,
+		Extras:     fromExtrasDB(transfer.Extras),
 	}
 }
