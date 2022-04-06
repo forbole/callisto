@@ -17,6 +17,8 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return m.handleMsgCreateAsset(tx, index, assetMsg)
 	case *assetstypes.MsgAssetManage:
 		return m.handleMsgManageAsset(tx, index, assetMsg)
+	case *assetstypes.MsgAssetSetExtra:
+		return m.handleMsgSetExtraAsset(tx, index, assetMsg)
 	default:
 		return nil
 	}
