@@ -131,6 +131,17 @@ func toSystemTransferDatabase(transfer *bankingtypes.SystemTransfer) types.DBSys
 	}
 }
 
+// toSystemTransfersDatabase - mapping func to database model
+func toSystemTransfersDatabase(transfers ...*bankingtypes.SystemTransfer) []types.DBSystemTransfer {
+	result := make([]types.DBSystemTransfer, 0, len(transfers))
+	for _, t := range transfers {
+		result = append(result, toSystemTransferDatabase(t))
+	}
+
+	return result
+
+}
+
 // toWithdrawDomain - mapping func to domain model
 func toWithdrawDomain(withdraw types.DBWithdraw) *bankingtypes.Withdraw {
 	return &bankingtypes.Withdraw{

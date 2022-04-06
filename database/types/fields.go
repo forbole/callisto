@@ -43,4 +43,5 @@ const (
 	FieldTxHash                = "tx_hash"
 	FieldWalletFrom            = "wallet_from"
 	FieldWalletTo              = "wallet_to"
+	FieldFee                   = "fee"
 )
