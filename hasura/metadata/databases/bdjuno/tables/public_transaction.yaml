@@ -5,16 +5,6 @@ object_relationships:
 - name: block
   using:
     foreign_key_constraint_on: height
-array_relationships:
-- name: messagesByTransactionHash
-  using:
-    manual_configuration:
-      remote_table:
-        schema: public
-        name: message
-      insertion_order:
-      column_mapping:
-        transaction_hash: hash
 select_permissions:
 - permission:
     allow_aggregations: true
