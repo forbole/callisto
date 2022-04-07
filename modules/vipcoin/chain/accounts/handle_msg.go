@@ -1,11 +1,8 @@
 package accounts
 
 import (
-	"fmt"
-
 	"git.ooo.ua/vipcoin/chain/x/accounts/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	juno "github.com/forbole/juno/v2/types"
 )
 
@@ -35,7 +32,6 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	case *types.MsgAddAffiliate:
 		return m.handleMsgAddAffiliate(tx, index, accountMsg)
 	default:
-		errMsg := fmt.Sprintf("unrecognized %s message type: %T", types.ModuleName, accountMsg)
-		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
+		return nil
 	}
 }

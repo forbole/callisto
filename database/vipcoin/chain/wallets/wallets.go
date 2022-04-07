@@ -97,7 +97,7 @@ func (r Repository) UpdateWallets(wallets ...*walletstypes.Wallet) error {
 	defer tx.Rollback()
 
 	query := `UPDATE vipcoin_chain_wallets_wallets SET
-				 address = :address, account_address = :account_address, kind = :kind,
+				 account_address = :account_address, kind = :kind,
 				 state = :state, balance = :balance, extras = :extras, default_status = :default_status
 			 WHERE address = :address`
 

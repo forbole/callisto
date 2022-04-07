@@ -1,7 +1,7 @@
 package banking
 
 import (
-	"strconv"
+	"time"
 
 	"git.ooo.ua/vipcoin/chain/x/banking/types"
 	"git.ooo.ua/vipcoin/lib/filter"
@@ -45,7 +45,7 @@ func (m *Module) handleMsgSystemTransfer(tx *juno.Tx, index int, msg *types.MsgS
 		return err
 	}
 
-	time, err := strconv.ParseInt(tx.Timestamp, 10, 64)
+	time, err := time.Parse(time.RFC3339, tx.Timestamp)
 	if err != nil {
 		return err
 	}
@@ -58,7 +58,7 @@ func (m *Module) handleMsgSystemTransfer(tx *juno.Tx, index int, msg *types.MsgS
 			Amount:    msg.Amount,
 			Kind:      types.TRANSFER_KIND_SYSTEM,
 			Extras:    msg.Extras,
-			Timestamp: time,
+			Timestamp: time.Unix(),
 			TxHash:    tx.TxHash,
 		},
 	}

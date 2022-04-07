@@ -17,6 +17,7 @@ const (
 	tableIssue             = "vipcoin_chain_banking_issue"
 	tableMsgPayment        = "vipcoin_chain_banking_msg_payment"
 	tableMsgSystemTransfer = "vipcoin_chain_banking_msg_system_transfer"
+	tableMsgIssue          = "vipcoin_chain_banking_msg_issue"
 )
 
 // toExtrasDB - mapping func to database model
@@ -295,5 +296,37 @@ func toMsgSystemTransferDomain(transfer types.DBMsgSystemTransfer) *bankingtypes
 		Asset:      transfer.Asset,
 		Amount:     transfer.Amount,
 		Extras:     fromExtrasDB(transfer.Extras),
+	}
+}
+
+// toMsgIssueDatabase - mapping func to database model
+func toMsgIssueDatabase(issue *bankingtypes.MsgIssue) types.DBMsgIssue {
+	return types.DBMsgIssue{
+		Creator: issue.Creator,
+		Wallet:  issue.Wallet,
+		Asset:   issue.Asset,
+		Amount:  issue.Amount,
+		Extras:  toExtrasDB(issue.Extras),
+	}
+}
+
+// toMsgIssuesDatabase - mapping func to database model
+func toMsgIssuesDatabase(issues ...*bankingtypes.MsgIssue) []types.DBMsgIssue {
+	result := make([]types.DBMsgIssue, 0, len(issues))
+	for _, issue := range issues {
+		result = append(result, toMsgIssueDatabase(issue))
+	}
+
+	return result
+}
+
+// toMsgIssueDomain - mapping func to domain model
+func toMsgIssueDomain(issue types.DBMsgIssue) *bankingtypes.MsgIssue {
+	return &bankingtypes.MsgIssue{
+		Creator: issue.Creator,
+		Wallet:  issue.Wallet,
+		Asset:   issue.Asset,
+		Amount:  issue.Amount,
+		Extras:  fromExtrasDB(issue.Extras),
 	}
 }

@@ -1,8 +1,8 @@
 -- +migrate Up
 CREATE TABLE IF NOT EXISTS vipcoin_chain_assets_assets
 (
-    issuer         TEXT NOT NULL PRIMARY KEY, -- assets issuer
-    name           TEXT NOT NULL,             -- assets name
+    name           TEXT NOT NULL PRIMARY KEY, -- assets name
+    issuer         TEXT NOT NULL,             -- assets issuer
     policies       INT[],                     -- assets policies
     state          INT,                       -- assets state
     issued         BIGINT,                    -- assets issued

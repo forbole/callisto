@@ -1,14 +1,9 @@
 package wallets
 
 import (
-	"fmt"
-
 	typeswallets "git.ooo.ua/vipcoin/chain/x/wallets/types"
 	"git.ooo.ua/vipcoin/lib/filter"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-
 	"github.com/forbole/juno/v2/types"
 	juno "github.com/forbole/juno/v2/types"
 
@@ -33,8 +28,7 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *types.Tx) error {
 	case *typeswallets.MsgCreateWalletWithBalance:
 		return m.MsgCreateWalletWithBalance(walletMsg)
 	default:
-		errMsg := fmt.Sprintf("unrecognized %s message type: %T", typeswallets.ModuleName, walletMsg)
-		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
+		return nil
 	}
 }
 

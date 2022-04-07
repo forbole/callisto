@@ -5,6 +5,7 @@ import (
 	"github.com/forbole/juno/v2/modules"
 
 	"github.com/forbole/bdjuno/v2/database"
+	"github.com/forbole/bdjuno/v2/database/vipcoin/chain/assets"
 	"github.com/forbole/bdjuno/v2/database/vipcoin/chain/banking"
 	"github.com/forbole/bdjuno/v2/database/vipcoin/chain/wallets"
 	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/banking/source"
@@ -22,6 +23,7 @@ type Module struct {
 	db          *database.Db
 	bankingRepo banking.Repository
 	walletsRepo wallets.Repository
+	assetRepo   assets.Repository
 	keeper      source.Source
 }
 
@@ -34,6 +36,7 @@ func NewModule(
 		db:          db,
 		bankingRepo: *banking.NewRepository(db.Sqlx, cdc),
 		walletsRepo: *wallets.NewRepository(db.Sqlx, cdc),
+		assetRepo:   *assets.NewRepository(db.Sqlx, cdc),
 		keeper:      keeper,
 	}
 }

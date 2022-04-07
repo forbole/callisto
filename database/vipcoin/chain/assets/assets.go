@@ -6,10 +6,10 @@ import (
 
 	assetstypes "git.ooo.ua/vipcoin/chain/x/assets/types"
 	"git.ooo.ua/vipcoin/lib/filter"
-
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/forbole/bdjuno/v2/database/types"
 	"github.com/jmoiron/sqlx"
+
+	"github.com/forbole/bdjuno/v2/database/types"
 )
 
 type (
@@ -92,10 +92,10 @@ func (r Repository) UpdateAssets(assets ...*assetstypes.Asset) error {
 	}()
 
 	query := `UPDATE vipcoin_chain_assets_assets SET
-				 issuer = :issuer, name = :name, policies = :policies,
+				 issuer = :issuer, policies = :policies,
 				 state = :state, issued = :issued, burned = :burned, withdrawn = :withdrawn, 
 			     in_circulation = :in_circulation, precision = :precision, fee_percent = :fee_percent, extras = :extras
-			 WHERE issuer = :issuer`
+			 WHERE name = :name`
 
 	for _, asset := range assets {
 		assetDB := toAssetDatabase(asset)
