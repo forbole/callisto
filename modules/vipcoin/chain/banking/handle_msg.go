@@ -21,6 +21,8 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return m.handleMsgPayments(tx, index, bankingMsg)
 	case *types.MsgSetTransferExtra:
 		return m.handleMsgSetTransferExtra(tx, index, bankingMsg)
+	case *types.MsgSystemRewardTransfer:
+		return m.handleMsgSystemRewardTransfer(tx, index, bankingMsg)
 	case *types.MsgWithdraw:
 		return m.handleMsgWithdraw(tx, index, bankingMsg)
 	default:

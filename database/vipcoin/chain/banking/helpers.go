@@ -10,16 +10,17 @@ import (
 )
 
 const (
-	tableTransfers           = "vipcoin_chain_banking_base_transfers"
-	tableSystemTransfer      = "vipcoin_chain_banking_system_transfer"
-	tablePayment             = "vipcoin_chain_banking_payment"
-	tableWithdraw            = "vipcoin_chain_banking_withdraw"
-	tableIssue               = "vipcoin_chain_banking_issue"
-	tableMsgPayment          = "vipcoin_chain_banking_msg_payment"
-	tableMsgSystemTransfer   = "vipcoin_chain_banking_msg_system_transfer"
-	tableMsgIssue            = "vipcoin_chain_banking_msg_issue"
-	tableMsgSetTransferExtra = "vipcoin_chain_banking_set_transfer_extra"
-	tableMsgWithdraw         = "vipcoin_chain_banking_msg_withdraw"
+	tableTransfers               = "vipcoin_chain_banking_base_transfers"
+	tableIssue                   = "vipcoin_chain_banking_issue"
+	tablePayment                 = "vipcoin_chain_banking_payment"
+	tableSystemTransfer          = "vipcoin_chain_banking_system_transfer"
+	tableWithdraw                = "vipcoin_chain_banking_withdraw"
+	tableMsgIssue                = "vipcoin_chain_banking_msg_issue"
+	tableMsgPayment              = "vipcoin_chain_banking_msg_payment"
+	tableMsgSetTransferExtra     = "vipcoin_chain_banking_set_transfer_extra"
+	tableMsgSystemRewardTransfer = "vipcoin_chain_banking_system_reward_transfer"
+	tableMsgSystemTransfer       = "vipcoin_chain_banking_msg_system_transfer"
+	tableMsgWithdraw             = "vipcoin_chain_banking_msg_withdraw"
 )
 
 // toExtrasDB - mapping func to database model
@@ -311,6 +312,40 @@ func toMsgSystemTransfersDatabase(transfers ...*bankingtypes.MsgSystemTransfer) 
 // toSystemTransferDomain - mapping func to domain model
 func toMsgSystemTransferDomain(transfer types.DBMsgSystemTransfer) *bankingtypes.MsgSystemTransfer {
 	return &bankingtypes.MsgSystemTransfer{
+		Creator:    transfer.Creator,
+		WalletFrom: transfer.WalletFrom,
+		WalletTo:   transfer.WalletTo,
+		Asset:      transfer.Asset,
+		Amount:     transfer.Amount,
+		Extras:     fromExtrasDB(transfer.Extras),
+	}
+}
+
+// toMsgSystemRewardTransferDatabase - mapping func to database model
+func toMsgSystemRewardTransferDatabase(transfer *bankingtypes.MsgSystemRewardTransfer) types.DBSystemRewardTransfer {
+	return types.DBSystemRewardTransfer{
+		Creator:    transfer.Creator,
+		WalletFrom: transfer.WalletFrom,
+		WalletTo:   transfer.WalletTo,
+		Asset:      transfer.Asset,
+		Amount:     transfer.Amount,
+		Extras:     toExtrasDB(transfer.Extras),
+	}
+}
+
+// toMsgSystemRewardTransfersDatabase - mapping func to database model
+func toMsgSystemRewardTransfersDatabase(transfers ...*bankingtypes.MsgSystemRewardTransfer) []types.DBSystemRewardTransfer {
+	result := make([]types.DBSystemRewardTransfer, 0, len(transfers))
+	for _, transfer := range transfers {
+		result = append(result, toMsgSystemRewardTransferDatabase(transfer))
+	}
+
+	return result
+}
+
+// toMsgSystemRewardTransferDomain - mapping func to domain model
+func toMsgSystemRewardTransferDomain(transfer types.DBSystemRewardTransfer) *bankingtypes.MsgSystemRewardTransfer {
+	return &bankingtypes.MsgSystemRewardTransfer{
 		Creator:    transfer.Creator,
 		WalletFrom: transfer.WalletFrom,
 		WalletTo:   transfer.WalletTo,
