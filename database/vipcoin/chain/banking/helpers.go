@@ -19,6 +19,7 @@ const (
 	tableMsgSystemTransfer   = "vipcoin_chain_banking_msg_system_transfer"
 	tableMsgIssue            = "vipcoin_chain_banking_msg_issue"
 	tableMsgSetTransferExtra = "vipcoin_chain_banking_set_transfer_extra"
+	tableMsgWithdraw         = "vipcoin_chain_banking_msg_withdraw"
 )
 
 // toExtrasDB - mapping func to database model
@@ -376,5 +377,37 @@ func toMsgSetTransferExtraDomain(extra types.DBSetTransferExtra) *bankingtypes.M
 		Creator: extra.Creator,
 		Id:      extra.Id,
 		Extras:  fromExtrasDB(extra.Extras),
+	}
+}
+
+// toMsgWithdrawDatabase - mapping func to database model
+func toMsgWithdrawDatabase(withdraw *bankingtypes.MsgWithdraw) types.DBMsgWithdraw {
+	return types.DBMsgWithdraw{
+		Creator: withdraw.Creator,
+		Wallet:  withdraw.Wallet,
+		Asset:   withdraw.Asset,
+		Amount:  withdraw.Amount,
+		Extras:  toExtrasDB(withdraw.Extras),
+	}
+}
+
+// toMsgWithdrawsDatabase - mapping func to database model
+func toMsgWithdrawsDatabase(withdraws ...*bankingtypes.MsgWithdraw) []types.DBMsgWithdraw {
+	result := make([]types.DBMsgWithdraw, 0, len(withdraws))
+	for _, withdraw := range withdraws {
+		result = append(result, toMsgWithdrawDatabase(withdraw))
+	}
+
+	return result
+}
+
+// toMsgWithdrawDomain - mapping func to domain model
+func toMsgWithdrawDomain(withdraw types.DBMsgWithdraw) *bankingtypes.MsgWithdraw {
+	return &bankingtypes.MsgWithdraw{
+		Creator: withdraw.Creator,
+		Wallet:  withdraw.Wallet,
+		Asset:   withdraw.Asset,
+		Amount:  withdraw.Amount,
+		Extras:  fromExtrasDB(withdraw.Extras),
 	}
 }

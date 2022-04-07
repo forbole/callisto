@@ -19,6 +19,8 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return m.handleMsgIssue(tx, index, bankingMsg)
 	case *types.MsgSetTransferExtra:
 		return m.handleMsgSetTransferExtra(tx, index, bankingMsg)
+	case *types.MsgWithdraw:
+		return m.handleMsgWithdraw(tx, index, bankingMsg)
 	default:
 		return nil
 	}
