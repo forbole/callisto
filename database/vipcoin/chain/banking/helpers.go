@@ -10,17 +10,18 @@ import (
 )
 
 const (
-	tableTransfers               = "vipcoin_chain_banking_base_transfers"
-	tableIssue                   = "vipcoin_chain_banking_issue"
-	tablePayment                 = "vipcoin_chain_banking_payment"
-	tableSystemTransfer          = "vipcoin_chain_banking_system_transfer"
-	tableWithdraw                = "vipcoin_chain_banking_withdraw"
-	tableMsgIssue                = "vipcoin_chain_banking_msg_issue"
-	tableMsgPayment              = "vipcoin_chain_banking_msg_payment"
-	tableMsgSetTransferExtra     = "vipcoin_chain_banking_set_transfer_extra"
-	tableMsgSystemRewardTransfer = "vipcoin_chain_banking_system_reward_transfer"
-	tableMsgSystemTransfer       = "vipcoin_chain_banking_msg_system_transfer"
-	tableMsgWithdraw             = "vipcoin_chain_banking_msg_withdraw"
+	tableTransfers                  = "vipcoin_chain_banking_base_transfers"
+	tableIssue                      = "vipcoin_chain_banking_issue"
+	tablePayment                    = "vipcoin_chain_banking_payment"
+	tableSystemTransfer             = "vipcoin_chain_banking_system_transfer"
+	tableWithdraw                   = "vipcoin_chain_banking_withdraw"
+	tableMsgIssue                   = "vipcoin_chain_banking_msg_issue"
+	tableMsgPayment                 = "vipcoin_chain_banking_msg_payment"
+	tableMsgSetTransferExtra        = "vipcoin_chain_banking_set_transfer_extra"
+	tableMsgSystemRewardTransfer    = "vipcoin_chain_banking_system_reward_transfer"
+	tableMsgSystemTransfer          = "vipcoin_chain_banking_msg_system_transfer"
+	tableMsgWithdraw                = "vipcoin_chain_banking_msg_withdraw"
+	tableMsgSetRewardManagerAddress = "vipcoin_chain_banking_set_reward_manager_address"
 )
 
 // toExtrasDB - mapping func to database model
@@ -352,6 +353,32 @@ func toMsgSystemRewardTransferDomain(transfer types.DBSystemRewardTransfer) *ban
 		Asset:      transfer.Asset,
 		Amount:     transfer.Amount,
 		Extras:     fromExtrasDB(transfer.Extras),
+	}
+}
+
+// toMsgSetRewardMgrAddressDB - mapping func to database model
+func toMsgSetRewardMgrAddressDB(address *bankingtypes.MsgSetRewardManagerAddress) types.DBSetRewardManagerAddress {
+	return types.DBSetRewardManagerAddress{
+		Creator: address.Creator,
+		Address: address.Address,
+	}
+}
+
+// toMsgSetRewardMgrAddressesDB - mapping func to database model
+func toMsgSetRewardMgrAddressesDB(addrs ...*bankingtypes.MsgSetRewardManagerAddress) []types.DBSetRewardManagerAddress {
+	result := make([]types.DBSetRewardManagerAddress, 0, len(addrs))
+	for _, address := range addrs {
+		result = append(result, toMsgSetRewardMgrAddressDB(address))
+	}
+
+	return result
+}
+
+// toMsgSetRewardMgrAddressDomain - mapping func to domain model
+func toMsgSetRewardMgrAddressDomain(address types.DBSetRewardManagerAddress) *bankingtypes.MsgSetRewardManagerAddress {
+	return &bankingtypes.MsgSetRewardManagerAddress{
+		Creator: address.Creator,
+		Address: address.Address,
 	}
 }
 

@@ -13,6 +13,8 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	}
 
 	switch bankingMsg := msg.(type) {
+	case *types.MsgSetRewardManagerAddress:
+		return m.handleMsgSetRewardManagerAddress(tx, index, bankingMsg)
 	case *types.MsgSystemTransfer:
 		return m.handleMsgSystemTransfer(tx, index, bankingMsg)
 	case *types.MsgIssue:
