@@ -10,14 +10,15 @@ import (
 )
 
 const (
-	tableTransfers         = "vipcoin_chain_banking_base_transfers"
-	tableSystemTransfer    = "vipcoin_chain_banking_system_transfer"
-	tablePayment           = "vipcoin_chain_banking_payment"
-	tableWithdraw          = "vipcoin_chain_banking_withdraw"
-	tableIssue             = "vipcoin_chain_banking_issue"
-	tableMsgPayment        = "vipcoin_chain_banking_msg_payment"
-	tableMsgSystemTransfer = "vipcoin_chain_banking_msg_system_transfer"
-	tableMsgIssue          = "vipcoin_chain_banking_msg_issue"
+	tableTransfers           = "vipcoin_chain_banking_base_transfers"
+	tableSystemTransfer      = "vipcoin_chain_banking_system_transfer"
+	tablePayment             = "vipcoin_chain_banking_payment"
+	tableWithdraw            = "vipcoin_chain_banking_withdraw"
+	tableIssue               = "vipcoin_chain_banking_issue"
+	tableMsgPayment          = "vipcoin_chain_banking_msg_payment"
+	tableMsgSystemTransfer   = "vipcoin_chain_banking_msg_system_transfer"
+	tableMsgIssue            = "vipcoin_chain_banking_msg_issue"
+	tableMsgSetTransferExtra = "vipcoin_chain_banking_set_transfer_extra"
 )
 
 // toExtrasDB - mapping func to database model
@@ -347,5 +348,33 @@ func toMsgIssueDomain(issue types.DBMsgIssue) *bankingtypes.MsgIssue {
 		Asset:   issue.Asset,
 		Amount:  issue.Amount,
 		Extras:  fromExtrasDB(issue.Extras),
+	}
+}
+
+// toMsgSetTransferExtraDatabase - mapping func to database model
+func toMsgSetTransferExtraDatabase(extra *bankingtypes.MsgSetTransferExtra) types.DBSetTransferExtra {
+	return types.DBSetTransferExtra{
+		Creator: extra.Creator,
+		Id:      extra.Id,
+		Extras:  toExtrasDB(extra.Extras),
+	}
+}
+
+// toMsgSetTransferExtrasDatabase - mapping func to database model
+func toMsgSetTransferExtrasDatabase(extras ...*bankingtypes.MsgSetTransferExtra) []types.DBSetTransferExtra {
+	result := make([]types.DBSetTransferExtra, 0, len(extras))
+	for _, extra := range extras {
+		result = append(result, toMsgSetTransferExtraDatabase(extra))
+	}
+
+	return result
+}
+
+// toMsgSetTransferExtraDomain - mapping func to domain model
+func toMsgSetTransferExtraDomain(extra types.DBSetTransferExtra) *bankingtypes.MsgSetTransferExtra {
+	return &bankingtypes.MsgSetTransferExtra{
+		Creator: extra.Creator,
+		Id:      extra.Id,
+		Extras:  fromExtrasDB(extra.Extras),
 	}
 }
