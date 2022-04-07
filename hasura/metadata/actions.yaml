@@ -5,7 +5,7 @@ actions:
 - name: action_account_balance
   definition:
     kind: synchronous
-    handler: {{ACTION_BASE_URL}}/account_balance
+    handler: "{{ACTION_BASE_URL}}/account_balance"
     output_type: ActionBalance
     arguments:
     - name: address
