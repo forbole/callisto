@@ -1,11 +1,11 @@
 table:
-  name: supply
   schema: public
+  name: supply
 select_permissions:
-- permission:
-    allow_aggregations: true
-    columns:
-    - coins
-    - height
-    filter: {}
-  role: anonymous
+  - role: anonymous
+    permission:
+      columns:
+        - coins
+        - height
+      filter: {}
+      allow_aggregations: true

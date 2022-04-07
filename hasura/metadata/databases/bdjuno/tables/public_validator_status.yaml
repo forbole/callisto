@@ -1,18 +1,18 @@
 table:
-  name: validator_status
   schema: public
+  name: validator_status
 object_relationships:
-- name: validator
-  using:
-    foreign_key_constraint_on: validator_address
+  - name: validator
+    using:
+      foreign_key_constraint_on: validator_address
 select_permissions:
-- permission:
-    allow_aggregations: true
-    columns:
-    - validator_address
-    - status
-    - jailed
-    - tombstoned
-    - height
-    filter: {}
-  role: anonymous
+  - role: anonymous
+    permission:
+      columns:
+        - validator_address
+        - status
+        - jailed
+        - tombstoned
+        - height
+      filter: {}
+      allow_aggregations: true

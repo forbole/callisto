@@ -1,33 +1,33 @@
 table:
-  name: transaction
   schema: public
+  name: transaction
 object_relationships:
-- name: block
-  using:
-    foreign_key_constraint_on: height
+  - name: block
+    using:
+      foreign_key_constraint_on: height
 array_relationships:
-- name: messagesByTransactionHash
-  using:
-    foreign_key_constraint_on:
-      column: transaction_hash
-      table:
-        name: message
-        schema: public
+  - name: messagesByTransactionHash
+    using:
+      foreign_key_constraint_on:
+        column: transaction_hash
+        table:
+          schema: public
+          name: message
 select_permissions:
-- permission:
-    allow_aggregations: true
-    columns:
-    - hash
-    - height
-    - success
-    - messages
-    - memo
-    - signatures
-    - signer_infos
-    - fee
-    - gas_wanted
-    - gas_used
-    - raw_log
-    - logs
-    filter: {}
-  role: anonymous
+  - role: anonymous
+    permission:
+      columns:
+        - hash
+        - height
+        - success
+        - messages
+        - memo
+        - signatures
+        - signer_infos
+        - fee
+        - gas_wanted
+        - gas_used
+        - raw_log
+        - logs
+      filter: {}
+      allow_aggregations: true

@@ -1,11 +1,11 @@
 table:
-  name: average_block_time_per_minute
   schema: public
+  name: average_block_time_per_minute
 select_permissions:
-- permission:
-    allow_aggregations: true
-    columns:
-    - average_time
-    - height
-    filter: {}
-  role: anonymous
+  - role: anonymous
+    permission:
+      columns:
+        - average_time
+        - height
+      filter: {}
+      allow_aggregations: true

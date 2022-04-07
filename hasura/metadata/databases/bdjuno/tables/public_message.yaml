@@ -1,18 +1,18 @@
 table:
-  name: message
   schema: public
+  name: message
 object_relationships:
-- name: transaction
-  using:
-    foreign_key_constraint_on: transaction_hash
+  - name: transaction
+    using:
+      foreign_key_constraint_on: transaction_hash
 select_permissions:
-- permission:
-    allow_aggregations: true
-    columns:
-    - transaction_hash
-    - index
-    - type
-    - value
-    - involved_accounts_addresses
-    filter: {}
-  role: anonymous
+  - role: anonymous
+    permission:
+      columns:
+        - transaction_hash
+        - index
+        - type
+        - value
+        - involved_accounts_addresses
+      filter: {}
+      allow_aggregations: true

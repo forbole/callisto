@@ -1,3 +1,3 @@
 table:
-  name: vipcoin_chain_accounts_set_affiliate_extra
   schema: public
+  name: vipcoin_chain_accounts_set_affiliate_extra

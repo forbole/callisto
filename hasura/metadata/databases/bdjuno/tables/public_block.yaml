@@ -1,45 +1,45 @@
 table:
-  name: block
   schema: public
+  name: block
 object_relationships:
-- name: validator
-  using:
-    foreign_key_constraint_on: proposer_address
+  - name: validator
+    using:
+      foreign_key_constraint_on: proposer_address
 array_relationships:
-- name: pre_commits
-  using:
-    manual_configuration:
-      column_mapping:
-        height: height
-      insertion_order: null
-      remote_table:
-        name: pre_commit
-        schema: public
-- name: transactions
-  using:
-    foreign_key_constraint_on:
-      column: height
-      table:
-        name: transaction
-        schema: public
-- name: validator_voting_powers
-  using:
-    manual_configuration:
-      column_mapping:
-        height: height
-      insertion_order: null
-      remote_table:
-        name: validator_voting_power
-        schema: public
+  - name: pre_commits
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: pre_commit
+        insertion_order: null
+        column_mapping:
+          height: height
+  - name: transactions
+    using:
+      foreign_key_constraint_on:
+        column: height
+        table:
+          schema: public
+          name: transaction
+  - name: validator_voting_powers
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: validator_voting_power
+        insertion_order: null
+        column_mapping:
+          height: height
 select_permissions:
-- permission:
-    allow_aggregations: true
-    columns:
-    - num_txs
-    - height
-    - total_gas
-    - hash
-    - proposer_address
-    - timestamp
-    filter: {}
-  role: anonymous
+  - role: anonymous
+    permission:
+      columns:
+        - num_txs
+        - height
+        - total_gas
+        - hash
+        - proposer_address
+        - timestamp
+      filter: {}
+      allow_aggregations: true

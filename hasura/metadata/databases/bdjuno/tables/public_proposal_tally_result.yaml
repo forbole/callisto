@@ -1,19 +1,19 @@
 table:
-  name: proposal_tally_result
   schema: public
+  name: proposal_tally_result
 object_relationships:
-- name: proposal
-  using:
-    foreign_key_constraint_on: proposal_id
+  - name: proposal
+    using:
+      foreign_key_constraint_on: proposal_id
 select_permissions:
-- permission:
-    allow_aggregations: true
-    columns:
-    - proposal_id
-    - yes
-    - abstain
-    - no
-    - no_with_veto
-    - height
-    filter: {}
-  role: anonymous
+  - role: anonymous
+    permission:
+      columns:
+        - proposal_id
+        - "yes"
+        - abstain
+        - "no"
+        - no_with_veto
+        - height
+      filter: {}
+      allow_aggregations: true

@@ -1,17 +1,17 @@
 table:
-  name: token_price_history
   schema: public
+  name: token_price_history
 object_relationships:
-- name: token_unit
-  using:
-    foreign_key_constraint_on: unit_name
+  - name: token_unit
+    using:
+      foreign_key_constraint_on: unit_name
 select_permissions:
-- permission:
-    allow_aggregations: true
-    columns:
-    - market_cap
-    - price
-    - timestamp
-    - unit_name
-    filter: {}
-  role: anonymous
+  - role: anonymous
+    permission:
+      columns:
+        - market_cap
+        - price
+        - timestamp
+        - unit_name
+      filter: {}
+      allow_aggregations: true
