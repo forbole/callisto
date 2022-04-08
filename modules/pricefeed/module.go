@@ -18,12 +18,12 @@ var (
 // Module represents the module that allows to get the token prices
 type Module struct {
 	cfg *Config
-	cdc codec.Marshaler
+	cdc codec.Codec
 	db  *database.Db
 }
 
 // NewModule returns a new Module instance
-func NewModule(cfg config.Config, cdc codec.Marshaler, db *database.Db) *Module {
+func NewModule(cfg config.Config, cdc codec.Codec, db *database.Db) *Module {
 	pricefeedCfg, err := ParseConfig(cfg.GetBytes())
 	if err != nil {
 		panic(err)

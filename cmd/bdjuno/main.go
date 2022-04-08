@@ -2,16 +2,18 @@ package main
 
 import (
 	"github.com/cosmos/cosmos-sdk/types/module"
-	parsecmd "github.com/forbole/bdjuno/v2/cmd/parse"
 	"github.com/forbole/juno/v3/cmd"
 	initcmd "github.com/forbole/juno/v3/cmd/init"
 	parsetypes "github.com/forbole/juno/v3/cmd/parse/types"
 
+	parsecmd "github.com/forbole/bdjuno/v2/cmd/parse"
+
 	"github.com/forbole/juno/v3/modules/messages"
 
-	actionscmd "github.com/forbole/bdjuno/v2/cmd/actions"
 	migratecmd "github.com/forbole/juno/v3/cmd/migrate"
 	startcmd "github.com/forbole/juno/v3/cmd/start"
+
+	actionscmd "github.com/forbole/bdjuno/v2/cmd/actions"
 
 	"github.com/forbole/bdjuno/v2/types/config"
 
