@@ -3,13 +3,13 @@ package handlers
 import (
 	"fmt"
 
+	"github.com/forbole/bdjuno/v2/modules/actions/types"
+
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/rs/zerolog/log"
-
-	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 )
 
-func RedelegationHandler(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
+func RedelegationHandler(ctx *types.Context, payload *types.Payload) (interface{}, error) {
 	log.Debug().Str("address", payload.GetAddress()).
 		Int64("height", payload.Input.Height).
 		Msg("executing redelegations action")
@@ -28,17 +28,17 @@ func RedelegationHandler(ctx *actionstypes.Context, payload *actionstypes.Payloa
 		return nil, fmt.Errorf("error while getting delegator redelegations: %s", err)
 	}
 
-	redelegationsList := make([]actionstypes.Redelegation, len(redelegations.RedelegationResponses))
+	redelegationsList := make([]types.Redelegation, len(redelegations.RedelegationResponses))
 	for index, del := range redelegations.RedelegationResponses {
-		redelegationsList[index] = actionstypes.Redelegation{
+		redelegationsList[index] = types.Redelegation{
 			DelegatorAddress:    del.Redelegation.DelegatorAddress,
 			ValidatorSrcAddress: del.Redelegation.ValidatorSrcAddress,
 			ValidatorDstAddress: del.Redelegation.ValidatorDstAddress,
 		}
 
-		RedelegationEntriesList := make([]actionstypes.RedelegationEntry, len(del.Entries))
+		RedelegationEntriesList := make([]types.RedelegationEntry, len(del.Entries))
 		for indexEntry, entry := range del.Entries {
-			RedelegationEntriesList[indexEntry] = actionstypes.RedelegationEntry{
+			RedelegationEntriesList[indexEntry] = types.RedelegationEntry{
 				CompletionTime: entry.RedelegationEntry.CompletionTime,
 				Balance:        entry.Balance,
 			}
@@ -47,7 +47,7 @@ func RedelegationHandler(ctx *actionstypes.Context, payload *actionstypes.Payloa
 		redelegationsList[index].RedelegationEntries = RedelegationEntriesList
 	}
 
-	return actionstypes.RedelegationResponse{
+	return types.RedelegationResponse{
 		Redelegations: redelegationsList,
 		Pagination:    redelegations.Pagination,
 	}, nil

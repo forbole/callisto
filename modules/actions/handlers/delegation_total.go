@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/forbole/bdjuno/v2/modules/actions/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc/codes"
-
-	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 )
 
-func TotalDelegationAmountHandler(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
+func TotalDelegationAmountHandler(ctx *types.Context, payload *types.Payload) (interface{}, error) {
 	log.Debug().Str("address", payload.GetAddress()).
 		Int64("height", payload.Input.Height).
 		Msg("executing total delegation amount action")
@@ -48,7 +48,7 @@ func TotalDelegationAmountHandler(ctx *actionstypes.Context, payload *actionstyp
 		}
 	}
 
-	return actionstypes.Balance{
-		Coins: actionstypes.ConvertCoins(coinObject),
+	return types.Balance{
+		Coins: types.ConvertCoins(coinObject),
 	}, nil
 }

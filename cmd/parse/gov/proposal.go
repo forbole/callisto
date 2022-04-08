@@ -4,16 +4,18 @@ import (
 	"encoding/hex"
 	"fmt"
 
+	modulestypes "github.com/forbole/bdjuno/v2/modules/types"
+
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
 	"github.com/forbole/juno/v3/types/config"
 	"github.com/spf13/cobra"
 
+	"github.com/forbole/juno/v3/parser"
+
 	"github.com/forbole/bdjuno/v2/database"
-	"github.com/forbole/bdjuno/v2/modules"
 	"github.com/forbole/bdjuno/v2/modules/gov"
 	"github.com/forbole/bdjuno/v2/utils"
-	"github.com/forbole/juno/v3/parser"
 )
 
 // proposalCmd returns the Cobra command allowing to fix all things related to a proposal
@@ -29,7 +31,7 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				return err
 			}
 
-			sources, err := modules.BuildSources(config.Cfg.Node, parseCtx.EncodingConfig)
+			sources, err := modulestypes.BuildSources(config.Cfg.Node, parseCtx.EncodingConfig)
 			if err != nil {
 				return err
 			}
