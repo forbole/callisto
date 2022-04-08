@@ -6,13 +6,11 @@ import (
 	"github.com/forbole/juno/v3/cmd"
 	initcmd "github.com/forbole/juno/v3/cmd/init"
 	parsetypes "github.com/forbole/juno/v3/cmd/parse/types"
-
-	parsecmd "github.com/forbole/bdjuno/v2/cmd/parse"
-
+	startcmd "github.com/forbole/juno/v3/cmd/start"
 	"github.com/forbole/juno/v3/modules/messages"
 
-	migratecmd "github.com/forbole/juno/v3/cmd/migrate"
-	startcmd "github.com/forbole/juno/v3/cmd/start"
+	migratecmd "github.com/forbole/bdjuno/v2/cmd/migrate"
+	parsecmd "github.com/forbole/bdjuno/v2/cmd/parse"
 
 	"github.com/forbole/bdjuno/v2/types/config"
 
