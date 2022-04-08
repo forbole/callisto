@@ -1,12 +1,12 @@
 package gov
 
 import (
-	"github.com/forbole/juno/v2/cmd/parse"
+	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
 	"github.com/spf13/cobra"
 )
 
 // NewGovCmd returns the Cobra command allowing to fix various things related to the x/gov module
-func NewGovCmd(parseConfig *parse.Config) *cobra.Command {
+func NewGovCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "gov",
 		Short: "Fix things related to the x/gov module",

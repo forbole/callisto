@@ -5,25 +5,26 @@ import (
 	"fmt"
 
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	"github.com/forbole/juno/v2/cmd/parse"
-	"github.com/forbole/juno/v2/types/config"
+	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
+	"github.com/forbole/juno/v3/types/config"
 	"github.com/spf13/cobra"
 
 	"github.com/forbole/bdjuno/v2/database"
 	"github.com/forbole/bdjuno/v2/modules"
 	"github.com/forbole/bdjuno/v2/modules/gov"
 	"github.com/forbole/bdjuno/v2/utils"
+	"github.com/forbole/juno/v3/parser"
 )
 
 // proposalCmd returns the Cobra command allowing to fix all things related to a proposal
-func proposalCmd(parseConfig *parse.Config) *cobra.Command {
+func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:   "proposal [id]",
 		Short: "Get the description, votes and everything related to a proposal given its id",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			proposalID := args[0]
 
-			parseCtx, err := parse.GetParsingContext(parseConfig)
+			parseCtx, err := parsecmdtypes.GetParserContext(config.Cfg, parseConfig)
 			if err != nil {
 				return err
 			}
@@ -59,7 +60,7 @@ func proposalCmd(parseConfig *parse.Config) *cobra.Command {
 	}
 }
 
-func refreshProposalDetails(parseCtx *parse.Context, proposalID string, govModule *gov.Module) error {
+func refreshProposalDetails(parseCtx *parser.Context, proposalID string, govModule *gov.Module) error {
 	// Get the tx that created the proposal
 	txs, err := utils.QueryTxs(parseCtx.Node, fmt.Sprintf("submit_proposal.proposal_id=%s", proposalID))
 	if err != nil {
@@ -91,7 +92,7 @@ func refreshProposalDetails(parseCtx *parse.Context, proposalID string, govModul
 	return nil
 }
 
-func refreshProposalDeposits(parseCtx *parse.Context, proposalID string, govModule *gov.Module) error {
+func refreshProposalDeposits(parseCtx *parser.Context, proposalID string, govModule *gov.Module) error {
 	// Get the tx that deposited to the proposal
 	txs, err := utils.QueryTxs(parseCtx.Node, fmt.Sprintf("proposal_deposit.proposal_id=%s", proposalID))
 	if err != nil {
@@ -121,7 +122,7 @@ func refreshProposalDeposits(parseCtx *parse.Context, proposalID string, govModu
 	return nil
 }
 
-func refreshProposalVotes(parseCtx *parse.Context, proposalID string, govModule *gov.Module) error {
+func refreshProposalVotes(parseCtx *parser.Context, proposalID string, govModule *gov.Module) error {
 	// Get the tx that voted the proposal
 	txs, err := utils.QueryTxs(parseCtx.Node, fmt.Sprintf("proposal_vote.proposal_id=%s", proposalID))
 	if err != nil {

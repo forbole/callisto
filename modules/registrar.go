@@ -7,13 +7,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/tendermint/tendermint/libs/log"
 
-	"github.com/forbole/juno/v2/modules/pruning"
-	"github.com/forbole/juno/v2/modules/telemetry"
+	"github.com/forbole/juno/v3/modules/pruning"
+	"github.com/forbole/juno/v3/modules/telemetry"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/forbole/juno/v2/node/remote"
+	"github.com/forbole/juno/v3/node/remote"
 
-	"github.com/forbole/bdjuno/v2/modules/history"
 	"github.com/forbole/bdjuno/v2/modules/slashing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -25,15 +24,15 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/forbole/juno/v2/node/local"
+	"github.com/forbole/juno/v3/node/local"
 
-	jmodules "github.com/forbole/juno/v2/modules"
-	"github.com/forbole/juno/v2/modules/messages"
-	"github.com/forbole/juno/v2/modules/registrar"
+	jmodules "github.com/forbole/juno/v3/modules"
+	"github.com/forbole/juno/v3/modules/messages"
+	"github.com/forbole/juno/v3/modules/registrar"
 
 	"github.com/forbole/bdjuno/v2/utils"
 
-	nodeconfig "github.com/forbole/juno/v2/node/config"
+	nodeconfig "github.com/forbole/juno/v3/node/config"
 
 	"github.com/forbole/bdjuno/v2/database"
 	"github.com/forbole/bdjuno/v2/modules/auth"
@@ -112,7 +111,6 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	consensusModule := consensus.NewModule(db)
 	distrModule := distribution.NewModule(sources.DistrSource, cdc, db)
 	feegrantModule := feegrant.NewModule(cdc, db)
-	historyModule := history.NewModule(ctx.JunoConfig.Chain, r.parser, cdc, db)
 	mintModule := mint.NewModule(sources.MintSource, cdc, db)
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
 	stakingModule := staking.NewModule(sources.StakingSource, slashingModule, cdc, db)
@@ -129,10 +127,9 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		distrModule,
 		feegrantModule,
 		govModule,
-		historyModule,
 		mintModule,
 		modules.NewModule(ctx.JunoConfig.Chain, db),
-		pricefeed.NewModule(ctx.JunoConfig, historyModule, cdc, db),
+		pricefeed.NewModule(ctx.JunoConfig, cdc, db),
 		slashingModule,
 		stakingModule,
 	}

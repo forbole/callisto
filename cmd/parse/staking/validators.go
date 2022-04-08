@@ -3,8 +3,8 @@ package staking
 import (
 	"fmt"
 
-	"github.com/forbole/juno/v2/cmd/parse"
-	"github.com/forbole/juno/v2/types/config"
+	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
+	"github.com/forbole/juno/v3/types/config"
 	"github.com/spf13/cobra"
 
 	"github.com/forbole/bdjuno/v2/database"
@@ -13,12 +13,12 @@ import (
 )
 
 // validatorsCmd returns a Cobra command that allows to fix the validator infos for all validators.
-func validatorsCmd(parseConfig *parse.Config) *cobra.Command {
+func validatorsCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:   "validators",
 		Short: "Fix the information about validators taking them from the latest known height",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			parseCtx, err := parse.GetParsingContext(parseConfig)
+			parseCtx, err := parsecmdtypes.GetParserContext(config.Cfg, parseConfig)
 			if err != nil {
 				return err
 			}
