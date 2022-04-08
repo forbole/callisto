@@ -19,22 +19,38 @@ The BDjuno is working as a backend for Big Dipper. The followings are the featur
 - [x] [x/distribution] Update community pool
 - [x] [x/gov] Get gov proposals
 - [x] [x/gov] Calculate the tally result
+- [x] Validators signing-info (slashing)
 
 ### Achievable using GraphQL APIs
 - [x] Calculate the average block time
 
+
+### Achievable using Hasura Actions
+#### Address/Delegator related data:
+- [x] Get account balance
+- [x] Get delegations
+- [x] Get total delegations amount
+- [x] Get delegation rewards
+- [x] Get unbonding delegations
+- [x] Get total unbonding delegations amount
+- [x] Get redelegations
+- [x] Get delegator withdraw address
+#### Validator related data:
+- [x] Get commission amount
+- [x] Get validator delegations
+- [x] Get validator redelegations
+- [x] Get validator unbonding delegations
+
+
 ## On intervals
-- [x] Get token price and marketcap (per 30 seconds)
+- [x] Get token price and marketcap (per 2 minutes)
 - [x] [x/staking] Calculate average delegation ratio (per hour, per day) *
 - [x] [x/staking] Calculate voting power distribution (per hour) *
-- [x] [x/staking] Record all delegations (per day) *
-- [x] [x/staking] Record all undelegatios (per day) *
-- [x] [x/staking] Record all redelegations (per day) *
 
-\* These should be duable using the `average` method inside GraphQL
+\* These should be doable using the `average` method inside GraphQL
 
 ## Not on Big Dipper now but we are considering to add
-- [x] Validators signing-info (slashing)
+
 - [ ] All wallets activities
 - [ ] Alert on events: 
    - [ ] Proposal creation
@@ -44,7 +60,6 @@ The BDjuno is working as a backend for Big Dipper. The followings are the featur
    - [ ] Huge undelegation
    - [ ] Proposal start voting 
    - [ ] Proposal voting ends
-- [x] Validators information update history
 - [ ] Validators rating
    - [ ] Self-delegation
    - [ ] Uptime
