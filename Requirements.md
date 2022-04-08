@@ -26,7 +26,7 @@ The BDjuno is working as a backend for Big Dipper. The followings are the featur
 
 
 ### Achievable using Hasura Actions
-#### Address/Delegator related data:
+Address/Delegator related data:
 - [x] Get account balance
 - [x] Get delegations
 - [x] Get total delegations amount
@@ -35,7 +35,8 @@ The BDjuno is working as a backend for Big Dipper. The followings are the featur
 - [x] Get total unbonding delegations amount
 - [x] Get redelegations
 - [x] Get delegator withdraw address
-#### Validator related data:
+
+Validator related data:
 - [x] Get commission amount
 - [x] Get validator delegations
 - [x] Get validator redelegations
@@ -43,7 +44,10 @@ The BDjuno is working as a backend for Big Dipper. The followings are the featur
 
 
 ## On intervals
-- [x] Get token price and marketcap (per 2 minutes)
+- [x] [x/bank] Get total supply (per 10 mins)
+- [x] [x/distribution] Get community pool (per hour)
+- [x] [x/mint] Get inflation (per day)
+- [x] [x/pricefeed] Get token price and marketcap (per 2 minutes, per hour)
 - [x] [x/staking] Calculate average delegation ratio (per hour, per day) *
 - [x] [x/staking] Calculate voting power distribution (per hour) *
 
