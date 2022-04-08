@@ -14,6 +14,7 @@ This version introduces breaking changes to `transaction` and `message` PostgreS
 ### Changes 
 #### Hasura
 - ([\#377](https://github.com/forbole/bdjuno/pull/377)) Updated Hasura metadata
+- ([\#381](https://github.com/forbole/bdjuno/pull/381)) Hasura actions are now a module 
 
 ### Dependencies
 - ([\#356](https://github.com/forbole/bdjuno/pull/356)) Updated Juno to `v3.0.0`
