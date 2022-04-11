@@ -19,12 +19,16 @@ import (
 )
 
 func main() {
+	initCfg := initcmd.NewConfig().
+		WithConfigCreator(config.Creator)
+
 	parseCfg := parsetypes.NewConfig().
 		WithDBBuilder(database.Builder).
 		WithEncodingConfigBuilder(config.MakeEncodingConfig(getBasicManagers())).
 		WithRegistrar(modules.NewRegistrar(getAddressesParser()))
 
 	cfg := cmd.NewConfig("bdjuno").
+		WithInitConfig(initCfg).
 		WithParseConfig(parseCfg)
 
 	// Run the command

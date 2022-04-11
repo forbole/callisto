@@ -19,6 +19,14 @@ func NewConfig(port uint, remoteDetails *remote.Details) *Config {
 	}
 }
 
+// DefaultConfig returns the default configuration
+func DefaultConfig() Config {
+	return Config{
+		Port: 3000,
+		Node: nil,
+	}
+}
+
 func ParseConfig(bz []byte) (*Config, error) {
 	type T struct {
 		Config *Config `yaml:"actions"`

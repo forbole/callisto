@@ -27,7 +27,12 @@ type Module struct {
 }
 
 func NewModule(cfg config.Config, encodingConfig *params.EncodingConfig) *Module {
-	actionsCfg, err := ParseConfig(cfg.GetBytes())
+	bz, err := cfg.GetBytes()
+	if err != nil {
+		panic(err)
+	}
+
+	actionsCfg, err := ParseConfig(bz)
 	if err != nil {
 		panic(err)
 	}
