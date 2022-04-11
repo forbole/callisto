@@ -34,22 +34,29 @@ func (r Repository) SaveAssets(assets ...*assetstypes.Asset) error {
 		return nil
 	}
 
-	query := `INSERT INTO vipcoin_chain_assets_assets 
-       (
-        "issuer", "name", "policies", "state", "issued", "burned",
-        "withdrawn", "in_circulation", "precision", "fee_percent", "extras"
-        ) 
-     VALUES 
-       (
-        :issuer, :name, :policies, :state, :issued, :burned,
-        :withdrawn, :in_circulation, :precision, :fee_percent, :extras
-        )`
-
-	if _, err := r.db.NamedExec(query, toAssetsArrDatabase(assets...)); err != nil {
+	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
+	if err != nil {
 		return err
 	}
 
-	return nil
+	defer func() {
+		_ = tx.Rollback()
+	}()
+
+	query := `INSERT INTO vipcoin_chain_assets_assets 
+        ("issuer", "name", "policies", "state", "issued", "burned",
+        "withdrawn", "in_circulation", "precision", "fee_percent", "extras")
+     VALUES 
+       (:issuer, :name, :policies, :state, :issued, :burned,
+        :withdrawn, :in_circulation, :precision, :fee_percent, :extras)`
+
+	for _, asset := range assets {
+		if _, err := tx.NamedExec(query, toAssetDatabase(asset)); err != nil {
+			return err
+		}
+	}
+
+	return tx.Commit()
 }
 
 // GetAssets - method that get assets from the "vipcoin_chain_assets_assets" table

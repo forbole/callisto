@@ -3,7 +3,6 @@ package wallets
 import (
 	extratypes "git.ooo.ua/vipcoin/chain/x/types"
 	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
-
 	cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/forbole/bdjuno/v2/database/types"
@@ -45,7 +44,7 @@ func fromBalanceDB(balance types.BalanceDB) cosmos_sdk_types.Coins {
 }
 
 // toWalletsDatabase - mapping func to database model
-func toWalletsDatabase(wallets *walletstypes.Wallet) (types.DBWallets, error) {
+func toWalletsDatabase(wallets *walletstypes.Wallet) types.DBWallets {
 	return types.DBWallets{
 		Address:        wallets.Address,
 		AccountAddress: wallets.AccountAddress,
@@ -54,11 +53,11 @@ func toWalletsDatabase(wallets *walletstypes.Wallet) (types.DBWallets, error) {
 		Balance:        toBalanceDB(wallets.Balance),
 		Extras:         toExtrasDB(wallets.Extras),
 		DefaultStatus:  wallets.Default,
-	}, nil
+	}
 }
 
 // toWalletDomain - mapping func to domain model
-func toWalletDomain(wallet types.DBWallets) (*walletstypes.Wallet, error) {
+func toWalletDomain(wallet types.DBWallets) *walletstypes.Wallet {
 	return &walletstypes.Wallet{
 		Address:        wallet.Address,
 		AccountAddress: wallet.AccountAddress,
@@ -67,7 +66,7 @@ func toWalletDomain(wallet types.DBWallets) (*walletstypes.Wallet, error) {
 		Balance:        fromBalanceDB(wallet.Balance),
 		Extras:         fromExtrasDB(wallet.Extras),
 		Default:        wallet.DefaultStatus,
-	}, nil
+	}
 }
 
 // toCreateWalletDatabase - mapping func to database model

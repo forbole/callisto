@@ -47,12 +47,7 @@ func (r Repository) SaveWallets(wallets ...*walletstypes.Wallet) error {
        (:address, :account_address, :kind, :state, :balance, :extras, :default_status)`
 
 	for _, wallet := range wallets {
-		walletDB, err := toWalletsDatabase(wallet)
-		if err != nil {
-			return err
-		}
-
-		if _, err := tx.NamedExec(query, walletDB); err != nil {
+		if _, err := tx.NamedExec(query, toWalletsDatabase(wallet)); err != nil {
 			return err
 		}
 	}
@@ -72,12 +67,7 @@ func (r Repository) GetWallets(filter filter.Filter) ([]*walletstypes.Wallet, er
 
 	wallets := make([]*walletstypes.Wallet, 0, len(result))
 	for _, w := range result {
-		wallet, err := toWalletDomain(w)
-		if err != nil {
-			return []*walletstypes.Wallet{}, err
-		}
-
-		wallets = append(wallets, wallet)
+		wallets = append(wallets, toWalletDomain(w))
 	}
 
 	return wallets, nil
@@ -102,12 +92,7 @@ func (r Repository) UpdateWallets(wallets ...*walletstypes.Wallet) error {
 			 WHERE address = :address`
 
 	for _, wallet := range wallets {
-		walletsDB, err := toWalletsDatabase(wallet)
-		if err != nil {
-			return err
-		}
-
-		if _, err := tx.NamedExec(query, walletsDB); err != nil {
+		if _, err := tx.NamedExec(query, toWalletsDatabase(wallet)); err != nil {
 			return err
 		}
 	}

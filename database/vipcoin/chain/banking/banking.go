@@ -34,16 +34,27 @@ func (r Repository) SaveBaseTransfers(transfers ...*bankingtypes.BaseTransfer) e
 		return nil
 	}
 
+	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		_ = tx.Rollback()
+	}()
+
 	query := `INSERT INTO vipcoin_chain_banking_base_transfers 
        ("id", "asset", "amount", "kind", "extras", "timestamp", "tx_hash") 
      VALUES 
        (:id, :asset, :amount, :kind, :extras, :timestamp, :tx_hash)`
 
-	if _, err := r.db.NamedExec(query, toTransfersDatabase(transfers...)); err != nil {
-		return err
+	for _, transfer := range transfers {
+		if _, err := tx.NamedExec(query, toTransferDatabase(transfer)); err != nil {
+			return err
+		}
 	}
 
-	return nil
+	return tx.Commit()
 }
 
 // UpdateBaseTransfers - method that updates the transfers in the "vipcoin_chain_banking_transfers" table
