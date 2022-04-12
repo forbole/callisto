@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/forbole/juno/v3/cmd"
 	initcmd "github.com/forbole/juno/v3/cmd/init"

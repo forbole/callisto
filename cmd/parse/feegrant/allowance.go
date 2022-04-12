@@ -3,6 +3,7 @@ package feegrant
 import (
 	"encoding/hex"
 	"fmt"
+
 	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
 	"github.com/forbole/juno/v3/types/config"
 
