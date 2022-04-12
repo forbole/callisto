@@ -1,19 +1,16 @@
 package main
 
 import (
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/forbole/juno/v3/cmd"
 	initcmd "github.com/forbole/juno/v3/cmd/init"
 	parsetypes "github.com/forbole/juno/v3/cmd/parse/types"
-
-	parsecmd "github.com/forbole/bdjuno/v2/cmd/parse"
-
+	startcmd "github.com/forbole/juno/v3/cmd/start"
 	"github.com/forbole/juno/v3/modules/messages"
 
-	migratecmd "github.com/forbole/juno/v3/cmd/migrate"
-	startcmd "github.com/forbole/juno/v3/cmd/start"
-
-	actionscmd "github.com/forbole/bdjuno/v2/cmd/actions"
+	migratecmd "github.com/forbole/bdjuno/v2/cmd/migrate"
+	parsecmd "github.com/forbole/bdjuno/v2/cmd/parse"
 
 	"github.com/forbole/bdjuno/v2/types/config"
 
@@ -24,12 +21,16 @@ import (
 )
 
 func main() {
+	initCfg := initcmd.NewConfig().
+		WithConfigCreator(config.Creator)
+
 	parseCfg := parsetypes.NewConfig().
 		WithDBBuilder(database.Builder).
 		WithEncodingConfigBuilder(config.MakeEncodingConfig(getBasicManagers())).
 		WithRegistrar(modules.NewRegistrar(getAddressesParser()))
 
 	cfg := cmd.NewConfig("bdjuno").
+		WithInitConfig(initCfg).
 		WithParseConfig(parseCfg)
 
 	// Run the command
@@ -41,7 +42,6 @@ func main() {
 		parsecmd.NewParseCmd(cfg.GetParseConfig()),
 		migratecmd.NewMigrateCmd(cfg.GetName(), cfg.GetParseConfig()),
 		startcmd.NewStartCmd(cfg.GetParseConfig()),
-		actionscmd.NewActionsCmd(cfg.GetParseConfig()),
 	)
 
 	executor := cmd.PrepareRootCmd(cfg.GetName(), rootCmd)

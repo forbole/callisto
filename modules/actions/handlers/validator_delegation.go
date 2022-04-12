@@ -3,13 +3,13 @@ package handlers
 import (
 	"fmt"
 
+	"github.com/forbole/bdjuno/v2/modules/actions/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/rs/zerolog/log"
-
-	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 )
 
-func ValidatorDelegation(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
+func ValidatorDelegation(ctx *types.Context, payload *types.Payload) (interface{}, error) {
 	log.Debug().Str("address", payload.GetAddress()).
 		Int64("height", payload.Input.Height).
 		Msg("executing validator delegation action")
@@ -26,16 +26,16 @@ func ValidatorDelegation(ctx *actionstypes.Context, payload *actionstypes.Payloa
 		return nil, fmt.Errorf("error while getting validator delegations: %s", err)
 	}
 
-	delegations := make([]actionstypes.Delegation, len(res.DelegationResponses))
+	delegations := make([]types.Delegation, len(res.DelegationResponses))
 	for index, del := range res.DelegationResponses {
-		delegations[index] = actionstypes.Delegation{
+		delegations[index] = types.Delegation{
 			DelegatorAddress: del.Delegation.DelegatorAddress,
 			ValidatorAddress: del.Delegation.ValidatorAddress,
-			Coins:            actionstypes.ConvertCoins([]sdk.Coin{del.Balance}),
+			Coins:            types.ConvertCoins([]sdk.Coin{del.Balance}),
 		}
 	}
 
-	return actionstypes.DelegationResponse{
+	return types.DelegationResponse{
 		Delegations: delegations,
 		Pagination:  res.Pagination,
 	}, nil

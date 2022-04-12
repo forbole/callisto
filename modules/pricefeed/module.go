@@ -24,7 +24,12 @@ type Module struct {
 
 // NewModule returns a new Module instance
 func NewModule(cfg config.Config, cdc codec.Codec, db *database.Db) *Module {
-	pricefeedCfg, err := ParseConfig(cfg.GetBytes())
+	bz, err := cfg.GetBytes()
+	if err != nil {
+		panic(err)
+	}
+
+	pricefeedCfg, err := ParseConfig(bz)
 	if err != nil {
 		panic(err)
 	}
