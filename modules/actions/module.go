@@ -8,7 +8,7 @@ import (
 	nodeconfig "github.com/forbole/juno/v3/node/config"
 	"github.com/forbole/juno/v3/types/config"
 
-	modulestypes "github.com/forbole/bdjuno/v2/modules/types"
+	modulestypes "github.com/forbole/bdjuno/v3/modules/types"
 )
 
 const (

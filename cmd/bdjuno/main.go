@@ -9,13 +9,13 @@ import (
 	startcmd "github.com/forbole/juno/v3/cmd/start"
 	"github.com/forbole/juno/v3/modules/messages"
 
-	migratecmd "github.com/forbole/bdjuno/v2/cmd/migrate"
-	parsecmd "github.com/forbole/bdjuno/v2/cmd/parse"
+	migratecmd "github.com/forbole/bdjuno/v3/cmd/migrate"
+	parsecmd "github.com/forbole/bdjuno/v3/cmd/parse"
 
-	"github.com/forbole/bdjuno/v2/types/config"
+	"github.com/forbole/bdjuno/v3/types/config"
 
-	"github.com/forbole/bdjuno/v2/database"
-	"github.com/forbole/bdjuno/v2/modules"
+	"github.com/forbole/bdjuno/v3/database"
+	"github.com/forbole/bdjuno/v3/modules"
 )
 
 func main() {
