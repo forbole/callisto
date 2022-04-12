@@ -3,7 +3,7 @@ package feegrant
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/forbole/bdjuno/v2/database"
+	"github.com/forbole/bdjuno/v3/database"
 
 	"github.com/forbole/juno/v3/modules"
 )

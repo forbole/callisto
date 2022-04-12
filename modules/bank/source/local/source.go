@@ -8,8 +8,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/juno/v3/node/local"
 
-	"github.com/forbole/bdjuno/v2/modules/bank/source"
-	"github.com/forbole/bdjuno/v2/types"
+	"github.com/forbole/bdjuno/v3/modules/bank/source"
+	"github.com/forbole/bdjuno/v3/types"
 )
 
 var (

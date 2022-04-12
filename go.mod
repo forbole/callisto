@@ -1,4 +1,4 @@
-module github.com/forbole/bdjuno/v2
+module github.com/forbole/bdjuno/v3
 
 go 1.17
 
