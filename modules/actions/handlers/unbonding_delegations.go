@@ -3,12 +3,12 @@ package handlers
 import (
 	"fmt"
 
-	"github.com/rs/zerolog/log"
+	"github.com/forbole/bdjuno/v2/modules/actions/types"
 
-	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
+	"github.com/rs/zerolog/log"
 )
 
-func UnbondingDelegationsHandler(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
+func UnbondingDelegationsHandler(ctx *types.Context, payload *types.Payload) (interface{}, error) {
 	log.Debug().Str("address", payload.GetAddress()).
 		Int64("height", payload.Input.Height).
 		Msg("executing unbonding delegations action")
@@ -24,16 +24,16 @@ func UnbondingDelegationsHandler(ctx *actionstypes.Context, payload *actionstype
 		return nil, fmt.Errorf("error while getting delegator unbonding delegations: %s", err)
 	}
 
-	unbondingDelegationsList := make([]actionstypes.UnbondingDelegation, len(unbondingDelegations.UnbondingResponses))
+	unbondingDelegationsList := make([]types.UnbondingDelegation, len(unbondingDelegations.UnbondingResponses))
 	for index, del := range unbondingDelegations.UnbondingResponses {
-		unbondingDelegationsList[index] = actionstypes.UnbondingDelegation{
+		unbondingDelegationsList[index] = types.UnbondingDelegation{
 			DelegatorAddress: del.DelegatorAddress,
 			ValidatorAddress: del.ValidatorAddress,
 			Entries:          del.Entries,
 		}
 	}
 
-	return actionstypes.UnbondingDelegationResponse{
+	return types.UnbondingDelegationResponse{
 		UnbondingDelegations: unbondingDelegationsList,
 		Pagination:           unbondingDelegations.Pagination,
 	}, nil

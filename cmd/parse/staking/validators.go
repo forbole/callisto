@@ -3,12 +3,13 @@ package staking
 import (
 	"fmt"
 
+	modulestypes "github.com/forbole/bdjuno/v2/modules/types"
+
 	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
 	"github.com/forbole/juno/v3/types/config"
 	"github.com/spf13/cobra"
 
 	"github.com/forbole/bdjuno/v2/database"
-	"github.com/forbole/bdjuno/v2/modules"
 	"github.com/forbole/bdjuno/v2/modules/staking"
 )
 
@@ -23,7 +24,7 @@ func validatorsCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				return err
 			}
 
-			sources, err := modules.BuildSources(config.Cfg.Node, parseCtx.EncodingConfig)
+			sources, err := modulestypes.BuildSources(config.Cfg.Node, parseCtx.EncodingConfig)
 			if err != nil {
 				return err
 			}
