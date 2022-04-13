@@ -99,3 +99,27 @@ func (r Repository) UpdateWallets(wallets ...*walletstypes.Wallet) error {
 
 	return tx.Commit()
 }
+
+// DeleteWallets - method that delete wallets in the "vipcoin_chain_wallets_wallets" table
+func (r Repository) DeleteWallets(wallets ...*walletstypes.Wallet) error {
+	if len(wallets) == 0 {
+		return nil
+	}
+
+	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
+	if err != nil {
+		return err
+	}
+
+	defer tx.Rollback()
+
+	query := `DELETE FROM vipcoin_chain_wallets_wallets WHERE address = :address`
+
+	for _, wallet := range wallets {
+		if _, err := tx.NamedExec(query, toWalletsDatabase(wallet)); err != nil {
+			return err
+		}
+	}
+
+	return tx.Commit()
+}

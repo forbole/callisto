@@ -1,20 +1,23 @@
 -- +migrate Up
-CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_affiliates(
-    id               SERIAL PRIMARY KEY NOT NULL,                -- affiliates id
-    address          TEXT               NOT NULL,                -- affiliates address
-    affiliation_kind INT,                                        -- affiliates AffiliationKind
-    extras           JSONB                                       -- affiliates extras
-);
-
 CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_accounts (
     address    TEXT      NOT NULL PRIMARY KEY,                   -- accounts address
-    hash       TEXT      NOT NULL,                               -- accounts hash
+    hash       TEXT      NOT NULL UNIQUE,                        -- accounts hash
     public_key TEXT      NOT NULL,                               -- accounts public_key
     kinds      INT[],                                            -- accounts kinds
     state      INT,                                              -- accounts state
     extras     JSONB,                                            -- accounts extras
-    affiliates BIGINT[],                                         -- accounts affiliates
     wallets    TEXT[]                                            -- accounts wallets
+);
+
+CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_affiliates(
+    id               SERIAL PRIMARY KEY NOT NULL,                -- affiliates id
+    account_hash     TEXT               NOT NULL,                -- affiliates account hash
+    address          TEXT               NOT NULL,                -- affiliates address
+    affiliation_kind INT,                                        -- affiliates AffiliationKind
+    extras           JSONB,                                      -- affiliates extras
+    CONSTRAINT fk_accounts_accounts
+      FOREIGN KEY(account_hash) 
+      REFERENCES vipcoin_chain_accounts_accounts(hash)
 );
 
 CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_set_kinds (

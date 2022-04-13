@@ -27,14 +27,24 @@ const (
 	tableAddAffiliate     = "vipcoin_chain_accounts_add_affiliate"
 )
 
-// toAffiliatesDatabase - mapping func to database model
-func toAffiliatesDatabase(affiliate *accountstypes.Affiliate) types.DBAffiliates {
+// toAffiliateDatabase - mapping func to database model
+func toAffiliateDatabase(affiliate *accountstypes.Affiliate, accHash string) types.DBAffiliates {
 	return types.DBAffiliates{
 		Address:         affiliate.Address,
+		AccountHash:     accHash,
 		AffiliationKind: accountstypes.AffiliationKind_value[affiliate.Affiliation.String()],
 		Extras:          toExtrasDB(affiliate.Extras),
 	}
+}
 
+// toAffiliatesDatabase - mapping func to database model
+func toAffiliatesDatabase(affiliates []*accountstypes.Affiliate, accHash string) []types.DBAffiliates {
+	result := make([]types.DBAffiliates, 0, len(affiliates))
+	for _, affiliate := range affiliates {
+		result = append(result, toAffiliateDatabase(affiliate, accHash))
+	}
+
+	return result
 }
 
 // toAffiliatesDomain - mapping func to domain model
@@ -132,16 +142,6 @@ func toKindsDomain(kinds pq.Int32Array) []accountstypes.AccountKind {
 	result := make([]accountstypes.AccountKind, 0, len(kinds))
 	for _, kind := range kinds {
 		result = append(result, accountstypes.AccountKind(kind))
-	}
-
-	return result
-}
-
-// parseID - helper function for convert
-func parseID(data []int64) []interface{} {
-	result := make([]interface{}, 0, len(data))
-	for _, id := range data {
-		result = append(result, id)
 	}
 
 	return result

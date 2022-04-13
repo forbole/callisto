@@ -5,7 +5,6 @@ const (
 	FieldAccountAddress        = "account_address"
 	FieldAccountHash           = "account_hash"
 	FieldAddress               = "address"
-	FieldAffiliates            = "affiliates"
 	FieldAffiliation           = "affiliation"
 	FieldAffiliationHash       = "affiliation_hash"
 	FieldAffiliationKind       = "affiliation_kind"

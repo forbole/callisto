@@ -95,12 +95,12 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_set_reward_manager_address (
 );
 
 -- +migrate Down
-DROP TABLE IF EXISTS vipcoin_chain_banking_base_transfers CASCADE;
 DROP TABLE IF EXISTS vipcoin_chain_banking_system_transfer CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_banking_system_reward_transfer CASCADE;
 DROP TABLE IF EXISTS vipcoin_chain_banking_payment CASCADE;
 DROP TABLE IF EXISTS vipcoin_chain_banking_withdraw CASCADE;
 DROP TABLE IF EXISTS vipcoin_chain_banking_issue CASCADE;
+DROP TABLE IF EXISTS vipcoin_chain_banking_base_transfers CASCADE;
+DROP TABLE IF EXISTS vipcoin_chain_banking_system_reward_transfer CASCADE;
 DROP TABLE IF EXISTS vipcoin_chain_banking_set_transfer_extra CASCADE;
 DROP TABLE IF EXISTS vipcoin_chain_banking_set_reward_manager_address CASCADE;
 DROP TABLE IF EXISTS vipcoin_chain_banking_msg_system_transfer CASCADE;

@@ -1,3 +1,7 @@
 table:
   schema: public
   name: vipcoin_chain_accounts_affiliates
+object_relationships:
+  - name: account
+    using:
+      foreign_key_constraint_on: account_hash

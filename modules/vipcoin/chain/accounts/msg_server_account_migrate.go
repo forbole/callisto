@@ -2,6 +2,7 @@ package accounts
 
 import (
 	"git.ooo.ua/vipcoin/chain/x/accounts/types"
+	xtypes "git.ooo.ua/vipcoin/chain/x/types"
 	"git.ooo.ua/vipcoin/lib/filter"
 	juno "github.com/forbole/juno/v2/types"
 
@@ -14,13 +15,19 @@ func (m *Module) handleMsgAccountMigrate(tx *juno.Tx, index int, msg *types.MsgA
 		return err
 	}
 
-	account, err := m.accountRepo.GetAccounts(filter.NewFilter().SetArgument(dbtypes.FieldHash, msg.Hash))
-	if err != nil {
+	accountArr, err := m.accountRepo.GetAccounts(filter.NewFilter().SetArgument(dbtypes.FieldHash, msg.Hash))
+	switch {
+	case err != nil:
 		return err
+	case len(accountArr) != 1:
+		return types.ErrInvalidHashField
 	}
 
-	if len(account) != 1 {
-		return types.ErrInvalidHashField
+	account := accountArr[0]
+
+	wallets, err := m.walletsRepo.GetWallets(filter.NewFilter().SetArgument(dbtypes.FieldAccountAddress, account.Address))
+	if err != nil {
+		return err
 	}
 
 	publicKey, err := types.PubKeyFromString(msg.PublicKey)
@@ -28,12 +35,63 @@ func (m *Module) handleMsgAccountMigrate(tx *juno.Tx, index int, msg *types.MsgA
 		return types.ErrInvalidPublicKeyField
 	}
 
-	account[0].PublicKey, err = types.PubKeyToAny(publicKey)
+	account.PublicKey, err = types.PubKeyToAny(publicKey)
 	if err != nil {
 		return types.ErrInvalidPublicKeyField
 	}
 
-	account[0].Address = msg.Address
+	oldAddr := account.Address
+	account.Address = msg.Address
 
-	return m.accountRepo.UpdateAccounts(account...)
+	// Change address in affiliates
+	for _, affiliate := range account.Affiliates {
+		// Get affiliate account
+		affiliateAcc, err := m.accountRepo.GetAccounts(filter.NewFilter().SetArgument(dbtypes.FieldAddress, affiliate.Address))
+		switch {
+		case err != nil:
+			return err
+		case len(affiliateAcc) != 1:
+			return types.ErrInvalidAddressField
+		}
+
+		if affiliateAcc[0].Address == "" {
+			// skip empty affiliate
+			continue
+		}
+
+		// search obsolete address
+		for i, a := range affiliateAcc[0].Affiliates {
+			if xtypes.GetSDKAddress(a.Address).Equals(xtypes.GetSDKAddress(oldAddr)) {
+				// Update address to new one
+				a.Address = msg.Address
+				affiliateAcc[0].Affiliates[i] = a
+				// Break loop
+				break
+			}
+		}
+
+		if err := m.accountRepo.UpdateAccounts(affiliateAcc...); err != nil {
+			return err
+		}
+	}
+
+	if err := m.walletsRepo.DeleteWallets(wallets...); err != nil {
+		return err
+	}
+
+	if err := m.accountRepo.UpdateAccounts(account); err != nil {
+		return err
+	}
+
+	// change address in wallets
+	for index := range wallets {
+		if wallets[index].Address == "" {
+			// skip empty wallet
+			continue
+		}
+
+		wallets[index].AccountAddress = msg.Address
+	}
+
+	return m.walletsRepo.SaveWallets(wallets...)
 }

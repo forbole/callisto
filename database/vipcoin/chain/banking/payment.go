@@ -24,23 +24,37 @@ func (r Repository) SavePayments(payments ...*bankingtypes.Payment) error {
 	defer tx.Rollback()
 
 	queryBaseTransfer := `INSERT INTO vipcoin_chain_banking_base_transfers 
-       ("id", "asset", "amount", "kind", "extras", "timestamp", "tx_hash") 
+       ("asset", "amount", "kind", "extras", "timestamp", "tx_hash") 
      VALUES 
-       (:id, :asset, :amount, :kind, :extras, :timestamp, :tx_hash)`
+       (:asset, :amount, :kind, :extras, :timestamp, :tx_hash)
+     RETURNING id`
 
 	queryPayment := `INSERT INTO vipcoin_chain_banking_payment
 			("id", "wallet_from", "wallet_to", "fee")
 			VALUES
 			(:id,:wallet_from,:wallet_to,:fee)`
 
-	paymentDB := toPaymentsDatabase(payments...)
+	for _, payment := range payments {
+		paymentDB := toPaymentDatabase(payment)
 
-	if _, err := tx.NamedExec(queryBaseTransfer, paymentDB); err != nil {
-		return err
-	}
+		resp, err := tx.NamedQuery(queryBaseTransfer, paymentDB)
+		if err != nil {
+			return err
+		}
 
-	if _, err := tx.NamedExec(queryPayment, paymentDB); err != nil {
-		return err
+		for resp.Next() {
+			if err := resp.Scan(&paymentDB.ID); err != nil {
+				return err
+			}
+		}
+
+		if err := resp.Err(); err != nil {
+			return err
+		}
+
+		if _, err := tx.NamedExec(queryPayment, paymentDB); err != nil {
+			return err
+		}
 	}
 
 	return tx.Commit()
@@ -81,12 +95,12 @@ func (r Repository) UpdatePayments(payments ...*bankingtypes.Payment) error {
 	defer tx.Rollback()
 
 	queryBaseTransfer := `UPDATE vipcoin_chain_banking_base_transfers SET
-	id =:id, asset =:asset, amount =:amount, kind =:kind, extras =:extras, timestamp =:timestamp, tx_hash =:tx_hash
+	asset =:asset, amount =:amount, kind =:kind, extras =:extras, timestamp =:timestamp, tx_hash =:tx_hash
 	WHERE id =:id;
 	`
 
 	queryPayment := `UPDATE vipcoin_chain_banking_payment SET
-	id =:id, wallet_from =:wallet_from, wallet_to =:wallet_to, fee =:fee
+	wallet_from =:wallet_from, wallet_to =:wallet_to, fee =:fee
 	WHERE id =:id;
 	`
 

@@ -24,23 +24,37 @@ func (r Repository) SaveSystemTransfers(transfers ...*bankingtypes.SystemTransfe
 	defer tx.Rollback()
 
 	queryBaseTransfer := `INSERT INTO vipcoin_chain_banking_base_transfers 
-       ("id", "asset", "amount", "kind", "extras", "timestamp", "tx_hash") 
+       ("asset", "amount", "kind", "extras", "timestamp", "tx_hash") 
      VALUES 
-       (:id, :asset, :amount, :kind, :extras, :timestamp, :tx_hash)`
+       (:asset, :amount, :kind, :extras, :timestamp, :tx_hash)
+     RETURNING id`
 
 	querySystemTransfer := `INSERT INTO vipcoin_chain_banking_system_transfer
 			("id", "wallet_from", "wallet_to")
 			VALUES
-			(:id,:wallet_from,:wallet_to)`
+			(:id, :wallet_from, :wallet_to)`
 
-	transferDB := toSystemTransfersDatabase(transfers...)
+	for _, transfer := range transfers {
+		transferDB := toSystemTransferDatabase(transfer)
 
-	if _, err := tx.NamedExec(queryBaseTransfer, transferDB); err != nil {
-		return err
-	}
+		resp, err := tx.NamedQuery(queryBaseTransfer, transferDB)
+		if err != nil {
+			return err
+		}
 
-	if _, err := tx.NamedExec(querySystemTransfer, transferDB); err != nil {
-		return err
+		for resp.Next() {
+			if err := resp.Scan(&transferDB.ID); err != nil {
+				return err
+			}
+		}
+
+		if err := resp.Err(); err != nil {
+			return err
+		}
+
+		if _, err := tx.NamedExec(querySystemTransfer, transferDB); err != nil {
+			return err
+		}
 	}
 
 	return tx.Commit()
@@ -81,12 +95,12 @@ func (r Repository) UpdateSystemTransfers(transfers ...*bankingtypes.SystemTrans
 	defer tx.Rollback()
 
 	queryBaseTransfer := `UPDATE vipcoin_chain_banking_base_transfers SET
-	id =:id, asset =:asset, amount =:amount, kind =:kind, extras =:extras, timestamp =:timestamp, tx_hash =:tx_hash
+	asset =:asset, amount =:amount, kind =:kind, extras =:extras, timestamp =:timestamp, tx_hash =:tx_hash
 	WHERE id =:id;
 	`
 
 	queryTransfer := `UPDATE vipcoin_chain_banking_system_transfer SET
-	id =:id, wallet_from =:wallet_from, wallet_to =:wallet_to
+	wallet_from =:wallet_from, wallet_to =:wallet_to
 	WHERE id =:id;
 	`
 
