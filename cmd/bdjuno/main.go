@@ -1,6 +1,7 @@
 package main
 
 import (
+	chainapp "git.ooo.ua/vipcoin/chain/app"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/forbole/juno/v2/cmd"
@@ -12,13 +13,10 @@ import (
 	fixcmd "github.com/forbole/bdjuno/v2/cmd/fix"
 	migratecmd "github.com/forbole/bdjuno/v2/cmd/migrate"
 	parsegenesiscmd "github.com/forbole/bdjuno/v2/cmd/parse-genesis"
-
-	chainapp "git.ooo.ua/vipcoin/chain/app"
-
-	"github.com/forbole/bdjuno/v2/types/config"
-
+	vault "github.com/forbole/bdjuno/v2/config"
 	"github.com/forbole/bdjuno/v2/database"
 	"github.com/forbole/bdjuno/v2/modules"
+	"github.com/forbole/bdjuno/v2/types/config"
 )
 
 func main() {
@@ -36,7 +34,7 @@ func main() {
 	rootCmd.AddCommand(
 		cmd.VersionCmd(),
 		initcmd.InitCmd(cfg.GetInitConfig()),
-		parsecmd.ParseCmd(cfg.GetParseConfig()),
+		vault.CheckVaultConfig(cfg.GetName(), parsecmd.ParseCmd(cfg.GetParseConfig())),
 		migratecmd.NewMigrateCmd(),
 		fixcmd.NewFixCmd(cfg.GetParseConfig()),
 		parsegenesiscmd.NewParseGenesisCmd(cfg.GetParseConfig()),

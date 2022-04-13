@@ -24,6 +24,23 @@ require (
 )
 
 require (
+	github.com/hashicorp/errwrap v1.0.0 // indirect
+	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
+	github.com/hashicorp/go-multierror v1.1.0 // indirect
+	github.com/hashicorp/go-retryablehttp v0.6.6 // indirect
+	github.com/hashicorp/go-rootcerts v1.0.2 // indirect
+	github.com/hashicorp/go-sockaddr v1.0.2 // indirect
+	github.com/hashicorp/vault/api v1.1.0 // indirect
+	github.com/hashicorp/vault/sdk v0.1.14-0.20200519221838-e0cfd64bc267 // indirect
+	github.com/pierrec/lz4 v2.5.2+incompatible // indirect
+	github.com/ryanuber/go-glob v1.0.0 // indirect
+	golang.org/x/time v0.0.0-20200416051211-89c76fbcd5d1 // indirect
+	gopkg.in/square/go-jose.v2 v2.5.1 // indirect
+)
+
+require (
+	git.ooo.ua/vipcoin/lib/config v1.0.2
+	git.ooo.ua/vipcoin/lib/vault v1.0.7
 	github.com/99designs/keyring v1.1.6 // indirect
 	github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d // indirect
 	github.com/CosmWasm/wasmd v0.19.0 // indirect
