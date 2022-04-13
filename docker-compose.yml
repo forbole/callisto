@@ -20,7 +20,7 @@ services:
       context: .
       dockerfile: Dockerfile
     restart: always
-    command: bdjuno parse --home /bdjuno/.bdjuno
+    command: bdjuno parse genesis-file --home /bdjuno/.bdjuno
     volumes:
       ## Modify first path to match configuration file.
-      - /bdjuno/.bdjuno:/bdjuno/.bdjuno
+      - ${BDJUNO_PATH}:/bdjuno/.bdjuno
