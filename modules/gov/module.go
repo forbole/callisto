@@ -3,11 +3,11 @@ package gov
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/forbole/bdjuno/v2/database"
+	"github.com/forbole/bdjuno/v3/database"
 
-	govsource "github.com/forbole/bdjuno/v2/modules/gov/source"
+	govsource "github.com/forbole/bdjuno/v3/modules/gov/source"
 
-	"github.com/forbole/juno/v2/modules"
+	"github.com/forbole/juno/v3/modules"
 )
 
 var (
@@ -19,7 +19,7 @@ var (
 
 // Module represent x/gov module
 type Module struct {
-	cdc            codec.Marshaler
+	cdc            codec.Codec
 	db             *database.Db
 	source         govsource.Source
 	authModule     AuthModule
@@ -37,7 +37,7 @@ func NewModule(
 	mintModule MintModule,
 	slashingModule SlashingModule,
 	stakingModule StakingModule,
-	cdc codec.Marshaler,
+	cdc codec.Codec,
 	db *database.Db,
 ) *Module {
 	return &Module{
