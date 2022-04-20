@@ -39,6 +39,12 @@ import (
 	stakingsource "github.com/forbole/bdjuno/v3/modules/staking/source"
 	localstakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/remote"
+	desmosapp "github.com/desmos-labs/desmos/v3/app"
+	localprofilessource "github.com/forbole/bdjuno/v3/modules/profiles/source/local"
+	remoteprofilessource "github.com/forbole/bdjuno/v3/modules/profiles/source/remote"
+	profilessource "github.com/forbole/bdjuno/v3/modules/profiles/source"
+	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+
 )
 
 type Sources struct {
@@ -46,6 +52,7 @@ type Sources struct {
 	DistrSource    distrsource.Source
 	GovSource      govsource.Source
 	MintSource     mintsource.Source
+	ProfilesSource profilessource.Source
 	SlashingSource slashingsource.Source
 	StakingSource  stakingsource.Source
 }
@@ -68,6 +75,11 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		return nil, err
 	}
 
+		desmosApp := desmosapp.NewDesmosApp(
+		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
+		cfg.Home, 0, desmosapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
+	)
+
 	app := simapp.NewSimApp(
 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
 		cfg.Home, 0, simapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
@@ -78,6 +90,7 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
 		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
 		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
+		ProfilesSource: localprofilessource.NewSource(source, profilestypes.QueryServer(desmosApp.ProfileKeeper)),
 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
 		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
 	}
@@ -117,6 +130,7 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		DistrSource:    remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
 		GovSource:      remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
+		ProfilesSource: remoteprofilessource.NewSource(source, profilestypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
 	}, nil

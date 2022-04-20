@@ -4,10 +4,10 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
-	"github.com/forbole/juno/v2/node/local"
+	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+	"github.com/forbole/juno/v3/node/local"
 
-	profilessource "github.com/forbole/bdjuno/v2/modules/profiles/source"
+	profilessource "github.com/forbole/bdjuno/v3/modules/profiles/source"
 )
 
 var (
