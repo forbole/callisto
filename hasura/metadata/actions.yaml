@@ -5,7 +5,7 @@ actions:
 - name: action_account_balance
   definition:
     kind: synchronous
-    handler: http://localhost:3000/account_balance
+    handler: "{{ACTION_BASE_URL}}/account_balance"
     output_type: ActionBalance
     arguments:
     - name: address
@@ -23,7 +23,7 @@ actions:
 - name: action_delegation_reward
   definition:
     kind: synchronous
-    handler: http://localhost:3000/delegation_reward
+    handler: "{{ACTION_BASE_URL}}/delegation_reward"
     output_type: "[ActionDelegationReward]"
     arguments:
     - name: address
@@ -40,7 +40,7 @@ actions:
 - name: action_delegator_withdraw_address
   definition:
     kind: synchronous
-    handler: http://localhost:3000/delegator_withdraw_address
+    handler: "{{ACTION_BASE_URL}}/delegator_withdraw_address"
     output_type: ActionAddress
     arguments:
     - name: address
@@ -55,7 +55,7 @@ actions:
 - name: action_delegation
   definition:
     kind: synchronous
-    handler: http://localhost:3000/delegation
+    handler: "{{ACTION_BASE_URL}}/delegation"
     output_type: ActionDelegationResponse
     arguments:
     - name: address
@@ -78,7 +78,7 @@ actions:
 - name: action_delegation_total
   definition:
     kind: synchronous
-    handler: http://localhost:3000/delegation_total
+    handler: "{{ACTION_BASE_URL}}/delegation_total"
     output_type: ActionBalance
     arguments:
     - name: address
@@ -95,7 +95,7 @@ actions:
 - name: action_redelegation
   definition:
     kind: synchronous
-    handler: http://localhost:3000/redelegation
+    handler: "{{ACTION_BASE_URL}}/redelegation"
     output_type: ActionRedelegationResponse
     arguments:
     - name: address
@@ -118,7 +118,7 @@ actions:
 - name: action_unbonding_delegation
   definition:
     kind: synchronous
-    handler: http://localhost:3000/unbonding_delegation
+    handler: "{{ACTION_BASE_URL}}/unbonding_delegation"
     output_type: ActionUnbondingDelegationResponse
     arguments:
     - name: address
@@ -141,7 +141,7 @@ actions:
 - name: action_unbonding_delegation_total
   definition:
     kind: synchronous
-    handler: http://localhost:3000/unbonding_delegation_total
+    handler: "{{ACTION_BASE_URL}}/unbonding_delegation_total"
     output_type: ActionBalance
     arguments:
     - name: address
@@ -159,7 +159,7 @@ actions:
 - name: action_validator_commission_amount
   definition:
     kind: synchronous
-    handler: http://localhost:3000/validator_commission_amount
+    handler: "{{ACTION_BASE_URL}}/validator_commission_amount"
     output_type: "[ActionValidatorCommissionAmount]"
     arguments:
     - name: address
@@ -174,7 +174,7 @@ actions:
 - name: action_validator_delegations
   definition:
     kind: synchronous
-    handler: http://localhost:3000/validator_delegations
+    handler: "{{ACTION_BASE_URL}}/validator_delegations"
     output_type: ActionDelegationResponse
     arguments:
     - name: address
@@ -195,7 +195,7 @@ actions:
 - name: action_validator_redelegations_from
   definition:
     kind: synchronous
-    handler: http://localhost:3000/validator_redelegations_from
+    handler: "{{ACTION_BASE_URL}}/validator_redelegations_from"
     output_type: ActionRedelegationResponse
     arguments:
     - name: address
@@ -218,7 +218,7 @@ actions:
 - name: action_validator_unbonding_delegations
   definition:
     kind: synchronous
-    handler: http://localhost:3000/validator_unbonding_delegations
+    handler: "{{ACTION_BASE_URL}}/validator_unbonding_delegations"
     output_type: ActionUnbondingDelegationResponse
     arguments:
     - name: address

@@ -5,7 +5,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/forbole/bdjuno/v2/types"
+	"github.com/forbole/bdjuno/v3/types"
 )
 
 // SaveFeeGrantAllowance allows to store the fee grant allowances for the given block height

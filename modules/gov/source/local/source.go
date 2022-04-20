@@ -5,9 +5,9 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	"github.com/forbole/juno/v2/node/local"
+	"github.com/forbole/juno/v3/node/local"
 
-	govsource "github.com/forbole/bdjuno/v2/modules/gov/source"
+	govsource "github.com/forbole/bdjuno/v3/modules/gov/source"
 )
 
 var (
