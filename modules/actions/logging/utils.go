@@ -15,6 +15,6 @@ func ErrorCounter(path string) {
 }
 
 func ReponseTimeBuckets(path string, start time.Time) {
-	ActionResponseTime.WithLabelValues(path, fmt.Sprintf("%v", time.Since(start).Seconds())).
+	ActionResponseTime.WithLabelValues(path).
 		Observe(time.Since(start).Seconds())
 }
