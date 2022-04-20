@@ -4,10 +4,10 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/forbole/juno/v2/node/local"
+	"github.com/forbole/juno/v3/node/local"
 	iscntypes "github.com/likecoin/likechain/x/iscn/types"
 
-	iscnsource "github.com/forbole/bdjuno/v2/modules/iscn/source"
+	iscnsource "github.com/forbole/bdjuno/v3/modules/iscn/source"
 )
 
 var (

@@ -1,17 +1,16 @@
-module github.com/forbole/bdjuno/v2
+module github.com/forbole/bdjuno/v3
 
 go 1.17
 
 require (
-	github.com/cosmos/cosmos-sdk v0.42.11
-	github.com/forbole/juno/v2 v2.0.0-20220223115557-e4ed06a008de
+	github.com/cosmos/cosmos-sdk v0.44.4
+	github.com/forbole/juno/v3 v3.1.1-stargate
 	github.com/go-co-op/gocron v1.13.0
 	github.com/gogo/protobuf v1.3.3
-	github.com/gorilla/mux v1.8.0
-	github.com/jmoiron/sqlx v1.2.1-0.20200324155115-ee514944af4b
-	github.com/lib/pq v1.10.4
+	github.com/gorilla/mux v1.8.0 // indirect
+	github.com/jmoiron/sqlx v1.3.4
+	github.com/lib/pq v1.10.5
 	github.com/likecoin/likechain v1.2.0
-	github.com/pelletier/go-toml v1.9.4
 	github.com/prometheus/client_golang v1.12.1
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
 	github.com/rs/zerolog v1.26.1
@@ -66,7 +65,7 @@ require (
 	github.com/gtank/merlin v0.1.1 // indirect
 	github.com/gtank/ristretto255 v0.1.2 // indirect
 	github.com/hashicorp/go-immutable-radix v1.3.1 // indirect
-	github.com/hashicorp/golang-lru v0.5.4 // indirect
+	github.com/hashicorp/golang-lru v0.5.5-0.20210104140557-80c98217689d // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/ipfs/go-cid v0.0.7 // indirect
@@ -91,6 +90,7 @@ require (
 	github.com/multiformats/go-multibase v0.0.3 // indirect
 	github.com/multiformats/go-multihash v0.0.15 // indirect
 	github.com/multiformats/go-varint v0.0.6 // indirect
+	github.com/pelletier/go-toml v1.9.4 // indirect
 	github.com/petermattis/goid v0.0.0-20180202154549-b0b1615b78e5 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
@@ -133,4 +133,5 @@ replace (
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	github.com/tendermint/tendermint => github.com/forbole/tendermint v0.34.13-0.20210820072129-a2a4af55563d
 	google.golang.org/grpc => google.golang.org/grpc v1.33.2
+
 )
