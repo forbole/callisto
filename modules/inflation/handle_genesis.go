@@ -8,7 +8,7 @@ import (
 	inflationtypes "github.com/e-money/em-ledger/x/inflation/types"
 	"github.com/rs/zerolog/log"
 
-	"github.com/forbole/bdjuno/v2/types"
+	"github.com/forbole/bdjuno/v3/types"
 )
 
 // HandleGenesis implements modules.GenesisModule

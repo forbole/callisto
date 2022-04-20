@@ -5,9 +5,9 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authoritytypes "github.com/e-money/em-ledger/x/authority/types"
-	"github.com/forbole/juno/v2/node/remote"
+	"github.com/forbole/juno/v3/node/remote"
 
-	authoritysource "github.com/forbole/bdjuno/v2/modules/authority/source"
+	authoritysource "github.com/forbole/bdjuno/v3/modules/authority/source"
 )
 
 var (

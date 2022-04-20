@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	inflationtypes "github.com/e-money/em-ledger/x/inflation/types"
-	"github.com/forbole/juno/v2/node/remote"
+	"github.com/forbole/juno/v3/node/remote"
 
-	inflationsource "github.com/forbole/bdjuno/v2/modules/inflation/source"
+	inflationsource "github.com/forbole/bdjuno/v3/modules/inflation/source"
 )
 
 var (
