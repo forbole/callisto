@@ -6,8 +6,8 @@ import (
 
 	inflationtypes "github.com/e-money/em-ledger/x/inflation/types"
 
-	dbtypes "github.com/forbole/bdjuno/v2/database/types"
-	"github.com/forbole/bdjuno/v2/types"
+	dbtypes "github.com/forbole/bdjuno/v3/database/types"
+	"github.com/forbole/bdjuno/v3/types"
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveEMoneyInflation() {

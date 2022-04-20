@@ -2,11 +2,11 @@ package pricefeed
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/forbole/juno/v2/types/config"
+	"github.com/forbole/juno/v3/types/config"
 
-	"github.com/forbole/bdjuno/v2/database"
+	"github.com/forbole/bdjuno/v3/database"
 
-	"github.com/forbole/juno/v2/modules"
+	"github.com/forbole/juno/v3/modules"
 )
 
 var (
@@ -24,7 +24,12 @@ type Module struct {
 
 // NewModule returns a new Module instance
 func NewModule(cfg config.Config, cdc codec.Marshaler, db *database.Db) *Module {
-	pricefeedCfg, err := ParseConfig(cfg.GetBytes())
+	bz, err := cfg.GetBytes()
+	if err != nil {
+		panic(err)
+	}
+
+	pricefeedCfg, err := ParseConfig(bz)
 	if err != nil {
 		panic(err)
 	}
