@@ -1,7 +1,7 @@
 queue_rules:
   - name: default
     conditions:
-      - base~=v2/cosmos/
+      - base~=cosmos/
 
 pull_request_rules:
   - name: automerge to master with label automerge and branch protection passing

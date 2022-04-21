@@ -2,6 +2,9 @@ table:
   name: validator_voting_power
   schema: public
 object_relationships:
+- name: block
+  using:
+    foreign_key_constraint_on: height
 - name: validator
   using:
     foreign_key_constraint_on: validator_address
