@@ -5,15 +5,15 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	juno "github.com/forbole/juno/v2/types"
+	juno "github.com/forbole/juno/v3/types"
 	"github.com/gogo/protobuf/proto"
 	"github.com/rs/zerolog/log"
 
 	authttypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 
-	"github.com/forbole/bdjuno/v2/modules/utils"
-	"github.com/forbole/bdjuno/v2/types"
+	"github.com/forbole/bdjuno/v3/modules/utils"
+	"github.com/forbole/bdjuno/v3/types"
 )
 
 // HandleMsg implements modules.MessageModule
