@@ -16,7 +16,7 @@ import (
 	"github.com/forbole/bdjuno/v3/database"
 	"github.com/forbole/bdjuno/v3/modules"
 
-	// agoricapp "github.com/MonCatCat/ag0/v6/app"
+	agoricapp "github.com/MonCatCat/ag0/v6/app"
 	gaiaapp "github.com/cosmos/gaia/v6/app"
 )
 
@@ -57,7 +57,7 @@ func main() {
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
 		gaiaapp.ModuleBasics,
-		// agoricapp.ModuleBasics,
+		agoricapp.ModuleBasics,
 	}
 }
 
