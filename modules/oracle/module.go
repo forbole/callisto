@@ -1,10 +1,10 @@
 package oracle
 
 import (
-	"github.com/forbole/juno/v2/modules"
+	"github.com/forbole/juno/v3/modules"
 
-	"github.com/forbole/bdjuno/v2/database"
-	oraclesource "github.com/forbole/bdjuno/v2/modules/oracle/source"
+	"github.com/forbole/bdjuno/v3/database"
+	oraclesource "github.com/forbole/bdjuno/v3/modules/oracle/source"
 )
 
 var (
