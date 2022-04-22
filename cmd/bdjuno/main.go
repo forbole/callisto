@@ -17,7 +17,7 @@ import (
 	"github.com/forbole/bdjuno/v3/modules"
 
 	gaiaapp "github.com/cosmos/gaia/v6/app"
-	desmosapp "github.com/desmos-labs/desmos/v3/app"
+	desmosapp "github.com/desmos-labs/desmos/v2/app"
 )
 
 func main() {

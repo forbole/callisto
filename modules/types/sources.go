@@ -21,6 +21,8 @@ import (
 
 	nodeconfig "github.com/forbole/juno/v3/node/config"
 
+	desmosapp "github.com/desmos-labs/desmos/v2/app"
+	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
 	banksource "github.com/forbole/bdjuno/v3/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v3/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v3/modules/bank/source/remote"
@@ -33,17 +35,15 @@ import (
 	mintsource "github.com/forbole/bdjuno/v3/modules/mint/source"
 	localmintsource "github.com/forbole/bdjuno/v3/modules/mint/source/local"
 	remotemintsource "github.com/forbole/bdjuno/v3/modules/mint/source/remote"
+	profilessource "github.com/forbole/bdjuno/v3/modules/profiles/source"
+	localprofilessource "github.com/forbole/bdjuno/v3/modules/profiles/source/local"
+	remoteprofilessource "github.com/forbole/bdjuno/v3/modules/profiles/source/remote"
 	slashingsource "github.com/forbole/bdjuno/v3/modules/slashing/source"
 	localslashingsource "github.com/forbole/bdjuno/v3/modules/slashing/source/local"
 	remoteslashingsource "github.com/forbole/bdjuno/v3/modules/slashing/source/remote"
 	stakingsource "github.com/forbole/bdjuno/v3/modules/staking/source"
 	localstakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/remote"
-	desmosapp "github.com/desmos-labs/desmos/v3/app"
-	localprofilessource "github.com/forbole/bdjuno/v3/modules/profiles/source/local"
-	remoteprofilessource "github.com/forbole/bdjuno/v3/modules/profiles/source/remote"
-	profilessource "github.com/forbole/bdjuno/v3/modules/profiles/source"
-	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
 )
 
 type Sources struct {

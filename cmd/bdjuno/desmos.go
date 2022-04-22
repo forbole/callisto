@@ -3,9 +3,7 @@ package main
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
-	relationshiptypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
-
+	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
 	junomessages "github.com/forbole/juno/v3/modules/messages"
 )
 
@@ -31,16 +29,16 @@ func profilesMessageAddressesParser(_ codec.Codec, cosmosMsg sdk.Msg) ([]string,
 	case *profilestypes.MsgRefuseDTagTransferRequest:
 		return []string{msg.Sender, msg.Receiver}, nil
 
-	case *relationshiptypes.MsgCreateRelationship:
-		return []string{msg.Signer, msg.Counterparty}, nil
+	case *profilestypes.MsgCreateRelationship:
+		return []string{msg.Sender, msg.Receiver}, nil
 
-	case *relationshiptypes.MsgDeleteRelationship:
-		return []string{msg.Signer, msg.Counterparty}, nil
+	case *profilestypes.MsgDeleteRelationship:
+		return []string{msg.User, msg.Counterparty}, nil
 
-	case *relationshiptypes.MsgBlockUser:
+	case *profilestypes.MsgBlockUser:
 		return []string{msg.Blocker, msg.Blocked}, nil
 
-	case *relationshiptypes.MsgUnblockUser:
+	case *profilestypes.MsgUnblockUser:
 		return []string{msg.Blocker, msg.Blocked}, nil
 
 	}
