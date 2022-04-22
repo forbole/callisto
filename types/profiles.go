@@ -1,7 +1,7 @@
 package types
 
 import (
-	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
+	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
 )
 
 type ProfilesParams struct {
