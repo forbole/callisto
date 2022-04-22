@@ -6,11 +6,11 @@ import (
 
 	"google.golang.org/grpc/codes"
 
-	juno "github.com/forbole/juno/v2/types"
+	juno "github.com/forbole/juno/v3/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
-	"github.com/forbole/bdjuno/v2/modules/staking/keybase"
-	"github.com/forbole/bdjuno/v2/types"
+	"github.com/forbole/bdjuno/v3/modules/staking/keybase"
+	"github.com/forbole/bdjuno/v3/types"
 
 	"github.com/rs/zerolog/log"
 
