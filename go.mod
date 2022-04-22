@@ -1,14 +1,13 @@
-module github.com/forbole/bdjuno/v2
+module github.com/forbole/bdjuno/v3
 
 go 1.17
 
 require (
 	github.com/cosmos/cosmos-sdk v0.45.1
-	github.com/forbole/juno/v2 v2.0.0-20220308070656-570bc10bf70a // branch v2/cosmos-v0.44.x-akash
+	github.com/forbole/juno/v3 v3.1.2-0.20220421111714-5d2aba086e6c
 	github.com/go-co-op/gocron v1.11.0
 	github.com/gogo/protobuf v1.3.3
-	github.com/gorilla/mux v1.8.0
-	github.com/jmoiron/sqlx v1.2.1-0.20200324155115-ee514944af4b
+	github.com/jmoiron/sqlx v1.3.4
 	github.com/lib/pq v1.10.4
 	github.com/ovrclk/akash v0.15.0-rc14
 	github.com/pelletier/go-toml v1.9.4
@@ -16,8 +15,7 @@ require (
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
 	github.com/rs/zerolog v1.26.1
 	github.com/spf13/cobra v1.4.0
-	github.com/spf13/viper v1.10.1 // indirect
-	github.com/stretchr/testify v1.7.1
+	github.com/stretchr/testify v1.7.0
 	github.com/tendermint/tendermint v0.34.14
 	google.golang.org/grpc v1.44.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
@@ -40,7 +38,7 @@ require (
 	github.com/cosmos/btcutil v1.0.4 // indirect
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
 	github.com/cosmos/iavl v0.17.3 // indirect
-	github.com/cosmos/ibc-go/v2 v2.0.3 // indirect
+	github.com/cosmos/ibc-go/v2 v2.2.0 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.11.1 // indirect
 	github.com/cosmos/ledger-go v0.9.2 // indirect
 	github.com/danieljoos/wincred v1.0.2 // indirect
@@ -65,6 +63,7 @@ require (
 	github.com/google/btree v1.0.1 // indirect
 	github.com/google/orderedcode v0.0.1 // indirect
 	github.com/gorilla/handlers v1.5.1 // indirect
+	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0 // indirect
@@ -105,6 +104,7 @@ require (
 	github.com/spf13/cast v1.4.1 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/spf13/viper v1.10.1 // indirect
 	github.com/subosito/gotenv v1.2.1-0.20190917103637-de67a6614a4d // indirect
 	github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7 // indirect
 	github.com/tecbot/gorocksdb v0.0.0-20191217155057-f0fad39f321c // indirect

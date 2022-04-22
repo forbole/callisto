@@ -5,7 +5,8 @@ import (
 )
 
 type TomlConfig struct {
-	PricefeedConfig *PricefeedConfig `toml:"pricefeed"`
+	PricefeedConfig    *PricefeedConfig    `toml:"pricefeed"`
+	DistributionConfig *DistributionConfig `toml:"distribution"`
 }
 
 func ParseConfig(bz []byte) (TomlConfig, error) {
@@ -16,7 +17,8 @@ func ParseConfig(bz []byte) (TomlConfig, error) {
 	}
 
 	return TomlConfig{
-		PricefeedConfig: tomlCfg.PricefeedConfig,
+		PricefeedConfig:    tomlCfg.PricefeedConfig,
+		DistributionConfig: tomlCfg.DistributionConfig,
 	}, nil
 }
 
@@ -34,4 +36,8 @@ type TokenUnit struct {
 	Exponent int      `toml:"exponent"`
 	Aliases  []string `toml:"aliases"`
 	PriceID  string   `toml:"price_id"`
+}
+
+type DistributionConfig struct {
+	DistributionFrequency int64 `toml:"distribution_frequency"`
 }
