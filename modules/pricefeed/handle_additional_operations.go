@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/forbole/bdjuno/v2/types"
+	"github.com/forbole/bdjuno/v3/types"
 
 	"github.com/rs/zerolog/log"
 )
@@ -56,5 +56,5 @@ func (m *Module) storeTokens() error {
 		return fmt.Errorf("error while storing token prices: %s", err)
 	}
 
-	return m.historyModule.UpdatePricesHistory(prices)
+	return nil
 }

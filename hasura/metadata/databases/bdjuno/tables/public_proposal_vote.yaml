@@ -5,6 +5,9 @@ object_relationships:
 - name: account
   using:
     foreign_key_constraint_on: voter_address
+- name: block
+  using:
+    foreign_key_constraint_on: height
 - name: proposal
   using:
     foreign_key_constraint_on: proposal_id

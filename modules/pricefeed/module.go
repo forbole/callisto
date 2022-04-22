@@ -2,11 +2,11 @@ package pricefeed
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/forbole/juno/v2/types/config"
+	"github.com/forbole/juno/v3/types/config"
 
-	"github.com/forbole/bdjuno/v2/database"
+	"github.com/forbole/bdjuno/v3/database"
 
-	"github.com/forbole/juno/v2/modules"
+	"github.com/forbole/juno/v3/modules"
 )
 
 var (
@@ -17,24 +17,27 @@ var (
 
 // Module represents the module that allows to get the token prices
 type Module struct {
-	cfg           *Config
-	cdc           codec.Codec
-	db            *database.Db
-	historyModule HistoryModule
+	cfg *Config
+	cdc codec.Codec
+	db  *database.Db
 }
 
 // NewModule returns a new Module instance
-func NewModule(cfg config.Config, historyModule HistoryModule, cdc codec.Codec, db *database.Db) *Module {
-	pricefeedCfg, err := ParseConfig(cfg.GetBytes())
+func NewModule(cfg config.Config, cdc codec.Codec, db *database.Db) *Module {
+	bz, err := cfg.GetBytes()
+	if err != nil {
+		panic(err)
+	}
+
+	pricefeedCfg, err := ParseConfig(bz)
 	if err != nil {
 		panic(err)
 	}
 
 	return &Module{
-		cfg:           pricefeedCfg,
-		cdc:           cdc,
-		db:            db,
-		historyModule: historyModule,
+		cfg: pricefeedCfg,
+		cdc: cdc,
+		db:  db,
 	}
 }
 

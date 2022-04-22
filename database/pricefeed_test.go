@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/forbole/bdjuno/v2/types"
+	"github.com/forbole/bdjuno/v3/types"
 
-	dbtypes "github.com/forbole/bdjuno/v2/database/types"
+	dbtypes "github.com/forbole/bdjuno/v3/database/types"
 )
 
 func (suite *DbTestSuite) insertToken(name string) {
@@ -119,6 +119,144 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTokenPrice() {
 	rows = []dbtypes.TokenPriceRow{}
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM token_price ORDER BY timestamp`)
 	suite.Require().NoError(err)
+	for i, row := range rows {
+		suite.Require().True(expected[i].Equals(row))
+	}
+}
+
+func (suite *DbTestSuite) TestBigDipperDb_SaveTokenPriceHistory() {
+	suite.insertToken("desmos")
+	suite.insertToken("atom")
+
+	// Save data
+	tickers := []types.TokenPrice{
+		types.NewTokenPrice(
+			"desmos",
+			100.01,
+			10,
+			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
+		),
+		types.NewTokenPrice(
+			"desmos",
+			200.01,
+			20,
+			time.Date(2020, 10, 10, 15, 02, 00, 000, time.UTC),
+		),
+		types.NewTokenPrice(
+			"atom",
+			1,
+			20,
+			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
+		),
+		types.NewTokenPrice(
+			"atom",
+			1,
+			20,
+			time.Date(2020, 10, 10, 15, 02, 00, 000, time.UTC),
+		),
+	}
+	err := suite.database.SaveTokenPricesHistory(tickers)
+	suite.Require().NoError(err)
+
+	// Verify data
+	expected := []dbtypes.TokenPriceRow{
+		dbtypes.NewTokenPriceRow(
+			"desmos",
+			100.01,
+			10,
+			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
+		),
+		dbtypes.NewTokenPriceRow(
+			"desmos",
+			200.01,
+			20,
+			time.Date(2020, 10, 10, 15, 02, 00, 000, time.UTC),
+		),
+		dbtypes.NewTokenPriceRow(
+			"atom",
+			1,
+			20,
+			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
+		),
+		dbtypes.NewTokenPriceRow(
+			"atom",
+			1,
+			20,
+			time.Date(2020, 10, 10, 15, 02, 00, 000, time.UTC),
+		),
+	}
+
+	var rows []dbtypes.TokenPriceRow
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM token_price_history`)
+	suite.Require().NoError(err)
+
+	for i, row := range rows {
+		suite.Require().True(expected[i].Equals(row))
+	}
+
+	// Update data
+	tickers = []types.TokenPrice{
+		types.NewTokenPrice(
+			"desmos",
+			100.01,
+			10,
+			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
+		),
+		types.NewTokenPrice(
+			"desmos",
+			300.01,
+			20,
+			time.Date(2020, 10, 10, 15, 02, 00, 000, time.UTC),
+		),
+		types.NewTokenPrice(
+			"atom",
+			1,
+			20,
+			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
+		),
+		types.NewTokenPrice(
+			"atom",
+			10,
+			20,
+			time.Date(2020, 10, 10, 15, 02, 00, 000, time.UTC),
+		),
+	}
+	err = suite.database.SaveTokenPricesHistory(tickers)
+	suite.Require().NoError(err)
+
+	// Verify data
+	expected = []dbtypes.TokenPriceRow{
+		dbtypes.NewTokenPriceRow(
+			"desmos",
+			100.01,
+			10,
+			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
+		),
+		dbtypes.NewTokenPriceRow(
+			"atom",
+			1,
+			20,
+			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
+		),
+		dbtypes.NewTokenPriceRow(
+			"desmos",
+			300.01,
+			20,
+			time.Date(2020, 10, 10, 15, 02, 00, 000, time.UTC),
+		),
+
+		dbtypes.NewTokenPriceRow(
+			"atom",
+			10,
+			20,
+			time.Date(2020, 10, 10, 15, 02, 00, 000, time.UTC),
+		),
+	}
+
+	rows = []dbtypes.TokenPriceRow{}
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM token_price_history ORDER BY timestamp`)
+	suite.Require().NoError(err)
+
 	for i, row := range rows {
 		suite.Require().True(expected[i].Equals(row))
 	}
