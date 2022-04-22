@@ -21,8 +21,8 @@ import (
 
 	nodeconfig "github.com/forbole/juno/v3/node/config"
 
-	desmosapp "github.com/desmos-labs/desmos/v2/app"
-	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
+	desmosapp "github.com/desmos-labs/desmos/v3/app"
+	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
 	banksource "github.com/forbole/bdjuno/v3/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v3/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v3/modules/bank/source/remote"
