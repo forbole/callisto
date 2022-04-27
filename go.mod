@@ -20,7 +20,7 @@ require (
 	github.com/stretchr/testify v1.7.1
 	github.com/tendermint/tendermint v0.34.19
 	github.com/tharsis/ethermint v0.14.0
-	github.com/tharsis/evmos/v3 v3.0.0-beta1
+	github.com/tharsis/evmos/v3 v3.0.0
 	google.golang.org/grpc v1.45.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
