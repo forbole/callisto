@@ -2,6 +2,10 @@
 ### Dependencies
 - Updated Juno to `v3.2.0`
 
+### Changes 
+#### Hasura
+- ([\#395](https://github.com/forbole/bdjuno/pull/395)) Remove time label from Hasura Prometheus monitoring
+
 
 ## Version v3.0.1
 ### Dependencies
