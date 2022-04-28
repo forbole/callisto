@@ -16,6 +16,7 @@ import (
 	"github.com/forbole/bdjuno/v3/database"
 	"github.com/forbole/bdjuno/v3/modules"
 
+	cmdxapp "github.com/comdex-official/comdex/app"
 	gaiaapp "github.com/cosmos/gaia/v7/app"
 )
 
@@ -56,6 +57,7 @@ func main() {
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
 		gaiaapp.ModuleBasics,
+		cmdxapp.ModuleBasics,
 	}
 }
 
