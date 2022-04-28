@@ -1,3 +1,8 @@
+## Version v3.1.0
+### Dependencies
+- Updated Juno to `v3.2.0`
+
+
 ## Version v3.0.1
 ### Dependencies
 - Updated Juno to `v3.1.1`
