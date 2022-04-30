@@ -677,8 +677,8 @@ github.com/huandu/xstrings v1.0.0/go.mod h1:4qWG/gcEcfX4z/mBDHJ++3ReCw9ibxbsNJbc
 github.com/huandu/xstrings v1.2.0/go.mod h1:DvyZB1rfVYsBIigL8HwpZgxHwXozlTgGqn63UyNX5k4=
 github.com/hudl/fargo v1.3.0/go.mod h1:y3CKSmjA+wD2gak7sUSXTAoopbhU08POFhmITJgmKTg=
 github.com/hudl/fargo v1.4.0/go.mod h1:9Ai6uvFy5fQNq6VPKtg+Ceq1+eTY4nKUlR2JElEOcDo=
-github.com/huichiaotsou/comdex v0.1.1-exportkeepers h1:gNMnZUNS5qKau3CfZ8Pd6VXvuaDTCQ8TvU2jyg2t/nA=
-github.com/huichiaotsou/comdex v0.1.1-exportkeepers/go.mod h1:wYpKRpB9iWQdwDy7RxWtOtY41IYI18EzW+XuGV1BP48=
+github.com/huichiaotsou/comdex v0.1.1-exportkeepers-a h1:ygGSXB+SQH3e2s+a9TYIT/DuefNqLouwIjyzEkjqFqA=
+github.com/huichiaotsou/comdex v0.1.1-exportkeepers-a/go.mod h1:wYpKRpB9iWQdwDy7RxWtOtY41IYI18EzW+XuGV1BP48=
 github.com/huin/goupnp v1.0.0/go.mod h1:n9v9KO1tAxYH82qOn+UTIFQDmx5n1Zxd/ClZDMX7Bnc=
 github.com/huin/goutil v0.0.0-20170803182201-1ca381bf3150/go.mod h1:PpLOETDnJ0o3iZrZfqZzyLl6l7F3c6L1oWn7OICBi6o=
 github.com/iancoleman/strcase v0.2.0/go.mod h1:iwCmte+B7n89clKwxIoIXy/HfoL7AsD47ZCWhYzw7ho=

@@ -1,7 +1,7 @@
 CREATE TYPE ACCESS_CONFIG AS
 (
-    permission  INT     NOT NULL,
-    address     TEXT    NOT NULL
+    permission  INT,
+    address     TEXT
 );
 
 CREATE TABLE wasm_code
@@ -19,7 +19,7 @@ CREATE INDEX wasm_code_id_index ON wasm_code (code_id);
 CREATE TABLE wasm_contract
 (
     sender                  TEXT            NOT NULL REFERENCES account (address),
-    admin                   TEXT            NULL REFERENCES account (address),,
+    admin                   TEXT            NULL REFERENCES account (address),
     code_id                 BIGINT          NOT NULL REFERENCES wasm_code (code_id),
     label                   TEXT            NULL,
     raw_contract_message    JSONB           NOT NULL DEFAULT '{}'::JSONB,
