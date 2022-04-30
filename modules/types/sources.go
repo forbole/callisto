@@ -80,33 +80,28 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		cfg.Home, 0, cmdxapp.MakeEncodingConfig(), simapp.EmptyAppOptions{}, nil,
 	)
 
-	app := simapp.NewSimApp(
-		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
-		cfg.Home, 0, simapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
-	)
-
 	sources := &Sources{
-		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
-		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
-		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
-		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
-		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
-		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
+		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(cmdxApp.BankKeeper)),
+		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(cmdxApp.DistrKeeper)),
+		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(cmdxApp.GovKeeper)),
+		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(cmdxApp.MintKeeper)),
+		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(cmdxApp.SlashingKeeper)),
+		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: cmdxApp.StakingKeeper}),
 		WasmSource:     localwasmsource.NewSource(source, wasmkeeper.Querier(&cmdxApp.WasmKeeper)),
 	}
 
 	// Mount and initialize the stores
-	err = source.MountKVStores(app, "keys")
+	err = source.MountKVStores(cmdxApp, "keys")
 	if err != nil {
 		return nil, err
 	}
 
-	err = source.MountTransientStores(app, "tkeys")
+	err = source.MountTransientStores(cmdxApp, "tkeys")
 	if err != nil {
 		return nil, err
 	}
 
-	err = source.MountMemoryStores(app, "memKeys")
+	err = source.MountMemoryStores(cmdxApp, "memKeys")
 	if err != nil {
 		return nil, err
 	}
