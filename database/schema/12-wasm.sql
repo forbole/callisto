@@ -9,12 +9,10 @@ CREATE TABLE wasm_code
     sender                  TEXT            NOT NULL REFERENCES account (address),
     byte_code               TEXT            NOT NULL,
     instantiate_permission  ACCESS_CONFIG   NULL,
-    code_id                 BIGINT          NOT NULL,
+    code_id                 BIGINT          NOT NULL UNIQUE,
     height                  BIGINT          NOT NULL REFERENCES block (height)
 );
 CREATE INDEX wasm_code_height_index ON wasm_code (height);
-CREATE INDEX wasm_code_id_index ON wasm_code (code_id);
-
 
 CREATE TABLE wasm_contract
 (
