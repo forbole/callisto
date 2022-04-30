@@ -225,7 +225,6 @@ github.com/cncf/xds/go v0.0.0-20211001041855-01bcc9b48dfe/go.mod h1:eXthEFrGJvWH
 github.com/cncf/xds/go v0.0.0-20211130200136-a8f946100490/go.mod h1:eXthEFrGJvWHgFFCl3hGmgk+/aYT6PnTQLykKQRLhEs=
 github.com/cockroachdb/datadriven v0.0.0-20190809214429-80d97fb3cbaa/go.mod h1:zn76sxSg3SzpJ0PPJaLDCu+Bu0Lg3sKTORVIj19EIF8=
 github.com/codahale/hdrhistogram v0.0.0-20161010025455-3a0bb77429bd/go.mod h1:sE/e/2PUdi/liOCUjSTXgM1o87ZssimdTWN964YiIeI=
-github.com/coinbase/rosetta-sdk-go v0.6.10/go.mod h1:J/JFMsfcePrjJZkwQFLh+hJErkAmdm9Iyy3D5Y0LfXo=
 github.com/coinbase/rosetta-sdk-go v0.7.0 h1:lmTO/JEpCvZgpbkOITL95rA80CPKb5CtMzLaqF2mCNg=
 github.com/coinbase/rosetta-sdk-go v0.7.0/go.mod h1:7nD3oBPIiHqhRprqvMgPoGxe/nyq3yftRmpsy29coWE=
 github.com/comdex-official/comdex v0.1.1 h1:w+/2PzK24WSdfcNi0df8skrQP7APmrsHpMe60v7kIwU=
@@ -251,12 +250,8 @@ github.com/coreos/pkg v0.0.0-20160727233714-3ac0863d7acf/go.mod h1:E3G3o1h8I7cfc
 github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f/go.mod h1:E3G3o1h8I7cfcXa63jLwjI0eiQQMgzzUDFVpN/nH/eA=
 github.com/cosmos/btcutil v1.0.4 h1:n7C2ngKXo7UC9gNyMNLbzqz7Asuf+7Qv4gnX/rOdQ44=
 github.com/cosmos/btcutil v1.0.4/go.mod h1:Ffqc8Hn6TJUdDgHBwIZLtrLQC1KdJ9jGJl/TvgUaxbU=
-github.com/cosmos/cosmos-sdk v0.43.0/go.mod h1:ctcrTEAhei9s8O3KSNvL0dxe+fVQGp07QyRb/7H9JYE=
-github.com/cosmos/cosmos-sdk v0.44.5/go.mod h1:maUA6m2TBxOJZkbwl0eRtEBgTX37kcaiOWU5t1HEGaY=
-github.com/cosmos/cosmos-sdk v0.45.0/go.mod h1:XXS/asyCqWNWkx2rW6pSuen+EVcpAFxq6khrhnZgHaQ=
+github.com/cosmos/cosmos-sdk v0.45.1 h1:PY79YxPea5qlRLExRnzg8/rT1Scc8GGgRs22p7DX99Q=
 github.com/cosmos/cosmos-sdk v0.45.1/go.mod h1:XXS/asyCqWNWkx2rW6pSuen+EVcpAFxq6khrhnZgHaQ=
-github.com/cosmos/cosmos-sdk v0.45.3 h1:PiVSU3IkNEDPhoxOZHk2lPnhwBBJgEYAtAR0jGXRN4g=
-github.com/cosmos/cosmos-sdk v0.45.3/go.mod h1:qYm5JEr0ZlbnmoP/Q3b+dYMOliHf4ddHirpILiwZzqg=
 github.com/cosmos/gaia/v7 v7.0.1 h1:wT9U/C4lON8iUA+fAqzG94pttZOpdxS/I/4s+kCbtcw=
 github.com/cosmos/gaia/v7 v7.0.1/go.mod h1:49v9PPVzHN0wLfV7vRfrodJa6z0QmeC060fqY5tPaxo=
 github.com/cosmos/go-bip39 v0.0.0-20180819234021-555e2067c45d/go.mod h1:tSxLoYXyBmiFeKpvmq4dzayMdCjCnu8uqmCysIGBT2Y=
@@ -265,7 +260,6 @@ github.com/cosmos/go-bip39 v1.0.0/go.mod h1:RNJv0H/pOIVgxw6KS7QeX2a0Uo0aKUlfhZ4x
 github.com/cosmos/gorocksdb v1.2.0 h1:d0l3jJG8M4hBouIZq0mDUHZ+zjOx044J3nGRskwTb4Y=
 github.com/cosmos/gorocksdb v1.2.0/go.mod h1:aaKvKItm514hKfNJpUJXnnOWeBnk2GL4+Qw9NHizILw=
 github.com/cosmos/iavl v0.15.3/go.mod h1:OLjQiAQ4fGD2KDZooyJG9yz+p2ao2IAYSbke8mVvSA4=
-github.com/cosmos/iavl v0.16.0/go.mod h1:2A8O/Jz9YwtjqXMO0CjnnbTYEEaovE8jWcwrakH3PoE=
 github.com/cosmos/iavl v0.17.3 h1:s2N819a2olOmiauVa0WAhoIJq9EhSXE9HDBAoR9k+8Y=
 github.com/cosmos/iavl v0.17.3/go.mod h1:prJoErZFABYZGDHka1R6Oay4z9PrNeFFiMKHDAMOi4w=
 github.com/cosmos/ibc-go v1.0.0 h1:RtIRERSENyApp6WK7Germ3/wq8xvHxfsqfW/Xh+CJ2o=
@@ -329,7 +323,6 @@ github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21/go.mod h1
 github.com/eapache/queue v1.1.0/go.mod h1:6eCeP0CKFpHLu8blIFXhExK/dRa7WDZfr6jVFPTqq+I=
 github.com/edsrzf/mmap-go v0.0.0-20160512033002-935e0e8a636c/go.mod h1:YO35OhQPt3KJa3ryjFM5Bs14WD66h8eGKpfaBNrHW5M=
 github.com/edsrzf/mmap-go v1.0.0/go.mod h1:YO35OhQPt3KJa3ryjFM5Bs14WD66h8eGKpfaBNrHW5M=
-github.com/enigmampc/btcutil v1.0.3-0.20200723161021-e2fb6adb2a25/go.mod h1:hTr8+TLQmkUkgcuh3mcr5fjrT9c64ZzsBCdCEC6UppY=
 github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1mIlRU8Am5FuJP05cCM98=
 github.com/envoyproxy/go-control-plane v0.10.1/go.mod h1:AY7fTTXNdv/aJ2O5jwpxAPOWUZ7hQAEvzN5Pf27BkQQ=
 github.com/envoyproxy/protoc-gen-validate v0.0.14/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
@@ -694,7 +687,6 @@ github.com/ianlancetaylor/demangle v0.0.0-20200824232613-28f6c0f3b639/go.mod h1:
 github.com/imdario/mergo v0.3.4/go.mod h1:2EnlNZ0deacrJVfApfmtdGgDfMuh/nq6Ok1EcJh5FfA=
 github.com/imdario/mergo v0.3.8/go.mod h1:2EnlNZ0deacrJVfApfmtdGgDfMuh/nq6Ok1EcJh5FfA=
 github.com/imdario/mergo v0.3.12/go.mod h1:jmQim1M+e3UYxmgPu/WyfjB3N3VflVyUjjjwH0dnCYA=
-github.com/improbable-eng/grpc-web v0.14.0/go.mod h1:6hRR09jOEG81ADP5wCQju1z71g6OL4eEvELdran/3cs=
 github.com/improbable-eng/grpc-web v0.14.1 h1:NrN4PY71A6tAz2sKDvC5JCauENWp0ykG8Oq1H3cpFvw=
 github.com/improbable-eng/grpc-web v0.14.1/go.mod h1:zEjGHa8DAlkoOXmswrNvhUGEYQA9UI7DhrGeHR1DMGU=
 github.com/inconshreveable/mousetrap v1.0.0 h1:Z8tu5sraLXCXIcARxBp/8cbvlwVa7Z1NHg9XEKhtSvM=
@@ -708,7 +700,6 @@ github.com/jessevdk/go-flags v0.0.0-20141203071132-1679536dcc89/go.mod h1:4FA24M
 github.com/jessevdk/go-flags v1.4.0/go.mod h1:4FA24M0QyGHXBuZZK/XkWh8h0e1EYbRYJSGM75WSRxI=
 github.com/jgautheron/goconst v1.5.1/go.mod h1:aAosetZ5zaeC/2EfMeRswtxUFBpe2Hr7HzkgX4fanO4=
 github.com/jhump/protoreflect v1.6.1/go.mod h1:RZQ/lnuN+zqeRVpQigTwO6o0AJUkxbnSnpuG7toUTG4=
-github.com/jhump/protoreflect v1.8.2/go.mod h1:7GcYQDdMU/O/BBrl/cX6PNHpXh6cenjd8pneu5yW7Tg=
 github.com/jhump/protoreflect v1.9.0 h1:npqHz788dryJiR/l6K/RUQAyh2SwV91+d1dnh4RjO9w=
 github.com/jhump/protoreflect v1.9.0/go.mod h1:7GcYQDdMU/O/BBrl/cX6PNHpXh6cenjd8pneu5yW7Tg=
 github.com/jingyugao/rowserrcheck v1.1.1/go.mod h1:4yvlZSDb3IyDTUZJUmpZfm2Hwok+Dtp+nu2qOq+er9c=
@@ -753,7 +744,6 @@ github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI
 github.com/kisielk/errcheck v1.6.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
 github.com/kkdai/bstream v0.0.0-20161212061736-f391b8402d23/go.mod h1:J+Gs4SYgM6CZQHDETBtE9HaSEkGmuNXF86RwHhHUvq4=
-github.com/kkdai/bstream v1.0.0/go.mod h1:FDnDOHt5Yx4p3FaHcioFT0QjDOtgUpvjeZqAs+NVZZA=
 github.com/klauspost/compress v1.10.3/go.mod h1:aoV0uJVorq1K+umq18yTdKaF57EivdYsUV+/s2qKfXs=
 github.com/klauspost/compress v1.11.7/go.mod h1:aoV0uJVorq1K+umq18yTdKaF57EivdYsUV+/s2qKfXs=
 github.com/klauspost/compress v1.12.3/go.mod h1:8dP1Hq4DHOhN9w426knH3Rhby4rFm6D8eO+e+Dq5Gzg=
@@ -829,7 +819,6 @@ github.com/mattn/go-isatty v0.0.9/go.mod h1:YNRxwqDuOph6SZLI9vUUz6OYw3QyUt7WiY2y
 github.com/mattn/go-isatty v0.0.10/go.mod h1:qgIWMr58cqv1PHHyhnkY9lrL7etaEgOFcMEpPG5Rm84=
 github.com/mattn/go-isatty v0.0.11/go.mod h1:PhnuNfih5lzO57/f3n+odYbM4JtupLOxQOAqxQCu2WE=
 github.com/mattn/go-isatty v0.0.12/go.mod h1:cbi8OIDigv2wuxKPP5vlRcQ1OAZbq2CE4Kysco4FUpU=
-github.com/mattn/go-isatty v0.0.13/go.mod h1:cbi8OIDigv2wuxKPP5vlRcQ1OAZbq2CE4Kysco4FUpU=
 github.com/mattn/go-isatty v0.0.14 h1:yVuAays6BHfxijgZPzw+3Zlu5yQgKGP2/hcQbHb7S9Y=
 github.com/mattn/go-isatty v0.0.14/go.mod h1:7GGIvUiUoEMVVmxf/4nioHXj79iQHKdU27kJ6hsGG94=
 github.com/mattn/go-runewidth v0.0.2/go.mod h1:LwmH8dsx7+W8Uxz3IHJYH5QSwggIsqBzpuz5H//U1FU=
@@ -1355,7 +1344,6 @@ golang.org/x/crypto v0.0.0-20200115085410-6d4e4cb37c7d/go.mod h1:LzIPMQfyMNhhGPh
 golang.org/x/crypto v0.0.0-20200323165209-0ec3e9974c59/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
 golang.org/x/crypto v0.0.0-20200510223506-06a226fb4e37/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
 golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
-golang.org/x/crypto v0.0.0-20200709230013-948cd5f35899/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
 golang.org/x/crypto v0.0.0-20200728195943-123391ffb6de/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
 golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
 golang.org/x/crypto v0.0.0-20201117144127-c1f2f97bffc9/go.mod h1:jdWPYTVW3xRLrWPugEBEK3UY2ZEsg3UU495nc5E+M+I=
