@@ -5,7 +5,7 @@ package wasm
 
 // 	abci "github.com/tendermint/tendermint/abci/types"
 
-// 	wasmdtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+// 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 // 	juno "github.com/forbole/juno/v3/types"
 
 // 	"github.com/rs/zerolog/log"
@@ -32,7 +32,7 @@ package wasm
 // 	log.Debug().Str("module", "feegrant").Int64("height", height).
 // 		Msg("updating expired fee grant allowances")
 
-// 	events = juno.FindEventsByType(events, wasmdtypes.EventTypeInstantiate)
+// 	events = juno.FindEventsByType(events, wasmtypes.EventTypeInstantiate)
 
 // 	for _, event := range events {
 // 		granterAddress, err := juno.FindAttributeByKey(event, feegranttypes.AttributeKeyGranter)

@@ -3,7 +3,7 @@ module github.com/forbole/bdjuno/v3
 go 1.17
 
 require (
-	github.com/CosmWasm/wasmd v0.22.0 
+	github.com/CosmWasm/wasmd v0.22.0
 	github.com/comdex-official/comdex v0.1.1
 	github.com/cosmos/cosmos-sdk v0.45.3
 	github.com/cosmos/gaia/v7 v7.0.1
@@ -27,7 +27,6 @@ require (
 	filippo.io/edwards25519 v1.0.0-beta.2 // indirect
 	github.com/99designs/keyring v1.1.6 // indirect
 	github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d // indirect
-	github.com/CosmWasm/wasmd v0.22.0 // indirect
 	github.com/CosmWasm/wasmvm v1.0.0-beta5 // indirect
 	github.com/Workiva/go-datastructures v1.0.53 // indirect
 	github.com/armon/go-metrics v0.3.10 // indirect

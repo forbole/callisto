@@ -3,7 +3,7 @@ package remote
 import (
 	"fmt"
 
-	wasmdtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/forbole/juno/v3/node/remote"
 
 	wasmsource "github.com/forbole/bdjuno/v3/modules/wasm/source"
@@ -16,22 +16,27 @@ var (
 // Source implements stakingsource.Source using a remote node
 type Source struct {
 	*remote.Source
-	wasmClient wasmdtypes.QueryClient
+	wasmClient wasmtypes.QueryClient
 }
 
 // NewSource returns a new Source instance
-func NewSource(source *remote.Source, wasmClient wasmdtypes.QueryClient) *Source {
+func NewSource(source *remote.Source, wasmClient wasmtypes.QueryClient) *Source {
 	return &Source{
 		Source:     source,
 		wasmClient: wasmClient,
 	}
 }
 
-// GetContractHisotry implements wasmsource.Source
-func (s Source) GetContractHisotry(height int64) (*wasmdtypes.QueryContractHistoryResponse, error) {
-	res, err := s.wasmClient.ContractHistory(s.Ctx, &wasmdtypes.QueryContractHistoryRequest{})
+// GetContractInfo implements wasmsource.Source
+func (s Source) GetContractInfo(height int64, contractAddr string) (*wasmtypes.QueryContractInfoResponse, error) {
+	res, err := s.wasmClient.ContractInfo(
+		remote.GetHeightRequestContext(s.Ctx, height),
+		&wasmtypes.QueryContractInfoRequest{
+			Address: contractAddr,
+		},
+	)
 	if err != nil {
-		return nil, fmt.Errorf("error while getting contract history: %s", err)
+		return nil, fmt.Errorf("error while getting contract info: %s", err)
 	}
 
 	return res, nil
