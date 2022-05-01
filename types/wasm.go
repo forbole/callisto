@@ -61,3 +61,30 @@ func NewWasmContract(
 		Height:                height,
 	}
 }
+
+// WasmExecuteContract represents the CosmWasm execute contract in x/wasm module
+type WasmExecuteContract struct {
+	Sender          string
+	ContractAddress string
+	RawContractMsg  []byte
+	Funds           sdk.Coins
+	Data            []byte
+	ExecutedAt      time.Time
+	Height          int64
+}
+
+// NewWasmExecuteContract allows to build a new x/wasm execute contract instance from wasmtypes.MsgExecuteContract
+func NewWasmExecuteContract(
+	msg *wasmtypes.MsgExecuteContract, data []byte,
+	executedAt time.Time, height int64,
+) WasmExecuteContract {
+	return WasmExecuteContract{
+		Sender:          msg.Sender,
+		ContractAddress: msg.Contract,
+		RawContractMsg:  msg.Msg,
+		Funds:           msg.Funds,
+		Data:            data,
+		ExecutedAt:      executedAt,
+		Height:          height,
+	}
+}

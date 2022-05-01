@@ -22,6 +22,8 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return m.HandleMsgStoreCode(index, tx, cosmosMsg)
 	case *wasmtypes.MsgInstantiateContract:
 		return m.HandleMsgInstantiateContract(index, tx, cosmosMsg)
+	case *wasmtypes.MsgExecuteContract:
+		return m.HandleMsgExecuteContract(index, tx, cosmosMsg)
 
 	}
 	return nil
@@ -65,10 +67,10 @@ func (m *Module) HandleMsgInstantiateContract(index int, tx *juno.Tx, msg *wasmt
 		return fmt.Errorf("error while searching for AttributeKeyContractAddr: %s", err)
 	}
 
-	// Get response data
+	// Get result data
 	resultData, err := tx.FindAttributeByKey(event, wasmtypes.AttributeKeyResultDataHex)
 	if err != nil {
-		return fmt.Errorf("error while searching for AttributeKeyContractAddr: %s", err)
+		return fmt.Errorf("error while searching for AttributeKeyResultDataHex: %s", err)
 	}
 
 	// Get the contract info
@@ -85,4 +87,26 @@ func (m *Module) HandleMsgInstantiateContract(index int, tx *juno.Tx, msg *wasmt
 	return m.db.SaveWasmContract(
 		types.NewWasmContract(msg, contractAddress, []byte(resultData), timestamp, contractInfo.Extension, tx.Height),
 	)
+}
+
+// HandleMsgExecuteContract allows to properly handle a MsgExecuteContract
+func (m *Module) HandleMsgExecuteContract(index int, tx *juno.Tx, msg *wasmtypes.MsgExecuteContract) error {
+	// Get Execute Contract event
+	event, err := tx.FindEventByType(index, wasmtypes.EventTypeExecute)
+	if err != nil {
+		return fmt.Errorf("error while searching for EventTypeExecute: %s", err)
+	}
+
+	// Get result data
+	resultData, err := tx.FindAttributeByKey(event, wasmtypes.AttributeKeyResultDataHex)
+	if err != nil {
+		return fmt.Errorf("error while searching for AttributeKeyResultDataHex: %s", err)
+	}
+
+	timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
+	if err != nil {
+		return fmt.Errorf("error while parsing time: %s", err)
+	}
+
+	//TO-DO save execute contract
 }
