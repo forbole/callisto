@@ -66,16 +66,17 @@ func (a WasmCodeRow) Equals(b WasmCodeRow) bool {
 
 // WasmContractRow represents a single row inside the "wasm_contract" table
 type WasmContractRow struct {
-	Sender             string    `db:"sender"`
-	Admin              string    `db:"admin"`
-	CodeID             int64     `db:"code_id"`
-	Label              string    `db:"label"`
-	RawContractMessage string    `db:"raw_contract_message"`
-	Funds              *DbCoins  `db:"funds"`
-	ContractAddress    string    `db:"contract_address"`
-	Data               string    `db:"data"`
-	InitatedAt         time.Time `db:"initated_at"`
-	Height             int64     `db:"height"`
+	Sender                string    `db:"sender"`
+	Admin                 string    `db:"admin"`
+	CodeID                int64     `db:"code_id"`
+	Label                 string    `db:"label"`
+	RawContractMessage    string    `db:"raw_contract_message"`
+	Funds                 *DbCoins  `db:"funds"`
+	ContractAddress       string    `db:"contract_address"`
+	Data                  string    `db:"data"`
+	InstantiatedAt        time.Time `db:"instantiated_at"`
+	ContractInfoExtension string    `db:"contract_info_extension"`
+	Height                int64     `db:"height"`
 }
 
 // NewWasmContractRow allows to easily create a new NewWasmContractRow
@@ -88,20 +89,22 @@ func NewWasmContractRow(
 	funds *DbCoins,
 	contractAddress string,
 	data string,
-	initatedAt time.Time,
+	instantiatedAt time.Time,
+	contractInfoExtension string,
 	height int64,
 ) WasmContractRow {
 	return WasmContractRow{
-		Sender:             sender,
-		Admin:              admin,
-		CodeID:             codeID,
-		Label:              label,
-		RawContractMessage: rawContractMessage,
-		Funds:              funds,
-		ContractAddress:    contractAddress,
-		Data:               data,
-		InitatedAt:         initatedAt,
-		Height:             height,
+		Sender:                sender,
+		Admin:                 admin,
+		CodeID:                codeID,
+		Label:                 label,
+		RawContractMessage:    rawContractMessage,
+		Funds:                 funds,
+		ContractAddress:       contractAddress,
+		Data:                  data,
+		InstantiatedAt:        instantiatedAt,
+		ContractInfoExtension: contractInfoExtension,
+		Height:                height,
 	}
 }
 
@@ -115,6 +118,7 @@ func (a WasmContractRow) Equals(b WasmContractRow) bool {
 		a.Funds.Equal(a.Funds) &&
 		a.ContractAddress == b.ContractAddress &&
 		a.Data == b.Data &&
-		a.InitatedAt == b.InitatedAt &&
+		a.InstantiatedAt == b.InstantiatedAt &&
+		a.ContractInfoExtension == b.ContractInfoExtension &&
 		a.Height == b.Height
 }

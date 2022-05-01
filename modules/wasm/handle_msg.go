@@ -3,6 +3,7 @@ package wasm
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -64,20 +65,24 @@ func (m *Module) HandleMsgInstantiateContract(index int, tx *juno.Tx, msg *wasmt
 		return fmt.Errorf("error while searching for AttributeKeyContractAddr: %s", err)
 	}
 
+	// Get response data
+	resultData, err := tx.FindAttributeByKey(event, wasmtypes.AttributeKeyResultDataHex)
+	if err != nil {
+		return fmt.Errorf("error while searching for AttributeKeyContractAddr: %s", err)
+	}
+
 	// Get the contract info
 	contractInfo, err := m.source.GetContractInfo(tx.Height, contractAddress)
 	if err != nil {
 		return fmt.Errorf("error while getting proposal: %s", err)
 	}
 
-	// Unpack contract info extension
-	var extension wasmtypes.ContractInfoExtension
-	err = m.cdc.UnpackAny(contractInfo.Extension, &extension)
+	timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
 	if err != nil {
-		return fmt.Errorf("error while unpacking contract info extension: %s", err)
+		return fmt.Errorf("error while parsing time: %s", err)
 	}
 
-	// TO-DO: save contract info
-
-	return nil
+	return m.db.SaveWasmContract(
+		types.NewWasmContract(msg, contractAddress, []byte(resultData), timestamp, contractInfo.Extension, tx.Height),
+	)
 }

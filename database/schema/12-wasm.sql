@@ -22,9 +22,10 @@ CREATE TABLE wasm_contract
     label                   TEXT            NULL,
     raw_contract_message    JSONB           NOT NULL DEFAULT '{}'::JSONB,
     funds                   COIN[]          NOT NULL DEFAULT '{}',
-    contract_address        TEXT            NOT NULL,
+    contract_address        TEXT            NOT NULL UNIQUE,
     data                    JSONB           NULL,
-    initated_at             TIMESTAMP       NOT NULL,
+    instantiated_at         TIMESTAMP       NOT NULL,
+    contract_info_extension JSONB           NULL,
     height                  BIGINT          NOT NULL REFERENCES block (height)
 );
 CREATE INDEX wasm_contract_height_index ON wasm_contract (height);
