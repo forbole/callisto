@@ -79,7 +79,7 @@ type WasmContractRow struct {
 	Height                int64     `db:"height"`
 }
 
-// NewWasmContractRow allows to easily create a new NewWasmContractRow
+// NewWasmContractRow allows to easily create a new WasmContractRow
 func NewWasmContractRow(
 	sender string,
 	admin string,
@@ -120,5 +120,50 @@ func (a WasmContractRow) Equals(b WasmContractRow) bool {
 		a.Data == b.Data &&
 		a.InstantiatedAt == b.InstantiatedAt &&
 		a.ContractInfoExtension == b.ContractInfoExtension &&
+		a.Height == b.Height
+}
+
+// ===================== Wasm Execute Contract =====================
+
+// WasmExecuteContractRow represents a single row inside the "wasm_execute_contract" table
+type WasmExecuteContractRow struct {
+	Sender             string    `db:"sender"`
+	ContractAddress    string    `db:"contract_address"`
+	RawContractMessage string    `db:"raw_contract_message"`
+	Funds              *DbCoins  `db:"funds"`
+	Data               string    `db:"data"`
+	ExecutedAt         time.Time `db:"executed_at"`
+	Height             int64     `db:"height"`
+}
+
+// NewWasmExecuteContractRow allows to easily create a new WasmExecuteContractRow
+func NewWasmExecuteContractRow(
+	sender string,
+	contractAddress string,
+	rawContractMessage string,
+	funds *DbCoins,
+	data string,
+	executedAt time.Time,
+	height int64,
+) WasmExecuteContractRow {
+	return WasmExecuteContractRow{
+		Sender:             sender,
+		RawContractMessage: rawContractMessage,
+		Funds:              funds,
+		ContractAddress:    contractAddress,
+		Data:               data,
+		ExecutedAt:         executedAt,
+		Height:             height,
+	}
+}
+
+// Equals return true if one WasmExecuteContractRow representing the same row as the original one
+func (a WasmExecuteContractRow) Equals(b WasmExecuteContractRow) bool {
+	return a.Sender == b.Sender &&
+		a.ContractAddress == b.ContractAddress &&
+		a.RawContractMessage == b.RawContractMessage &&
+		a.Funds.Equal(a.Funds) &&
+		a.Data == b.Data &&
+		a.ExecutedAt == b.ExecutedAt &&
 		a.Height == b.Height
 }

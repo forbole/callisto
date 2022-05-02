@@ -26,6 +26,7 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return m.HandleMsgExecuteContract(index, tx, cosmosMsg)
 
 	}
+
 	return nil
 }
 
@@ -109,4 +110,7 @@ func (m *Module) HandleMsgExecuteContract(index int, tx *juno.Tx, msg *wasmtypes
 	}
 
 	//TO-DO save execute contract
+	return m.db.SaveWasmExecuteContract(
+		types.NewWasmExecuteContract(msg, []byte(resultData), timestamp, tx.Height),
+	)
 }
