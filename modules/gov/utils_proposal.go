@@ -19,7 +19,7 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 )
 
-func (m *Module) UpdateProposal(height int64, blockVals *tmctypes.ResultValidators, id uint64) error {
+func (m *Module) UpdateProposal(height int64, id uint64) error {
 	// Get the proposal
 	proposal, err := m.source.Proposal(height, id)
 	if err != nil {
@@ -50,8 +50,11 @@ func (m *Module) UpdateProposal(height int64, blockVals *tmctypes.ResultValidato
 	if err != nil {
 		return fmt.Errorf("error while updating account: %s", err)
 	}
+	return nil
+}
 
-	err = m.updateProposalStakingPoolSnapshot(height, id)
+func (m *Module) UpdateProposalSnapshots(height int64, blockVals *tmctypes.ResultValidators, id uint64) error {
+	err := m.updateProposalStakingPoolSnapshot(height, id)
 	if err != nil {
 		return fmt.Errorf("error while updating proposal staking pool snapshot: %s", err)
 	}
@@ -99,6 +102,7 @@ func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Propo
 	if !ok {
 		return nil
 	}
+
 	for _, change := range paramChangeProposal.Changes {
 		// Update the params for corresponding modules
 		switch change.Subspace {
