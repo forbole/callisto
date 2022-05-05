@@ -47,10 +47,11 @@ ON CONFLICT DO NOTHING`
 	// TO-DO: check if the below is stored as Json in DB:
 	// - Data
 	// - ContractInfoExtension
+	// - RawContractMsg
 
 	_, err = db.Sql.Exec(stmt,
-		wasmContract.Sender, wasmContract.Admin, wasmContract.CodeID, wasmContract.Label, wasmContract.RawContractMsg,
-		pq.Array(dbtypes.NewDbCoins(wasmContract.Funds)), wasmContract.ContractAddress, string(wasmContract.Data),
+		wasmContract.Sender, wasmContract.Admin, wasmContract.CodeID, wasmContract.Label, string(wasmContract.RawContractMsg),
+		pq.Array(dbtypes.NewDbCoins(wasmContract.Funds)), wasmContract.ContractAddress, wasmContract.Data,
 		wasmContract.InstantiatedAt, string(ExtensionBz), wasmContract.Height,
 	)
 
@@ -75,7 +76,7 @@ ON CONFLICT DO NOTHING`
 
 	_, err := db.Sql.Exec(stmt,
 		executeContract.Sender, executeContract.ContractAddress, executeContract.RawContractMsg,
-		pq.Array(dbtypes.NewDbCoins(executeContract.Funds)), string(executeContract.Data),
+		pq.Array(dbtypes.NewDbCoins(executeContract.Funds)), executeContract.Data,
 		executeContract.ExecutedAt, executeContract.Height,
 	)
 
@@ -83,5 +84,40 @@ ON CONFLICT DO NOTHING`
 		return fmt.Errorf("error while saving wasm contract: %s", err)
 	}
 
+	return nil
+}
+
+func (db *Db) UpdateContractWithMsgMigrateContract(
+	sender string, contractAddress string, codeID uint64, rawContractMsg []byte, data string,
+) error {
+
+	stmt := `UPDATE wasm_contract SET 
+sender = $1, code_id = $2, raw_contract_message = $3, data = $4 
+WHERE contract_address = $5 `
+
+	// TO-DO: check if the below is stored as Json in DB:
+	// - rawContractMsg
+	// - Data
+
+	_, err := db.Sql.Exec(stmt,
+		sender, codeID, string(rawContractMsg), data,
+		contractAddress,
+	)
+	if err != nil {
+		return fmt.Errorf("error while updating wasm contract from contract migration: %s", err)
+
+	}
+	return nil
+}
+
+func (db *Db) UpdateContractAdmin(sender string, contractAddress string, newAdmin string) error {
+
+	stmt := `UPDATE wasm_contract SET 
+sender = $1, admin = $2 WHERE contract_address = $2 `
+
+	_, err := db.Sql.Exec(stmt, sender, newAdmin, contractAddress)
+	if err != nil {
+		return fmt.Errorf("error while updating wsm contract admin: %s", err)
+	}
 	return nil
 }

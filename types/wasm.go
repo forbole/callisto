@@ -30,13 +30,14 @@ func NewWasmCode(msg *wasmtypes.MsgStoreCode, codeID int64, height int64) WasmCo
 // WasmContract represents the CosmWasm contract in x/wasm module
 type WasmContract struct {
 	Sender                string
+	Creator               string
 	Admin                 string
 	CodeID                uint64
 	Label                 string
 	RawContractMsg        []byte
 	Funds                 sdk.Coins
 	ContractAddress       string
-	Data                  []byte
+	Data                  string
 	InstantiatedAt        time.Time
 	ContractInfoExtension wasmtypes.ContractInfoExtension
 	Height                int64
@@ -44,15 +45,18 @@ type WasmContract struct {
 
 // NewWasmCode allows to build a new x/wasm contract instance from wasmtypes.MsgStoreCode
 func NewWasmContract(
-	msg *wasmtypes.MsgInstantiateContract, contractAddress string, data []byte,
-	instantiatedAt time.Time, contractInfoExtension wasmtypes.ContractInfoExtension, height int64,
+	msg *wasmtypes.MsgInstantiateContract, contractAddress string, data string,
+	instantiatedAt time.Time, creator string, contractInfoExtension wasmtypes.ContractInfoExtension, height int64,
 ) WasmContract {
+	rawContractMsg, _ := msg.Msg.MarshalJSON()
+
 	return WasmContract{
 		Sender:                msg.Sender,
+		Creator:               creator,
 		Admin:                 msg.Admin,
 		CodeID:                msg.CodeID,
 		Label:                 msg.Label,
-		RawContractMsg:        msg.Msg,
+		RawContractMsg:        rawContractMsg,
 		Funds:                 msg.Funds,
 		ContractAddress:       contractAddress,
 		Data:                  data,
@@ -68,20 +72,22 @@ type WasmExecuteContract struct {
 	ContractAddress string
 	RawContractMsg  []byte
 	Funds           sdk.Coins
-	Data            []byte
+	Data            string
 	ExecutedAt      time.Time
 	Height          int64
 }
 
 // NewWasmExecuteContract allows to build a new x/wasm execute contract instance from wasmtypes.MsgExecuteContract
 func NewWasmExecuteContract(
-	msg *wasmtypes.MsgExecuteContract, data []byte,
+	msg *wasmtypes.MsgExecuteContract, data string,
 	executedAt time.Time, height int64,
 ) WasmExecuteContract {
+	rawContractMsg, _ := msg.Msg.MarshalJSON()
+
 	return WasmExecuteContract{
 		Sender:          msg.Sender,
 		ContractAddress: msg.Contract,
-		RawContractMsg:  msg.Msg,
+		RawContractMsg:  rawContractMsg,
 		Funds:           msg.Funds,
 		Data:            data,
 		ExecutedAt:      executedAt,

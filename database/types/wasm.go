@@ -67,6 +67,7 @@ func (a WasmCodeRow) Equals(b WasmCodeRow) bool {
 // WasmContractRow represents a single row inside the "wasm_contract" table
 type WasmContractRow struct {
 	Sender                string    `db:"sender"`
+	Creator               string    `db:"creator"`
 	Admin                 string    `db:"admin"`
 	CodeID                int64     `db:"code_id"`
 	Label                 string    `db:"label"`
@@ -82,6 +83,7 @@ type WasmContractRow struct {
 // NewWasmContractRow allows to easily create a new WasmContractRow
 func NewWasmContractRow(
 	sender string,
+	creator string,
 	admin string,
 	codeID int64,
 	label string,
@@ -95,6 +97,7 @@ func NewWasmContractRow(
 ) WasmContractRow {
 	return WasmContractRow{
 		Sender:                sender,
+		Creator:               creator,
 		Admin:                 admin,
 		CodeID:                codeID,
 		Label:                 label,
@@ -111,6 +114,7 @@ func NewWasmContractRow(
 // Equals return true if one WasmContractRow representing the same row as the original one
 func (a WasmContractRow) Equals(b WasmContractRow) bool {
 	return a.Sender == b.Sender &&
+		a.Creator == b.Creator &&
 		a.Admin == b.Admin &&
 		a.CodeID == b.CodeID &&
 		a.Label == b.Label &&
