@@ -6,6 +6,9 @@
 #### Hasura
 - ([\#395](https://github.com/forbole/bdjuno/pull/395)) Remove time label from Hasura Prometheus monitoring
 
+#### Parse `x/gov`
+- ([\#401](https://github.com/forbole/bdjuno/pull/401)) Update the proposal status to the latest in `bdjuno parse gov proposal [id]` command
+
 
 ## Version v3.0.1
 ### Dependencies
