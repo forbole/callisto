@@ -13,7 +13,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func HandleGenesis(appState map[string]json.RawMessage, cdc codec.Marshaler, db *database.Db) error {
+func HandleGenesis(appState map[string]json.RawMessage, cdc codec.Codec, db *database.Db) error {
 	log.Debug().Str("module", "iscn").Msg("parsing genesis")
 
 	err := GetGenesisIscnRecords(appState, db, cdc)
@@ -27,7 +27,7 @@ func HandleGenesis(appState map[string]json.RawMessage, cdc codec.Marshaler, db 
 }
 
 // GetGenesisIscnRecords parses the given appState and saves the genesis iscn records in db
-func GetGenesisIscnRecords(appState map[string]json.RawMessage, db *database.Db, cdc codec.Marshaler) error {
+func GetGenesisIscnRecords(appState map[string]json.RawMessage, db *database.Db, cdc codec.Codec) error {
 
 	var genState iscntypes.GenesisState
 	err := cdc.UnmarshalJSON(appState[iscntypes.ModuleName], &genState)
