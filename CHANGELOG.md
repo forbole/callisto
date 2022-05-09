@@ -6,6 +6,9 @@
 #### Hasura
 - ([\#395](https://github.com/forbole/bdjuno/pull/395)) Remove time label from Hasura Prometheus monitoring
 
+#### x/slashing DB method
+- ([\#403](https://github.com/forbole/bdjuno/pull/403)) Filter empty validator address whil storing signing info into DB
+
 
 ## Version v3.0.1
 ### Dependencies
