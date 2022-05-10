@@ -4,15 +4,15 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/forbole/bdjuno/v3/modules/actions/types"
+
 	"google.golang.org/grpc/codes"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/rs/zerolog/log"
-
-	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
 )
 
-func DelegationHandler(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
+func DelegationHandler(ctx *types.Context, payload *types.Payload) (interface{}, error) {
 	log.Debug().Str("action", "delegations").
 		Str("address", payload.GetAddress()).
 		Msg("executing delegations action")
@@ -32,16 +32,16 @@ func DelegationHandler(ctx *actionstypes.Context, payload *actionstypes.Payload)
 		return err, fmt.Errorf("error while getting delegator delegations: %s", err)
 	}
 
-	delegations := make([]actionstypes.Delegation, len(res.DelegationResponses))
+	delegations := make([]types.Delegation, len(res.DelegationResponses))
 	for index, del := range res.DelegationResponses {
-		delegations[index] = actionstypes.Delegation{
+		delegations[index] = types.Delegation{
 			DelegatorAddress: del.Delegation.DelegatorAddress,
 			ValidatorAddress: del.Delegation.ValidatorAddress,
-			Coins:            actionstypes.ConvertCoins([]sdk.Coin{del.Balance}),
+			Coins:            types.ConvertCoins([]sdk.Coin{del.Balance}),
 		}
 	}
 
-	return actionstypes.DelegationResponse{
+	return types.DelegationResponse{
 		Delegations: delegations,
 		Pagination:  res.Pagination,
 	}, nil

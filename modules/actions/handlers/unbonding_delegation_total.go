@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/rs/zerolog/log"
+	"github.com/forbole/bdjuno/v3/modules/actions/types"
 
-	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
+	"github.com/rs/zerolog/log"
 )
 
-func UnbondingDelegationsTotal(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
+func UnbondingDelegationsTotal(ctx *types.Context, payload *types.Payload) (interface{}, error) {
 	log.Debug().Str("address", payload.GetAddress()).
 		Int64("height", payload.Input.Height).
 		Msg("executing unbonding delegation total action")
@@ -39,8 +39,8 @@ func UnbondingDelegationsTotal(ctx *actionstypes.Context, payload *actionstypes.
 		}
 	}
 
-	return actionstypes.Balance{
-		Coins: []actionstypes.Coin{
+	return types.Balance{
+		Coins: []types.Coin{
 			{
 				Denom:  params.BondDenom,
 				Amount: totalAmount.String(),

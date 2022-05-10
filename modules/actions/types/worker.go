@@ -7,11 +7,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gorilla/mux"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/rs/zerolog/log"
+	"github.com/forbole/bdjuno/v3/modules/actions/logging"
 
-	"github.com/forbole/bdjuno/v2/cmd/actions/logging"
+	"github.com/rs/zerolog/log"
 )
 
 // ActionsWorker represents the worker that is used to handle Hasura actions queries
@@ -97,15 +95,7 @@ func (w *ActionsWorker) handleError(writer http.ResponseWriter, path string, err
 
 // Start starts the worker
 func (w *ActionsWorker) Start(port uint) {
-	http.ListenAndServe(fmt.Sprintf(":%d", port), w.mux)
-}
-
-// startPrometheus starts a Prometheus server using the given configuration
-func StartPrometheus(port uint) {
-	router := mux.NewRouter()
-	router.Handle("/metrics", promhttp.Handler())
-
-	err := http.ListenAndServe(fmt.Sprintf(":%d", port), router)
+	err := http.ListenAndServe(fmt.Sprintf(":%d", port), w.mux)
 	if err != nil {
 		panic(err)
 	}

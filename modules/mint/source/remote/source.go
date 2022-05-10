@@ -5,7 +5,7 @@ import (
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	"github.com/forbole/juno/v3/node/remote"
 
-	mintsource "github.com/forbole/bdjuno/v2/modules/mint/source"
+	mintsource "github.com/forbole/bdjuno/v3/modules/mint/source"
 )
 
 var (

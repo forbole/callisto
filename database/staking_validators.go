@@ -3,11 +3,12 @@ package database
 import (
 	"fmt"
 
-	"github.com/forbole/bdjuno/v2/types"
+	"github.com/forbole/bdjuno/v3/types"
 
-	dbtypes "github.com/forbole/bdjuno/v2/database/types"
+	dbtypes "github.com/forbole/bdjuno/v3/database/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/bech32"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
@@ -39,9 +40,22 @@ VALUES `
 		vp := i * 2 // Starting position for validator params
 		vi := i * 6 // Starting position for validator info params
 
+		// Convert cosmos prefix to like prefix for self_delefate_address
+		selfDelegateAddress := validator.GetSelfDelegateAddress()
+		hrp, bz, err := bech32.DecodeAndConvert(selfDelegateAddress)
+		if err != nil {
+			return fmt.Errorf("error while decoding self delefate address(%s): %s", selfDelegateAddress, err)
+		}
+		if hrp == "cosmos" {
+			selfDelegateAddress, err = bech32.ConvertAndEncode("like", bz)
+			if err != nil {
+				return fmt.Errorf("error while encoding self delefate address(%s) with like prefix: %s", selfDelegateAddress, err)
+			}
+		}
+
 		selfDelegationAccQuery += fmt.Sprintf("($%d),", i+1)
 		selfDelegationParam = append(selfDelegationParam,
-			validator.GetSelfDelegateAddress())
+			selfDelegateAddress)
 
 		validatorQuery += fmt.Sprintf("($%d,$%d),", vp+1, vp+2)
 		validatorParams = append(validatorParams,
@@ -49,7 +63,7 @@ VALUES `
 
 		validatorInfoQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6)
 		validatorInfoParams = append(validatorInfoParams,
-			validator.GetConsAddr(), validator.GetOperator(), validator.GetSelfDelegateAddress(),
+			validator.GetConsAddr(), validator.GetOperator(), selfDelegateAddress,
 			validator.GetMaxChangeRate().String(), validator.GetMaxRate().String(), validator.GetHeight(),
 		)
 	}

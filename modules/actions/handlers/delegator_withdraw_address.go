@@ -3,12 +3,12 @@ package handlers
 import (
 	"fmt"
 
-	"github.com/rs/zerolog/log"
+	"github.com/forbole/bdjuno/v3/modules/actions/types"
 
-	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
+	"github.com/rs/zerolog/log"
 )
 
-func DelegatorWithdrawAddressHandler(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
+func DelegatorWithdrawAddressHandler(ctx *types.Context, payload *types.Payload) (interface{}, error) {
 	log.Debug().Str("address", payload.GetAddress()).
 		Msg("executing delegator withdraw address action")
 
@@ -24,7 +24,7 @@ func DelegatorWithdrawAddressHandler(ctx *actionstypes.Context, payload *actions
 		return nil, fmt.Errorf("error while getting delegator withdraw address: %s", err)
 	}
 
-	return actionstypes.Address{
+	return types.Address{
 		Address: withdrawAddress,
 	}, nil
 }

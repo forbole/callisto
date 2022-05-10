@@ -3,12 +3,12 @@ package handlers
 import (
 	"fmt"
 
-	"github.com/rs/zerolog/log"
+	"github.com/forbole/bdjuno/v3/modules/actions/types"
 
-	actionstypes "github.com/forbole/bdjuno/v2/cmd/actions/types"
+	"github.com/rs/zerolog/log"
 )
 
-func AccountBalanceHandler(ctx *actionstypes.Context, payload *actionstypes.Payload) (interface{}, error) {
+func AccountBalanceHandler(ctx *types.Context, payload *types.Payload) (interface{}, error) {
 	log.Debug().Str("address", payload.GetAddress()).
 		Int64("height", payload.Input.Height).
 		Msg("executing account balance action")
@@ -23,7 +23,7 @@ func AccountBalanceHandler(ctx *actionstypes.Context, payload *actionstypes.Payl
 		return nil, fmt.Errorf("error while getting account balance: %s", err)
 	}
 
-	return actionstypes.Balance{
-		Coins: actionstypes.ConvertCoins(balance),
+	return types.Balance{
+		Coins: types.ConvertCoins(balance),
 	}, nil
 }
