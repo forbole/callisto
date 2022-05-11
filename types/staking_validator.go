@@ -1,8 +1,11 @@
 package types
 
 import (
+	"log"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	"github.com/forbole/bdjuno/v3/modules/utils"
 )
 
 // Validator represents a single validator.
@@ -35,6 +38,21 @@ func NewValidator(
 	selfDelegateAddress string, maxChangeRate *sdk.Dec,
 	maxRate *sdk.Dec, height int64,
 ) Validator {
+	consAddr, err := utils.ConvertAddressPrefix("likevalcons", consAddr)
+	if err != nil {
+		log.Fatalf("error while converting to likevalcons prefix: %s", err)
+	}
+
+	opAddr, err = utils.ConvertAddressPrefix("likevaloper", opAddr)
+	if err != nil {
+		log.Fatalf("error while converting to likevaloper prefix: %s", err)
+	}
+
+	selfDelegateAddress, err = utils.ConvertAddressPrefix("like", selfDelegateAddress)
+	if err != nil {
+		log.Fatalf("error while converting to like prefix: %s", err)
+	}
+
 	return validator{
 		ConsensusAddr:       consAddr,
 		ConsPubKey:          consPubKey,
