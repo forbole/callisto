@@ -1,17 +1,17 @@
 package types
 
 import (
+	"database/sql/driver"
+	"fmt"
 	"time"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 )
 
-// ===================== Store Code =====================
-
 // DbAccessConfig represents the information stored inside the database about a single access_config
 type DbAccessConfig struct {
-	Permission int
-	Address    string
+	Permission int    `db:"permission"`
+	Address    string `db:"address"`
 }
 
 // NewDbAccessConfig builds a DbAccessConfig starting from an CosmWasm type AccessConfig
@@ -22,10 +22,39 @@ func NewDbAccessConfig(accessCfg *wasmtypes.AccessConfig) DbAccessConfig {
 	}
 }
 
+// Value implements driver.Valuer
+func (cfg *DbAccessConfig) Value() (driver.Value, error) {
+	return fmt.Sprintf("(%d,%s)", cfg.Permission, cfg.Address), nil
+}
+
 // Equal tells whether a and b represent the same access_config
 func (a *DbAccessConfig) Equal(b *DbAccessConfig) bool {
 	return a.Address == b.Address && a.Permission == b.Permission
 }
+
+// ===================== Params =====================
+
+// WasmParams represents the CosmWasm code in x/wasm module
+type WasmParams struct {
+	CodeUploadAccess             *DbAccessConfig `db:"code_upload_access"`
+	InstantiateDefaultPermission int32           `db:"instantiate_default_permission"`
+	MaxWasmCodeSize              uint64          `db:"max_wasm_code_size"`
+	Height                       int64           `db:"height"`
+}
+
+// NewWasmParams allows to build a new x/wasm params instance
+func NewWasmParams(
+	codeUploadAccess *DbAccessConfig, instantiateDefaultPermission int32, maxWasmCodeSize uint64, height int64,
+) WasmParams {
+	return WasmParams{
+		CodeUploadAccess:             codeUploadAccess,
+		InstantiateDefaultPermission: instantiateDefaultPermission,
+		MaxWasmCodeSize:              maxWasmCodeSize,
+		Height:                       height,
+	}
+}
+
+// ===================== Code =====================
 
 // WasmCodeRow represents a single row inside the "wasm_code" table
 type WasmCodeRow struct {
@@ -62,7 +91,7 @@ func (a WasmCodeRow) Equals(b WasmCodeRow) bool {
 		a.Height == b.Height
 }
 
-// ===================== Wasm Contract =====================
+// ===================== Contract =====================
 
 // WasmContractRow represents a single row inside the "wasm_contract" table
 type WasmContractRow struct {
@@ -127,7 +156,7 @@ func (a WasmContractRow) Equals(b WasmContractRow) bool {
 		a.Height == b.Height
 }
 
-// ===================== Wasm Execute Contract =====================
+// ===================== Execute Contract =====================
 
 // WasmExecuteContractRow represents a single row inside the "wasm_execute_contract" table
 type WasmExecuteContractRow struct {

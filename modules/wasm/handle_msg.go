@@ -20,17 +20,35 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 
 	switch cosmosMsg := msg.(type) {
 	case *wasmtypes.MsgStoreCode:
-		return m.HandleMsgStoreCode(index, tx, cosmosMsg)
+		err := m.HandleMsgStoreCode(index, tx, cosmosMsg)
+		if err != nil {
+			return fmt.Errorf("error while handling MsgStoreCode: %s", err)
+		}
 	case *wasmtypes.MsgInstantiateContract:
-		return m.HandleMsgInstantiateContract(index, tx, cosmosMsg)
+		err := m.HandleMsgInstantiateContract(index, tx, cosmosMsg)
+		if err != nil {
+			return fmt.Errorf("error while handling MsgInstantiateContract: %s", err)
+		}
 	case *wasmtypes.MsgExecuteContract:
-		return m.HandleMsgExecuteContract(index, tx, cosmosMsg)
+		err := m.HandleMsgExecuteContract(index, tx, cosmosMsg)
+		if err != nil {
+			return fmt.Errorf("error while handling MsgExecuteContract: %s", err)
+		}
 	case *wasmtypes.MsgMigrateContract:
-		return m.HandleMsgMigrateContract(index, tx, cosmosMsg)
+		err := m.HandleMsgMigrateContract(index, tx, cosmosMsg)
+		if err != nil {
+			return fmt.Errorf("error while handling MsgMigrateContract: %s", err)
+		}
 	case *wasmtypes.MsgUpdateAdmin:
-		return m.HandleMsgUpdateAdmin(cosmosMsg)
+		err := m.HandleMsgUpdateAdmin(cosmosMsg)
+		if err != nil {
+			return fmt.Errorf("error while handling MsgUpdateAdmin: %s", err)
+		}
 	case *wasmtypes.MsgClearAdmin:
-		return m.HandleMsgClearAdmin(cosmosMsg)
+		err := m.HandleMsgClearAdmin(cosmosMsg)
+		if err != nil {
+			return fmt.Errorf("error while handling MsgClearAdmin: %s", err)
+		}
 	}
 
 	return nil
@@ -51,13 +69,15 @@ func (m *Module) HandleMsgStoreCode(index int, tx *juno.Tx, msg *wasmtypes.MsgSt
 		return fmt.Errorf("error while searching for AttributeKeyContractAddr: %s", err)
 	}
 
-	codeID, err := strconv.ParseInt(codeIDKey, 10, 64)
+	codeID, err := strconv.ParseUint(codeIDKey, 10, 64)
 	if err != nil {
 		return fmt.Errorf("error while parsing code id to int64: %s", err)
 	}
 
 	return m.db.SaveWasmCode(
-		types.NewWasmCode(msg, codeID, tx.Height),
+		types.NewWasmCode(
+			msg.Sender, msg.WASMByteCode, msg.InstantiatePermission, codeID, tx.Height,
+		),
 	)
 }
 
@@ -97,10 +117,20 @@ func (m *Module) HandleMsgInstantiateContract(index int, tx *juno.Tx, msg *wasmt
 		return fmt.Errorf("error while parsing time: %s", err)
 	}
 
-	return m.db.SaveWasmContract(
-		types.NewWasmContract(msg, contractAddress, string(resultDataBz), timestamp,
-			contractInfo.Creator, contractInfo.Extension, tx.Height,
-		),
+	// Get contract info extension
+	var extentionI wasmtypes.ContractInfoExtension
+	err = m.cdc.UnpackAny(contractInfo.Extension, &extentionI)
+	if err != nil {
+		return fmt.Errorf("error while getting contract info extension: %s", err)
+	}
+
+	contract := types.NewWasmContract(
+		msg.Sender, msg.Admin, msg.CodeID, msg.Label, msg.Msg, msg.Funds,
+		contractAddress, string(resultDataBz), timestamp,
+		contractInfo.Creator, extentionI.String(), tx.Height,
+	)
+	return m.db.SaveWasmContracts(
+		[]types.WasmContract{contract},
 	)
 }
 
@@ -129,7 +159,10 @@ func (m *Module) HandleMsgExecuteContract(index int, tx *juno.Tx, msg *wasmtypes
 	}
 
 	return m.db.SaveWasmExecuteContract(
-		types.NewWasmExecuteContract(msg, string(resultDataBz), timestamp, tx.Height),
+		types.NewWasmExecuteContract(
+			msg.Sender, msg.Contract, msg.Msg, msg.Funds,
+			string(resultDataBz), timestamp, tx.Height,
+		),
 	)
 }
 

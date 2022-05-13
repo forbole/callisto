@@ -4,30 +4,40 @@ CREATE TYPE ACCESS_CONFIG AS
     address     TEXT
 );
 
+CREATE TABLE wasm_params
+(
+    one_row_id                      BOOLEAN         NOT NULL DEFAULT TRUE PRIMARY KEY,
+    code_upload_access              ACCESS_CONFIG   NOT NULL,
+    instantiate_default_permission  INT             NOT NULL,
+    max_wasm_code_size              INTEGER         NOT NULL,
+    height                          BIGINT          NOT NULL
+);
+
+
 CREATE TABLE wasm_code
 (
-    sender                  TEXT            NOT NULL REFERENCES account (address),
-    byte_code               TEXT            NOT NULL,
+    sender                  TEXT            NULL,
+    byte_code               BYTEA           NOT NULL,
     instantiate_permission  ACCESS_CONFIG   NULL,
     code_id                 BIGINT          NOT NULL UNIQUE,
-    height                  BIGINT          NOT NULL REFERENCES block (height)
+    height                  BIGINT          NOT NULL
 );
 CREATE INDEX wasm_code_height_index ON wasm_code (height);
 
 CREATE TABLE wasm_contract
 (
-    sender                  TEXT            NOT NULL REFERENCES account (address),
-    creator                 TEXT            NOT NULL REFERENCES account (address),
-    admin                   TEXT            NOT NULL DEFAULT "",
+    sender                  TEXT            NULL,
+    creator                 TEXT            NOT NULL,
+    admin                   TEXT            NULL,
     code_id                 BIGINT          NOT NULL REFERENCES wasm_code (code_id),
     label                   TEXT            NULL,
     raw_contract_message    JSONB           NOT NULL DEFAULT '{}'::JSONB,
     funds                   COIN[]          NOT NULL DEFAULT '{}',
     contract_address        TEXT            NOT NULL UNIQUE,
-    data                    JSONB           NOT NULL DEFAULT '{}'::JSONB,
+    data                    TEXT            NULL,
     instantiated_at         TIMESTAMP       NOT NULL,
-    contract_info_extension JSONB           NOT NULL DEFAULT '{}'::JSONB,
-    height                  BIGINT          NOT NULL REFERENCES block (height)
+    contract_info_extension TEXT            NULL,
+    height                  BIGINT          NOT NULL
 );
 CREATE INDEX wasm_contract_height_index ON wasm_contract (height);
 
@@ -39,6 +49,7 @@ CREATE TABLE wasm_execute_contract
     funds                   COIN[]          NOT NULL DEFAULT '{}',
     data                    JSONB           NOT NULL DEFAULT '{}'::JSONB,
     executed_at             TIMESTAMP       NOT NULL,
-    height                  BIGINT          NOT NULL REFERENCES block (height)
+    height                  BIGINT          NOT NULL
 );
 CREATE INDEX execute_contract_height_index ON execute_contract (height);
+ 
