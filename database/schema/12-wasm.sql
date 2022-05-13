@@ -47,7 +47,7 @@ CREATE TABLE wasm_execute_contract
     contract_address        TEXT            NOT NULL REFERENCES wasm_contract (contract_address),
     raw_contract_message    JSONB           NOT NULL DEFAULT '{}'::JSONB,
     funds                   COIN[]          NOT NULL DEFAULT '{}',
-    data                    JSONB           NOT NULL DEFAULT '{}'::JSONB,
+    data                    TEXT            NULL,
     executed_at             TIMESTAMP       NOT NULL,
     height                  BIGINT          NOT NULL
 );
