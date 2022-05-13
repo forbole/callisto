@@ -170,7 +170,7 @@ func (db *Db) saveWasmExecuteContracts(paramNumber int, executeContracts []types
 	stmt := `
 INSERT INTO wasm_execute_contract 
 (sender, contract_address, raw_contract_message, funds, data, executed_at, height) 
-VALUES ($1, $2, $3, $4, $5, $6, $7) `
+VALUES `
 
 	var args []interface{}
 	for i, executeContract := range executeContracts {
