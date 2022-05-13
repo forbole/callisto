@@ -186,8 +186,6 @@ VALUES `
 
 	stmt += ` ON CONFLICT DO NOTHING`
 
-	fmt.Println(stmt)
-	fmt.Println(args)
 	_, err := db.Sql.Exec(stmt, args...)
 	if err != nil {
 		return fmt.Errorf("error while saving wasm execute contracts: %s", err)
