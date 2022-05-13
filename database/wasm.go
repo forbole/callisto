@@ -183,6 +183,8 @@ ON CONFLICT DO NOTHING`
 			pq.Array(dbtypes.NewDbCoins(executeContract.Funds)), executeContract.Data, executeContract.ExecutedAt, executeContract.Height)
 	}
 
+	stmt = stmt[:len(stmt)-1] // Remove trailing ","
+
 	_, err := db.Sql.Exec(stmt, args...)
 	if err != nil {
 		return fmt.Errorf("error while saving wasm execute contracts: %s", err)
