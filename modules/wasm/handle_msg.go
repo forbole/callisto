@@ -30,21 +30,6 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 			return fmt.Errorf("error while handling MsgInstantiateContract: %s", err)
 		}
 	case *wasmtypes.MsgExecuteContract:
-		fmt.Println("tx.Body: ", tx.Body)
-
-		fmt.Println("tx.Body.Messages: ")
-		for _, bodymsg := range tx.Body.Messages {
-			fmt.Println(bodymsg.String())
-		}
-		fmt.Println("tx.Events: ", tx.Events)
-		fmt.Println("tx.TxResponse: ", tx.TxResponse)
-
-		fmt.Println("tx.TxResponse.Logs: ")
-		for _, log := range tx.TxResponse.Logs {
-			fmt.Println(log.Log)
-			fmt.Println(log.Events)
-		}
-
 		err := m.HandleMsgExecuteContract(index, tx, cosmosMsg)
 		if err != nil {
 			return fmt.Errorf("error while handling MsgExecuteContract: %s", err)
@@ -114,7 +99,7 @@ func (m *Module) HandleMsgInstantiateContract(index int, tx *juno.Tx, msg *wasmt
 	// Get result data
 	resultData, err := tx.FindAttributeByKey(event, wasmtypes.AttributeKeyResultDataHex)
 	if err != nil {
-		return fmt.Errorf("error while searching for AttributeKeyResultDataHex: %s", err)
+		resultData = ""
 	}
 	resultDataBz, err := base64.StdEncoding.DecodeString(resultData)
 	if err != nil {
@@ -161,7 +146,7 @@ func (m *Module) HandleMsgExecuteContract(index int, tx *juno.Tx, msg *wasmtypes
 	// Get result data
 	resultData, err := tx.FindAttributeByKey(event, wasmtypes.AttributeKeyResultDataHex)
 	if err != nil {
-		return fmt.Errorf("error while searching for AttributeKeyResultDataHex: %s", err)
+		resultData = ""
 	}
 	resultDataBz, err := base64.StdEncoding.DecodeString(resultData)
 	if err != nil {
@@ -193,7 +178,7 @@ func (m *Module) HandleMsgMigrateContract(index int, tx *juno.Tx, msg *wasmtypes
 	// Get result data
 	resultData, err := tx.FindAttributeByKey(event, wasmtypes.AttributeKeyResultDataHex)
 	if err != nil {
-		return fmt.Errorf("error while searching for AttributeKeyResultDataHex: %s", err)
+		resultData = ""
 	}
 	resultDataBz, err := base64.StdEncoding.DecodeString(resultData)
 	if err != nil {
