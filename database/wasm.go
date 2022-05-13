@@ -170,8 +170,7 @@ func (db *Db) saveWasmExecuteContracts(paramNumber int, executeContracts []types
 	stmt := `
 INSERT INTO wasm_execute_contract 
 (sender, contract_address, raw_contract_message, funds, data, executed_at, height) 
-VALUES ($1, $2, $3, $4, $5, $6, $7) 
-ON CONFLICT DO NOTHING`
+VALUES ($1, $2, $3, $4, $5, $6, $7) `
 
 	var args []interface{}
 	for i, executeContract := range executeContracts {
@@ -185,8 +184,7 @@ ON CONFLICT DO NOTHING`
 
 	stmt = stmt[:len(stmt)-1] // Remove trailing ","
 
-	fmt.Println(stmt)
-	fmt.Println(args)
+	stmt += ` ON CONFLICT DO NOTHING`
 
 	_, err := db.Sql.Exec(stmt, args...)
 	if err != nil {
