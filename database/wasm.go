@@ -185,6 +185,9 @@ ON CONFLICT DO NOTHING`
 
 	stmt = stmt[:len(stmt)-1] // Remove trailing ","
 
+	fmt.Println(stmt)
+	fmt.Println(args)
+
 	_, err := db.Sql.Exec(stmt, args...)
 	if err != nil {
 		return fmt.Errorf("error while saving wasm execute contracts: %s", err)
