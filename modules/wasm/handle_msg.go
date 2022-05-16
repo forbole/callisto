@@ -20,15 +20,11 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 
 	switch cosmosMsg := msg.(type) {
 	case *wasmtypes.MsgStoreCode:
-		fmt.Println("==== handling MsgStoreCode ====")
-
 		err := m.HandleMsgStoreCode(index, tx, cosmosMsg)
 		if err != nil {
 			return fmt.Errorf("error while handling MsgStoreCode: %s", err)
 		}
 	case *wasmtypes.MsgInstantiateContract:
-		fmt.Println("==== handling MsgInstantiateContract ====")
-
 		err := m.HandleMsgInstantiateContract(index, tx, cosmosMsg)
 		if err != nil {
 			return fmt.Errorf("error while handling MsgInstantiateContract: %s", err)
@@ -39,15 +35,11 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 			return fmt.Errorf("error while handling MsgExecuteContract: %s", err)
 		}
 	case *wasmtypes.MsgMigrateContract:
-		fmt.Println("==== handling MsgMigrateContract ====")
-
 		err := m.HandleMsgMigrateContract(index, tx, cosmosMsg)
 		if err != nil {
 			return fmt.Errorf("error while handling MsgMigrateContract: %s", err)
 		}
 	case *wasmtypes.MsgUpdateAdmin:
-		fmt.Println("==== handling MsgUpdateAdmin ====")
-
 		err := m.HandleMsgUpdateAdmin(cosmosMsg)
 		if err != nil {
 			return fmt.Errorf("error while handling MsgUpdateAdmin: %s", err)
