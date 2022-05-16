@@ -28,8 +28,8 @@ func (cfg *DbAccessConfig) Value() (driver.Value, error) {
 }
 
 // Equal tells whether a and b represent the same access_config
-func (a *DbAccessConfig) Equal(b *DbAccessConfig) bool {
-	return a.Address == b.Address && a.Permission == b.Permission
+func (cfg *DbAccessConfig) Equal(b *DbAccessConfig) bool {
+	return cfg.Address == b.Address && cfg.Permission == b.Permission
 }
 
 // ===================== Params =====================
