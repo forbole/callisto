@@ -44,8 +44,6 @@ func (db *Db) SaveWasmCodes(wasmCodes []types.WasmCode) error {
 INSERT INTO wasm_code(sender, byte_code, instantiate_permission, code_id, height) 
 VALUES `
 
-	// TO-DO: check if string(wasmCode.WasmByteCode) saved as string in DB
-
 	var args []interface{}
 	for i, code := range wasmCodes {
 		ii := i * 5
@@ -129,11 +127,6 @@ VALUES `
 			height = excluded.height
 	WHERE wasm_contract.height <= excluded.height`
 
-	// TO-DO: check if the below is stored as Json in DB:
-	// - Data
-	// - ContractInfoExtension
-	// - RawContractMsg
-
 	_, err := db.Sql.Exec(stmt, args...)
 	if err != nil {
 		return fmt.Errorf("error while saving wasm contracts: %s", err)
@@ -201,10 +194,6 @@ func (db *Db) UpdateContractWithMsgMigrateContract(
 	stmt := `UPDATE wasm_contract SET 
 sender = $1, code_id = $2, raw_contract_message = $3, data = $4 
 WHERE contract_address = $5 `
-
-	// TO-DO: check if the below is stored as Json in DB:
-	// - rawContractMsg
-	// - Data
 
 	_, err := db.Sql.Exec(stmt,
 		sender, codeID, string(rawContractMsg), data,
