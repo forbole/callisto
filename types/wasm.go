@@ -103,7 +103,13 @@ func convertContractStates(states []wasmtypes.Model) []byte {
 	var jsonState = make(map[string]string)
 	for _, model := range states {
 		key, _ := hex.DecodeString(model.Key.String())
-		value, _ := base64.StdEncoding.DecodeString(string(model.Value))
+		fmt.Println("string(model.Value): ", string(model.Value))
+
+		value, err := base64.StdEncoding.DecodeString(string(model.Value))
+		if err != nil {
+			panic(err)
+		}
+
 		fmt.Println(string(key))
 		fmt.Println(string(value))
 		jsonState[string(key)] = string(value)
