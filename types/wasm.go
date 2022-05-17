@@ -98,7 +98,7 @@ func convertContractStates(states []wasmtypes.Model) []byte {
 		return nil
 	}
 
-	var jsonState map[string]string
+	var jsonState = make(map[string]string)
 	for _, model := range states {
 		key, _ := model.Key.MarshalJSON()
 		value := base64.StdEncoding.EncodeToString(model.Value)
