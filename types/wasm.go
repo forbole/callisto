@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
@@ -103,6 +104,8 @@ func convertContractStates(states []wasmtypes.Model) []byte {
 	for _, model := range states {
 		key, _ := hex.DecodeString(model.Key.String())
 		value, _ := base64.StdEncoding.DecodeString(string(model.Value))
+		fmt.Println(string(key))
+		fmt.Println(string(value))
 		jsonState[string(key)] = string(value)
 	}
 
