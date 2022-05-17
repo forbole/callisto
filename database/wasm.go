@@ -96,7 +96,8 @@ func (db *Db) saveWasmContracts(paramsNumber int, wasmContracts []types.WasmCont
 
 	stmt := `
 INSERT INTO wasm_contract 
-(sender, creator, admin, code_id, label, raw_contract_message, funds, contract_address, data, instantiated_at, contract_info_extension, height) 
+(sender, creator, admin, code_id, label, raw_contract_message, funds, contract_address, 
+data, instantiated_at, contract_info_extension, contract_states, height) 
 VALUES `
 
 	var args []interface{}
@@ -107,7 +108,7 @@ VALUES `
 		args = append(args,
 			contract.Sender, contract.Creator, contract.Admin, contract.CodeID, contract.Label, string(contract.RawContractMsg),
 			pq.Array(dbtypes.NewDbCoins(contract.Funds)), contract.ContractAddress, contract.Data,
-			contract.InstantiatedAt, contract.ContractInfoExtension, contract.Height,
+			contract.InstantiatedAt, contract.ContractInfoExtension, string(contract.ContractStates), contract.Height,
 		)
 	}
 
@@ -124,6 +125,7 @@ VALUES `
 			data = excluded.data,
 			instantiated_at = excluded.instantiated_at,
 			contract_info_extension = excluded.contract_info_extension,
+			contract_states = excluded.contract_states,
 			height = excluded.height
 	WHERE wasm_contract.height <= excluded.height`
 

@@ -5,6 +5,7 @@ import (
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/forbole/juno/v3/node/local"
 
 	wasmsource "github.com/forbole/bdjuno/v3/modules/wasm/source"
@@ -46,4 +47,36 @@ func (s Source) GetContractInfo(height int64, contractAddr string) (*wasmtypes.Q
 	}
 
 	return res, nil
+}
+
+// GetContractStates implements wasmsource.Source
+func (s Source) GetContractStates(height int64, contractAddr string) ([]wasmtypes.Model, error) {
+	ctx, err := s.LoadHeight(height)
+	if err != nil {
+		return nil, fmt.Errorf("error while loading height: %s", err)
+	}
+
+	var models []wasmtypes.Model
+	var nextKey []byte
+	var stop = false
+	for !stop {
+		res, err := s.q.AllContractState(
+			sdk.WrapSDKContext(ctx),
+			&wasmtypes.QueryAllContractStateRequest{
+				Address: contractAddr,
+				Pagination: &query.PageRequest{
+					Key:   nextKey,
+					Limit: 100, // Query 100 states at time
+				},
+			},
+		)
+		if err != nil {
+			return nil, fmt.Errorf("error while getting contract state: %s", err)
+		}
+
+		stop = len(res.Pagination.NextKey) == 0
+		models = append(models, res.Models...)
+	}
+
+	return models, nil
 }

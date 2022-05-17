@@ -106,13 +106,13 @@ type WasmContractRow struct {
 	Data                  string    `db:"data"`
 	InstantiatedAt        time.Time `db:"instantiated_at"`
 	ContractInfoExtension string    `db:"contract_info_extension"`
+	ContractStates        string    `db:"contract_states"`
 	Height                int64     `db:"height"`
 }
 
 // NewWasmContractRow allows to easily create a new WasmContractRow
 func NewWasmContractRow(
 	sender string,
-	creator string,
 	admin string,
 	codeID int64,
 	label string,
@@ -121,12 +121,12 @@ func NewWasmContractRow(
 	contractAddress string,
 	data string,
 	instantiatedAt time.Time,
+	creator string,
 	contractInfoExtension string,
 	height int64,
 ) WasmContractRow {
 	return WasmContractRow{
 		Sender:                sender,
-		Creator:               creator,
 		Admin:                 admin,
 		CodeID:                codeID,
 		Label:                 label,
@@ -135,6 +135,7 @@ func NewWasmContractRow(
 		ContractAddress:       contractAddress,
 		Data:                  data,
 		InstantiatedAt:        instantiatedAt,
+		Creator:               creator,
 		ContractInfoExtension: contractInfoExtension,
 		Height:                height,
 	}

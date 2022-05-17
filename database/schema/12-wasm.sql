@@ -37,6 +37,7 @@ CREATE TABLE wasm_contract
     data                    TEXT            NULL,
     instantiated_at         TIMESTAMP       NOT NULL,
     contract_info_extension TEXT            NULL,
+    contract_state          JSONB           NOT NULL DEFAULT '{}'::JSONB,
     height                  BIGINT          NOT NULL
 );
 CREATE INDEX wasm_contract_height_index ON wasm_contract (height);

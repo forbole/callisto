@@ -1,6 +1,8 @@
 package types
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"time"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
@@ -52,7 +54,6 @@ func NewWasmCode(
 // WasmContract represents the CosmWasm contract in x/wasm module
 type WasmContract struct {
 	Sender                string
-	Creator               string
 	Admin                 string
 	CodeID                uint64
 	Label                 string
@@ -61,20 +62,22 @@ type WasmContract struct {
 	ContractAddress       string
 	Data                  string
 	InstantiatedAt        time.Time
+	Creator               string
 	ContractInfoExtension string
+	ContractStates        []byte
 	Height                int64
 }
 
 // NewWasmCode allows to build a new x/wasm contract instance
 func NewWasmContract(
 	sender string, admin string, codeID uint64, label string, rawMsg wasmtypes.RawContractMessage, funds sdk.Coins, contractAddress string, data string,
-	instantiatedAt time.Time, creator string, contractInfoExtension string, height int64,
+	instantiatedAt time.Time, creator string, contractInfoExtension string, states []wasmtypes.Model, height int64,
 ) WasmContract {
 	rawContractMsg, _ := rawMsg.MarshalJSON()
+	contractStates := convertContractStates(states)
 
 	return WasmContract{
 		Sender:                sender,
-		Creator:               creator,
 		Admin:                 admin,
 		CodeID:                codeID,
 		Label:                 label,
@@ -83,9 +86,23 @@ func NewWasmContract(
 		ContractAddress:       contractAddress,
 		Data:                  data,
 		InstantiatedAt:        instantiatedAt,
+		Creator:               creator,
 		ContractInfoExtension: contractInfoExtension,
+		ContractStates:        contractStates,
 		Height:                height,
 	}
+}
+
+func convertContractStates(states []wasmtypes.Model) []byte {
+	var jsonState map[string]string
+	for _, model := range states {
+		key, _ := model.Key.MarshalJSON()
+		value := base64.StdEncoding.EncodeToString(model.Value)
+		jsonState[string(key)] = value
+	}
+
+	statesBz, _ := json.Marshal(&jsonState)
+	return statesBz
 }
 
 // WasmExecuteContract represents the CosmWasm execute contract in x/wasm module
