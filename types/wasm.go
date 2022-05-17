@@ -94,6 +94,10 @@ func NewWasmContract(
 }
 
 func convertContractStates(states []wasmtypes.Model) []byte {
+	if len(states) == 0 {
+		return nil
+	}
+
 	var jsonState map[string]string
 	for _, model := range states {
 		key, _ := model.Key.MarshalJSON()
