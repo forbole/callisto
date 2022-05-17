@@ -74,9 +74,7 @@ func (m *Module) SaveGenesisCodes(codes []wasmtypes.Code, initHeight int64) erro
 }
 
 func (m *Module) SaveGenesisContracts(contracts []wasmtypes.Contract, doc *tmtypes.GenesisDoc) error {
-	wasmContracts := make([]types.WasmContract, len(contracts))
-
-	for index, contract := range contracts {
+	for _, contract := range contracts {
 		var contractInfoExt string
 		if contract.ContractInfo.Extension != nil {
 			var extentionI wasmtypes.ContractInfoExtension
@@ -87,22 +85,20 @@ func (m *Module) SaveGenesisContracts(contracts []wasmtypes.Contract, doc *tmtyp
 			contractInfoExt = extentionI.String()
 		}
 
-		fmt.Println("address: ", contract.ContractAddress)
 		contractStates, err := m.source.GetContractStates(doc.InitialHeight, contract.ContractAddress)
 		if err != nil {
 			return fmt.Errorf("error while getting genesis contract states: %s", err)
 		}
-		fmt.Println("states: ", contractStates)
 
-		wasmContracts[index] = types.NewWasmContract(
+		contract := types.NewWasmContract(
 			"", contract.ContractInfo.Admin, contract.ContractInfo.CodeID, contract.ContractInfo.Label, nil, nil,
 			contract.ContractAddress, "", doc.GenesisTime, contract.ContractInfo.Creator, contractInfoExt, contractStates, doc.InitialHeight,
 		)
-	}
 
-	err := m.db.SaveWasmContracts(wasmContracts)
-	if err != nil {
-		return fmt.Errorf("error while saving genesis wasm contracts: %s", err)
+		err = m.db.SaveWasmContracts([]types.WasmContract{contract})
+		if err != nil {
+			return fmt.Errorf("error while saving genesis wasm contracts: %s", err)
+		}
 	}
 
 	return nil
