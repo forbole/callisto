@@ -2,6 +2,7 @@ package types
 
 import (
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"time"
 
@@ -100,9 +101,9 @@ func convertContractStates(states []wasmtypes.Model) []byte {
 
 	var jsonState = make(map[string]string)
 	for _, model := range states {
-		key, _ := model.Key.MarshalJSON()
-		value := base64.StdEncoding.EncodeToString(model.Value)
-		jsonState[string(key)] = value
+		key, _ := hex.DecodeString(model.Key.String())
+		value, _ := base64.StdEncoding.DecodeString(string(model.Value))
+		jsonState[string(key)] = string(value)
 	}
 
 	statesBz, _ := json.Marshal(&jsonState)
