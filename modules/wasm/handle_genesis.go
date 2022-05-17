@@ -87,10 +87,12 @@ func (m *Module) SaveGenesisContracts(contracts []wasmtypes.Contract, doc *tmtyp
 			contractInfoExt = extentionI.String()
 		}
 
+		fmt.Println("address: ", contract.ContractAddress)
 		contractStates, err := m.source.GetContractStates(doc.InitialHeight, contract.ContractAddress)
 		if err != nil {
 			return fmt.Errorf("error while getting genesis contract states: %s", err)
 		}
+		fmt.Println("states: ", contractStates)
 
 		wasmContracts[index] = types.NewWasmContract(
 			"", contract.ContractInfo.Admin, contract.ContractInfo.CodeID, contract.ContractInfo.Label, nil, nil,
