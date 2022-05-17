@@ -27,7 +27,7 @@ CREATE INDEX wasm_code_height_index ON wasm_code (height);
 CREATE TABLE wasm_contract
 (
     sender                  TEXT            NULL,
-    creator                 TEXT            NOT NULL REFERENCES account (address),,
+    creator                 TEXT            NOT NULL REFERENCES account (address),
     admin                   TEXT            NULL,
     code_id                 BIGINT          NOT NULL REFERENCES wasm_code (code_id),
     label                   TEXT            NULL,
@@ -37,6 +37,7 @@ CREATE TABLE wasm_contract
     data                    TEXT            NULL,
     instantiated_at         TIMESTAMP       NOT NULL,
     contract_info_extension TEXT            NULL,
+    contract_states         JSONB           NOT NULL DEFAULT '{}'::JSONB,
     height                  BIGINT          NOT NULL
 );
 CREATE INDEX wasm_contract_height_index ON wasm_contract (height);
