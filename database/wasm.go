@@ -75,7 +75,7 @@ VALUES `
 
 // SaveWasmContracts allows to store the wasm contract slice
 func (db *Db) SaveWasmContracts(contracts []types.WasmContract) error {
-	paramsNumber := 12
+	paramsNumber := 13
 	slices := dbutils.SplitWasmContracts(contracts, paramsNumber)
 
 	for _, contracts := range slices {
@@ -103,8 +103,8 @@ VALUES `
 	var args []interface{}
 	for i, contract := range wasmContracts {
 		ii := i * paramsNumber
-		stmt += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d),",
-			ii+1, ii+2, ii+3, ii+4, ii+5, ii+6, ii+7, ii+8, ii+9, ii+10, ii+11, ii+12)
+		stmt += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d),",
+			ii+1, ii+2, ii+3, ii+4, ii+5, ii+6, ii+7, ii+8, ii+9, ii+10, ii+11, ii+12, ii+13)
 		args = append(args,
 			contract.Sender, contract.Creator, contract.Admin, contract.CodeID, contract.Label, string(contract.RawContractMsg),
 			pq.Array(dbtypes.NewDbCoins(contract.Funds)), contract.ContractAddress, contract.Data,
