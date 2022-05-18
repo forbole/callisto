@@ -3,7 +3,6 @@ package types
 import (
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	"time"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
@@ -75,7 +74,7 @@ func NewWasmContract(
 	instantiatedAt time.Time, creator string, contractInfoExtension string, states []wasmtypes.Model, height int64,
 ) WasmContract {
 	rawContractMsg, _ := rawMsg.MarshalJSON()
-	contractStates := convertContractStates(states)
+	contractStateInfo := getContractStateInfo(states)
 
 	return WasmContract{
 		Sender:                sender,
@@ -89,12 +88,12 @@ func NewWasmContract(
 		InstantiatedAt:        instantiatedAt,
 		Creator:               creator,
 		ContractInfoExtension: contractInfoExtension,
-		ContractStates:        contractStates,
+		ContractStates:        contractStateInfo,
 		Height:                height,
 	}
 }
 
-func convertContractStates(states []wasmtypes.Model) []byte {
+func getContractStateInfo(states []wasmtypes.Model) []byte {
 	if len(states) == 0 {
 		return nil
 	}
@@ -108,8 +107,6 @@ func convertContractStates(states []wasmtypes.Model) []byte {
 	}
 
 	contractStateInfoBz, _ := json.Marshal(&contractStateInfo)
-
-	fmt.Println(string(contractStateInfoBz))
 
 	return contractStateInfoBz
 }
