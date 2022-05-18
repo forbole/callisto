@@ -99,19 +99,19 @@ func convertContractStates(states []wasmtypes.Model) []byte {
 		return nil
 	}
 
-	var jsonState = make(map[string]interface{})
+	var contractStateInfo string
 	for _, model := range states {
 		key, _ := hex.DecodeString(model.Key.String())
-		jsonState[string(key)] = string(model.Value)
+		if string(key) == "contract_info" {
+			contractStateInfo = string(model.Value)
+		}
 	}
 
-	fmt.Println(jsonState)
+	contractStateInfoBz, _ := json.Marshal(&contractStateInfo)
 
-	statesBz, _ := json.Marshal(&jsonState)
+	fmt.Println(string(contractStateInfoBz))
 
-	fmt.Println(string(statesBz))
-
-	return statesBz
+	return contractStateInfoBz
 }
 
 // WasmExecuteContract represents the CosmWasm execute contract in x/wasm module
