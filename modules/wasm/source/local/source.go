@@ -15,7 +15,7 @@ var (
 	_ wasmsource.Source = &Source{}
 )
 
-// Source implements stakingsource.Source using a local node
+// Source implements wasmsource.Source using a local node
 type Source struct {
 	*local.Source
 	q wasmtypes.QueryServer
