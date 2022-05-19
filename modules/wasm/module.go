@@ -14,7 +14,7 @@ var (
 	_ modules.MessageModule = &Module{}
 )
 
-// Module represent x/feegrant module
+// Module represent x/wasm module
 type Module struct {
 	cdc    codec.Codec
 	db     *database.Db
