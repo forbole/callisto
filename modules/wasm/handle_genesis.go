@@ -57,7 +57,9 @@ func (m *Module) SaveGenesisParams(params wasmtypes.Params, initHeight int64) er
 
 func (m *Module) SaveGenesisCodes(codes []wasmtypes.Code, initHeight int64) error {
 	var wasmCodes []types.WasmCode = []types.WasmCode{}
-	for _, code := range codes {
+	for i, code := range codes {
+		fmt.Println("code count: ", i)
+
 		if code.CodeID != 0 {
 			wasmCodes = append(wasmCodes, types.NewWasmCode(
 				"", code.CodeBytes, &code.CodeInfo.InstantiateConfig, code.CodeID, initHeight,
@@ -70,11 +72,15 @@ func (m *Module) SaveGenesisCodes(codes []wasmtypes.Code, initHeight int64) erro
 		return fmt.Errorf("error while saving genesis wasm codes: %s", err)
 	}
 
+	fmt.Println("done saving codes")
+
 	return nil
 }
 
 func (m *Module) SaveGenesisContracts(contracts []wasmtypes.Contract, doc *tmtypes.GenesisDoc) error {
-	for _, contract := range contracts {
+	for i, contract := range contracts {
+		fmt.Println("contract count: ", i)
+
 		var contractInfoExt string
 		if contract.ContractInfo.Extension != nil {
 			var extentionI wasmtypes.ContractInfoExtension
@@ -124,6 +130,8 @@ func (m *Module) SaveGenesisMsgs(msgs []wasmtypes.GenesisState_GenMsgs, doc *tmt
 			return m.db.SaveWasmExecuteContracts([]types.WasmExecuteContract{executeContract})
 		}
 	}
+
+	fmt.Println("done saving messages")
 
 	return nil
 }
