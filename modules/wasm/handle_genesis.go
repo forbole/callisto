@@ -56,10 +56,8 @@ func (m *Module) SaveGenesisParams(params wasmtypes.Params, initHeight int64) er
 }
 
 func (m *Module) SaveGenesisCodes(codes []wasmtypes.Code, initHeight int64) error {
-	var wasmCodes []types.WasmCode = []types.WasmCode{}
-	for i, code := range codes {
-		fmt.Println("code count: ", i)
-
+	var wasmCodes = []types.WasmCode{}
+	for _, code := range codes {
 		if code.CodeID != 0 {
 			wasmCodes = append(wasmCodes, types.NewWasmCode(
 				"", code.CodeBytes, &code.CodeInfo.InstantiateConfig, code.CodeID, initHeight,
@@ -72,16 +70,17 @@ func (m *Module) SaveGenesisCodes(codes []wasmtypes.Code, initHeight int64) erro
 		return fmt.Errorf("error while saving genesis wasm codes: %s", err)
 	}
 
-	fmt.Println("done saving codes")
-
 	return nil
 }
 
 func (m *Module) SaveGenesisContracts(contracts []wasmtypes.Contract, doc *tmtypes.GenesisDoc) error {
-	log.Debug().Int("number of contracts", len(contracts)).Msg("parsing genesis contracts")
+	log.Debug().Str("module", "wasm").Str("operation", "contracts").
+		Int("contract counts", len(contracts)).Msg("parsing genesis")
 
 	var genesisContracts = make([]types.WasmContract, len(contracts))
 	for index, contract := range contracts {
+		fmt.Println("countract count: ", index)
+
 		var contractInfoExt string
 		if contract.ContractInfo.Extension != nil {
 			var extentionI wasmtypes.ContractInfoExtension
@@ -113,9 +112,10 @@ func (m *Module) SaveGenesisContracts(contracts []wasmtypes.Contract, doc *tmtyp
 }
 
 func (m *Module) SaveGenesisMsgs(msgs []wasmtypes.GenesisState_GenMsgs, doc *tmtypes.GenesisDoc) error {
-	log.Debug().Int("number of messages", len(msgs)).Msg("parsing genesis messages")
+	log.Debug().Str("module", "wasm").Str("operation", "messages").
+		Int("message counts", len(msgs)).Msg("parsing genesis")
 
-	var genesisExecuteContracts []types.WasmExecuteContract
+	var genesisExecuteContracts = []types.WasmExecuteContract{}
 	for i, msg := range msgs {
 		fmt.Println("msg count: ", i)
 		if msgExecuteContract, ok := msg.Sum.(*wasmtypes.GenesisState_GenMsgs_ExecuteContract); ok {
