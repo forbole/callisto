@@ -74,13 +74,13 @@ func (m *Module) SaveGenesisCodes(codes []wasmtypes.Code, initHeight int64) erro
 }
 
 func (m *Module) SaveGenesisContracts(contracts []wasmtypes.Contract, doc *tmtypes.GenesisDoc) error {
-	log.Debug().Str("module", "wasm").Str("operation", "contracts").
+	log.Debug().Str("module", "wasm").Str("operation", "genesis contracts").
 		Int("contract counts", len(contracts)).Msg("parsing genesis")
 
 	var genesisContracts = make([]types.WasmContract, len(contracts))
 	for index, contract := range contracts {
-		fmt.Println("countract count: ", index)
 
+		// Unpack contract info extension
 		var contractInfoExt string
 		if contract.ContractInfo.Extension != nil {
 			var extentionI wasmtypes.ContractInfoExtension
@@ -91,6 +91,7 @@ func (m *Module) SaveGenesisContracts(contracts []wasmtypes.Contract, doc *tmtyp
 			contractInfoExt = extentionI.String()
 		}
 
+		// Get contract states
 		contractStates, err := m.source.GetContractStates(doc.InitialHeight, contract.ContractAddress)
 		if err != nil {
 			return fmt.Errorf("error while getting genesis contract states: %s", err)
@@ -107,17 +108,16 @@ func (m *Module) SaveGenesisContracts(contracts []wasmtypes.Contract, doc *tmtyp
 	if err != nil {
 		return fmt.Errorf("error while saving genesis wasm contracts: %s", err)
 	}
-	fmt.Println("done saving contracts")
 	return nil
 }
 
 func (m *Module) SaveGenesisMsgs(msgs []wasmtypes.GenesisState_GenMsgs, doc *tmtypes.GenesisDoc) error {
-	log.Debug().Str("module", "wasm").Str("operation", "messages").
+	log.Debug().Str("module", "wasm").Str("operation", "genesis messages").
 		Int("message counts", len(msgs)).Msg("parsing genesis")
 
 	var genesisExecuteContracts = []types.WasmExecuteContract{}
-	for i, msg := range msgs {
-		fmt.Println("msg count: ", i)
+	for _, msg := range msgs {
+		// Handle genesis execute contract messages
 		if msgExecuteContract, ok := msg.Sum.(*wasmtypes.GenesisState_GenMsgs_ExecuteContract); ok {
 			execution := msgExecuteContract.ExecuteContract
 			executeContract := types.NewWasmExecuteContract(
@@ -132,7 +132,6 @@ func (m *Module) SaveGenesisMsgs(msgs []wasmtypes.GenesisState_GenMsgs, doc *tmt
 			genesisExecuteContracts = append(genesisExecuteContracts, executeContract)
 		}
 	}
-	fmt.Println("done saving messages")
 
 	return m.db.SaveWasmExecuteContracts(genesisExecuteContracts)
 }
