@@ -80,7 +80,7 @@ func (m *Module) SaveGenesisContracts(contracts []wasmtypes.Contract, doc *tmtyp
 			var extentionI wasmtypes.ContractInfoExtension
 			err := m.cdc.UnpackAny(contract.ContractInfo.Extension, &extentionI)
 			if err != nil {
-				return fmt.Errorf("error while getting genesis contract info extension: %s", err)
+				return fmt.Errorf("error while unpacking genesis contract info extension: %s", err)
 			}
 			contractInfoExt = extentionI.String()
 		}

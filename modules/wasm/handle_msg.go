@@ -118,10 +118,14 @@ func (m *Module) HandleMsgInstantiateContract(index int, tx *juno.Tx, msg *wasmt
 	}
 
 	// Get contract info extension
-	var extentionI wasmtypes.ContractInfoExtension
-	err = m.cdc.UnpackAny(contractInfo.Extension, &extentionI)
-	if err != nil {
-		return fmt.Errorf("error while getting contract info extension: %s", err)
+	var contractInfoExt string
+	if contractInfo.Extension != nil {
+		var extentionI wasmtypes.ContractInfoExtension
+		err = m.cdc.UnpackAny(contractInfo.Extension, &extentionI)
+		if err != nil {
+			return fmt.Errorf("error while getting contract info extension: %s", err)
+		}
+		contractInfoExt = extentionI.String()
 	}
 
 	// Get contract states
@@ -130,14 +134,10 @@ func (m *Module) HandleMsgInstantiateContract(index int, tx *juno.Tx, msg *wasmt
 		return fmt.Errorf("error while getting genesis contract states: %s", err)
 	}
 
-	fmt.Println("contractInfo.Creator: ", contractInfo.Creator)
-	fmt.Println("extentionI.String(): ", extentionI.String())
-	fmt.Println("contractStates: ", contractStates)
-
 	contract := types.NewWasmContract(
 		msg.Sender, msg.Admin, msg.CodeID, msg.Label, msg.Msg, msg.Funds,
 		contractAddress, string(resultDataBz), timestamp,
-		contractInfo.Creator, extentionI.String(), contractStates, tx.Height,
+		contractInfo.Creator, contractInfoExt, contractStates, tx.Height,
 	)
 	return m.db.SaveWasmContracts(
 		[]types.WasmContract{contract},
