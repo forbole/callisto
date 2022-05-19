@@ -74,7 +74,7 @@ func NewWasmContract(
 	instantiatedAt time.Time, creator string, contractInfoExtension string, states []wasmtypes.Model, height int64,
 ) WasmContract {
 	rawContractMsg, _ := rawMsg.MarshalJSON()
-	contractStateInfo := getContractStateInfo(states)
+	contractStateInfo := ConvertContractStates(states)
 
 	return WasmContract{
 		Sender:                sender,
@@ -93,22 +93,34 @@ func NewWasmContract(
 	}
 }
 
-func getContractStateInfo(states []wasmtypes.Model) []byte {
-	if len(states) == 0 {
-		return nil
-	}
+// ConvertContractStates removes unaccepted hex characters for postgreSQL from the state key
+func ConvertContractStates(states []wasmtypes.Model) []byte {
+	var jsonStates = make(map[string]interface{})
 
-	var contractStateInfo string
-	for _, model := range states {
-		key, _ := hex.DecodeString(model.Key.String())
-		if string(key) == "contract_info" {
-			contractStateInfo = string(model.Value)
+	hexZero, _ := hex.DecodeString("00")
+	for _, state := range states {
+		key := state.Key
+		// Remove initial 2 hex characters if the first is \x00
+		if string(state.Key[:1]) == string(hexZero) {
+			key = state.Key[2:]
 		}
+
+		// Remove \x00 hex characters in the middle
+		for i := 0; i < len(key); i++ {
+			if string(key[i]) == string(hexZero) {
+				key = append(key[:i], key[i+1:]...)
+				i--
+			}
+		}
+
+		// Decode hex value
+		keyBz, _ := hex.DecodeString(key.String())
+
+		jsonStates[string(keyBz)] = string(state.Value)
 	}
+	jsonStatesBz, _ := json.Marshal(&jsonStates)
 
-	contractStateInfoBz, _ := json.Marshal(&contractStateInfo)
-
-	return contractStateInfoBz
+	return jsonStatesBz
 }
 
 // WasmExecuteContract represents the CosmWasm execute contract in x/wasm module
