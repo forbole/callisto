@@ -48,7 +48,11 @@ VALUES `
 	for i, code := range wasmCodes {
 		ii := i * 5
 
-		accessConfig := dbtypes.NewDbAccessConfig(code.InstantiatePermission)
+		var accessConfig dbtypes.DbAccessConfig
+		if code.InstantiatePermission != nil {
+			accessConfig = dbtypes.NewDbAccessConfig(code.InstantiatePermission)
+		}
+
 		cfgValue, _ := accessConfig.Value()
 
 		stmt += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d),", ii+1, ii+2, ii+3, ii+4, ii+5)
