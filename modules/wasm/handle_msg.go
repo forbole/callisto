@@ -74,6 +74,8 @@ func (m *Module) HandleMsgStoreCode(index int, tx *juno.Tx, msg *wasmtypes.MsgSt
 		return fmt.Errorf("error while parsing code id to int64: %s", err)
 	}
 
+	fmt.Println("msg.InstantiatePermission: ", msg.InstantiatePermission)
+
 	return m.db.SaveWasmCode(
 		types.NewWasmCode(
 			msg.Sender, msg.WASMByteCode, msg.InstantiatePermission, codeID, tx.Height,
