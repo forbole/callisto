@@ -78,9 +78,10 @@ func (m *Module) SaveGenesisCodes(codes []wasmtypes.Code, initHeight int64) erro
 }
 
 func (m *Module) SaveGenesisContracts(contracts []wasmtypes.Contract, doc *tmtypes.GenesisDoc) error {
-	for i, contract := range contracts {
-		fmt.Println("contract count: ", i)
+	log.Debug().Int("number of contracts", len(contracts)).Msg("parsing genesis contracts")
 
+	var genesisContracts = make([]types.WasmContract, len(contracts))
+	for index, contract := range contracts {
 		var contractInfoExt string
 		if contract.ContractInfo.Extension != nil {
 			var extentionI wasmtypes.ContractInfoExtension
@@ -100,20 +101,21 @@ func (m *Module) SaveGenesisContracts(contracts []wasmtypes.Contract, doc *tmtyp
 			"", contract.ContractInfo.Admin, contract.ContractInfo.CodeID, contract.ContractInfo.Label, nil, nil,
 			contract.ContractAddress, "", doc.GenesisTime, contract.ContractInfo.Creator, contractInfoExt, contractStates, doc.InitialHeight,
 		)
-
-		err = m.db.SaveWasmContracts([]types.WasmContract{contract})
-		if err != nil {
-			return fmt.Errorf("error while saving genesis wasm contracts: %s", err)
-		}
+		genesisContracts[index] = contract
 	}
 
+	err := m.db.SaveWasmContracts(genesisContracts)
+	if err != nil {
+		return fmt.Errorf("error while saving genesis wasm contracts: %s", err)
+	}
 	fmt.Println("done saving contracts")
 	return nil
 }
 
 func (m *Module) SaveGenesisMsgs(msgs []wasmtypes.GenesisState_GenMsgs, doc *tmtypes.GenesisDoc) error {
-	fmt.Println("start saving messages, len(msgs): ", len(msgs))
+	log.Debug().Int("number of messages", len(msgs)).Msg("parsing genesis messages")
 
+	var genesisExecuteContracts []types.WasmExecuteContract
 	for i, msg := range msgs {
 		fmt.Println("msg count: ", i)
 		if msgExecuteContract, ok := msg.Sum.(*wasmtypes.GenesisState_GenMsgs_ExecuteContract); ok {
@@ -127,11 +129,10 @@ func (m *Module) SaveGenesisMsgs(msgs []wasmtypes.GenesisState_GenMsgs, doc *tmt
 				doc.GenesisTime,
 				doc.InitialHeight,
 			)
-			return m.db.SaveWasmExecuteContracts([]types.WasmExecuteContract{executeContract})
+			genesisExecuteContracts = append(genesisExecuteContracts, executeContract)
 		}
 	}
-
 	fmt.Println("done saving messages")
 
-	return nil
+	return m.db.SaveWasmExecuteContracts(genesisExecuteContracts)
 }
