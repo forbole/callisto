@@ -101,11 +101,15 @@ func (m *Module) SaveGenesisContracts(contracts []wasmtypes.Contract, doc *tmtyp
 		}
 	}
 
+	fmt.Println("done saving contracts")
 	return nil
 }
 
 func (m *Module) SaveGenesisMsgs(msgs []wasmtypes.GenesisState_GenMsgs, doc *tmtypes.GenesisDoc) error {
-	for _, msg := range msgs {
+	fmt.Println("start saving messages, len(msgs): ", len(msgs))
+
+	for i, msg := range msgs {
+		fmt.Println("msg count: ", i)
 		if msgExecuteContract, ok := msg.Sum.(*wasmtypes.GenesisState_GenMsgs_ExecuteContract); ok {
 			execution := msgExecuteContract.ExecuteContract
 			executeContract := types.NewWasmExecuteContract(
