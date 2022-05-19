@@ -28,7 +28,7 @@ func (cfg *DbAccessConfig) Value() (driver.Value, error) {
 		return fmt.Sprintf("(%d,%s)", cfg.Permission, cfg.Address), nil
 	}
 
-	return fmt.Sprintf("(%s,%s)", "", ""), nil
+	return fmt.Sprintf("(%d,%s)", wasmtypes.AccessTypeUnspecified, ""), nil
 }
 
 // Equal tells whether a and b represent the same access_config
