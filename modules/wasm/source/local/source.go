@@ -74,6 +74,7 @@ func (s Source) GetContractStates(height int64, contractAddr string) ([]wasmtype
 			return nil, fmt.Errorf("error while getting contract state: %s", err)
 		}
 
+		nextKey = res.Pagination.NextKey
 		stop = len(res.Pagination.NextKey) == 0
 		models = append(models, res.Models...)
 	}
