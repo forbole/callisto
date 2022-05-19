@@ -105,7 +105,6 @@ func (m *Module) SaveGenesisContracts(contracts []wasmtypes.Contract, doc *tmtyp
 }
 
 func (m *Module) SaveGenesisMsgs(msgs []wasmtypes.GenesisState_GenMsgs, doc *tmtypes.GenesisDoc) error {
-	var executeContracts []types.WasmExecuteContract
 	for _, msg := range msgs {
 		if msgExecuteContract, ok := msg.Sum.(*wasmtypes.GenesisState_GenMsgs_ExecuteContract); ok {
 			execution := msgExecuteContract.ExecuteContract
@@ -118,10 +117,9 @@ func (m *Module) SaveGenesisMsgs(msgs []wasmtypes.GenesisState_GenMsgs, doc *tmt
 				doc.GenesisTime,
 				doc.InitialHeight,
 			)
-
-			executeContracts = append(executeContracts, executeContract)
+			return m.db.SaveWasmExecuteContracts([]types.WasmExecuteContract{executeContract})
 		}
 	}
 
-	return m.db.SaveWasmExecuteContracts(executeContracts)
+	return nil
 }
