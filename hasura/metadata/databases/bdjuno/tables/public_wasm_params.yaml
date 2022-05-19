@@ -5,7 +5,7 @@ select_permissions:
 - permission:
     allow_aggregations: true
     columns:
-    - num_txs
+    - one_row_id
     - code_upload_access
     - instantiate_default_permission
     - max_wasm_code_size

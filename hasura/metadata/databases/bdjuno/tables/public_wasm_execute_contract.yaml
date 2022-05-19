@@ -10,7 +10,7 @@ select_permissions:
     allow_aggregations: true
     columns:
     - sender
-    - contract_states
+    - contract_address
     - raw_contract_message
     - funds
     - data
