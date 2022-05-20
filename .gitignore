@@ -2,10 +2,12 @@
 .vscode/
 build/
 vendor/
+volume/test_conf/
 
 # Configuration
 *.toml
 *.json
+!genesis.json
 config.yaml
 config.docker.yaml
 
