@@ -13,7 +13,7 @@ CREATE TABLE mint_params
 CREATE TABLE inflation
 (
     one_row_id bool PRIMARY KEY DEFAULT TRUE,
-    value      DECIMAL NOT NULL,
+    value      TEXT NOT NULL,
     height     BIGINT  NOT NULL,
     CONSTRAINT one_row_uni CHECK (one_row_id)
 );

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+	minttypes "github.com/osmosis-labs/osmosis/v7/x/mint/types"
 
 	"github.com/forbole/bdjuno/v3/types"
 
@@ -14,7 +14,7 @@ import (
 func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 
 	// Save the data
-	err := suite.database.SaveInflation(sdk.NewDecWithPrec(10050, 2), 100)
+	err := suite.database.SaveInflation("100.50", 100)
 	suite.Require().NoError(err)
 
 	// Verify the data
@@ -29,7 +29,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 	// ---------------------------------------------------------------------------------------------------------------
 
 	// Try updating with lower height
-	err = suite.database.SaveInflation(sdk.NewDecWithPrec(20000, 2), 90)
+	err = suite.database.SaveInflation("2000.00", 90)
 	suite.Require().NoError(err, "double inflation insertion should return no error")
 
 	// Verify the data
@@ -44,7 +44,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 	// ---------------------------------------------------------------------------------------------------------------
 
 	// Try updating with same height
-	err = suite.database.SaveInflation(sdk.NewDecWithPrec(30000, 2), 100)
+	err = suite.database.SaveInflation("300.00", 100)
 	suite.Require().NoError(err, "double inflation insertion should return no error")
 
 	// Verify the data
@@ -59,7 +59,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 	// ---------------------------------------------------------------------------------------------------------------
 
 	// Try updating with higher height
-	err = suite.database.SaveInflation(sdk.NewDecWithPrec(40000, 2), 110)
+	err = suite.database.SaveInflation("400.00", 110)
 	suite.Require().NoError(err, "double inflation insertion should return no error")
 
 	// Verify the data
@@ -73,12 +73,15 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveMintParams() {
+	var weightedAddress []minttypes.WeightedAddress
 	mintParams := minttypes.NewParams(
 		"udaric",
 		sdk.NewDecWithPrec(4, 1),
+		"day",
 		sdk.NewDecWithPrec(8, 1),
-		sdk.NewDecWithPrec(4, 1),
-		sdk.NewDecWithPrec(8, 1),
+		int64(11),
+		minttypes.DefaultParams().DistributionProportions,
+		weightedAddress,
 		5006000,
 	)
 	err := suite.database.SaveMintParams(types.NewMintParams(mintParams, 10))
