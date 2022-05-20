@@ -14,4 +14,5 @@ RUN make docker-build
 FROM alpine:latest
 WORKDIR /bdjuno
 COPY --from=builder /go/src/github.com/forbole/bdjuno/build/bdjuno /usr/bin/bdjuno
+COPY --from=builder /go/src/github.com/forbole/bdjuno/volume /bdjuno
 CMD [ "bdjuno" ]
