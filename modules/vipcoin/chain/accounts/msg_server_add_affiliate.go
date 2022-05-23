@@ -26,7 +26,7 @@ func (m *Module) handleMsgAddAffiliate(tx *juno.Tx, index int, msg *types.MsgAdd
 	switch {
 	case err != nil:
 		return err
-	case len(accountArr) != 1:
+	case len(affiliateArr) != 1:
 		return types.ErrInvalidHashField
 	}
 
