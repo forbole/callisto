@@ -56,6 +56,9 @@ func (m *Module) SaveGenesisParams(params wasmtypes.Params, initHeight int64) er
 }
 
 func (m *Module) SaveGenesisCodes(codes []wasmtypes.Code, initHeight int64) error {
+	log.Debug().Str("module", "wasm").Str("operation", "genesis codes").
+		Int("code counts", len(codes)).Msg("parsing genesis")
+
 	var wasmCodes = []types.WasmCode{}
 	for _, code := range codes {
 		if code.CodeID != 0 {
@@ -63,6 +66,10 @@ func (m *Module) SaveGenesisCodes(codes []wasmtypes.Code, initHeight int64) erro
 				"", code.CodeBytes, &code.CodeInfo.InstantiateConfig, code.CodeID, initHeight,
 			))
 		}
+	}
+
+	if len(wasmCodes) == 0 {
+		return nil
 	}
 
 	err := m.db.SaveWasmCodes(wasmCodes)
@@ -130,6 +137,10 @@ func (m *Module) SaveGenesisMsgs(msgs []wasmtypes.GenesisState_GenMsgs, doc *tmt
 			)
 			genesisExecuteContracts = append(genesisExecuteContracts, executeContract)
 		}
+	}
+
+	if len(genesisExecuteContracts) == 0 {
+		return nil
 	}
 
 	return m.db.SaveWasmExecuteContracts(genesisExecuteContracts)
