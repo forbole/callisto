@@ -1,0 +1,34 @@
+table:
+  name: wasm_contract
+  schema: public
+object_relationships:
+- name: wasm_code
+  using:
+    foreign_key_constraint_on: code_id
+array_relationships:
+- name: wasm_execute_contracts
+  using:
+    foreign_key_constraint_on:
+      column: contract_address
+      table:
+        name: wasm_execute_contract
+        schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - sender
+    - creator
+    - admin
+    - code_id
+    - label
+    - raw_contract_message
+    - funds
+    - contract_address
+    - data
+    - instantiated_at
+    - contract_info_extension
+    - contract_states
+    - height
+    filter: {}
+  role: anonymous
