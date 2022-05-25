@@ -6,6 +6,8 @@
 #### Hasura
 - ([\#395](https://github.com/forbole/bdjuno/pull/395)) Remove time label from Hasura Prometheus monitoring
 
+#### Bank module
+- ([\#410](https://github.com/forbole/bdjuno/pull/410)) Change total supply query from only 1 page to all pages
 
 ## Version v3.0.1
 ### Dependencies
