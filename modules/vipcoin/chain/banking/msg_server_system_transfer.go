@@ -35,7 +35,7 @@ func (m *Module) handleMsgSystemTransfer(tx *juno.Tx, index int, msg *types.MsgS
 
 	coin := sdk.NewCoin(msg.Asset, sdk.NewIntFromUint64(msg.Amount))
 
-	walletFrom[0].Balance = walletFrom[0].Balance.Sub(sdk.NewCoins(coin))
+	walletFrom[0].Balance, _ = walletFrom[0].Balance.SafeSub(sdk.NewCoins(coin))
 	if err := m.walletsRepo.UpdateWallets(walletFrom...); err != nil {
 		return err
 	}

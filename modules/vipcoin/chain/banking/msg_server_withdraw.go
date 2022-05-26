@@ -36,7 +36,7 @@ func (m *Module) handleMsgWithdraw(tx *juno.Tx, index int, msg *types.MsgWithdra
 	coins := sdk.NewCoins(sdk.NewCoin(msg.Asset, sdk.NewIntFromUint64(msg.Amount)))
 
 	// sub coins from wallet balance
-	wallet[0].Balance = wallet[0].Balance.Sub(coins)
+	wallet[0].Balance, _ = wallet[0].Balance.SafeSub(coins)
 	if err := m.walletsRepo.UpdateWallets(wallet...); err != nil {
 		return err
 	}

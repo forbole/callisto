@@ -120,7 +120,7 @@ func (m *Module) payment(
 	coin := sdk.NewCoin(asset.Name, sdk.NewIntFromUint64(msg.Amount))
 
 	// subtract coins from sender wallet balance
-	walletFrom.Balance = walletFrom.Balance.Sub(sdk.NewCoins(coin))
+	walletFrom.Balance, _ = walletFrom.Balance.SafeSub(sdk.NewCoins(coin))
 	if err := m.walletsRepo.UpdateWallets(&walletFrom); err != nil {
 		return &banking.Payment{}, err
 	}
@@ -165,7 +165,7 @@ func (m *Module) paymentWithFee(
 	)
 
 	// subtract coins from sender wallet balance
-	walletFrom.Balance = walletFrom.Balance.Sub(sdk.NewCoins(coin))
+	walletFrom.Balance, _ = walletFrom.Balance.SafeSub(sdk.NewCoins(coin))
 	if err := m.walletsRepo.UpdateWallets(&walletFrom); err != nil {
 		return &banking.Payment{}, err
 	}
