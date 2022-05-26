@@ -1,6 +1,6 @@
 ## Unreleased
 ### Dependencies
-- ([\#67](https://github.com/forbole/juno/pull/67)) Updated Juno to `v3.2.1`
+- ([\#412](https://github.com/forbole/bdjuno/pull/412)) Updated Juno to `v3.2.1`
 
 ## Version v3.1.0
 ### Dependencies
