@@ -72,7 +72,7 @@ WHERE slashing_params.height <= excluded.height`
 	return nil
 }
 
-// GetValidatorTombstoneStatus gets the validator latest tombstoned status from the database
+// GetValidatorTombstonedStatus gets the validator latest tombstoned status from the database
 func (db *Db) GetValidatorTombstonedStatus(valConsAddress string) (bool, error) {
 	stmt := `SELECT tombstoned FROM validator_signing_info WHERE validator_address = $1`
 
