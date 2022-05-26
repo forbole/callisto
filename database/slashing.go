@@ -71,3 +71,20 @@ WHERE slashing_params.height <= excluded.height`
 
 	return nil
 }
+
+// GetValidatorTombstoneStatus gets the validator latest tombstoned status from the database
+func (db *Db) GetValidatorTombstonedStatus(valConsAddress string) (bool, error) {
+	stmt := `SELECT tombstoned FROM validator_signing_info WHERE validator_address = $1`
+
+	var rows []bool
+	err := db.Sqlx.Select(&rows, stmt, valConsAddress)
+	if err != nil {
+		return false, fmt.Errorf("error while gettting validator tombstoned status: %s", err)
+	}
+
+	if len(rows) == 0 {
+		return false, fmt.Errorf("validator tombstoned status is empty")
+	}
+
+	return rows[0], nil
+}

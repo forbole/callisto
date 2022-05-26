@@ -176,9 +176,9 @@ func (m *Module) GetValidatorsStatuses(height int64, validators []stakingtypes.V
 			return nil, fmt.Errorf("error while getting validator consensus public key: %s", err)
 		}
 
-		valSigningInfo, err := m.slashingModule.GetSigningInfo(height, consAddr)
+		valTombstonedStatus, err := m.db.GetValidatorTombstonedStatus(consAddr.String())
 		if err != nil && !strings.Contains(err.Error(), codes.NotFound.String()) {
-			return nil, fmt.Errorf("error while getting validator signing info: %s", err)
+			return nil, fmt.Errorf("error while getting validator tombstoned status: %s", err)
 		}
 
 		statuses[index] = types.NewValidatorStatus(
@@ -186,7 +186,7 @@ func (m *Module) GetValidatorsStatuses(height int64, validators []stakingtypes.V
 			consPubKey.String(),
 			int(validator.GetStatus()),
 			validator.IsJailed(),
-			valSigningInfo.Tombstoned,
+			valTombstonedStatus,
 			height,
 		)
 	}
