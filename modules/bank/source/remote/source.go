@@ -51,7 +51,8 @@ func (s Source) GetBalances(addresses []string, height int64) ([]types.AccountBa
 
 // GetSupply implements bankkeeper.Source
 func (s Source) GetSupply(height int64) (sdk.Coins, error) {
-	res, err := s.bankClient.TotalSupply(remote.GetHeightRequestContext(s.Ctx, height), &banktypes.QueryTotalSupplyRequest{})
+	ctx := remote.GetHeightRequestContext(s.Ctx, height)
+	res, err := s.bankClient.TotalSupply(ctx, &banktypes.QueryTotalSupplyRequest{})
 	if err != nil {
 		return nil, fmt.Errorf("error while getting total supply: %s", err)
 	}

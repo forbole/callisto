@@ -50,7 +50,7 @@ func (s Source) GetBalances(addresses []string, height int64) ([]types.AccountBa
 	return balances, nil
 }
 
-// GetSupply implements keeper.Source
+// GetSupply implements bankkeeper.Source
 func (s Source) GetSupply(height int64) (sdk.Coins, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
