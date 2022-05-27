@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/forbole/juno/v3/node/remote"
 
@@ -51,10 +52,28 @@ func (s Source) GetBalances(addresses []string, height int64) ([]types.AccountBa
 
 // GetSupply implements bankkeeper.Source
 func (s Source) GetSupply(height int64) (sdk.Coins, error) {
-	res, err := s.bankClient.TotalSupply(remote.GetHeightRequestContext(s.Ctx, height), &banktypes.QueryTotalSupplyRequest{})
-	if err != nil {
-		return nil, fmt.Errorf("error while getting total supply: %s", err)
+	ctx := remote.GetHeightRequestContext(s.Ctx, height)
+
+	var coins []sdk.Coin
+	var nextKey []byte
+	var stop = false
+	for !stop {
+		res, err := s.bankClient.TotalSupply(
+			ctx,
+			&banktypes.QueryTotalSupplyRequest{
+				Pagination: &query.PageRequest{
+					Key:   nextKey,
+					Limit: 100, // Query 100 supplies at time
+				},
+			})
+		if err != nil {
+			return nil, fmt.Errorf("error while getting total supply: %s", err)
+		}
+
+		nextKey = res.Pagination.NextKey
+		stop = len(res.Pagination.NextKey) == 0
+		coins = append(coins, res.Supply...)
 	}
 
-	return res.Supply, nil
+	return coins, nil
 }
