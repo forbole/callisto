@@ -10,7 +10,7 @@ var ActionResponseTime = prometheus.NewHistogramVec(
 		Name:    "bdjuno_action_response_time",
 		Help:    "Time it has taken to execute an action",
 		Buckets: []float64{0.5, 1, 2, 3, 4, 5},
-	}, []string{"path", "time"})
+	}, []string{"path"})
 
 // ActionCounter represents the Telemetry counter used to track the total number of actions executed
 var ActionCounter = prometheus.NewCounterVec(
