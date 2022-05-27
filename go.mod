@@ -3,20 +3,18 @@ module github.com/forbole/bdjuno/v3
 go 1.17
 
 require (
-	github.com/cosmos/cosmos-sdk v0.45.3
-	github.com/cosmos/gaia/v7 v7.0.1
-	github.com/forbole/juno/v3 v3.1.1
+	github.com/cosmos/cosmos-sdk v0.45.4
+	github.com/cosmos/gaia/v7 v7.0.2
+	github.com/forbole/juno/v3 v3.2.1
 	github.com/go-co-op/gocron v1.13.0
 	github.com/gogo/protobuf v1.3.3
-	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/jmoiron/sqlx v1.3.5
-	github.com/lib/pq v1.10.5
-	github.com/pelletier/go-toml v1.9.4
-	github.com/prometheus/client_golang v1.12.1
+	github.com/lib/pq v1.10.6
+	github.com/pelletier/go-toml v1.9.5
+	github.com/prometheus/client_golang v1.12.2
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
 	github.com/rs/zerolog v1.26.1
 	github.com/spf13/cobra v1.4.0
-	github.com/spf13/viper v1.11.0 // indirect
 	github.com/stretchr/testify v1.7.1
 	github.com/tendermint/tendermint v0.34.19
 	github.com/tharsis/ethermint v0.14.0
@@ -73,6 +71,7 @@ require (
 	github.com/google/orderedcode v0.0.1 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/handlers v1.5.1 // indirect
+	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/gravity-devs/liquidity v1.5.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
@@ -124,6 +123,7 @@ require (
 	github.com/spf13/cast v1.4.1 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/spf13/viper v1.11.0 // indirect
 	github.com/status-im/keycard-go v0.0.0-20200402102358-957c09536969 // indirect
 	github.com/strangelove-ventures/packet-forward-middleware/v2 v2.1.1 // indirect
 	github.com/subosito/gotenv v1.2.0 // indirect
