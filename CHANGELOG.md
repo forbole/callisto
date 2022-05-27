@@ -1,3 +1,14 @@
+## Version v3.1.0
+### Dependencies
+- ([\#412](https://github.com/forbole/bdjuno/pull/412)) Updated Juno to `v3.2.1`
+
+### Changes 
+#### Hasura
+- ([\#395](https://github.com/forbole/bdjuno/pull/395)) Remove time label from Hasura Prometheus monitoring
+
+#### Bank module
+- ([\#410](https://github.com/forbole/bdjuno/pull/410)) Change total supply query from only 1 page to all pages
+
 ## Version v3.0.1
 ### Dependencies
 - Updated Juno to `v3.1.1`
