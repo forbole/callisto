@@ -1,10 +1,6 @@
-## Unreleased
-### Dependencies
-- ([\#412](https://github.com/forbole/bdjuno/pull/412)) Updated Juno to `v3.2.1`
-
 ## Version v3.1.0
 ### Dependencies
-- Updated Juno to `v3.2.0`
+- ([\#412](https://github.com/forbole/bdjuno/pull/412)) Updated Juno to `v3.2.1`
 
 ### Changes 
 #### Hasura
