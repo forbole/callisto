@@ -1,5 +1,11 @@
 package types
 
+import (
+	"log"
+
+	"github.com/forbole/bdjuno/v3/modules/utils"
+)
+
 // DoubleSignEvidence represent a double sign evidence on each tendermint block
 type DoubleSignEvidence struct {
 	VoteA  DoubleSignVote
@@ -37,6 +43,11 @@ func NewDoubleSignVote(
 	validatorIndex int32,
 	signature string,
 ) DoubleSignVote {
+	validatorAddress, err := utils.ConvertAddressPrefix("likevalcons", validatorAddress)
+	if err != nil {
+		log.Fatalf("error while converting to likevalcons prefix: %s", err)
+	}
+
 	return DoubleSignVote{
 		Type:             roundType,
 		Height:           height,

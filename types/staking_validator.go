@@ -109,6 +109,11 @@ type ValidatorDescription struct {
 func NewValidatorDescription(
 	opAddr string, description stakingtypes.Description, avatarURL string, height int64,
 ) ValidatorDescription {
+	opAddr, err := utils.ConvertAddressPrefix("likevaloper", opAddr)
+	if err != nil {
+		log.Fatalf("error while converting to likevaloper prefix: %s", err)
+	}
+
 	return ValidatorDescription{
 		OperatorAddress: opAddr,
 		Description:     description,
@@ -131,6 +136,11 @@ type ValidatorCommission struct {
 func NewValidatorCommission(
 	valAddress string, rate *sdk.Dec, minSelfDelegation *sdk.Int, height int64,
 ) ValidatorCommission {
+	valAddress, err := utils.ConvertAddressPrefix("likevalcons", valAddress)
+	if err != nil {
+		log.Fatalf("error while converting to likevalcons prefix: %s", err)
+	}
+
 	return ValidatorCommission{
 		ValAddress:        valAddress,
 		Commission:        rate,
@@ -150,6 +160,11 @@ type ValidatorVotingPower struct {
 
 // NewValidatorVotingPower creates a new ValidatorVotingPower
 func NewValidatorVotingPower(address string, votingPower int64, height int64) ValidatorVotingPower {
+	address, err := utils.ConvertAddressPrefix("likevalcons", address)
+	if err != nil {
+		log.Fatalf("error while converting to likevalcons prefix: %s", err)
+	}
+
 	return ValidatorVotingPower{
 		ConsensusAddress: address,
 		VotingPower:      votingPower,
@@ -171,6 +186,11 @@ type ValidatorStatus struct {
 
 // NewValidatorStatus creates a new ValidatorVotingPower
 func NewValidatorStatus(valConsAddr, pubKey string, status int, jailed bool, tombstoned bool, height int64) ValidatorStatus {
+	valConsAddr, err := utils.ConvertAddressPrefix("likevalcons", valConsAddr)
+	if err != nil {
+		log.Fatalf("error while converting to likevalcons prefix: %s", err)
+	}
+
 	return ValidatorStatus{
 		ConsensusAddress: valConsAddr,
 		ConsensusPubKey:  pubKey,
