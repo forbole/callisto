@@ -6,7 +6,7 @@ require (
 	github.com/cosmos/cosmos-sdk v0.45.4
 	github.com/cosmos/gaia/v6 v6.0.0
 	github.com/crescent-network/crescent v1.1.0
-	github.com/forbole/juno/v3 v3.0.0-20220526032148-74a7c6df7371
+	github.com/forbole/juno/v3 v3.2.2-0.20220526111705-99d09a80c1a3
 	github.com/go-co-op/gocron v1.13.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
@@ -39,7 +39,7 @@ require (
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
 	github.com/cosmos/gorocksdb v1.2.0 // indirect
 	github.com/cosmos/iavl v0.17.3 // indirect
-	github.com/cosmos/ibc-go/v2 v2.0.2 // indirect
+	github.com/cosmos/ibc-go/v2 v2.2.0 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.11.1 // indirect
 	github.com/cosmos/ledger-go v0.9.2 // indirect
 	github.com/danieljoos/wincred v1.0.2 // indirect
@@ -133,8 +133,8 @@ require (
 replace (
 	github.com/cosmos/cosmos-sdk => github.com/crescent-network/cosmos-sdk v1.0.2-sdk-0.44.5
 	github.com/cosmos/gaia/v6 => github.com/huichiaotsou/gaia/v6 v6.0.0-crescent-removeliquidity
+	github.com/cosmos/ibc-go/v2 => github.com/cosmos/ibc-go/v2 v2.0.2
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	github.com/tendermint/tendermint => github.com/forbole/tendermint v0.34.13-0.20210820072129-a2a4af55563d
 	google.golang.org/grpc => google.golang.org/grpc v1.33.2
-
 )
