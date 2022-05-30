@@ -51,5 +51,5 @@ func (m *Module) handleMsgSetDefaultWallet(msg *typeswallets.MsgSetDefaultWallet
 
 	targetWallet[0].Default = true
 
-	return m.walletsRepo.SaveWallets(targetWallet[0])
+	return m.walletsRepo.UpdateWallets(targetWallet[0])
 }

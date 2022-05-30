@@ -23,5 +23,5 @@ func (m *Module) handleMsgSetStates(msg *typeswallets.MsgSetWalletState) error {
 
 	wallets[0].State = msg.State
 
-	return m.walletsRepo.SaveWallets(wallets...)
+	return m.walletsRepo.UpdateWallets(wallets...)
 }

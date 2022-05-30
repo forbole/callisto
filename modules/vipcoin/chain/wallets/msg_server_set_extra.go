@@ -23,5 +23,5 @@ func (m *Module) handleMsgSetExtra(msg *typeswallets.MsgSetExtra) error {
 
 	wallets[0].Extras = msg.Extras
 
-	return m.walletsRepo.SaveWallets(wallets...)
+	return m.walletsRepo.UpdateWallets(wallets...)
 }
