@@ -16,7 +16,8 @@ import (
 	"github.com/forbole/bdjuno/v3/database"
 	"github.com/forbole/bdjuno/v3/modules"
 
-	gaiaapp "github.com/cosmos/gaia/v7/app"
+	certikapp "github.com/certikfoundation/shentu/v2/app"
+	gaiaapp "github.com/cosmos/gaia/v6/app"
 )
 
 func main() {
@@ -56,6 +57,7 @@ func main() {
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
 		gaiaapp.ModuleBasics,
+		certikapp.ModuleBasics,
 	}
 }
 
