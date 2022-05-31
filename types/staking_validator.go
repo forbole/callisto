@@ -136,9 +136,9 @@ type ValidatorCommission struct {
 func NewValidatorCommission(
 	valAddress string, rate *sdk.Dec, minSelfDelegation *sdk.Int, height int64,
 ) ValidatorCommission {
-	valAddress, err := utils.ConvertAddressPrefix("likevalcons", valAddress)
+	valAddress, err := utils.ConvertAddressPrefix("likevaloper", valAddress)
 	if err != nil {
-		log.Fatalf("error while converting to likevalcons prefix: %s", err)
+		log.Fatalf("error while converting to likevaloper prefix: %s", err)
 	}
 
 	return ValidatorCommission{
