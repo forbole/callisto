@@ -1,14 +1,18 @@
+## Unreleased
+### Bug fixes
+#### Slashing module
+- ([\#403](https://github.com/forbole/bdjuno/pull/403)) Filter empty validator address whil storing signing info into DB
+
 ## Version v3.1.0
 ### Dependencies
-- Updated Juno to `v3.2.0`
+- ([\#412](https://github.com/forbole/bdjuno/pull/412)) Updated Juno to `v3.2.1`
 
 ### Changes 
 #### Hasura
 - ([\#395](https://github.com/forbole/bdjuno/pull/395)) Remove time label from Hasura Prometheus monitoring
 
-#### x/slashing DB method
-- ([\#403](https://github.com/forbole/bdjuno/pull/403)) Filter empty validator address whil storing signing info into DB
-
+#### Bank module
+- ([\#410](https://github.com/forbole/bdjuno/pull/410)) Change total supply query from only 1 page to all pages
 
 ## Version v3.0.1
 ### Dependencies
