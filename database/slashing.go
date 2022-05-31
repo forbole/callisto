@@ -19,18 +19,19 @@ INSERT INTO validator_signing_info
 VALUES `
 	var args []interface{}
 	var counter int
-
 	for _, info := range infos {
-		if info.ValidatorAddress != "" {
-			ii := counter * 7
-			stmt += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d),", ii+1, ii+2, ii+3, ii+4, ii+5, ii+6, ii+7)
-			args = append(args,
-				info.ValidatorAddress, info.StartHeight, info.IndexOffset, info.JailedUntil, info.Tombstoned,
-				info.MissedBlocksCounter, info.Height,
-			)
-
-			counter++
+		if info.ValidatorAddress == "" {
+			continue
 		}
+
+		ii := counter * 7
+		stmt += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d),", ii+1, ii+2, ii+3, ii+4, ii+5, ii+6, ii+7)
+		args = append(args,
+			info.ValidatorAddress, info.StartHeight, info.IndexOffset, info.JailedUntil, info.Tombstoned,
+			info.MissedBlocksCounter, info.Height,
+		)
+
+		counter++
 	}
 
 	stmt = stmt[:len(stmt)-1] // Remove trailing ","
