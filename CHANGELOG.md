@@ -1,3 +1,8 @@
+## Unreleased
+### Bug fixes
+#### Slashing module
+- ([\#403](https://github.com/forbole/bdjuno/pull/403)) Filter empty validator address whil storing signing info into DB
+
 ## Version v3.1.0
 ### Dependencies
 - ([\#412](https://github.com/forbole/bdjuno/pull/412)) Updated Juno to `v3.2.1`
