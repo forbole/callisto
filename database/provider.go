@@ -10,7 +10,7 @@ import (
 	providertypes "github.com/ovrclk/akash/x/provider/types/v1beta2"
 )
 
-// SaveProviders allows to store the given balances inside the database
+// SaveProviders allows to store the providers inside the database
 func (db *Db) SaveProviders(providers []providertypes.Provider, height int64) error {
 	if len(providers) == 0 {
 		return nil
@@ -34,6 +34,7 @@ func (db *Db) SaveProviders(providers []providertypes.Provider, height int64) er
 	return nil
 }
 
+// saveProviders allows to store provider inside the database
 func (db *Db) saveProviders(paramsNumber int, providers []providertypes.Provider, height int64) error {
 	stmt := `INSERT INTO provider (owner_address, host_uri, attributes, info, height) VALUES `
 	var params []interface{}
@@ -74,7 +75,7 @@ WHERE provider.height <= excluded.height`
 	return nil
 }
 
-// SaveProviders allows to store the given balances inside the database
+// DeleteProvider allows to remove provider record from the database
 func (db *Db) DeleteProvider(ownerAddress string) error {
 	stmt := `DELETE FROM providers WHERE owner = $1`
 	_, err := db.Sql.Exec(stmt, ownerAddress)

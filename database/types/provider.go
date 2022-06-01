@@ -50,7 +50,7 @@ func NewDbInfo(info providertypes.ProviderInfo) DbProviderInfo {
 	}
 }
 
-// Equal tells whether coin and d represent the same coin with the same amount
+// Equal tells whether both object are the same
 func (a DbProviderInfo) Equal(b DbProviderInfo) bool {
 	return a.EMail == b.EMail && a.Website == b.Website
 }

@@ -16,7 +16,7 @@ var (
 	_ providersource.Source = &Source{}
 )
 
-// Source implements stakingsource.Source using a local node
+// Source implements providersource.Source using a local node
 type Source struct {
 	*local.Source
 	q providertypes.QueryServer
