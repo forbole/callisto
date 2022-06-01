@@ -137,8 +137,8 @@ replace (
 	github.com/cosmos/ledger-cosmos-go => github.com/ovrclk/ledger-cosmos-go v0.13.2
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	github.com/keybase/go-keychain => github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4
-	github.com/tendermint/tendermint => github.com/ovrclk/tendermint v0.34.19-patches
-	// github.com/zondax/hid => github.com/troian/hid v0.9.9
+	github.com/tendermint/tendermint => github.com/MonikaCat/tendermint v0.34.20-0.20220510093325-405517310d66
+	// github.com/ovrclk/tendermint v0.34.19-patches
 	github.com/zondax/ledger-go => github.com/ovrclk/ledger-go v0.13.4
 	google.golang.org/grpc => google.golang.org/grpc v1.33.2
 )

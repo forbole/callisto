@@ -59,7 +59,7 @@ func (db *Db) saveProviders(paramsNumber int, providers []providertypes.Provider
 
 	stmt = stmt[:len(stmt)-1]
 	stmt += `
-ON CONFLICT (owner_address) DO UPDATE 
+ON CONFLICT ON CONSTRAINT unique_provider DO UPDATE
 	SET host_uri = excluded.host_uri, 
 		attributes = excluded.attributes,
 		info = excluded.info,

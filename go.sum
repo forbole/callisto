@@ -84,6 +84,8 @@ github.com/HdrHistogram/hdrhistogram-go v1.1.2/go.mod h1:yDgFjdqOqDEKOvasDdhWNXY
 github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible/go.mod h1:r7JcOSlj0wfOMncg0iLm8Leh48TZaKVeNIfJntJ2wa0=
 github.com/Microsoft/go-winio v0.5.1 h1:aPJp2QD7OOrhO5tQXqQoGSJc+DjDtWTGLOmNyAm6FgY=
 github.com/Microsoft/go-winio v0.5.1/go.mod h1:JPGBdM1cNvN/6ISo+n8V5iA4v8pBzdOpzfwIujj1a84=
+github.com/MonikaCat/tendermint v0.34.20-0.20220510093325-405517310d66 h1:pXFeky7KOX4NQ6vHmgBmBpe1LiGTnFOa4JZa4o/52rY=
+github.com/MonikaCat/tendermint v0.34.20-0.20220510093325-405517310d66/go.mod h1:R5+wgIwSxMdKQcmOaeudL0Cjkr3HDkhpcdum6VeU3R4=
 github.com/NYTimes/gziphandler v0.0.0-20170623195520-56545f4a5d46/go.mod h1:3wb06e3pkSAbeQ52E9H9iFoQsEEwGN64994WTCIhntQ=
 github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 h1:TngWCqHvy9oXAN6lEVMRuU21PR1EtLVZJmdB18Gu3Rw=
 github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5/go.mod h1:lmUJ/7eu/Q8D7ML55dXQrVaamCz2vxCfdQBasLZfHKk=
@@ -808,8 +810,6 @@ github.com/ovrclk/ledger-cosmos-go v0.13.2 h1:MwjDy5tw1olqUHaVIGrPexvdkAl/5wMQub
 github.com/ovrclk/ledger-cosmos-go v0.13.2/go.mod h1:yFLa7PuoNE5B4kcZhurZbVXMae2jJeaijmh91+RiSto=
 github.com/ovrclk/ledger-go v0.13.4 h1:etwWczrjFota24DRSFctc0kA3MkabLfsExWxdXqvWuk=
 github.com/ovrclk/ledger-go v0.13.4/go.mod h1:ePOnJDViaVfCnOfW5A4SjvgyqWupEEdsbvUEAqwliwA=
-github.com/ovrclk/tendermint v0.34.19-patches h1:4BppAEGV1P+pU3R8pzbriswK03enldY9UqkeWj3NGBg=
-github.com/ovrclk/tendermint v0.34.19-patches/go.mod h1:R5+wgIwSxMdKQcmOaeudL0Cjkr3HDkhpcdum6VeU3R4=
 github.com/pact-foundation/pact-go v1.0.4/go.mod h1:uExwJY4kCzNPcHRj+hCR/HBbOOIwwtUjcrb0b5/5kLM=
 github.com/pascaldekloe/goe v0.0.0-20180627143212-57f6aae5913c/go.mod h1:lzWF7FIEvWOWxwDKqyGYQf6ZUaNfKdP144TG7ZOy1lc=
 github.com/pascaldekloe/goe v0.1.0 h1:cBOtyMzM9HTpWjXfbbunk26uA6nG3a8n06Wieeh0MwY=
