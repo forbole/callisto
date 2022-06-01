@@ -206,6 +206,9 @@ func (db *Db) GetProposal(id uint64) (*types.Proposal, error) {
 
 // GetOpenProposalsIds returns all the ids of the proposals that are currently in deposit or voting period
 func (db *Db) GetOpenProposalsIds() ([]uint64, error) {
+	// -- Certik --
+	// they have their more status for an open proposal
+
 	var ids []uint64
 	stmt := `SELECT id FROM proposal WHERE status = $1 OR status = $2`
 	err := db.Sqlx.Select(&ids, stmt, govtypes.StatusDepositPeriod.String(), govtypes.StatusVotingPeriod.String())

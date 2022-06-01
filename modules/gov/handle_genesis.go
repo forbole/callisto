@@ -16,6 +16,9 @@ import (
 func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
 	log.Debug().Str("module", "gov").Msg("parsing genesis")
 
+	// -- Certik --
+	// they have their own custom gove genesis state
+
 	// Read the genesis state
 	var genState govtypes.GenesisState
 	err := m.cdc.UnmarshalJSON(appState[govtypes.ModuleName], &genState)

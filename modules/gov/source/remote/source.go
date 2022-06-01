@@ -11,6 +11,9 @@ var (
 	_ govsource.Source = &Source{}
 )
 
+// -- Certik --
+// use custome query client and certik proposal type
+
 // Source implements govsource.Source using a remote node
 type Source struct {
 	*remote.Source
