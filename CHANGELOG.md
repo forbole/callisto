@@ -1,3 +1,7 @@
+## Unreleased
+#### Staking module
+- ([\#411](https://github.com/forbole/bdjuno/pull/411)) Get validator tombstoned status from the database instead of querying to the node
+
 ## Version v3.1.0
 ### Dependencies
 - Updated Juno to `v3.2.0`
@@ -8,10 +12,6 @@
 
 #### Bank module
 - ([\#410](https://github.com/forbole/bdjuno/pull/410)) Change total supply query from only 1 page to all pages
-
-#### Staking module
-- ([\#411](https://github.com/forbole/bdjuno/pull/411)) Get validator tombstoned status from the database instead of querying to the node
-
 
 ## Version v3.0.1
 ### Dependencies
