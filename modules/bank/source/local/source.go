@@ -74,8 +74,14 @@ func (s Source) GetSupply(height int64) (sdk.Coins, error) {
 			return nil, fmt.Errorf("error while getting total supply: %s", err)
 		}
 
-		nextKey = res.Pagination.NextKey
-		stop = len(res.Pagination.NextKey) == 0
+		// Currently Certik does not return pagination for total supply query
+		if res.Pagination != nil {
+			nextKey = res.Pagination.NextKey
+			stop = len(res.Pagination.NextKey) == 0
+		} else {
+			stop = true
+		}
+
 		coins = append(coins, res.Supply...)
 	}
 
