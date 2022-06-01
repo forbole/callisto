@@ -3,6 +3,7 @@ package local
 import (
 	"fmt"
 
+	certikgovtypes "github.com/certikfoundation/shentu/v2/x/gov/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/forbole/juno/v3/node/local"
@@ -17,11 +18,11 @@ var (
 // Source implements govsource.Source by using a local node
 type Source struct {
 	*local.Source
-	q govtypes.QueryServer
+	q certikgovtypes.QueryServer
 }
 
 // NewSource returns a new Source instance
-func NewSource(source *local.Source, govKeeper govtypes.QueryServer) *Source {
+func NewSource(source *local.Source, govKeeper certikgovtypes.QueryServer) *Source {
 	return &Source{
 		Source: source,
 		q:      govKeeper,
@@ -29,15 +30,15 @@ func NewSource(source *local.Source, govKeeper govtypes.QueryServer) *Source {
 }
 
 // Proposal implements govsource.Source
-func (s Source) Proposal(height int64, id uint64) (govtypes.Proposal, error) {
+func (s Source) Proposal(height int64, id uint64) (certikgovtypes.Proposal, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return govtypes.Proposal{}, fmt.Errorf("error while loading height: %s", err)
+		return certikgovtypes.Proposal{}, fmt.Errorf("error while loading height: %s", err)
 	}
 
-	res, err := s.q.Proposal(sdk.WrapSDKContext(ctx), &govtypes.QueryProposalRequest{ProposalId: id})
+	res, err := s.q.Proposal(sdk.WrapSDKContext(ctx), &certikgovtypes.QueryProposalRequest{ProposalId: id})
 	if err != nil {
-		return govtypes.Proposal{}, err
+		return certikgovtypes.Proposal{}, err
 	}
 
 	return res.Proposal, nil
@@ -50,7 +51,7 @@ func (s Source) ProposalDeposit(height int64, id uint64, depositor string) (govt
 		return govtypes.Deposit{}, fmt.Errorf("error while loading height: %s", err)
 	}
 
-	res, err := s.q.Deposit(sdk.WrapSDKContext(ctx), &govtypes.QueryDepositRequest{ProposalId: id, Depositor: depositor})
+	res, err := s.q.Deposit(sdk.WrapSDKContext(ctx), &certikgovtypes.QueryDepositRequest{ProposalId: id, Depositor: depositor})
 	if err != nil {
 		return govtypes.Deposit{}, err
 	}
@@ -65,7 +66,7 @@ func (s Source) TallyResult(height int64, proposalID uint64) (govtypes.TallyResu
 		return govtypes.TallyResult{}, fmt.Errorf("error while loading height: %s", err)
 	}
 
-	res, err := s.q.TallyResult(sdk.WrapSDKContext(ctx), &govtypes.QueryTallyResultRequest{ProposalId: proposalID})
+	res, err := s.q.TallyResult(sdk.WrapSDKContext(ctx), &certikgovtypes.QueryTallyResultRequest{ProposalId: proposalID})
 	if err != nil {
 		return govtypes.TallyResult{}, err
 	}
@@ -74,15 +75,15 @@ func (s Source) TallyResult(height int64, proposalID uint64) (govtypes.TallyResu
 }
 
 // DepositParams implements govsource.Source
-func (s Source) DepositParams(height int64) (govtypes.DepositParams, error) {
+func (s Source) DepositParams(height int64) (certikgovtypes.DepositParams, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return govtypes.DepositParams{}, fmt.Errorf("error while loading height: %s", err)
+		return certikgovtypes.DepositParams{}, fmt.Errorf("error while loading height: %s", err)
 	}
 
-	res, err := s.q.Params(sdk.WrapSDKContext(ctx), &govtypes.QueryParamsRequest{ParamsType: govtypes.ParamDeposit})
+	res, err := s.q.Params(sdk.WrapSDKContext(ctx), &certikgovtypes.QueryParamsRequest{ParamsType: govtypes.ParamDeposit})
 	if err != nil {
-		return govtypes.DepositParams{}, err
+		return certikgovtypes.DepositParams{}, err
 	}
 
 	return res.DepositParams, nil
@@ -95,7 +96,7 @@ func (s Source) VotingParams(height int64) (govtypes.VotingParams, error) {
 		return govtypes.VotingParams{}, fmt.Errorf("error while loading height: %s", err)
 	}
 
-	res, err := s.q.Params(sdk.WrapSDKContext(ctx), &govtypes.QueryParamsRequest{ParamsType: govtypes.ParamVoting})
+	res, err := s.q.Params(sdk.WrapSDKContext(ctx), &certikgovtypes.QueryParamsRequest{ParamsType: govtypes.ParamVoting})
 	if err != nil {
 		return govtypes.VotingParams{}, err
 	}
@@ -104,15 +105,15 @@ func (s Source) VotingParams(height int64) (govtypes.VotingParams, error) {
 }
 
 // TallyParams implements govsource.Source
-func (s Source) TallyParams(height int64) (govtypes.TallyParams, error) {
+func (s Source) TallyParams(height int64) (certikgovtypes.TallyParams, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return govtypes.TallyParams{}, fmt.Errorf("error while loading height: %s", err)
+		return certikgovtypes.TallyParams{}, fmt.Errorf("error while loading height: %s", err)
 	}
 
-	res, err := s.q.Params(sdk.WrapSDKContext(ctx), &govtypes.QueryParamsRequest{ParamsType: govtypes.ParamTallying})
+	res, err := s.q.Params(sdk.WrapSDKContext(ctx), &certikgovtypes.QueryParamsRequest{ParamsType: govtypes.ParamTallying})
 	if err != nil {
-		return govtypes.TallyParams{}, err
+		return certikgovtypes.TallyParams{}, err
 	}
 
 	return res.TallyParams, nil

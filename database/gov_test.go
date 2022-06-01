@@ -11,6 +11,7 @@ import (
 
 	"github.com/forbole/bdjuno/v3/types"
 
+	certikgovtypes "github.com/certikfoundation/shentu/v2/x/gov/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 
@@ -19,8 +20,22 @@ import (
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveGovParams() {
 	votingParams := govtypes.NewVotingParams(time.Second * 10)
-	tallyParams := govtypes.NewTallyParams(sdk.NewDec(10), sdk.NewDec(10), sdk.NewDec(10))
-	depositParams := govtypes.NewDepositParams(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(10))), time.Minute*5)
+
+	// Tally Params
+	defaultTally := govtypes.NewTallyParams(sdk.NewDec(10), sdk.NewDec(10), sdk.NewDec(10))
+	certifierUpdateSecurityVoteTally := govtypes.NewTallyParams(sdk.NewDec(10), sdk.NewDec(10), sdk.NewDec(10))
+	certifierUpdateStakeVoteTally := govtypes.NewTallyParams(sdk.NewDec(10), sdk.NewDec(10), sdk.NewDec(10))
+	tallyParams := certikgovtypes.TallyParams{
+		DefaultTally:                     &defaultTally,
+		CertifierUpdateSecurityVoteTally: &certifierUpdateSecurityVoteTally,
+		CertifierUpdateStakeVoteTally:    &certifierUpdateStakeVoteTally,
+	}
+
+	depositParams := certikgovtypes.NewDepositParams(
+		sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(10))),
+		sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(10))),
+		time.Minute*5,
+	)
 	original := types.NewGovParams(types.NewVotingParams(votingParams), types.NewDepositParam(depositParams), types.NewTallyParams(tallyParams), 10)
 
 	err := suite.database.SaveGovParams(original)
@@ -32,7 +47,11 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveGovParams() {
 
 	// ----------------------------------------------------------------------------------------------------------------
 	// Try updating with a lower height
-	depositParams = govtypes.NewDepositParams(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(1000))), time.Minute*5)
+	depositParams = certikgovtypes.NewDepositParams(
+		sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(1000))),
+		sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(1000))),
+		time.Minute*5,
+	)
 	updated := types.NewGovParams(types.NewVotingParams(votingParams), types.NewDepositParam(depositParams), types.NewTallyParams(tallyParams), 9)
 
 	err = suite.database.SaveGovParams(updated)
@@ -55,8 +74,22 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveGovParams() {
 
 	// ----------------------------------------------------------------------------------------------------------------
 	// Try updating with a higher height
-	tallyParams = govtypes.NewTallyParams(sdk.NewDec(100), sdk.NewDec(100), sdk.NewDec(100))
-	depositParams = govtypes.NewDepositParams(sdk.NewCoins(sdk.NewCoin("udesmos", sdk.NewInt(10000))), time.Minute*5)
+
+	// Tally Params
+	defaultTally = govtypes.NewTallyParams(sdk.NewDec(100), sdk.NewDec(100), sdk.NewDec(100))
+	certifierUpdateSecurityVoteTally = govtypes.NewTallyParams(sdk.NewDec(100), sdk.NewDec(100), sdk.NewDec(100))
+	certifierUpdateStakeVoteTally = govtypes.NewTallyParams(sdk.NewDec(100), sdk.NewDec(100), sdk.NewDec(100))
+	tallyParams = certikgovtypes.TallyParams{
+		DefaultTally:                     &defaultTally,
+		CertifierUpdateSecurityVoteTally: &certifierUpdateSecurityVoteTally,
+		CertifierUpdateStakeVoteTally:    &certifierUpdateStakeVoteTally,
+	}
+
+	depositParams = certikgovtypes.NewDepositParams(
+		sdk.NewCoins(sdk.NewCoin("udesmos", sdk.NewInt(10000))),
+		sdk.NewCoins(sdk.NewCoin("udesmos", sdk.NewInt(10000))),
+		time.Minute*5,
+	)
 	updated = types.NewGovParams(types.NewVotingParams(votingParams), types.NewDepositParam(depositParams), types.NewTallyParams(tallyParams), 11)
 
 	err = suite.database.SaveGovParams(updated)
@@ -221,7 +254,7 @@ func (suite *DbTestSuite) TestBigDipperDb_GetOpenProposalsIds() {
 			"proposalRoute",
 			"proposalType",
 			content1,
-			govtypes.StatusVotingPeriod.String(),
+			certikgovtypes.StatusCertifierVotingPeriod.String(),
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 			time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC),
 			time.Date(2020, 1, 1, 02, 00, 00, 000, time.UTC),
@@ -233,7 +266,7 @@ func (suite *DbTestSuite) TestBigDipperDb_GetOpenProposalsIds() {
 			"proposalRoute",
 			"proposalType",
 			content1,
-			govtypes.StatusDepositPeriod.String(),
+			certikgovtypes.StatusDepositPeriod.String(),
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 			time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC),
 			time.Date(2020, 1, 1, 02, 00, 00, 000, time.UTC),
@@ -242,6 +275,18 @@ func (suite *DbTestSuite) TestBigDipperDb_GetOpenProposalsIds() {
 		),
 		types.NewProposal(
 			3,
+			"proposalRoute",
+			"proposalType",
+			content2,
+			certikgovtypes.StatusDepositPeriod.String(),
+			time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+			time.Date(2020, 1, 2, 01, 00, 00, 000, time.UTC),
+			time.Date(2020, 1, 2, 02, 00, 00, 000, time.UTC),
+			time.Date(2020, 1, 2, 03, 00, 00, 000, time.UTC),
+			proposer1.String(),
+		),
+		types.NewProposal(
+			4,
 			"proposalRoute1",
 			"proposalType1",
 			content2,
@@ -271,7 +316,7 @@ func (suite *DbTestSuite) TestBigDipperDb_GetOpenProposalsIds() {
 
 	ids, err := suite.database.GetOpenProposalsIds()
 	suite.Require().NoError(err)
-	suite.Require().Equal([]uint64{1, 2}, ids)
+	suite.Require().Equal([]uint64{1, 2, 3}, ids)
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_UpdateProposal() {

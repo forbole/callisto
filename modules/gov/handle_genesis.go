@@ -8,6 +8,7 @@ import (
 
 	"github.com/forbole/bdjuno/v3/types"
 
+	certikgovtypes "github.com/certikfoundation/shentu/v2/x/gov/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/rs/zerolog/log"
 )
@@ -16,11 +17,8 @@ import (
 func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
 	log.Debug().Str("module", "gov").Msg("parsing genesis")
 
-	// -- Certik --
-	// they have their own custom gove genesis state
-
 	// Read the genesis state
-	var genState govtypes.GenesisState
+	var genState certikgovtypes.GenesisState
 	err := m.cdc.UnmarshalJSON(appState[govtypes.ModuleName], &genState)
 	if err != nil {
 		return fmt.Errorf("error while reading gov genesis data: %s", err)
@@ -47,7 +45,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 }
 
 // saveProposals save proposals from genesis file
-func (m *Module) saveProposals(slice govtypes.Proposals) error {
+func (m *Module) saveProposals(slice certikgovtypes.Proposals) error {
 	proposals := make([]types.Proposal, len(slice))
 	tallyResults := make([]types.TallyResult, len(slice))
 	deposits := make([]types.Deposit, len(slice))

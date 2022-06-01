@@ -16,6 +16,7 @@ import (
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 
+	certikgovtypes "github.com/certikfoundation/shentu/v2/x/gov/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 )
 
@@ -83,7 +84,7 @@ func (m *Module) updateDeletedProposalStatus(id uint64) error {
 }
 
 // handleParamChangeProposal updates params to the corresponding modules if a ParamChangeProposal has passed
-func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Proposal) error {
+func (m *Module) handleParamChangeProposal(height int64, proposal certikgovtypes.Proposal) error {
 	if proposal.Status.String() != types.ProposalStatusPassed {
 		// If the status of ParamChangeProposal is not passed, do nothing
 		return nil
@@ -133,7 +134,7 @@ func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Propo
 }
 
 // updateProposalStatus updates the given proposal status
-func (m *Module) updateProposalStatus(proposal govtypes.Proposal) error {
+func (m *Module) updateProposalStatus(proposal certikgovtypes.Proposal) error {
 	return m.db.UpdateProposal(
 		types.NewProposalUpdate(
 			proposal.ProposalId,
@@ -145,7 +146,7 @@ func (m *Module) updateProposalStatus(proposal govtypes.Proposal) error {
 }
 
 // updateProposalTallyResult updates the tally result associated with the given proposal
-func (m *Module) updateProposalTallyResult(proposal govtypes.Proposal) error {
+func (m *Module) updateProposalTallyResult(proposal certikgovtypes.Proposal) error {
 	height, err := m.db.GetLastBlockHeight()
 	if err != nil {
 		return err
@@ -169,7 +170,7 @@ func (m *Module) updateProposalTallyResult(proposal govtypes.Proposal) error {
 }
 
 // updateAccounts updates any account that might be involved in the proposal (eg. fund community recipient)
-func (m *Module) updateAccounts(proposal govtypes.Proposal) error {
+func (m *Module) updateAccounts(proposal certikgovtypes.Proposal) error {
 	content, ok := proposal.Content.GetCachedValue().(*distrtypes.CommunityPoolSpendProposal)
 	if ok {
 		height, err := m.db.GetLastBlockHeight()
