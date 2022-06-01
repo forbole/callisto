@@ -1,4 +1,7 @@
 ## Unreleased
+### Dependencies
+- ([\#412](https://github.com/forbole/bdjuno/pull/412)) Updated Juno to `v3.2.1`
+
 #### Staking module
 - ([\#411](https://github.com/forbole/bdjuno/pull/411)) Get validator tombstoned status from the database instead of querying to the node
 
