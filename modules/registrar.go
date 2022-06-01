@@ -25,6 +25,7 @@ import (
 	"github.com/forbole/bdjuno/v3/modules/feegrant"
 
 	"github.com/forbole/bdjuno/v3/modules/gov"
+	"github.com/forbole/bdjuno/v3/modules/market"
 	"github.com/forbole/bdjuno/v3/modules/mint"
 	"github.com/forbole/bdjuno/v3/modules/modules"
 	"github.com/forbole/bdjuno/v3/modules/pricefeed"
@@ -78,6 +79,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	consensusModule := consensus.NewModule(db)
 	distrModule := distribution.NewModule(sources.DistrSource, cdc, db)
 	feegrantModule := feegrant.NewModule(cdc, db)
+	marketModule := market.NewModule(cdc, db)
 	mintModule := mint.NewModule(sources.MintSource, cdc, db)
 	providerModule := provider.NewModule(sources.ProviderSource, cdc, db)
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
@@ -96,6 +98,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		distrModule,
 		feegrantModule,
 		govModule,
+		marketModule,
 		mintModule,
 		modules.NewModule(ctx.JunoConfig.Chain, db),
 		pricefeed.NewModule(ctx.JunoConfig, cdc, db),
