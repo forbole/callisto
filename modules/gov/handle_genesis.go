@@ -51,7 +51,6 @@ func (m *Module) saveProposals(slice certikgovtypes.Proposals) error {
 	deposits := make([]types.Deposit, len(slice))
 
 	for index, proposal := range slice {
-		// Since it's not possible to get the proposer, set it to nil
 		proposals[index] = types.NewProposal(
 			proposal.ProposalId,
 			proposal.ProposalRoute(),
@@ -62,7 +61,7 @@ func (m *Module) saveProposals(slice certikgovtypes.Proposals) error {
 			proposal.DepositEndTime,
 			proposal.VotingStartTime,
 			proposal.VotingEndTime,
-			"",
+			proposal.ProposerAddress,
 		)
 
 		tallyResults[index] = types.NewTallyResult(
