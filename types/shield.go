@@ -1,7 +1,6 @@
 package types
 
 import (
-	shieldtypes "github.com/certikfoundation/shentu/v2/x/shield/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -22,15 +21,15 @@ type ShieldPool struct {
 
 // NewShieldPool allows to build a new ShieldPool instance
 func NewShieldPool(
-	poolID uint64, fromAddress string, shield sdk.Coins, deposit shieldtypes.MixedCoins, sponsor string,
+	poolID uint64, fromAddress string, shield sdk.Coins, nativeDeposit sdk.Coins, foreignDeposit sdk.Coins, sponsor string,
 	sponsorAddress string, description string, shieldLimit sdk.Int, pause bool, height int64,
 ) *ShieldPool {
 	return &ShieldPool{
 		PoolID:         poolID,
 		FromAddress:    fromAddress,
 		Shield:         shield,
-		NativeDeposit:  deposit.Native,
-		ForeignDeposit: deposit.Foreign,
+		NativeDeposit:  nativeDeposit,
+		ForeignDeposit: foreignDeposit,
 		Sponsor:        sponsor,
 		SponsorAddr:    sponsorAddress,
 		Description:    description,
