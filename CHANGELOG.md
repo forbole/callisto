@@ -1,3 +1,7 @@
+## Unreleased
+### Likecoin
+- ([\#413](https://github.com/forbole/bdjuno/pull/413)) Support likecoin dual prefix
+
 ## Version v3.1.0
 ### Dependencies
 - ([\#412](https://github.com/forbole/bdjuno/pull/412)) Updated Juno to `v3.2.1`
