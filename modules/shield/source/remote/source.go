@@ -23,3 +23,16 @@ func NewSource(source *remote.Source, shieldClient shieldtypes.QueryClient) *Sou
 		shieldClient: shieldClient,
 	}
 }
+
+// GetPoolParams implements shieldsource.Source
+func (s Source) GetPoolParams(height int64) (shieldtypes.PoolParams, error) {
+	res, err := s.shieldClient.PoolParams(
+		remote.GetHeightRequestContext(s.Ctx, height),
+		&shieldtypes.QueryPoolParamsRequest{},
+	)
+
+	if err != nil {
+		return shieldtypes.PoolParams{}, err
+	}
+	return res.Params, nil
+}

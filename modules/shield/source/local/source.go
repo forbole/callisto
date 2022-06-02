@@ -1,7 +1,10 @@
 package local
 
 import (
+	"fmt"
+
 	shieldtypes "github.com/certikfoundation/shentu/v2/x/shield/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/forbole/juno/v3/node/local"
 
@@ -24,4 +27,22 @@ func NewSource(source *local.Source, querier shieldtypes.QueryServer) *Source {
 		Source: source,
 		q:      querier,
 	}
+}
+
+// GetPoolParams implements shieldsource.Source
+func (s Source) GetPoolParams(height int64) (shieldtypes.PoolParams, error) {
+	ctx, err := s.LoadHeight(height)
+	if err != nil {
+		return shieldtypes.PoolParams{}, fmt.Errorf("error while loading height: %s", err)
+	}
+
+	res, err := s.q.PoolParams(
+		sdk.WrapSDKContext(ctx),
+		&shieldtypes.QueryPoolParamsRequest{},
+	)
+
+	if err != nil {
+		return shieldtypes.PoolParams{}, err
+	}
+	return res.Params, nil
 }
