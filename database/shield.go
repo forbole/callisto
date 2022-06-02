@@ -55,3 +55,15 @@ func (db *Db) UpdatePoolPauseStatus(poolID uint64, pause bool) error {
 
 	return nil
 }
+
+// UpdatePoolSponsor updates the pool sponsor address
+func (db *Db) UpdatePoolSponsor(poolID uint64, sponsor string, sponsorAddress string) error {
+	stmt := `UPDATE shield_pool SET sponsor = $1 AND sponsor_address = $2 WHERE pool_id = %3`
+
+	_, err := db.Sql.Exec(stmt, sponsor, sponsorAddress, poolID)
+	if err != nil {
+		return fmt.Errorf("error while updating shield pool sponsor: %s", err)
+	}
+
+	return nil
+}

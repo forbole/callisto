@@ -29,20 +29,20 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	case *shieldtypes.MsgResumePool:
 		return m.HandleMsgResumePool(tx, cosmosMsg)
 
-		// case *shieldtypes.MsgWithdrawRewards:
-		// 	return m.HandleMsgWithdrawRewards(tx, cosmosMsg)
+	// case *shieldtypes.MsgWithdrawRewards:
+	// 	return m.HandleMsgWithdrawRewards(tx, cosmosMsg)
 
-		// case *shieldtypes.MsgDepositCollateral:
-		// 	return m.HandleMsgDepositCollateral(tx, cosmosMsg)
+	// case *shieldtypes.MsgDepositCollateral:
+	// 	return m.HandleMsgDepositCollateral(tx, cosmosMsg)
 
-		// case *shieldtypes.MsgWithdrawCollateral:
-		// 	return m.HandleMsgWithdrawCollateral(tx, cosmosMsg)
+	// case *shieldtypes.MsgWithdrawCollateral:
+	// 	return m.HandleMsgWithdrawCollateral(tx, cosmosMsg)
 
-		// case *shieldtypes.MsgPurchaseShield:
-		// 	return m.HandleMsgPurchaseShield(tx, cosmosMsg)
+	// case *shieldtypes.MsgPurchaseShield:
+	// 	return m.HandleMsgPurchaseShield(tx, cosmosMsg)
 
-		// case *shieldtypes.MsgUpdateSponsor:
-		// 	return m.HandleMsgUpdateSponsor(tx, cosmosMsg)
+	case *shieldtypes.MsgUpdateSponsor:
+		return m.HandleMsgUpdateSponsor(tx, cosmosMsg)
 
 		// case *shieldtypes.MsgStakeForShield:
 		// 	return m.HandleMsgStakeForShield(tx, cosmosMsg)
@@ -135,11 +135,11 @@ func (m *Module) HandleMsgResumePool(tx *juno.Tx, msg *shieldtypes.MsgResumePool
 // 	return nil
 // }
 
-// // HandleMsgUpdateSponsor allows to properly handle a MsgUpdateSponsor
-// func (m *Module) HandleMsgUpdateSponsor(tx *juno.Tx, msg *shieldtypes.MsgUpdateSponsor) error {
+// HandleMsgUpdateSponsor allows to properly handle a MsgUpdateSponsor
+func (m *Module) HandleMsgUpdateSponsor(tx *juno.Tx, msg *shieldtypes.MsgUpdateSponsor) error {
 
-// 	return nil
-// }
+	return m.db.UpdatePoolSponsor(msg.PoolId, msg.Sponsor, msg.SponsorAddr)
+}
 
 // // HandleMsgStakeForShield allows to properly handle a MsgStakeForShield
 // func (m *Module) HandleMsgStakeForShield(tx *juno.Tx, msg *shieldtypes.MsgStakeForShield) error {
