@@ -1,7 +1,7 @@
 CREATE TABLE shield_pool
 (
 	pool_id				INT				NOT NULL PRIMARY KEY,
-	from_address        TEXT            NOT NULL,
+	from_address        TEXT            NOT NULL REFERENCES account (address),
 	shield              COIN[]          NOT NULL,
 	native_deposit      COIN[]		    NOT NULL,
 	foreign_deposit     COIN[]		    NOT NULL,
@@ -18,7 +18,7 @@ CREATE INDEX shield_pool_height_index ON shield_pool (height);
 CREATE TABLE shield_purchase
 (
 	pool_id				INT				NOT NULL REFERENCES shield_pool (pool_id),
-	from_address        TEXT            NOT NULL,
+	from_address        TEXT            NOT NULL PRIMARY KEY REFERENCES account (address),
 	shield              COIN[]          NOT NULL,
 	description         TEXT            NOT NULL,
     height              BIGINT          NOT NULL
