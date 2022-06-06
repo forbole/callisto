@@ -13,3 +13,14 @@ CREATE TABLE shield_pool
     height              BIGINT          NOT NULL
 );
 CREATE INDEX shield_pool_height_index ON shield_pool (height);
+
+
+CREATE TABLE shield_purchase
+(
+	pool_id				INT				NOT NULL REFERENCES shield_pool (pool_id),
+	from_address        TEXT            NOT NULL,
+	shield              COIN[]          NOT NULL,
+	description         TEXT            NOT NULL,
+    height              BIGINT          NOT NULL
+);
+CREATE INDEX shield_purchase_height_index ON shield_purchase (height);
