@@ -24,3 +24,14 @@ CREATE TABLE shield_purchase
     height              BIGINT          NOT NULL
 );
 CREATE INDEX shield_purchase_height_index ON shield_purchase (height);
+
+/* ---- PARAMS ---- */
+
+CREATE TABLE shield_pool_params
+(
+    one_row_id BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
+    params     JSONB   NOT NULL,
+    height     BIGINT  NOT NULL,
+    CHECK (one_row_id)
+);
+CREATE INDEX shield_pool_params_height_index ON shield_pool_params (height);

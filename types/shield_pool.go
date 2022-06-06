@@ -1,6 +1,7 @@
 package types
 
 import (
+	shieldtypes "github.com/certikfoundation/shentu/v2/x/shield/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -58,5 +59,21 @@ func NewShieldPurchase(
 		Shield:      shield,
 		Description: description,
 		Height:      height,
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// ShieldPoolParams represents the parameters of the shield module at a given height
+type ShieldPoolParams struct {
+	Params shieldtypes.PoolParams
+	Height int64
+}
+
+// NewSlashingParams allows to build a new ShieldPoolParams instance
+func NewShieldPoolParams(params shieldtypes.PoolParams, height int64) *ShieldPoolParams {
+	return &ShieldPoolParams{
+		Params: params,
+		Height: height,
 	}
 }

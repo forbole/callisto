@@ -1,6 +1,7 @@
 package database
 
 import (
+	"encoding/json"
 	"fmt"
 
 	dbtypes "github.com/forbole/bdjuno/v3/database/types"
@@ -90,6 +91,29 @@ WHERE shield_purchase.height <= excluded.height`
 
 	if err != nil {
 		return fmt.Errorf("error while storing shield purchase: %s", err)
+	}
+
+	return nil
+}
+
+// SaveShieldPoolParams allows to save shield pool params
+func (db *Db) SaveShieldPoolParams(params *types.ShieldPoolParams) error {
+	paramsBz, err := json.Marshal(&params.Params)
+	if err != nil {
+		return fmt.Errorf("error while marshaling shield pool params: %s", err)
+	}
+
+	stmt := `
+INSERT INTO shield_pool_params (params, height) 
+VALUES ($1, $2)
+ON CONFLICT (one_row_id) DO UPDATE 
+    SET params = excluded.params,
+        height = excluded.height
+WHERE shield_pool_params.height <= excluded.height`
+
+	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
+	if err != nil {
+		return fmt.Errorf("error while storing shield pool  params: %s", err)
 	}
 
 	return nil
