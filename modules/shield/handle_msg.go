@@ -38,8 +38,8 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	// case *shieldtypes.MsgWithdrawCollateral:
 	// 	return m.HandleMsgWithdrawCollateral(tx, cosmosMsg)
 
-	// case *shieldtypes.MsgPurchaseShield:
-	// 	return m.HandleMsgPurchaseShield(tx, cosmosMsg)
+	case *shieldtypes.MsgPurchaseShield:
+		return m.HandleMsgPurchaseShield(tx, cosmosMsg)
 
 	case *shieldtypes.MsgUpdateSponsor:
 		return m.HandleMsgUpdateSponsor(tx, cosmosMsg)
@@ -129,11 +129,14 @@ func (m *Module) HandleMsgResumePool(tx *juno.Tx, msg *shieldtypes.MsgResumePool
 // 	return nil
 // }
 
-// // HandleMsgPurchaseShield allows to properly handle a MsgPurchaseShield
-// func (m *Module) HandleMsgPurchaseShield(tx *juno.Tx, msg *shieldtypes.MsgPurchaseShield) error {
+// HandleMsgPurchaseShield allows to properly handle a MsgPurchaseShield
+func (m *Module) HandleMsgPurchaseShield(tx *juno.Tx, msg *shieldtypes.MsgPurchaseShield) error {
+	shield := types.NewShieldPurchase(
+		msg.PoolId, msg.From, msg.Shield, msg.Description, tx.Height,
+	)
 
-// 	return nil
-// }
+	return m.db.SaveShieldPurchase(shield)
+}
 
 // HandleMsgUpdateSponsor allows to properly handle a MsgUpdateSponsor
 func (m *Module) HandleMsgUpdateSponsor(tx *juno.Tx, msg *shieldtypes.MsgUpdateSponsor) error {

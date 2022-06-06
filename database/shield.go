@@ -67,3 +67,30 @@ func (db *Db) UpdatePoolSponsor(poolID uint64, sponsor string, sponsorAddress st
 
 	return nil
 }
+
+// SaveShieldPurchase allows to save shield purchase for the given height
+func (db *Db) SaveShieldPurchase(shield *types.ShieldPurchase) error {
+	stmt := `
+INSERT INTO shield_purchase (pool_id, from_address, shield, description, height) 
+VALUES ($1, $2, $3, $4, $5)
+ON CONFLICT (from_address) DO UPDATE 
+    SET pool_id = excluded.pool_id, 
+	shield = excluded.shield, 
+	description = excluded.description, 
+    height = excluded.height
+WHERE shield_purchase.height <= excluded.height`
+
+	_, err := db.Sql.Exec(stmt,
+		shield.PoolID,
+		shield.FromAddress,
+		pq.Array(dbtypes.NewDbCoins(shield.Shield)),
+		shield.Description,
+		shield.Height,
+	)
+
+	if err != nil {
+		return fmt.Errorf("error while storing shield purchase: %s", err)
+	}
+
+	return nil
+}

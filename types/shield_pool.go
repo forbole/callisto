@@ -38,3 +38,25 @@ func NewShieldPool(
 		Height:         height,
 	}
 }
+
+// ShieldPurchase represents a purchase of the shield module at a given height
+type ShieldPurchase struct {
+	PoolID      uint64
+	FromAddress string
+	Shield      sdk.Coins
+	Description string
+	Height      int64
+}
+
+// NewShieldPurchase allows to build a new ShieldPurchase instance
+func NewShieldPurchase(
+	poolID uint64, fromAddress string, shield sdk.Coins, description string, height int64,
+) *ShieldPurchase {
+	return &ShieldPurchase{
+		PoolID:      poolID,
+		FromAddress: fromAddress,
+		Shield:      shield,
+		Description: description,
+		Height:      height,
+	}
+}
