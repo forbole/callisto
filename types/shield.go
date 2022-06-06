@@ -1,6 +1,8 @@
 package types
 
 import (
+	"time"
+
 	shieldtypes "github.com/certikfoundation/shentu/v2/x/shield/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -105,5 +107,38 @@ func NewShieldProvider(address string, collateral int64, delegationBonded int64,
 		TotalLocked:      totalLocked,
 		Withdrawing:      withdrawing,
 		Height:           height,
+	}
+}
+
+// ShieldPurchaseList represents a purchase of the shield module at a given height
+type ShieldPurchaseList struct {
+	PurchaseID         uint64
+	PoolID             uint64
+	Purchaser          string
+	DeletionTime       time.Time
+	ProtectionEndTime  time.Time
+	ForeignServiceFees sdk.DecCoins
+	NativeServiceFees  sdk.DecCoins
+	Shield             sdk.Int
+	Description        string
+	Height             int64
+}
+
+// NewShieldPurchaseList allows to build a new ShieldPurchaseList instance
+func NewShieldPurchaseList(
+	purchaseID uint64, poolID uint64, purchaser string, deletionTime time.Time, protectionEndTime time.Time,
+	foreignServiceFees sdk.DecCoins, nativeServiceFees sdk.DecCoins, shield sdk.Int, description string, height int64,
+) *ShieldPurchaseList {
+	return &ShieldPurchaseList{
+		PoolID:             poolID,
+		Purchaser:          purchaser,
+		DeletionTime:       deletionTime,
+		ProtectionEndTime:  protectionEndTime,
+		PurchaseID:         purchaseID,
+		ForeignServiceFees: foreignServiceFees,
+		NativeServiceFees:  nativeServiceFees,
+		Shield:             shield,
+		Description:        description,
+		Height:             height,
 	}
 }

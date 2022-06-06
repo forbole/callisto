@@ -40,7 +40,13 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	// Save the shield providers
 	err = m.saveShieldProviders(doc, genState.Providers)
 	if err != nil {
-		return fmt.Errorf("error while storing shield genesis pools: %s", err)
+		return fmt.Errorf("error while storing shield genesis providers: %s", err)
+	}
+
+	// Save the shield purchase list
+	err = m.savePurchaseList(doc, genState.PurchaseLists)
+	if err != nil {
+		return fmt.Errorf("error while storing shield genesis purchase list: %s", err)
 	}
 
 	return nil
@@ -69,6 +75,23 @@ func (m *Module) saveShieldProviders(doc *tmtypes.GenesisDoc, providers []shield
 		if err != nil {
 			return err
 		}
+	}
+
+	return nil
+}
+
+// savePurchaseList stores the shield purchase record inside the given genesis state
+func (m *Module) savePurchaseList(doc *tmtypes.GenesisDoc, list []shieldtypes.PurchaseList) error {
+	for _, purchase := range list {
+		for _, entry := range purchase.Entries {
+			purchaseRecord := types.NewShieldPurchaseList(entry.PurchaseId, purchase.PoolId, purchase.Purchaser, entry.DeletionTime, entry.ProtectionEndTime,
+				entry.ServiceFees.Foreign, entry.ServiceFees.Native, entry.Shield, entry.Description, doc.InitialHeight)
+			err := m.db.SaveShieldPurchaseList(purchaseRecord)
+			if err != nil {
+				return err
+			}
+		}
+
 	}
 
 	return nil

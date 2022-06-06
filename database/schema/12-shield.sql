@@ -41,11 +41,11 @@ CREATE INDEX shield_provider_height_index ON shield_purchase (height);
 
 CREATE TABLE shield_purchase_list
 (
+	purchase_id 			INT 						NOT NULL PRIMARY KEY,
 	pool_id					INT							NOT NULL REFERENCES shield_pool (pool_id),
-	purchaser       		TEXT            			NOT NULL PRIMARY KEY REFERENCES account (address),
+	purchaser       		TEXT            			NOT NULL REFERENCES account (address),
 	deletion_time			TIMESTAMP WITHOUT TIME ZONE NOT NULL,
 	protection_end_time 	TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-	purchase_id				INT 						NOT NULL,
 	foreign_service_fees	COIN [] 					NOT NULL,
 	native_service_fees 	COIN [] 					NOT NULL,
 	shield          	    COIN[]         				NOT NULL,

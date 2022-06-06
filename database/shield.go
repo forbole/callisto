@@ -152,3 +152,41 @@ WHERE shield_provider.height <= excluded.height`
 
 	return nil
 }
+
+// SaveShieldPurchaseList allows to save the shield purchase record for the given height
+func (db *Db) SaveShieldPurchaseList(list *types.ShieldPurchaseList) error {
+	stmt := `
+INSERT INTO shield_purchase_list (purchase_id, pool_id, purchaser, deletion_time, protection_end_time, 
+    foreign_service_fees, native_service_fees, shield, description, height) 
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+ON CONFLICT (purchase_id) DO UPDATE 
+    SET pool_id = excluded.pool_id, 
+	purchaser = excluded.purchaser, 
+	deletion_time = excluded.deletion_time, 
+	protection_end_time = excluded.protection_end_time, 
+	foreign_service_fees = excluded.foreign_service_fees, 
+	native_service_fees = excluded.native_service_fees,
+	shield = excluded.shield, 
+	description = excluded.description, 
+    height = excluded.height
+WHERE shield_purchase_list.height <= excluded.height`
+
+	_, err := db.Sql.Exec(stmt,
+		list.PurchaseID,
+		list.PoolID,
+		list.Purchaser,
+		list.DeletionTime,
+		list.ProtectionEndTime,
+		pq.Array(dbtypes.NewDbDecCoins(list.ForeignServiceFees)),
+		pq.Array(dbtypes.NewDbDecCoins(list.NativeServiceFees)),
+		list.Shield.Int64(),
+		list.Description,
+		list.Height,
+	)
+
+	if err != nil {
+		return fmt.Errorf("error while storing shield provider: %s", err)
+	}
+
+	return nil
+}
