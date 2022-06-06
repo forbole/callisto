@@ -80,23 +80,23 @@ func NewShieldPoolParams(params shieldtypes.PoolParams, height int64) *ShieldPoo
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// ShieldProviders represents providers of the shield module at a given height
-type ShieldProviders struct {
+// ShieldProvider represents the provider of the shield module at a given height
+type ShieldProvider struct {
 	Address          string
 	Collateral       int64
 	DelegationBonded int64
-	NativeRewards    sdk.Coins
-	ForeignRewards   sdk.Coins
+	NativeRewards    sdk.DecCoins
+	ForeignRewards   sdk.DecCoins
 	TotalLocked      int64
 	Withdrawing      int64
 	Height           int64
 }
 
-// NewShieldProviders allows to build a new ShieldProviders instance
-func NewShieldProviders(address string, collateral int64, delegationBonded int64,
-	nativeRewards sdk.Coins, foreignRewards sdk.Coins, totalLocked int64,
-	withdrawing int64, height int64) *ShieldProviders {
-	return &ShieldProviders{
+// NewShieldProvider allows to build a new ShieldProvider instance
+func NewShieldProvider(address string, collateral int64, delegationBonded int64,
+	nativeRewards sdk.DecCoins, foreignRewards sdk.DecCoins, totalLocked int64,
+	withdrawing int64, height int64) *ShieldProvider {
+	return &ShieldProvider{
 		Address:          address,
 		Collateral:       collateral,
 		DelegationBonded: delegationBonded,

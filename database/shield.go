@@ -118,3 +118,37 @@ WHERE shield_pool_params.height <= excluded.height`
 
 	return nil
 }
+
+// SaveShieldProvider allows to save the shield provider for the given height
+func (db *Db) SaveShieldProvider(provider *types.ShieldProvider) error {
+	stmt := `
+INSERT INTO shield_provider (address, collateral, delegation_bonded, native_rewards, 
+    foreign_rewards,total_locked, withdrawing, height) 
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+ON CONFLICT (address) DO UPDATE 
+    SET collateral = excluded.collateral, 
+	delegation_bonded = excluded.delegation_bonded, 
+	native_rewards = excluded.native_rewards, 
+	foreign_rewards = excluded.foreign_rewards, 
+	total_locked = excluded.total_locked, 
+	withdrawing = excluded.withdrawing, 
+    height = excluded.height
+WHERE shield_provider.height <= excluded.height`
+
+	_, err := db.Sql.Exec(stmt,
+		provider.Address,
+		provider.Collateral,
+		provider.DelegationBonded,
+		pq.Array(dbtypes.NewDbDecCoins(provider.NativeRewards)),
+		pq.Array(dbtypes.NewDbDecCoins(provider.ForeignRewards)),
+		provider.TotalLocked,
+		provider.Withdrawing,
+		provider.Height,
+	)
+
+	if err != nil {
+		return fmt.Errorf("error while storing shield provider: %s", err)
+	}
+
+	return nil
+}

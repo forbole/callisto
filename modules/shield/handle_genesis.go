@@ -37,14 +37,35 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 		return fmt.Errorf("error while storing shield genesis pools: %s", err)
 	}
 
+	// Save the shield providers
+	err = m.saveShieldProviders(doc, genState.Providers)
+	if err != nil {
+		return fmt.Errorf("error while storing shield genesis pools: %s", err)
+	}
+
 	return nil
 }
 
 // saveShieldPools stores the shield pools present inside the given genesis state
 func (m *Module) saveShieldPools(doc *tmtypes.GenesisDoc, pools []shieldtypes.Pool) error {
 	for _, pool := range pools {
-		poolRecord := types.NewShieldPool(pool.Id, "", sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, pool.Shield)), nil, nil, pool.Sponsor, pool.SponsorAddr, pool.Description, pool.ShieldLimit, !pool.Active, doc.InitialHeight)
+		poolRecord := types.NewShieldPool(pool.Id, "", sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, pool.Shield)), nil, nil,
+			pool.Sponsor, pool.SponsorAddr, pool.Description, pool.ShieldLimit, !pool.Active, doc.InitialHeight)
 		err := m.db.SaveShieldPool(poolRecord)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// saveShieldProviders stores the shield providers present inside the given genesis state
+func (m *Module) saveShieldProviders(doc *tmtypes.GenesisDoc, providers []shieldtypes.Provider) error {
+	for _, provider := range providers {
+		providerRecord := types.NewShieldProvider(provider.Address, provider.Collateral.Int64(), provider.DelegationBonded.Int64(),
+			provider.Rewards.Native, provider.Rewards.Foreign, provider.TotalLocked.Int64(), provider.Withdrawing.Int64(), doc.InitialHeight)
+		err := m.db.SaveShieldProvider(providerRecord)
 		if err != nil {
 			return err
 		}

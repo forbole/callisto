@@ -25,6 +25,20 @@ CREATE TABLE shield_purchase
 );
 CREATE INDEX shield_purchase_height_index ON shield_purchase (height);
 
+
+CREATE TABLE shield_provider
+(
+	address        		TEXT            NOT NULL PRIMARY KEY REFERENCES account (address),
+    collateral			BIGINT          NOT NULL,
+    delegation_bonded	BIGINT          NOT NULL,
+    native_rewards		COIN[]          NOT NULL,
+    foreign_rewards		COIN[]          NOT NULL,
+    total_locked		BIGINT          NOT NULL,
+    withdrawing			BIGINT          NOT NULL,
+    height              BIGINT          NOT NULL
+);
+CREATE INDEX shield_provider_height_index ON shield_purchase (height);
+
 /* ---- PARAMS ---- */
 
 CREATE TABLE shield_pool_params
