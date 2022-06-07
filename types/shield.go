@@ -195,9 +195,9 @@ type ShieldInfo struct {
 }
 
 // NewShieldInfo allows to build a new ShieldInfo instance
-func NewShieldInfo(gobalStakingPool string, lastUpdateTime time.Time, nextPoolID uint64, nextPurchaseID uint64, 
+func NewShieldInfo(gobalStakingPool string, lastUpdateTime time.Time, nextPoolID uint64, nextPurchaseID uint64,
 	originalStaking []shieldtypes.OriginalStaking, proposalIDReimbursementPair []shieldtypes.ProposalIDReimbursementPair,
-	shieldAdmin string, shieldStakingRate string, stakeForShields []shieldtypes.ShieldStaking, totalClaimed sdk.Int, 
+	shieldAdmin string, shieldStakingRate string, stakeForShields []shieldtypes.ShieldStaking, totalClaimed sdk.Int,
 	totalCollateral sdk.Int, totalShield sdk.Int, totalWithdrawing sdk.Int, height int64) *ShieldInfo {
 	return &ShieldInfo{
 		GobalStakingPool:            gobalStakingPool,
@@ -213,6 +213,25 @@ func NewShieldInfo(gobalStakingPool string, lastUpdateTime time.Time, nextPoolID
 		TotalCollateral:             totalCollateral,
 		TotalShield:                 totalShield,
 		TotalWithdrawing:            totalWithdrawing,
+		Height:                      height,
+	}
+}
+
+type ShieldServiceFees struct {
+	ForeignServiceFees          sdk.DecCoins
+	NativeServiceFees           sdk.DecCoins
+	RemainingForeignServiceFees sdk.DecCoins
+	RemainingNativeServiceFees  sdk.DecCoins
+	Height                      int64
+}
+
+// NewShieldServiceFees allows to build a new ShieldServiceFees instance
+func NewShieldServiceFees(foreignServiceFees sdk.DecCoins, nativeServiceFees sdk.DecCoins, remainingForeignServiceFees sdk.DecCoins, remainingNativeServiceFees sdk.DecCoins, height int64) *ShieldServiceFees {
+	return &ShieldServiceFees{
+		ForeignServiceFees:          foreignServiceFees,
+		NativeServiceFees:           nativeServiceFees,
+		RemainingForeignServiceFees: remainingForeignServiceFees,
+		RemainingNativeServiceFees:  remainingNativeServiceFees,
 		Height:                      height,
 	}
 }

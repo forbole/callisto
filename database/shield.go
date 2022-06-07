@@ -281,3 +281,32 @@ WHERE shield_info.height <= excluded.height`
 
 	return nil
 }
+
+// SaveShieldServiceFees allows to save shield service fees
+func (db *Db) SaveShieldServiceFees(fees *types.ShieldServiceFees) error {
+	stmt := `
+INSERT INTO shield_service_fees (foreign_service_fees, native_service_fees, 
+	remaining_foreign_service_fees, remaining_native_service_fees, height) 
+VALUES ($1, $2, $3, $4, $5)
+ON CONFLICT (one_row_id) DO UPDATE 
+    SET foreign_service_fees = excluded.foreign_service_fees,
+        native_service_fees = excluded.native_service_fees,
+        remaining_foreign_service_fees = excluded.remaining_foreign_service_fees,
+        remaining_native_service_fees = excluded.remaining_native_service_fees,
+        height = excluded.height
+WHERE shield_service_fees.height <= excluded.height`
+
+	_, err := db.Sql.Exec(stmt,
+		pq.Array(dbtypes.NewDbDecCoins(fees.ForeignServiceFees)),
+		pq.Array(dbtypes.NewDbDecCoins(fees.NativeServiceFees)),
+		pq.Array(dbtypes.NewDbDecCoins(fees.RemainingForeignServiceFees)),
+		pq.Array(dbtypes.NewDbDecCoins(fees.RemainingNativeServiceFees)),
+		fees.Height,
+	)
+
+	if err != nil {
+		return fmt.Errorf("error while storing shield service fees: %s", err)
+	}
+
+	return nil
+}

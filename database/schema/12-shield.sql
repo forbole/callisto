@@ -84,6 +84,18 @@ CREATE TABLE shield_info
 );
 CREATE INDEX shield_info_height_index ON shield_info (height);
 
+CREATE TABLE shield_service_fees
+(
+    one_row_id 						BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
+    foreign_service_fees     		COIN [] NOT NULL,
+    native_service_fees     		COIN [] NOT NULL,
+    remaining_foreign_service_fees  COIN [] NOT NULL,
+	remaining_native_service_fees 	COIN [] NOT NULL,
+    height     						BIGINT  NOT NULL,
+    CHECK (one_row_id)
+);
+CREATE INDEX shield_service_fees_height_index ON shield_service_fees (height);
+
 /* ---- PARAMS ---- */
 
 CREATE TABLE shield_pool_params
