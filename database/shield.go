@@ -202,7 +202,7 @@ WHERE shield_purchase_list.height <= excluded.height`
 		list.ProtectionEndTime,
 		pq.Array(dbtypes.NewDbDecCoins(list.ForeignServiceFees)),
 		pq.Array(dbtypes.NewDbDecCoins(list.NativeServiceFees)),
-		list.Shield.Int64(),
+		list.Shield.String(),
 		list.Description,
 		list.Height,
 	)

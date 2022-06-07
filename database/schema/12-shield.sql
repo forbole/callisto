@@ -46,9 +46,9 @@ CREATE TABLE shield_purchase_list
 	purchaser       		TEXT            			NOT NULL REFERENCES account (address),
 	deletion_time			TIMESTAMP WITHOUT TIME ZONE NOT NULL,
 	protection_end_time 	TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-	foreign_service_fees	COIN [] 					NOT NULL,
-	native_service_fees 	COIN [] 					NOT NULL,
-	shield          	    COIN[]         				NOT NULL,
+	foreign_service_fees	COIN[] 						NOT NULL,
+	native_service_fees 	COIN[] 						NOT NULL,
+	shield          	   	TEXT         				NOT NULL,
 	description         	TEXT            			NOT NULL,
     height              	BIGINT          			NOT NULL
 );
