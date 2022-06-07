@@ -54,6 +54,15 @@ CREATE TABLE shield_purchase_list
 );
 CREATE INDEX shield_purchase_list_height_index ON shield_purchase_list (height);
 
+CREATE TABLE shield_withdraws
+(
+	address			TEXT            			NOT NULL REFERENCES account (address),
+	amount 			BIGINT 						NOT NULL,
+	completion_time TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    height          BIGINT          			NOT NULL
+);
+CREATE INDEX shield_withdraws_height_index ON shield_withdraws (height);
+
 /* ---- PARAMS ---- */
 
 CREATE TABLE shield_pool_params

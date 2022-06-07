@@ -185,7 +185,27 @@ WHERE shield_purchase_list.height <= excluded.height`
 	)
 
 	if err != nil {
-		return fmt.Errorf("error while storing shield provider: %s", err)
+		return fmt.Errorf("error while storing shield purchase list: %s", err)
+	}
+
+	return nil
+}
+
+// SaveShieldWithdraw allows to save the shield withdraw for the given height
+func (db *Db) SaveShieldWithdraw(withdraw *types.ShieldWithdraw) error {
+	stmt := `
+INSERT INTO shield_withdraws (address, amount, completion_time, height)
+VALUES ($1, $2, $3, $4)`
+
+	_, err := db.Sql.Exec(stmt,
+		withdraw.Address,
+		withdraw.Amount,
+		withdraw.CompletionTime,
+		withdraw.Height,
+	)
+
+	if err != nil {
+		return fmt.Errorf("error while storing shield withdraw: %s", err)
 	}
 
 	return nil

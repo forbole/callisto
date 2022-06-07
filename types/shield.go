@@ -142,3 +142,22 @@ func NewShieldPurchaseList(
 		Height:             height,
 	}
 }
+
+// ShieldWithdraw represents the withdraw of the shield module at a given height
+type ShieldWithdraw struct {
+	Address        string
+	Amount         int64
+	CompletionTime time.Time
+	Height         int64
+}
+
+// NewShieldWithdraw allows to build a new ShieldWithdraw instance
+func NewShieldWithdraw(address string, amount int64, completionTime time.Time,
+	height int64) *ShieldWithdraw {
+	return &ShieldWithdraw{
+		Address:        address,
+		Amount:         amount,
+		CompletionTime: completionTime,
+		Height:         height,
+	}
+}

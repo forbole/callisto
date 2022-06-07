@@ -49,6 +49,11 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 		return fmt.Errorf("error while storing shield genesis purchase list: %s", err)
 	}
 
+	// Save the shield withdraws
+	err = m.saveShieldWithdraws(doc, genState.Withdraws)
+	if err != nil {
+		return fmt.Errorf("error while storing shield withdraws: %s", err)
+	}
 	return nil
 }
 
@@ -92,6 +97,19 @@ func (m *Module) savePurchaseList(doc *tmtypes.GenesisDoc, list []shieldtypes.Pu
 			}
 		}
 
+	}
+
+	return nil
+}
+
+// saveShieldWithdraws stores the shield withdraws present inside the given genesis state
+func (m *Module) saveShieldWithdraws(doc *tmtypes.GenesisDoc, withdraws []shieldtypes.Withdraw) error {
+	for _, withdraw := range withdraws {
+		withdrawRecord := types.NewShieldWithdraw(withdraw.Address,withdraw.Amount.Int64(), withdraw.CompletionTime, doc.InitialHeight)
+		err := m.db.SaveShieldWithdraw(withdrawRecord)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
