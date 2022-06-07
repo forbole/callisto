@@ -94,7 +94,6 @@ func NewShieldClaimProposalParams(params shieldtypes.ClaimProposalParams, height
 	}
 }
 
-
 // --------------------------------------------------------------------------------------------------------------------
 
 // ShieldProvider represents the provider of the shield module at a given height
@@ -174,5 +173,46 @@ func NewShieldWithdraw(address string, amount int64, completionTime time.Time,
 		Amount:         amount,
 		CompletionTime: completionTime,
 		Height:         height,
+	}
+}
+
+// ShieldInfo represents the base info of the shield module at a given height
+type ShieldInfo struct {
+	GobalStakingPool            string
+	LastUpdateTime              time.Time
+	NextPoolID                  uint64
+	NextPurchaseID              uint64
+	OriginalStaking             []shieldtypes.OriginalStaking
+	ProposalIDReimbursementPair []shieldtypes.ProposalIDReimbursementPair
+	ShieldAdmin                 string
+	ShieldStakingRate           string
+	StakeForShields             []shieldtypes.ShieldStaking
+	TotalClaimed                sdk.Int
+	TotalCollateral             sdk.Int
+	TotalShield                 sdk.Int
+	TotalWithdrawing            sdk.Int
+	Height                      int64
+}
+
+// NewShieldInfo allows to build a new ShieldInfo instance
+func NewShieldInfo(gobalStakingPool string, lastUpdateTime time.Time, nextPoolID uint64, nextPurchaseID uint64, 
+	originalStaking []shieldtypes.OriginalStaking, proposalIDReimbursementPair []shieldtypes.ProposalIDReimbursementPair,
+	shieldAdmin string, shieldStakingRate string, stakeForShields []shieldtypes.ShieldStaking, totalClaimed sdk.Int, 
+	totalCollateral sdk.Int, totalShield sdk.Int, totalWithdrawing sdk.Int, height int64) *ShieldInfo {
+	return &ShieldInfo{
+		GobalStakingPool:            gobalStakingPool,
+		LastUpdateTime:              lastUpdateTime,
+		NextPoolID:                  nextPoolID,
+		NextPurchaseID:              nextPurchaseID,
+		OriginalStaking:             originalStaking,
+		ProposalIDReimbursementPair: proposalIDReimbursementPair,
+		ShieldAdmin:                 shieldAdmin,
+		ShieldStakingRate:           shieldStakingRate,
+		StakeForShields:             stakeForShields,
+		TotalClaimed:                totalClaimed,
+		TotalCollateral:             totalCollateral,
+		TotalShield:                 totalShield,
+		TotalWithdrawing:            totalWithdrawing,
+		Height:                      height,
 	}
 }

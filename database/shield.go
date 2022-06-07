@@ -233,3 +233,51 @@ VALUES ($1, $2, $3, $4)`
 
 	return nil
 }
+
+// SaveShieldInfo allows to save the shield info for the given height
+func (db *Db) SaveShieldInfo(info *types.ShieldInfo) error {
+	stmt := `
+INSERT INTO shield_info (global_staking_pool, last_update_time, next_pool_id, next_purchase_id, 
+    original_staking, proposal_id_reimbursement_pair, shield_admin, shield_staking_rate, stake_for_shields,
+	total_claimed, total_collateral, total_shield, total_withdrawing, height) 
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+ON CONFLICT (one_row_id) DO UPDATE 
+    SET global_staking_pool = excluded.global_staking_pool, 
+	last_update_time = excluded.last_update_time, 
+	next_pool_id = excluded.next_pool_id, 
+	next_purchase_id = excluded.next_purchase_id, 
+	original_staking = excluded.original_staking, 
+	proposal_id_reimbursement_pair = excluded.proposal_id_reimbursement_pair,
+	shield_admin = excluded.shield_admin, 
+	shield_staking_rate = excluded.shield_staking_rate, 
+	stake_for_shields = excluded.stake_for_shields, 
+	total_claimed = excluded.total_claimed, 
+	total_collateral = excluded.total_collateral, 
+	total_shield = excluded.total_shield, 
+	total_withdrawing = excluded.total_withdrawing, 
+    height = excluded.height
+WHERE shield_info.height <= excluded.height`
+
+	_, err := db.Sql.Exec(stmt,
+		info.GobalStakingPool,
+		info.LastUpdateTime,
+		info.NextPoolID,
+		info.NextPurchaseID,
+		pq.Array(info.OriginalStaking),
+		pq.Array(info.ProposalIDReimbursementPair),
+		info.ShieldAdmin,
+		info.ShieldStakingRate,
+		pq.Array(info.StakeForShields),
+		info.TotalClaimed.Int64(),
+		info.TotalCollateral.Int64(),
+		info.TotalShield.Int64(),
+		info.TotalWithdrawing.Int64(),
+		info.Height,
+	)
+
+	if err != nil {
+		return fmt.Errorf("error while storing shield info: %s", err)
+	}
+
+	return nil
+}
