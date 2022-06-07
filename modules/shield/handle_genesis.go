@@ -25,13 +25,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 		return fmt.Errorf("error while unmarshaling shield state: %s", err)
 	}
 
-	// Save the params
-	err = m.db.SaveShieldPoolParams(types.NewShieldPoolParams(genState.PoolParams, doc.InitialHeight))
-	if err != nil {
-		return fmt.Errorf("error while storing genesis shield params: %s", err)
-	}
-
-	// Save the shield pools
+	// Save shield pools
 	err = m.saveShieldPools(doc, genState.Pools)
 	if err != nil {
 		return fmt.Errorf("error while storing shield genesis pools: %s", err)
@@ -43,16 +37,28 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 		return fmt.Errorf("error while storing shield genesis providers: %s", err)
 	}
 
-	// Save the shield purchase list
+	// Save shield purchase list
 	err = m.savePurchaseList(doc, genState.PurchaseLists)
 	if err != nil {
 		return fmt.Errorf("error while storing shield genesis purchase list: %s", err)
 	}
 
-	// Save the shield withdraws
+	// Save shield withdraws
 	err = m.saveShieldWithdraws(doc, genState.Withdraws)
 	if err != nil {
 		return fmt.Errorf("error while storing shield withdraws: %s", err)
+	}
+
+	// Save pool params
+	err = m.db.SaveShieldPoolParams(types.NewShieldPoolParams(genState.PoolParams, doc.InitialHeight))
+	if err != nil {
+		return fmt.Errorf("error while storing genesis shield pool params: %s", err)
+	}
+
+	// Save claim proposal params
+	err = m.db.SaveShieldClaimProposalParams(types.NewShieldClaimProposalParams(genState.ClaimProposalParams, doc.InitialHeight))
+	if err != nil {
+		return fmt.Errorf("error while storing shield claim proposal params: %s", err)
 	}
 	return nil
 }
@@ -105,7 +111,7 @@ func (m *Module) savePurchaseList(doc *tmtypes.GenesisDoc, list []shieldtypes.Pu
 // saveShieldWithdraws stores the shield withdraws present inside the given genesis state
 func (m *Module) saveShieldWithdraws(doc *tmtypes.GenesisDoc, withdraws []shieldtypes.Withdraw) error {
 	for _, withdraw := range withdraws {
-		withdrawRecord := types.NewShieldWithdraw(withdraw.Address,withdraw.Amount.Int64(), withdraw.CompletionTime, doc.InitialHeight)
+		withdrawRecord := types.NewShieldWithdraw(withdraw.Address, withdraw.Amount.Int64(), withdraw.CompletionTime, doc.InitialHeight)
 		err := m.db.SaveShieldWithdraw(withdrawRecord)
 		if err != nil {
 			return err

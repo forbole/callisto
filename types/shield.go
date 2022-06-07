@@ -66,7 +66,7 @@ func NewShieldPurchase(
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// ShieldPoolParams represents the parameters of the shield module at a given height
+// ShieldPoolParams represents the pool parameters of the shield module at a given height
 type ShieldPoolParams struct {
 	Params shieldtypes.PoolParams
 	Height int64
@@ -79,6 +79,21 @@ func NewShieldPoolParams(params shieldtypes.PoolParams, height int64) *ShieldPoo
 		Height: height,
 	}
 }
+
+// ShieldClaimProposalParams represents the claim proposal parameters of the shield module at a given height
+type ShieldClaimProposalParams struct {
+	Params shieldtypes.ClaimProposalParams
+	Height int64
+}
+
+// NewShieldClaimProposalParams allows to build a new ShieldPoolParams instance
+func NewShieldClaimProposalParams(params shieldtypes.ClaimProposalParams, height int64) *ShieldClaimProposalParams {
+	return &ShieldClaimProposalParams{
+		Params: params,
+		Height: height,
+	}
+}
+
 
 // --------------------------------------------------------------------------------------------------------------------
 

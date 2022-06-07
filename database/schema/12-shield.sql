@@ -73,3 +73,12 @@ CREATE TABLE shield_pool_params
     CHECK (one_row_id)
 );
 CREATE INDEX shield_pool_params_height_index ON shield_pool_params (height);
+
+CREATE TABLE shield_claim_proposal_params
+(
+ 	one_row_id 		BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
+  	params 			JSONB 	NOT NULL,
+    height          BIGINT	NOT NULL,
+ 	CHECK (one_row_id)
+);
+CREATE INDEX shield_claim_proposal_params_height_index ON shield_claim_proposal_params (height);

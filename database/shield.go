@@ -113,7 +113,30 @@ WHERE shield_pool_params.height <= excluded.height`
 
 	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
 	if err != nil {
-		return fmt.Errorf("error while storing shield pool  params: %s", err)
+		return fmt.Errorf("error while storing shield pool params: %s", err)
+	}
+
+	return nil
+}
+
+// SaveShieldClaimProposalParams allows to save shield claim proposal params
+func (db *Db) SaveShieldClaimProposalParams(params *types.ShieldClaimProposalParams) error {
+	paramsBz, err := json.Marshal(&params.Params)
+	if err != nil {
+		return fmt.Errorf("error while marshaling shield claim proposal params: %s", err)
+	}
+
+	stmt := `
+INSERT INTO shield_claim_proposal_params (params, height) 
+VALUES ($1, $2)
+ON CONFLICT (one_row_id) DO UPDATE 
+    SET params = excluded.params,
+        height = excluded.height
+WHERE shield_claim_proposal_params.height <= excluded.height`
+
+	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
+	if err != nil {
+		return fmt.Errorf("error while storing shield claim proposal params: %s", err)
 	}
 
 	return nil
