@@ -152,7 +152,7 @@ func (m *Module) HandleMsgWithdrawCollateral(msg *shieldtypes.MsgWithdrawCollate
 // HandleMsgPurchaseShield allows to properly handle a MsgPurchaseShield
 func (m *Module) HandleMsgPurchaseShield(tx *juno.Tx, msg *shieldtypes.MsgPurchaseShield) error {
 	shield := types.NewShieldPurchase(
-		msg.PoolId, msg.From, msg.Shield, msg.Description, tx.Height,
+		msg.PoolId, msg.From, msg.Shield[0].Amount, msg.Description, tx.Height,
 	)
 
 	return m.db.SaveShieldPurchase(shield)

@@ -107,9 +107,8 @@ func (m *Module) saveShieldProviders(doc *tmtypes.GenesisDoc, providers []shield
 func (m *Module) savePurchaseList(doc *tmtypes.GenesisDoc, list []shieldtypes.PurchaseList) error {
 	for _, purchase := range list {
 		for _, entry := range purchase.Entries {
-			purchaseRecord := types.NewShieldPurchaseList(entry.PurchaseId, purchase.PoolId, purchase.Purchaser, entry.DeletionTime, entry.ProtectionEndTime,
-				entry.ServiceFees.Foreign, entry.ServiceFees.Native, entry.Shield, entry.Description, doc.InitialHeight)
-			err := m.db.SaveShieldPurchaseList(purchaseRecord)
+			purchaseRecord := types.NewShieldPurchase(purchase.PoolId, purchase.Purchaser, entry.Shield, entry.Description, doc.InitialHeight)
+			err := m.db.SaveShieldPurchase(purchaseRecord)
 			if err != nil {
 				return err
 			}
