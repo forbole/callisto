@@ -56,7 +56,8 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	}
 
 	// Save shield service fees
-	err = m.saveShieldServiceFees(doc, genState.ServiceFees, genState.RemainingServiceFees)
+	err = m.db.SaveShieldServiceFees(types.NewShieldServiceFees(genState.ServiceFees.Foreign, genState.ServiceFees.Native,
+		genState.RemainingServiceFees.Foreign, genState.RemainingServiceFees.Native, doc.InitialHeight))
 	if err != nil {
 		return fmt.Errorf("error while storing shield service fees: %s", err)
 	}
@@ -142,19 +143,6 @@ func (m *Module) saveShieldInfo(doc *tmtypes.GenesisDoc, info shieldtypes.Genesi
 		info.TotalWithdrawing, doc.InitialHeight)
 
 	err := m.db.SaveShieldInfo(infos)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// saveShieldServiceFees stores the shield service fees present inside the given genesis state
-func (m *Module) saveShieldServiceFees(doc *tmtypes.GenesisDoc, fees shieldtypes.MixedDecCoins, remainingFees shieldtypes.MixedDecCoins) error {
-
-	serviceFees := types.NewShieldServiceFees(fees.Foreign, fees.Native, remainingFees.Foreign, remainingFees.Native, doc.InitialHeight)
-
-	err := m.db.SaveShieldServiceFees(serviceFees)
 	if err != nil {
 		return err
 	}
