@@ -35,8 +35,8 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	case *shieldtypes.MsgDepositCollateral:
 		return m.HandleMsgDepositCollateral(tx, cosmosMsg)
 
-	// case *shieldtypes.MsgWithdrawCollateral:
-	// 	return m.HandleMsgWithdrawCollateral(tx, cosmosMsg)
+	case *shieldtypes.MsgWithdrawCollateral:
+		return m.HandleMsgWithdrawCollateral(tx, cosmosMsg)
 
 	case *shieldtypes.MsgPurchaseShield:
 		return m.HandleMsgPurchaseShield(tx, cosmosMsg)
@@ -128,11 +128,19 @@ func (m *Module) HandleMsgDepositCollateral(tx *juno.Tx, msg *shieldtypes.MsgDep
 	return m.db.UpdateShieldProviderCollateral(msg.From, updatedCollateral)
 }
 
-// // HandleMsgWithdrawCollateral allows to properly handle a MsgWithdrawCollateral
-// func (m *Module) HandleMsgWithdrawCollateral(tx *juno.Tx, msg *shieldtypes.MsgWithdrawCollateral) error {
-
-// 	return nil
-// }
+// HandleMsgWithdrawCollateral allows to properly handle a MsgWithdrawCollateral
+func (m *Module) HandleMsgWithdrawCollateral(tx *juno.Tx, msg *shieldtypes.MsgWithdrawCollateral) error {
+	collateral, err := m.db.GetShieldProviderCollateral(msg.From)
+	if err != nil {
+		return fmt.Errorf("error while getting shield provider collateral: %s", err)
+	}
+	if msg.Collateral[0].Amount.Int64() >= collateral {
+		updatedCollateral := collateral - msg.Collateral[0].Amount.Int64()
+		return m.db.UpdateShieldProviderCollateral(msg.From, updatedCollateral)
+	} else {
+		return m.db.UpdateShieldProviderCollateral(msg.From, 0)
+	}
+}
 
 // HandleMsgPurchaseShield allows to properly handle a MsgPurchaseShield
 func (m *Module) HandleMsgPurchaseShield(tx *juno.Tx, msg *shieldtypes.MsgPurchaseShield) error {
