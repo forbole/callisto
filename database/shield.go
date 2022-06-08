@@ -69,15 +69,40 @@ func (db *Db) UpdatePoolSponsor(poolID uint64, sponsor string, sponsorAddress st
 	return nil
 }
 
+// UpdateShieldProviderCollateral updates the shield provider' collateral value
+func (db *Db) UpdateShieldProviderCollateral(address string, collateral int64) error {
+	stmt := `UPDATE shield_provider SET collateral = $1 WHERE address = $2`
+
+	_, err := db.Sql.Exec(stmt, collateral, address)
+	if err != nil {
+		return fmt.Errorf("error while updating shield provider collateral value: %s", err)
+	}
+
+	return nil
+}
+
+// GetShieldProviderCollateral returns the shield provider' collateral value
+func (db *Db) GetShieldProviderCollateral(address string) (int64, error) {
+	var collateral int64
+	stmt := `SELECT collateral from shield_provider WHERE address = $1`
+
+	err := db.Sqlx.Select(&collateral, stmt, address)
+	if err != nil {
+		return 0, fmt.Errorf("error while getting shield provider collateral value: %s", err)
+	}
+
+	return collateral, nil
+}
+
 // SaveShieldPurchase allows to save shield purchase for the given height
 func (db *Db) SaveShieldPurchase(shield *types.ShieldPurchase) error {
 	stmt := `
-INSERT INTO shield_purchase (pool_id, from_address, shield, description, height) 
+INSERT INTO shield_purchase (pool_id, from_address, shield, description, height)
 VALUES ($1, $2, $3, $4, $5)
-ON CONFLICT (from_address) DO UPDATE 
-    SET pool_id = excluded.pool_id, 
-	shield = excluded.shield, 
-	description = excluded.description, 
+ON CONFLICT (from_address) DO UPDATE
+    SET pool_id = excluded.pool_id,
+	shield = excluded.shield,
+	description = excluded.description,
     height = excluded.height
 WHERE shield_purchase.height <= excluded.height`
 
