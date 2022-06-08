@@ -96,7 +96,7 @@ func (db *Db) WithdrawNativeRewards(address string, nativeRewards sdk.DecCoins) 
 
 // UpdateShieldProviderDelegation updates the shield provider' delegation value
 func (db *Db) UpdateShieldProviderDelegation(address string, delegation int64) error {
-	stmt := `UPDATE shield_provider SET delegation = $1 WHERE address = $2`
+	stmt := `UPDATE shield_provider SET delegation_bonded = $1 WHERE address = $2`
 
 	_, err := db.Sql.Exec(stmt, delegation, address)
 	if err != nil {
@@ -122,7 +122,7 @@ func (db *Db) GetShieldProviderCollateral(address string) (int64, error) {
 // GetShieldProviderDelegation returns the shield provider' delegation value
 func (db *Db) GetShieldProviderDelegation(address string) (int64, error) {
 	var delegation int64
-	stmt := `SELECT delegation from shield_provider WHERE address = $1`
+	stmt := `SELECT delegation_bonded from shield_provider WHERE address = $1`
 
 	err := db.Sqlx.Select(&delegation, stmt, address)
 	if err != nil {
