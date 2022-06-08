@@ -29,8 +29,8 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	case *shieldtypes.MsgResumePool:
 		return m.HandleMsgResumePool(tx, cosmosMsg)
 
-	// case *shieldtypes.MsgWithdrawRewards:
-	// 	return m.HandleMsgWithdrawRewards(tx, cosmosMsg)
+	case *shieldtypes.MsgWithdrawRewards:
+		return m.HandleMsgWithdrawRewards(tx, cosmosMsg)
 
 	case *shieldtypes.MsgDepositCollateral:
 		return m.HandleMsgDepositCollateral(tx, cosmosMsg)
@@ -111,11 +111,10 @@ func (m *Module) HandleMsgResumePool(tx *juno.Tx, msg *shieldtypes.MsgResumePool
 	return m.db.UpdatePoolPauseStatus(msg.PoolId, pause)
 }
 
-// // HandleMsgWithdrawRewards allows to properly handle a MsgWithdrawRewards
-// func (m *Module) HandleMsgWithdrawRewards(tx *juno.Tx, msg *shieldtypes.MsgWithdrawRewards) error {
-
-// 	return nil
-// }
+// HandleMsgWithdrawRewards allows to properly handle a MsgWithdrawRewards
+func (m *Module) HandleMsgWithdrawRewards(tx *juno.Tx, msg *shieldtypes.MsgWithdrawRewards) error {
+	return m.db.WithdrawNativeRewards(msg.From, sdk.DecCoins{})
+}
 
 // HandleMsgDepositCollateral allows to properly handle a MsgDepositCollateral
 func (m *Module) HandleMsgDepositCollateral(tx *juno.Tx, msg *shieldtypes.MsgDepositCollateral) error {

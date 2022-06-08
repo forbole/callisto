@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	dbtypes "github.com/forbole/bdjuno/v3/database/types"
 	"github.com/forbole/bdjuno/v3/types"
 	"github.com/lib/pq"
@@ -76,6 +77,18 @@ func (db *Db) UpdateShieldProviderCollateral(address string, collateral int64) e
 	_, err := db.Sql.Exec(stmt, collateral, address)
 	if err != nil {
 		return fmt.Errorf("error while updating shield provider collateral value: %s", err)
+	}
+
+	return nil
+}
+
+// WithdrawNativeRewards withdraws the shield provider' rewards value
+func (db *Db) WithdrawNativeRewards(address string, nativeRewards sdk.DecCoins) error {
+	stmt := `UPDATE shield_provider SET native_rewards = $1 WHERE address = $2`
+
+	_, err := db.Sql.Exec(stmt, nativeRewards, address)
+	if err != nil {
+		return fmt.Errorf("error while withdrawing the native rewards: %s", err)
 	}
 
 	return nil
