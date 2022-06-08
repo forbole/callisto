@@ -82,13 +82,25 @@ func (db *Db) UpdateShieldProviderCollateral(address string, collateral int64) e
 	return nil
 }
 
-// WithdrawNativeRewards withdraws the shield provider' rewards value
-func (db *Db) WithdrawNativeRewards(address string, nativeRewards sdk.DecCoins) error {
+// WithdrawNativeRewards withdraws the shield provider' native rewards
+func (db *Db) WithdrawNativeRewards(address string) error {
 	stmt := `UPDATE shield_provider SET native_rewards = $1 WHERE address = $2`
 
-	_, err := db.Sql.Exec(stmt, nativeRewards, address)
+	_, err := db.Sql.Exec(stmt, pq.Array(dbtypes.NewDbDecCoins(sdk.DecCoins{})), address)
 	if err != nil {
 		return fmt.Errorf("error while withdrawing the native rewards: %s", err)
+	}
+
+	return nil
+}
+
+// WithdrawForeignRewards withdraws the shield provider' foreign rewards
+func (db *Db) WithdrawForeignRewards(address string) error {
+	stmt := `UPDATE shield_provider SET foreign_rewards = $1 WHERE address = $2`
+
+	_, err := db.Sql.Exec(stmt, pq.Array(dbtypes.NewDbDecCoins(sdk.DecCoins{})), address)
+	if err != nil {
+		return fmt.Errorf("error while withdrawing the foreign rewards: %s", err)
 	}
 
 	return nil
