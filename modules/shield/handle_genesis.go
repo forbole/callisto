@@ -10,7 +10,6 @@ import (
 
 	shieldtypes "github.com/certikfoundation/shentu/v2/x/shield/types"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/rs/zerolog/log"
 )
 
@@ -79,7 +78,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 // saveShieldPools stores the shield pools present inside the given genesis state
 func (m *Module) saveShieldPools(doc *tmtypes.GenesisDoc, pools []shieldtypes.Pool) error {
 	for _, pool := range pools {
-		poolRecord := types.NewShieldPool(pool.Id, "", sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, pool.Shield)), nil, nil,
+		poolRecord := types.NewShieldPool(pool.Id, "", pool.Shield, nil, nil,
 			pool.Sponsor, pool.SponsorAddr, pool.Description, pool.ShieldLimit, !pool.Active, doc.InitialHeight)
 		err := m.db.SaveShieldPool(poolRecord)
 		if err != nil {

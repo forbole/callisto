@@ -28,7 +28,7 @@ WHERE shield_pool.height <= excluded.height`
 	_, err := db.Sql.Exec(stmt,
 		pool.PoolID,
 		pool.FromAddress,
-		pq.Array(dbtypes.NewDbCoins(pool.Shield)),
+		pool.Shield.String(),
 		pq.Array(dbtypes.NewDbCoins(pool.NativeDeposit)),
 		pq.Array(dbtypes.NewDbCoins(pool.ForeignDeposit)),
 		pool.Sponsor,

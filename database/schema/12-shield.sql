@@ -2,7 +2,7 @@ CREATE TABLE shield_pool
 (
 	pool_id				INT				NOT NULL PRIMARY KEY,
 	from_address        TEXT            NOT NULL REFERENCES account (address),
-	shield              COIN[]          NOT NULL,
+	shield              TEXT         	NOT NULL,
 	native_deposit      COIN[]		    NOT NULL,
 	foreign_deposit     COIN[]		    NOT NULL,
 	sponsor             TEXT            NOT NULL,
