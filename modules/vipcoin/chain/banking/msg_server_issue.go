@@ -1,6 +1,7 @@
 package banking
 
 import (
+	"strings"
 	"time"
 
 	"git.ooo.ua/vipcoin/chain/x/banking/types"
@@ -13,6 +14,9 @@ import (
 
 // handleMsgIssue allows to properly handle a handleMsgIssue
 func (m *Module) handleMsgIssue(tx *juno.Tx, index int, msg *types.MsgIssue) error {
+	msg.Wallet = strings.ToLower(msg.Wallet)
+	msg.Asset = strings.ToLower(msg.Asset)
+
 	if err := m.bankingRepo.SaveMsgIssue(msg); err != nil {
 		return err
 	}

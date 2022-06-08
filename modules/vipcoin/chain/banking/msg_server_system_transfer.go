@@ -1,6 +1,7 @@
 package banking
 
 import (
+	"strings"
 	"time"
 
 	"git.ooo.ua/vipcoin/chain/x/banking/types"
@@ -13,6 +14,10 @@ import (
 
 // handleMsgSystemTransfer allows to properly handle a handleMsgSystemTransfer
 func (m *Module) handleMsgSystemTransfer(tx *juno.Tx, index int, msg *types.MsgSystemTransfer) error {
+	msg.WalletFrom = strings.ToLower(msg.WalletFrom)
+	msg.WalletTo = strings.ToLower(msg.WalletTo)
+	msg.Asset = strings.ToLower(msg.Asset)
+
 	if err := m.bankingRepo.SaveMsgSystemTransfers(msg); err != nil {
 		return err
 	}

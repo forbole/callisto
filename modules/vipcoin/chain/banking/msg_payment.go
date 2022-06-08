@@ -2,6 +2,7 @@ package banking
 
 import (
 	"math"
+	"strings"
 	"time"
 
 	accounts "git.ooo.ua/vipcoin/chain/x/accounts/types"
@@ -17,6 +18,10 @@ import (
 
 // handleMsgPayments allows to properly handle a MsgSetState
 func (m *Module) handleMsgPayments(tx *juno.Tx, index int, msg *banking.MsgPayment) error {
+	msg.WalletFrom = strings.ToLower(msg.WalletFrom)
+	msg.WalletTo = strings.ToLower(msg.WalletTo)
+	msg.Asset = strings.ToLower(msg.Asset)
+
 	if err := m.bankingRepo.SaveMsgPayments(msg); err != nil {
 		return err
 	}

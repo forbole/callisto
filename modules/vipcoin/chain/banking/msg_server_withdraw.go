@@ -1,6 +1,7 @@
 package banking
 
 import (
+	"strings"
 	"time"
 
 	"git.ooo.ua/vipcoin/chain/x/banking/types"
@@ -13,6 +14,9 @@ import (
 
 // handleMsgWithdraw allows to properly handle a handleMsgWithdraw
 func (m *Module) handleMsgWithdraw(tx *juno.Tx, index int, msg *types.MsgWithdraw) error {
+	msg.Wallet = strings.ToLower(msg.Wallet)
+	msg.Asset = strings.ToLower(msg.Asset)
+
 	if err := m.bankingRepo.SaveMsgWithdraw(msg); err != nil {
 		return err
 	}
