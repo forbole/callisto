@@ -44,8 +44,8 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	case *shieldtypes.MsgUpdateSponsor:
 		return m.HandleMsgUpdateSponsor(tx, cosmosMsg)
 
-		// case *shieldtypes.MsgStakeForShield:
-		// 	return m.HandleMsgStakeForShield(tx, cosmosMsg)
+	case *shieldtypes.MsgStakeForShield:
+		return m.HandleMsgStakeForShield(tx, cosmosMsg)
 
 		// case *shieldtypes.MsgUnstakeFromShield:
 		// 	return m.HandleMsgUnstakeFromShield(tx, cosmosMsg)
@@ -156,11 +156,15 @@ func (m *Module) HandleMsgUpdateSponsor(tx *juno.Tx, msg *shieldtypes.MsgUpdateS
 	return m.db.UpdatePoolSponsor(msg.PoolId, msg.Sponsor, msg.SponsorAddr)
 }
 
-// // HandleMsgStakeForShield allows to properly handle a MsgStakeForShield
-// func (m *Module) HandleMsgStakeForShield(tx *juno.Tx, msg *shieldtypes.MsgStakeForShield) error {
-
-// 	return nil
-// }
+// HandleMsgStakeForShield allows to properly handle a MsgStakeForShield
+func (m *Module) HandleMsgStakeForShield(tx *juno.Tx, msg *shieldtypes.MsgStakeForShield) error {
+	delegation, err := m.db.GetShieldProviderDelegation(msg.From)
+	if err != nil {
+		return fmt.Errorf("error while getting shield provider delegation: %s", err)
+	}
+	totalDelegation := delegation + msg.Shield[0].Amount.Int64()
+	return m.db.UpdateShieldProviderDelegation(msg.From, totalDelegation)
+}
 
 // // HandleMsgUnstakeFromShield allows to properly handle a MsgUnstakeFromShield
 // func (m *Module) HandleMsgUnstakeFromShield(tx *juno.Tx, msg *shieldtypes.MsgUnstakeFromShield) error {
