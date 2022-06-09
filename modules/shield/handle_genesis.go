@@ -54,13 +54,6 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 		return fmt.Errorf("error while storing shield withdraws: %s", err)
 	}
 
-	// // Save shield service fees
-	// err = m.db.SaveShieldServiceFees(types.NewShieldServiceFees(genState.ServiceFees.Foreign, genState.ServiceFees.Native,
-	// 	genState.RemainingServiceFees.Foreign, genState.RemainingServiceFees.Native, doc.InitialHeight))
-	// if err != nil {
-	// 	return fmt.Errorf("error while storing shield service fees: %s", err)
-	// }
-
 	// Save pool params
 	err = m.db.SaveShieldPoolParams(types.NewShieldPoolParams(genState.PoolParams, doc.InitialHeight))
 	if err != nil {

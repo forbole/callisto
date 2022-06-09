@@ -18,9 +18,8 @@ var (
 
 // Module represents the x/bank module
 type Module struct {
-	cdc codec.Codec
-	db  *database.Db
-
+	cdc    codec.Codec
+	db     *database.Db
 	source source.Source
 }
 

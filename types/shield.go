@@ -171,22 +171,3 @@ func NewShieldStatus(gobalStakingPool sdk.Int, currentNativeServiceFees sdk.DecC
 		Height:                      height,
 	}
 }
-
-// type ShieldServiceFees struct {
-// 	ForeignServiceFees          sdk.DecCoins
-// 	NativeServiceFees           sdk.DecCoins
-// 	RemainingForeignServiceFees sdk.DecCoins
-// 	RemainingNativeServiceFees  sdk.DecCoins
-// 	Height                      int64
-// }
-
-// // NewShieldServiceFees allows to build a new ShieldServiceFees instance
-// func NewShieldServiceFees(foreignServiceFees sdk.DecCoins, nativeServiceFees sdk.DecCoins, remainingForeignServiceFees sdk.DecCoins, remainingNativeServiceFees sdk.DecCoins, height int64) *ShieldServiceFees {
-// 	return &ShieldServiceFees{
-// 		ForeignServiceFees:          foreignServiceFees,
-// 		NativeServiceFees:           nativeServiceFees,
-// 		RemainingForeignServiceFees: remainingForeignServiceFees,
-// 		RemainingNativeServiceFees:  remainingNativeServiceFees,
-// 		Height:                      height,
-// 	}
-// }
