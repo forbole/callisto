@@ -82,3 +82,20 @@ func (s Source) GetPoolProviders(height int64) ([]shieldtypes.Provider, error) {
 	}
 	return res.Providers, nil
 }
+
+// GetShieldStatus implements shieldsource.Source
+func (s Source) GetShieldStatus(height int64) (*shieldtypes.QueryShieldStatusResponse, error) {
+	ctx, err := s.LoadHeight(height)
+	if err != nil {
+		return &shieldtypes.QueryShieldStatusResponse{}, fmt.Errorf("error while loading height: %s", err)
+	}
+	res, err := s.q.ShieldStatus(
+		sdk.WrapSDKContext(ctx),
+		&shieldtypes.QueryShieldStatusRequest{},
+	)
+
+	if err != nil {
+		return &shieldtypes.QueryShieldStatusResponse{}, err
+	}
+	return res, nil
+}
