@@ -48,13 +48,10 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return m.HandleMsgUpdateSponsor(cosmosMsg)
 
 	case *shieldtypes.MsgStakeForShield:
-		return m.HandleMsgStakeForShield( cosmosMsg)
+		return m.HandleMsgStakeForShield(cosmosMsg)
 
 	case *shieldtypes.MsgUnstakeFromShield:
 		return m.HandleMsgUnstakeFromShield(cosmosMsg)
-
-		// case *shieldtypes.MsgWithdrawReimbursement:
-		// 	return m.HandleMsgWithdrawReimbursement(tx, cosmosMsg)
 
 	}
 
@@ -187,9 +184,3 @@ func (m *Module) HandleMsgUnstakeFromShield(msg *shieldtypes.MsgUnstakeFromShiel
 		return m.db.UpdateShieldProviderDelegation(msg.From, 0)
 	}
 }
-
-// // HandleMsgWithdrawReimbursement allows to properly handle a MsgWithdrawReimbursement
-// func (m *Module) HandleMsgWithdrawReimbursement(tx *juno.Tx, msg *shieldtypes.MsgWithdrawReimbursement) error {
-
-// 	return nil
-// }
