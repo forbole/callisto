@@ -18,9 +18,15 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	if _, err := scheduler.Every(10).Minutes().Do(func() {
 		utils.WatchMethod(m.updatePoolProviders)
 	}); err != nil {
-		return fmt.Errorf("error while setting up shield period operations: %s", err)
+		return fmt.Errorf("error while setting up shield pool providers period operations: %s", err)
 	}
 
+	// Fetch the shield status every 10 mins
+	if _, err := scheduler.Every(10).Minutes().Do(func() {
+		utils.WatchMethod(m.updateShieldStatus)
+	}); err != nil {
+		return fmt.Errorf("error while setting up shield status period operations: %s", err)
+	}
 	return nil
 }
 
@@ -45,5 +51,29 @@ func (m *Module) updatePoolProviders() error {
 			return err
 		}
 	}
+	return nil
+}
+
+// updateShieldStatus allows to get the most up-to-date shield status
+func (m *Module) updateShieldStatus() error {
+
+	block, err := m.db.GetLastBlock()
+	if err != nil {
+		return fmt.Errorf("error while getting last block: %s", err)
+	}
+
+	shieldStatus, err := m.source.GetShieldStatus(block.Height)
+	if err != nil {
+		return err
+	}
+
+	err = m.db.SaveShieldStatus(types.NewShieldStatus(shieldStatus.GlobalShieldStakingPool,
+		shieldStatus.CurrentServiceFees.Native, shieldStatus.CurrentServiceFees.Foreign,
+		shieldStatus.RemainingServiceFees.Native, shieldStatus.RemainingServiceFees.Foreign,
+		shieldStatus.TotalCollateral, shieldStatus.TotalShield, shieldStatus.TotalWithdrawing, block.Height))
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
