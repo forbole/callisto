@@ -134,8 +134,7 @@ func (m *Module) saveShieldWithdraws(doc *tmtypes.GenesisDoc, withdraws []shield
 
 // saveShieldStatus stores the shield status present inside the given genesis state
 func (m *Module) saveShieldStatus(doc *tmtypes.GenesisDoc, status shieldtypes.GenesisState) error {
-
-	shieldStatus := types.NewShieldStatus(status.GlobalStakingPool.String(), status.ServiceFees.Native,
+	shieldStatus := types.NewShieldStatus(status.GlobalStakingPool, status.ServiceFees.Native,
 		status.ServiceFees.Foreign, status.RemainingServiceFees.Native, status.RemainingServiceFees.Foreign,
 		status.TotalCollateral, status.TotalShield, status.TotalWithdrawing, doc.InitialHeight)
 

@@ -49,7 +49,7 @@ CREATE INDEX shield_withdraws_height_index ON shield_withdraws (height);
 CREATE TABLE shield_status
 (
  	one_row_id 						BOOLEAN 	NOT NULL DEFAULT TRUE PRIMARY KEY,
-	global_staking_pool 			TEXT 		NOT NULL,
+	global_staking_pool 			BIGINT 		NOT NULL,
 	current_native_service_fees		COIN []		NOT NULL,
 	current_foreign_service_fees 	COIN []		NOT NULL,
 	remaining_native_service_fees	COIN [] 	NOT NULL,

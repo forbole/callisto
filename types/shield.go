@@ -145,7 +145,7 @@ func NewShieldWithdraw(address string, amount int64, completionTime time.Time,
 
 // ShieldStatus represents the status of the shield module at a given height
 type ShieldStatus struct {
-	GobalStakingPool            string
+	GobalStakingPool            sdk.Int
 	CurrentNativeServiceFees    sdk.DecCoins
 	CurrentForeignServiceFees   sdk.DecCoins
 	RemainingNativeServiceFees  sdk.DecCoins
@@ -157,7 +157,7 @@ type ShieldStatus struct {
 }
 
 // NewShieldStatus allows to build a new ShieldStatus instance
-func NewShieldStatus(gobalStakingPool string, currentNativeServiceFees sdk.DecCoins,
+func NewShieldStatus(gobalStakingPool sdk.Int, currentNativeServiceFees sdk.DecCoins,
 	currentForeignServiceFees sdk.DecCoins, remainingNativeServiceFees sdk.DecCoins,
 	remainingForeignServiceFees sdk.DecCoins, totalCollateral sdk.Int, totalShield sdk.Int,
 	totalWithdrawing sdk.Int, height int64) *ShieldStatus {

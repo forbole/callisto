@@ -284,7 +284,7 @@ ON CONFLICT (one_row_id) DO UPDATE
 WHERE shield_status.height <= excluded.height`
 
 	_, err := db.Sql.Exec(stmt,
-		status.GobalStakingPool,
+		status.GobalStakingPool.Int64(),
 		pq.Array(dbtypes.NewDbDecCoins(status.CurrentNativeServiceFees)),
 		pq.Array(dbtypes.NewDbDecCoins(status.CurrentForeignServiceFees)),
 		pq.Array(dbtypes.NewDbDecCoins(status.RemainingNativeServiceFees)),
