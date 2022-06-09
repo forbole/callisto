@@ -123,15 +123,11 @@ func (m *Module) HandleMsgWithdrawForeignRewards(tx *juno.Tx, msg *shieldtypes.M
 
 // HandleMsgDepositCollateral allows to properly handle a MsgDepositCollateral
 func (m *Module) HandleMsgDepositCollateral(tx *juno.Tx, msg *shieldtypes.MsgDepositCollateral) error {
-	fmt.Printf("\n *****DEPOSIT COLLATERAL***** \n ")
 	collateral, err := m.db.GetShieldProviderCollateral(msg.From)
 	if err != nil {
 		return fmt.Errorf("error while getting shield provider collateral: %s", err)
 	}
-	fmt.Printf("\n *****%d***** \n ", collateral)
-
 	updatedCollateral := collateral + msg.Collateral[0].Amount.Int64()
-	fmt.Printf("\n *****%d***** \n ", updatedCollateral)
 
 	return m.db.UpdateShieldProviderCollateral(msg.From, updatedCollateral, tx.Height)
 }
