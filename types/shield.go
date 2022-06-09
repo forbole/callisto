@@ -10,7 +10,6 @@ import (
 // ShieldPool represents a pool of the shield module at a given height
 type ShieldPool struct {
 	PoolID             uint64
-	FromAddress        string
 	Shield             sdk.Int
 	NativeServiceFees  sdk.Coins
 	ForeignServiceFees sdk.Coins
@@ -24,12 +23,11 @@ type ShieldPool struct {
 
 // NewShieldPool allows to build a new ShieldPool instance
 func NewShieldPool(
-	poolID uint64, fromAddress string, shield sdk.Int, nativeServiceFees sdk.Coins, foreignServiceFees sdk.Coins, sponsor string,
+	poolID uint64, shield sdk.Int, nativeServiceFees sdk.Coins, foreignServiceFees sdk.Coins, sponsor string,
 	sponsorAddress string, description string, shieldLimit sdk.Int, pause bool, height int64,
 ) *ShieldPool {
 	return &ShieldPool{
 		PoolID:             poolID,
-		FromAddress:        fromAddress,
 		Shield:             shield,
 		NativeServiceFees:  nativeServiceFees,
 		ForeignServiceFees: foreignServiceFees,

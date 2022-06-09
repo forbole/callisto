@@ -78,7 +78,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 // saveShieldPools stores the shield pools present inside the given genesis state
 func (m *Module) saveShieldPools(doc *tmtypes.GenesisDoc, pools []shieldtypes.Pool) error {
 	for _, pool := range pools {
-		poolRecord := types.NewShieldPool(pool.Id, "", pool.Shield, nil, nil,
+		poolRecord := types.NewShieldPool(pool.Id, pool.Shield, nil, nil,
 			pool.Sponsor, pool.SponsorAddr, pool.Description, pool.ShieldLimit, !pool.Active, doc.InitialHeight)
 		err := m.db.SaveShieldPool(poolRecord)
 		if err != nil {

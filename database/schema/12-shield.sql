@@ -1,7 +1,6 @@
 CREATE TABLE shield_pool
 (
 	pool_id					INT				NOT NULL PRIMARY KEY,
-	from_address        	TEXT            NOT NULL REFERENCES account (address),
 	shield              	TEXT         	NOT NULL,
 	native_service_fees     COIN[]		    NOT NULL,
 	foreign_service_fees    COIN[]		    NOT NULL,
