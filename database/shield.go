@@ -126,6 +126,10 @@ func (db *Db) GetShieldProviderCollateral(address string) (int64, error) {
 		return 0, fmt.Errorf("error while getting shield provider collateral value: %s", err)
 	}
 
+	if len(collateral) == 0 {
+		return 0, fmt.Errorf("cannot find shield provider for address %s", address)
+	}
+
 	return collateral[0], nil
 }
 
