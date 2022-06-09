@@ -36,3 +36,16 @@ func (s Source) GetPoolParams(height int64) (shieldtypes.PoolParams, error) {
 	}
 	return res.Params, nil
 }
+
+// GetPools implements shieldsource.Source
+func (s Source) GetPools(height int64) ([]shieldtypes.Pool, error) {
+	res, err := s.shieldClient.Pools(
+		remote.GetHeightRequestContext(s.Ctx, height),
+		&shieldtypes.QueryPoolsRequest{},
+	)
+
+	if err != nil {
+		return []shieldtypes.Pool{}, err
+	}
+	return res.Pools, nil
+}
