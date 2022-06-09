@@ -1,0 +1,14 @@
+table:
+  name: shield_purchase
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - pool_id
+    - purchaser
+    - shield
+    - description
+    - height
+    filter: {}
+  role: anonymous

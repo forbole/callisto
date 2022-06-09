@@ -1,0 +1,19 @@
+table:
+  name: shield_status
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - one_row_id
+    - global_staking_pool
+    - current_native_service_fees
+    - current_foreign_service_fees
+    - remaining_native_service_fees
+    - remaining_foreign_service_fees
+    - total_collateral
+    - total_shield
+    - total_withdrawing
+    - height
+    filter: {}
+  role: anonymous

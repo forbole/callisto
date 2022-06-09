@@ -1,0 +1,17 @@
+table:
+  name: shield_provider
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - address
+    - collateral
+    - delegation_bonded
+    - native_rewards
+    - foreign_rewards
+    - total_locked
+    - withdrawing
+    - height
+    filter: {}
+  role: anonymous

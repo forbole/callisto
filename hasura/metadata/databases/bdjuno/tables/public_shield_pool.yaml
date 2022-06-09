@@ -1,0 +1,29 @@
+table:
+  name: shield_pool
+  schema: public
+object_relationships:
+- name: shield_purchase
+  using:
+    manual_configuration:
+      column_mapping:
+        pool_id: pool_id
+      insertion_order: null
+      remote_table:
+        name: shield_purchase
+        schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - pool_id
+    - shield
+    - native_service_fees
+    - foreign_service_fees
+    - sponsor
+    - sponsor_address
+    - description
+    - shield_limit
+    - pause
+    - height
+    filter: {}
+  role: anonymous
