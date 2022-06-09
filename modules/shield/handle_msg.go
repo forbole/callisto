@@ -24,34 +24,34 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return m.HandleMsgUpdatePool(tx, cosmosMsg)
 
 	case *shieldtypes.MsgPausePool:
-		return m.HandleMsgPausePool(cosmosMsg)
+		return m.HandleMsgPausePool(tx, cosmosMsg)
 
 	case *shieldtypes.MsgResumePool:
-		return m.HandleMsgResumePool(cosmosMsg)
+		return m.HandleMsgResumePool(tx, cosmosMsg)
 
 	case *shieldtypes.MsgWithdrawRewards:
-		return m.HandleMsgWithdrawRewards(cosmosMsg)
+		return m.HandleMsgWithdrawRewards(tx, cosmosMsg)
 
 	case *shieldtypes.MsgWithdrawForeignRewards:
-		return m.HandleMsgWithdrawForeignRewards(cosmosMsg)
+		return m.HandleMsgWithdrawForeignRewards(tx, cosmosMsg)
 
 	case *shieldtypes.MsgDepositCollateral:
-		return m.HandleMsgDepositCollateral(cosmosMsg)
+		return m.HandleMsgDepositCollateral(tx, cosmosMsg)
 
 	case *shieldtypes.MsgWithdrawCollateral:
-		return m.HandleMsgWithdrawCollateral(cosmosMsg)
+		return m.HandleMsgWithdrawCollateral(tx, cosmosMsg)
 
 	case *shieldtypes.MsgPurchaseShield:
 		return m.HandleMsgPurchaseShield(tx, cosmosMsg)
 
 	case *shieldtypes.MsgUpdateSponsor:
-		return m.HandleMsgUpdateSponsor(cosmosMsg)
+		return m.HandleMsgUpdateSponsor(tx, cosmosMsg)
 
 	case *shieldtypes.MsgStakeForShield:
-		return m.HandleMsgStakeForShield(cosmosMsg)
+		return m.HandleMsgStakeForShield(tx, cosmosMsg)
 
 	case *shieldtypes.MsgUnstakeFromShield:
-		return m.HandleMsgUnstakeFromShield(cosmosMsg)
+		return m.HandleMsgUnstakeFromShield(tx, cosmosMsg)
 
 	}
 
@@ -100,49 +100,53 @@ func (m *Module) HandleMsgUpdatePool(tx *juno.Tx, msg *shieldtypes.MsgUpdatePool
 }
 
 // HandleMsgPausePool allows to properly handle a MsgPausePool
-func (m *Module) HandleMsgPausePool(msg *shieldtypes.MsgPausePool) error {
+func (m *Module) HandleMsgPausePool(tx *juno.Tx, msg *shieldtypes.MsgPausePool) error {
 	pause := true
-	return m.db.UpdatePoolPauseStatus(msg.PoolId, pause)
+	return m.db.UpdatePoolPauseStatus(msg.PoolId, pause, tx.Height)
 }
 
 // HandleMsgResumePool allows to properly handle a MsgResumePool
-func (m *Module) HandleMsgResumePool(msg *shieldtypes.MsgResumePool) error {
+func (m *Module) HandleMsgResumePool(tx *juno.Tx, msg *shieldtypes.MsgResumePool) error {
 	pause := false
-	return m.db.UpdatePoolPauseStatus(msg.PoolId, pause)
+	return m.db.UpdatePoolPauseStatus(msg.PoolId, pause, tx.Height)
 }
 
 // HandleMsgWithdrawRewards allows to properly handle a MsgWithdrawRewards
-func (m *Module) HandleMsgWithdrawRewards(msg *shieldtypes.MsgWithdrawRewards) error {
-	return m.db.WithdrawNativeRewards(msg.From)
+func (m *Module) HandleMsgWithdrawRewards(tx *juno.Tx, msg *shieldtypes.MsgWithdrawRewards) error {
+	return m.db.WithdrawNativeRewards(msg.From, tx.Height)
 }
 
 // HandleMsgWithdrawForeignRewards allows to properly handle a MsgWithdrawForeignRewards
-func (m *Module) HandleMsgWithdrawForeignRewards(msg *shieldtypes.MsgWithdrawForeignRewards) error {
-	return m.db.WithdrawForeignRewards(msg.From)
+func (m *Module) HandleMsgWithdrawForeignRewards(tx *juno.Tx, msg *shieldtypes.MsgWithdrawForeignRewards) error {
+	return m.db.WithdrawForeignRewards(msg.From, tx.Height)
 }
 
 // HandleMsgDepositCollateral allows to properly handle a MsgDepositCollateral
-func (m *Module) HandleMsgDepositCollateral(msg *shieldtypes.MsgDepositCollateral) error {
+func (m *Module) HandleMsgDepositCollateral(tx *juno.Tx, msg *shieldtypes.MsgDepositCollateral) error {
+	fmt.Printf("\n *****DEPOSIT COLLATERAL***** \n ")
 	collateral, err := m.db.GetShieldProviderCollateral(msg.From)
 	if err != nil {
 		return fmt.Errorf("error while getting shield provider collateral: %s", err)
 	}
+	fmt.Printf("\n *****%d***** \n ", collateral)
 
 	updatedCollateral := collateral + msg.Collateral[0].Amount.Int64()
-	return m.db.UpdateShieldProviderCollateral(msg.From, updatedCollateral)
+	fmt.Printf("\n *****%d***** \n ", updatedCollateral)
+
+	return m.db.UpdateShieldProviderCollateral(msg.From, updatedCollateral, tx.Height)
 }
 
 // HandleMsgWithdrawCollateral allows to properly handle a MsgWithdrawCollateral
-func (m *Module) HandleMsgWithdrawCollateral(msg *shieldtypes.MsgWithdrawCollateral) error {
+func (m *Module) HandleMsgWithdrawCollateral(tx *juno.Tx, msg *shieldtypes.MsgWithdrawCollateral) error {
 	collateral, err := m.db.GetShieldProviderCollateral(msg.From)
 	if err != nil {
 		return fmt.Errorf("error while getting shield provider collateral: %s", err)
 	}
 	if msg.Collateral[0].Amount.Int64() >= collateral {
 		updatedCollateral := collateral - msg.Collateral[0].Amount.Int64()
-		return m.db.UpdateShieldProviderCollateral(msg.From, updatedCollateral)
+		return m.db.UpdateShieldProviderCollateral(msg.From, updatedCollateral, tx.Height)
 	} else {
-		return m.db.UpdateShieldProviderCollateral(msg.From, 0)
+		return m.db.UpdateShieldProviderCollateral(msg.From, 0, tx.Height)
 	}
 }
 
@@ -156,31 +160,31 @@ func (m *Module) HandleMsgPurchaseShield(tx *juno.Tx, msg *shieldtypes.MsgPurcha
 }
 
 // HandleMsgUpdateSponsor allows to properly handle a MsgUpdateSponsor
-func (m *Module) HandleMsgUpdateSponsor(msg *shieldtypes.MsgUpdateSponsor) error {
+func (m *Module) HandleMsgUpdateSponsor(tx *juno.Tx, msg *shieldtypes.MsgUpdateSponsor) error {
 
-	return m.db.UpdatePoolSponsor(msg.PoolId, msg.Sponsor, msg.SponsorAddr)
+	return m.db.UpdatePoolSponsor(msg.PoolId, msg.Sponsor, msg.SponsorAddr, tx.Height)
 }
 
 // HandleMsgStakeForShield allows to properly handle a MsgStakeForShield
-func (m *Module) HandleMsgStakeForShield(msg *shieldtypes.MsgStakeForShield) error {
+func (m *Module) HandleMsgStakeForShield(tx *juno.Tx, msg *shieldtypes.MsgStakeForShield) error {
 	delegation, err := m.db.GetShieldProviderDelegation(msg.From)
 	if err != nil {
 		return fmt.Errorf("error while getting shield provider delegation: %s", err)
 	}
 	totalDelegation := delegation + msg.Shield[0].Amount.Int64()
-	return m.db.UpdateShieldProviderDelegation(msg.From, totalDelegation)
+	return m.db.UpdateShieldProviderDelegation(msg.From, totalDelegation, tx.Height)
 }
 
 // HandleMsgUnstakeFromShield allows to properly handle a MsgUnstakeFromShield
-func (m *Module) HandleMsgUnstakeFromShield(msg *shieldtypes.MsgUnstakeFromShield) error {
+func (m *Module) HandleMsgUnstakeFromShield(tx *juno.Tx, msg *shieldtypes.MsgUnstakeFromShield) error {
 	delegation, err := m.db.GetShieldProviderDelegation(msg.From)
 	if err != nil {
 		return fmt.Errorf("error while getting shield provider delegation: %s", err)
 	}
 	if msg.Shield[0].Amount.Int64() >= delegation {
 		updatedDelegation := delegation - msg.Shield[0].Amount.Int64()
-		return m.db.UpdateShieldProviderDelegation(msg.From, updatedDelegation)
+		return m.db.UpdateShieldProviderDelegation(msg.From, updatedDelegation, tx.Height)
 	} else {
-		return m.db.UpdateShieldProviderDelegation(msg.From, 0)
+		return m.db.UpdateShieldProviderDelegation(msg.From, 0, tx.Height)
 	}
 }

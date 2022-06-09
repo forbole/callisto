@@ -47,10 +47,10 @@ WHERE shield_pool.height <= excluded.height`
 }
 
 // UpdatePoolPauseStatus updates the pool pause status
-func (db *Db) UpdatePoolPauseStatus(poolID uint64, pause bool) error {
-	stmt := `UPDATE shield_pool SET pause = $1 WHERE pool_id = %2`
+func (db *Db) UpdatePoolPauseStatus(poolID uint64, pause bool, height int64) error {
+	stmt := `UPDATE shield_pool SET pause = $1, height = $2 WHERE pool_id = %3`
 
-	_, err := db.Sql.Exec(stmt, pause, poolID)
+	_, err := db.Sql.Exec(stmt, pause, height, poolID)
 	if err != nil {
 		return fmt.Errorf("error while updating shield pool pause status: %s", err)
 	}
@@ -59,10 +59,10 @@ func (db *Db) UpdatePoolPauseStatus(poolID uint64, pause bool) error {
 }
 
 // UpdatePoolSponsor updates the pool sponsor address
-func (db *Db) UpdatePoolSponsor(poolID uint64, sponsor string, sponsorAddress string) error {
-	stmt := `UPDATE shield_pool SET sponsor = $1 AND sponsor_address = $2 WHERE pool_id = %3`
+func (db *Db) UpdatePoolSponsor(poolID uint64, sponsor string, sponsorAddress string, height int64) error {
+	stmt := `UPDATE shield_pool SET sponsor = $1, sponsor_address = $2, height = $3 WHERE pool_id = %4`
 
-	_, err := db.Sql.Exec(stmt, sponsor, sponsorAddress, poolID)
+	_, err := db.Sql.Exec(stmt, sponsor, sponsorAddress, height, poolID)
 	if err != nil {
 		return fmt.Errorf("error while updating shield pool sponsor: %s", err)
 	}
@@ -71,10 +71,10 @@ func (db *Db) UpdatePoolSponsor(poolID uint64, sponsor string, sponsorAddress st
 }
 
 // UpdateShieldProviderCollateral updates the shield provider' collateral value
-func (db *Db) UpdateShieldProviderCollateral(address string, collateral int64) error {
-	stmt := `UPDATE shield_provider SET collateral = $1 WHERE address = $2`
+func (db *Db) UpdateShieldProviderCollateral(address string, collateral int64, height int64) error {
+	stmt := `UPDATE shield_provider SET collateral = $1, height = $2 WHERE address = $3`
 
-	_, err := db.Sql.Exec(stmt, collateral, address)
+	_, err := db.Sql.Exec(stmt, collateral, height, address)
 	if err != nil {
 		return fmt.Errorf("error while updating shield provider collateral value: %s", err)
 	}
@@ -83,10 +83,10 @@ func (db *Db) UpdateShieldProviderCollateral(address string, collateral int64) e
 }
 
 // WithdrawNativeRewards withdraws the shield provider' native rewards
-func (db *Db) WithdrawNativeRewards(address string) error {
-	stmt := `UPDATE shield_provider SET native_rewards = $1 WHERE address = $2`
+func (db *Db) WithdrawNativeRewards(address string, height int64) error {
+	stmt := `UPDATE shield_provider SET native_rewards = $1, height = $2 WHERE address = $3`
 
-	_, err := db.Sql.Exec(stmt, pq.Array(dbtypes.NewDbDecCoins(sdk.DecCoins{})), address)
+	_, err := db.Sql.Exec(stmt, pq.Array(dbtypes.NewDbDecCoins(sdk.DecCoins{})), height, address)
 	if err != nil {
 		return fmt.Errorf("error while withdrawing the native rewards: %s", err)
 	}
@@ -95,10 +95,10 @@ func (db *Db) WithdrawNativeRewards(address string) error {
 }
 
 // WithdrawForeignRewards withdraws the shield provider' foreign rewards
-func (db *Db) WithdrawForeignRewards(address string) error {
-	stmt := `UPDATE shield_provider SET foreign_rewards = $1 WHERE address = $2`
+func (db *Db) WithdrawForeignRewards(address string, height int64) error {
+	stmt := `UPDATE shield_provider SET foreign_rewards = $1, height = $2 WHERE address = $3`
 
-	_, err := db.Sql.Exec(stmt, pq.Array(dbtypes.NewDbDecCoins(sdk.DecCoins{})), address)
+	_, err := db.Sql.Exec(stmt, pq.Array(dbtypes.NewDbDecCoins(sdk.DecCoins{})), height, address)
 	if err != nil {
 		return fmt.Errorf("error while withdrawing the foreign rewards: %s", err)
 	}
@@ -107,10 +107,10 @@ func (db *Db) WithdrawForeignRewards(address string) error {
 }
 
 // UpdateShieldProviderDelegation updates the shield provider' delegation value
-func (db *Db) UpdateShieldProviderDelegation(address string, delegation int64) error {
-	stmt := `UPDATE shield_provider SET delegation_bonded = $1 WHERE address = $2`
+func (db *Db) UpdateShieldProviderDelegation(address string, delegation int64, height int64) error {
+	stmt := `UPDATE shield_provider SET delegation_bonded = $1, height = $2 WHERE address = $3`
 
-	_, err := db.Sql.Exec(stmt, delegation, address)
+	_, err := db.Sql.Exec(stmt, delegation, height, address)
 	if err != nil {
 		return fmt.Errorf("error while updating shield provider delegation value: %s", err)
 	}
@@ -120,7 +120,7 @@ func (db *Db) UpdateShieldProviderDelegation(address string, delegation int64) e
 
 // GetShieldProviderCollateral returns the shield provider' collateral value
 func (db *Db) GetShieldProviderCollateral(address string) (int64, error) {
-	var collateral int64
+	var collateral []int64
 	stmt := `SELECT collateral from shield_provider WHERE address = $1`
 
 	err := db.Sqlx.Select(&collateral, stmt, address)
@@ -128,7 +128,7 @@ func (db *Db) GetShieldProviderCollateral(address string) (int64, error) {
 		return 0, fmt.Errorf("error while getting shield provider collateral value: %s", err)
 	}
 
-	return collateral, nil
+	return collateral[0], nil
 }
 
 // GetShieldProviderDelegation returns the shield provider' delegation value
