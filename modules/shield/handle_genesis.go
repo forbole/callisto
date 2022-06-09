@@ -48,8 +48,8 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 		return fmt.Errorf("error while storing shield withdraws: %s", err)
 	}
 
-	// Save shield info
-	err = m.saveShieldInfo(doc, genState)
+	// Save shield status
+	err = m.saveShieldStatus(doc, genState)
 	if err != nil {
 		return fmt.Errorf("error while storing shield withdraws: %s", err)
 	}
@@ -132,15 +132,15 @@ func (m *Module) saveShieldWithdraws(doc *tmtypes.GenesisDoc, withdraws []shield
 	return nil
 }
 
-// saveShieldInfo stores the shield info present inside the given genesis state
-func (m *Module) saveShieldInfo(doc *tmtypes.GenesisDoc, info shieldtypes.GenesisState) error {
+// saveShieldStatus stores the shield status present inside the given genesis state
+func (m *Module) saveShieldStatus(doc *tmtypes.GenesisDoc, status shieldtypes.GenesisState) error {
 
-	infos := types.NewShieldInfo(info.GlobalStakingPool.String(), info.LastUpdateTime.UTC(), info.NextPoolId,
-		info.NextPurchaseId, info.OriginalStakings, info.ProposalIDReimbursementPairs, info.ShieldAdmin,
-		info.ShieldStakingRate.String(), info.StakeForShields, info.TotalClaimed, info.TotalCollateral, info.TotalShield,
-		info.TotalWithdrawing, doc.InitialHeight)
+	shieldStatus := types.NewShieldStatus(status.GlobalStakingPool.String(), status.LastUpdateTime.UTC(), status.NextPoolId,
+		status.NextPurchaseId, status.OriginalStakings, status.ProposalIDReimbursementPairs, status.ShieldAdmin,
+		status.ShieldStakingRate.String(), status.StakeForShields, status.TotalClaimed, status.TotalCollateral, status.TotalShield,
+		status.TotalWithdrawing, doc.InitialHeight)
 
-	err := m.db.SaveShieldInfo(infos)
+	err := m.db.SaveShieldStatus(shieldStatus)
 	if err != nil {
 		return err
 	}

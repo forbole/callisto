@@ -143,8 +143,8 @@ func NewShieldWithdraw(address string, amount int64, completionTime time.Time,
 	}
 }
 
-// ShieldInfo represents the base info of the shield module at a given height
-type ShieldInfo struct {
+// ShieldStatus represents the status of the shield module at a given height
+type ShieldStatus struct {
 	GobalStakingPool            string
 	LastUpdateTime              time.Time
 	NextPoolID                  uint64
@@ -161,12 +161,12 @@ type ShieldInfo struct {
 	Height                      int64
 }
 
-// NewShieldInfo allows to build a new ShieldInfo instance
-func NewShieldInfo(gobalStakingPool string, lastUpdateTime time.Time, nextPoolID uint64, nextPurchaseID uint64,
+// NewShieldStatus allows to build a new ShieldStatus instance
+func NewShieldStatus(gobalStakingPool string, lastUpdateTime time.Time, nextPoolID uint64, nextPurchaseID uint64,
 	originalStaking []shieldtypes.OriginalStaking, proposalIDReimbursementPair []shieldtypes.ProposalIDReimbursementPair,
 	shieldAdmin string, shieldStakingRate string, stakeForShields []shieldtypes.ShieldStaking, totalClaimed sdk.Int,
-	totalCollateral sdk.Int, totalShield sdk.Int, totalWithdrawing sdk.Int, height int64) *ShieldInfo {
-	return &ShieldInfo{
+	totalCollateral sdk.Int, totalShield sdk.Int, totalWithdrawing sdk.Int, height int64) *ShieldStatus {
+	return &ShieldStatus{
 		GobalStakingPool:            gobalStakingPool,
 		LastUpdateTime:              lastUpdateTime,
 		NextPoolID:                  nextPoolID,

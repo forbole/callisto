@@ -46,7 +46,7 @@ CREATE TABLE shield_withdraws
 );
 CREATE INDEX shield_withdraws_height_index ON shield_withdraws (height);
 
-CREATE TABLE shield_info
+CREATE TABLE shield_status
 (
  	one_row_id 						BOOLEAN 					NOT NULL DEFAULT TRUE PRIMARY KEY,
 	global_staking_pool 			TEXT 						NOT NULL,
@@ -65,7 +65,7 @@ CREATE TABLE shield_info
     height              			BIGINT          			NOT NULL,
  	CHECK (one_row_id)
 );
-CREATE INDEX shield_info_height_index ON shield_info (height);
+CREATE INDEX shield_status_height_index ON shield_status (height);
 
 CREATE TABLE shield_service_fees
 (
