@@ -65,6 +65,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	if err != nil {
 		return fmt.Errorf("error while storing shield claim proposal params: %s", err)
 	}
+
 	return nil
 }
 
@@ -106,7 +107,6 @@ func (m *Module) savePurchaseList(doc *tmtypes.GenesisDoc, list []shieldtypes.Pu
 				return err
 			}
 		}
-
 	}
 
 	return nil

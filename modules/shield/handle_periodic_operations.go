@@ -14,11 +14,11 @@ import (
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	log.Debug().Str("module", "shield").Msg("setting up periodic tasks")
 
-	// Fetch the pool providers every 10 mins
+	// Fetch the shield providers every 10 mins
 	if _, err := scheduler.Every(10).Minutes().Do(func() {
-		utils.WatchMethod(m.updatePoolProviders)
+		utils.WatchMethod(m.updateShieldProviders)
 	}); err != nil {
-		return fmt.Errorf("error while setting up shield pool providers period operations: %s", err)
+		return fmt.Errorf("error while setting up shield providers period operations: %s", err)
 	}
 
 	// Fetch the shield status every 10 mins
@@ -30,15 +30,15 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	return nil
 }
 
-// updatePoolProviders allows to get the most up-to-date pool providers
-func (m *Module) updatePoolProviders() error {
+// updateShieldProviders allows to get the most up-to-date shield providers
+func (m *Module) updateShieldProviders() error {
 
 	block, err := m.db.GetLastBlock()
 	if err != nil {
 		return fmt.Errorf("error while getting last block: %s", err)
 	}
 
-	providers, err := m.source.GetPoolProviders(block.Height)
+	providers, err := m.source.GetShieldProviders(block.Height)
 	if err != nil {
 		return err
 	}

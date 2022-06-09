@@ -50,8 +50,8 @@ func (s Source) GetPools(height int64) ([]shieldtypes.Pool, error) {
 	return res.Pools, nil
 }
 
-// GetPoolProviders implements shieldsource.Source
-func (s Source) GetPoolProviders(height int64) ([]shieldtypes.Provider, error) {
+// GetShieldProviders implements shieldsource.Source
+func (s Source) GetShieldProviders(height int64) ([]shieldtypes.Provider, error) {
 	res, err := s.shieldClient.Providers(
 		remote.GetHeightRequestContext(s.Ctx, height),
 		&shieldtypes.QueryProvidersRequest{},
