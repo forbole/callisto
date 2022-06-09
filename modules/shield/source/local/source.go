@@ -64,3 +64,21 @@ func (s Source) GetPools(height int64) ([]shieldtypes.Pool, error) {
 	}
 	return res.Pools, nil
 }
+
+// GetPoolProviders implements shieldsource.Source
+func (s Source) GetPoolProviders(height int64) ([]shieldtypes.Provider, error) {
+	ctx, err := s.LoadHeight(height)
+	if err != nil {
+		return []shieldtypes.Provider{}, fmt.Errorf("error while loading height: %s", err)
+	}
+
+	res, err := s.q.Providers(
+		sdk.WrapSDKContext(ctx),
+		&shieldtypes.QueryProvidersRequest{},
+	)
+
+	if err != nil {
+		return []shieldtypes.Provider{}, err
+	}
+	return res.Providers, nil
+}
