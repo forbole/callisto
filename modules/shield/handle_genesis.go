@@ -54,12 +54,12 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 		return fmt.Errorf("error while storing shield withdraws: %s", err)
 	}
 
-	// Save shield service fees
-	err = m.db.SaveShieldServiceFees(types.NewShieldServiceFees(genState.ServiceFees.Foreign, genState.ServiceFees.Native,
-		genState.RemainingServiceFees.Foreign, genState.RemainingServiceFees.Native, doc.InitialHeight))
-	if err != nil {
-		return fmt.Errorf("error while storing shield service fees: %s", err)
-	}
+	// // Save shield service fees
+	// err = m.db.SaveShieldServiceFees(types.NewShieldServiceFees(genState.ServiceFees.Foreign, genState.ServiceFees.Native,
+	// 	genState.RemainingServiceFees.Foreign, genState.RemainingServiceFees.Native, doc.InitialHeight))
+	// if err != nil {
+	// 	return fmt.Errorf("error while storing shield service fees: %s", err)
+	// }
 
 	// Save pool params
 	err = m.db.SaveShieldPoolParams(types.NewShieldPoolParams(genState.PoolParams, doc.InitialHeight))
@@ -135,10 +135,9 @@ func (m *Module) saveShieldWithdraws(doc *tmtypes.GenesisDoc, withdraws []shield
 // saveShieldStatus stores the shield status present inside the given genesis state
 func (m *Module) saveShieldStatus(doc *tmtypes.GenesisDoc, status shieldtypes.GenesisState) error {
 
-	shieldStatus := types.NewShieldStatus(status.GlobalStakingPool.String(), status.LastUpdateTime.UTC(), status.NextPoolId,
-		status.NextPurchaseId, status.OriginalStakings, status.ProposalIDReimbursementPairs, status.ShieldAdmin,
-		status.ShieldStakingRate.String(), status.StakeForShields, status.TotalClaimed, status.TotalCollateral, status.TotalShield,
-		status.TotalWithdrawing, doc.InitialHeight)
+	shieldStatus := types.NewShieldStatus(status.GlobalStakingPool.String(), status.ServiceFees.Native,
+		status.ServiceFees.Foreign, status.RemainingServiceFees.Native, status.RemainingServiceFees.Foreign,
+		status.TotalCollateral, status.TotalShield, status.TotalWithdrawing, doc.InitialHeight)
 
 	err := m.db.SaveShieldStatus(shieldStatus)
 	if err != nil {

@@ -268,21 +268,15 @@ VALUES ($1, $2, $3, $4)`
 // SaveShieldStatus allows to save the shield status for the given height
 func (db *Db) SaveShieldStatus(status *types.ShieldStatus) error {
 	stmt := `
-INSERT INTO shield_status (global_staking_pool, last_update_time, next_pool_id, next_purchase_id, 
-    original_staking, proposal_id_reimbursement_pair, shield_admin, shield_staking_rate, stake_for_shields,
-	total_claimed, total_collateral, total_shield, total_withdrawing, height) 
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+INSERT INTO shield_status (global_staking_pool, current_native_service_fees, current_foreign_service_fees, remaining_native_service_fees,
+	remaining_foreign_service_fees, total_collateral, total_shield, total_withdrawing, height) 
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 ON CONFLICT (one_row_id) DO UPDATE 
     SET global_staking_pool = excluded.global_staking_pool, 
-	last_update_time = excluded.last_update_time, 
-	next_pool_id = excluded.next_pool_id, 
-	next_purchase_id = excluded.next_purchase_id, 
-	original_staking = excluded.original_staking, 
-	proposal_id_reimbursement_pair = excluded.proposal_id_reimbursement_pair,
-	shield_admin = excluded.shield_admin, 
-	shield_staking_rate = excluded.shield_staking_rate, 
-	stake_for_shields = excluded.stake_for_shields, 
-	total_claimed = excluded.total_claimed, 
+	current_native_service_fees = excluded.current_native_service_fees,
+	current_foreign_service_fees = excluded.current_foreign_service_fees,
+	remaining_native_service_fees = excluded.remaining_native_service_fees,
+	remaining_foreign_service_fees = excluded.remaining_foreign_service_fees, 
 	total_collateral = excluded.total_collateral, 
 	total_shield = excluded.total_shield, 
 	total_withdrawing = excluded.total_withdrawing, 
@@ -291,15 +285,10 @@ WHERE shield_status.height <= excluded.height`
 
 	_, err := db.Sql.Exec(stmt,
 		status.GobalStakingPool,
-		status.LastUpdateTime,
-		status.NextPoolID,
-		status.NextPurchaseID,
-		pq.Array(status.OriginalStaking),
-		pq.Array(status.ProposalIDReimbursementPair),
-		status.ShieldAdmin,
-		status.ShieldStakingRate,
-		pq.Array(status.StakeForShields),
-		status.TotalClaimed.Int64(),
+		pq.Array(dbtypes.NewDbDecCoins(status.CurrentNativeServiceFees)),
+		pq.Array(dbtypes.NewDbDecCoins(status.CurrentForeignServiceFees)),
+		pq.Array(dbtypes.NewDbDecCoins(status.RemainingNativeServiceFees)),
+		pq.Array(dbtypes.NewDbDecCoins(status.RemainingForeignServiceFees)),
 		status.TotalCollateral.Int64(),
 		status.TotalShield.Int64(),
 		status.TotalWithdrawing.Int64(),
@@ -313,31 +302,31 @@ WHERE shield_status.height <= excluded.height`
 	return nil
 }
 
-// SaveShieldServiceFees allows to save shield service fees
-func (db *Db) SaveShieldServiceFees(fees *types.ShieldServiceFees) error {
-	stmt := `
-INSERT INTO shield_service_fees (foreign_service_fees, native_service_fees, 
-	remaining_foreign_service_fees, remaining_native_service_fees, height) 
-VALUES ($1, $2, $3, $4, $5)
-ON CONFLICT (one_row_id) DO UPDATE 
-    SET foreign_service_fees = excluded.foreign_service_fees,
-        native_service_fees = excluded.native_service_fees,
-        remaining_foreign_service_fees = excluded.remaining_foreign_service_fees,
-        remaining_native_service_fees = excluded.remaining_native_service_fees,
-        height = excluded.height
-WHERE shield_service_fees.height <= excluded.height`
+// // SaveShieldServiceFees allows to save shield service fees
+// func (db *Db) SaveShieldServiceFees(fees *types.ShieldServiceFees) error {
+// 	stmt := `
+// INSERT INTO shield_service_fees (foreign_service_fees, native_service_fees,
+// 	remaining_foreign_service_fees, remaining_native_service_fees, height)
+// VALUES ($1, $2, $3, $4, $5)
+// ON CONFLICT (one_row_id) DO UPDATE
+//     SET foreign_service_fees = excluded.foreign_service_fees,
+//         native_service_fees = excluded.native_service_fees,
+//         remaining_foreign_service_fees = excluded.remaining_foreign_service_fees,
+//         remaining_native_service_fees = excluded.remaining_native_service_fees,
+//         height = excluded.height
+// WHERE shield_service_fees.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt,
-		pq.Array(dbtypes.NewDbDecCoins(fees.ForeignServiceFees)),
-		pq.Array(dbtypes.NewDbDecCoins(fees.NativeServiceFees)),
-		pq.Array(dbtypes.NewDbDecCoins(fees.RemainingForeignServiceFees)),
-		pq.Array(dbtypes.NewDbDecCoins(fees.RemainingNativeServiceFees)),
-		fees.Height,
-	)
+// 	_, err := db.Sql.Exec(stmt,
+// 		pq.Array(dbtypes.NewDbDecCoins(fees.ForeignServiceFees)),
+// 		pq.Array(dbtypes.NewDbDecCoins(fees.NativeServiceFees)),
+// 		pq.Array(dbtypes.NewDbDecCoins(fees.RemainingForeignServiceFees)),
+// 		pq.Array(dbtypes.NewDbDecCoins(fees.RemainingNativeServiceFees)),
+// 		fees.Height,
+// 	)
 
-	if err != nil {
-		return fmt.Errorf("error while storing shield service fees: %s", err)
-	}
+// 	if err != nil {
+// 		return fmt.Errorf("error while storing shield service fees: %s", err)
+// 	}
 
-	return nil
-}
+// 	return nil
+// }

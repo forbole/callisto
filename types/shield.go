@@ -146,15 +146,10 @@ func NewShieldWithdraw(address string, amount int64, completionTime time.Time,
 // ShieldStatus represents the status of the shield module at a given height
 type ShieldStatus struct {
 	GobalStakingPool            string
-	LastUpdateTime              time.Time
-	NextPoolID                  uint64
-	NextPurchaseID              uint64
-	OriginalStaking             []shieldtypes.OriginalStaking
-	ProposalIDReimbursementPair []shieldtypes.ProposalIDReimbursementPair
-	ShieldAdmin                 string
-	ShieldStakingRate           string
-	StakeForShields             []shieldtypes.ShieldStaking
-	TotalClaimed                sdk.Int
+	CurrentNativeServiceFees    sdk.DecCoins
+	CurrentForeignServiceFees   sdk.DecCoins
+	RemainingNativeServiceFees  sdk.DecCoins
+	RemainingForeignServiceFees sdk.DecCoins
 	TotalCollateral             sdk.Int
 	TotalShield                 sdk.Int
 	TotalWithdrawing            sdk.Int
@@ -162,21 +157,16 @@ type ShieldStatus struct {
 }
 
 // NewShieldStatus allows to build a new ShieldStatus instance
-func NewShieldStatus(gobalStakingPool string, lastUpdateTime time.Time, nextPoolID uint64, nextPurchaseID uint64,
-	originalStaking []shieldtypes.OriginalStaking, proposalIDReimbursementPair []shieldtypes.ProposalIDReimbursementPair,
-	shieldAdmin string, shieldStakingRate string, stakeForShields []shieldtypes.ShieldStaking, totalClaimed sdk.Int,
-	totalCollateral sdk.Int, totalShield sdk.Int, totalWithdrawing sdk.Int, height int64) *ShieldStatus {
+func NewShieldStatus(gobalStakingPool string, currentNativeServiceFees sdk.DecCoins,
+	currentForeignServiceFees sdk.DecCoins, remainingNativeServiceFees sdk.DecCoins,
+	remainingForeignServiceFees sdk.DecCoins, totalCollateral sdk.Int, totalShield sdk.Int,
+	totalWithdrawing sdk.Int, height int64) *ShieldStatus {
 	return &ShieldStatus{
 		GobalStakingPool:            gobalStakingPool,
-		LastUpdateTime:              lastUpdateTime,
-		NextPoolID:                  nextPoolID,
-		NextPurchaseID:              nextPurchaseID,
-		OriginalStaking:             originalStaking,
-		ProposalIDReimbursementPair: proposalIDReimbursementPair,
-		ShieldAdmin:                 shieldAdmin,
-		ShieldStakingRate:           shieldStakingRate,
-		StakeForShields:             stakeForShields,
-		TotalClaimed:                totalClaimed,
+		CurrentNativeServiceFees:    currentNativeServiceFees,
+		CurrentForeignServiceFees:   currentForeignServiceFees,
+		RemainingNativeServiceFees:  remainingNativeServiceFees,
+		RemainingForeignServiceFees: remainingForeignServiceFees,
 		TotalCollateral:             totalCollateral,
 		TotalShield:                 totalShield,
 		TotalWithdrawing:            totalWithdrawing,
@@ -184,21 +174,21 @@ func NewShieldStatus(gobalStakingPool string, lastUpdateTime time.Time, nextPool
 	}
 }
 
-type ShieldServiceFees struct {
-	ForeignServiceFees          sdk.DecCoins
-	NativeServiceFees           sdk.DecCoins
-	RemainingForeignServiceFees sdk.DecCoins
-	RemainingNativeServiceFees  sdk.DecCoins
-	Height                      int64
-}
+// type ShieldServiceFees struct {
+// 	ForeignServiceFees          sdk.DecCoins
+// 	NativeServiceFees           sdk.DecCoins
+// 	RemainingForeignServiceFees sdk.DecCoins
+// 	RemainingNativeServiceFees  sdk.DecCoins
+// 	Height                      int64
+// }
 
-// NewShieldServiceFees allows to build a new ShieldServiceFees instance
-func NewShieldServiceFees(foreignServiceFees sdk.DecCoins, nativeServiceFees sdk.DecCoins, remainingForeignServiceFees sdk.DecCoins, remainingNativeServiceFees sdk.DecCoins, height int64) *ShieldServiceFees {
-	return &ShieldServiceFees{
-		ForeignServiceFees:          foreignServiceFees,
-		NativeServiceFees:           nativeServiceFees,
-		RemainingForeignServiceFees: remainingForeignServiceFees,
-		RemainingNativeServiceFees:  remainingNativeServiceFees,
-		Height:                      height,
-	}
-}
+// // NewShieldServiceFees allows to build a new ShieldServiceFees instance
+// func NewShieldServiceFees(foreignServiceFees sdk.DecCoins, nativeServiceFees sdk.DecCoins, remainingForeignServiceFees sdk.DecCoins, remainingNativeServiceFees sdk.DecCoins, height int64) *ShieldServiceFees {
+// 	return &ShieldServiceFees{
+// 		ForeignServiceFees:          foreignServiceFees,
+// 		NativeServiceFees:           nativeServiceFees,
+// 		RemainingForeignServiceFees: remainingForeignServiceFees,
+// 		RemainingNativeServiceFees:  remainingNativeServiceFees,
+// 		Height:                      height,
+// 	}
+// }
