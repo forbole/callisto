@@ -38,8 +38,12 @@ func (m *Module) updatePoolProviders() error {
 	}
 
 	for _, provider := range providers {
-		m.db.SaveShieldProvider(types.NewShieldProvider(provider.Address, provider.Collateral.Int64(), provider.DelegationBonded.Int64(),
-			provider.Rewards.Native, provider.Rewards.Foreign, provider.TotalLocked.Int64(), provider.Withdrawing.Int64(), block.Height))
+		err := m.db.SaveShieldProvider(types.NewShieldProvider(provider.Address, provider.Collateral.Int64(),
+			provider.DelegationBonded.Int64(), provider.Rewards.Native, provider.Rewards.Foreign,
+			provider.TotalLocked.Int64(), provider.Withdrawing.Int64(), block.Height))
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
