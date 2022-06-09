@@ -13,13 +13,13 @@ import (
 // SaveShieldPool allows to save for the given height the given shieldtypes pool
 func (db *Db) SaveShieldPool(pool *types.ShieldPool) error {
 	stmt := `
-INSERT INTO shield_pool (pool_id, from_address, shield, native_deposit, foreign_deposit, sponsor, sponsor_address, description, shield_limit, pause, height) 
+INSERT INTO shield_pool (pool_id, from_address, shield, native_service_fees, foreign_service_fees, sponsor, sponsor_address, description, shield_limit, pause, height) 
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 ON CONFLICT (pool_id) DO UPDATE 
     SET from_address = excluded.from_address, 
 	shield = excluded.shield, 
-	native_deposit = excluded.native_deposit, 
-	foreign_deposit = excluded.foreign_deposit, 
+	native_service_fees = excluded.native_service_fees, 
+	foreign_service_fees = excluded.foreign_service_fees, 
 	description = excluded.description, 
 	shield_limit = excluded.shield_limit, 
     height = excluded.height
@@ -29,8 +29,8 @@ WHERE shield_pool.height <= excluded.height`
 		pool.PoolID,
 		pool.FromAddress,
 		pool.Shield.String(),
-		pq.Array(dbtypes.NewDbCoins(pool.NativeDeposit)),
-		pq.Array(dbtypes.NewDbCoins(pool.ForeignDeposit)),
+		pq.Array(dbtypes.NewDbCoins(pool.NativeServiceFees)),
+		pq.Array(dbtypes.NewDbCoins(pool.ForeignServiceFees)),
 		pool.Sponsor,
 		pool.SponsorAddr,
 		pool.Description,
