@@ -446,3 +446,87 @@ func (suite *DbTestSuite) TestBigDipperDb_ShieldWithdraws() {
 	}
 
 }
+
+func (suite *DbTestSuite) TestBigDipperDb_ShieldStatus() {
+
+	// Save the data
+	shieldStatus := types.NewShieldStatus(
+		sdk.NewInt(10000000),
+		sdk.NewDecCoins(sdk.NewDecCoin("uatom", sdk.NewInt(3120000))),
+		sdk.NewDecCoins(sdk.NewDecCoin("uatom", sdk.NewInt(240000))),
+		sdk.NewDecCoins(sdk.NewDecCoin("uatom", sdk.NewInt(180000))),
+		sdk.NewDecCoins(sdk.NewDecCoin("uatom", sdk.NewInt(110000))),
+		sdk.NewInt(32910293),
+		sdk.NewInt(12000000000),
+		sdk.NewInt(12731311),
+		651123,
+	)
+
+	err := suite.database.SaveShieldStatus(shieldStatus)
+	suite.Require().NoError(err)
+
+	// Verify the data
+	expected := []dbtypes.ShieldStatusRow{
+		dbtypes.NewShieldStatusRow(
+			10000000,
+			dbtypes.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("uatom", sdk.NewInt(3120000)))),
+			dbtypes.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("uatom", sdk.NewInt(240000)))),
+			dbtypes.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("uatom", sdk.NewInt(180000)))),
+			dbtypes.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("uatom", sdk.NewInt(110000)))),
+			32910293,
+			12000000000,
+			12731311,
+			651123,
+		),
+	}
+
+	var rows []dbtypes.ShieldStatusRow
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM shield_status`)
+	suite.Require().NoError(err)
+
+	for i, row := range rows {
+		suite.Require().True(expected[i].Equal(row))
+	}
+
+	// ----------------------------------------------------------------------------------------------------------------
+
+	// Update the data
+	updatedShieldStatus := types.NewShieldStatus(
+		sdk.NewInt(30000000),
+		sdk.NewDecCoins(sdk.NewDecCoin("uatom", sdk.NewInt(6120000))),
+		sdk.NewDecCoins(sdk.NewDecCoin("uatom", sdk.NewInt(350000))),
+		sdk.NewDecCoins(sdk.NewDecCoin("uatom", sdk.NewInt(270000))),
+		sdk.NewDecCoins(sdk.NewDecCoin("uatom", sdk.NewInt(320000))),
+		sdk.NewInt(35670123),
+		sdk.NewInt(44000210000),
+		sdk.NewInt(14561122),
+		655611,
+	)
+
+	err = suite.database.SaveShieldStatus(updatedShieldStatus)
+	suite.Require().NoError(err)
+
+	// Verify the data
+	expected = []dbtypes.ShieldStatusRow{
+		dbtypes.NewShieldStatusRow(
+			30000000,
+			dbtypes.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("uatom", sdk.NewInt(6120000)))),
+			dbtypes.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("uatom", sdk.NewInt(350000)))),
+			dbtypes.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("uatom", sdk.NewInt(270000)))),
+			dbtypes.NewDbDecCoins(sdk.NewDecCoins(sdk.NewDecCoin("uatom", sdk.NewInt(320000)))),
+			35670123,
+			44000210000,
+			14561122,
+			655611,
+		),
+	}
+
+	rows = []dbtypes.ShieldStatusRow{}
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM shield_status`)
+	suite.Require().NoError(err)
+
+	for i, row := range rows {
+		suite.Require().True(expected[i].Equal(row))
+	}
+
+}

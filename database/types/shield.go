@@ -171,3 +171,57 @@ func NewShieldWithdrawRow(
 		Height:         height,
 	}
 }
+
+// ----------------------------------------------------------------
+
+type ShieldStatusRow struct {
+	OneRowID                    bool        `db:"one_row_id"`
+	GobalStakingPool            int64       `db:"global_staking_pool"`
+	CurrentNativeServiceFees    *DbDecCoins `db:"current_native_service_fees"`
+	CurrentForeignServiceFees   *DbDecCoins `db:"current_foreign_service_fees"`
+	RemainingNativeServiceFees  *DbDecCoins `db:"remaining_native_service_fees"`
+	RemainingForeignServiceFees *DbDecCoins `db:"remaining_foreign_service_fees"`
+	TotalCollateral             int64       `db:"total_collateral"`
+	TotalShield                 int64       `db:"total_shield"`
+	TotalWithdrawing            int64       `db:"total_withdrawing"`
+	Height                      int64       `db:"height"`
+}
+
+// Equal tells whether v and w represent the same rows
+func (v ShieldStatusRow) Equal(w ShieldStatusRow) bool {
+	return v.GobalStakingPool == w.GobalStakingPool &&
+		v.CurrentNativeServiceFees.Equal(w.CurrentNativeServiceFees) &&
+		v.CurrentForeignServiceFees.Equal(w.CurrentForeignServiceFees) &&
+		v.RemainingNativeServiceFees.Equal(w.RemainingNativeServiceFees) &&
+		v.RemainingForeignServiceFees.Equal(w.RemainingForeignServiceFees) &&
+		v.TotalCollateral == w.TotalCollateral &&
+		v.TotalShield == w.TotalShield &&
+		v.TotalWithdrawing == w.TotalWithdrawing &&
+		v.Height == w.Height
+}
+
+// NewShieldStatusRow allows to build a new ShieldStatusRow
+func NewShieldStatusRow(
+	gobalStakingPool int64,
+	currentNativeServiceFees DbDecCoins,
+	currentForeignServiceFees DbDecCoins,
+	remainingNativeServiceFees DbDecCoins,
+	remainingForeignServiceFees DbDecCoins,
+	totalCollateral int64,
+	totalShield int64,
+	totalWithdrawing int64,
+	height int64,
+) ShieldStatusRow {
+	return ShieldStatusRow{
+		OneRowID:                    true,
+		GobalStakingPool:            gobalStakingPool,
+		CurrentNativeServiceFees:    &currentNativeServiceFees,
+		CurrentForeignServiceFees:   &currentForeignServiceFees,
+		RemainingNativeServiceFees:  &remainingNativeServiceFees,
+		RemainingForeignServiceFees: &remainingForeignServiceFees,
+		TotalCollateral:             totalCollateral,
+		TotalShield:                 totalShield,
+		TotalWithdrawing:            totalWithdrawing,
+		Height:                      height,
+	}
+}
