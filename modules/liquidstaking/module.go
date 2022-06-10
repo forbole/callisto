@@ -5,6 +5,7 @@ import (
 	"github.com/forbole/juno/v3/modules"
 
 	"github.com/forbole/bdjuno/v3/database"
+	liquidstaking "github.com/forbole/bdjuno/v3/modules/liquidstaking/source"
 )
 
 var (
@@ -12,17 +13,19 @@ var (
 	_ modules.GenesisModule = &Module{}
 )
 
-// Module represent database/mint module
+// Module represent database/liquidstaking module
 type Module struct {
-	cdc codec.Codec
-	db  *database.Db
+	cdc    codec.Codec
+	db     *database.Db
+	source liquidstaking.Source
 }
 
 // NewModule returns a new Module instance
-func NewModule(cdc codec.Codec, db *database.Db) *Module {
+func NewModule(source liquidstaking.Source, cdc codec.Codec, db *database.Db) *Module {
 	return &Module{
-		cdc: cdc,
-		db:  db,
+		cdc:    cdc,
+		db:     db,
+		source: source,
 	}
 }
 
