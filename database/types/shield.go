@@ -53,3 +53,51 @@ func NewShieldPoolRow(
 		Height:             height,
 	}
 }
+
+// ----------------------------------------------------------------
+
+type ShieldProviderRow struct {
+	Address          string      `db:"address"`
+	Collateral       int64       `db:"collateral"`
+	DelegationBonded int64       `db:"delegation_bonded"`
+	NativeRewards    *DbDecCoins `db:"native_rewards"`
+	ForeignRewards   *DbDecCoins `db:"foreign_rewards"`
+	TotalLocked      int64       `db:"total_locked"`
+	Withdrawing      int64       `db:"withdrawing"`
+	Height           int64       `db:"height"`
+}
+
+// Equal tells whether v and w represent the same rows
+func (v ShieldProviderRow) Equal(w ShieldProviderRow) bool {
+	return v.Address == w.Address &&
+		v.Collateral == w.Collateral &&
+		v.DelegationBonded == w.DelegationBonded &&
+		v.NativeRewards.Equal(w.NativeRewards) &&
+		v.ForeignRewards.Equal(w.ForeignRewards) &&
+		v.TotalLocked == w.TotalLocked &&
+		v.Withdrawing == w.Withdrawing &&
+		v.Height == w.Height
+}
+
+// NewShieldProviderRow allows to build a new ShieldProviderRow
+func NewShieldProviderRow(
+	address string,
+	collateral int64,
+	delegationBonded int64,
+	nativeRewards DbDecCoins,
+	foreignRewards DbDecCoins,
+	totalLocked int64,
+	withdrawing int64,
+	height int64,
+) ShieldProviderRow {
+	return ShieldProviderRow{
+		Address:          address,
+		Collateral:       collateral,
+		DelegationBonded: delegationBonded,
+		NativeRewards:    &nativeRewards,
+		ForeignRewards:   &foreignRewards,
+		TotalLocked:      totalLocked,
+		Withdrawing:      withdrawing,
+		Height:           height,
+	}
+}
