@@ -552,3 +552,24 @@ func (suite *DbTestSuite) TestBigDipperDb_ShieldPoolParams() {
 	suite.Require().Equal(int64(1829332), rows[0].Height)
 
 }
+
+func (suite *DbTestSuite) TestBigDipperDb_ShieldClaimProposalParams() {
+	// Save the data
+	defaultParams := shieldtypes.DefaultClaimProposalParams()
+	claimProposalParams := types.NewShieldClaimProposalParams(defaultParams, 1213131)
+
+	err := suite.database.SaveShieldClaimProposalParams(claimProposalParams)
+	suite.Require().NoError(err)
+
+	var rows []dbtypes.ShieldClaimProposalParamsRow
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM shield_claim_proposal_params`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+
+	var storedParams shieldtypes.ClaimProposalParams
+	err = json.Unmarshal([]byte(rows[0].Params), &storedParams)
+	suite.Require().NoError(err)
+	suite.Require().Equal(defaultParams, storedParams)
+	suite.Require().Equal(int64(1213131), rows[0].Height)
+
+}

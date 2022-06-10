@@ -248,3 +248,26 @@ func NewShieldPoolParamsRow(params string, height int64) ShieldPoolParamsRow {
 		Height:   height,
 	}
 }
+
+// ----------------------------------------------------------------
+
+type ShieldClaimProposalParamsRow struct {
+	OneRowID bool   `db:"one_row_id"`
+	Params   string `db:"params"`
+	Height   int64  `db:"height"`
+}
+
+// Equal reports whether m and n represent the same table rows.
+func (m ShieldClaimProposalParamsRow) Equal(n ShieldClaimProposalParamsRow) bool {
+	return m.Params == n.Params &&
+		m.Height == n.Height
+}
+
+// NewShieldClaimProposalParamsRow allows to build a new ShieldClaimProposalParamsRow
+func NewShieldClaimProposalParamsRow(params string, height int64) ShieldClaimProposalParamsRow {
+	return ShieldClaimProposalParamsRow{
+		OneRowID: true,
+		Params:   params,
+		Height:   height,
+	}
+}
