@@ -71,6 +71,7 @@ CREATE TABLE validator_status
     status            INT     NOT NULL,
     jailed            BOOLEAN NOT NULL,
     tombstoned        BOOLEAN NOT NULL DEFAULT FALSE,
+    liquid_validator  BOOLEAN NOT NULL DEFAULT FALSE,
     height            BIGINT  NOT NULL
 );
 CREATE INDEX validator_status_height_index ON validator_status (height);
