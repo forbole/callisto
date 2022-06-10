@@ -1,12 +1,14 @@
 package database_test
 
 import (
+	"encoding/json"
 	"time"
 
 	"github.com/forbole/bdjuno/v3/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	shieldtypes "github.com/certikfoundation/shentu/v2/x/shield/types"
 	dbtypes "github.com/forbole/bdjuno/v3/database/types"
 )
 
@@ -448,7 +450,6 @@ func (suite *DbTestSuite) TestBigDipperDb_ShieldWithdraws() {
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_ShieldStatus() {
-
 	// Save the data
 	shieldStatus := types.NewShieldStatus(
 		sdk.NewInt(10000000),
@@ -528,5 +529,26 @@ func (suite *DbTestSuite) TestBigDipperDb_ShieldStatus() {
 	for i, row := range rows {
 		suite.Require().True(expected[i].Equal(row))
 	}
+
+}
+
+func (suite *DbTestSuite) TestBigDipperDb_ShieldPoolParams() {
+	// Save the data
+	defaultParams := shieldtypes.DefaultPoolParams()
+	poolParams := types.NewShieldPoolParams(defaultParams, 1829332)
+
+	err := suite.database.SaveShieldPoolParams(poolParams)
+	suite.Require().NoError(err)
+
+	var rows []dbtypes.ShieldPoolParamsRow
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM shield_pool_params`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+
+	var storedParams shieldtypes.PoolParams
+	err = json.Unmarshal([]byte(rows[0].Params), &storedParams)
+	suite.Require().NoError(err)
+	suite.Require().Equal(defaultParams, storedParams)
+	suite.Require().Equal(int64(1829332), rows[0].Height)
 
 }
