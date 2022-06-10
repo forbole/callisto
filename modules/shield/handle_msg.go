@@ -138,12 +138,13 @@ func (m *Module) HandleMsgWithdrawCollateral(tx *juno.Tx, msg *shieldtypes.MsgWi
 	if err != nil {
 		return fmt.Errorf("error while getting shield provider collateral: %s", err)
 	}
-	if msg.Collateral[0].Amount.Int64() >= collateral {
-		updatedCollateral := collateral - msg.Collateral[0].Amount.Int64()
-		return m.db.UpdateShieldProviderCollateral(msg.From, updatedCollateral, tx.Height)
-	} else {
+
+	if msg.Collateral[0].Amount.Int64() <= collateral {
 		return m.db.UpdateShieldProviderCollateral(msg.From, 0, tx.Height)
 	}
+
+	updatedCollateral := collateral - msg.Collateral[0].Amount.Int64()
+	return m.db.UpdateShieldProviderCollateral(msg.From, updatedCollateral, tx.Height)
 }
 
 // HandleMsgPurchaseShield allows to properly handle a MsgPurchaseShield
@@ -177,10 +178,11 @@ func (m *Module) HandleMsgUnstakeFromShield(tx *juno.Tx, msg *shieldtypes.MsgUns
 	if err != nil {
 		return fmt.Errorf("error while getting shield provider delegation: %s", err)
 	}
-	if msg.Shield[0].Amount.Int64() >= delegation {
-		updatedDelegation := delegation - msg.Shield[0].Amount.Int64()
-		return m.db.UpdateShieldProviderDelegation(msg.From, updatedDelegation, tx.Height)
-	} else {
+
+	if msg.Shield[0].Amount.Int64() <= delegation {
 		return m.db.UpdateShieldProviderDelegation(msg.From, 0, tx.Height)
 	}
+
+	updatedDelegation := delegation - msg.Shield[0].Amount.Int64()
+	return m.db.UpdateShieldProviderDelegation(msg.From, updatedDelegation, tx.Height)
 }
