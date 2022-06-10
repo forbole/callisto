@@ -1,5 +1,7 @@
 package types
 
+import "time"
+
 type ShieldPoolRow struct {
 	PoolID             int64    `db:"pool_id"`
 	Shield             string   `db:"shield"`
@@ -135,5 +137,37 @@ func NewShieldPurchaseRow(
 		Shield:      shield,
 		Description: description,
 		Height:      height,
+	}
+}
+
+// ----------------------------------------------------------------
+
+type ShieldWithdrawRow struct {
+	Address        string    `db:"address"`
+	Amount         int64     `db:"amount"`
+	CompletionTime time.Time `db:"completion_time"`
+	Height         int64     `db:"height"`
+}
+
+// Equal tells whether v and w represent the same rows
+func (v ShieldWithdrawRow) Equal(w ShieldWithdrawRow) bool {
+	return v.Address == w.Address &&
+		v.Amount == w.Amount &&
+		v.CompletionTime.Equal(w.CompletionTime) &&
+		v.Height == w.Height
+}
+
+// NewShieldWithdrawRow allows to build a new ShieldWithdrawRow
+func NewShieldWithdrawRow(
+	address string,
+	amount int64,
+	completionTime time.Time,
+	height int64,
+) ShieldWithdrawRow {
+	return ShieldWithdrawRow{
+		Address:        address,
+		Amount:         amount,
+		CompletionTime: completionTime,
+		Height:         height,
 	}
 }

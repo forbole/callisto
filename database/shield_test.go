@@ -1,6 +1,8 @@
 package database_test
 
 import (
+	"time"
+
 	"github.com/forbole/bdjuno/v3/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -394,4 +396,53 @@ func (suite *DbTestSuite) TestBigDipperDb_ShieldPurchase() {
 	for i, row := range rows {
 		suite.Require().True(expected[i].Equal(row))
 	}
+}
+
+func (suite *DbTestSuite) TestBigDipperDb_ShieldWithdraws() {
+	withdrawAddress1 := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
+	withdrawAddress2 := suite.getAccount("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
+
+	// Save the data
+	shieldWithdraw1 := types.NewShieldWithdraw(
+		withdrawAddress1.String(),
+		10000000,
+		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+		123311)
+
+	shieldWithdraw2 := types.NewShieldWithdraw(
+		withdrawAddress2.String(),
+		40000000,
+		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+		123311)
+
+	err := suite.database.SaveShieldWithdraw(shieldWithdraw1)
+	suite.Require().NoError(err)
+
+	err = suite.database.SaveShieldWithdraw(shieldWithdraw2)
+	suite.Require().NoError(err)
+
+	// Verify the data
+	expected := []dbtypes.ShieldWithdrawRow{
+		dbtypes.NewShieldWithdrawRow(
+			withdrawAddress1.String(),
+			10000000,
+			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			123311,
+		),
+		dbtypes.NewShieldWithdrawRow(
+			withdrawAddress2.String(),
+			40000000,
+			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
+			123311,
+		),
+	}
+
+	var rows []dbtypes.ShieldWithdrawRow
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM shield_withdraws`)
+	suite.Require().NoError(err)
+
+	for i, row := range rows {
+		suite.Require().True(expected[i].Equal(row))
+	}
+
 }
