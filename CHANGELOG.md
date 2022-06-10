@@ -1,4 +1,8 @@
 ## Unreleased
+
+### Changes 
+#### Shield module
+- ([\#418](https://github.com/forbole/bdjuno/pull/418)) [certik] Added `x/shield` module parsing
 ### Dependencies
 - ([\#412](https://github.com/forbole/bdjuno/pull/412)) Updated Juno to `v3.2.1`
 
