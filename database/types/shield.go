@@ -101,3 +101,39 @@ func NewShieldProviderRow(
 		Height:           height,
 	}
 }
+
+// ----------------------------------------------------------------
+
+type ShieldPurchaseRow struct {
+	PoolID      uint64 `db:"pool_id"`
+	FromAddress string `db:"purchaser"`
+	Shield      string `db:"shield"`
+	Description string `db:"description"`
+	Height      int64  `db:"height"`
+}
+
+// Equal tells whether v and w represent the same rows
+func (v ShieldPurchaseRow) Equal(w ShieldPurchaseRow) bool {
+	return v.PoolID == w.PoolID &&
+		v.FromAddress == w.FromAddress &&
+		v.Shield == w.Shield &&
+		v.Description == w.Description &&
+		v.Height == w.Height
+}
+
+// NewShieldPurchaseRow allows to build a new ShieldPurchaseRow
+func NewShieldPurchaseRow(
+	poolID uint64,
+	fromAddress string,
+	shield string,
+	description string,
+	height int64,
+) ShieldPurchaseRow {
+	return ShieldPurchaseRow{
+		PoolID:      poolID,
+		FromAddress: fromAddress,
+		Shield:      shield,
+		Description: description,
+		Height:      height,
+	}
+}

@@ -9,15 +9,17 @@ import (
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_ShieldPool() {
+	sponsorAddress1 := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
+	sponsorAddress2 := suite.getAccount("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 
 	// Save the data
 	shield := types.NewShieldPool(
 		1,
 		sdk.NewInt(1000000000),
-		sdk.NewCoins(sdk.NewCoin("ucrtk", sdk.NewInt(1000000000))),
-		sdk.NewCoins(sdk.NewCoin("ucrtk", sdk.NewInt(2000000000))),
+		sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(1000000000))),
+		sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(2000000000))),
 		"Sponsor",
-		"certik1ktt6kej30pycfnm5aq42x0edcm807kqcpw273p",
+		sponsorAddress1.String(),
 		"Shield1 Description",
 		sdk.NewInt(1000000000000),
 		false,
@@ -26,10 +28,10 @@ func (suite *DbTestSuite) TestBigDipperDb_ShieldPool() {
 	shield2 := types.NewShieldPool(
 		2,
 		sdk.NewInt(1000000000),
-		sdk.NewCoins(sdk.NewCoin("ucrtk", sdk.NewInt(3000000000))),
-		sdk.NewCoins(sdk.NewCoin("ucrtk", sdk.NewInt(4000000000))),
+		sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(3000000000))),
+		sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(4000000000))),
 		"Sponsor",
-		"certik1rhf94zrhhapm5wm73yjd9y9jrxj9kcly974gm2",
+		sponsorAddress2.String(),
 		"Shield2 Description",
 		sdk.NewInt(1000000000000),
 		true,
@@ -46,10 +48,10 @@ func (suite *DbTestSuite) TestBigDipperDb_ShieldPool() {
 		dbtypes.NewShieldPoolRow(
 			1,
 			"1000000000",
-			dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("ucrtk", sdk.NewInt(1000000000)))),
-			dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("ucrtk", sdk.NewInt(2000000000)))),
+			dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(1000000000)))),
+			dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(2000000000)))),
 			"Sponsor",
-			"certik1ktt6kej30pycfnm5aq42x0edcm807kqcpw273p",
+			sponsorAddress1.String(),
 			"Shield1 Description",
 			"1000000000000",
 			false,
@@ -58,10 +60,10 @@ func (suite *DbTestSuite) TestBigDipperDb_ShieldPool() {
 		dbtypes.NewShieldPoolRow(
 			2,
 			"1000000000",
-			dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("ucrtk", sdk.NewInt(3000000000)))),
-			dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("ucrtk", sdk.NewInt(4000000000)))),
+			dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(3000000000)))),
+			dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(4000000000)))),
 			"Sponsor",
-			"certik1rhf94zrhhapm5wm73yjd9y9jrxj9kcly974gm2",
+			sponsorAddress2.String(),
 			"Shield2 Description",
 			"1000000000000",
 			true,
@@ -83,10 +85,10 @@ func (suite *DbTestSuite) TestBigDipperDb_ShieldPool() {
 	updateShield1 := types.NewShieldPool(
 		1,
 		sdk.NewInt(5500000000),
-		sdk.NewCoins(sdk.NewCoin("ucrtk", sdk.NewInt(1000000055))),
-		sdk.NewCoins(sdk.NewCoin("ucrtk", sdk.NewInt(7500000000))),
+		sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(1000000055))),
+		sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(7500000000))),
 		"Sponsor",
-		"certik1ktt6kej30pycfnm5aq42x0edcm807kqcpw273p",
+		sponsorAddress1.String(),
 		"Shield Description",
 		sdk.NewInt(1000000000002),
 		false,
@@ -96,10 +98,10 @@ func (suite *DbTestSuite) TestBigDipperDb_ShieldPool() {
 	updateShield2 := types.NewShieldPool(
 		2,
 		sdk.NewInt(6600000000),
-		sdk.NewCoins(sdk.NewCoin("ucrtk", sdk.NewInt(3000000055))),
-		sdk.NewCoins(sdk.NewCoin("ucrtk", sdk.NewInt(8500000000))),
+		sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(3000000055))),
+		sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(8500000000))),
 		"Sponsor",
-		"certik1rhf94zrhhapm5wm73yjd9y9jrxj9kcly974gm2",
+		sponsorAddress2.String(),
 		"Shield Description",
 		sdk.NewInt(1000000000001),
 		true,
@@ -117,10 +119,10 @@ func (suite *DbTestSuite) TestBigDipperDb_ShieldPool() {
 		dbtypes.NewShieldPoolRow(
 			1,
 			"5500000000",
-			dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("ucrtk", sdk.NewInt(1000000055)))),
-			dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("ucrtk", sdk.NewInt(7500000000)))),
+			dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(1000000055)))),
+			dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(7500000000)))),
 			"Sponsor",
-			"certik1ktt6kej30pycfnm5aq42x0edcm807kqcpw273p",
+			sponsorAddress1.String(),
 			"Shield Description",
 			"1000000000002",
 			false,
@@ -129,10 +131,10 @@ func (suite *DbTestSuite) TestBigDipperDb_ShieldPool() {
 		dbtypes.NewShieldPoolRow(
 			2,
 			"6600000000",
-			dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("ucrtk", sdk.NewInt(3000000055)))),
-			dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("ucrtk", sdk.NewInt(8500000000)))),
+			dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(3000000055)))),
+			dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(8500000000)))),
 			"Sponsor",
-			"certik1rhf94zrhhapm5wm73yjd9y9jrxj9kcly974gm2",
+			sponsorAddress2.String(),
 			"Shield Description",
 			"1000000000001",
 			true,
@@ -272,4 +274,124 @@ func (suite *DbTestSuite) TestBigDipperDb_ShieldProvider() {
 		suite.Require().True(expected[i].Equal(row))
 	}
 
+}
+
+func (suite *DbTestSuite) TestBigDipperDb_ShieldPurchase() {
+	purchaserAddress1 := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
+	purchaserAddress2 := suite.getAccount("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
+
+	// Save pool details
+	shield := types.NewShieldPool(
+		1,
+		sdk.NewInt(1000000000),
+		sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(1000000000))),
+		sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(2000000000))),
+		"Sponsor",
+		purchaserAddress1.String(),
+		"Shield Description",
+		sdk.NewInt(1000000000000),
+		false,
+		123654)
+
+	shield2 := types.NewShieldPool(
+		2,
+		sdk.NewInt(1000000000),
+		sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(3000000000))),
+		sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(4000000000))),
+		"Sponsor",
+		purchaserAddress2.String(),
+		"Shield Description",
+		sdk.NewInt(1000000000000),
+		false,
+		123654)
+
+	err := suite.database.SaveShieldPool(shield)
+	suite.Require().NoError(err)
+
+	err = suite.database.SaveShieldPool(shield2)
+	suite.Require().NoError(err)
+
+	// Verify the data
+	expectedPools := []dbtypes.ShieldPoolRow{
+		dbtypes.NewShieldPoolRow(
+			1,
+			"1000000000",
+			dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(1000000000)))),
+			dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(2000000000)))),
+			"Sponsor",
+			purchaserAddress1.String(),
+			"Shield Description",
+			"1000000000000",
+			false,
+			123654,
+		),
+		dbtypes.NewShieldPoolRow(
+			2,
+			"1000000000",
+			dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(3000000000)))),
+			dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(4000000000)))),
+			"Sponsor",
+			purchaserAddress2.String(),
+			"Shield Description",
+			"1000000000000",
+			false,
+			123654,
+		),
+	}
+
+	var poolRows []dbtypes.ShieldPoolRow
+	err = suite.database.Sqlx.Select(&poolRows, `SELECT * FROM shield_pool`)
+	suite.Require().NoError(err)
+
+	for i, row := range poolRows {
+		suite.Require().True(expectedPools[i].Equal(row))
+	}
+
+	// -----------------------------------------------------------------------------------
+	// Save the data
+	shieldPurchase1 := types.NewShieldPurchase(
+		1,
+		purchaserAddress1.String(),
+		sdk.NewInt(1000000000),
+		"Shield Description",
+		652211)
+
+	shieldPurchase2 := types.NewShieldPurchase(
+		2,
+		purchaserAddress2.String(),
+		sdk.NewInt(3000000000),
+		"Shield Description",
+		652211)
+
+	err = suite.database.SaveShieldPurchase(shieldPurchase1)
+	suite.Require().NoError(err)
+
+	err = suite.database.SaveShieldPurchase(shieldPurchase2)
+	suite.Require().NoError(err)
+
+	// Verify the data
+	expected := []dbtypes.ShieldPurchaseRow{
+		dbtypes.NewShieldPurchaseRow(
+			1,
+			purchaserAddress1.String(),
+			"1000000000",
+			"Shield Description",
+			652211,
+		),
+		dbtypes.NewShieldPurchaseRow(
+			2,
+			purchaserAddress2.String(),
+			"3000000000",
+			"Shield Description",
+			652211,
+		),
+	}
+
+	var rows []dbtypes.ShieldPurchaseRow
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM shield_purchase`)
+	suite.Require().NoError(err)
+
+	for i, row := range rows {
+		suite.Require().True(expected[i].Equal(row))
+	}
 }
