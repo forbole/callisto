@@ -165,6 +165,22 @@ func (m *Module) updateValidators(height int64) ([]stakingtypes.Validator, error
 
 func (m *Module) GetValidatorsStatuses(height int64, validators []stakingtypes.Validator) ([]types.ValidatorStatus, error) {
 	statuses := make([]types.ValidatorStatus, len(validators))
+
+	liquidValidators, err := m.liquidStakingSource.GetLiquidValidators(height)
+	if err != nil {
+		return nil, fmt.Errorf("error while getting liquid validators list: %s", err)
+	}
+
+	var liquidValidatorsList []string
+	for _, val := range liquidValidators {
+		// convert operator address to consensus address
+		valAddress, err := m.db.GetValidatorConsensusAddress(val.OperatorAddress)
+		if err != nil {
+			return nil, fmt.Errorf("error while converting operator address to consensus address: %s", err)
+		}
+		liquidValidatorsList = append(liquidValidatorsList, valAddress.String())
+	}
+
 	for index, validator := range validators {
 		consAddr, err := m.getValidatorConsAddr(validator)
 		if err != nil {
@@ -181,12 +197,21 @@ func (m *Module) GetValidatorsStatuses(height int64, validators []stakingtypes.V
 			return nil, fmt.Errorf("error while getting validator signing info: %s", err)
 		}
 
+		isLiquidStakingValidator := false
+		for _, address := range liquidValidatorsList {
+			if address != consAddr.String() {
+				continue
+				// isLiquidStakingValidator = true
+			}
+			isLiquidStakingValidator = true
+		}
 		statuses[index] = types.NewValidatorStatus(
 			consAddr.String(),
 			consPubKey.String(),
 			int(validator.GetStatus()),
 			validator.IsJailed(),
 			valSigningInfo.Tombstoned,
+			isLiquidStakingValidator,
 			height,
 		)
 	}
