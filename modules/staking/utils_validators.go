@@ -201,10 +201,10 @@ func (m *Module) GetValidatorsStatuses(height int64, validators []stakingtypes.V
 		for _, address := range liquidValidatorsList {
 			if address != consAddr.String() {
 				continue
-				// isLiquidStakingValidator = true
 			}
 			isLiquidStakingValidator = true
 		}
+
 		statuses[index] = types.NewValidatorStatus(
 			consAddr.String(),
 			consPubKey.String(),
