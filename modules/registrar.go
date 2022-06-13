@@ -81,7 +81,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	liquidStakingModule := liquidstaking.NewModule(sources.LiquidStakingSource, cdc, db)
 	mintModule := mint.NewModule(sources.MintSource, cdc, db)
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
-	stakingModule := staking.NewModule(sources.StakingSource, slashingModule, cdc, db)
+	stakingModule := staking.NewModule(sources.StakingSource, slashingModule, sources.LiquidStakingSource, cdc, db)
 	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakingModule, cdc, db)
 
 	return []jmodules.Module{
