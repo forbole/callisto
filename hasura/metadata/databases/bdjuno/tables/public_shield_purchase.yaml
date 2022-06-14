@@ -5,7 +5,7 @@ object_relationships:
 - name: shield_purchase_pool_id
   using:
     foreign_key_constraint_on: pool_id
-- name: shield_purchaser
+- name: shield_purchaser_address
   using:
     foreign_key_constraint_on: purchaser
 select_permissions:
