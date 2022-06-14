@@ -86,9 +86,18 @@ func (m *Module) saveShieldPools(doc *tmtypes.GenesisDoc, pools []shieldtypes.Po
 // saveShieldProviders stores the shield providers present inside the given genesis state
 func (m *Module) saveShieldProviders(doc *tmtypes.GenesisDoc, providers []shieldtypes.Provider) error {
 	for _, provider := range providers {
+		// store provider address in db
+		err := m.db.SaveAccounts([]types.Account{
+			types.NewAccount(provider.Address),
+		})
+		if err != nil {
+			return err
+		}
+
+		// store shield provider in db
 		providerRecord := types.NewShieldProvider(provider.Address, provider.Collateral.Int64(), provider.DelegationBonded.Int64(),
 			provider.Rewards.Native, provider.Rewards.Foreign, provider.TotalLocked.Int64(), provider.Withdrawing.Int64(), doc.InitialHeight)
-		err := m.db.SaveShieldProvider(providerRecord)
+		err = m.db.SaveShieldProvider(providerRecord)
 		if err != nil {
 			return err
 		}
@@ -100,6 +109,15 @@ func (m *Module) saveShieldProviders(doc *tmtypes.GenesisDoc, providers []shield
 // savePurchaseList stores the shield purchase record inside the given genesis state
 func (m *Module) savePurchaseList(doc *tmtypes.GenesisDoc, list []shieldtypes.PurchaseList) error {
 	for _, purchase := range list {
+		// store purchaser address in db
+		err := m.db.SaveAccounts([]types.Account{
+			types.NewAccount(purchase.Purchaser),
+		})
+		if err != nil {
+			return err
+		}
+
+		// store shield purchase in db
 		for _, entry := range purchase.Entries {
 			purchaseRecord := types.NewShieldPurchase(purchase.PoolId, purchase.Purchaser, entry.Shield, entry.Description, doc.InitialHeight)
 			err := m.db.SaveShieldPurchase(purchaseRecord)
@@ -115,8 +133,17 @@ func (m *Module) savePurchaseList(doc *tmtypes.GenesisDoc, list []shieldtypes.Pu
 // saveShieldWithdraws stores the shield withdraws present inside the given genesis state
 func (m *Module) saveShieldWithdraws(doc *tmtypes.GenesisDoc, withdraws []shieldtypes.Withdraw) error {
 	for _, withdraw := range withdraws {
+		// store withdraw address in db
+		err := m.db.SaveAccounts([]types.Account{
+			types.NewAccount(withdraw.Address),
+		})
+		if err != nil {
+			return err
+		}
+
+		// store shield withdraw details in db
 		withdrawRecord := types.NewShieldWithdraw(withdraw.Address, withdraw.Amount.Int64(), withdraw.CompletionTime, doc.InitialHeight)
-		err := m.db.SaveShieldWithdraw(withdrawRecord)
+		err = m.db.SaveShieldWithdraw(withdrawRecord)
 		if err != nil {
 			return err
 		}
