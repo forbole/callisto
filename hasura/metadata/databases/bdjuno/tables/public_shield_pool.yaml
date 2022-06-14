@@ -1,14 +1,12 @@
 table:
   name: shield_pool
   schema: public
-object_relationships:
-- name: shield_purchase
+array_relationships:
+- name: shield_purchases
   using:
-    manual_configuration:
-      column_mapping:
-        pool_id: pool_id
-      insertion_order: null
-      remote_table:
+    foreign_key_constraint_on: 
+      column: pool_id
+      table:
         name: shield_purchase
         schema: public
 select_permissions:

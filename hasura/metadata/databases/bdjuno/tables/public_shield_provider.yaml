@@ -1,6 +1,10 @@
 table:
   name: shield_provider
   schema: public
+object_relationships:
+- name: shield_provider_address
+  using:
+    foreign_key_constraint_on: address
 select_permissions:
 - permission:
     allow_aggregations: true
