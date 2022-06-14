@@ -10,11 +10,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/forbole/juno/v3/node/remote"
 
+	minttypes "github.com/MonOsmosis/osmosis/v10/x/mint/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	minttypes "github.com/osmosis-labs/osmosis/v7/x/mint/types"
 
+	mintkeeper "github.com/MonOsmosis/osmosis/v10/x/mint/keeper"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -22,6 +23,7 @@ import (
 
 	nodeconfig "github.com/forbole/juno/v3/node/config"
 
+	osmosisapp "github.com/MonOsmosis/osmosis/v10/app"
 	banksource "github.com/forbole/bdjuno/v3/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v3/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v3/modules/bank/source/remote"
@@ -40,7 +42,6 @@ import (
 	stakingsource "github.com/forbole/bdjuno/v3/modules/staking/source"
 	localstakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/remote"
-	osmosisapp "github.com/osmosis-labs/osmosis/v7/app"
 )
 
 type Sources struct {
@@ -76,10 +77,11 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 	)
 
 	sources := &Sources{
-		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
-		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
-		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
-		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
+		BankSource:  localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
+		DistrSource: localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
+		GovSource:   localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
+		MintSource:  localmintsource.NewSource(source, mintkeeper.Querier{Keeper: *app.MintKeeper}),
+		//  minttypes.QueryServer(app.MintKeeper)),
 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
 		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: *app.StakingKeeper}),
 	}

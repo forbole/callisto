@@ -16,8 +16,8 @@ import (
 	"github.com/forbole/bdjuno/v3/database"
 	"github.com/forbole/bdjuno/v3/modules"
 
-	gaiaapp "github.com/cosmos/gaia/v6/app"
-	osmosisapp "github.com/osmosis-labs/osmosis/v7/app"
+	osmosisapp "github.com/MonOsmosis/osmosis/v10/app"
+	gaiaapp "github.com/cosmos/gaia/v7/app"
 )
 
 func main() {

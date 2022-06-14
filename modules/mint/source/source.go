@@ -1,7 +1,7 @@
 package source
 
 import (
-	minttypes "github.com/osmosis-labs/osmosis/v7/x/mint/types"
+	minttypes "github.com/MonOsmosis/osmosis/v10/x/mint/types"
 )
 
 type Source interface {

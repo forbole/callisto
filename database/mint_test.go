@@ -3,8 +3,8 @@ package database_test
 import (
 	"encoding/json"
 
+	minttypes "github.com/MonOsmosis/osmosis/v10/x/mint/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	minttypes "github.com/osmosis-labs/osmosis/v7/x/mint/types"
 
 	"github.com/forbole/bdjuno/v3/types"
 
