@@ -13,6 +13,7 @@ select_permissions:
     - status
     - jailed
     - tombstoned
+    - liquid_validator
     - height
     filter: {}
   role: anonymous
