@@ -5,5 +5,5 @@ import (
 )
 
 type Source interface {
-	GetAllMarkers(height int64, status string) ([]*types.Any, error)
+	GetAllMarkers(height int64) ([]*types.Any, error)
 }

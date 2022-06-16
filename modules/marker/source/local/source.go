@@ -30,7 +30,7 @@ func NewSource(source *local.Source, querier markertypes.QueryServer) *Source {
 }
 
 // GetAllMarkers implements markersource.Source
-func (s Source) GetAllMarkers(height int64, status string) ([]*types.Any, error) {
+func (s Source) GetAllMarkers(height int64) ([]*types.Any, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
 		return nil, fmt.Errorf("error while loading height: %s", err)

@@ -27,7 +27,7 @@ func NewSource(source *remote.Source, querier markertypes.QueryClient) *Source {
 }
 
 // GetAllMarkers implements markersource.Source
-func (s Source) GetAllMarkers(height int64, status string) ([]*types.Any, error) {
+func (s Source) GetAllMarkers(height int64) ([]*types.Any, error) {
 	ctx := remote.GetHeightRequestContext(s.Ctx, height)
 
 	var markers []*types.Any
