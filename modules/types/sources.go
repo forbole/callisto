@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
@@ -30,6 +29,9 @@ import (
 	govsource "github.com/forbole/bdjuno/v3/modules/gov/source"
 	localgovsource "github.com/forbole/bdjuno/v3/modules/gov/source/local"
 	remotegovsource "github.com/forbole/bdjuno/v3/modules/gov/source/remote"
+	markersourcer "github.com/forbole/bdjuno/v3/modules/marker/source"
+	localmarkersource "github.com/forbole/bdjuno/v3/modules/marker/source/local"
+	remotemarkersource "github.com/forbole/bdjuno/v3/modules/marker/source/remote"
 	mintsource "github.com/forbole/bdjuno/v3/modules/mint/source"
 	localmintsource "github.com/forbole/bdjuno/v3/modules/mint/source/local"
 	remotemintsource "github.com/forbole/bdjuno/v3/modules/mint/source/remote"
@@ -39,12 +41,15 @@ import (
 	stakingsource "github.com/forbole/bdjuno/v3/modules/staking/source"
 	localstakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/remote"
+	provenanceapp "github.com/provenance-io/provenance/app"
+	markertypes "github.com/provenance-io/provenance/x/marker/types"
 )
 
 type Sources struct {
 	BankSource     banksource.Source
 	DistrSource    distrsource.Source
 	GovSource      govsource.Source
+	MarkerSource   markersourcer.Source
 	MintSource     mintsource.Source
 	SlashingSource slashingsource.Source
 	StakingSource  stakingsource.Source
@@ -68,15 +73,16 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		return nil, err
 	}
 
-	app := simapp.NewSimApp(
+	app := provenanceapp.New(
 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
-		cfg.Home, 0, simapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
+		cfg.Home, 0, provenanceapp.MakeEncodingConfig(), provenanceapp.EmptyAppOptions{},
 	)
 
 	sources := &Sources{
 		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
 		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
 		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
+		MarkerSource:   localmarkersource.NewSource(source, markertypes.QueryServer(app.MarkerKeeper)),
 		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
 		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
@@ -116,6 +122,7 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		BankSource:     remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
 		DistrSource:    remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
 		GovSource:      remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
+		MarkerSource:   remotemarkersource.NewSource(source, markertypes.NewQueryClient(source.GrpcConn)),
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
