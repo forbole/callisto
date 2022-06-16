@@ -5,6 +5,7 @@ import (
 	"github.com/forbole/juno/v3/modules"
 
 	"github.com/forbole/bdjuno/v3/database"
+	markersource "github.com/forbole/bdjuno/v3/modules/marker/source"
 )
 
 var (
@@ -14,15 +15,17 @@ var (
 
 // Module represent database/marker module
 type Module struct {
-	cdc codec.Codec
-	db  *database.Db
+	cdc    codec.Codec
+	db     *database.Db
+	source markersource.Source
 }
 
 // NewModule returns a new Module instance
-func NewModule(cdc codec.Codec, db *database.Db) *Module {
+func NewModule(source markersource.Source, cdc codec.Codec, db *database.Db) *Module {
 	return &Module{
-		cdc: cdc,
-		db:  db,
+		cdc:    cdc,
+		db:     db,
+		source: source,
 	}
 }
 
