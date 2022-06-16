@@ -137,20 +137,11 @@ require (
 	nhooyr.io/websocket v1.8.6 // indirect
 )
 
-// github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-// replace github.com/tendermint/tendermint => github.com/forbole/tendermint v0.34.13-0.20210820072129-a2a4af55563d
-replace github.com/tendermint/tendermint => github.com/MonikaCat/tendermint v0.34.20-0.20220510093325-405517310d66
-
-replace google.golang.org/grpc => google.golang.org/grpc v1.33.2
-
-replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-
-replace github.com/cosmos/cosmos-sdk => github.com/provenance-io/cosmos-sdk v0.45.3-pio-2
-
-replace github.com/99designs/keyring => github.com/cosmos/keyring v1.1.7-0.20210622111912-ef00f8ac3d76
-
-// replace github.com/tecbot/gorocksdb => github.com/cosmos/gorocksdb v1.1.1
-
-// Fix upstream GHSA-h395-qcrw-5vmq vulnerability.
-// TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409
-replace github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
+replace (
+	github.com/99designs/keyring => github.com/cosmos/keyring v1.1.7-0.20210622111912-ef00f8ac3d76
+	github.com/cosmos/cosmos-sdk => github.com/provenance-io/cosmos-sdk v0.45.3-pio-2
+	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
+	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
+	github.com/tendermint/tendermint => github.com/MonikaCat/tendermint v0.34.20-0.20220510093325-405517310d66
+	google.golang.org/grpc => google.golang.org/grpc v1.33.2
+)
