@@ -139,7 +139,7 @@ func (m *Module) HandleMsgWithdrawCollateral(tx *juno.Tx, msg *shieldtypes.MsgWi
 		return fmt.Errorf("error while getting shield provider collateral: %s", err)
 	}
 
-	if msg.Collateral[0].Amount.Int64() <= collateral {
+	if msg.Collateral[0].Amount.Int64() >= collateral {
 		return m.db.UpdateShieldProviderCollateral(msg.From, 0, tx.Height)
 	}
 
@@ -179,7 +179,7 @@ func (m *Module) HandleMsgUnstakeFromShield(tx *juno.Tx, msg *shieldtypes.MsgUns
 		return fmt.Errorf("error while getting shield provider delegation: %s", err)
 	}
 
-	if msg.Shield[0].Amount.Int64() <= delegation {
+	if msg.Shield[0].Amount.Int64() >= delegation {
 		return m.db.UpdateShieldProviderDelegation(msg.From, 0, tx.Height)
 	}
 
