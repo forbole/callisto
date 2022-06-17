@@ -21,7 +21,6 @@ type Marker struct {
 	Address                string
 	AccessControl          []markertypes.AccessGrant
 	AllowGovernanceControl bool
-	BaseAccount            markertypes.MarkerAccountI
 	Denom                  string
 	MarkerType             markertypes.MarkerType
 	Status                 markertypes.MarkerStatus
@@ -34,7 +33,6 @@ func NewMarker(
 	address string,
 	accessControl []markertypes.AccessGrant,
 	allowGovernanceControl bool,
-	baseAccount markertypes.MarkerAccountI,
 	denom string,
 	markerType markertypes.MarkerType,
 	status markertypes.MarkerStatus,
@@ -44,7 +42,6 @@ func NewMarker(
 		Address:                address,
 		AccessControl:          accessControl,
 		AllowGovernanceControl: allowGovernanceControl,
-		BaseAccount:            baseAccount,
 		Denom:                  denom,
 		MarkerType:             markerType,
 		Status:                 status,
