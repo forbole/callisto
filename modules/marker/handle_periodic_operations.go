@@ -6,8 +6,8 @@ import (
 	"github.com/forbole/bdjuno/v3/modules/utils"
 	"github.com/forbole/bdjuno/v3/types"
 
+	markertypes "github.com/MonikaCat/provenance/x/marker/types"
 	"github.com/go-co-op/gocron"
-	markertypes "github.com/provenance-io/provenance/x/marker/types"
 	"github.com/rs/zerolog/log"
 )
 
@@ -15,8 +15,8 @@ import (
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	log.Debug().Str("module", "marker").Msg("setting up periodic tasks")
 
-	// Setup a cron job to run every midnight
-	if _, err := scheduler.Every(1).Minute().Do(func() {
+	// Setup a cron job to run every hour
+	if _, err := scheduler.Every(1).Hour().Do(func() {
 		utils.WatchMethod(m.updateAllMarkers)
 	}); err != nil {
 		return err
@@ -51,6 +51,10 @@ func (m *Module) updateAllMarkers() error {
 			return err
 		}
 
+		var supply []types.MarkerSupply
+		supplyDenom, supplyAmount := accountI.GetSupplyValues()
+		supply = append(supply, types.NewMarkerSupply(supplyDenom, supplyAmount.String()))
+
 		markers = append(markers,
 			*types.NewMarker(
 				accountI.GetAddress().String(),
@@ -59,7 +63,7 @@ func (m *Module) updateAllMarkers() error {
 				accountI.GetDenom(),
 				accountI.GetMarkerType(),
 				accountI.GetStatus(),
-				2222,
+				supply,
 				height))
 	}
 
