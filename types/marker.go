@@ -26,7 +26,7 @@ type Marker struct {
 	Denom                  string
 	MarkerType             markertypes.MarkerType
 	Status                 markertypes.MarkerStatus
-	Supply                 string
+	Supply                 *MarkerSupply
 	Height                 int64
 }
 
@@ -38,7 +38,7 @@ func NewMarker(
 	denom string,
 	markerType markertypes.MarkerType,
 	status markertypes.MarkerStatus,
-	supply string,
+	supply *MarkerSupply,
 	height int64) *Marker {
 	return &Marker{
 		Address:                address,
@@ -49,5 +49,21 @@ func NewMarker(
 		Status:                 status,
 		Supply:                 supply,
 		Height:                 height,
+	}
+}
+
+// MarkerSupply represents the x/marker supply value
+type MarkerSupply struct {
+	Denom  string
+	Amount string
+}
+
+// NewMarkerSupply allows to build a new MarkerSupply instance
+func NewMarkerSupply(
+	denom string,
+	amount string) *MarkerSupply {
+	return &MarkerSupply{
+		Denom:  denom,
+		Amount: amount,
 	}
 }
