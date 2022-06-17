@@ -95,7 +95,7 @@ ON CONFLICT (denom) DO UPDATE
 WHERE marker_account.height <= excluded.height`
 	_, err = db.Sql.Exec(stmt, markerParams...)
 	if err != nil {
-		return fmt.Errorf("error while storing markers list: %s", err)
+		return fmt.Errorf("error while storing markers accounts list: %s", err)
 	}
 
 	return nil
