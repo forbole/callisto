@@ -82,12 +82,21 @@ func (db *Db) SaveMarkersAccounts(markersList []types.MarkerAccount, height int6
 
 	// Store the markers accounts
 	stmt = stmt[:len(stmt)-1] // Remove trailing ","
-	stmt += " ON CONFLICT DO NOTHING"
+	stmt += `
+ON CONFLICT (denom) DO UPDATE
+	SET address = excluded.address,
+		access_control = excluded.access_control,
+		allow_governance_control = excluded.allow_governance_control,
+		denom = excluded.denom,
+		marker_type = excluded.marker_type,
+		status = excluded.status,
+		supply = excluded.supply,
+		height = excluded.height
+WHERE marker_account.height <= excluded.height`
 	_, err = db.Sql.Exec(stmt, markerParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing markers list: %s", err)
 	}
 
 	return nil
-
 }

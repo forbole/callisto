@@ -8,11 +8,10 @@ CREATE TABLE marker_params
 
 CREATE TABLE marker_account
 (
-    id                       SERIAL     NOT NULL PRIMARY KEY,
     address                  TEXT       NOT NULL REFERENCES account (address),
     access_control           TEXT       NOT NULL,
     allow_governance_control BOOLEAN    NOT NULL,
-    denom                    TEXT       NOT NULL,
+    denom                    TEXT       NOT NULL PRIMARY KEY,
     marker_type              TEXT       NOT NULL,
     status                   TEXT       NOT NULL,
     supply                   TEXT       NOT NULL,
