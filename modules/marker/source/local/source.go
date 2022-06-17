@@ -60,3 +60,18 @@ func (s Source) GetAllMarkers(height int64) ([]*types.Any, error) {
 
 	return markers, nil
 }
+
+// GetMarkerSupply implements markersource.Source
+func (s Source) GetMarkerSupply(denom string, height int64) (*markertypes.QuerySupplyResponse) {
+	ctx, err := s.LoadHeight(height)
+	if err != nil {
+		return nil
+	}
+
+	supply, _ := s.querier.Supply(sdk.WrapSDKContext(ctx), &markertypes.QuerySupplyRequest{Id: denom})
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	return supply
+}

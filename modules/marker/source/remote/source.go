@@ -1,6 +1,8 @@
 package remote
 
 import (
+	"fmt"
+
 	types "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	markersource "github.com/forbole/bdjuno/v3/modules/marker/source"
@@ -54,4 +56,13 @@ func (s Source) GetAllMarkers(height int64) ([]*types.Any, error) {
 	}
 
 	return markers, nil
+}
+
+// GetMarkerSupply implements markersource.Source
+func (s Source) GetMarkerSupply(denom string, height int64) *markertypes.QuerySupplyResponse {
+	ctx := remote.GetHeightRequestContext(s.Ctx, height)
+
+	supply, _ := s.querier.Supply(ctx, &markertypes.QuerySupplyRequest{Id: denom})
+
+	return supply
 }
