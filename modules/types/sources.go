@@ -20,6 +20,8 @@ import (
 
 	nodeconfig "github.com/forbole/juno/v3/node/config"
 
+	provenanceapp "github.com/MonikaCat/provenance/app"
+	markertypes "github.com/MonikaCat/provenance/x/marker/types"
 	banksource "github.com/forbole/bdjuno/v3/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v3/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v3/modules/bank/source/remote"
@@ -41,8 +43,6 @@ import (
 	stakingsource "github.com/forbole/bdjuno/v3/modules/staking/source"
 	localstakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/remote"
-	provenanceapp "github.com/provenance-io/provenance/app"
-	markertypes "github.com/provenance-io/provenance/x/marker/types"
 )
 
 type Sources struct {

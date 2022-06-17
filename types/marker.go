@@ -1,7 +1,7 @@
 package types
 
 import (
-	markertypes "github.com/provenance-io/provenance/x/marker/types"
+	markertypes "github.com/MonikaCat/provenance/x/marker/types"
 )
 
 // MarkerParams represents the x/marker parameters
@@ -26,7 +26,7 @@ type Marker struct {
 	Denom                  string
 	MarkerType             markertypes.MarkerType
 	Status                 markertypes.MarkerStatus
-	Supply                 *MarkerSupply
+	Supply                 []MarkerSupply
 	Height                 int64
 }
 
@@ -38,7 +38,7 @@ func NewMarker(
 	denom string,
 	markerType markertypes.MarkerType,
 	status markertypes.MarkerStatus,
-	supply *MarkerSupply,
+	supply []MarkerSupply,
 	height int64) *Marker {
 	return &Marker{
 		Address:                address,
@@ -61,8 +61,8 @@ type MarkerSupply struct {
 // NewMarkerSupply allows to build a new MarkerSupply instance
 func NewMarkerSupply(
 	denom string,
-	amount string) *MarkerSupply {
-	return &MarkerSupply{
+	amount string) MarkerSupply {
+	return MarkerSupply{
 		Denom:  denom,
 		Amount: amount,
 	}

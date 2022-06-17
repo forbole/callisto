@@ -93,6 +93,8 @@ github.com/HdrHistogram/hdrhistogram-go v1.1.2/go.mod h1:yDgFjdqOqDEKOvasDdhWNXY
 github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible/go.mod h1:r7JcOSlj0wfOMncg0iLm8Leh48TZaKVeNIfJntJ2wa0=
 github.com/Microsoft/go-winio v0.5.1 h1:aPJp2QD7OOrhO5tQXqQoGSJc+DjDtWTGLOmNyAm6FgY=
 github.com/Microsoft/go-winio v0.5.1/go.mod h1:JPGBdM1cNvN/6ISo+n8V5iA4v8pBzdOpzfwIujj1a84=
+github.com/MonikaCat/provenance v1.10.1-0.20220617151414-ca82aea8317e h1:7y/x2+1cDaXmj7nh37gMtElLOJYbspQRrGNx3AuTF3o=
+github.com/MonikaCat/provenance v1.10.1-0.20220617151414-ca82aea8317e/go.mod h1:tUSfOOq0FuGNcnAwhmnlWDX2cfQ3vjMb8BjPqSQM4Xo=
 github.com/MonikaCat/tendermint v0.34.20-0.20220510093325-405517310d66 h1:pXFeky7KOX4NQ6vHmgBmBpe1LiGTnFOa4JZa4o/52rY=
 github.com/MonikaCat/tendermint v0.34.20-0.20220510093325-405517310d66/go.mod h1:R5+wgIwSxMdKQcmOaeudL0Cjkr3HDkhpcdum6VeU3R4=
 github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 h1:TngWCqHvy9oXAN6lEVMRuU21PR1EtLVZJmdB18Gu3Rw=
@@ -964,8 +966,6 @@ github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244 h1:fdX2U+a2Rmc4BjR
 github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244/go.mod h1:jG8oAQG0ZPHPyxg5QlMERS31airDC+ZuqiAe8DUvFVo=
 github.com/provenance-io/cosmos-sdk v0.45.3-pio-2 h1:qLdEQtwLFfHwAwL0505gkBlJ/fO/i2jXG9qQ7EZeHQw=
 github.com/provenance-io/cosmos-sdk v0.45.3-pio-2/go.mod h1:PjsF1aATbY6endgLbdNswiOfwoLvrNNZzdJ37kzrNbw=
-github.com/provenance-io/provenance v1.10.0 h1:gyGHQnb1+zifVo3BjYLodTqje+4OJ7DK9nQ5xSYYRQ0=
-github.com/provenance-io/provenance v1.10.0/go.mod h1:7Wjfho/4V0NN418Bjo9UKo4FPTI8oMJzbycCwVTSfb0=
 github.com/rakyll/statik v0.1.7 h1:OF3QCZUuyPxuGEP7B4ypUa7sB/iHtqOTDYZXGM8KOdQ=
 github.com/rakyll/statik v0.1.7/go.mod h1:AlZONWzMtEnMs7W4e/1LURLiI49pIMmp6V9Unghqrcc=
 github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a/go.mod h1:bCqnVzQkZxMG4s8nGwiZ5l3QUCyqpo9Y+/ZMZ9VjZe4=
