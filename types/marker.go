@@ -18,8 +18,8 @@ func NewMarkerParams(params markertypes.Params, height int64) *MarkerParams {
 	}
 }
 
-// Marker represents the x/marker marker account
-type Marker struct {
+// MarkerAccount represents the x/marker marker account
+type MarkerAccount struct {
 	Address                string
 	AccessControl          []markertypes.AccessGrant
 	AllowGovernanceControl bool
@@ -30,8 +30,8 @@ type Marker struct {
 	Height                 int64
 }
 
-// NewMarker allows to build a new Marker instance
-func NewMarker(
+// NewMarkerAccount allows to build a new MarkerAccount instance
+func NewMarkerAccount(
 	address string,
 	accessControl []markertypes.AccessGrant,
 	allowGovernanceControl bool,
@@ -39,8 +39,8 @@ func NewMarker(
 	markerType markertypes.MarkerType,
 	status markertypes.MarkerStatus,
 	supply []MarkerSupply,
-	height int64) *Marker {
-	return &Marker{
+	height int64) *MarkerAccount {
+	return &MarkerAccount{
 		Address:                address,
 		AccessControl:          accessControl,
 		AllowGovernanceControl: allowGovernanceControl,

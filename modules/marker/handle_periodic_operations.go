@@ -17,7 +17,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 
 	// Setup a cron job to run every hour
 	if _, err := scheduler.Every(1).Hour().Do(func() {
-		utils.WatchMethod(m.updateAllMarkers)
+		utils.WatchMethod(m.updateMarkersAccounts)
 	}); err != nil {
 		return err
 	}
@@ -25,9 +25,9 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	return nil
 }
 
-// updateAllMarkers fetches from the REST APIs the latest markers
+// updateMarkersAccounts fetches from the REST APIs the latest markers
 // and saves them inside the database.
-func (m *Module) updateAllMarkers() error {
+func (m *Module) updateMarkersAccounts() error {
 	log.Debug().
 		Str("module", "marker").
 		Msg("getting markers data")
@@ -43,7 +43,7 @@ func (m *Module) updateAllMarkers() error {
 		return fmt.Errorf("error while getting markers list: %s", err)
 	}
 
-	var markers []types.Marker
+	var markers []types.MarkerAccount
 	for _, marker := range markersList {
 		var accountI markertypes.MarkerAccountI
 		err := m.cdc.UnpackAny(marker, &accountI)
@@ -56,7 +56,7 @@ func (m *Module) updateAllMarkers() error {
 		supply = append(supply, types.NewMarkerSupply(supplyDenom, supplyAmount.String()))
 
 		markers = append(markers,
-			*types.NewMarker(
+			*types.NewMarkerAccount(
 				accountI.GetAddress().String(),
 				accountI.GetAccessList(),
 				accountI.HasGovernanceEnabled(),
@@ -67,5 +67,5 @@ func (m *Module) updateAllMarkers() error {
 				height))
 	}
 
-	return m.db.SaveMarkers(markers, height)
+	return m.db.SaveMarkersAccounts(markers, height)
 }
