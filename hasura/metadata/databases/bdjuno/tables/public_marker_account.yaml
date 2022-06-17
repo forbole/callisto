@@ -1,0 +1,22 @@
+table:
+  name: marker_account
+  schema: public
+object_relationships:
+- name: account
+  using:
+    foreign_key_constraint_on: address
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - id
+    - address
+    - access_control
+    - allow_governance_control
+    - denom
+    - marker_type
+    - status
+    - supply
+    - height
+    filter: {}
+  role: anonymous
