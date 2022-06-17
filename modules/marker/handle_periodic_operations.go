@@ -57,7 +57,7 @@ func (m *Module) updateMarkersAccounts() error {
 		supply = append(supply, types.NewMarkerSupply(supplyDenom, supplyAmount.String()))
 
 		markers = append(markers,
-			*types.NewMarkerAccount(
+			types.NewMarkerAccount(
 				accountI.GetAddress().String(),
 				accountI.GetAccessList(),
 				accountI.HasGovernanceEnabled(),
@@ -68,5 +68,5 @@ func (m *Module) updateMarkersAccounts() error {
 				height))
 	}
 
-	return m.db.SaveMarkersAccounts(markers, height)
+	return m.db.SaveMarkersAccounts(markers)
 }

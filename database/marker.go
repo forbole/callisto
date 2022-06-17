@@ -31,7 +31,7 @@ WHERE marker_params.height <= excluded.height`
 }
 
 // SaveMarkersAccounts allows to store the markers accounts for the given block height
-func (db *Db) SaveMarkersAccounts(markersList []types.MarkerAccount, height int64) error {
+func (db *Db) SaveMarkersAccounts(markersList []types.MarkerAccount) error {
 	if len(markersList) == 0 {
 		return nil
 	}

@@ -39,8 +39,8 @@ func NewMarkerAccount(
 	markerType markertypes.MarkerType,
 	status markertypes.MarkerStatus,
 	supply []MarkerSupply,
-	height int64) *MarkerAccount {
-	return &MarkerAccount{
+	height int64) MarkerAccount {
+	return MarkerAccount{
 		Address:                address,
 		AccessControl:          accessControl,
 		AllowGovernanceControl: allowGovernanceControl,
