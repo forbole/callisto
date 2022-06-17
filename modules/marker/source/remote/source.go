@@ -39,7 +39,7 @@ func (s Source) GetAllMarkers(height int64) ([]*types.Any, error) {
 			&markertypes.QueryAllMarkersRequest{
 				Pagination: &query.PageRequest{
 					Key:   nextKey,
-					Limit: 100, // Query 100 accounts at a time
+					Limit: 100, // Query 100 markers at a time
 				},
 			},
 		)
