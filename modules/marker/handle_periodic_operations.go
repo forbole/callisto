@@ -52,6 +52,7 @@ func (m *Module) updateMarkersAccounts() error {
 		}
 
 		var supply []types.MarkerSupply
+		// custom function GetSupplyValues
 		supplyDenom, supplyAmount := accountI.GetSupplyValues()
 		supply = append(supply, types.NewMarkerSupply(supplyDenom, supplyAmount.String()))
 
