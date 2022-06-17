@@ -1,8 +1,8 @@
 ## Unreleased
 
 ### Changes 
-#### x/market module
-- ([\#420](https://github.com/forbole/bdjuno/pull/420)) [provenance] Added `x/market` module parsing
+#### x/marker module
+- ([\#420](https://github.com/forbole/bdjuno/pull/420)) [provenance] Added `x/marker` module parsing
 
 ### Dependencies
 - ([\#412](https://github.com/forbole/bdjuno/pull/412)) Updated Juno to `v3.2.1`
