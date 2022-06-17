@@ -7,5 +7,4 @@ import (
 
 type Source interface {
 	GetAllMarkers(height int64) ([]*types.Any, error)
-	GetMarkerSupply(denom string, height int64) *markertypes.QuerySupplyResponse
 }
