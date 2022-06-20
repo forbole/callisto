@@ -4,15 +4,18 @@ import (
 	"fmt"
 	"os"
 
+	certiksimapp "github.com/certikfoundation/shentu/v2/simapp"
 	"github.com/cosmos/cosmos-sdk/simapp"
+
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/forbole/juno/v3/node/remote"
 
+	certikgovtypes "github.com/certikfoundation/shentu/v2/x/gov/types"
+	shieldtypes "github.com/certikfoundation/shentu/v2/x/shield/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
@@ -33,6 +36,9 @@ import (
 	mintsource "github.com/forbole/bdjuno/v3/modules/mint/source"
 	localmintsource "github.com/forbole/bdjuno/v3/modules/mint/source/local"
 	remotemintsource "github.com/forbole/bdjuno/v3/modules/mint/source/remote"
+	shieldsource "github.com/forbole/bdjuno/v3/modules/shield/source"
+	localshieldsource "github.com/forbole/bdjuno/v3/modules/shield/source/local"
+	remoteshieldsource "github.com/forbole/bdjuno/v3/modules/shield/source/remote"
 	slashingsource "github.com/forbole/bdjuno/v3/modules/slashing/source"
 	localslashingsource "github.com/forbole/bdjuno/v3/modules/slashing/source/local"
 	remoteslashingsource "github.com/forbole/bdjuno/v3/modules/slashing/source/remote"
@@ -46,6 +52,7 @@ type Sources struct {
 	DistrSource    distrsource.Source
 	GovSource      govsource.Source
 	MintSource     mintsource.Source
+	Shieldsource   shieldsource.Source
 	SlashingSource slashingsource.Source
 	StakingSource  stakingsource.Source
 }
@@ -73,12 +80,18 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		cfg.Home, 0, simapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
 	)
 
+	certikapp := certiksimapp.NewSimApp(
+		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
+		cfg.Home, 0, simapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
+	)
+
 	sources := &Sources{
-		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
-		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
-		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
-		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
-		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
+		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(certikapp.BankKeeper)),
+		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(certikapp.DistrKeeper)),
+		GovSource:      localgovsource.NewSource(source, certikgovtypes.QueryServer(certikapp.GovKeeper)),
+		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(certikapp.MintKeeper)),
+		Shieldsource:   localshieldsource.NewSource(source, shieldtypes.QueryServer(certikapp.ShieldKeeper)),
+		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(certikapp.SlashingKeeper)),
 		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
 	}
 
@@ -115,8 +128,9 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 	return &Sources{
 		BankSource:     remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
 		DistrSource:    remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
-		GovSource:      remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
+		GovSource:      remotegovsource.NewSource(source, certikgovtypes.NewQueryClient(source.GrpcConn)),
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
+		Shieldsource:   remoteshieldsource.NewSource(source, shieldtypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
 	}, nil

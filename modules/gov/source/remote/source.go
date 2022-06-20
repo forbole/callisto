@@ -1,6 +1,7 @@
 package remote
 
 import (
+	certikgovtypes "github.com/certikfoundation/shentu/v2/x/gov/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/forbole/juno/v3/node/remote"
 
@@ -14,11 +15,11 @@ var (
 // Source implements govsource.Source using a remote node
 type Source struct {
 	*remote.Source
-	govClient govtypes.QueryClient
+	govClient certikgovtypes.QueryClient
 }
 
 // NewSource returns a new Source implementation
-func NewSource(source *remote.Source, govClient govtypes.QueryClient) *Source {
+func NewSource(source *remote.Source, govClient certikgovtypes.QueryClient) *Source {
 	return &Source{
 		Source:    source,
 		govClient: govClient,
@@ -26,13 +27,13 @@ func NewSource(source *remote.Source, govClient govtypes.QueryClient) *Source {
 }
 
 // Proposal implements govsource.Source
-func (s Source) Proposal(height int64, id uint64) (govtypes.Proposal, error) {
+func (s Source) Proposal(height int64, id uint64) (certikgovtypes.Proposal, error) {
 	res, err := s.govClient.Proposal(
 		remote.GetHeightRequestContext(s.Ctx, height),
-		&govtypes.QueryProposalRequest{ProposalId: id},
+		&certikgovtypes.QueryProposalRequest{ProposalId: id},
 	)
 	if err != nil {
-		return govtypes.Proposal{}, err
+		return certikgovtypes.Proposal{}, err
 	}
 
 	return res.Proposal, err
@@ -42,7 +43,7 @@ func (s Source) Proposal(height int64, id uint64) (govtypes.Proposal, error) {
 func (s Source) ProposalDeposit(height int64, id uint64, depositor string) (govtypes.Deposit, error) {
 	res, err := s.govClient.Deposit(
 		remote.GetHeightRequestContext(s.Ctx, height),
-		&govtypes.QueryDepositRequest{ProposalId: id, Depositor: depositor},
+		&certikgovtypes.QueryDepositRequest{ProposalId: id, Depositor: depositor},
 	)
 	if err != nil {
 		return govtypes.Deposit{}, err
@@ -55,7 +56,7 @@ func (s Source) ProposalDeposit(height int64, id uint64, depositor string) (govt
 func (s Source) TallyResult(height int64, proposalID uint64) (govtypes.TallyResult, error) {
 	res, err := s.govClient.TallyResult(
 		remote.GetHeightRequestContext(s.Ctx, height),
-		&govtypes.QueryTallyResultRequest{ProposalId: proposalID},
+		&certikgovtypes.QueryTallyResultRequest{ProposalId: proposalID},
 	)
 	if err != nil {
 		return govtypes.TallyResult{}, err
@@ -65,13 +66,13 @@ func (s Source) TallyResult(height int64, proposalID uint64) (govtypes.TallyResu
 }
 
 // DepositParams implements govsource.Source
-func (s Source) DepositParams(height int64) (govtypes.DepositParams, error) {
+func (s Source) DepositParams(height int64) (certikgovtypes.DepositParams, error) {
 	res, err := s.govClient.Params(
 		remote.GetHeightRequestContext(s.Ctx, height),
-		&govtypes.QueryParamsRequest{ParamsType: govtypes.ParamDeposit},
+		&certikgovtypes.QueryParamsRequest{ParamsType: govtypes.ParamDeposit},
 	)
 	if err != nil {
-		return govtypes.DepositParams{}, err
+		return certikgovtypes.DepositParams{}, err
 	}
 
 	return res.DepositParams, nil
@@ -81,7 +82,7 @@ func (s Source) DepositParams(height int64) (govtypes.DepositParams, error) {
 func (s Source) VotingParams(height int64) (govtypes.VotingParams, error) {
 	res, err := s.govClient.Params(
 		remote.GetHeightRequestContext(s.Ctx, height),
-		&govtypes.QueryParamsRequest{ParamsType: govtypes.ParamVoting},
+		&certikgovtypes.QueryParamsRequest{ParamsType: govtypes.ParamVoting},
 	)
 	if err != nil {
 		return govtypes.VotingParams{}, err
@@ -91,13 +92,13 @@ func (s Source) VotingParams(height int64) (govtypes.VotingParams, error) {
 }
 
 // TallyParams implements govsource.Source
-func (s Source) TallyParams(height int64) (govtypes.TallyParams, error) {
+func (s Source) TallyParams(height int64) (certikgovtypes.TallyParams, error) {
 	res, err := s.govClient.Params(
 		remote.GetHeightRequestContext(s.Ctx, height),
-		&govtypes.QueryParamsRequest{ParamsType: govtypes.ParamTallying},
+		&certikgovtypes.QueryParamsRequest{ParamsType: govtypes.ParamTallying},
 	)
 	if err != nil {
-		return govtypes.TallyParams{}, err
+		return certikgovtypes.TallyParams{}, err
 	}
 
 	return res.TallyParams, nil

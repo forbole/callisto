@@ -5,6 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	certikgovtypes "github.com/certikfoundation/shentu/v2/x/gov/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 )
 
@@ -15,15 +16,17 @@ const (
 
 // DepositParams contains the data of the deposit parameters of the x/gov module
 type DepositParams struct {
-	MinDeposit       sdk.Coins `json:"min_deposit,omitempty" yaml:"min_deposit"`
-	MaxDepositPeriod int64     `json:"max_deposit_period,omitempty" yaml:"max_deposit_period"`
+	MinInitialDeposit sdk.Coins `json:"min_initial_deposit,omitempty" yaml:"min_initial_deposit"`
+	MinDeposit        sdk.Coins `json:"min_deposit,omitempty" yaml:"min_deposit"`
+	MaxDepositPeriod  int64     `json:"max_deposit_period,omitempty" yaml:"max_deposit_period"`
 }
 
 // NewDepositParam allows to build a new DepositParams
-func NewDepositParam(d govtypes.DepositParams) DepositParams {
+func NewDepositParam(d certikgovtypes.DepositParams) DepositParams {
 	return DepositParams{
-		MinDeposit:       d.MinDeposit,
-		MaxDepositPeriod: d.MaxDepositPeriod.Nanoseconds(),
+		MinInitialDeposit: d.MinInitialDeposit,
+		MinDeposit:        d.MinDeposit,
+		MaxDepositPeriod:  d.MaxDepositPeriod.Nanoseconds(),
 	}
 }
 
@@ -47,19 +50,37 @@ type GovParams struct {
 	Height        int64         `json:"height" ymal:"height"`
 }
 
-// TallyParams contains the tally parameters of the x/gov module
+// TallyParams contains the tally parameters of the certikfoundation/shentu/x/gov module
 type TallyParams struct {
+	DefaultTally                     TallyParam `json:"default_tally,omitempty"`
+	CertifierUpdateSecurityVoteTally TallyParam `json:"certifier_update_security_vote_tally,omitempty"`
+	CertifierUpdateStakeVoteTally    TallyParam `json:"certifier_update_stake_vote_tally,omitempty"`
+}
+
+type TallyParam struct {
 	Quorum        sdk.Dec `json:"quorum,omitempty"`
 	Threshold     sdk.Dec `json:"threshold,omitempty"`
 	VetoThreshold sdk.Dec `json:"veto_threshold,omitempty" yaml:"veto_threshold"`
 }
 
 // NewTallyParams allows to build a new TallyParams instance
-func NewTallyParams(t govtypes.TallyParams) TallyParams {
+func NewTallyParams(t certikgovtypes.TallyParams) TallyParams {
 	return TallyParams{
-		Quorum:        t.Quorum,
-		Threshold:     t.Threshold,
-		VetoThreshold: t.VetoThreshold,
+		DefaultTally: TallyParam{
+			Quorum:        t.DefaultTally.Quorum,
+			Threshold:     t.DefaultTally.Threshold,
+			VetoThreshold: t.DefaultTally.VetoThreshold,
+		},
+		CertifierUpdateSecurityVoteTally: TallyParam{
+			Quorum:        t.CertifierUpdateSecurityVoteTally.Quorum,
+			Threshold:     t.CertifierUpdateSecurityVoteTally.Threshold,
+			VetoThreshold: t.CertifierUpdateSecurityVoteTally.VetoThreshold,
+		},
+		CertifierUpdateStakeVoteTally: TallyParam{
+			Quorum:        t.CertifierUpdateStakeVoteTally.Quorum,
+			Threshold:     t.CertifierUpdateStakeVoteTally.Threshold,
+			VetoThreshold: t.CertifierUpdateStakeVoteTally.VetoThreshold,
+		},
 	}
 }
 

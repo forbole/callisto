@@ -33,6 +33,27 @@ array_relationships:
       table:
         name: proposal
         schema: public
+- name: shield_providers
+  using:
+    foreign_key_constraint_on:
+      column: address
+      table:
+        name: shield_provider
+        schema: public
+- name: shield_purchase_purchasers
+  using:
+    foreign_key_constraint_on:
+      column: purchaser
+      table:
+        name: shield_purchase
+        schema: public
+- name: shield_withdraws_addresses
+  using:
+    foreign_key_constraint_on:
+      column: address
+      table:
+        name: shield_withdraws
+        schema: public
 - name: validator_infos
   using:
     foreign_key_constraint_on:

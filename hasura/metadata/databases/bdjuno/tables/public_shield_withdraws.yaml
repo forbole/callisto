@@ -1,0 +1,17 @@
+table:
+  name: shield_withdraws
+  schema: public
+object_relationships:
+- name: shield_withdraw_address
+  using:
+    foreign_key_constraint_on: address
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - address
+    - amount
+    - completion_time
+    - height
+    filter: {}
+  role: anonymous

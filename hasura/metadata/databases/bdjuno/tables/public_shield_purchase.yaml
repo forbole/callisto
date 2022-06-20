@@ -1,0 +1,21 @@
+table:
+  name: shield_purchase
+  schema: public
+object_relationships:
+- name: shield_purchase_pool_id
+  using:
+    foreign_key_constraint_on: pool_id
+- name: shield_purchaser_address
+  using:
+    foreign_key_constraint_on: purchaser
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - pool_id
+    - purchaser
+    - shield
+    - description
+    - height
+    filter: {}
+  role: anonymous

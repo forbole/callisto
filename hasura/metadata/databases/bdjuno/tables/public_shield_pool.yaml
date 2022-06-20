@@ -1,0 +1,27 @@
+table:
+  name: shield_pool
+  schema: public
+array_relationships:
+- name: shield_purchases
+  using:
+    foreign_key_constraint_on: 
+      column: pool_id
+      table:
+        name: shield_purchase
+        schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - pool_id
+    - shield
+    - native_service_fees
+    - foreign_service_fees
+    - sponsor
+    - sponsor_address
+    - description
+    - shield_limit
+    - pause
+    - height
+    filter: {}
+  role: anonymous

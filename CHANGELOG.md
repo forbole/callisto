@@ -1,6 +1,15 @@
 ## Unreleased
+
+### Changes 
+#### Shield module
+- ([\#418](https://github.com/forbole/bdjuno/pull/418)) [certik] Added `x/shield` module parsing
+
 ### Dependencies
 - ([\#412](https://github.com/forbole/bdjuno/pull/412)) Updated Juno to `v3.2.1`
+
+### Gov module
+- ([\#414](https://github.com/forbole/bdjuno/pull/414)) Apply `certik` custom types: proposal, deposit params, and tally params
+
 
 ## Version v3.1.0
 ### Dependencies
