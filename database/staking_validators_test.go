@@ -634,6 +634,7 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 			1,
 			false,
 			false,
+			true,
 			10,
 		),
 		types.NewValidatorStatus(
@@ -642,6 +643,7 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 			2,
 			true,
 			true,
+			false,
 			10,
 		),
 	})
@@ -657,6 +659,7 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 			1,
 			false,
 			false,
+			true,
 			validator1.GetConsAddr(),
 			10,
 		),
@@ -664,6 +667,7 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 			2,
 			true,
 			true,
+			false,
 			validator2.GetConsAddr(),
 			10,
 		),
@@ -678,15 +682,17 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 		types.NewValidatorStatus(
 			validator1.GetConsAddr(),
 			validator1.GetConsPubKey(),
-			3,
+			2,
 			true,
 			true,
-			9,
+			false,
+			11,
 		),
 		types.NewValidatorStatus(
 			validator2.GetConsAddr(),
 			validator2.GetConsPubKey(),
 			3,
+			true,
 			true,
 			true,
 			11,
@@ -701,14 +707,16 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 
 	expected = []dbtypes.ValidatorStatusRow{
 		dbtypes.NewValidatorStatusRow(
-			1,
-			false,
+			2,
+			true,
+			true,
 			false,
 			validator1.GetConsAddr(),
-			10,
+			11,
 		),
 		dbtypes.NewValidatorStatusRow(
 			3,
+			true,
 			true,
 			true,
 			validator2.GetConsAddr(),

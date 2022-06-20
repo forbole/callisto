@@ -237,21 +237,23 @@ func (v ValidatorVotingPowerRow) Equal(w ValidatorVotingPowerRow) bool {
 
 // ValidatorStatusRow represents a single row of the validator_status table
 type ValidatorStatusRow struct {
-	Status      int    `db:"status"`
-	Jailed      bool   `db:"jailed"`
-	Tombstoned  bool   `db:"tombstoned"`
-	ConsAddress string `db:"validator_address"`
-	Height      int64  `db:"height"`
+	Status          int    `db:"status"`
+	Jailed          bool   `db:"jailed"`
+	Tombstoned      bool   `db:"tombstoned"`
+	LiquidValidator bool   `db:"liquid_validator"`
+	ConsAddress     string `db:"validator_address"`
+	Height          int64  `db:"height"`
 }
 
 // NewValidatorStatusRow builds a new ValidatorStatusRow
-func NewValidatorStatusRow(status int, jailed bool, tombstoned bool, consAddess string, height int64) ValidatorStatusRow {
+func NewValidatorStatusRow(status int, jailed bool, tombstoned bool, liquidValidator bool, consAddess string, height int64) ValidatorStatusRow {
 	return ValidatorStatusRow{
-		Status:      status,
-		Jailed:      jailed,
-		Tombstoned:  tombstoned,
-		ConsAddress: consAddess,
-		Height:      height,
+		Status:          status,
+		Jailed:          jailed,
+		Tombstoned:      tombstoned,
+		LiquidValidator: liquidValidator,
+		ConsAddress:     consAddess,
+		Height:          height,
 	}
 }
 
@@ -260,6 +262,7 @@ func (v ValidatorStatusRow) Equal(w ValidatorStatusRow) bool {
 	return v.Status == w.Status &&
 		v.Jailed == w.Jailed &&
 		v.Tombstoned == w.Tombstoned &&
+		v.LiquidValidator == w.LiquidValidator &&
 		v.ConsAddress == w.ConsAddress &&
 		v.Height == w.Height
 }

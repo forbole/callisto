@@ -2,6 +2,7 @@ package modules
 
 import (
 	"github.com/forbole/bdjuno/v3/modules/actions"
+	"github.com/forbole/bdjuno/v3/modules/liquidstaking"
 	"github.com/forbole/bdjuno/v3/modules/types"
 
 	"github.com/forbole/juno/v3/modules/pruning"
@@ -77,9 +78,10 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	consensusModule := consensus.NewModule(db)
 	distrModule := distribution.NewModule(sources.DistrSource, cdc, db)
 	feegrantModule := feegrant.NewModule(cdc, db)
+	liquidStakingModule := liquidstaking.NewModule(sources.LiquidStakingSource, cdc, db)
 	mintModule := mint.NewModule(sources.MintSource, cdc, db)
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
-	stakingModule := staking.NewModule(sources.StakingSource, slashingModule, cdc, db)
+	stakingModule := staking.NewModule(sources.StakingSource, slashingModule, sources.LiquidStakingSource, cdc, db)
 	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakingModule, cdc, db)
 
 	return []jmodules.Module{
@@ -94,6 +96,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		distrModule,
 		feegrantModule,
 		govModule,
+		liquidStakingModule,
 		mintModule,
 		modules.NewModule(ctx.JunoConfig.Chain, db),
 		pricefeed.NewModule(ctx.JunoConfig, cdc, db),
