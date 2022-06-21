@@ -83,9 +83,8 @@ func (db *Db) SaveMarkersAccounts(markersList []types.MarkerAccount) error {
 	// Store the markers accounts
 	stmt = stmt[:len(stmt)-1] // Remove trailing ","
 	stmt += `
-ON CONFLICT (denom) DO UPDATE
-	SET address = excluded.address,
-		access_control = excluded.access_control,
+ON CONFLICT (address) DO UPDATE
+	SET access_control = excluded.access_control,
 		allow_governance_control = excluded.allow_governance_control,
 		denom = excluded.denom,
 		marker_type = excluded.marker_type,
