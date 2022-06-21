@@ -9,7 +9,6 @@ select_permissions:
 - permission:
     allow_aggregations: true
     columns:
-    - id
     - address
     - access_control
     - allow_governance_control
