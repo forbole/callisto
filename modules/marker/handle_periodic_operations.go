@@ -16,7 +16,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	log.Debug().Str("module", "marker").Msg("setting up periodic tasks")
 
 	// Setup a cron job to run every hour
-	if _, err := scheduler.Every(1).Hour().Do(func() {
+	if _, err := scheduler.Every(1).Minute().Do(func() {
 		utils.WatchMethod(m.updateMarkersAccounts)
 	}); err != nil {
 		return err
@@ -43,8 +43,8 @@ func (m *Module) updateMarkersAccounts() error {
 		return fmt.Errorf("error while getting markers list: %s", err)
 	}
 
-	var markers []types.MarkerAccount
-	for _, marker := range markersList {
+	var markers = make([]types.MarkerAccount, len(markersList))
+	for index, marker := range markersList {
 		var accountI markertypes.MarkerAccountI
 		err := m.cdc.UnpackAny(marker, &accountI)
 		if err != nil {
@@ -56,16 +56,15 @@ func (m *Module) updateMarkersAccounts() error {
 		supplyDenom, supplyAmount := accountI.GetSupplyValues()
 		supply = append(supply, types.NewMarkerSupply(supplyDenom, supplyAmount.String()))
 
-		markers = append(markers,
-			types.NewMarkerAccount(
-				accountI.GetAddress().String(),
-				accountI.GetAccessList(),
-				accountI.HasGovernanceEnabled(),
-				accountI.GetDenom(),
-				accountI.GetMarkerType(),
-				accountI.GetStatus(),
-				supply,
-				height))
+		markers[index] = types.NewMarkerAccount(
+			accountI.GetAddress().String(),
+			accountI.GetAccessList(),
+			accountI.HasGovernanceEnabled(),
+			accountI.GetDenom(),
+			accountI.GetMarkerType(),
+			accountI.GetStatus(),
+			supply,
+			height)
 	}
 
 	return m.db.SaveMarkersAccounts(markers)
