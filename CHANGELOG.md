@@ -1,4 +1,8 @@
 ## Unreleased
+### Changes
+#### Gov module
+- ([\#401](https://github.com/forbole/bdjuno/pull/401)) Update the proposal status to the latest in `bdjuno parse gov proposal [id]` command
+
 ### Dependencies
 - ([\#412](https://github.com/forbole/bdjuno/pull/412)) Updated Juno to `v3.2.1`
 
