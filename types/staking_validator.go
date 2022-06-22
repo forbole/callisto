@@ -35,7 +35,6 @@ func NewValidator(
 	selfDelegateAddress string, maxChangeRate *sdk.Dec,
 	maxRate *sdk.Dec, height int64,
 ) Validator {
-
 	return validator{
 		ConsensusAddr:       consAddr,
 		ConsPubKey:          consPubKey,
@@ -92,7 +91,6 @@ type ValidatorDescription struct {
 func NewValidatorDescription(
 	opAddr string, description stakingtypes.Description, avatarURL string, height int64,
 ) ValidatorDescription {
-
 	return ValidatorDescription{
 		OperatorAddress: opAddr,
 		Description:     description,
@@ -115,7 +113,6 @@ type ValidatorCommission struct {
 func NewValidatorCommission(
 	valAddress string, rate *sdk.Dec, minSelfDelegation *sdk.Int, height int64,
 ) ValidatorCommission {
-
 	return ValidatorCommission{
 		ValAddress:        valAddress,
 		Commission:        rate,
@@ -135,7 +132,6 @@ type ValidatorVotingPower struct {
 
 // NewValidatorVotingPower creates a new ValidatorVotingPower
 func NewValidatorVotingPower(address string, votingPower int64, height int64) ValidatorVotingPower {
-
 	return ValidatorVotingPower{
 		ConsensusAddress: address,
 		VotingPower:      votingPower,
@@ -157,7 +153,6 @@ type ValidatorStatus struct {
 
 // NewValidatorStatus creates a new ValidatorVotingPower
 func NewValidatorStatus(valConsAddr, pubKey string, status int, jailed bool, tombstoned bool, height int64) ValidatorStatus {
-
 	return ValidatorStatus{
 		ConsensusAddress: valConsAddr,
 		ConsensusPubKey:  pubKey,

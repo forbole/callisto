@@ -38,7 +38,6 @@ func NewValidatorSigningInfo(
 	missedBlocksCounter int64,
 	height int64,
 ) ValidatorSigningInfo {
-
 	return ValidatorSigningInfo{
 		ValidatorAddress:    validatorAddress,
 		StartHeight:         startHeight,

@@ -37,7 +37,6 @@ func NewDoubleSignVote(
 	validatorIndex int32,
 	signature string,
 ) DoubleSignVote {
-
 	return DoubleSignVote{
 		Type:             roundType,
 		Height:           height,
