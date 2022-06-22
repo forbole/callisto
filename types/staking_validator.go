@@ -1,11 +1,8 @@
 package types
 
 import (
-	"log"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/forbole/bdjuno/v3/modules/utils"
 )
 
 // Validator represents a single validator.
@@ -38,20 +35,6 @@ func NewValidator(
 	selfDelegateAddress string, maxChangeRate *sdk.Dec,
 	maxRate *sdk.Dec, height int64,
 ) Validator {
-	consAddr, err := utils.ConvertAddressPrefix("likevalcons", consAddr)
-	if err != nil {
-		log.Fatalf("error while converting to likevalcons prefix: %s", err)
-	}
-
-	opAddr, err = utils.ConvertAddressPrefix("likevaloper", opAddr)
-	if err != nil {
-		log.Fatalf("error while converting to likevaloper prefix: %s", err)
-	}
-
-	selfDelegateAddress, err = utils.ConvertAddressPrefix("like", selfDelegateAddress)
-	if err != nil {
-		log.Fatalf("error while converting to like prefix: %s", err)
-	}
 
 	return validator{
 		ConsensusAddr:       consAddr,
@@ -109,10 +92,6 @@ type ValidatorDescription struct {
 func NewValidatorDescription(
 	opAddr string, description stakingtypes.Description, avatarURL string, height int64,
 ) ValidatorDescription {
-	opAddr, err := utils.ConvertAddressPrefix("likevaloper", opAddr)
-	if err != nil {
-		log.Fatalf("error while converting to likevaloper prefix: %s", err)
-	}
 
 	return ValidatorDescription{
 		OperatorAddress: opAddr,
@@ -136,10 +115,6 @@ type ValidatorCommission struct {
 func NewValidatorCommission(
 	valAddress string, rate *sdk.Dec, minSelfDelegation *sdk.Int, height int64,
 ) ValidatorCommission {
-	valAddress, err := utils.ConvertAddressPrefix("likevaloper", valAddress)
-	if err != nil {
-		log.Fatalf("error while converting to likevaloper prefix: %s", err)
-	}
 
 	return ValidatorCommission{
 		ValAddress:        valAddress,
@@ -160,10 +135,6 @@ type ValidatorVotingPower struct {
 
 // NewValidatorVotingPower creates a new ValidatorVotingPower
 func NewValidatorVotingPower(address string, votingPower int64, height int64) ValidatorVotingPower {
-	address, err := utils.ConvertAddressPrefix("likevalcons", address)
-	if err != nil {
-		log.Fatalf("error while converting to likevalcons prefix: %s", err)
-	}
 
 	return ValidatorVotingPower{
 		ConsensusAddress: address,
@@ -186,10 +157,6 @@ type ValidatorStatus struct {
 
 // NewValidatorStatus creates a new ValidatorVotingPower
 func NewValidatorStatus(valConsAddr, pubKey string, status int, jailed bool, tombstoned bool, height int64) ValidatorStatus {
-	valConsAddr, err := utils.ConvertAddressPrefix("likevalcons", valConsAddr)
-	if err != nil {
-		log.Fatalf("error while converting to likevalcons prefix: %s", err)
-	}
 
 	return ValidatorStatus{
 		ConsensusAddress: valConsAddr,

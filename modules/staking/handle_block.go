@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"fmt"
 
+	"github.com/forbole/bdjuno/v3/modules/utils"
 	"github.com/forbole/bdjuno/v3/types"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -92,6 +93,16 @@ func (m *Module) updateDoubleSignEvidence(height int64, evidenceList tmtypes.Evi
 			continue
 		}
 
+		// For likecoin dual prefix
+		valAddressVoteA, _ := utils.ConvertAddressPrefix(
+			"likevalcons",
+			juno.ConvertValidatorAddressToBech32String(dve.VoteA.ValidatorAddress),
+		)
+		valAddressVoteB, _ := utils.ConvertAddressPrefix(
+			"likevalcons",
+			juno.ConvertValidatorAddressToBech32String(dve.VoteB.ValidatorAddress),
+		)
+
 		evidence := types.NewDoubleSignEvidence(
 			height,
 			types.NewDoubleSignVote(
@@ -99,7 +110,7 @@ func (m *Module) updateDoubleSignEvidence(height int64, evidenceList tmtypes.Evi
 				dve.VoteA.Height,
 				dve.VoteA.Round,
 				dve.VoteA.BlockID.String(),
-				juno.ConvertValidatorAddressToBech32String(dve.VoteA.ValidatorAddress),
+				valAddressVoteA,
 				dve.VoteA.ValidatorIndex,
 				hex.EncodeToString(dve.VoteA.Signature),
 			),
@@ -108,7 +119,7 @@ func (m *Module) updateDoubleSignEvidence(height int64, evidenceList tmtypes.Evi
 				dve.VoteB.Height,
 				dve.VoteB.Round,
 				dve.VoteB.BlockID.String(),
-				juno.ConvertValidatorAddressToBech32String(dve.VoteB.ValidatorAddress),
+				valAddressVoteB,
 				dve.VoteB.ValidatorIndex,
 				hex.EncodeToString(dve.VoteB.Signature),
 			),

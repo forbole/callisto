@@ -1,11 +1,9 @@
 package types
 
 import (
-	"log"
 	"time"
 
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
-	"github.com/forbole/bdjuno/v3/modules/utils"
 )
 
 // ValidatorSigningInfo contains the signing info of a validator at a given height
@@ -40,10 +38,6 @@ func NewValidatorSigningInfo(
 	missedBlocksCounter int64,
 	height int64,
 ) ValidatorSigningInfo {
-	validatorAddress, err := utils.ConvertAddressPrefix("likevalcons", validatorAddress)
-	if err != nil {
-		log.Fatalf("error while converting to likevalcons prefix: %s", err)
-	}
 
 	return ValidatorSigningInfo{
 		ValidatorAddress:    validatorAddress,

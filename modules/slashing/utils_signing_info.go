@@ -1,8 +1,11 @@
 package slashing
 
 import (
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	"github.com/forbole/bdjuno/v3/modules/utils"
 	"github.com/forbole/bdjuno/v3/types"
 )
 
@@ -14,8 +17,15 @@ func (m *Module) getSigningInfos(height int64) ([]types.ValidatorSigningInfo, er
 
 	infos := make([]types.ValidatorSigningInfo, len(signingInfos))
 	for index, info := range signingInfos {
+
+		// For likecoin dual prefix
+		validatorAddress, err := utils.ConvertAddressPrefix("likevalcons", info.Address)
+		if err != nil {
+			return nil, fmt.Errorf("error while converting to likevalcons prefix: %s", err)
+		}
+
 		infos[index] = types.NewValidatorSigningInfo(
-			info.Address,
+			validatorAddress,
 			info.StartHeight,
 			info.IndexOffset,
 			info.JailedUntil,
@@ -35,8 +45,14 @@ func (m *Module) GetSigningInfo(height int64, consAddr sdk.ConsAddress) (types.V
 		return types.ValidatorSigningInfo{}, err
 	}
 
+	// For likecoin dual prefix
+	validatorAddress, err := utils.ConvertAddressPrefix("likevalcons", info.Address)
+	if err != nil {
+		return types.ValidatorSigningInfo{}, err
+	}
+
 	signingInfo := types.NewValidatorSigningInfo(
-		info.Address,
+		validatorAddress,
 		info.StartHeight,
 		info.IndexOffset,
 		info.JailedUntil,

@@ -8,6 +8,7 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	"github.com/forbole/bdjuno/v3/modules/staking/keybase"
+	"github.com/forbole/bdjuno/v3/modules/utils"
 	"github.com/forbole/bdjuno/v3/types"
 )
 
@@ -39,10 +40,16 @@ func (m *Module) StoreValidatorsFromMsgCreateValidator(height int64, msg *stakin
 		return err
 	}
 
+	// For likecoin dual prefix
+	opAddr, err := utils.ConvertAddressPrefix("likevaloper", msg.ValidatorAddress)
+	if err != nil {
+		return fmt.Errorf("error while converting to likevaloper prefix: %s", err)
+	}
+
 	// Save the descriptions
 	err = m.db.SaveValidatorDescription(
 		types.NewValidatorDescription(
-			msg.ValidatorAddress,
+			opAddr,
 			msg.Description,
 			avatarURL,
 			height,
@@ -52,10 +59,16 @@ func (m *Module) StoreValidatorsFromMsgCreateValidator(height int64, msg *stakin
 		return err
 	}
 
+	// For likecoin dual prefix
+	operAddr, err := utils.ConvertAddressPrefix("likevaloper", msg.ValidatorAddress)
+	if err != nil {
+		return err
+	}
+
 	// Save the commissions
 	err = m.db.SaveValidatorCommission(
 		types.NewValidatorCommission(
-			msg.ValidatorAddress,
+			operAddr,
 			&msg.Commission.Rate,
 			&msg.MinSelfDelegation,
 			height,
