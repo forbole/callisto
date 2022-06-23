@@ -238,23 +238,30 @@ func (m *Module) GetValidatorsVotingPowers(height int64, vals *tmctypes.ResultVa
 			return nil, err
 		}
 
-		// Find the voting power of this validator
-		var votingPower int64 = 0
-		for _, blockVal := range vals.Validators {
-			blockValConsAddr := juno.ConvertValidatorAddressToBech32String(blockVal.Address)
-			if blockValConsAddr == consAddr.String() {
-				votingPower = blockVal.VotingPower
-			}
-		}
-
-		if found, _ := m.db.HasValidator(consAddr.String()); !found {
-			continue
-		}
-
 		// For likecoin dual prefix
 		likeConsAddr, err := utils.ConvertAddressPrefix("likevalcons", consAddr.String())
 		if err != nil {
 			return nil, err
+		}
+
+		// Find the voting power of this validator
+		var votingPower int64 = 0
+		for _, blockVal := range vals.Validators {
+			blockValConsAddr := juno.ConvertValidatorAddressToBech32String(blockVal.Address)
+
+			// For likecoin dual prefix
+			likeBlockValConsAddr, err := utils.ConvertAddressPrefix("likevalcons", blockValConsAddr)
+			if err != nil {
+				return nil, err
+			}
+
+			if likeBlockValConsAddr == likeConsAddr {
+				votingPower = blockVal.VotingPower
+			}
+		}
+
+		if found, _ := m.db.HasValidator(likeConsAddr); !found {
+			continue
 		}
 
 		votingPowers[index] = types.NewValidatorVotingPower(likeConsAddr, votingPower, height)
