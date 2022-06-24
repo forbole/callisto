@@ -2,30 +2,27 @@ package banking
 
 import (
 	bankingtypes "git.ooo.ua/vipcoin/chain/x/banking/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
-// SaveMsgSystemRewardTransfers - method that create transfers to the "vipcoin_chain_banking_system_reward_transfer"
-func (r Repository) SaveMsgSystemRewardTransfers(transfers ...*bankingtypes.MsgSystemRewardTransfer) error {
-	if len(transfers) == 0 {
-		return nil
-	}
-
-	query := `INSERT INTO vipcoin_chain_banking_system_reward_transfer 
-		(creator, wallet_from, wallet_to, asset, amount, extras) 
+// SaveMsgSystemRewardTransfers - method that create transfers to the "vipcoin_chain_banking_system_msg_reward_transfer"
+func (r Repository) SaveMsgSystemRewardTransfers(transfers *bankingtypes.MsgSystemRewardTransfer, transactionHash string) error {
+	query := `INSERT INTO vipcoin_chain_banking_system_msg_reward_transfer 
+		(transaction_hash, creator, wallet_from, wallet_to, asset, amount, extras) 
 		VALUES 
-		(:creator, :wallet_from, :wallet_to, :asset, :amount, :extras)`
+		(:transaction_hash, :creator, :wallet_from, :wallet_to, :asset, :amount, :extras)`
 
-	if _, err := r.db.NamedExec(query, toMsgSystemRewardTransfersDatabase(transfers...)); err != nil {
-		return err
+	if _, err := r.db.NamedExec(query, toMsgSystemRewardTransferDatabase(transfers, transactionHash)); err != nil {
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return nil
 }
 
-// GetMsgSystemRewardTransfers - method that get transfers from the "vipcoin_chain_banking_system_reward_transfer"
+// GetMsgSystemRewardTransfers - method that get transfers from the "vipcoin_chain_banking_system_msg_reward_transfer"
 func (r Repository) GetMsgSystemRewardTransfers(filter filter.Filter) ([]*bankingtypes.MsgSystemRewardTransfer, error) {
 	query, args := filter.Build(
 		tableMsgSystemRewardTransfer,
@@ -33,9 +30,9 @@ func (r Repository) GetMsgSystemRewardTransfers(filter filter.Filter) ([]*bankin
 		types.FieldAsset, types.FieldAmount, types.FieldExtras,
 	)
 
-	var result []types.DBSystemRewardTransfer
+	var result []types.DBMsgSystemRewardTransfer
 	if err := r.db.Select(&result, query, args...); err != nil {
-		return []*bankingtypes.MsgSystemRewardTransfer{}, err
+		return []*bankingtypes.MsgSystemRewardTransfer{}, errs.Internal{Cause: err.Error()}
 	}
 
 	transfers := make([]*bankingtypes.MsgSystemRewardTransfer, 0, len(result))

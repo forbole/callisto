@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	assetstypes "git.ooo.ua/vipcoin/chain/x/assets/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/jmoiron/sqlx"
@@ -36,7 +37,7 @@ func (r Repository) SaveAssets(assets ...*assetstypes.Asset) error {
 
 	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 	if err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	defer func() {
@@ -52,7 +53,7 @@ func (r Repository) SaveAssets(assets ...*assetstypes.Asset) error {
 
 	for _, asset := range assets {
 		if _, err := tx.NamedExec(query, toAssetDatabase(asset)); err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 	}
 

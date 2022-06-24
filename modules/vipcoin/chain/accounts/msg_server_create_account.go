@@ -7,7 +7,7 @@ import (
 
 // handleMsgCreateAccount allows to properly handle a handleMsgCreateAccount
 func (m *Module) handleMsgCreateAccount(tx *juno.Tx, index int, msg *types.MsgCreateAccount) error {
-	if err := m.accountRepo.SaveCreateAccount(msg); err != nil {
+	if err := m.accountRepo.SaveCreateAccount(msg, tx.TxHash); err != nil {
 		return err
 	}
 

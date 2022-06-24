@@ -6,16 +6,14 @@ import (
 
 	extratypes "git.ooo.ua/vipcoin/chain/x/types"
 	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
-
 	"git.ooo.ua/vipcoin/lib/filter"
-
-	typesdb "github.com/forbole/bdjuno/v2/database/types"
-	walletsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/wallets"
-
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/types"
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
+
+	typesdb "github.com/forbole/bdjuno/v2/database/types"
+	walletsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/wallets"
 )
 
 func TestRepository_SaveCreateWalletWithBalance(t *testing.T) {
@@ -58,7 +56,7 @@ func TestRepository_SaveCreateWalletWithBalance(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := walletsdb.NewRepository(db, codec.Marshaler)
 
-			if err := r.SaveCreateWalletWithBalance(tt.args.msg...); (err != nil) != tt.wantErr {
+			if err := r.SaveCreateWalletWithBalance(tt.args.msg, ""); (err != nil) != tt.wantErr {
 				t.Errorf("Repository.SaveCreateWalletWithBalance() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

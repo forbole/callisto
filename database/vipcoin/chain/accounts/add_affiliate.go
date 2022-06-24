@@ -2,24 +2,21 @@ package accounts
 
 import (
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
 // SaveAddAffiliate - saves the given affiliate inside the database
-func (r Repository) SaveAddAffiliate(msg ...*accountstypes.MsgAddAffiliate) error {
-	if len(msg) == 0 {
-		return nil
-	}
-
+func (r Repository) SaveAddAffiliate(msg *accountstypes.MsgAddAffiliate, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_accounts_add_affiliate 
-			(creator, account_hash, affiliation_hash, affiliation, extras) 
+			(transaction_hash, creator, account_hash, affiliation_hash, affiliation, extras) 
 		VALUES 
-			(:creator, :account_hash, :affiliation_hash, :affiliation, :extras)`
+			(:transaction_hash, :creator, :account_hash, :affiliation_hash, :affiliation, :extras)`
 
-	if _, err := r.db.NamedExec(query, toAddAffiliatesDatabase(msg...)); err != nil {
-		return err
+	if _, err := r.db.NamedExec(query, toAddAffiliateDatabase(msg, transactionHash)); err != nil {
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return nil
@@ -35,7 +32,7 @@ func (r Repository) GetAddAffiliate(accountFilter filter.Filter) ([]*accountstyp
 
 	var result []types.DBAddAffiliate
 	if err := r.db.Select(&result, query, args...); err != nil {
-		return []*accountstypes.MsgAddAffiliate{}, err
+		return []*accountstypes.MsgAddAffiliate{}, errs.Internal{Cause: err.Error()}
 	}
 
 	affiliates := make([]*accountstypes.MsgAddAffiliate, 0, len(result))

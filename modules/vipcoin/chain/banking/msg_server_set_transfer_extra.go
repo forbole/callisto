@@ -10,7 +10,7 @@ import (
 
 // handleMsgSetTransferExtra allows to properly handle a handleMsgSetTransferExtra
 func (m *Module) handleMsgSetTransferExtra(tx *juno.Tx, index int, msg *types.MsgSetTransferExtra) error {
-	if err := m.bankingRepo.SaveMsgSetTransferExtra(msg); err != nil {
+	if err := m.bankingRepo.SaveMsgSetTransferExtra(msg, tx.TxHash); err != nil {
 		return err
 	}
 

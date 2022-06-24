@@ -2,24 +2,21 @@ package accounts
 
 import (
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
 // SaveExtra - saves the given extra inside the database
-func (r Repository) SaveExtra(msg ...*accountstypes.MsgSetExtra) error {
-	if len(msg) == 0 {
-		return nil
-	}
-
+func (r Repository) SaveExtra(msg *accountstypes.MsgSetExtra, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_accounts_set_extra 
-			(creator, hash, extras) 
+			(transaction_hash, creator, hash, extras) 
 		VALUES 
-			(:creator, :hash, :extras)`
+			(:transaction_hash, :creator, :hash, :extras)`
 
-	if _, err := r.db.NamedExec(query, toSetExtrasDatabase(msg...)); err != nil {
-		return err
+	if _, err := r.db.NamedExec(query, toSetExtraDatabase(msg, transactionHash)); err != nil {
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return nil
@@ -34,7 +31,7 @@ func (r Repository) GetExtra(accountFilter filter.Filter) ([]*accountstypes.MsgS
 
 	var result []types.DBSetAccountExtra
 	if err := r.db.Select(&result, query, args...); err != nil {
-		return []*accountstypes.MsgSetExtra{}, err
+		return []*accountstypes.MsgSetExtra{}, errs.Internal{Cause: err.Error()}
 	}
 
 	migrates := make([]*accountstypes.MsgSetExtra, 0, len(result))

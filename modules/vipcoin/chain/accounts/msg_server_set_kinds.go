@@ -10,7 +10,7 @@ import (
 
 // handleMsgSetKinds allows to properly handle a handleMsgSetKinds
 func (m *Module) handleMsgSetKinds(tx *juno.Tx, index int, msg *types.MsgSetKinds) error {
-	if err := m.accountRepo.SaveKinds(msg); err != nil {
+	if err := m.accountRepo.SaveKinds(msg, tx.TxHash); err != nil {
 		return err
 	}
 

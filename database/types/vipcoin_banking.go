@@ -45,6 +45,7 @@ type (
 
 	// DBSystemTransfer represents a single row inside the "vipcoin_chain_banking_msg_system_transfer" table
 	DBMsgSystemTransfer struct {
+		Hash       string  `db:"transaction_hash"`
 		Creator    string  `db:"creator"`
 		WalletFrom string  `db:"wallet_from"`
 		WalletTo   string  `db:"wallet_to"`
@@ -53,8 +54,9 @@ type (
 		Extras     ExtraDB `db:"extras"`
 	}
 
-	// DBSystemRewardTransfer represents a single row inside the "vipcoin_chain_banking_system_reward_transfer" table
-	DBSystemRewardTransfer struct {
+	// DBSystemRewardTransfer represents a single row inside the "vipcoin_chain_banking_system_msg_reward_transfer" table
+	DBMsgSystemRewardTransfer struct {
+		Hash       string  `db:"transaction_hash"`
 		Creator    string  `db:"creator"`
 		WalletFrom string  `db:"wallet_from"`
 		WalletTo   string  `db:"wallet_to"`
@@ -65,6 +67,7 @@ type (
 
 	// DBPayment represents a single row inside the "vipcoin_chain_banking_msg_payment" table
 	DBMsgPayment struct {
+		Hash       string  `db:"transaction_hash"`
 		Creator    string  `db:"creator"`
 		WalletFrom string  `db:"wallet_from"`
 		WalletTo   string  `db:"wallet_to"`
@@ -75,6 +78,7 @@ type (
 
 	// DBWithdraw represents a single row inside the "vipcoin_chain_banking_msg_withdraw" table
 	DBMsgWithdraw struct {
+		Hash    string  `db:"transaction_hash"`
 		Creator string  `db:"creator"`
 		Wallet  string  `db:"wallet"`
 		Asset   string  `db:"asset"`
@@ -84,6 +88,7 @@ type (
 
 	// DBIssue represents a single row inside the "vipcoin_chain_banking_msg_issue" table
 	DBMsgIssue struct {
+		Hash    string  `db:"transaction_hash"`
 		Creator string  `db:"creator"`
 		Wallet  string  `db:"wallet"`
 		Asset   string  `db:"asset"`
@@ -93,6 +98,7 @@ type (
 
 	// DBSetTransferExtra represents a single row inside the "vipcoin_chain_banking_set_transfer_extra" table
 	DBSetTransferExtra struct {
+		Hash    string  `db:"transaction_hash"`
 		Creator string  `db:"creator"`
 		Id      uint64  `db:"id"`
 		Extras  ExtraDB `db:"extras"`
@@ -100,6 +106,7 @@ type (
 
 	// DBSetRewardManagerAddress represents a single row inside the "vipcoin_chain_banking_set_reward_manager_address" table
 	DBSetRewardManagerAddress struct {
+		Hash    string `db:"transaction_hash"`
 		Creator string `db:"creator"`
 		Address string `db:"address"`
 	}

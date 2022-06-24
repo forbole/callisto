@@ -78,7 +78,7 @@ func TestRepository_SaveMsgWithdraw(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := bankingdb.NewRepository(db, codec.Marshaler)
 
-			if err := r.SaveMsgWithdraw(tt.args.withdraws...); (err != nil) != tt.wantErr {
+			if err := r.SaveMsgWithdraw(tt.args.withdraws, ""); (err != nil) != tt.wantErr {
 				t.Errorf("Repository.SaveMsgWithdraw() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

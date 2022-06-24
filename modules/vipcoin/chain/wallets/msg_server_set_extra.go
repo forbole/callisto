@@ -3,13 +3,14 @@ package wallets
 import (
 	typeswallets "git.ooo.ua/vipcoin/chain/x/wallets/types"
 	"git.ooo.ua/vipcoin/lib/filter"
+	juno "github.com/forbole/juno/v2/types"
 
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 )
 
 // handleMsgSetExtra allows to properly handle a MsgSetExtra
-func (m *Module) handleMsgSetExtra(msg *typeswallets.MsgSetExtra) error {
-	if err := m.walletsRepo.SaveExtras(msg); err != nil {
+func (m *Module) handleMsgSetExtra(tx *juno.Tx, index int, msg *typeswallets.MsgSetExtra) error {
+	if err := m.walletsRepo.SaveExtras(msg, tx.TxHash); err != nil {
 		return err
 	}
 

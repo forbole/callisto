@@ -2,24 +2,21 @@ package banking
 
 import (
 	bankingtypes "git.ooo.ua/vipcoin/chain/x/banking/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
 // SaveMsgSetTransferExtra - method that create extras to the "vipcoin_chain_banking_set_transfer_extra" table
-func (r Repository) SaveMsgSetTransferExtra(extras ...*bankingtypes.MsgSetTransferExtra) error {
-	if len(extras) == 0 {
-		return nil
-	}
-
+func (r Repository) SaveMsgSetTransferExtra(extras *bankingtypes.MsgSetTransferExtra, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_banking_set_transfer_extra 
-		(creator, id, extras) 
+		(transaction_hash, creator, id, extras) 
 		VALUES 
-		(:creator, :id, :extras)`
+		(:transaction_hash, :creator, :id, :extras)`
 
-	if _, err := r.db.NamedExec(query, toMsgSetTransferExtrasDatabase(extras...)); err != nil {
-		return err
+	if _, err := r.db.NamedExec(query, toMsgSetTransferExtraDatabase(extras, transactionHash)); err != nil {
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return nil
@@ -34,7 +31,7 @@ func (r Repository) GetMsgSetTransferExtra(filter filter.Filter) ([]*bankingtype
 
 	var result []types.DBSetTransferExtra
 	if err := r.db.Select(&result, query, args...); err != nil {
-		return []*bankingtypes.MsgSetTransferExtra{}, err
+		return []*bankingtypes.MsgSetTransferExtra{}, errs.Internal{Cause: err.Error()}
 	}
 
 	extras := make([]*bankingtypes.MsgSetTransferExtra, 0, len(result))

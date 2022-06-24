@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: message
+  schema: public
 object_relationships:
   - name: transaction
     using:

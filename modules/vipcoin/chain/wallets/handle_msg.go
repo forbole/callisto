@@ -14,15 +14,17 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *types.Tx) error {
 
 	switch walletMsg := msg.(type) {
 	case *typeswallets.MsgSetWalletState:
-		return m.handleMsgSetStates(walletMsg)
+		return m.handleMsgSetStates(tx, index, walletMsg)
 	case *typeswallets.MsgCreateWallet:
 		return m.handleMsgCreateWallet(tx, index, walletMsg)
 	case *typeswallets.MsgSetDefaultWallet:
-		return m.handleMsgSetDefaultWallet(walletMsg)
+		return m.handleMsgSetDefaultWallet(tx, index, walletMsg)
 	case *typeswallets.MsgSetExtra:
-		return m.handleMsgSetExtra(walletMsg)
+		return m.handleMsgSetExtra(tx, index, walletMsg)
 	case *typeswallets.MsgCreateWalletWithBalance:
-		return m.MsgCreateWalletWithBalance(walletMsg)
+		return m.MsgCreateWalletWithBalance(tx, index, walletMsg)
+	case *typeswallets.MsgSetWalletKind:
+		return m.handleMsgSetKind(tx, index, walletMsg)
 	default:
 		return nil
 	}

@@ -2,24 +2,21 @@ package assets
 
 import (
 	assetstypes "git.ooo.ua/vipcoin/chain/x/assets/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
 // SaveManageAsset saves the given asset inside the database
-func (r *Repository) SaveManageAsset(msg ...*assetstypes.MsgAssetManage) error {
-	if len(msg) == 0 {
-		return nil
-	}
-
+func (r *Repository) SaveManageAsset(msg *assetstypes.MsgAssetManage, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_assets_manage 
-			(creator, name, policies, state, precision, fee_percent, issued, burned, withdrawn, in_circulation) 
+			(transaction_hash, creator, name, policies, state, precision, fee_percent, issued, burned, withdrawn, in_circulation) 
 		VALUES 
-			(:creator, :name, :policies, :state, :precision, :fee_percent, :issued, :burned, :withdrawn, :in_circulation)`
+			(:transaction_hash, :creator, :name, :policies, :state, :precision, :fee_percent, :issued, :burned, :withdrawn, :in_circulation)`
 
-	if _, err := r.db.NamedExec(query, toManageAssetsArrDatabase(msg...)); err != nil {
-		return err
+	if _, err := r.db.NamedExec(query, toManageAssetDatabase(msg, transactionHash)); err != nil {
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return nil
@@ -39,7 +36,7 @@ func (r *Repository) GetManageAsset(assetFilter filter.Filter) ([]*assetstypes.M
 	var result []types.DBAssetManage
 
 	if err := r.db.Select(&result, query, args...); err != nil {
-		return []*assetstypes.MsgAssetManage{}, err
+		return []*assetstypes.MsgAssetManage{}, errs.Internal{Cause: err.Error()}
 	}
 
 	assets := make([]*assetstypes.MsgAssetManage, 0, len(result))

@@ -2,24 +2,21 @@ package assets
 
 import (
 	assetstypes "git.ooo.ua/vipcoin/chain/x/assets/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
 // SaveExtraAsset - saves the given extra inside the database
-func (r Repository) SaveExtraAsset(msg ...*assetstypes.MsgAssetSetExtra) error {
-	if len(msg) == 0 {
-		return nil
-	}
-
+func (r Repository) SaveExtraAsset(msg *assetstypes.MsgAssetSetExtra, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_assets_set_extra 
-			(creator, name, extras) 
+			(transaction_hash, creator, name, extras) 
 		VALUES 
-			(:creator, :name, :extras)`
+			(:transaction_hash, :creator, :name, :extras)`
 
-	if _, err := r.db.NamedExec(query, toSetExtrasDatabase(msg...)); err != nil {
-		return err
+	if _, err := r.db.NamedExec(query, toSetExtraDatabase(msg, transactionHash)); err != nil {
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return nil
@@ -34,7 +31,7 @@ func (r Repository) GetExtraAsset(assetFilter filter.Filter) ([]*assetstypes.Msg
 
 	var result []types.DBAssetSetExtra
 	if err := r.db.Select(&result, query, args...); err != nil {
-		return []*assetstypes.MsgAssetSetExtra{}, err
+		return []*assetstypes.MsgAssetSetExtra{}, errs.Internal{Cause: err.Error()}
 	}
 
 	extras := make([]*assetstypes.MsgAssetSetExtra, 0, len(result))

@@ -70,8 +70,9 @@ func toWalletDomain(wallet types.DBWallets) *walletstypes.Wallet {
 }
 
 // toCreateWalletDatabase - mapping func to database model
-func toCreateWalletDatabase(wallet *walletstypes.MsgCreateWallet) types.DBCreateWallet {
+func toCreateWalletDatabase(wallet *walletstypes.MsgCreateWallet, transactionHash string) types.DBCreateWallet {
 	return types.DBCreateWallet{
+		Hash:           transactionHash,
 		Creator:        wallet.Creator,
 		Address:        wallet.Address,
 		AccountAddress: wallet.AccountAddress,
@@ -94,8 +95,9 @@ func toCreateWalletDomain(wallet types.DBCreateWallet) *walletstypes.MsgCreateWa
 }
 
 // toSetWalletStateDatabase - mapping func to database model
-func toSetWalletStateDatabase(wallet *walletstypes.MsgSetWalletState) types.DBSetWalletState {
+func toSetWalletStateDatabase(wallet *walletstypes.MsgSetWalletState, transactionHash string) types.DBSetWalletState {
 	return types.DBSetWalletState{
+		Hash:    transactionHash,
 		Creator: wallet.Creator,
 		Address: wallet.Address,
 		State:   int32(wallet.State),
@@ -112,8 +114,9 @@ func toSetWalletStateDomain(wallet types.DBSetWalletState) *walletstypes.MsgSetW
 }
 
 // toSetDefaultWalletDatabase - mapping func to database model
-func toSetDefaultWalletDatabase(wallet *walletstypes.MsgSetDefaultWallet) types.DBSetDefaultWallet {
+func toSetDefaultWalletDatabase(wallet *walletstypes.MsgSetDefaultWallet, transactionHash string) types.DBSetDefaultWallet {
 	return types.DBSetDefaultWallet{
+		Hash:    transactionHash,
 		Creator: wallet.Creator,
 		Address: wallet.Address,
 	}
@@ -128,22 +131,13 @@ func toSetDefaultWalletDomain(wallet types.DBSetDefaultWallet) *walletstypes.Msg
 }
 
 // toSetExtraDatabase - mapping func to database model
-func toSetExtraDatabase(wallet *walletstypes.MsgSetExtra) types.DBSetExtra {
+func toSetExtraDatabase(wallet *walletstypes.MsgSetExtra, transactionHash string) types.DBSetExtra {
 	return types.DBSetExtra{
+		Hash:    transactionHash,
 		Creator: wallet.Creator,
 		Address: wallet.Address,
 		Extras:  toExtrasDB(wallet.Extras),
 	}
-}
-
-// toSetExtrasDatabase - mapping func to database model
-func toSetExtrasDatabase(messages ...*walletstypes.MsgSetExtra) []types.DBSetExtra {
-	result := make([]types.DBSetExtra, 0, len(messages))
-	for _, msg := range messages {
-		result = append(result, toSetExtraDatabase(msg))
-	}
-
-	return result
 }
 
 // toSetExtraDomain - mapping func to domain model
@@ -156,8 +150,12 @@ func toSetExtraDomain(wallet types.DBSetExtra) *walletstypes.MsgSetExtra {
 }
 
 // toWalletsDatabase - mapping func to database model
-func toCreateWalletWithBalanceDatabase(wallets *walletstypes.MsgCreateWalletWithBalance) types.DBCreateWalletWithBalance {
+func toCreateWalletWithBalanceDatabase(
+	wallets *walletstypes.MsgCreateWalletWithBalance,
+	transactionHash string,
+) types.DBCreateWalletWithBalance {
 	return types.DBCreateWalletWithBalance{
+		Hash:           transactionHash,
 		Creator:        wallets.Creator,
 		Address:        wallets.Address,
 		AccountAddress: wallets.AccountAddress,
@@ -167,17 +165,6 @@ func toCreateWalletWithBalanceDatabase(wallets *walletstypes.MsgCreateWalletWith
 		DefaultStatus:  wallets.Default,
 		Balance:        toBalanceDB(wallets.Balance),
 	}
-}
-
-// toCreateWalletsWithBalanceDatabase - mapping func to database model
-func toCreateWalletsWithBalanceDatabase(messages ...*walletstypes.MsgCreateWalletWithBalance) []types.DBCreateWalletWithBalance {
-	result := make([]types.DBCreateWalletWithBalance, 0, len(messages))
-	for _, msg := range messages {
-
-		result = append(result, toCreateWalletWithBalanceDatabase(msg))
-	}
-
-	return result
 }
 
 // toWalletDomain - mapping func to domain model
@@ -191,5 +178,24 @@ func toCreateWalletWithBalanceDomain(wallet types.DBCreateWalletWithBalance) *wa
 		Extras:         fromExtrasDB(wallet.Extras),
 		Default:        wallet.DefaultStatus,
 		Balance:        fromBalanceDB(wallet.Balance),
+	}
+}
+
+// toSetKindDatabase - mapping func to database model
+func toSetKindDatabase(wallet *walletstypes.MsgSetWalletKind, transactionHash string) types.DBSetWalletKind {
+	return types.DBSetWalletKind{
+		Hash:    transactionHash,
+		Creator: wallet.Creator,
+		Address: wallet.Address,
+		Kind:    int32(wallet.Kind),
+	}
+}
+
+// toSetKindsDomain - mapping func to domain model
+func toSetKindDomain(wallet types.DBSetWalletKind) *walletstypes.MsgSetWalletKind {
+	return &walletstypes.MsgSetWalletKind{
+		Creator: wallet.Creator,
+		Address: wallet.Address,
+		Kind:    walletstypes.WalletKind(wallet.Kind),
 	}
 }

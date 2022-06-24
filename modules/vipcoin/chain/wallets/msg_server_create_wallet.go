@@ -11,7 +11,7 @@ import (
 
 // handleMsgCreateWallet allows to properly handle a handleMsgCreateWallet
 func (m *Module) handleMsgCreateWallet(tx *juno.Tx, index int, msg *typeswallets.MsgCreateWallet) error {
-	if err := m.walletsRepo.SaveCreateWallet(msg); err != nil {
+	if err := m.walletsRepo.SaveCreateWallet(msg, tx.TxHash); err != nil {
 		return err
 	}
 

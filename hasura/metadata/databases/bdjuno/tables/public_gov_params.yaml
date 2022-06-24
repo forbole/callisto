@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: gov_params
+  schema: public
 select_permissions:
   - role: anonymous
     permission:

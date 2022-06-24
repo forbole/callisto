@@ -1,14 +1,14 @@
 table:
-  schema: public
   name: token
+  schema: public
 array_relationships:
   - name: token_units
     using:
       foreign_key_constraint_on:
         column: token_name
         table:
-          schema: public
           name: token_unit
+          schema: public
 select_permissions:
   - role: anonymous
     permission:

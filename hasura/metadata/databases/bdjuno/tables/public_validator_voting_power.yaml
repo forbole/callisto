@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: validator_voting_power
+  schema: public
 object_relationships:
   - name: validator
     using:

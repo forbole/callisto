@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: token_price
+  schema: public
 object_relationships:
   - name: token_unit
     using:

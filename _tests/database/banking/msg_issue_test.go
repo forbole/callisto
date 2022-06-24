@@ -78,7 +78,7 @@ func TestRepository_SaveMsgIssue(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := bankingdb.NewRepository(db, codec.Marshaler)
 
-			if err := r.SaveMsgIssue(tt.args.issue...); (err != nil) != tt.wantErr {
+			if err := r.SaveMsgIssue(tt.args.issue, ""); (err != nil) != tt.wantErr {
 				t.Errorf("Repository.SaveMsgIssue() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

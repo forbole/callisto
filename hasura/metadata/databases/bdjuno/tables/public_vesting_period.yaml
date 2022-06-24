@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: vesting_period
+  schema: public
 object_relationships:
   - name: vesting_account
     using:

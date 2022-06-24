@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: vesting_account
+  schema: public
 object_relationships:
   - name: account
     using:
@@ -11,8 +11,8 @@ array_relationships:
       foreign_key_constraint_on:
         column: vesting_account_id
         table:
-          schema: public
           name: vesting_period
+          schema: public
 select_permissions:
   - role: anonymous
     permission:

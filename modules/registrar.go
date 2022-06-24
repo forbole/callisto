@@ -4,34 +4,13 @@ import (
 	"fmt"
 	"os"
 
+	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
+	assetstypes "git.ooo.ua/vipcoin/chain/x/assets/types"
+	bankingtypes "git.ooo.ua/vipcoin/chain/x/banking/types"
+	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/forbole/juno/v2/modules/messages"
-	"github.com/forbole/juno/v2/modules/pruning"
-	"github.com/forbole/juno/v2/modules/registrar"
-	"github.com/forbole/juno/v2/modules/telemetry"
-	"github.com/forbole/juno/v2/node/local"
-	"github.com/forbole/juno/v2/node/remote"
-	"github.com/tendermint/tendermint/libs/log"
-
-	"github.com/forbole/bdjuno/v2/database"
-	"github.com/forbole/bdjuno/v2/modules/auth"
-	"github.com/forbole/bdjuno/v2/modules/bank"
-	"github.com/forbole/bdjuno/v2/modules/consensus"
-	"github.com/forbole/bdjuno/v2/modules/distribution"
-	"github.com/forbole/bdjuno/v2/modules/gov"
-	"github.com/forbole/bdjuno/v2/modules/mint"
-	"github.com/forbole/bdjuno/v2/modules/modules"
-	"github.com/forbole/bdjuno/v2/modules/pricefeed"
-	"github.com/forbole/bdjuno/v2/modules/slashing"
-	"github.com/forbole/bdjuno/v2/modules/staking"
-	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts"
-	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/assets"
-	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/banking"
-	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets"
-	"github.com/forbole/bdjuno/v2/utils"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -40,45 +19,55 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	jmodules "github.com/forbole/juno/v2/modules"
+	"github.com/forbole/juno/v2/modules/messages"
+	"github.com/forbole/juno/v2/modules/pruning"
+	"github.com/forbole/juno/v2/modules/registrar"
+	"github.com/forbole/juno/v2/modules/telemetry"
+	nodeconfig "github.com/forbole/juno/v2/node/config"
+	"github.com/forbole/juno/v2/node/local"
+	"github.com/forbole/juno/v2/node/remote"
+	"github.com/tendermint/tendermint/libs/log"
 
+	"github.com/forbole/bdjuno/v2/database"
+	"github.com/forbole/bdjuno/v2/modules/auth"
+	"github.com/forbole/bdjuno/v2/modules/bank"
 	banksource "github.com/forbole/bdjuno/v2/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v2/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v2/modules/bank/source/remote"
+	"github.com/forbole/bdjuno/v2/modules/consensus"
+	"github.com/forbole/bdjuno/v2/modules/distribution"
 	distrsource "github.com/forbole/bdjuno/v2/modules/distribution/source"
 	localdistrsource "github.com/forbole/bdjuno/v2/modules/distribution/source/local"
 	remotedistrsource "github.com/forbole/bdjuno/v2/modules/distribution/source/remote"
+	"github.com/forbole/bdjuno/v2/modules/gov"
 	govsource "github.com/forbole/bdjuno/v2/modules/gov/source"
 	localgovsource "github.com/forbole/bdjuno/v2/modules/gov/source/local"
 	remotegovsource "github.com/forbole/bdjuno/v2/modules/gov/source/remote"
+	"github.com/forbole/bdjuno/v2/modules/mint"
 	mintsource "github.com/forbole/bdjuno/v2/modules/mint/source"
 	localmintsource "github.com/forbole/bdjuno/v2/modules/mint/source/local"
 	remotemintsource "github.com/forbole/bdjuno/v2/modules/mint/source/remote"
+	"github.com/forbole/bdjuno/v2/modules/modules"
+	"github.com/forbole/bdjuno/v2/modules/pricefeed"
+	"github.com/forbole/bdjuno/v2/modules/slashing"
 	slashingsource "github.com/forbole/bdjuno/v2/modules/slashing/source"
 	localslashingsource "github.com/forbole/bdjuno/v2/modules/slashing/source/local"
 	remoteslashingsource "github.com/forbole/bdjuno/v2/modules/slashing/source/remote"
+	"github.com/forbole/bdjuno/v2/modules/staking"
 	stakingsource "github.com/forbole/bdjuno/v2/modules/staking/source"
 	localstakingsource "github.com/forbole/bdjuno/v2/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v2/modules/staking/source/remote"
-
-	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
-	assetstypes "git.ooo.ua/vipcoin/chain/x/assets/types"
-	bankingtypes "git.ooo.ua/vipcoin/chain/x/banking/types"
-	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
-
-	jmodules "github.com/forbole/juno/v2/modules"
-	nodeconfig "github.com/forbole/juno/v2/node/config"
-
+	"github.com/forbole/bdjuno/v2/modules/vipcoin"
 	vipcoinaccountssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts/source"
 	remotevipcoinaccountssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts/source/remote"
-
-	vipcoinwalletssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets/source"
-	remotevipcoinwalletsssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets/source/remote"
-
-	vipcoinbankingsource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/banking/source"
-	remotevipcoinbankingsource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/banking/source/remote"
-
 	vipcoinassetssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/assets/source"
 	remotevipcoinassetssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/assets/source/remote"
+	vipcoinbankingsource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/banking/source"
+	remotevipcoinbankingsource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/banking/source/remote"
+	vipcoinwalletssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets/source"
+	remotevipcoinwalletsssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets/source/remote"
+	"github.com/forbole/bdjuno/v2/utils"
 )
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
@@ -115,7 +104,6 @@ func NewRegistrar(parser messages.MessageAddressesParser) *Registrar {
 func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	cdc := ctx.EncodingConfig.Marshaler
 	db := database.Cast(ctx.Database)
-	storeKey := sdk.NewKVStoreKey(bankingtypes.StoreKey)
 
 	sources, err := BuildSources(ctx.JunoConfig.Node, ctx.EncodingConfig)
 	if err != nil {
@@ -131,10 +119,16 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	stakingModule := staking.NewModule(sources.StakingSource, slashingModule, cdc, db)
 	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakingModule, cdc, db)
 
-	vipcoinAccountsModule := accounts.NewModule(sources.VipcoinAccountsSource, cdc, db)
-	vipcoinWalletsModule := wallets.NewModule(r.parser, sources.VipcoinWalletsSource, cdc, db)
-	vipcoinBankingModule := banking.NewModule(sources.VipcoinBankingSource, storeKey, cdc, db)
-	vipcoinAssetsModule := assets.NewModule(sources.VipcoinAssetsSource, cdc, db)
+	vipcoinModules := vipcoin.NewModule(
+		cdc,
+		db,
+		ctx.Logger,
+
+		sources.VipcoinAccountsSource,
+		sources.VipcoinWalletsSource,
+		sources.VipcoinBankingSource,
+		sources.VipcoinAssetsSource,
+	)
 
 	return []jmodules.Module{
 		messages.NewModule(r.parser, cdc, ctx.Database),
@@ -152,10 +146,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		slashingModule,
 		stakingModule,
 
-		vipcoinAccountsModule,
-		vipcoinWalletsModule,
-		vipcoinBankingModule,
-		vipcoinAssetsModule,
+		vipcoinModules,
 	}
 }
 

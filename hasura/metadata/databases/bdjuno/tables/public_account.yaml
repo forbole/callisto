@@ -1,45 +1,45 @@
 table:
-  schema: public
   name: account
+  schema: public
 object_relationships:
   - name: vesting_account
     using:
       manual_configuration:
-        remote_table:
-          schema: public
-          name: vesting_account
-        insertion_order: null
         column_mapping:
           address: address
+        insertion_order: null
+        remote_table:
+          name: vesting_account
+          schema: public
 array_relationships:
   - name: proposal_deposits
     using:
       foreign_key_constraint_on:
         column: depositor_address
         table:
-          schema: public
           name: proposal_deposit
+          schema: public
   - name: proposal_votes
     using:
       foreign_key_constraint_on:
         column: voter_address
         table:
-          schema: public
           name: proposal_vote
+          schema: public
   - name: proposals
     using:
       foreign_key_constraint_on:
         column: proposer_address
         table:
-          schema: public
           name: proposal
+          schema: public
   - name: validator_infos
     using:
       foreign_key_constraint_on:
         column: self_delegate_address
         table:
-          schema: public
           name: validator_info
+          schema: public
 select_permissions:
   - role: anonymous
     permission:

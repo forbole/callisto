@@ -53,7 +53,7 @@ func TestRepository_SaveMsgSetExtra(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := walletsdb.NewRepository(db, codec.Marshaler)
 
-			if err := r.SaveExtras(tt.args.msg...); (err != nil) != tt.wantErr {
+			if err := r.SaveExtras(tt.args.msg, ""); (err != nil) != tt.wantErr {
 				t.Errorf("Repository.SaveExtras() error = %v\nwantErr %v", err, tt.wantErr)
 			}
 		})

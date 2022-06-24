@@ -1,5 +1,6 @@
 .idea/
 .vscode/
+.run/
 build/
 vendor/
 volume/test_conf/

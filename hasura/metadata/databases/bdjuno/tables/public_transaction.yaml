@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: transaction
+  schema: public
 object_relationships:
   - name: block
     using:
@@ -11,8 +11,183 @@ array_relationships:
       foreign_key_constraint_on:
         column: transaction_hash
         table:
-          schema: public
           name: message
+          schema: public
+  - name: vipcoin_chain_accounts_account_migrates
+    using:
+      foreign_key_constraint_on:
+        column: transaction_hash
+        table:
+          name: vipcoin_chain_accounts_account_migrate
+          schema: public
+  - name: vipcoin_chain_accounts_add_affiliates
+    using:
+      foreign_key_constraint_on:
+        column: transaction_hash
+        table:
+          name: vipcoin_chain_accounts_add_affiliate
+          schema: public
+  - name: vipcoin_chain_accounts_create_accounts
+    using:
+      foreign_key_constraint_on:
+        column: transaction_hash
+        table:
+          name: vipcoin_chain_accounts_create_account
+          schema: public
+  - name: vipcoin_chain_accounts_register_users
+    using:
+      foreign_key_constraint_on:
+        column: transaction_hash
+        table:
+          name: vipcoin_chain_accounts_register_user
+          schema: public
+  - name: vipcoin_chain_accounts_set_affiliate_addresses
+    using:
+      foreign_key_constraint_on:
+        column: transaction_hash
+        table:
+          name: vipcoin_chain_accounts_set_affiliate_address
+          schema: public
+  - name: vipcoin_chain_accounts_set_affiliate_extras
+    using:
+      foreign_key_constraint_on:
+        column: transaction_hash
+        table:
+          name: vipcoin_chain_accounts_set_affiliate_extra
+          schema: public
+  - name: vipcoin_chain_accounts_set_extras
+    using:
+      foreign_key_constraint_on:
+        column: transaction_hash
+        table:
+          name: vipcoin_chain_accounts_set_extra
+          schema: public
+  - name: vipcoin_chain_accounts_set_kinds
+    using:
+      foreign_key_constraint_on:
+        column: transaction_hash
+        table:
+          name: vipcoin_chain_accounts_set_kinds
+          schema: public
+  - name: vipcoin_chain_accounts_set_states
+    using:
+      foreign_key_constraint_on:
+        column: transaction_hash
+        table:
+          name: vipcoin_chain_accounts_set_state
+          schema: public
+  - name: vipcoin_chain_assets_creates
+    using:
+      foreign_key_constraint_on:
+        column: transaction_hash
+        table:
+          name: vipcoin_chain_assets_create
+          schema: public
+  - name: vipcoin_chain_assets_manages
+    using:
+      foreign_key_constraint_on:
+        column: transaction_hash
+        table:
+          name: vipcoin_chain_assets_manage
+          schema: public
+  - name: vipcoin_chain_assets_set_extras
+    using:
+      foreign_key_constraint_on:
+        column: transaction_hash
+        table:
+          name: vipcoin_chain_assets_set_extra
+          schema: public
+  - name: vipcoin_chain_banking_msg_issues
+    using:
+      foreign_key_constraint_on:
+        column: transaction_hash
+        table:
+          name: vipcoin_chain_banking_msg_issue
+          schema: public
+  - name: vipcoin_chain_banking_msg_payments
+    using:
+      foreign_key_constraint_on:
+        column: transaction_hash
+        table:
+          name: vipcoin_chain_banking_msg_payment
+          schema: public
+  - name: vipcoin_chain_banking_msg_system_transfers
+    using:
+      foreign_key_constraint_on:
+        column: transaction_hash
+        table:
+          name: vipcoin_chain_banking_msg_system_transfer
+          schema: public
+  - name: vipcoin_chain_banking_msg_withdraws
+    using:
+      foreign_key_constraint_on:
+        column: transaction_hash
+        table:
+          name: vipcoin_chain_banking_msg_withdraw
+          schema: public
+  - name: vipcoin_chain_banking_set_reward_manager_addresses
+    using:
+      foreign_key_constraint_on:
+        column: transaction_hash
+        table:
+          name: vipcoin_chain_banking_set_reward_manager_address
+          schema: public
+  - name: vipcoin_chain_banking_set_transfer_extras
+    using:
+      foreign_key_constraint_on:
+        column: transaction_hash
+        table:
+          name: vipcoin_chain_banking_set_transfer_extra
+          schema: public
+  - name: vipcoin_chain_banking_system_msg_reward_transfers
+    using:
+      foreign_key_constraint_on:
+        column: transaction_hash
+        table:
+          name: vipcoin_chain_banking_system_msg_reward_transfer
+          schema: public
+  - name: vipcoin_chain_wallets_create_wallet_with_balances
+    using:
+      foreign_key_constraint_on:
+        column: transaction_hash
+        table:
+          name: vipcoin_chain_wallets_create_wallet_with_balance
+          schema: public
+  - name: vipcoin_chain_wallets_create_wallets
+    using:
+      foreign_key_constraint_on:
+        column: transaction_hash
+        table:
+          name: vipcoin_chain_wallets_create_wallet
+          schema: public
+  - name: vipcoin_chain_wallets_set_default_wallets
+    using:
+      foreign_key_constraint_on:
+        column: transaction_hash
+        table:
+          name: vipcoin_chain_wallets_set_default_wallet
+          schema: public
+  - name: vipcoin_chain_wallets_set_extras
+    using:
+      foreign_key_constraint_on:
+        column: transaction_hash
+        table:
+          name: vipcoin_chain_wallets_set_extra
+          schema: public
+  - name: vipcoin_chain_wallets_set_wallet_kinds
+    using:
+      foreign_key_constraint_on:
+        column: transaction_hash
+        table:
+          name: vipcoin_chain_wallets_set_wallet_kind
+          schema: public
+  - name: vipcoin_chain_wallets_set_wallet_states
+    using:
+      foreign_key_constraint_on:
+        column: transaction_hash
+        table:
+          name: vipcoin_chain_wallets_set_wallet_state
+          schema: public
 select_permissions:
   - role: anonymous
     permission:

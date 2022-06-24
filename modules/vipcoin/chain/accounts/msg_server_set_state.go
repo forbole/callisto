@@ -10,7 +10,7 @@ import (
 
 // handleMsgSetState allows to properly handle a handleMsgSetState
 func (m *Module) handleMsgSetState(tx *juno.Tx, index int, msg *types.MsgSetState) error {
-	if err := m.accountRepo.SaveState(msg); err != nil {
+	if err := m.accountRepo.SaveState(msg, tx.TxHash); err != nil {
 		return err
 	}
 

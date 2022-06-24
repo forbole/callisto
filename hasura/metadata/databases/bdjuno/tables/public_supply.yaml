@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: supply
+  schema: public
 select_permissions:
   - role: anonymous
     permission:

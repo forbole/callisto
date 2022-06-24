@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: proposal_tally_result
+  schema: public
 object_relationships:
   - name: proposal
     using:

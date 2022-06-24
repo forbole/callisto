@@ -48,7 +48,7 @@ func TestRepository_SaveMsgSetRewardManagerAddress(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := bankingdb.NewRepository(db, codec.Marshaler)
 
-			if err := r.SaveMsgSetRewardMgrAddress(tt.args.address...); (err != nil) != tt.wantErr {
+			if err := r.SaveMsgSetRewardMgrAddress(tt.args.address, ""); (err != nil) != tt.wantErr {
 				t.Errorf("Repository.SaveMsgSetRewardMgrAddress() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

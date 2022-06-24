@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/jmoiron/sqlx"
@@ -36,7 +37,7 @@ func (r Repository) SaveWallets(wallets ...*walletstypes.Wallet) error {
 
 	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 	if err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	defer tx.Rollback()
@@ -48,7 +49,7 @@ func (r Repository) SaveWallets(wallets ...*walletstypes.Wallet) error {
 
 	for _, wallet := range wallets {
 		if _, err := tx.NamedExec(query, toWalletsDatabase(wallet)); err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 	}
 
@@ -62,7 +63,7 @@ func (r Repository) GetWallets(filter filter.Filter) ([]*walletstypes.Wallet, er
 
 	var result []types.DBWallets
 	if err := r.db.Select(&result, query, args...); err != nil {
-		return []*walletstypes.Wallet{}, err
+		return []*walletstypes.Wallet{}, errs.Internal{Cause: err.Error()}
 	}
 
 	wallets := make([]*walletstypes.Wallet, 0, len(result))
@@ -81,7 +82,7 @@ func (r Repository) UpdateWallets(wallets ...*walletstypes.Wallet) error {
 
 	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 	if err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	defer tx.Rollback()
@@ -93,7 +94,7 @@ func (r Repository) UpdateWallets(wallets ...*walletstypes.Wallet) error {
 
 	for _, wallet := range wallets {
 		if _, err := tx.NamedExec(query, toWalletsDatabase(wallet)); err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 	}
 
@@ -108,7 +109,7 @@ func (r Repository) DeleteWallets(wallets ...*walletstypes.Wallet) error {
 
 	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 	if err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	defer tx.Rollback()
@@ -117,7 +118,7 @@ func (r Repository) DeleteWallets(wallets ...*walletstypes.Wallet) error {
 
 	for _, wallet := range wallets {
 		if _, err := tx.NamedExec(query, toWalletsDatabase(wallet)); err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 	}
 

@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/jmoiron/sqlx"
@@ -35,7 +36,7 @@ func (r Repository) SaveAccounts(accounts ...*accountstypes.Account) error {
 
 	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 	if err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	defer func() {
@@ -50,15 +51,15 @@ func (r Repository) SaveAccounts(accounts ...*accountstypes.Account) error {
 	for _, acc := range accounts {
 		accountDB, err := toAccountDatabase(acc, r.cdc)
 		if err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 
 		if _, err := tx.NamedExec(query, accountDB); err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 
 		if err = saveAffiliates(tx, acc.Affiliates, accountDB.Hash); err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 	}
 
@@ -89,7 +90,7 @@ func (r Repository) UpdateAccounts(accounts ...*accountstypes.Account) error {
 
 	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 	if err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	defer func() {
@@ -106,19 +107,19 @@ func (r Repository) UpdateAccounts(accounts ...*accountstypes.Account) error {
 	for _, acc := range accounts {
 		accountDB, err := toAccountDatabase(acc, r.cdc)
 		if err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 
 		if _, err := tx.Exec(deleteAffiliates, accountDB.Hash); err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 
 		if _, err := tx.NamedExec(query, accountDB); err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 
 		if err = saveAffiliates(tx, acc.Affiliates, acc.Hash); err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 	}
 
@@ -134,18 +135,18 @@ func (r Repository) GetAccounts(accountFilter filter.Filter) ([]*accountstypes.A
 
 	var result []types.DBAccount
 	if err := r.db.Select(&result, query, args...); err != nil {
-		return []*accountstypes.Account{}, err
+		return []*accountstypes.Account{}, errs.Internal{Cause: err.Error()}
 	}
 
 	accounts := make([]*accountstypes.Account, 0, len(result))
 	for _, acc := range result {
 		account, err := toAccountDomain(acc)
 		if err != nil {
-			return []*accountstypes.Account{}, err
+			return []*accountstypes.Account{}, errs.Internal{Cause: err.Error()}
 		}
 
 		if account.Affiliates, err = getAffiliates(r.db, acc.Hash); err != nil {
-			return []*accountstypes.Account{}, err
+			return []*accountstypes.Account{}, errs.Internal{Cause: err.Error()}
 		}
 
 		accounts = append(accounts, account)

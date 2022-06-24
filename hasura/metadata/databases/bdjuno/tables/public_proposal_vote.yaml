@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: proposal_vote
+  schema: public
 object_relationships:
   - name: account
     using:

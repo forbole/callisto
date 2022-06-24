@@ -2,7 +2,6 @@ package banking
 
 import (
 	"strings"
-	"time"
 
 	"git.ooo.ua/vipcoin/chain/x/banking/types"
 	"git.ooo.ua/vipcoin/lib/filter"
@@ -17,7 +16,12 @@ func (m *Module) handleMsgIssue(tx *juno.Tx, index int, msg *types.MsgIssue) err
 	msg.Wallet = strings.ToLower(msg.Wallet)
 	msg.Asset = strings.ToLower(msg.Asset)
 
-	if err := m.bankingRepo.SaveMsgIssue(msg); err != nil {
+	if err := m.bankingRepo.SaveMsgIssue(msg, tx.TxHash); err != nil {
+		return err
+	}
+
+	issue, err := getIssueFromTx(tx, msg)
+	if err != nil {
 		return err
 	}
 
@@ -52,21 +56,5 @@ func (m *Module) handleMsgIssue(tx *juno.Tx, index int, msg *types.MsgIssue) err
 		return err
 	}
 
-	time, err := time.Parse(time.RFC3339, tx.Timestamp)
-	if err != nil {
-		return err
-	}
-
-	issue := &types.Issue{
-		Wallet: msg.Wallet,
-		BaseTransfer: types.BaseTransfer{
-			Asset:     msg.Asset,
-			Amount:    msg.Amount,
-			Kind:      types.TRANSFER_KIND_ISSUE,
-			Timestamp: time.Unix(),
-			Extras:    msg.Extras,
-			TxHash:    tx.TxHash,
-		},
-	}
 	return m.bankingRepo.SaveIssues(issue)
 }

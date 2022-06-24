@@ -2,7 +2,6 @@ package banking
 
 import (
 	"strings"
-	"time"
 
 	"git.ooo.ua/vipcoin/chain/x/banking/types"
 	"git.ooo.ua/vipcoin/lib/filter"
@@ -17,7 +16,12 @@ func (m *Module) handleMsgWithdraw(tx *juno.Tx, index int, msg *types.MsgWithdra
 	msg.Wallet = strings.ToLower(msg.Wallet)
 	msg.Asset = strings.ToLower(msg.Asset)
 
-	if err := m.bankingRepo.SaveMsgWithdraw(msg); err != nil {
+	if err := m.bankingRepo.SaveMsgWithdraw(msg, tx.TxHash); err != nil {
+		return err
+	}
+
+	withdraw, err := getWithdrawFromTx(tx, msg)
+	if err != nil {
 		return err
 	}
 
@@ -40,7 +44,7 @@ func (m *Module) handleMsgWithdraw(tx *juno.Tx, index int, msg *types.MsgWithdra
 	coins := sdk.NewCoins(sdk.NewCoin(msg.Asset, sdk.NewIntFromUint64(msg.Amount)))
 
 	// sub coins from wallet balance
-	wallet[0].Balance, _ = wallet[0].Balance.SafeSub(coins)
+	wallet[0].Balance = wallet[0].Balance.Sub(coins)
 	if err := m.walletsRepo.UpdateWallets(wallet...); err != nil {
 		return err
 	}
@@ -50,23 +54,6 @@ func (m *Module) handleMsgWithdraw(tx *juno.Tx, index int, msg *types.MsgWithdra
 	asset[0].InCirculation -= msg.Amount
 	if err := m.assetRepo.UpdateAssets(asset...); err != nil {
 		return err
-	}
-
-	msgTime, err := time.Parse(time.RFC3339, tx.Timestamp)
-	if err != nil {
-		return err
-	}
-
-	withdraw := &types.Withdraw{
-		Wallet: msg.Wallet,
-		BaseTransfer: types.BaseTransfer{
-			Asset:     msg.Asset,
-			Amount:    msg.Amount,
-			Kind:      types.TRANSFER_KIND_WITHDRAW,
-			Timestamp: msgTime.Unix(),
-			Extras:    msg.Extras,
-			TxHash:    tx.TxHash,
-		},
 	}
 
 	return m.bankingRepo.SaveWithdraws(withdraw)

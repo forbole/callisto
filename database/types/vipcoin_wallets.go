@@ -22,6 +22,7 @@ type (
 
 	// DBSetWalletKind represents a single row inside the "vipcoin_chain_wallets_set_wallet_kind" table
 	DBSetWalletKind struct {
+		Hash    string `db:"transaction_hash"`
 		Creator string `db:"creator"`
 		Address string `db:"address"`
 		Kind    int32  `db:"kind"`
@@ -29,6 +30,7 @@ type (
 
 	// DBSetWalletState represents a single row inside the "vipcoin_chain_wallets_set_wallet_state" table
 	DBSetWalletState struct {
+		Hash    string `db:"transaction_hash"`
 		Creator string `db:"creator"`
 		Address string `db:"address"`
 		State   int32  `db:"state"`
@@ -36,6 +38,7 @@ type (
 
 	// DBCreateWallet represents a single row inside the "vipcoin_chain_wallets_create_wallet" table
 	DBCreateWallet struct {
+		Hash           string  `db:"transaction_hash"`
 		Creator        string  `db:"creator"`
 		Address        string  `db:"address"`
 		AccountAddress string  `db:"account_address"`
@@ -46,6 +49,7 @@ type (
 
 	// DBCreateWalletWithBalance represents a single row inside the "vipcoin_chain_wallets_create_wallet_with_balance" table
 	DBCreateWalletWithBalance struct {
+		Hash           string    `db:"transaction_hash"`
 		Creator        string    `db:"creator"`
 		Address        string    `db:"address"`
 		AccountAddress string    `db:"account_address"`
@@ -58,12 +62,14 @@ type (
 
 	// DBSetDefaultWallet represents a single row inside the "vipcoin_chain_wallets_set_default_wallet" table
 	DBSetDefaultWallet struct {
+		Hash    string `db:"transaction_hash"`
 		Creator string `db:"creator"`
 		Address string `db:"address"`
 	}
 
 	// DBSetExtra represents a single row inside the "vipcoin_chain_wallets_set_extra" table
 	DBSetExtra struct {
+		Hash    string  `db:"transaction_hash"`
 		Creator string  `db:"creator"`
 		Address string  `db:"address"`
 		Extras  ExtraDB `db:"extras"`

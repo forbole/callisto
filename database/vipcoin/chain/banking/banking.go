@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	bankingtypes "git.ooo.ua/vipcoin/chain/x/banking/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/jmoiron/sqlx"
@@ -36,7 +37,7 @@ func (r Repository) SaveBaseTransfers(transfers ...*bankingtypes.BaseTransfer) e
 
 	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 	if err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	defer func() {
@@ -50,7 +51,7 @@ func (r Repository) SaveBaseTransfers(transfers ...*bankingtypes.BaseTransfer) e
 
 	for _, transfer := range transfers {
 		if _, err := tx.NamedExec(query, toTransferDatabase(transfer)); err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 	}
 
@@ -65,7 +66,7 @@ func (r Repository) UpdateBaseTransfers(transfers ...*bankingtypes.BaseTransfer)
 
 	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 	if err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	defer func() {
@@ -80,7 +81,7 @@ func (r Repository) UpdateBaseTransfers(transfers ...*bankingtypes.BaseTransfer)
 
 	for _, transfer := range transfers {
 		if _, err := tx.NamedExec(query, toTransferDatabase(transfer)); err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 	}
 
@@ -97,7 +98,7 @@ func (r Repository) GetBaseTransfers(filter filter.Filter) ([]*bankingtypes.Base
 
 	var result []types.DBTransfer
 	if err := r.db.Select(&result, query, args...); err != nil {
-		return []*bankingtypes.BaseTransfer{}, err
+		return []*bankingtypes.BaseTransfer{}, errs.Internal{Cause: err.Error()}
 	}
 
 	transfers := make([]*bankingtypes.BaseTransfer, 0, len(result))

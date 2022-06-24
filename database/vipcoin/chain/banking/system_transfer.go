@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	bankingtypes "git.ooo.ua/vipcoin/chain/x/banking/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
@@ -18,16 +19,15 @@ func (r Repository) SaveSystemTransfers(transfers ...*bankingtypes.SystemTransfe
 
 	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 	if err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	defer tx.Rollback()
 
 	queryBaseTransfer := `INSERT INTO vipcoin_chain_banking_base_transfers 
-       ("asset", "amount", "kind", "extras", "timestamp", "tx_hash") 
+       ("id", "asset", "amount", "kind", "extras", "timestamp", "tx_hash") 
      VALUES 
-       (:asset, :amount, :kind, :extras, :timestamp, :tx_hash)
-     RETURNING id`
+       (:id, :asset, :amount, :kind, :extras, :timestamp, :tx_hash)`
 
 	querySystemTransfer := `INSERT INTO vipcoin_chain_banking_system_transfer
 			("id", "wallet_from", "wallet_to")
@@ -37,23 +37,12 @@ func (r Repository) SaveSystemTransfers(transfers ...*bankingtypes.SystemTransfe
 	for _, transfer := range transfers {
 		transferDB := toSystemTransferDatabase(transfer)
 
-		resp, err := tx.NamedQuery(queryBaseTransfer, transferDB)
-		if err != nil {
-			return err
-		}
-
-		for resp.Next() {
-			if err := resp.Scan(&transferDB.ID); err != nil {
-				return err
-			}
-		}
-
-		if err := resp.Err(); err != nil {
-			return err
+		if _, err := tx.NamedExec(queryBaseTransfer, transferDB); err != nil {
+			return errs.Internal{Cause: err.Error()}
 		}
 
 		if _, err := tx.NamedExec(querySystemTransfer, transferDB); err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 	}
 
@@ -70,7 +59,7 @@ func (r Repository) GetSystemTransfers(filter filter.Filter) ([]*bankingtypes.Sy
 
 	var transfersDB []types.DBSystemTransfer
 	if err := r.db.Select(&transfersDB, query, args...); err != nil {
-		return []*bankingtypes.SystemTransfer{}, err
+		return []*bankingtypes.SystemTransfer{}, errs.Internal{Cause: err.Error()}
 	}
 
 	result := make([]*bankingtypes.SystemTransfer, 0, len(transfersDB))
@@ -89,7 +78,7 @@ func (r Repository) UpdateSystemTransfers(transfers ...*bankingtypes.SystemTrans
 
 	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 	if err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	defer tx.Rollback()
@@ -108,11 +97,11 @@ func (r Repository) UpdateSystemTransfers(transfers ...*bankingtypes.SystemTrans
 		transferDB := toSystemTransfersDatabase(transfer)
 
 		if _, err := tx.NamedExec(queryBaseTransfer, transferDB); err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 
 		if _, err := tx.NamedExec(queryTransfer, transferDB); err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 	}
 

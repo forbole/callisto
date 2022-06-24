@@ -2,24 +2,21 @@ package banking
 
 import (
 	bankingtypes "git.ooo.ua/vipcoin/chain/x/banking/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
 // SaveMsgPayments - method that create payments to the "vipcoin_chain_banking_msg_payment" table
-func (r Repository) SaveMsgPayments(payments ...*bankingtypes.MsgPayment) error {
-	if len(payments) == 0 {
-		return nil
-	}
-
+func (r Repository) SaveMsgPayments(payments *bankingtypes.MsgPayment, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_banking_msg_payment 
-		(creator, wallet_from, wallet_to, asset, amount, extras) 
+		(transaction_hash, creator, wallet_from, wallet_to, asset, amount, extras) 
 		VALUES 
-		(:creator, :wallet_from, :wallet_to, :asset, :amount, :extras)`
+		(:transaction_hash, :creator, :wallet_from, :wallet_to, :asset, :amount, :extras)`
 
-	if _, err := r.db.NamedExec(query, toMsgPaymentsDatabase(payments...)); err != nil {
-		return err
+	if _, err := r.db.NamedExec(query, toMsgPaymentDatabase(payments, transactionHash)); err != nil {
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return nil
@@ -35,7 +32,7 @@ func (r Repository) GetMsgPayments(filter filter.Filter) ([]*bankingtypes.MsgPay
 
 	var result []types.DBMsgPayment
 	if err := r.db.Select(&result, query, args...); err != nil {
-		return []*bankingtypes.MsgPayment{}, err
+		return []*bankingtypes.MsgPayment{}, errs.Internal{Cause: err.Error()}
 	}
 
 	payments := make([]*bankingtypes.MsgPayment, 0, len(result))

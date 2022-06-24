@@ -1,7 +1,13 @@
 table:
-  schema: public
   name: vipcoin_chain_banking_payment
+  schema: public
 object_relationships:
   - name: base_transfer
     using:
       foreign_key_constraint_on: id
+  - name: wallets_wallet_from
+    using:
+      foreign_key_constraint_on: wallet_from
+  - name: wallets_wallet_to
+    using:
+      foreign_key_constraint_on: wallet_to

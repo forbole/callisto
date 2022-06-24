@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: double_sign_vote
+  schema: public
 object_relationships:
   - name: validator
     using:
@@ -11,15 +11,15 @@ array_relationships:
       foreign_key_constraint_on:
         column: vote_b_id
         table:
-          schema: public
           name: double_sign_evidence
+          schema: public
   - name: double_sign_evidences
     using:
       foreign_key_constraint_on:
         column: vote_a_id
         table:
-          schema: public
           name: double_sign_evidence
+          schema: public
 select_permissions:
   - role: anonymous
     permission:

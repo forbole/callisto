@@ -2,24 +2,21 @@ package accounts
 
 import (
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
 // SaveKinds - saves the given kinds inside the database
-func (r Repository) SaveKinds(msg ...*accountstypes.MsgSetKinds) error {
-	if len(msg) == 0 {
-		return nil
-	}
-
+func (r Repository) SaveKinds(msg *accountstypes.MsgSetKinds, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_accounts_set_kinds 
-			(creator, hash, kinds) 
+			(transaction_hash, creator, hash, kinds) 
 			VALUES 
-			(:creator, :hash, :kinds)`
+			(:transaction_hash, :creator, :hash, :kinds)`
 
-	if _, err := r.db.NamedExec(query, toKindsArrDatabase(msg...)); err != nil {
-		return err
+	if _, err := r.db.NamedExec(query, toSetKindsDatabase(msg, transactionHash)); err != nil {
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return nil
@@ -34,7 +31,7 @@ func (r Repository) GetKinds(accountFilter filter.Filter) ([]*accountstypes.MsgS
 
 	var result []types.DBSetKinds
 	if err := r.db.Select(&result, query, args...); err != nil {
-		return []*accountstypes.MsgSetKinds{}, err
+		return []*accountstypes.MsgSetKinds{}, errs.Internal{Cause: err.Error()}
 	}
 
 	kinds := make([]*accountstypes.MsgSetKinds, 0, len(result))

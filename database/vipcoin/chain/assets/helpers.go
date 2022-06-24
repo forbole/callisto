@@ -3,9 +3,9 @@ package assets
 import (
 	assetstypes "git.ooo.ua/vipcoin/chain/x/assets/types"
 	extratypes "git.ooo.ua/vipcoin/chain/x/types"
+	"github.com/lib/pq"
 
 	"github.com/forbole/bdjuno/v2/database/types"
-	"github.com/lib/pq"
 )
 
 const (
@@ -82,19 +82,10 @@ func toAssetsArrDatabase(assets ...*assetstypes.Asset) []types.DBAssets {
 	return result
 }
 
-// toCreateAssetsArrDatabase - mapping func to database model
-func toCreateAssetsArrDatabase(msgs ...*assetstypes.MsgAssetCreate) []types.DBAssetCreate {
-	result := make([]types.DBAssetCreate, 0, len(msgs))
-	for _, msg := range msgs {
-		result = append(result, toCreateAssetDatabase(msg))
-	}
-
-	return result
-}
-
 // toCreateAssetDatabase - mapping func to database model
-func toCreateAssetDatabase(msg *assetstypes.MsgAssetCreate) types.DBAssetCreate {
+func toCreateAssetDatabase(msg *assetstypes.MsgAssetCreate, transactionHash string) types.DBAssetCreate {
 	return types.DBAssetCreate{
+		Hash:       transactionHash,
 		Creator:    msg.Creator,
 		Name:       msg.Name,
 		Issuer:     msg.Issuer,
@@ -122,19 +113,10 @@ func toCreateAssetDomain(asset types.DBAssetCreate) *assetstypes.MsgAssetCreate 
 	}
 }
 
-// toManageAssetsArrDatabase - mapping func to database model
-func toManageAssetsArrDatabase(msgs ...*assetstypes.MsgAssetManage) []types.DBAssetManage {
-	result := make([]types.DBAssetManage, 0, len(msgs))
-	for _, msg := range msgs {
-		result = append(result, toManageAssetDatabase(msg))
-	}
-
-	return result
-}
-
 // toManageAssetDatabase - mapping func to database model
-func toManageAssetDatabase(msg *assetstypes.MsgAssetManage) types.DBAssetManage {
+func toManageAssetDatabase(msg *assetstypes.MsgAssetManage, transactionHash string) types.DBAssetManage {
 	return types.DBAssetManage{
+		Hash:          transactionHash,
 		Creator:       msg.Creator,
 		Name:          msg.Name,
 		Policies:      toPoliciesDB(msg.Policies),
@@ -186,22 +168,13 @@ func toAssetDomain(asset types.DBAssets) *assetstypes.Asset {
 }
 
 // toSetExtraDatabase - mapping func to database model
-func toSetExtraDatabase(msg *assetstypes.MsgAssetSetExtra) types.DBAssetSetExtra {
+func toSetExtraDatabase(msg *assetstypes.MsgAssetSetExtra, transactionHash string) types.DBAssetSetExtra {
 	return types.DBAssetSetExtra{
+		Hash:    transactionHash,
 		Creator: msg.Creator,
 		Name:    msg.Name,
 		Extras:  toExtrasDB(msg.Extras),
 	}
-}
-
-// toSetExtrasDatabase - mapping func to database model
-func toSetExtrasDatabase(msg ...*assetstypes.MsgAssetSetExtra) []types.DBAssetSetExtra {
-	result := make([]types.DBAssetSetExtra, 0, len(msg))
-	for _, extra := range msg {
-		result = append(result, toSetExtraDatabase(extra))
-	}
-
-	return result
 }
 
 // toSetExtraDomain - mapping func to database model

@@ -2,24 +2,21 @@ package banking
 
 import (
 	bankingtypes "git.ooo.ua/vipcoin/chain/x/banking/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
 // SaveMsgSetRewardMgrAddress - method that save to the "vipcoin_chain_banking_set_reward_manager_address" table
-func (r Repository) SaveMsgSetRewardMgrAddress(addresses ...*bankingtypes.MsgSetRewardManagerAddress) error {
-	if len(addresses) == 0 {
-		return nil
-	}
-
+func (r Repository) SaveMsgSetRewardMgrAddress(addresses *bankingtypes.MsgSetRewardManagerAddress, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_banking_set_reward_manager_address 
-		(creator, address) 
+		(transaction_hash, creator, address) 
 		VALUES 
-		(:creator, :address)`
+		(:transaction_hash, :creator, :address)`
 
-	if _, err := r.db.NamedExec(query, toMsgSetRewardMgrAddressesDB(addresses...)); err != nil {
-		return err
+	if _, err := r.db.NamedExec(query, toMsgSetRewardMgrAddressDB(addresses, transactionHash)); err != nil {
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return nil
@@ -34,7 +31,7 @@ func (r Repository) GetMsgSetRewardMgrAddress(filter filter.Filter) ([]*bankingt
 
 	var result []types.DBSetRewardManagerAddress
 	if err := r.db.Select(&result, query, args...); err != nil {
-		return []*bankingtypes.MsgSetRewardManagerAddress{}, err
+		return []*bankingtypes.MsgSetRewardManagerAddress{}, errs.Internal{Cause: err.Error()}
 	}
 
 	addresses := make([]*bankingtypes.MsgSetRewardManagerAddress, 0, len(result))

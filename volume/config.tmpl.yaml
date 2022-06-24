@@ -1,17 +1,14 @@
 chain:
     bech32_prefix: vcg
     modules:
-      - modules
-      - messages
-      - auth
-      - bank
-      - gov
-      - mint
-      - slashing
-      - vipcoin_accounts
-      - vipcoin_wallets
-      - vipcoin_banking
-      - vipcoin_assets
+        - modules
+        - messages
+        - auth
+        - bank
+        - gov
+        - mint
+        - slashing
+        - vipcoin
 
 node:
     type: remote
@@ -24,7 +21,7 @@ node:
             address: http://localhost:9090
             insecure: true
 parsing:
-    workers: 5
+    workers: 10
     listen_new_blocks: true
     parse_old_blocks: true
     parse_genesis: false

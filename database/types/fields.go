@@ -44,4 +44,10 @@ const (
 	FieldWalletTo              = "wallet_to"
 	FieldWallets               = "wallets"
 	FieldWithdrawn             = "withdrawn"
+	FieldBlock                 = "block"
+	FieldHeight                = "height"
+	FieldNumTxs                = "num_txs"
+	FieldTotalGas              = "total_gas"
+	FieldProposerAddress       = "proposer_address"
+	FieldSuccess               = "success"
 )

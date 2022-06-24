@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: average_block_time_from_genesis
+  schema: public
 select_permissions:
   - role: anonymous
     permission:

@@ -22,6 +22,7 @@ type (
 
 	// DBAssetCreate represents a single row inside the "vipcoin_chain_assets_create" table
 	DBAssetCreate struct {
+		Hash       string        `db:"transaction_hash"`
 		Creator    string        `db:"creator"`
 		Name       string        `db:"name"`
 		Issuer     string        `db:"issuer"`
@@ -34,6 +35,7 @@ type (
 
 	// DBAssetManage represents a single row inside the "vipcoin_chain_assets_manage" table
 	DBAssetManage struct {
+		Hash          string        `db:"transaction_hash"`
 		Creator       string        `db:"creator"`
 		Name          string        `db:"name"`
 		Policies      pq.Int32Array `db:"policies"`
@@ -48,6 +50,7 @@ type (
 
 	// DBAssetSetExtra represents a single row inside the "vipcoin_chain_assets_set_extra" table
 	DBAssetSetExtra struct {
+		Hash    string  `db:"transaction_hash"`
 		Creator string  `db:"creator"`
 		Name    string  `db:"name"`
 		Extras  ExtraDB `db:"extras"`

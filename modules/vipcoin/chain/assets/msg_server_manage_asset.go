@@ -3,14 +3,14 @@ package assets
 import (
 	assetstypes "git.ooo.ua/vipcoin/chain/x/assets/types"
 	"git.ooo.ua/vipcoin/lib/filter"
+	juno "github.com/forbole/juno/v2/types"
 
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
-	juno "github.com/forbole/juno/v2/types"
 )
 
 // handleMsgManageAsset allows to properly handle a handleMsgCreateAsset
 func (m *Module) handleMsgManageAsset(tx *juno.Tx, index int, msg *assetstypes.MsgAssetManage) error {
-	if err := m.assetRepo.SaveManageAsset(msg); err != nil {
+	if err := m.assetRepo.SaveManageAsset(msg, tx.TxHash); err != nil {
 		return err
 	}
 

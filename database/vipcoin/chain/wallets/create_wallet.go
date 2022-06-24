@@ -1,42 +1,25 @@
 package wallets
 
 import (
-	"context"
-	"database/sql"
-
 	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
 // SaveCreateWallet saves the given wallets inside the database
-func (r *Repository) SaveCreateWallet(msgWallet ...*walletstypes.MsgCreateWallet) error {
-	if len(msgWallet) == 0 {
-		return nil
-	}
-
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return err
-	}
-
-	defer func() {
-		_ = tx.Rollback()
-	}()
-
+func (r *Repository) SaveCreateWallet(msgWallet *walletstypes.MsgCreateWallet, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_wallets_create_wallet 
-			(creator, address, account_address, kind, state, extras) 
+			(transaction_hash, creator, address, account_address, kind, state, extras) 
 		VALUES 
-			(:creator, :address, :account_address, :kind, :state, :extras)`
+			(:transaction_hash, :creator, :address, :account_address, :kind, :state, :extras)`
 
-	for _, wallet := range msgWallet {
-		if _, err := tx.NamedExec(query, toCreateWalletDatabase(wallet)); err != nil {
-			return err
-		}
+	if _, err := r.db.NamedExec(query, toCreateWalletDatabase(msgWallet, transactionHash)); err != nil {
+		return errs.Internal{Cause: err.Error()}
 	}
 
-	return tx.Commit()
+	return nil
 }
 
 // GetCreateWallet get the given wallet from database
@@ -49,7 +32,7 @@ func (r *Repository) GetCreateWallet(walletFilter filter.Filter) ([]*walletstype
 	var result []types.DBCreateWallet
 
 	if err := r.db.Select(&result, query, args...); err != nil {
-		return []*walletstypes.MsgCreateWallet{}, err
+		return []*walletstypes.MsgCreateWallet{}, errs.Internal{Cause: err.Error()}
 	}
 
 	wallets := make([]*walletstypes.MsgCreateWallet, 0, len(result))

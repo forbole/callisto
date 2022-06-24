@@ -148,8 +148,9 @@ func toKindsDomain(kinds pq.Int32Array) []accountstypes.AccountKind {
 }
 
 // toRegisterUserDatabase - mapping func to database model
-func toRegisterUserDatabase(user *accountstypes.MsgRegisterUser) types.DBRegisterUser {
+func toRegisterUserDatabase(user *accountstypes.MsgRegisterUser, transactionHash string) types.DBRegisterUser {
 	return types.DBRegisterUser{
+		TransactionHash:       transactionHash,
 		Creator:               user.Creator,
 		Address:               user.Address,
 		Hash:                  user.Hash,
@@ -161,16 +162,6 @@ func toRegisterUserDatabase(user *accountstypes.MsgRegisterUser) types.DBRegiste
 		ReferrerHash:          user.ReferrerHash,
 	}
 
-}
-
-// toRegisterUsersDatabase - mapping func to database model
-func toRegisterUsersDatabase(msg ...*accountstypes.MsgRegisterUser) []types.DBRegisterUser {
-	result := make([]types.DBRegisterUser, 0, len(msg))
-	for _, user := range msg {
-		result = append(result, toRegisterUserDatabase(user))
-	}
-
-	return result
 }
 
 // toRegisterUserDomain - mapping func to database model
@@ -190,22 +181,13 @@ func toRegisterUserDomain(user types.DBRegisterUser) *accountstypes.MsgRegisterU
 }
 
 // toSetKindsDatabase - mapping func to database model
-func toSetKindsDatabase(kinds *accountstypes.MsgSetKinds) types.DBSetKinds {
+func toSetKindsDatabase(kinds *accountstypes.MsgSetKinds, transactionHash string) types.DBSetKinds {
 	return types.DBSetKinds{
-		Creator: kinds.Creator,
-		Hash:    kinds.Hash,
-		Kinds:   toKindsDB(kinds.Kinds),
+		TransactionHash: transactionHash,
+		Creator:         kinds.Creator,
+		Hash:            kinds.Hash,
+		Kinds:           toKindsDB(kinds.Kinds),
 	}
-}
-
-// toKindsArrDatabase - mapping func to database model
-func toKindsArrDatabase(msg ...*accountstypes.MsgSetKinds) []types.DBSetKinds {
-	result := make([]types.DBSetKinds, 0, len(msg))
-	for _, kind := range msg {
-		result = append(result, toSetKindsDatabase(kind))
-	}
-
-	return result
 }
 
 // toSetKindsDomain - mapping func to database model
@@ -218,23 +200,14 @@ func toSetKindsDomain(kinds types.DBSetKinds) *accountstypes.MsgSetKinds {
 }
 
 // toSetAffiliateAddressDatabase - mapping func to database model
-func toSetAffiliateAddressDatabase(msg *accountstypes.MsgSetAffiliateAddress) types.DBSetAffiliateAddress {
+func toSetAffiliateAddressDatabase(msg *accountstypes.MsgSetAffiliateAddress, transactionHash string) types.DBSetAffiliateAddress {
 	return types.DBSetAffiliateAddress{
-		Creator:    msg.Creator,
-		Hash:       msg.Hash,
-		OldAddress: msg.OldAddress,
-		NewAddress: msg.NewAddress,
+		TransactionHash: transactionHash,
+		Creator:         msg.Creator,
+		Hash:            msg.Hash,
+		OldAddress:      msg.OldAddress,
+		NewAddress:      msg.NewAddress,
 	}
-}
-
-// toSetAffiliatesAddressDatabase - mapping func to database model
-func toSetAffiliatesAddressDatabase(msg ...*accountstypes.MsgSetAffiliateAddress) []types.DBSetAffiliateAddress {
-	result := make([]types.DBSetAffiliateAddress, 0, len(msg))
-	for _, affiliate := range msg {
-		result = append(result, toSetAffiliateAddressDatabase(affiliate))
-	}
-
-	return result
 }
 
 // toSetAffiliateAddressDomain - mapping func to database model
@@ -248,23 +221,14 @@ func toSetAffiliateAddressDomain(msg types.DBSetAffiliateAddress) *accountstypes
 }
 
 // toAccountMigrateDatabase - mapping func to database model
-func toAccountMigrateDatabase(msg *accountstypes.MsgAccountMigrate) types.DBAccountMigrate {
+func toAccountMigrateDatabase(msg *accountstypes.MsgAccountMigrate, transactionHash string) types.DBAccountMigrate {
 	return types.DBAccountMigrate{
-		Creator:   msg.Creator,
-		Address:   msg.Address,
-		Hash:      msg.Hash,
-		PublicKey: msg.PublicKey,
+		TransactionHash: transactionHash,
+		Creator:         msg.Creator,
+		Address:         msg.Address,
+		Hash:            msg.Hash,
+		PublicKey:       msg.PublicKey,
 	}
-}
-
-// toAccountsMigrateDatabase - mapping func to database model
-func toAccountsMigrateDatabase(msg ...*accountstypes.MsgAccountMigrate) []types.DBAccountMigrate {
-	result := make([]types.DBAccountMigrate, 0, len(msg))
-	for _, account := range msg {
-		result = append(result, toAccountMigrateDatabase(account))
-	}
-
-	return result
 }
 
 // toAccountMigrateDomain - mapping func to database model
@@ -278,22 +242,13 @@ func toAccountMigrateDomain(msg types.DBAccountMigrate) *accountstypes.MsgAccoun
 }
 
 // toSetExtraDatabase - mapping func to database model
-func toSetExtraDatabase(msg *accountstypes.MsgSetExtra) types.DBSetAccountExtra {
+func toSetExtraDatabase(msg *accountstypes.MsgSetExtra, transactionHash string) types.DBSetAccountExtra {
 	return types.DBSetAccountExtra{
-		Creator: msg.Creator,
-		Hash:    msg.Hash,
-		Extras:  toExtrasDB(msg.Extras),
+		TransactionHash: transactionHash,
+		Creator:         msg.Creator,
+		Hash:            msg.Hash,
+		Extras:          toExtrasDB(msg.Extras),
 	}
-}
-
-// toSetExtrasDatabase - mapping func to database model
-func toSetExtrasDatabase(msg ...*accountstypes.MsgSetExtra) []types.DBSetAccountExtra {
-	result := make([]types.DBSetAccountExtra, 0, len(msg))
-	for _, extra := range msg {
-		result = append(result, toSetExtraDatabase(extra))
-	}
-
-	return result
 }
 
 // toSetExtraDomain - mapping func to database model
@@ -306,23 +261,14 @@ func toSetExtraDomain(msg types.DBSetAccountExtra) *accountstypes.MsgSetExtra {
 }
 
 // toSetAffiliateExtraDatabase - mapping func to database model
-func toSetAffiliateExtraDatabase(msg *accountstypes.MsgSetAffiliateExtra) types.DBSetAffiliateExtra {
+func toSetAffiliateExtraDatabase(msg *accountstypes.MsgSetAffiliateExtra, transactionHash string) types.DBSetAffiliateExtra {
 	return types.DBSetAffiliateExtra{
+		TransactionHash: transactionHash,
 		Creator:         msg.Creator,
 		AccountHash:     msg.AccountHash,
 		AffiliationHash: msg.AffiliationHash,
 		Extras:          toExtrasDB(msg.Extras),
 	}
-}
-
-// toSetAffiliatesExtraDatabase - mapping func to database model
-func toSetAffiliatesExtraDatabase(msg ...*accountstypes.MsgSetAffiliateExtra) []types.DBSetAffiliateExtra {
-	result := make([]types.DBSetAffiliateExtra, 0, len(msg))
-	for _, extra := range msg {
-		result = append(result, toSetAffiliateExtraDatabase(extra))
-	}
-
-	return result
 }
 
 // toSetAffiliateExtraDomain - mapping func to database model
@@ -336,23 +282,14 @@ func toSetAffiliateExtraDomain(msg types.DBSetAffiliateExtra) *accountstypes.Msg
 }
 
 // toSetStateDatabase - mapping func to database model
-func toSetStateDatabase(msg *accountstypes.MsgSetState) types.DBSetState {
+func toSetStateDatabase(msg *accountstypes.MsgSetState, transactionHash string) types.DBSetState {
 	return types.DBSetState{
-		Creator: msg.Creator,
-		Hash:    msg.Hash,
-		State:   int32(msg.State),
-		Reason:  msg.Reason,
+		TransactionHash: transactionHash,
+		Creator:         msg.Creator,
+		Hash:            msg.Hash,
+		State:           int32(msg.State),
+		Reason:          msg.Reason,
 	}
-}
-
-// toSetStatesDatabase - mapping func to database model
-func toSetStatesDatabase(msg ...*accountstypes.MsgSetState) []types.DBSetState {
-	result := make([]types.DBSetState, 0, len(msg))
-	for _, state := range msg {
-		result = append(result, toSetStateDatabase(state))
-	}
-
-	return result
 }
 
 // toSetStateDomain - mapping func to database model
@@ -366,26 +303,17 @@ func toSetStateDomain(msg types.DBSetState) *accountstypes.MsgSetState {
 }
 
 // toCreateAccountDatabase - mapping func to database model
-func toCreateAccountDatabase(msg *accountstypes.MsgCreateAccount) types.DBCreateAccount {
+func toCreateAccountDatabase(msg *accountstypes.MsgCreateAccount, transactionHash string) types.DBCreateAccount {
 	return types.DBCreateAccount{
-		Creator:   msg.Creator,
-		Hash:      msg.Hash,
-		Address:   msg.Address,
-		PublicKey: msg.PublicKey,
-		Kinds:     toKindsDB(msg.Kinds),
-		State:     int32(msg.State),
-		Extras:    toExtrasDB(msg.Extras),
+		TransactionHash: transactionHash,
+		Creator:         msg.Creator,
+		Hash:            msg.Hash,
+		Address:         msg.Address,
+		PublicKey:       msg.PublicKey,
+		Kinds:           toKindsDB(msg.Kinds),
+		State:           int32(msg.State),
+		Extras:          toExtrasDB(msg.Extras),
 	}
-}
-
-// toSetStatesDatabase - mapping func to database model
-func toCreateAccountsDatabase(msg ...*accountstypes.MsgCreateAccount) []types.DBCreateAccount {
-	result := make([]types.DBCreateAccount, 0, len(msg))
-	for _, account := range msg {
-		result = append(result, toCreateAccountDatabase(account))
-	}
-
-	return result
 }
 
 // toSetStateDomain - mapping func to database model
@@ -402,24 +330,15 @@ func toCreateAccountDomain(msg types.DBCreateAccount) *accountstypes.MsgCreateAc
 }
 
 // toAddAffiliateDatabase - mapping func to database model
-func toAddAffiliateDatabase(msg *accountstypes.MsgAddAffiliate) types.DBAddAffiliate {
+func toAddAffiliateDatabase(msg *accountstypes.MsgAddAffiliate, transactionHash string) types.DBAddAffiliate {
 	return types.DBAddAffiliate{
+		TransactionHash: transactionHash,
 		Creator:         msg.Creator,
 		AccountHash:     msg.AccountHash,
 		AffiliationHash: msg.AffiliationHash,
 		Affiliation:     int32(msg.Affiliation),
 		Extras:          toExtrasDB(msg.Extras),
 	}
-}
-
-// toAddAffiliatesDatabase - mapping func to database model
-func toAddAffiliatesDatabase(msg ...*accountstypes.MsgAddAffiliate) []types.DBAddAffiliate {
-	result := make([]types.DBAddAffiliate, 0, len(msg))
-	for _, affiliate := range msg {
-		result = append(result, toAddAffiliateDatabase(affiliate))
-	}
-
-	return result
 }
 
 // toAddAffiliateDomain - mapping func to database model

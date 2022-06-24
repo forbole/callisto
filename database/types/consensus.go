@@ -2,7 +2,10 @@ package types
 
 import (
 	"database/sql"
+	"encoding/json"
 	"time"
+
+	"github.com/lib/pq"
 )
 
 type GenesisRow struct {
@@ -86,4 +89,20 @@ type BlockRow struct {
 	ProposerAddress sql.NullString `db:"proposer_address"`
 	PreCommitsNum   int64          `db:"pre_commits"`
 	Timestamp       time.Time      `db:"timestamp"`
+}
+
+// TransactionRow represents a single transaction row stored inside the database
+type TransactionRow struct {
+	Hash        string          `db:"hash"`
+	Height      int64           `db:"height"`
+	Success     bool            `db:"success"`
+	Messages    json.RawMessage `db:"messages"`
+	Memo        string          `db:"memo"`
+	Signatures  pq.StringArray  `db:"signatures"`
+	SignerInfos json.RawMessage `db:"signer_infos"`
+	Fee         json.RawMessage `db:"fee"`
+	GasWanted   int64           `db:"gas_wanted"`
+	GasUsed     int64           `db:"gas_used"`
+	RawLog      string          `db:"raw_log"`
+	Logs        json.RawMessage `db:"logs"`
 }

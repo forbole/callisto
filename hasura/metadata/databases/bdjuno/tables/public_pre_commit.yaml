@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: pre_commit
+  schema: public
 object_relationships:
   - name: validator
     using:

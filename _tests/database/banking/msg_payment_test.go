@@ -80,7 +80,7 @@ func TestRepository_SaveMsgPayments(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := bankingdb.NewRepository(db, codec.Marshaler)
 
-			if err := r.SaveMsgPayments(tt.args.payments...); (err != nil) != tt.wantErr {
+			if err := r.SaveMsgPayments(tt.args.payments, ""); (err != nil) != tt.wantErr {
 				t.Errorf("Repository.SavePayments() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

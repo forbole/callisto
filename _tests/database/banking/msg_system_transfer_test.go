@@ -80,7 +80,7 @@ func TestRepository_SaveMsgSystemTransfers(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := bankingdb.NewRepository(db, codec.Marshaler)
 
-			if err := r.SaveMsgSystemTransfers(tt.args.transfers...); (err != nil) != tt.wantErr {
+			if err := r.SaveMsgSystemTransfers(tt.args.transfers, ""); (err != nil) != tt.wantErr {
 				t.Errorf("Repository.SaveSystemTransfers() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

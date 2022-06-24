@@ -7,11 +7,11 @@ import (
 	assetstypes "git.ooo.ua/vipcoin/chain/x/assets/types"
 	extratypes "git.ooo.ua/vipcoin/chain/x/types"
 	"git.ooo.ua/vipcoin/lib/filter"
-
 	"github.com/cosmos/cosmos-sdk/simapp"
-	assetsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/assets"
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
+
+	assetsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/assets"
 )
 
 func TestRepository_SaveSetExtraAsset(t *testing.T) {
@@ -62,7 +62,7 @@ func TestRepository_SaveSetExtraAsset(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := assetsdb.NewRepository(db, codec.Marshaler)
 
-			if err := r.SaveExtraAsset(tt.args.msgAssetSetExtra...); (err != nil) != tt.wantErr {
+			if err := r.SaveExtraAsset(tt.args.msgAssetSetExtra, ""); (err != nil) != tt.wantErr {
 				t.Errorf("Repository.SaveSetExtraAssets() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

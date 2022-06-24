@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: validator_commission
+  schema: public
 object_relationships:
   - name: validator
     using:

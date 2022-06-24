@@ -4,13 +4,14 @@ import (
 	typesaccount "git.ooo.ua/vipcoin/chain/x/accounts/types"
 	typeswallets "git.ooo.ua/vipcoin/chain/x/wallets/types"
 	"git.ooo.ua/vipcoin/lib/filter"
+	juno "github.com/forbole/juno/v2/types"
 
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 )
 
 // handleMsgSetDefaultWallet allows to properly handle a MsgSetDefaultWallet
-func (m *Module) handleMsgSetDefaultWallet(msg *typeswallets.MsgSetDefaultWallet) error {
-	if err := m.walletsRepo.SaveDefaultWallets(msg); err != nil {
+func (m *Module) handleMsgSetDefaultWallet(tx *juno.Tx, index int, msg *typeswallets.MsgSetDefaultWallet) error {
+	if err := m.walletsRepo.SaveDefaultWallets(msg, tx.TxHash); err != nil {
 		return err
 	}
 

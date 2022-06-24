@@ -2,24 +2,21 @@ package banking
 
 import (
 	bankingtypes "git.ooo.ua/vipcoin/chain/x/banking/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
 // SaveMsgWithdraw - method that create withdraw to the "vipcoin_chain_banking_msg_withdraw" table
-func (r Repository) SaveMsgWithdraw(withdraws ...*bankingtypes.MsgWithdraw) error {
-	if len(withdraws) == 0 {
-		return nil
-	}
-
+func (r Repository) SaveMsgWithdraw(withdraws *bankingtypes.MsgWithdraw, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_banking_msg_withdraw 
-		(creator, wallet, asset, amount, extras) 
+		(transaction_hash, creator, wallet, asset, amount, extras) 
 		VALUES 
-		(:creator, :wallet, :asset, :amount, :extras)`
+		(:transaction_hash, :creator, :wallet, :asset, :amount, :extras)`
 
-	if _, err := r.db.NamedExec(query, toMsgWithdrawsDatabase(withdraws...)); err != nil {
-		return err
+	if _, err := r.db.NamedExec(query, toMsgWithdrawDatabase(withdraws, transactionHash)); err != nil {
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return nil
@@ -35,7 +32,7 @@ func (r Repository) GetMsgWithdraw(filter filter.Filter) ([]*bankingtypes.MsgWit
 
 	var result []types.DBMsgWithdraw
 	if err := r.db.Select(&result, query, args...); err != nil {
-		return []*bankingtypes.MsgWithdraw{}, err
+		return []*bankingtypes.MsgWithdraw{}, errs.Internal{Cause: err.Error()}
 	}
 
 	withdraws := make([]*bankingtypes.MsgWithdraw, 0, len(result))

@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: double_sign_evidence
+  schema: public
 object_relationships:
   - name: doubleSignVoteByVoteAId
     using:

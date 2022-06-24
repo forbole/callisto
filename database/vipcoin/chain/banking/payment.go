@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	bankingtypes "git.ooo.ua/vipcoin/chain/x/banking/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
@@ -18,42 +19,30 @@ func (r Repository) SavePayments(payments ...*bankingtypes.Payment) error {
 
 	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
 	if err != nil {
-		return err
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	defer tx.Rollback()
 
 	queryBaseTransfer := `INSERT INTO vipcoin_chain_banking_base_transfers 
-       ("asset", "amount", "kind", "extras", "timestamp", "tx_hash") 
+       ("id", "asset", "amount", "kind", "extras", "timestamp", "tx_hash") 
      VALUES 
-       (:asset, :amount, :kind, :extras, :timestamp, :tx_hash)
-     RETURNING id`
+       (:id,:asset, :amount, :kind, :extras, :timestamp, :tx_hash)`
 
 	queryPayment := `INSERT INTO vipcoin_chain_banking_payment
 			("id", "wallet_from", "wallet_to", "fee")
 			VALUES
-			(:id,:wallet_from,:wallet_to,:fee)`
+			(:id, :wallet_from, :wallet_to, :fee)`
 
 	for _, payment := range payments {
 		paymentDB := toPaymentDatabase(payment)
 
-		resp, err := tx.NamedQuery(queryBaseTransfer, paymentDB)
-		if err != nil {
-			return err
-		}
-
-		for resp.Next() {
-			if err := resp.Scan(&paymentDB.ID); err != nil {
-				return err
-			}
-		}
-
-		if err := resp.Err(); err != nil {
-			return err
+		if _, err := tx.NamedExec(queryBaseTransfer, paymentDB); err != nil {
+			return errs.Internal{Cause: err.Error()}
 		}
 
 		if _, err := tx.NamedExec(queryPayment, paymentDB); err != nil {
-			return err
+			return errs.Internal{Cause: err.Error()}
 		}
 	}
 
@@ -70,7 +59,7 @@ func (r Repository) GetPayments(filter filter.Filter) ([]*bankingtypes.Payment, 
 
 	var paymentsDB []types.DBPayment
 	if err := r.db.Select(&paymentsDB, query, args...); err != nil {
-		return []*bankingtypes.Payment{}, err
+		return []*bankingtypes.Payment{}, errs.Internal{Cause: err.Error()}
 	}
 
 	result := make([]*bankingtypes.Payment, 0, len(paymentsDB))

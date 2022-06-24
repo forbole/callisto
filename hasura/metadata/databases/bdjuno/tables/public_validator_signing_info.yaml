@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: validator_signing_info
+  schema: public
 select_permissions:
   - role: anonymous
     permission:

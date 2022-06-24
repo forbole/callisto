@@ -76,7 +76,7 @@ func TestRepository_SaveAddAffiliate(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := accountsdb.NewRepository(db, codec.Marshaler)
 
-			if err := r.SaveAddAffiliate(tt.args.msg...); (err != nil) != tt.wantErr {
+			if err := r.SaveAddAffiliate(tt.args.msg, ""); (err != nil) != tt.wantErr {
 				t.Errorf("Repository.SaveAddAffiliate() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: proposal_validator_status_snapshot
+  schema: public
 object_relationships:
   - name: proposal
     using:

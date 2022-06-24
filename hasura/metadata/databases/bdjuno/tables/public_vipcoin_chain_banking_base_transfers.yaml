@@ -1,32 +1,35 @@
 table:
-  schema: public
   name: vipcoin_chain_banking_base_transfers
+  schema: public
 object_relationships:
+  - name: assets_asset
+    using:
+      foreign_key_constraint_on: asset
   - name: issue
     using:
       foreign_key_constraint_on:
         column: id
         table:
-          schema: public
           name: vipcoin_chain_banking_issue
+          schema: public
   - name: payment
     using:
       foreign_key_constraint_on:
         column: id
         table:
-          schema: public
           name: vipcoin_chain_banking_payment
+          schema: public
   - name: system_transfer
     using:
       foreign_key_constraint_on:
         column: id
         table:
-          schema: public
           name: vipcoin_chain_banking_system_transfer
+          schema: public
   - name: withdraw
     using:
       foreign_key_constraint_on:
         column: id
         table:
-          schema: public
           name: vipcoin_chain_banking_withdraw
+          schema: public

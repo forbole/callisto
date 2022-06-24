@@ -77,7 +77,7 @@ func TestRepository_SaveExtra(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := accountsdb.NewRepository(db, codec.Marshaler)
 
-			if err := r.SaveExtra(tt.args.msg...); (err != nil) != tt.wantErr {
+			if err := r.SaveExtra(tt.args.msg, ""); (err != nil) != tt.wantErr {
 				t.Errorf("Repository.SaveExtra() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

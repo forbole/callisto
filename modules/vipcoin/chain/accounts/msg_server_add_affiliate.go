@@ -10,7 +10,7 @@ import (
 
 // handleMsgAccountMigrate allows to properly handle a handleMsgAccountMigrate
 func (m *Module) handleMsgAddAffiliate(tx *juno.Tx, index int, msg *types.MsgAddAffiliate) error {
-	if err := m.accountRepo.SaveAddAffiliate(msg); err != nil {
+	if err := m.accountRepo.SaveAddAffiliate(msg, tx.TxHash); err != nil {
 		return err
 	}
 

@@ -2,26 +2,21 @@ package wallets
 
 import (
 	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
 // SaveDefaultWallets - inserts messages into the "vipcoin_chain_wallets_set_default_wallet" table
-func (r Repository) SaveDefaultWallets(messages ...*walletstypes.MsgSetDefaultWallet) error {
-	if len(messages) == 0 {
-		return nil
-	}
-
+func (r Repository) SaveDefaultWallets(messages *walletstypes.MsgSetDefaultWallet, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_wallets_set_default_wallet 
-			(creator, address) 
+			(transaction_hash, creator, address) 
 			VALUES 
-			(:creator, :address)`
+			(:transaction_hash, :creator, :address)`
 
-	for _, m := range messages {
-		if _, err := r.db.NamedExec(query, toSetDefaultWalletDatabase(m)); err != nil {
-			return err
-		}
+	if _, err := r.db.NamedExec(query, toSetDefaultWalletDatabase(messages, transactionHash)); err != nil {
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return nil
@@ -33,7 +28,7 @@ func (r Repository) GetDefaultWallets(filter filter.Filter) ([]*walletstypes.Msg
 
 	var wallets []types.DBSetDefaultWallet
 	if err := r.db.Select(&wallets, query, args...); err != nil {
-		return []*walletstypes.MsgSetDefaultWallet{}, err
+		return []*walletstypes.MsgSetDefaultWallet{}, errs.Internal{Cause: err.Error()}
 	}
 
 	result := make([]*walletstypes.MsgSetDefaultWallet, 0, len(wallets))

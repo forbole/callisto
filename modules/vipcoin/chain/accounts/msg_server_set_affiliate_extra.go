@@ -10,7 +10,7 @@ import (
 
 // handleMsgSetAffiliateExtra allows to properly handle a handleMsgSetAffiliateExtra
 func (m *Module) handleMsgSetAffiliateExtra(tx *juno.Tx, index int, msg *types.MsgSetAffiliateExtra) error {
-	if err := m.accountRepo.SaveAffiliateExtra(msg); err != nil {
+	if err := m.accountRepo.SaveAffiliateExtra(msg, tx.TxHash); err != nil {
 		return err
 	}
 

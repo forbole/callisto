@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: staking_pool
+  schema: public
 select_permissions:
   - role: anonymous
     permission:

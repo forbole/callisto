@@ -2,7 +2,6 @@ package banking
 
 import (
 	"strings"
-	"time"
 
 	"git.ooo.ua/vipcoin/chain/x/banking/types"
 	"git.ooo.ua/vipcoin/lib/filter"
@@ -18,7 +17,12 @@ func (m *Module) handleMsgSystemTransfer(tx *juno.Tx, index int, msg *types.MsgS
 	msg.WalletTo = strings.ToLower(msg.WalletTo)
 	msg.Asset = strings.ToLower(msg.Asset)
 
-	if err := m.bankingRepo.SaveMsgSystemTransfers(msg); err != nil {
+	if err := m.bankingRepo.SaveMsgSystemTransfers(msg, tx.TxHash); err != nil {
+		return err
+	}
+
+	transfer, err := getSystemTransferFromTx(tx, msg)
+	if err != nil {
 		return err
 	}
 
@@ -40,7 +44,7 @@ func (m *Module) handleMsgSystemTransfer(tx *juno.Tx, index int, msg *types.MsgS
 
 	coin := sdk.NewCoin(msg.Asset, sdk.NewIntFromUint64(msg.Amount))
 
-	walletFrom[0].Balance, _ = walletFrom[0].Balance.SafeSub(sdk.NewCoins(coin))
+	walletFrom[0].Balance = walletFrom[0].Balance.Sub(sdk.NewCoins(coin))
 	if err := m.walletsRepo.UpdateWallets(walletFrom...); err != nil {
 		return err
 	}
@@ -50,22 +54,5 @@ func (m *Module) handleMsgSystemTransfer(tx *juno.Tx, index int, msg *types.MsgS
 		return err
 	}
 
-	time, err := time.Parse(time.RFC3339, tx.Timestamp)
-	if err != nil {
-		return err
-	}
-
-	transfer := &types.SystemTransfer{
-		WalletFrom: msg.WalletFrom,
-		WalletTo:   msg.WalletTo,
-		BaseTransfer: types.BaseTransfer{
-			Asset:     msg.Asset,
-			Amount:    msg.Amount,
-			Kind:      types.TRANSFER_KIND_SYSTEM,
-			Extras:    msg.Extras,
-			Timestamp: time.Unix(),
-			TxHash:    tx.TxHash,
-		},
-	}
 	return m.bankingRepo.SaveSystemTransfers(transfer)
 }

@@ -32,6 +32,7 @@ type (
 
 	// DBRegisterUser represents a single row inside the "vipcoin_chain_accounts_register_user" table
 	DBRegisterUser struct {
+		TransactionHash       string  `db:"transaction_hash"`
 		Creator               string  `db:"creator"`
 		Address               string  `db:"address"`
 		Hash                  string  `db:"hash"`
@@ -45,36 +46,41 @@ type (
 
 	// DBSetKinds represents a single row inside the "vipcoin_chain_accounts_set_kinds" table
 	DBSetKinds struct {
-		Creator string        `db:"creator"`
-		Hash    string        `db:"hash"`
-		Kinds   pq.Int32Array `db:"kinds"`
+		TransactionHash string        `db:"transaction_hash"`
+		Creator         string        `db:"creator"`
+		Hash            string        `db:"hash"`
+		Kinds           pq.Int32Array `db:"kinds"`
 	}
 
 	// DBSetAffiliateAddress represents a single row inside the "vipcoin_chain_accounts_set_affiliate_address" table
 	DBSetAffiliateAddress struct {
-		Creator    string `db:"creator"`
-		Hash       string `db:"hash"`
-		OldAddress string `db:"old_address"`
-		NewAddress string `db:"new_address"`
+		TransactionHash string `db:"transaction_hash"`
+		Creator         string `db:"creator"`
+		Hash            string `db:"hash"`
+		OldAddress      string `db:"old_address"`
+		NewAddress      string `db:"new_address"`
 	}
 
 	// DBAccountMigrate represents a single row inside the "vipcoin_chain_accounts_account_migrate" table
 	DBAccountMigrate struct {
-		Creator   string `db:"creator"`
-		Address   string `db:"address"`
-		Hash      string `db:"hash"`
-		PublicKey string `db:"public_key"`
+		TransactionHash string `db:"transaction_hash"`
+		Creator         string `db:"creator"`
+		Address         string `db:"address"`
+		Hash            string `db:"hash"`
+		PublicKey       string `db:"public_key"`
 	}
 
 	// DBSetAccountExtra represents a single row inside the "vipcoin_chain_accounts_set_extra" table
 	DBSetAccountExtra struct {
-		Creator string  `db:"creator"`
-		Hash    string  `db:"hash"`
-		Extras  ExtraDB `db:"extras"`
+		TransactionHash string  `db:"transaction_hash"`
+		Creator         string  `db:"creator"`
+		Hash            string  `db:"hash"`
+		Extras          ExtraDB `db:"extras"`
 	}
 
 	// DBSetAffiliateExtra represents a single row inside the "vipcoin_chain_accounts_set_affiliate_extra" table
 	DBSetAffiliateExtra struct {
+		TransactionHash string  `db:"transaction_hash"`
 		Creator         string  `db:"creator"`
 		AccountHash     string  `db:"account_hash"`
 		AffiliationHash string  `db:"affiliation_hash"`
@@ -83,25 +89,28 @@ type (
 
 	// DBSetState represents a single row inside the "vipcoin_chain_accounts_set_state" table
 	DBSetState struct {
-		Creator string `db:"creator"`
-		Hash    string `db:"hash"`
-		State   int32  `db:"state"`
-		Reason  string `db:"reason"`
+		TransactionHash string `db:"transaction_hash"`
+		Creator         string `db:"creator"`
+		Hash            string `db:"hash"`
+		State           int32  `db:"state"`
+		Reason          string `db:"reason"`
 	}
 
 	// DBCreateAccount represents a single row inside the "vipcoin_chain_accounts_create_account" table
 	DBCreateAccount struct {
-		Creator   string        `db:"creator"`
-		Hash      string        `db:"hash"`
-		Address   string        `db:"address"`
-		PublicKey string        `db:"public_key"`
-		Kinds     pq.Int32Array `db:"kinds"`
-		State     int32         `db:"state"`
-		Extras    ExtraDB       `db:"extras"`
+		TransactionHash string        `db:"transaction_hash"`
+		Creator         string        `db:"creator"`
+		Hash            string        `db:"hash"`
+		Address         string        `db:"address"`
+		PublicKey       string        `db:"public_key"`
+		Kinds           pq.Int32Array `db:"kinds"`
+		State           int32         `db:"state"`
+		Extras          ExtraDB       `db:"extras"`
 	}
 
 	// DBAddAffiliate represents a single row inside the "vipcoin_chain_accounts_add_affiliate" table
 	DBAddAffiliate struct {
+		TransactionHash string  `db:"transaction_hash"`
 		Creator         string  `db:"creator"`
 		AccountHash     string  `db:"account_hash"`
 		AffiliationHash string  `db:"affiliation_hash"`

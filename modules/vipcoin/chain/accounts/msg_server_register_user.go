@@ -8,7 +8,7 @@ import (
 
 // handleMsgRegisterUser allows to properly handle a handleMsgRegisterUser
 func (m *Module) handleMsgRegisterUser(tx *juno.Tx, index int, msg *types.MsgRegisterUser) error {
-	if err := m.accountRepo.SaveRegisterUser(msg); err != nil {
+	if err := m.accountRepo.SaveRegisterUser(msg, tx.TxHash); err != nil {
 		return err
 	}
 

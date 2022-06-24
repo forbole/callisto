@@ -2,25 +2,21 @@ package wallets
 
 import (
 	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
-
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
 // SaveCreateWalletWithBalance - saves the given wallet inside the database
-func (r Repository) SaveCreateWalletWithBalance(msg ...*walletstypes.MsgCreateWalletWithBalance) error {
-	if len(msg) == 0 {
-		return nil
-	}
-
+func (r Repository) SaveCreateWalletWithBalance(msg *walletstypes.MsgCreateWalletWithBalance, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_wallets_create_wallet_with_balance 
-			(creator, address, account_address, kind, state, extras, default_status, balance) 
+			(transaction_hash, creator, address, account_address, kind, state, extras, default_status, balance) 
 		VALUES 
-			(:creator, :address, :account_address, :kind, :state, :extras, :default_status, :balance)`
+			(:transaction_hash, :creator, :address, :account_address, :kind, :state, :extras, :default_status, :balance)`
 
-	if _, err := r.db.NamedExec(query, toCreateWalletsWithBalanceDatabase(msg...)); err != nil {
-		return err
+	if _, err := r.db.NamedExec(query, toCreateWalletWithBalanceDatabase(msg, transactionHash)); err != nil {
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return nil
@@ -36,7 +32,7 @@ func (r Repository) GetCreateWalletWithBalance(walletFilter filter.Filter) ([]*w
 
 	var result []types.DBCreateWalletWithBalance
 	if err := r.db.Select(&result, query, args...); err != nil {
-		return []*walletstypes.MsgCreateWalletWithBalance{}, err
+		return []*walletstypes.MsgCreateWalletWithBalance{}, errs.Internal{Cause: err.Error()}
 	}
 
 	wallets := make([]*walletstypes.MsgCreateWalletWithBalance, 0, len(result))

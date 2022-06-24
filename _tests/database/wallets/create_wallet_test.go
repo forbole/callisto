@@ -6,14 +6,12 @@ import (
 
 	extratypes "git.ooo.ua/vipcoin/chain/x/types"
 	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
-
 	"git.ooo.ua/vipcoin/lib/filter"
+	"github.com/cosmos/cosmos-sdk/simapp"
+	_ "github.com/jackc/pgx/stdlib"
+	"github.com/jmoiron/sqlx"
 
 	walletsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/wallets"
-	_ "github.com/jackc/pgx/stdlib"
-
-	"github.com/cosmos/cosmos-sdk/simapp"
-	"github.com/jmoiron/sqlx"
 )
 
 func TestRepository_SaveCreateWallet(t *testing.T) {
@@ -54,7 +52,7 @@ func TestRepository_SaveCreateWallet(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := walletsdb.NewRepository(db, codec.Marshaler)
 
-			if err := r.SaveCreateWallet(tt.args.msg...); (err != nil) != tt.wantErr {
+			if err := r.SaveCreateWallet(tt.args.msg, ""); (err != nil) != tt.wantErr {
 				t.Errorf("Repository.SaveCreateWallet() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

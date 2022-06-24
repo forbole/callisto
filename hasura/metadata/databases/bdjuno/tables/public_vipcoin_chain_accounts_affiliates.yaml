@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: vipcoin_chain_accounts_affiliates
+  schema: public
 object_relationships:
   - name: account
     using:

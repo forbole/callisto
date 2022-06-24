@@ -10,7 +10,7 @@ import (
 
 // handleMsgSetAffiliateAddress allows to properly handle a handleMsgSetAffiliateAddress
 func (m *Module) handleMsgSetAffiliateAddress(tx *juno.Tx, index int, msg *types.MsgSetAffiliateAddress) error {
-	if err := m.accountRepo.SaveAffiliateAddress(msg); err != nil {
+	if err := m.accountRepo.SaveAffiliateAddress(msg, tx.TxHash); err != nil {
 		return err
 	}
 

@@ -21,19 +21,25 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_affiliates(
 );
 
 CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_set_kinds (
-    creator  TEXT  NOT NULL,                                     -- set kinds creator
-    hash     TEXT  NOT NULL,                                     -- set kinds hash
-    kinds    INT[]                                               -- set kinds kinds
+    id               SERIAL UNIQUE PRIMARY KEY NOT NULL,
+    transaction_hash TEXT  NOT NULL REFERENCES transaction (hash),
+    creator          TEXT  NOT NULL,                                     -- set kinds creator
+    hash             TEXT  NOT NULL,                                     -- set kinds hash
+    kinds            INT[]                                               -- set kinds kinds
 );
 
 CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_set_affiliate_address (
-    creator      TEXT  NOT NULL,                                 -- set affiliate address creator
-    hash         TEXT  NOT NULL,                                 -- set affiliate address hash
-    old_address  TEXT  NOT NULL,                                 -- set affiliate address old_address
-    new_address  TEXT  NOT NULL                                  -- set affiliate address new_address
+    id                  SERIAL UNIQUE PRIMARY KEY NOT NULL,
+    transaction_hash    TEXT  NOT NULL REFERENCES transaction (hash),
+    creator             TEXT  NOT NULL,                                 -- set affiliate address creator
+    hash                TEXT  NOT NULL,                                 -- set affiliate address hash
+    old_address         TEXT  NOT NULL,                                 -- set affiliate address old_address
+    new_address         TEXT  NOT NULL                                  -- set affiliate address new_address
 );
 
 CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_register_user (
+    id                        SERIAL UNIQUE PRIMARY KEY NOT NULL,
+    transaction_hash          TEXT  NOT NULL REFERENCES transaction (hash),
     creator                   TEXT  NOT NULL,                    -- register user creator
     address                   TEXT  NOT NULL,                    -- register user address
     hash                      TEXT  NOT NULL,                    -- register user hash
@@ -46,13 +52,17 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_register_user (
 );
 
 CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_account_migrate (
-    creator    TEXT  NOT NULL,                                   -- account migrate creator
-    address    TEXT  NOT NULL,                                   -- account migrate address
-    hash       TEXT  NOT NULL,                                   -- account migrate hash
-    public_key TEXT  NOT NULL                                    -- accounts public_key
+    id               SERIAL UNIQUE PRIMARY KEY NOT NULL,
+    transaction_hash TEXT  NOT NULL REFERENCES transaction (hash),
+    creator          TEXT  NOT NULL,                                   -- account migrate creator
+    address          TEXT  NOT NULL,                                   -- account migrate address
+    hash             TEXT  NOT NULL,                                   -- account migrate hash
+    public_key       TEXT  NOT NULL                                    -- accounts public_key
 );
 
 CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_set_affiliate_extra (
+    id                SERIAL UNIQUE PRIMARY KEY NOT NULL,
+    transaction_hash  TEXT  NOT NULL REFERENCES transaction (hash),
     creator           TEXT  NOT NULL,                            -- set affiliate extra creator
     account_hash      TEXT  NOT NULL,                            -- set affiliate extra account_hash
     affiliation_hash  TEXT  NOT NULL,                            -- set affiliate extra affiliation_hash
@@ -60,12 +70,16 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_set_affiliate_extra (
 );
 
 CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_set_extra (
+    id                SERIAL UNIQUE PRIMARY KEY NOT NULL,
+    transaction_hash  TEXT  NOT NULL REFERENCES transaction (hash),
     creator           TEXT  NOT NULL,                            -- set extra creator
     hash              TEXT  NOT NULL,                            -- set extra hash
     extras            JSONB                                      -- set extra extras
 );
 
 CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_set_state (
+    id                SERIAL UNIQUE PRIMARY KEY NOT NULL,
+    transaction_hash  TEXT  NOT NULL REFERENCES transaction (hash),
     creator           TEXT  NOT NULL,                            -- set state creator
     hash              TEXT  NOT NULL,                            -- set state hash
     state             INT   NOT NULL,                            -- set state state
@@ -73,6 +87,8 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_set_state (
 );
 
 CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_add_affiliate (
+    id                SERIAL UNIQUE PRIMARY KEY NOT NULL,
+    transaction_hash  TEXT  NOT NULL REFERENCES transaction (hash),
     creator           TEXT  NOT NULL,                            -- add affiliate creator
     account_hash      TEXT  NOT NULL,                            -- add affiliate account_hash
     affiliation_hash  TEXT  NOT NULL,                            -- add affiliate affiliation_hash
@@ -81,6 +97,8 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_add_affiliate (
 );
 
 CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_create_account (
+    id                SERIAL UNIQUE PRIMARY KEY NOT NULL,
+    transaction_hash  TEXT  NOT NULL REFERENCES transaction (hash),
     creator           TEXT  NOT NULL,                            -- create account creator
     hash              TEXT  NOT NULL,                            -- create account hash
     address           TEXT  NOT NULL,                            -- create account address

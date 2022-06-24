@@ -18,7 +18,7 @@ const (
 	tableMsgIssue                   = "vipcoin_chain_banking_msg_issue"
 	tableMsgPayment                 = "vipcoin_chain_banking_msg_payment"
 	tableMsgSetTransferExtra        = "vipcoin_chain_banking_set_transfer_extra"
-	tableMsgSystemRewardTransfer    = "vipcoin_chain_banking_system_reward_transfer"
+	tableMsgSystemRewardTransfer    = "vipcoin_chain_banking_system_msg_reward_transfer"
 	tableMsgSystemTransfer          = "vipcoin_chain_banking_msg_system_transfer"
 	tableMsgWithdraw                = "vipcoin_chain_banking_msg_withdraw"
 	tableMsgSetRewardManagerAddress = "vipcoin_chain_banking_set_reward_manager_address"
@@ -255,8 +255,9 @@ func toTransfersDatabase(transfers ...*bankingtypes.BaseTransfer) []types.DBTran
 }
 
 // toPaymentDatabase - mapping func to database model
-func toMsgPaymentDatabase(payments *bankingtypes.MsgPayment) types.DBMsgPayment {
+func toMsgPaymentDatabase(payments *bankingtypes.MsgPayment, transactionHash string) types.DBMsgPayment {
 	return types.DBMsgPayment{
+		Hash:       transactionHash,
 		Creator:    payments.Creator,
 		WalletFrom: payments.WalletFrom,
 		WalletTo:   payments.WalletTo,
@@ -264,16 +265,6 @@ func toMsgPaymentDatabase(payments *bankingtypes.MsgPayment) types.DBMsgPayment 
 		Amount:     payments.Amount,
 		Extras:     toExtrasDB(payments.Extras),
 	}
-}
-
-// toPaymentsDatabase - mapping func to database model
-func toMsgPaymentsDatabase(payments ...*bankingtypes.MsgPayment) []types.DBMsgPayment {
-	result := make([]types.DBMsgPayment, 0, len(payments))
-	for _, payment := range payments {
-		result = append(result, toMsgPaymentDatabase(payment))
-	}
-
-	return result
 }
 
 // toPaymentDomain - mapping func to domain model
@@ -289,8 +280,9 @@ func toMsgPaymentDomain(payments types.DBMsgPayment) *bankingtypes.MsgPayment {
 }
 
 // toSystemTransferDatabase - mapping func to database model
-func toMsgSystemTransferDatabase(transfer *bankingtypes.MsgSystemTransfer) types.DBMsgSystemTransfer {
+func toMsgSystemTransferDatabase(transfer *bankingtypes.MsgSystemTransfer, transactionHash string) types.DBMsgSystemTransfer {
 	return types.DBMsgSystemTransfer{
+		Hash:       transactionHash,
 		Creator:    transfer.Creator,
 		WalletFrom: transfer.WalletFrom,
 		WalletTo:   transfer.WalletTo,
@@ -298,16 +290,6 @@ func toMsgSystemTransferDatabase(transfer *bankingtypes.MsgSystemTransfer) types
 		Amount:     transfer.Amount,
 		Extras:     toExtrasDB(transfer.Extras),
 	}
-}
-
-// toSystemTransfersDatabase - mapping func to database model
-func toMsgSystemTransfersDatabase(transfers ...*bankingtypes.MsgSystemTransfer) []types.DBMsgSystemTransfer {
-	result := make([]types.DBMsgSystemTransfer, 0, len(transfers))
-	for _, transfer := range transfers {
-		result = append(result, toMsgSystemTransferDatabase(transfer))
-	}
-
-	return result
 }
 
 // toSystemTransferDomain - mapping func to domain model
@@ -323,8 +305,12 @@ func toMsgSystemTransferDomain(transfer types.DBMsgSystemTransfer) *bankingtypes
 }
 
 // toMsgSystemRewardTransferDatabase - mapping func to database model
-func toMsgSystemRewardTransferDatabase(transfer *bankingtypes.MsgSystemRewardTransfer) types.DBSystemRewardTransfer {
-	return types.DBSystemRewardTransfer{
+func toMsgSystemRewardTransferDatabase(
+	transfer *bankingtypes.MsgSystemRewardTransfer,
+	transactionHash string,
+) types.DBMsgSystemRewardTransfer {
+	return types.DBMsgSystemRewardTransfer{
+		Hash:       transactionHash,
 		Creator:    transfer.Creator,
 		WalletFrom: transfer.WalletFrom,
 		WalletTo:   transfer.WalletTo,
@@ -334,18 +320,8 @@ func toMsgSystemRewardTransferDatabase(transfer *bankingtypes.MsgSystemRewardTra
 	}
 }
 
-// toMsgSystemRewardTransfersDatabase - mapping func to database model
-func toMsgSystemRewardTransfersDatabase(transfers ...*bankingtypes.MsgSystemRewardTransfer) []types.DBSystemRewardTransfer {
-	result := make([]types.DBSystemRewardTransfer, 0, len(transfers))
-	for _, transfer := range transfers {
-		result = append(result, toMsgSystemRewardTransferDatabase(transfer))
-	}
-
-	return result
-}
-
 // toMsgSystemRewardTransferDomain - mapping func to domain model
-func toMsgSystemRewardTransferDomain(transfer types.DBSystemRewardTransfer) *bankingtypes.MsgSystemRewardTransfer {
+func toMsgSystemRewardTransferDomain(transfer types.DBMsgSystemRewardTransfer) *bankingtypes.MsgSystemRewardTransfer {
 	return &bankingtypes.MsgSystemRewardTransfer{
 		Creator:    transfer.Creator,
 		WalletFrom: transfer.WalletFrom,
@@ -357,21 +333,15 @@ func toMsgSystemRewardTransferDomain(transfer types.DBSystemRewardTransfer) *ban
 }
 
 // toMsgSetRewardMgrAddressDB - mapping func to database model
-func toMsgSetRewardMgrAddressDB(address *bankingtypes.MsgSetRewardManagerAddress) types.DBSetRewardManagerAddress {
+func toMsgSetRewardMgrAddressDB(
+	address *bankingtypes.MsgSetRewardManagerAddress,
+	transactionHash string,
+) types.DBSetRewardManagerAddress {
 	return types.DBSetRewardManagerAddress{
+		Hash:    transactionHash,
 		Creator: address.Creator,
 		Address: address.Address,
 	}
-}
-
-// toMsgSetRewardMgrAddressesDB - mapping func to database model
-func toMsgSetRewardMgrAddressesDB(addrs ...*bankingtypes.MsgSetRewardManagerAddress) []types.DBSetRewardManagerAddress {
-	result := make([]types.DBSetRewardManagerAddress, 0, len(addrs))
-	for _, address := range addrs {
-		result = append(result, toMsgSetRewardMgrAddressDB(address))
-	}
-
-	return result
 }
 
 // toMsgSetRewardMgrAddressDomain - mapping func to domain model
@@ -383,24 +353,15 @@ func toMsgSetRewardMgrAddressDomain(address types.DBSetRewardManagerAddress) *ba
 }
 
 // toMsgIssueDatabase - mapping func to database model
-func toMsgIssueDatabase(issue *bankingtypes.MsgIssue) types.DBMsgIssue {
+func toMsgIssueDatabase(issue *bankingtypes.MsgIssue, transactionHash string) types.DBMsgIssue {
 	return types.DBMsgIssue{
+		Hash:    transactionHash,
 		Creator: issue.Creator,
 		Wallet:  issue.Wallet,
 		Asset:   issue.Asset,
 		Amount:  issue.Amount,
 		Extras:  toExtrasDB(issue.Extras),
 	}
-}
-
-// toMsgIssuesDatabase - mapping func to database model
-func toMsgIssuesDatabase(issues ...*bankingtypes.MsgIssue) []types.DBMsgIssue {
-	result := make([]types.DBMsgIssue, 0, len(issues))
-	for _, issue := range issues {
-		result = append(result, toMsgIssueDatabase(issue))
-	}
-
-	return result
 }
 
 // toMsgIssueDomain - mapping func to domain model
@@ -415,22 +376,13 @@ func toMsgIssueDomain(issue types.DBMsgIssue) *bankingtypes.MsgIssue {
 }
 
 // toMsgSetTransferExtraDatabase - mapping func to database model
-func toMsgSetTransferExtraDatabase(extra *bankingtypes.MsgSetTransferExtra) types.DBSetTransferExtra {
+func toMsgSetTransferExtraDatabase(extra *bankingtypes.MsgSetTransferExtra, transactionHash string) types.DBSetTransferExtra {
 	return types.DBSetTransferExtra{
+		Hash:    transactionHash,
 		Creator: extra.Creator,
 		Id:      extra.Id,
 		Extras:  toExtrasDB(extra.Extras),
 	}
-}
-
-// toMsgSetTransferExtrasDatabase - mapping func to database model
-func toMsgSetTransferExtrasDatabase(extras ...*bankingtypes.MsgSetTransferExtra) []types.DBSetTransferExtra {
-	result := make([]types.DBSetTransferExtra, 0, len(extras))
-	for _, extra := range extras {
-		result = append(result, toMsgSetTransferExtraDatabase(extra))
-	}
-
-	return result
 }
 
 // toMsgSetTransferExtraDomain - mapping func to domain model
@@ -443,24 +395,15 @@ func toMsgSetTransferExtraDomain(extra types.DBSetTransferExtra) *bankingtypes.M
 }
 
 // toMsgWithdrawDatabase - mapping func to database model
-func toMsgWithdrawDatabase(withdraw *bankingtypes.MsgWithdraw) types.DBMsgWithdraw {
+func toMsgWithdrawDatabase(withdraw *bankingtypes.MsgWithdraw, transactionHash string) types.DBMsgWithdraw {
 	return types.DBMsgWithdraw{
+		Hash:    transactionHash,
 		Creator: withdraw.Creator,
 		Wallet:  withdraw.Wallet,
 		Asset:   withdraw.Asset,
 		Amount:  withdraw.Amount,
 		Extras:  toExtrasDB(withdraw.Extras),
 	}
-}
-
-// toMsgWithdrawsDatabase - mapping func to database model
-func toMsgWithdrawsDatabase(withdraws ...*bankingtypes.MsgWithdraw) []types.DBMsgWithdraw {
-	result := make([]types.DBMsgWithdraw, 0, len(withdraws))
-	for _, withdraw := range withdraws {
-		result = append(result, toMsgWithdrawDatabase(withdraw))
-	}
-
-	return result
 }
 
 // toMsgWithdrawDomain - mapping func to domain model

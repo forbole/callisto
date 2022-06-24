@@ -4,13 +4,14 @@ import (
 	typesaccount "git.ooo.ua/vipcoin/chain/x/accounts/types"
 	typeswallets "git.ooo.ua/vipcoin/chain/x/wallets/types"
 	"git.ooo.ua/vipcoin/lib/filter"
+	juno "github.com/forbole/juno/v2/types"
 
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 )
 
 // MsgCreateWalletWithBalance allows to properly handle a handleMsgCreateWallet
-func (m *Module) MsgCreateWalletWithBalance(msg *typeswallets.MsgCreateWalletWithBalance) error {
-	if err := m.walletsRepo.SaveCreateWalletWithBalance(msg); err != nil {
+func (m *Module) MsgCreateWalletWithBalance(tx *juno.Tx, index int, msg *typeswallets.MsgCreateWalletWithBalance) error {
+	if err := m.walletsRepo.SaveCreateWalletWithBalance(msg, tx.TxHash); err != nil {
 		return err
 	}
 

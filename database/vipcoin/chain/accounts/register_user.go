@@ -2,26 +2,23 @@ package accounts
 
 import (
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
 // SaveRegisterUser - saves the given user inside the database
-func (r Repository) SaveRegisterUser(msg ...*accountstypes.MsgRegisterUser) error {
-	if len(msg) == 0 {
-		return nil
-	}
-
+func (r Repository) SaveRegisterUser(msg *accountstypes.MsgRegisterUser, transactionHash string) error {
 	query := `INSERT INTO vipcoin_chain_accounts_register_user 
-			(creator, address, hash, public_key, holder_wallet, ref_reward_wallet, 
+			(transaction_hash, creator, address, hash, public_key, holder_wallet, ref_reward_wallet, 
 			holder_wallet_extras, ref_reward_wallet_extras, referrer_hash) 
 		VALUES 
-			(:creator, :address, :hash, :public_key, :holder_wallet, :ref_reward_wallet, 
+			(:transaction_hash, :creator, :address, :hash, :public_key, :holder_wallet, :ref_reward_wallet, 
 			:holder_wallet_extras, :ref_reward_wallet_extras, :referrer_hash)`
 
-	if _, err := r.db.NamedExec(query, toRegisterUsersDatabase(msg...)); err != nil {
-		return err
+	if _, err := r.db.NamedExec(query, toRegisterUserDatabase(msg, transactionHash)); err != nil {
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	return nil
@@ -38,7 +35,7 @@ func (r Repository) GetRegisterUser(accountFilter filter.Filter) ([]*accountstyp
 
 	var result []types.DBRegisterUser
 	if err := r.db.Select(&result, query, args...); err != nil {
-		return []*accountstypes.MsgRegisterUser{}, err
+		return []*accountstypes.MsgRegisterUser{}, errs.Internal{Cause: err.Error()}
 	}
 
 	users := make([]*accountstypes.MsgRegisterUser, 0, len(result))

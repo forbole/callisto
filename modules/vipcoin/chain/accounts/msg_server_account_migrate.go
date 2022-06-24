@@ -11,7 +11,7 @@ import (
 
 // handleMsgAccountMigrate allows to properly handle a handleMsgAccountMigrate
 func (m *Module) handleMsgAccountMigrate(tx *juno.Tx, index int, msg *types.MsgAccountMigrate) error {
-	if err := m.accountRepo.SaveAccountMigrate(msg); err != nil {
+	if err := m.accountRepo.SaveAccountMigrate(msg, tx.TxHash); err != nil {
 		return err
 	}
 
