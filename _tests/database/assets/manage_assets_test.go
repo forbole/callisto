@@ -64,7 +64,7 @@ func TestRepository_SaveManageAsset(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := assetsdb.NewRepository(db, codec.Marshaler)
 
-			if err := r.SaveManageAsset(tt.args.msgAssetManage, ""); (err != nil) != tt.wantErr {
+			if err := r.SaveManageAsset(tt.args.msgAssetManage[0], ""); (err != nil) != tt.wantErr {
 				t.Errorf("Repository.SaveManageAssets() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

@@ -46,7 +46,7 @@ func TestRepository_SaveMsgSetDefaultWallet(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := walletsdb.NewRepository(db, codec.Marshaler)
 
-			if err := r.SaveDefaultWallets(tt.args.msg, ""); (err != nil) != tt.wantErr {
+			if err := r.SaveDefaultWallets(tt.args.msg[0], ""); (err != nil) != tt.wantErr {
 				t.Errorf("Repository.SaveKinds() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

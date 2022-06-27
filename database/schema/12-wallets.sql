@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_wallets_wallets (
     default_status      BOOLEAN,                            -- wallet status for default use
     CONSTRAINT fk_accounts_accounts
       FOREIGN KEY(account_address) 
-      REFERENCES vipcoin_chain_accounts_accounts(address)
+      REFERENCES vipcoin_chain_accounts_accounts(address) ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS vipcoin_chain_wallets_set_wallet_kind (

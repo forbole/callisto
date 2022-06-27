@@ -60,7 +60,7 @@ func TestRepository_SaveAffiliateAddress(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := accountsdb.NewRepository(db, codec.Marshaler)
 
-			if err := r.SaveAffiliateAddress(tt.args.msg, ""); (err != nil) != tt.wantErr {
+			if err := r.SaveAffiliateAddress(tt.args.msg[0], ""); (err != nil) != tt.wantErr {
 				t.Errorf("Repository.SaveAffiliateAddress() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

@@ -57,7 +57,7 @@ func TestRepository_SaveKinds(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := accountsdb.NewRepository(db, codec.Marshaler)
 
-			if err := r.SaveKinds(tt.args.msg, ""); (err != nil) != tt.wantErr {
+			if err := r.SaveKinds(tt.args.msg[0], ""); (err != nil) != tt.wantErr {
 				t.Errorf("Repository.SaveKinds() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

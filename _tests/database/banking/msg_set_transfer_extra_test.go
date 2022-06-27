@@ -73,7 +73,7 @@ func TestRepository_SaveMsgSetTransferExtra(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := bankingdb.NewRepository(db, codec.Marshaler)
 
-			if err := r.SaveMsgSetTransferExtra(tt.args.extras, ""); (err != nil) != tt.wantErr {
+			if err := r.SaveMsgSetTransferExtra(tt.args.extras[0], ""); (err != nil) != tt.wantErr {
 				t.Errorf("Repository.SaveMsgSetTransferExtra() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

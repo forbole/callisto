@@ -25,11 +25,6 @@ func (m *Module) handleMsgAccountMigrate(tx *juno.Tx, index int, msg *types.MsgA
 
 	account := accountArr[0]
 
-	wallets, err := m.walletsRepo.GetWallets(filter.NewFilter().SetArgument(dbtypes.FieldAccountAddress, account.Address))
-	if err != nil {
-		return err
-	}
-
 	publicKey, err := types.PubKeyFromString(msg.PublicKey)
 	if err != nil {
 		return types.ErrInvalidPublicKeyField
@@ -75,23 +70,5 @@ func (m *Module) handleMsgAccountMigrate(tx *juno.Tx, index int, msg *types.MsgA
 		}
 	}
 
-	if err := m.walletsRepo.DeleteWallets(wallets...); err != nil {
-		return err
-	}
-
-	if err := m.accountRepo.UpdateAccounts(account); err != nil {
-		return err
-	}
-
-	// change address in wallets
-	for index := range wallets {
-		if wallets[index].Address == "" {
-			// skip empty wallet
-			continue
-		}
-
-		wallets[index].AccountAddress = msg.Address
-	}
-
-	return m.walletsRepo.SaveWallets(wallets...)
+	return m.accountRepo.UpdateAccounts(account)
 }

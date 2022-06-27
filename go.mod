@@ -24,6 +24,7 @@ require (
 )
 
 require (
+	github.com/brianvoe/gofakeit/v6 v6.16.0 // indirect
 	github.com/cockroachdb/apd v1.1.0 // indirect
 	github.com/gofrs/uuid v4.2.0+incompatible // indirect
 	github.com/hashicorp/errwrap v1.0.0 // indirect

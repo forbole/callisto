@@ -56,7 +56,7 @@ func TestRepository_SaveCreateWalletWithBalance(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := walletsdb.NewRepository(db, codec.Marshaler)
 
-			if err := r.SaveCreateWalletWithBalance(tt.args.msg, ""); (err != nil) != tt.wantErr {
+			if err := r.SaveCreateWalletWithBalance(tt.args.msg[0], ""); (err != nil) != tt.wantErr {
 				t.Errorf("Repository.SaveCreateWalletWithBalance() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

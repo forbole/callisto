@@ -52,7 +52,7 @@ func TestRepository_SaveCreateWallet(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := walletsdb.NewRepository(db, codec.Marshaler)
 
-			if err := r.SaveCreateWallet(tt.args.msg, ""); (err != nil) != tt.wantErr {
+			if err := r.SaveCreateWallet(tt.args.msg[0], ""); (err != nil) != tt.wantErr {
 				t.Errorf("Repository.SaveCreateWallet() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

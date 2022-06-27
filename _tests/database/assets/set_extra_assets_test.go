@@ -62,7 +62,7 @@ func TestRepository_SaveSetExtraAsset(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			r := assetsdb.NewRepository(db, codec.Marshaler)
 
-			if err := r.SaveExtraAsset(tt.args.msgAssetSetExtra, ""); (err != nil) != tt.wantErr {
+			if err := r.SaveExtraAsset(tt.args.msgAssetSetExtra[0], ""); (err != nil) != tt.wantErr {
 				t.Errorf("Repository.SaveSetExtraAssets() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
