@@ -3,6 +3,7 @@ module github.com/forbole/bdjuno/v3
 go 1.17
 
 require (
+	github.com/AssetMantle/node v0.3.0
 	github.com/cosmos/cosmos-sdk v0.45.4
 	github.com/cosmos/gaia/v7 v7.0.2
 	github.com/forbole/juno/v3 v3.2.1
