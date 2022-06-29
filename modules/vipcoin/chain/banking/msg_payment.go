@@ -7,6 +7,7 @@ import (
 	assets "git.ooo.ua/vipcoin/chain/x/assets/types"
 	banking "git.ooo.ua/vipcoin/chain/x/banking/types"
 	wallets "git.ooo.ua/vipcoin/chain/x/wallets/types"
+	"git.ooo.ua/vipcoin/lib/filter"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	juno "github.com/forbole/juno/v2/types"
 

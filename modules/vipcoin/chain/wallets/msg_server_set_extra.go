@@ -10,9 +10,6 @@ import (
 
 // handleMsgSetExtra allows to properly handle a MsgSetExtra
 func (m *Module) handleMsgSetExtra(tx *juno.Tx, index int, msg *typeswallets.MsgSetExtra) error {
-	if err := m.walletsRepo.SaveExtras(msg, tx.TxHash); err != nil {
-		return err
-	}
 
 	wallets, err := m.walletsRepo.GetWallets(filter.NewFilter().SetArgument(dbtypes.FieldAddress, msg.Address))
 	switch {
@@ -24,5 +21,9 @@ func (m *Module) handleMsgSetExtra(tx *juno.Tx, index int, msg *typeswallets.Msg
 
 	wallets[0].Extras = msg.Extras
 
-	return m.walletsRepo.UpdateWallets(wallets...)
+	if err := m.walletsRepo.UpdateWallets(wallets...); err != nil {
+		return err
+	}
+
+	return m.walletsRepo.SaveExtras(msg, tx.TxHash)
 }

@@ -10,20 +10,19 @@ import (
 
 // handleMsgSetExtra allows to properly handle a handleMsgSetExtra
 func (m *Module) handleMsgSetExtra(tx *juno.Tx, index int, msg *types.MsgSetExtra) error {
-	if err := m.accountRepo.SaveExtra(msg, tx.TxHash); err != nil {
-		return err
-	}
-
 	account, err := m.accountRepo.GetAccounts(filter.NewFilter().SetArgument(dbtypes.FieldHash, msg.Hash))
-	if err != nil {
+	switch {
+	case err != nil:
 		return err
-	}
-
-	if len(account) != 1 {
+	case len(account) != 1:
 		return types.ErrInvalidHashField
 	}
 
 	account[0].Extras = msg.Extras
 
-	return m.accountRepo.UpdateAccounts(account...)
+	if err := m.accountRepo.UpdateAccounts(account...); err != nil {
+		return err
+	}
+
+	return m.accountRepo.SaveExtra(msg, tx.TxHash)
 }

@@ -17,10 +17,6 @@ func (m *Module) handleMsgSystemTransfer(tx *juno.Tx, index int, msg *types.MsgS
 	msg.WalletTo = strings.ToLower(msg.WalletTo)
 	msg.Asset = strings.ToLower(msg.Asset)
 
-	if err := m.bankingRepo.SaveMsgSystemTransfers(msg, tx.TxHash); err != nil {
-		return err
-	}
-
 	transfer, err := getSystemTransferFromTx(tx, msg)
 	if err != nil {
 		return err
@@ -54,5 +50,9 @@ func (m *Module) handleMsgSystemTransfer(tx *juno.Tx, index int, msg *types.MsgS
 		return err
 	}
 
-	return m.bankingRepo.SaveSystemTransfers(transfer)
+	if err := m.bankingRepo.SaveSystemTransfers(transfer); err != nil {
+		return err
+	}
+
+	return m.bankingRepo.SaveMsgSystemTransfers(msg, tx.TxHash)
 }

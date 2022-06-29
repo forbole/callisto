@@ -10,16 +10,11 @@ import (
 
 // handleMsgSetAffiliateAddress allows to properly handle a handleMsgSetAffiliateAddress
 func (m *Module) handleMsgSetAffiliateAddress(tx *juno.Tx, index int, msg *types.MsgSetAffiliateAddress) error {
-	if err := m.accountRepo.SaveAffiliateAddress(msg, tx.TxHash); err != nil {
-		return err
-	}
-
 	acc, err := m.accountRepo.GetAccounts(filter.NewFilter().SetArgument(dbtypes.FieldHash, msg.Hash))
-	if err != nil {
+	switch {
+	case err != nil:
 		return err
-	}
-
-	if len(acc) != 1 {
+	case len(acc) != 1:
 		return types.ErrInvalidHashField
 	}
 
@@ -27,5 +22,9 @@ func (m *Module) handleMsgSetAffiliateAddress(tx *juno.Tx, index int, msg *types
 		return err
 	}
 
-	return m.accountRepo.UpdateAccounts(acc...)
+	if err := m.accountRepo.UpdateAccounts(acc...); err != nil {
+		return err
+	}
+
+	return m.accountRepo.SaveAffiliateAddress(msg, tx.TxHash)
 }

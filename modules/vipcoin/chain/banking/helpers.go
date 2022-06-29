@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"strconv"
+	"strings"
 
 	banking "git.ooo.ua/vipcoin/chain/x/banking/types"
 	wallets "git.ooo.ua/vipcoin/chain/x/wallets/types"
@@ -216,6 +217,8 @@ func (m *Module) getSystemTransfersFromAttribute(
 		return nil, nil, err
 	}
 
+	walletFrom = strings.ToLower(walletFrom)
+
 	walletArr := getAttributeValuesWithKey(attributes, "wallet_to")
 	if len(walletArr) == 0 {
 		return nil, nil, errors.New("wallet_to not found in log")
@@ -227,6 +230,8 @@ func (m *Module) getSystemTransfersFromAttribute(
 		if err := json.Unmarshal([]byte(walletString), &walletTo); err != nil {
 			return nil, nil, err
 		}
+
+		walletTo = strings.ToLower(walletTo)
 
 		walletToList = append(walletToList, walletTo)
 	}
@@ -304,8 +309,8 @@ func getPaymentTransferFromAttribute(attributes []sdk.Attribute) (*banking.Payme
 
 	paymentTransfer := banking.Payment{
 		BaseTransfer: baseVipcoin,
-		WalletFrom:   walletFrom,
-		WalletTo:     walletTo,
+		WalletFrom:   strings.ToLower(walletFrom),
+		WalletTo:     strings.ToLower(walletTo),
 		Fee:          feeUint,
 	}
 
@@ -331,7 +336,7 @@ func getIssueFromAttribute(attributes []sdk.Attribute) (*banking.Issue, error) {
 
 	issue := banking.Issue{
 		BaseTransfer: baseVipcoin,
-		Wallet:       wallet,
+		Wallet:       strings.ToLower(wallet),
 	}
 
 	return &issue, nil
@@ -361,8 +366,8 @@ func getSystemTransferFromAttribute(attributes []sdk.Attribute) (*banking.System
 
 	systemTransfer := banking.SystemTransfer{
 		BaseTransfer: baseVipcoin,
-		WalletFrom:   walletFrom,
-		WalletTo:     walletTo,
+		WalletFrom:   strings.ToLower(walletFrom),
+		WalletTo:     strings.ToLower(walletTo),
 	}
 
 	return &systemTransfer, nil
@@ -387,7 +392,7 @@ func getWithdrawFromAttribute(attributes []sdk.Attribute) (*banking.Withdraw, er
 
 	issue := banking.Withdraw{
 		BaseTransfer: baseVipcoin,
-		Wallet:       wallet,
+		Wallet:       strings.ToLower(wallet),
 	}
 
 	return &issue, nil

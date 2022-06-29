@@ -11,10 +11,6 @@ import (
 
 // handleMsgSystemRewardTransfer allows to properly handle a MsgSystemRewardTransfer
 func (m *Module) handleMsgSystemRewardTransfer(tx *juno.Tx, index int, msg *types.MsgSystemRewardTransfer) error {
-	if err := m.bankingRepo.SaveMsgSystemRewardTransfers(msg, tx.TxHash); err != nil {
-		return err
-	}
-
 	system := &types.MsgSystemTransfer{
 		WalletFrom: msg.WalletFrom,
 		WalletTo:   msg.WalletTo,
@@ -55,5 +51,9 @@ func (m *Module) handleMsgSystemRewardTransfer(tx *juno.Tx, index int, msg *type
 		return err
 	}
 
-	return m.bankingRepo.SaveSystemTransfers(transfer)
+	if err := m.bankingRepo.SaveSystemTransfers(transfer); err != nil {
+		return err
+	}
+
+	return m.bankingRepo.SaveMsgSystemRewardTransfers(msg, tx.TxHash)
 }

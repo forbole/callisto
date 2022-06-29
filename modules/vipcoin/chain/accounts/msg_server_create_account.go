@@ -7,10 +7,6 @@ import (
 
 // handleMsgCreateAccount allows to properly handle a handleMsgCreateAccount
 func (m *Module) handleMsgCreateAccount(tx *juno.Tx, index int, msg *types.MsgCreateAccount) error {
-	if err := m.accountRepo.SaveCreateAccount(msg, tx.TxHash); err != nil {
-		return err
-	}
-
 	publicKey, err := types.PubKeyFromString(msg.PublicKey)
 	if err != nil {
 		return types.ErrInvalidPublicKeyField
@@ -32,5 +28,9 @@ func (m *Module) handleMsgCreateAccount(tx *juno.Tx, index int, msg *types.MsgCr
 		Wallets:    []string{},
 	}
 
-	return m.accountRepo.SaveAccounts(&newAcc)
+	if err := m.accountRepo.SaveAccounts(&newAcc); err != nil {
+		return err
+	}
+
+	return m.accountRepo.SaveCreateAccount(msg, tx.TxHash)
 }

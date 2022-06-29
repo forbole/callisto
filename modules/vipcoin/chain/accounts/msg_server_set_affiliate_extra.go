@@ -10,21 +10,19 @@ import (
 
 // handleMsgSetAffiliateExtra allows to properly handle a handleMsgSetAffiliateExtra
 func (m *Module) handleMsgSetAffiliateExtra(tx *juno.Tx, index int, msg *types.MsgSetAffiliateExtra) error {
-	if err := m.accountRepo.SaveAffiliateExtra(msg, tx.TxHash); err != nil {
-		return err
-	}
-
 	acc, err := m.accountRepo.GetAccounts(filter.NewFilter().SetArgument(dbtypes.FieldHash, msg.AccountHash))
-	if err != nil {
+	switch {
+	case err != nil:
 		return err
+	case len(acc) != 1:
+		return types.ErrInvalidHashField
 	}
 
 	affAcc, err := m.accountRepo.GetAccounts(filter.NewFilter().SetArgument(dbtypes.FieldHash, msg.AffiliationHash))
-	if err != nil {
+	switch {
+	case err != nil:
 		return err
-	}
-
-	if len(acc) != 1 || len(affAcc) != 1 {
+	case len(affAcc) != 1:
 		return types.ErrInvalidHashField
 	}
 
@@ -34,5 +32,9 @@ func (m *Module) handleMsgSetAffiliateExtra(tx *juno.Tx, index int, msg *types.M
 		}
 	}
 
-	return m.accountRepo.UpdateAccounts(acc...)
+	if err := m.accountRepo.UpdateAccounts(acc...); err != nil {
+		return err
+	}
+
+	return m.accountRepo.SaveAffiliateExtra(msg, tx.TxHash)
 }

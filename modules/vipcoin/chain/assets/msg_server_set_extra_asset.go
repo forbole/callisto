@@ -10,10 +10,6 @@ import (
 
 // handleMsgSetExtraAsset allows to properly handle a handleMsgSetExtraAsset
 func (m *Module) handleMsgSetExtraAsset(tx *juno.Tx, index int, msg *assetstypes.MsgAssetSetExtra) error {
-	if err := m.assetRepo.SaveExtraAsset(msg, tx.TxHash); err != nil {
-		return err
-	}
-
 	assets, err := m.assetRepo.GetAssets(filter.NewFilter().SetArgument(dbtypes.FieldName, msg.Name))
 	if err != nil {
 		return err
@@ -25,5 +21,9 @@ func (m *Module) handleMsgSetExtraAsset(tx *juno.Tx, index int, msg *assetstypes
 
 	assets[0].Extras = msg.Extras
 
-	return m.assetRepo.UpdateAssets(assets...)
+	if err := m.assetRepo.UpdateAssets(assets...); err != nil {
+		return err
+	}
+
+	return m.assetRepo.SaveExtraAsset(msg, tx.TxHash)
 }

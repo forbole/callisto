@@ -16,10 +16,6 @@ func (m *Module) handleMsgWithdraw(tx *juno.Tx, index int, msg *types.MsgWithdra
 	msg.Wallet = strings.ToLower(msg.Wallet)
 	msg.Asset = strings.ToLower(msg.Asset)
 
-	if err := m.bankingRepo.SaveMsgWithdraw(msg, tx.TxHash); err != nil {
-		return err
-	}
-
 	withdraw, err := getWithdrawFromTx(tx, msg)
 	if err != nil {
 		return err
@@ -56,5 +52,9 @@ func (m *Module) handleMsgWithdraw(tx *juno.Tx, index int, msg *types.MsgWithdra
 		return err
 	}
 
-	return m.bankingRepo.SaveWithdraws(withdraw)
+	if err := m.bankingRepo.SaveWithdraws(withdraw); err != nil {
+		return err
+	}
+
+	return m.bankingRepo.SaveMsgWithdraw(msg, tx.TxHash)
 }

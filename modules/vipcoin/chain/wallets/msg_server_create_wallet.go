@@ -11,10 +11,6 @@ import (
 
 // handleMsgCreateWallet allows to properly handle a handleMsgCreateWallet
 func (m *Module) handleMsgCreateWallet(tx *juno.Tx, index int, msg *typeswallets.MsgCreateWallet) error {
-	if err := m.walletsRepo.SaveCreateWallet(msg, tx.TxHash); err != nil {
-		return err
-	}
-
 	accountArr, err := m.accountsRepo.GetAccounts(filter.NewFilter().SetArgument(dbtypes.FieldAddress, msg.AccountAddress))
 	switch {
 	case err != nil:
@@ -63,5 +59,9 @@ func (m *Module) handleMsgCreateWallet(tx *juno.Tx, index int, msg *typeswallets
 	// add wallet to account`s wallets list
 	account.Wallets = append(account.Wallets, wallet.Address)
 
-	return m.accountsRepo.UpdateAccounts(account)
+	if err := m.accountsRepo.UpdateAccounts(account); err != nil {
+		return err
+	}
+
+	return m.walletsRepo.SaveCreateWallet(msg, tx.TxHash)
 }

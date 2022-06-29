@@ -10,20 +10,19 @@ import (
 
 // handleMsgSetState allows to properly handle a handleMsgSetState
 func (m *Module) handleMsgSetState(tx *juno.Tx, index int, msg *types.MsgSetState) error {
-	if err := m.accountRepo.SaveState(msg, tx.TxHash); err != nil {
-		return err
-	}
-
 	acc, err := m.accountRepo.GetAccounts(filter.NewFilter().SetArgument(dbtypes.FieldHash, msg.Hash))
-	if err != nil {
+	switch {
+	case err != nil:
 		return err
-	}
-
-	if len(acc) != 1 {
+	case len(acc) != 1:
 		return types.ErrInvalidHashField
 	}
 
 	acc[0].State = msg.State
 
-	return m.accountRepo.UpdateAccounts(acc...)
+	if err := m.accountRepo.UpdateAccounts(acc...); err != nil {
+		return err
+	}
+
+	return m.accountRepo.SaveState(msg, tx.TxHash)
 }

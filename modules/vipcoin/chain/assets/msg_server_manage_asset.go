@@ -10,10 +10,6 @@ import (
 
 // handleMsgManageAsset allows to properly handle a handleMsgCreateAsset
 func (m *Module) handleMsgManageAsset(tx *juno.Tx, index int, msg *assetstypes.MsgAssetManage) error {
-	if err := m.assetRepo.SaveManageAsset(msg, tx.TxHash); err != nil {
-		return err
-	}
-
 	assetsArr, err := m.assetRepo.GetAssets(filter.NewFilter().SetArgument(dbtypes.FieldName, msg.Name))
 	switch {
 	case err != nil:
@@ -44,5 +40,9 @@ func (m *Module) handleMsgManageAsset(tx *juno.Tx, index int, msg *assetstypes.M
 		asset.InCirculation = msg.InCirculation
 	}
 
-	return m.assetRepo.UpdateAssets(asset)
+	if err := m.assetRepo.UpdateAssets(asset); err != nil {
+		return err
+	}
+
+	return m.assetRepo.SaveManageAsset(msg, tx.TxHash)
 }

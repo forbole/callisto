@@ -7,10 +7,6 @@ import (
 
 // handleMsgCreateAsset allows to properly handle a handleMsgCreateAsset
 func (m *Module) handleMsgCreateAsset(tx *juno.Tx, index int, msg *assetstypes.MsgAssetCreate) error {
-	if err := m.assetRepo.SaveCreateAsset(msg, tx.TxHash); err != nil {
-		return err
-	}
-
 	newAsset := assetstypes.Asset{
 		Name:       msg.Name,
 		Issuer:     msg.Issuer,
@@ -20,5 +16,9 @@ func (m *Module) handleMsgCreateAsset(tx *juno.Tx, index int, msg *assetstypes.M
 		Extras:     msg.Extras,
 	}
 
-	return m.assetRepo.SaveAssets(&newAsset)
+	if err := m.assetRepo.SaveAssets(&newAsset); err != nil {
+		return err
+	}
+
+	return m.assetRepo.SaveCreateAsset(msg, tx.TxHash)
 }

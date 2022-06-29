@@ -8,10 +8,6 @@ import (
 
 // handleMsgRegisterUser allows to properly handle a handleMsgRegisterUser
 func (m *Module) handleMsgRegisterUser(tx *juno.Tx, index int, msg *types.MsgRegisterUser) error {
-	if err := m.accountRepo.SaveRegisterUser(msg, tx.TxHash); err != nil {
-		return err
-	}
-
 	publicKey, err := types.PubKeyFromString(msg.PublicKey)
 	if err != nil {
 		return types.ErrInvalidPublicKeyField
@@ -58,5 +54,9 @@ func (m *Module) handleMsgRegisterUser(tx *juno.Tx, index int, msg *types.MsgReg
 		Default:        false,
 	}
 
-	return m.walletsRepo.SaveWallets(&refReward)
+	if err := m.walletsRepo.SaveWallets(&refReward); err != nil {
+		return err
+	}
+
+	return m.accountRepo.SaveRegisterUser(msg, tx.TxHash)
 }

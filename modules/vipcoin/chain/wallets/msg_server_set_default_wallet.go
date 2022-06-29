@@ -11,10 +11,6 @@ import (
 
 // handleMsgSetDefaultWallet allows to properly handle a MsgSetDefaultWallet
 func (m *Module) handleMsgSetDefaultWallet(tx *juno.Tx, index int, msg *typeswallets.MsgSetDefaultWallet) error {
-	if err := m.walletsRepo.SaveDefaultWallets(msg, tx.TxHash); err != nil {
-		return err
-	}
-
 	targetWallet, err := m.walletsRepo.GetWallets(filter.NewFilter().SetArgument(dbtypes.FieldAddress, msg.Address))
 	switch {
 	case err != nil:
@@ -52,5 +48,9 @@ func (m *Module) handleMsgSetDefaultWallet(tx *juno.Tx, index int, msg *typeswal
 
 	targetWallet[0].Default = true
 
-	return m.walletsRepo.UpdateWallets(targetWallet[0])
+	if err := m.walletsRepo.UpdateWallets(targetWallet[0]); err != nil {
+		return err
+	}
+
+	return m.walletsRepo.SaveDefaultWallets(msg, tx.TxHash)
 }

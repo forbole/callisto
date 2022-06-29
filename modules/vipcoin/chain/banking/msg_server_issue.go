@@ -16,10 +16,6 @@ func (m *Module) handleMsgIssue(tx *juno.Tx, index int, msg *types.MsgIssue) err
 	msg.Wallet = strings.ToLower(msg.Wallet)
 	msg.Asset = strings.ToLower(msg.Asset)
 
-	if err := m.bankingRepo.SaveMsgIssue(msg, tx.TxHash); err != nil {
-		return err
-	}
-
 	issue, err := getIssueFromTx(tx, msg)
 	if err != nil {
 		return err
@@ -56,5 +52,9 @@ func (m *Module) handleMsgIssue(tx *juno.Tx, index int, msg *types.MsgIssue) err
 		return err
 	}
 
-	return m.bankingRepo.SaveIssues(issue)
+	if err := m.bankingRepo.SaveIssues(issue); err != nil {
+		return err
+	}
+
+	return m.bankingRepo.SaveMsgIssue(msg, tx.TxHash)
 }

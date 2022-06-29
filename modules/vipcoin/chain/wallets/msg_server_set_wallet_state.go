@@ -10,10 +10,6 @@ import (
 
 // handleMsgSetStates allows to properly handle a MsgSetState
 func (m *Module) handleMsgSetStates(tx *juno.Tx, index int, msg *typeswallets.MsgSetWalletState) error {
-	if err := m.walletsRepo.SaveStates(msg, tx.TxHash); err != nil {
-		return err
-	}
-
 	wallets, err := m.walletsRepo.GetWallets(filter.NewFilter().SetArgument(dbtypes.FieldAddress, msg.Address))
 	switch {
 	case err != nil:
@@ -24,5 +20,9 @@ func (m *Module) handleMsgSetStates(tx *juno.Tx, index int, msg *typeswallets.Ms
 
 	wallets[0].State = msg.State
 
-	return m.walletsRepo.UpdateWallets(wallets...)
+	if err := m.walletsRepo.UpdateWallets(wallets...); err != nil {
+		return err
+	}
+
+	return m.walletsRepo.SaveStates(msg, tx.TxHash)
 }

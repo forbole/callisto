@@ -10,10 +10,6 @@ import (
 
 // handleMsgAccountMigrate allows to properly handle a handleMsgAccountMigrate
 func (m *Module) handleMsgAddAffiliate(tx *juno.Tx, index int, msg *types.MsgAddAffiliate) error {
-	if err := m.accountRepo.SaveAddAffiliate(msg, tx.TxHash); err != nil {
-		return err
-	}
-
 	accountArr, err := m.accountRepo.GetAccounts(filter.NewFilter().SetArgument(dbtypes.FieldHash, msg.AccountHash))
 	switch {
 	case err != nil:
@@ -80,5 +76,5 @@ func (m *Module) handleMsgAddAffiliate(tx *juno.Tx, index int, msg *types.MsgAdd
 		}
 	}
 
-	return nil
+	return m.accountRepo.SaveAddAffiliate(msg, tx.TxHash)
 }

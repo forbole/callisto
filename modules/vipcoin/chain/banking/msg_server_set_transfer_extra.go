@@ -10,10 +10,6 @@ import (
 
 // handleMsgSetTransferExtra allows to properly handle a handleMsgSetTransferExtra
 func (m *Module) handleMsgSetTransferExtra(tx *juno.Tx, index int, msg *types.MsgSetTransferExtra) error {
-	if err := m.bankingRepo.SaveMsgSetTransferExtra(msg, tx.TxHash); err != nil {
-		return err
-	}
-
 	transfer, err := m.bankingRepo.GetBaseTransfers(filter.NewFilter().SetArgument(dbtypes.FieldID, msg.Id))
 	switch {
 	case err != nil:
@@ -24,5 +20,9 @@ func (m *Module) handleMsgSetTransferExtra(tx *juno.Tx, index int, msg *types.Ms
 
 	transfer[0].Extras = msg.Extras
 
-	return m.bankingRepo.SaveBaseTransfers(transfer...)
+	if err := m.bankingRepo.SaveBaseTransfers(transfer...); err != nil {
+		return err
+	}
+
+	return m.bankingRepo.SaveMsgSetTransferExtra(msg, tx.TxHash)
 }

@@ -11,10 +11,6 @@ import (
 
 // handleMsgAccountMigrate allows to properly handle a handleMsgAccountMigrate
 func (m *Module) handleMsgAccountMigrate(tx *juno.Tx, index int, msg *types.MsgAccountMigrate) error {
-	if err := m.accountRepo.SaveAccountMigrate(msg, tx.TxHash); err != nil {
-		return err
-	}
-
 	accountArr, err := m.accountRepo.GetAccounts(filter.NewFilter().SetArgument(dbtypes.FieldHash, msg.Hash))
 	switch {
 	case err != nil:
@@ -70,5 +66,9 @@ func (m *Module) handleMsgAccountMigrate(tx *juno.Tx, index int, msg *types.MsgA
 		}
 	}
 
-	return m.accountRepo.UpdateAccounts(account)
+	if err := m.accountRepo.UpdateAccounts(account); err != nil {
+		return err
+	}
+
+	return m.accountRepo.SaveAccountMigrate(msg, tx.TxHash)
 }

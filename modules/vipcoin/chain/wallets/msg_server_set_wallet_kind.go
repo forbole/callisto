@@ -10,10 +10,6 @@ import (
 
 // handleMsgSetKind allows to properly handle a MsgSetKind
 func (m *Module) handleMsgSetKind(tx *juno.Tx, index int, msg *typeswallets.MsgSetWalletKind) error {
-	if err := m.walletsRepo.SaveKinds(msg, tx.TxHash); err != nil {
-		return err
-	}
-
 	wallets, err := m.walletsRepo.GetWallets(filter.NewFilter().SetArgument(dbtypes.FieldAddress, msg.Address))
 	switch {
 	case err != nil:
@@ -24,5 +20,9 @@ func (m *Module) handleMsgSetKind(tx *juno.Tx, index int, msg *typeswallets.MsgS
 
 	wallets[0].Kind = msg.Kind
 
-	return m.walletsRepo.UpdateWallets(wallets...)
+	if err := m.walletsRepo.UpdateWallets(wallets...); err != nil {
+		return err
+	}
+
+	return m.walletsRepo.SaveKinds(msg, tx.TxHash)
 }
