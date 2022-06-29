@@ -7,7 +7,6 @@ import (
 	assets "git.ooo.ua/vipcoin/chain/x/assets/types"
 	banking "git.ooo.ua/vipcoin/chain/x/banking/types"
 	wallets "git.ooo.ua/vipcoin/chain/x/wallets/types"
-	"git.ooo.ua/vipcoin/lib/filter"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	juno "github.com/forbole/juno/v2/types"
 
@@ -19,10 +18,6 @@ func (m *Module) handleMsgPayments(tx *juno.Tx, _ int, msg *banking.MsgPayment) 
 	msg.WalletFrom = strings.ToLower(msg.WalletFrom)
 	msg.WalletTo = strings.ToLower(msg.WalletTo)
 	msg.Asset = strings.ToLower(msg.Asset)
-
-	if err := m.bankingRepo.SaveMsgPayments(msg, tx.TxHash); err != nil {
-		return err
-	}
 
 	asset, err := m.assetRepo.GetAssets(filter.NewFilter().SetArgument(dbtypes.FieldName, msg.Asset))
 	switch {
@@ -55,10 +50,16 @@ func (m *Module) handleMsgPayments(tx *juno.Tx, _ int, msg *banking.MsgPayment) 
 
 	switch payment.Fee {
 	case 0:
-		return m.payment(payment, *walletFrom[0], *walletTo[0])
+		err = m.payment(payment, *walletFrom[0], *walletTo[0])
 	default:
-		return m.paymentWithFee(tx, payment, *asset[0], *walletFrom[0], *walletTo[0])
+		err = m.paymentWithFee(tx, payment, *asset[0], *walletFrom[0], *walletTo[0])
 	}
+
+	if err != nil {
+		return err
+	}
+
+	return m.bankingRepo.SaveMsgPayments(msg, tx.TxHash)
 }
 
 // payment - creates payment without fee

@@ -109,6 +109,7 @@ func (m *module) parseMessages(tx *types.Tx) error {
 			if messageModule, ok := module.(modules.MessageModule); ok {
 				if err := messageModule.HandleMsg(i, stdMsg, tx); err != nil {
 					m.logger.MsgError(module, tx, stdMsg, err)
+					return err
 				}
 			}
 		}
