@@ -6,6 +6,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/types/tx"
 
+	"github.com/forbole/bdjuno/v3/modules/utils"
 	"github.com/forbole/bdjuno/v3/types"
 
 	tmtypes "github.com/tendermint/tendermint/types"
@@ -132,8 +133,15 @@ func (m *Module) saveValidatorDescription(doc *tmtypes.GenesisDoc, validators st
 // saveValidatorsCommissions save the initial commission for each validator
 func (m *Module) saveValidatorsCommissions(height int64, validators stakingtypes.Validators) error {
 	for _, account := range validators {
-		err := m.db.SaveValidatorCommission(types.NewValidatorCommission(
-			account.OperatorAddress,
+
+		// For likecoin dual prefix
+		operAddr, err := utils.ConvertAddressPrefix("likevaloper", account.OperatorAddress)
+		if err != nil {
+			return err
+		}
+
+		err = m.db.SaveValidatorCommission(types.NewValidatorCommission(
+			operAddr,
 			&account.Commission.Rate,
 			&account.MinSelfDelegation,
 			height,

@@ -10,6 +10,7 @@ import (
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"github.com/forbole/bdjuno/v3/modules/staking/keybase"
+	"github.com/forbole/bdjuno/v3/modules/utils"
 	"github.com/forbole/bdjuno/v3/types"
 
 	"github.com/rs/zerolog/log"
@@ -50,11 +51,25 @@ func (m *Module) convertValidator(height int64, validator stakingtypes.Validator
 		return nil, fmt.Errorf("error while getting validator consensus pub key: %s", err)
 	}
 
+	// For likecoin dual prefix
+	likeConsAddr, err := utils.ConvertAddressPrefix("likevalcons", consAddr.String())
+	if err != nil {
+		return nil, fmt.Errorf("error while converting to likevalcons prefix: %s", err)
+	}
+	opAddr, err := utils.ConvertAddressPrefix("likevaloper", validator.OperatorAddress)
+	if err != nil {
+		return nil, fmt.Errorf("error while converting to likevaloper prefix: %s", err)
+	}
+	selfDelegateAddress, err := utils.ConvertAddressPrefix("like", sdk.AccAddress(validator.GetOperator()).String())
+	if err != nil {
+		return nil, fmt.Errorf("error while converting to like prefix: %s", err)
+	}
+
 	return types.NewValidator(
-		consAddr.String(),
-		validator.OperatorAddress,
+		likeConsAddr,
+		opAddr,
 		consPubKey.String(),
-		sdk.AccAddress(validator.GetOperator()).String(),
+		selfDelegateAddress,
 		&validator.Commission.MaxChangeRate,
 		&validator.Commission.MaxRate,
 		height,
@@ -77,6 +92,9 @@ func (m *Module) convertValidatorDescription(
 		}
 		avatarURL = url
 	}
+
+	// For likecoin dual prefix
+	opAddr, _ = utils.ConvertAddressPrefix("likevaloper", opAddr)
 
 	return types.NewValidatorDescription(opAddr, description, avatarURL, height)
 }
@@ -109,9 +127,15 @@ func (m *Module) RefreshValidatorInfos(height int64, valOper string) error {
 		return err
 	}
 
+	// for likecoin dual prefix
+	operAddr, err := utils.ConvertAddressPrefix("likevaloper", stakingValidator.OperatorAddress)
+	if err != nil {
+		return err
+	}
+
 	// Save the commission
 	return m.db.SaveValidatorCommission(types.NewValidatorCommission(
-		stakingValidator.OperatorAddress,
+		operAddr,
 		&stakingValidator.Commission.Rate,
 		&stakingValidator.MinSelfDelegation,
 		height,
@@ -181,8 +205,14 @@ func (m *Module) GetValidatorsStatuses(height int64, validators []stakingtypes.V
 			return nil, fmt.Errorf("error while getting validator signing info: %s", err)
 		}
 
+		// For likecoin dual prefix
+		likeValConsAddr, err := utils.ConvertAddressPrefix("likevalcons", consAddr.String())
+		if err != nil {
+			return nil, fmt.Errorf("error while converting to likevalcons prefix: %s", err)
+		}
+
 		statuses[index] = types.NewValidatorStatus(
-			consAddr.String(),
+			likeValConsAddr,
 			consPubKey.String(),
 			int(validator.GetStatus()),
 			validator.IsJailed(),
@@ -208,20 +238,33 @@ func (m *Module) GetValidatorsVotingPowers(height int64, vals *tmctypes.ResultVa
 			return nil, err
 		}
 
+		// For likecoin dual prefix
+		likeConsAddr, err := utils.ConvertAddressPrefix("likevalcons", consAddr.String())
+		if err != nil {
+			return nil, err
+		}
+
 		// Find the voting power of this validator
 		var votingPower int64 = 0
 		for _, blockVal := range vals.Validators {
 			blockValConsAddr := juno.ConvertValidatorAddressToBech32String(blockVal.Address)
-			if blockValConsAddr == consAddr.String() {
+
+			// For likecoin dual prefix
+			likeBlockValConsAddr, err := utils.ConvertAddressPrefix("likevalcons", blockValConsAddr)
+			if err != nil {
+				return nil, err
+			}
+
+			if likeBlockValConsAddr == likeConsAddr {
 				votingPower = blockVal.VotingPower
 			}
 		}
 
-		if found, _ := m.db.HasValidator(consAddr.String()); !found {
+		if found, _ := m.db.HasValidator(likeConsAddr); !found {
 			continue
 		}
 
-		votingPowers[index] = types.NewValidatorVotingPower(consAddr.String(), votingPower, height)
+		votingPowers[index] = types.NewValidatorVotingPower(likeConsAddr, votingPower, height)
 	}
 
 	return votingPowers, nil

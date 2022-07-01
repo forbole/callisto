@@ -2,7 +2,9 @@ package database
 
 import (
 	"fmt"
+	"log"
 
+	"github.com/forbole/bdjuno/v3/modules/utils"
 	"github.com/forbole/bdjuno/v3/types"
 
 	dbtypes "github.com/forbole/bdjuno/v3/database/types"
@@ -280,8 +282,15 @@ func (db *Db) getValidatorDescription(address sdk.ConsAddress) (*types.Validator
 	}
 
 	row := result[0]
+
+	// For likecoin dual prefix
+	opAddr, err := utils.ConvertAddressPrefix("likevaloper", row.ValAddress)
+	if err != nil {
+		log.Fatalf("error while converting to likevaloper prefix: %s", err)
+	}
+
 	description := types.NewValidatorDescription(
-		row.ValAddress,
+		opAddr,
 		stakingtypes.NewDescription(
 			dbtypes.ToString(row.Moniker),
 			dbtypes.ToString(row.Identity),
