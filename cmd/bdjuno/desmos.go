@@ -3,8 +3,8 @@ package main
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	profilestypes "github.com/desmos-labs/desmos/v3/x/profiles/types"
-	relationshiptypes "github.com/desmos-labs/desmos/v3/x/relationships/types"
+	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
+	relationshiptypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
 
 	junomessages "github.com/forbole/juno/v3/modules/messages"
 )
