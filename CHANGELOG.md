@@ -1,5 +1,8 @@
 ## Unreleased
 ### Changes
+#### Mint module
+- ([\#432](https://github.com/forbole/bdjuno/pull/432)) Update inflation rate when mint param change proposal is passed
+
 #### Gov module
 - ([\#401](https://github.com/forbole/bdjuno/pull/401)) Update the proposal status to the latest in `bdjuno parse gov proposal [id]` command
 - ([\#430](https://github.com/forbole/bdjuno/pull/430)) Update the proposals that have invalid status but can still be in voting or deposit periods 
