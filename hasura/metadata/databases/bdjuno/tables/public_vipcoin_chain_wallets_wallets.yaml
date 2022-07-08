@@ -48,3 +48,16 @@ array_relationships:
         table:
           name: vipcoin_chain_banking_withdraw
           schema: public
+select_permissions:
+  - role: walletUI
+    permission:
+      columns:
+        - address
+        - account_address
+        - kind
+        - state
+        - balance
+        - extras
+        - default_status
+      filter: {}
+      allow_aggregations: true

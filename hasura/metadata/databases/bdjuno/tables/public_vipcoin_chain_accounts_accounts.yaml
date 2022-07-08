@@ -16,3 +16,16 @@ array_relationships:
         table:
           name: vipcoin_chain_wallets_wallets
           schema: public
+select_permissions:
+  - role: walletUI
+    permission:
+      columns:
+        - address
+        - hash
+        - public_key
+        - kinds
+        - state
+        - extras
+        - wallets
+      filter: {}
+      allow_aggregations: true

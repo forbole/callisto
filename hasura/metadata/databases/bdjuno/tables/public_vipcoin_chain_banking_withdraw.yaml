@@ -8,3 +8,11 @@ object_relationships:
   - name: wallets_wallet
     using:
       foreign_key_constraint_on: wallet
+select_permissions:
+  - role: walletUI
+    permission:
+      columns:
+        - id
+        - wallet
+      filter: {}
+      allow_aggregations: true

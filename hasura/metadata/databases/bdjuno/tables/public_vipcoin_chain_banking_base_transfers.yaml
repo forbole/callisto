@@ -33,3 +33,16 @@ object_relationships:
         table:
           name: vipcoin_chain_banking_withdraw
           schema: public
+select_permissions:
+  - role: walletUI
+    permission:
+      columns:
+        - id
+        - asset
+        - amount
+        - kind
+        - extras
+        - timestamp
+        - tx_hash
+      filter: {}
+      allow_aggregations: true
