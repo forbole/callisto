@@ -4,7 +4,6 @@ import (
 	"git.ooo.ua/vipcoin/chain/x/accounts/types"
 	"git.ooo.ua/vipcoin/lib/filter"
 	juno "github.com/forbole/juno/v2/types"
-
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 )
 
@@ -71,7 +70,7 @@ func (m *Module) handleMsgAddAffiliate(tx *juno.Tx, index int, msg *types.MsgAdd
 		}
 
 		affiliate.Affiliates = append(affiliate.Affiliates, newAffiliate)
-		if err := m.accountRepo.UpdateAccounts(account); err != nil {
+		if err := m.accountRepo.UpdateAccounts(affiliate); err != nil {
 			return err
 		}
 	}

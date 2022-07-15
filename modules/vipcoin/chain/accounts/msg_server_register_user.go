@@ -3,6 +3,8 @@ package accounts
 import (
 	"git.ooo.ua/vipcoin/chain/x/accounts/types"
 	wallets "git.ooo.ua/vipcoin/chain/x/wallets/types"
+	"git.ooo.ua/vipcoin/lib/filter"
+	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 	juno "github.com/forbole/juno/v2/types"
 )
 
@@ -29,6 +31,49 @@ func (m *Module) handleMsgRegisterUser(tx *juno.Tx, index int, msg *types.MsgReg
 
 	if err := m.accountRepo.SaveAccounts(&newAcc); err != nil {
 		return err
+	}
+
+	if msg.ReferrerHash != "" {
+		affiliateAcc, err := m.accountRepo.GetAccounts(filter.NewFilter().SetArgument(dbtypes.FieldHash, msg.ReferrerHash))
+		switch {
+		case err != nil:
+			return err
+		case len(affiliateAcc) != 1:
+			return types.ErrInvalidHashField
+		}
+
+		affiliate := affiliateAcc[0]
+		// check if referrer address is valid
+		if affiliate.Address != msg.Address {
+			// set Referrer to created account
+			a := &types.Affiliate{
+				Address:     affiliate.Address,
+				Affiliation: types.AFFILIATION_KIND_REFERRER,
+			}
+			newAcc.Affiliates = append(newAcc.Affiliates, a)
+			if err := m.accountRepo.UpdateAccounts(&newAcc); err != nil {
+				return err
+			}
+
+			// add referral to the Referrer account
+			gotThisReferral := false
+			for _, aff := range affiliate.Affiliates {
+				if aff.Address == msg.Address {
+					gotThisReferral = true
+				}
+			}
+
+			if !gotThisReferral {
+				a := &types.Affiliate{
+					Address:     msg.Address,
+					Affiliation: types.AFFILIATION_KIND_REFERRAL,
+				}
+				affiliate.Affiliates = append(affiliate.Affiliates, a)
+				if err := m.accountRepo.UpdateAccounts(affiliate); err != nil {
+					return err
+				}
+			}
+		}
 	}
 
 	// create wallets

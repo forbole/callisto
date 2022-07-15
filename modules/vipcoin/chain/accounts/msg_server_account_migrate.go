@@ -5,7 +5,6 @@ import (
 	xtypes "git.ooo.ua/vipcoin/chain/x/types"
 	"git.ooo.ua/vipcoin/lib/filter"
 	juno "github.com/forbole/juno/v2/types"
-
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 )
 
@@ -56,14 +55,14 @@ func (m *Module) handleMsgAccountMigrate(tx *juno.Tx, index int, msg *types.MsgA
 				// Update address to new one
 				a.Address = msg.Address
 				affiliateAcc[0].Affiliates[i] = a
+				if err := m.accountRepo.UpdateAccounts(affiliateAcc...); err != nil {
+					return err
+				}
 				// Break loop
 				break
 			}
 		}
 
-		if err := m.accountRepo.UpdateAccounts(affiliateAcc...); err != nil {
-			return err
-		}
 	}
 
 	if err := m.accountRepo.UpdateAccounts(account); err != nil {
