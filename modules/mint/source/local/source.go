@@ -41,3 +41,18 @@ func (s Source) Params(height int64) (minttypes.Params, error) {
 
 	return res.Params, nil
 }
+
+// Params implements mintsource.Source
+func (s Source) EpochProvisions(height int64) (sdk.Dec, error) {
+	ctx, err := s.LoadHeight(height)
+	if err != nil {
+		return sdk.Dec{}, fmt.Errorf("error while loading height: %s", err)
+	}
+
+	res, err := s.querier.EpochProvisions(sdk.WrapSDKContext(ctx), &minttypes.QueryEpochProvisionsRequest{})
+	if err != nil {
+		return sdk.Dec{}, nil
+	}
+
+	return res.EpochProvisions, nil
+}
