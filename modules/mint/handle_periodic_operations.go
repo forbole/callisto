@@ -48,7 +48,7 @@ func (m *Module) updateInflation() error {
 
 	annualProvision := getCurrentAnnualProvision(block.Timestamp, mintParams.InflationSchedules)
 	if annualProvision == 0 {
-		return fmt.Errorf("annual provision is not found")
+		return nil
 	}
 
 	// Get current total supply of uCRE
