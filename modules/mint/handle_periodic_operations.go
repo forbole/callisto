@@ -41,7 +41,12 @@ func (m *Module) updateInflation() error {
 		return err
 	}
 
-	epochProvisions := new(big.Float).SetInt64(mintParams.GenesisEpochProvisions.RoundInt64())
+	epochProvisions, err := m.source.EpochProvisions(height)
+	if err != nil {
+		return err
+	}
+
+	epochProvisionsFloat := new(big.Float).SetInt64(epochProvisions.RoundInt64())
 	epochPeriod := new(big.Float).SetInt64(mintParams.ReductionPeriodInEpochs)
 
 	totalSupply, err := m.db.GetTotalSupply()
@@ -53,7 +58,7 @@ func (m *Module) updateInflation() error {
 		return err
 	}
 
-	totalProvisions := new(big.Float).Mul(epochProvisions, epochPeriod)
+	totalProvisions := new(big.Float).Mul(epochProvisionsFloat, epochPeriod)
 	inflation := new(big.Float).Quo(totalProvisions, new(big.Float).SetInt64(supply))
 
 	return m.db.SaveInflation(inflation.String(), height)

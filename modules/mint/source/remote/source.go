@@ -2,6 +2,7 @@ package remote
 
 import (
 	minttypes "github.com/MonOsmosis/osmosis/v10/x/mint/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	mintsource "github.com/forbole/bdjuno/v3/modules/mint/source"
 	"github.com/forbole/juno/v3/node/remote"
 )
@@ -32,4 +33,14 @@ func (s Source) Params(height int64) (minttypes.Params, error) {
 	}
 
 	return res.Params, nil
+}
+
+// Params implements mintsource.Source
+func (s Source) EpochProvisions(height int64) (sdk.Dec, error) {
+	res, err := s.querier.EpochProvisions(remote.GetHeightRequestContext(s.Ctx, height), &minttypes.QueryEpochProvisionsRequest{})
+	if err != nil {
+		return sdk.Dec{}, nil
+	}
+
+	return res.EpochProvisions, nil
 }
