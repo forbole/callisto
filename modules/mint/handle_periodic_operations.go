@@ -1,6 +1,9 @@
 package mint
 
 import (
+	"fmt"
+	"strconv"
+
 	"github.com/forbole/bdjuno/v3/modules/utils"
 
 	"github.com/go-co-op/gocron"
@@ -29,16 +32,45 @@ func (m *Module) updateInflation() error {
 		Str("operation", "inflation").
 		Msg("getting inflation data")
 
-	height, err := m.db.GetLastBlockHeight()
+	block, err := m.db.GetLastBlock()
 	if err != nil {
 		return err
 	}
 
-	// Get the inflation
-	inflation, err := m.source.GetInflation(height)
+	// Get mint params
+	mintParams, err := m.db.GetMintParams()
 	if err != nil {
 		return err
 	}
 
-	return m.db.SaveInflation(inflation, height)
+	// Get the new annual provision if entering into new inflation schedule
+	var annualProvision int64
+	for _, schedule := range mintParams.InflationSchedules {
+		if block.Timestamp.Year() == schedule.StartTime.Year() &&
+			block.Timestamp.Month() == schedule.StartTime.Month() &&
+			block.Timestamp.Day() == schedule.StartTime.Day() {
+
+			annualProvision = schedule.Amount.Int64()
+		} else {
+
+			return nil
+		}
+	}
+
+	// Get current total supply of uCRE
+	currTotalSupply, err := m.db.GetSupply("ucre")
+	if err != nil {
+		return err
+	}
+
+	// Convert supply to int64
+	supplyInt, err := strconv.ParseInt(currTotalSupply.Amount, 10, 64)
+	if err != nil {
+		return fmt.Errorf("error while converting supply to int64: %s", err)
+	}
+
+	// Calculate the inflation: annual provision / current total supply
+	inflation := float64(annualProvision) / float64(supplyInt)
+
+	return m.db.SaveInflation(inflation, block.Height)
 }

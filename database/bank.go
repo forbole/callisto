@@ -26,3 +26,20 @@ WHERE supply.height <= excluded.height`
 
 	return nil
 }
+
+// GetSupply allows to get the current total supply of certain denom
+func (db *Db) GetSupply(denom string) (*dbtypes.DbCoin, error) {
+	var rows []dbtypes.DbCoins
+	err := db.Sqlx.Select(&rows, `SELECT coins FROM supply`)
+	if err != nil {
+		return nil, fmt.Errorf("error while getting supply: %s", err)
+	}
+
+	for _, coin := range rows[0] {
+		if coin.Denom == denom {
+			return coin, nil
+		}
+	}
+
+	return nil, fmt.Errorf("denom not found: %s", err)
+}
