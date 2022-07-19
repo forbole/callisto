@@ -58,13 +58,13 @@ func (m *Module) updateInflation() error {
 	}
 
 	// Get current total supply of uCRE
-	currTotalSupply, err := m.db.GetSupply("ucre")
+	supply, err := m.db.GetSupply("ucre")
 	if err != nil {
 		return err
 	}
 
 	// Convert supply to int64
-	supplyInt, err := strconv.ParseInt(currTotalSupply.Amount, 10, 64)
+	supplyInt, err := strconv.ParseInt(supply.Amount, 10, 64)
 	if err != nil {
 		return fmt.Errorf("error while converting supply to int64: %s", err)
 	}
