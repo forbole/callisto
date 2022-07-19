@@ -1,6 +1,6 @@
 package types
 
-import liquidstakingtypes "github.com/crescent-network/crescent/x/liquidstaking/types"
+import liquidstakingtypes "github.com/crescent-network/crescent/v2/x/liquidstaking/types"
 
 // LiquidStakingParams represents the x/liquidstaking parameters
 type LiquidStakingParams struct {

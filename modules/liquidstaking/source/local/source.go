@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/juno/v3/node/local"
 
-	liquidstakingtypes "github.com/crescent-network/crescent/x/liquidstaking/types"
+	liquidstakingtypes "github.com/crescent-network/crescent/v2/x/liquidstaking/types"
 	liquidstakingsource "github.com/forbole/bdjuno/v3/modules/liquidstaking/source"
 )
 

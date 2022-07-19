@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/cosmos/cosmos-sdk v0.45.4
 	github.com/cosmos/gaia/v6 v6.0.0
-	github.com/crescent-network/crescent v1.1.0
+	github.com/crescent-network/crescent/v2 v2.1.0
 	github.com/forbole/juno/v3 v3.2.2-0.20220526111705-99d09a80c1a3
 	github.com/go-co-op/gocron v1.13.0
 	github.com/gogo/protobuf v1.3.3
@@ -33,7 +33,7 @@ require (
 	github.com/btcsuite/btcd v0.22.0-beta // indirect
 	github.com/cespare/xxhash v1.1.0 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
-	github.com/coinbase/rosetta-sdk-go v0.6.10 // indirect
+	github.com/coinbase/rosetta-sdk-go v0.7.0 // indirect
 	github.com/confio/ics23/go v0.7.0 // indirect
 	github.com/cosmos/btcutil v1.0.4 // indirect
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
@@ -111,7 +111,7 @@ require (
 	github.com/subosito/gotenv v1.2.0 // indirect
 	github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7 // indirect
 	github.com/tendermint/btcd v0.1.1 // indirect
-	github.com/tendermint/budget v1.1.1 // indirect
+	github.com/tendermint/budget v1.2.0 // indirect
 	github.com/tendermint/crypto v0.0.0-20191022145703-50d29ede1e15 // indirect
 	github.com/tendermint/go-amino v0.16.0 // indirect
 	github.com/tendermint/tm-db v0.6.7 // indirect
@@ -131,10 +131,10 @@ require (
 )
 
 replace (
-	github.com/cosmos/cosmos-sdk => github.com/crescent-network/cosmos-sdk v1.0.2-sdk-0.44.5
+	github.com/cosmos/cosmos-sdk => github.com/crescent-network/cosmos-sdk v1.1.0-sdk-0.45.3
 	github.com/cosmos/gaia/v6 => github.com/huichiaotsou/gaia/v6 v6.0.0-crescent-removeliquidity
 	github.com/cosmos/ibc-go/v2 => github.com/cosmos/ibc-go/v2 v2.0.2
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-	github.com/tendermint/tendermint => github.com/forbole/tendermint v0.34.13-0.20210820072129-a2a4af55563d
+	github.com/tendermint/tendermint => github.com/forbole/tendermint v0.34.19-forbole
 	google.golang.org/grpc => google.golang.org/grpc v1.33.2
 )

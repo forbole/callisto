@@ -17,7 +17,7 @@ import (
 	"github.com/forbole/bdjuno/v3/modules"
 
 	gaiaapp "github.com/cosmos/gaia/v6/app"
-	crescentapp "github.com/crescent-network/crescent/app"
+	crescentapp "github.com/crescent-network/crescent/v2/app"
 )
 
 func main() {

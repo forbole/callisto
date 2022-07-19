@@ -17,13 +17,13 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	liquidstakingkeeper "github.com/crescent-network/crescent/x/liquidstaking/keeper"
-	liquidstakingtypes "github.com/crescent-network/crescent/x/liquidstaking/types"
+	liquidstakingkeeper "github.com/crescent-network/crescent/v2/x/liquidstaking/keeper"
+	liquidstakingtypes "github.com/crescent-network/crescent/v2/x/liquidstaking/types"
 	"github.com/forbole/juno/v3/node/local"
 
 	nodeconfig "github.com/forbole/juno/v3/node/config"
 
-	crescentapp "github.com/crescent-network/crescent/app"
+	crescentapp "github.com/crescent-network/crescent/v2/app"
 	banksource "github.com/forbole/bdjuno/v3/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v3/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v3/modules/bank/source/remote"
