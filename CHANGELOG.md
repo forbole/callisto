@@ -4,6 +4,9 @@
 #### Liquidstaking module
 - ([\#419](https://github.com/forbole/bdjuno/pull/419)) [crescent] Added `x/liquidstaking` module parsing
 
+#### Mint module
+- ([\#435](https://github.com/forbole/bdjuno/pull/435)) [crescent] Applied crescent custom mint types to `x/mint` & manually calculate inflation
+
 ## Version v3.1.0
 ### Dependencies
 - ([\#412](https://github.com/forbole/bdjuno/pull/412)) Updated Juno to `v3.2.1`
