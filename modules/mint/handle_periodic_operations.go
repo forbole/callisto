@@ -3,11 +3,14 @@ package mint
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/forbole/bdjuno/v3/modules/utils"
 
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
+
+	creminttypes "github.com/crescent-network/crescent/v2/x/mint/types"
 )
 
 // RegisterPeriodicOperations implements modules.PeriodicOperationsModule
@@ -43,18 +46,9 @@ func (m *Module) updateInflation() error {
 		return err
 	}
 
-	// Get the new annual provision if entering into new inflation schedule
-	var annualProvision int64
-	for _, schedule := range mintParams.InflationSchedules {
-		if block.Timestamp.Year() == schedule.StartTime.Year() &&
-			block.Timestamp.Month() == schedule.StartTime.Month() &&
-			block.Timestamp.Day() == schedule.StartTime.Day() {
-
-			annualProvision = schedule.Amount.Int64()
-		} else {
-
-			return nil
-		}
+	annualProvision := getCurrentAnnualProvision(block.Timestamp, mintParams.InflationSchedules)
+	if annualProvision == 0 {
+		return fmt.Errorf("annual provision is not found")
 	}
 
 	// Get current total supply of uCRE
@@ -66,11 +60,27 @@ func (m *Module) updateInflation() error {
 	// Convert supply to int64
 	supplyInt, err := strconv.ParseInt(supply.Amount, 10, 64)
 	if err != nil {
-		return fmt.Errorf("error while converting supply to int64: %s", err)
+		return fmt.Errorf("error while converting supply string to int64: %s", err)
 	}
 
 	// Calculate the inflation: annual provision / current total supply
 	inflation := float64(annualProvision) / float64(supplyInt)
 
 	return m.db.SaveInflation(inflation, block.Height)
+}
+
+// getCurrentAnnualProvision gets the new annual provision if block time enters into new inflation schedule
+func getCurrentAnnualProvision(
+	blockTime time.Time, inflationSchedules []creminttypes.InflationSchedule,
+) int64 {
+	for _, schedule := range inflationSchedules {
+		if blockTime.Year() == schedule.StartTime.Year() &&
+			blockTime.Month() == schedule.StartTime.Month() &&
+			blockTime.Day() == schedule.StartTime.Day() {
+
+			return schedule.Amount.Int64()
+		}
+	}
+
+	return 0
 }
