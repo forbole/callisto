@@ -1,4 +1,9 @@
 ## Unreleased
+
+### Changes 
+#### x/marker module
+- ([\#421](https://github.com/forbole/bdjuno/pull/421)) [provenance] Added `x/marker` module parsing
+
 ### Dependencies
 - ([\#412](https://github.com/forbole/bdjuno/pull/412)) Updated Juno to `v3.2.1`
 

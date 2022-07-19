@@ -12,6 +12,8 @@
 - "!include public_genesis.yaml"
 - "!include public_gov_params.yaml"
 - "!include public_inflation.yaml"
+- "!include public_marker_account.yaml"
+- "!include public_marker_params.yaml"
 - "!include public_message.yaml"
 - "!include public_mint_params.yaml"
 - "!include public_modules.yaml"

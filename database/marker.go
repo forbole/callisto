@@ -29,3 +29,73 @@ WHERE marker_params.height <= excluded.height`
 
 	return nil
 }
+
+// SaveMarkersAccounts allows to store the markers accounts for the given block height
+func (db *Db) SaveMarkersAccounts(markersList []types.MarkerAccount) error {
+	if len(markersList) == 0 {
+		return nil
+	}
+
+	stmt := `
+	INSERT INTO marker_account (address, access_control, allow_governance_control, 
+		denom, marker_type, status, supply, height)
+	VALUES `
+	var accounts []types.Account
+	var markerParams []interface{}
+
+	for i, marker := range markersList {
+
+		accessControl, err := json.Marshal(&marker.AccessControl)
+		if err != nil {
+			return err
+		}
+
+		supplyValue, err := json.Marshal(&marker.Supply)
+		if err != nil {
+			return err
+		}
+		// Prepare the account query
+		accounts = append(accounts, types.NewAccount(marker.Address))
+
+		// Prepare the marker query
+		vi := i * 8
+		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
+			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8)
+
+		markerParams = append(markerParams,
+			marker.Address,
+			string(accessControl),
+			marker.AllowGovernanceControl,
+			marker.Denom,
+			marker.MarkerType.String(),
+			marker.Status,
+			string(supplyValue),
+			marker.Height,
+		)
+	}
+
+	// Store the accounts
+	err := db.SaveAccounts(accounts)
+	if err != nil {
+		return fmt.Errorf("error while storing markers accounts: %s", err)
+	}
+
+	// Store the markers accounts
+	stmt = stmt[:len(stmt)-1] // Remove trailing ","
+	stmt += `
+ON CONFLICT (address) DO UPDATE
+	SET access_control = excluded.access_control,
+		allow_governance_control = excluded.allow_governance_control,
+		denom = excluded.denom,
+		marker_type = excluded.marker_type,
+		status = excluded.status,
+		supply = excluded.supply,
+		height = excluded.height
+WHERE marker_account.height <= excluded.height`
+	_, err = db.Sql.Exec(stmt, markerParams...)
+	if err != nil {
+		return fmt.Errorf("error while storing markers accounts list: %s", err)
+	}
+
+	return nil
+}

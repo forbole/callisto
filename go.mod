@@ -3,6 +3,7 @@ module github.com/forbole/bdjuno/v3
 go 1.17
 
 require (
+	github.com/MonikaCat/provenance v1.10.1-0.20220617151414-ca82aea8317e
 	github.com/cosmos/cosmos-sdk v0.45.4
 	github.com/cosmos/gaia/v6 v6.0.4
 	github.com/forbole/juno/v3 v3.2.2-0.20220526111705-99d09a80c1a3
@@ -13,7 +14,6 @@ require (
 	github.com/pelletier/go-toml v1.9.5
 	github.com/prometheus/client_golang v1.12.2
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
-	github.com/provenance-io/provenance v1.10.0
 	github.com/rs/zerolog v1.27.0
 	github.com/spf13/cobra v1.4.0
 	github.com/stretchr/testify v1.7.2

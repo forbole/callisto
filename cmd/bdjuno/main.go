@@ -16,8 +16,8 @@ import (
 	"github.com/forbole/bdjuno/v3/database"
 	"github.com/forbole/bdjuno/v3/modules"
 
+	provenanceapp "github.com/MonikaCat/provenance/app"
 	gaiaapp "github.com/cosmos/gaia/v6/app"
-	provenanceapp "github.com/provenance-io/provenance/app"
 )
 
 func main() {
