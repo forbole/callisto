@@ -2,9 +2,10 @@ package database_test
 
 import (
 	"encoding/json"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+	creminttypes "github.com/crescent-network/crescent/v2/x/mint/types"
 
 	"github.com/forbole/bdjuno/v3/types"
 
@@ -73,14 +74,24 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveMintParams() {
-	mintParams := minttypes.NewParams(
-		"udaric",
-		sdk.NewDecWithPrec(4, 1),
-		sdk.NewDecWithPrec(8, 1),
-		sdk.NewDecWithPrec(4, 1),
-		sdk.NewDecWithPrec(8, 1),
-		5006000,
-	)
+	mintParams := creminttypes.Params{
+		MintDenom:          "udaric",
+		MintPoolAddress:    "cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs",
+		BlockTimeThreshold: 10 * time.Second,
+		InflationSchedules: []creminttypes.InflationSchedule{
+			{
+				StartTime: time.Date(2022, time.Month(4), 13, 0, 0, 0, 0, time.UTC),
+				EndTime:   time.Date(2023, time.Month(4), 13, 0, 0, 0, 0, time.UTC),
+				Amount:    sdk.NewInt(108700000000000),
+			},
+			{
+				StartTime: time.Date(2023, time.Month(4), 13, 0, 0, 0, 0, time.UTC),
+				EndTime:   time.Date(2024, time.Month(4), 13, 0, 0, 0, 0, time.UTC),
+				Amount:    sdk.NewInt(216100000000000),
+			},
+		},
+	}
+
 	err := suite.database.SaveMintParams(types.NewMintParams(mintParams, 10))
 	suite.Require().NoError(err)
 
@@ -89,7 +100,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveMintParams() {
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 
-	var storedParams minttypes.Params
+	var storedParams creminttypes.Params
 	err = json.Unmarshal([]byte(rows[0].Params), &storedParams)
 	suite.Require().NoError(err)
 	suite.Require().Equal(mintParams, storedParams)

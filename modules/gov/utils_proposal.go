@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strings"
 
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	creminttypes "github.com/crescent-network/crescent/v2/x/mint/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"google.golang.org/grpc/codes"
@@ -112,10 +112,10 @@ func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Propo
 			if err != nil {
 				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", govtypes.ModuleName, err)
 			}
-		case minttypes.ModuleName:
+		case creminttypes.ModuleName:
 			err = m.mintModule.UpdateParams(height)
 			if err != nil {
-				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", minttypes.ModuleName, err)
+				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", creminttypes.ModuleName, err)
 			}
 		case slashingtypes.ModuleName:
 			err = m.slashingModule.UpdateParams(height)
