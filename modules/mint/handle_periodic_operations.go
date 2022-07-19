@@ -69,7 +69,7 @@ func (m *Module) updateInflation() error {
 	return m.db.SaveInflation(inflation, block.Height)
 }
 
-// getCurrentAnnualProvision gets the new annual provision if block time enters into new inflation schedule
+// getCurrentAnnualProvision gets the new annual provision if block time enters into new inflation schedule, and if not, returns 0
 func getCurrentAnnualProvision(
 	blockTime time.Time, inflationSchedules []creminttypes.InflationSchedule,
 ) int64 {
