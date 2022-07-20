@@ -15,7 +15,7 @@ import (
 func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 
 	// Save the data
-	err := suite.database.SaveInflation(sdk.NewDecWithPrec(10050, 2).MustFloat64(), 100)
+	err := suite.database.SaveInflation(sdk.NewDecWithPrec(10050, 2).String(), 100)
 	suite.Require().NoError(err)
 
 	// Verify the data
@@ -30,7 +30,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 	// ---------------------------------------------------------------------------------------------------------------
 
 	// Try updating with lower height
-	err = suite.database.SaveInflation(sdk.NewDecWithPrec(20000, 2).MustFloat64(), 90)
+	err = suite.database.SaveInflation(sdk.NewDecWithPrec(20000, 2).String(), 90)
 	suite.Require().NoError(err, "double inflation insertion should return no error")
 
 	// Verify the data
@@ -45,7 +45,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 	// ---------------------------------------------------------------------------------------------------------------
 
 	// Try updating with same height
-	err = suite.database.SaveInflation(sdk.NewDecWithPrec(30000, 2).MustFloat64(), 100)
+	err = suite.database.SaveInflation(sdk.NewDecWithPrec(30000, 2).String(), 100)
 	suite.Require().NoError(err, "double inflation insertion should return no error")
 
 	// Verify the data
@@ -60,7 +60,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 	// ---------------------------------------------------------------------------------------------------------------
 
 	// Try updating with higher height
-	err = suite.database.SaveInflation(sdk.NewDecWithPrec(40000, 2).MustFloat64(), 110)
+	err = suite.database.SaveInflation(sdk.NewDecWithPrec(40000, 2).String(), 110)
 	suite.Require().NoError(err, "double inflation insertion should return no error")
 
 	// Verify the data

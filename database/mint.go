@@ -9,7 +9,7 @@ import (
 )
 
 // SaveInflation allows to store the inflation for the given block height as well as timestamp
-func (db *Db) SaveInflation(inflation float64, height int64) error {
+func (db *Db) SaveInflation(inflation string, height int64) error {
 	stmt := `
 INSERT INTO inflation (value, height) 
 VALUES ($1, $2) 

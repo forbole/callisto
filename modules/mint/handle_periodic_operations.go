@@ -66,7 +66,7 @@ func (m *Module) updateInflation() error {
 	// Calculate the inflation: annual provision / current total supply
 	inflation := float64(annualProvision) / float64(supplyInt)
 
-	return m.db.SaveInflation(inflation, block.Height)
+	return m.db.SaveInflation(fmt.Sprintf("%f", inflation), block.Height)
 }
 
 // getCurrentAnnualProvision gets the new annual provision if block time enters into new inflation schedule, and if not, returns 0
