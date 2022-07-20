@@ -35,9 +35,11 @@ func (db *Db) GetSupply(denom string) (*dbtypes.DbCoin, error) {
 		return nil, fmt.Errorf("error while getting supply: %s", err)
 	}
 
-	for _, coin := range rows[0] {
-		if coin.Denom == denom {
-			return coin, nil
+	for _, row := range rows {
+		for _, coin := range row {
+			if coin.Denom == denom {
+				return coin, nil
+			}
 		}
 	}
 
