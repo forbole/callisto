@@ -46,13 +46,20 @@ func (m *Module) updateInflation() error {
 		return err
 	}
 
+	// Get annual provision of the current inflation schedule
 	annualProvision := getCurrentAnnualProvision(block.Timestamp, mintParams.InflationSchedules)
 	if annualProvision == 0 {
 		return nil
 	}
 
+	// Get bond denom from staking params
+	stakingParams, err := m.stakingSource.GetParams(block.Height)
+	if err != nil {
+		return err
+	}
+
 	// Get current total supply of uCRE
-	supply, err := m.db.GetSupply("ucre")
+	supply, err := m.db.GetSupply(stakingParams.BondDenom)
 	if err != nil {
 		return err
 	}

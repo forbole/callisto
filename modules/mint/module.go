@@ -6,6 +6,7 @@ import (
 
 	"github.com/forbole/bdjuno/v3/database"
 	mintsource "github.com/forbole/bdjuno/v3/modules/mint/source"
+	stakingsource "github.com/forbole/bdjuno/v3/modules/staking/source"
 )
 
 var (
@@ -16,17 +17,19 @@ var (
 
 // Module represent database/mint module
 type Module struct {
-	cdc    codec.Codec
-	db     *database.Db
-	source mintsource.Source
+	cdc           codec.Codec
+	db            *database.Db
+	source        mintsource.Source
+	stakingSource stakingsource.Source
 }
 
 // NewModule returns a new Module instance
-func NewModule(source mintsource.Source, cdc codec.Codec, db *database.Db) *Module {
+func NewModule(source mintsource.Source, stakingSource stakingsource.Source, cdc codec.Codec, db *database.Db) *Module {
 	return &Module{
-		cdc:    cdc,
-		db:     db,
-		source: source,
+		cdc:           cdc,
+		db:            db,
+		source:        source,
+		stakingSource: stakingSource,
 	}
 }
 
