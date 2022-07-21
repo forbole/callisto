@@ -17,7 +17,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	if _, err := scheduler.Every(1).Day().At("00:00").Do(func() {
 		utils.WatchMethod(m.getLatestLiquidStakingState)
 	}); err != nil {
-		return fmt.Errorf("error while scheduling distribution peridic operation: %s", err)
+		return fmt.Errorf("error while scheduling liquidstaking peridic operation: %s", err)
 	}
 
 	return nil
