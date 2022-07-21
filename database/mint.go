@@ -58,6 +58,10 @@ func (db *Db) GetMintParams() (creminttypes.Params, error) {
 		return creminttypes.Params{}, fmt.Errorf("error while getting mint params: %s", err)
 	}
 
+	if len(rows) == 0 {
+		return creminttypes.Params{}, fmt.Errorf("no mint params stored")
+	}
+
 	var params creminttypes.Params
 	err = json.Unmarshal([]byte(rows[0].Params), &params)
 	if err != nil {
