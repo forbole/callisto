@@ -18,7 +18,7 @@ func NewLiquidStakingParams(params liquidstakingtypes.Params, height int64) *Liq
 	}
 }
 
-// LiquidStakingState represents the x/liquidstaking parameters
+// LiquidStakingState represents the x/liquidstaking state
 type LiquidStakingState struct {
 	State  liquidstakingtypes.NetAmountState
 	Height int64
