@@ -54,7 +54,7 @@ func (db *Db) GetMintParams() (creminttypes.Params, error) {
 	var rows []creminttypes.Params
 	err := db.Sqlx.Select(&rows, `SELECT * FROM mint_params`)
 	if err != nil {
-		return creminttypes.Params{}, fmt.Errorf("error while getting supply: %s", err)
+		return creminttypes.Params{}, fmt.Errorf("error while getting mint params: %s", err)
 	}
 
 	return rows[0], nil
