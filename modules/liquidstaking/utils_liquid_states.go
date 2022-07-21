@@ -16,6 +16,6 @@ func (m *Module) updateLiquidStakingState(height int64) error {
 		return fmt.Errorf("error while getting liquid staking state: %s", err)
 	}
 
-	// Store the pool into the database
+	// Store the liquid staking state in the database
 	return m.db.SaveLiquidStakingState(types.NewLiquidStakingState(state, height))
 }
