@@ -11,7 +11,7 @@ import (
 
 // RegisterPeriodicOperations implements modules.PeriodicOperationsModule
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
-	log.Debug().Str("module", "distribution").Msg("setting up periodic tasks")
+	log.Debug().Str("module", "liquidstaking").Msg("setting up periodic tasks")
 
 	// Update the liquid staking state every 1 day
 	if _, err := scheduler.Every(1).Day().At("00:00").Do(func() {
