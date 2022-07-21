@@ -30,6 +30,7 @@ WHERE liquid_staking_params.height <= excluded.height`
 	return nil
 }
 
+// SaveLiquidStakingState allows to store the given state inside the database
 func (db *Db) SaveLiquidStakingState(state *types.LiquidStakingState) error {
 	stateBz, err := json.Marshal(&state.State)
 	if err != nil {
