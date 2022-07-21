@@ -7,4 +7,5 @@ import (
 type Source interface {
 	Params(height int64) (liquidstakingtypes.Params, error)
 	GetLiquidValidators(height int64) ([]liquidstakingtypes.LiquidValidatorState, error)
+	GetLiquidStakingStates(height int64) (liquidstakingtypes.NetAmountState, error)
 }
