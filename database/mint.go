@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	creminttypes "github.com/crescent-network/crescent/v2/x/mint/types"
+	dbtypes "github.com/forbole/bdjuno/v3/database/types"
 	"github.com/forbole/bdjuno/v3/types"
 )
 
@@ -51,11 +52,17 @@ WHERE mint_params.height <= excluded.height`
 
 // GetMintParams allows to get the current mint params
 func (db *Db) GetMintParams() (creminttypes.Params, error) {
-	var rows []creminttypes.Params
+	var rows []dbtypes.MintParamsRow
 	err := db.Sqlx.Select(&rows, `SELECT * FROM mint_params`)
 	if err != nil {
 		return creminttypes.Params{}, fmt.Errorf("error while getting mint params: %s", err)
 	}
 
-	return rows[0], nil
+	var params creminttypes.Params
+	err = json.Unmarshal([]byte(rows[0].Params), &params)
+	if err != nil {
+		return creminttypes.Params{}, fmt.Errorf("error while unmarshaling mint params: %s", err)
+	}
+
+	return params, nil
 }
