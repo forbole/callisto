@@ -36,7 +36,6 @@ func (m *Module) updateInflationData() error {
 		return err
 	}
 
-	// Get evmos inflation data
 	evmosInfationData, err := m.getInflationData(height)
 	if err != nil {
 		return fmt.Errorf("error while storing evmos inflation data: %s", err)

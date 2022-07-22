@@ -19,5 +19,5 @@ func (m *Module) UpdateParams(height int64) error {
 		return fmt.Errorf("error while getting inflation params: %s", err)
 	}
 
-	return m.db.SaveInflationParams(types.NewInflationParams(params, height))
+	return m.db.SaveEvmosInflationParams(types.NewEvmosInflationParams(params, height))
 }

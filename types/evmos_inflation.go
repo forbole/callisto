@@ -5,15 +5,15 @@ import (
 	inflationtypes "github.com/evmos/evmos/v6/x/inflation/types"
 )
 
-// InflationParams represents the parameters of the evmos x/inflation module
-type InflationParams struct {
+// EvmosInflationParams represents the parameters of the evmos x/inflation module
+type EvmosInflationParams struct {
 	inflationtypes.Params
 	Height int64
 }
 
 // NewInflationParams allows to build a new InflationParams instance
-func NewInflationParams(params inflationtypes.Params, height int64) *InflationParams {
-	return &InflationParams{
+func NewEvmosInflationParams(params inflationtypes.Params, height int64) *EvmosInflationParams {
+	return &EvmosInflationParams{
 		Params: params,
 		Height: height,
 	}
@@ -32,7 +32,8 @@ type EvmosInflationData struct {
 // NewEvmosInflationData allows to build a new InflationData instance
 func NewEvmosInflationData(
 	circulatingSupply sdk.DecCoin, epochMintProvision sdk.DecCoin, inflationRate sdk.Dec,
-	inflationPeriod uint64, skippedEpochs uint64, height int64) *EvmosInflationData {
+	inflationPeriod uint64, skippedEpochs uint64, height int64,
+) *EvmosInflationData {
 	return &EvmosInflationData{
 		CirculatingSupply:  circulatingSupply,
 		EpochMintProvision: epochMintProvision,
