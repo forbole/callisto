@@ -1,5 +1,5 @@
 table:
-  name: evmos_inflation_params
+  name: evmos_inflation_data
   schema: public
 select_permissions:
 - permission:
