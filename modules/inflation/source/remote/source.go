@@ -2,46 +2,86 @@ package remote
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+	inflationtypes "github.com/evmos/evmos/v6/x/inflation/types"
 	"github.com/forbole/juno/v3/node/remote"
 
-	mintsource "github.com/forbole/bdjuno/v3/modules/mint/source"
+	inflationsource "github.com/forbole/bdjuno/v3/modules/inflation/source"
 )
 
 var (
-	_ mintsource.Source = &Source{}
+	_ inflationsource.Source = &Source{}
 )
 
 // Source implements mintsource.Source using a remote node
 type Source struct {
 	*remote.Source
-	querier minttypes.QueryClient
+	querier inflationtypes.QueryClient
 }
 
 // NewSource returns a new Source instance
-func NewSource(source *remote.Source, querier minttypes.QueryClient) *Source {
+func NewSource(source *remote.Source, querier inflationtypes.QueryClient) *Source {
 	return &Source{
 		Source:  source,
 		querier: querier,
 	}
 }
 
-// GetInflation implements mintsource.Source
-func (s Source) GetInflation(height int64) (sdk.Dec, error) {
-	res, err := s.querier.Inflation(remote.GetHeightRequestContext(s.Ctx, height), &minttypes.QueryInflationRequest{})
+// Params implements mintsource.Source
+func (s Source) Params(height int64) (inflationtypes.Params, error) {
+	res, err := s.querier.Params(remote.GetHeightRequestContext(s.Ctx, height), &inflationtypes.QueryParamsRequest{})
+	if err != nil {
+		return inflationtypes.Params{}, nil
+	}
+
+	return res.Params, nil
+}
+
+// CirculatingSupply implements mintsource.Source
+func (s Source) CirculatingSupply(height int64) (sdk.DecCoin, error) {
+	res, err := s.querier.CirculatingSupply(remote.GetHeightRequestContext(s.Ctx, height), &inflationtypes.QueryCirculatingSupplyRequest{})
+	if err != nil {
+		return sdk.DecCoin{}, err
+	}
+
+	return res.CirculatingSupply, nil
+}
+
+// EpochMintProvision implements mintsource.Source
+func (s Source) EpochMintProvision(height int64) (sdk.DecCoin, error) {
+	res, err := s.querier.EpochMintProvision(remote.GetHeightRequestContext(s.Ctx, height), &inflationtypes.QueryEpochMintProvisionRequest{})
+	if err != nil {
+		return sdk.DecCoin{}, err
+	}
+
+	return res.EpochMintProvision, nil
+}
+
+// InflationRate implements mintsource.Source
+func (s Source) InflationRate(height int64) (sdk.Dec, error) {
+	res, err := s.querier.InflationRate(remote.GetHeightRequestContext(s.Ctx, height), &inflationtypes.QueryInflationRateRequest{})
 	if err != nil {
 		return sdk.Dec{}, err
 	}
 
-	return res.Inflation, nil
+	return res.InflationRate, nil
 }
 
-// Params implements mintsource.Source
-func (s Source) Params(height int64) (minttypes.Params, error) {
-	res, err := s.querier.Params(remote.GetHeightRequestContext(s.Ctx, height), &minttypes.QueryParamsRequest{})
+// InflationPeriod implements mintsource.Source
+func (s Source) InflationPeriod(height int64) (uint64, error) {
+	res, err := s.querier.Period(remote.GetHeightRequestContext(s.Ctx, height), &inflationtypes.QueryPeriodRequest{})
 	if err != nil {
-		return minttypes.Params{}, nil
+		return 0, err
 	}
 
-	return res.Params, nil
+	return res.Period, nil
+}
+
+// SkippedEpochs implements mintsource.Source
+func (s Source) SkippedEpochs(height int64) (uint64, error) {
+	res, err := s.querier.SkippedEpochs(remote.GetHeightRequestContext(s.Ctx, height), &inflationtypes.QuerySkippedEpochsRequest{})
+	if err != nil {
+		return 0, err
+	}
+
+	return res.SkippedEpochs, nil
 }
