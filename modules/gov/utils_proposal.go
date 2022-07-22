@@ -18,7 +18,7 @@ import (
 
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 
-	inflationtypes "github.com/tharsis/evmos/v3/x/inflation/types"
+	inflationtypes "github.com/evmos/evmos/v6/x/inflation/types"
 )
 
 func (m *Module) UpdateProposal(height int64, blockVals *tmctypes.ResultValidators, id uint64) error {
