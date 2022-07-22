@@ -14,7 +14,7 @@ var (
 	_ inflationsource.Source = &Source{}
 )
 
-// Source implements mintsource.Source using a local node
+// Source implements inflationsource.Source using a local node
 type Source struct {
 	*local.Source
 	querier inflationtypes.QueryServer
