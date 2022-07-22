@@ -26,7 +26,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	return nil
 }
 
-// updateInflation fetches from the REST APIs the latest value for the
+// updateInflationData fetches from the REST APIs the latest value for the
 // inflation, and saves it inside the database.
 func (m *Module) updateInflationData() error {
 	log.Debug().
