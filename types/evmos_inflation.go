@@ -11,7 +11,7 @@ type EvmosInflationParams struct {
 	Height int64
 }
 
-// NewInflationParams allows to build a new InflationParams instance
+// NewEvmosInflationParams allows to build a new EvmosInflationParams instance
 func NewEvmosInflationParams(params inflationtypes.Params, height int64) *EvmosInflationParams {
 	return &EvmosInflationParams{
 		Params: params,
