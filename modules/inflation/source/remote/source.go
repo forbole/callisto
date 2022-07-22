@@ -76,7 +76,7 @@ func (s Source) InflationPeriod(height int64) (uint64, error) {
 	return res.Period, nil
 }
 
-// SkippedEpochs implements mintsource.Source
+// SkippedEpochs implements inflationsource.Source
 func (s Source) SkippedEpochs(height int64) (uint64, error) {
 	res, err := s.querier.SkippedEpochs(remote.GetHeightRequestContext(s.Ctx, height), &inflationtypes.QuerySkippedEpochsRequest{})
 	if err != nil {
