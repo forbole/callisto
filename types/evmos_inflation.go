@@ -21,8 +21,8 @@ func NewEvmosInflationParams(params inflationtypes.Params, height int64) *EvmosI
 
 // EvmosInflationData represents all the data cli-queried from the evmos x/inflation module
 type EvmosInflationData struct {
-	CirculatingSupply  sdk.DecCoin
-	EpochMintProvision sdk.DecCoin
+	CirculatingSupply  sdk.DecCoins
+	EpochMintProvision sdk.DecCoins
 	InflationRate      sdk.Dec
 	InflationPeriod    uint64
 	SkippedEpochs      uint64
@@ -31,7 +31,7 @@ type EvmosInflationData struct {
 
 // NewEvmosInflationData allows to build a new InflationData instance
 func NewEvmosInflationData(
-	circulatingSupply sdk.DecCoin, epochMintProvision sdk.DecCoin, inflationRate sdk.Dec,
+	circulatingSupply sdk.DecCoins, epochMintProvision sdk.DecCoins, inflationRate sdk.Dec,
 	inflationPeriod uint64, skippedEpochs uint64, height int64,
 ) *EvmosInflationData {
 	return &EvmosInflationData{

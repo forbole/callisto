@@ -8,6 +8,8 @@ import (
 
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // RegisterPeriodicOperations implements modules.PeriodicOperationsModule
@@ -41,7 +43,7 @@ func (m *Module) updateInflationData() error {
 		return fmt.Errorf("error while storing evmos inflation data: %s", err)
 	}
 
-	return m.db.SaveEvmosInflationData(evmosInfationData, height)
+	return m.db.SaveEvmosInflationData(evmosInfationData)
 }
 
 func (m *Module) getInflationData(height int64) (*types.EvmosInflationData, error) {
@@ -71,6 +73,6 @@ func (m *Module) getInflationData(height int64) (*types.EvmosInflationData, erro
 	}
 
 	return types.NewEvmosInflationData(
-		circulatingSupply, epochMintProvision, inflationRate, inflationPeriod, skippedEpochs, height,
+		[]sdk.DecCoin{circulatingSupply}, []sdk.DecCoin{epochMintProvision}, inflationRate, inflationPeriod, skippedEpochs, height,
 	), nil
 }
