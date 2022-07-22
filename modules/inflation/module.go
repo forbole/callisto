@@ -31,5 +31,5 @@ func NewModule(source mintsource.Source, cdc codec.Codec, db *database.Db) *Modu
 
 // Name implements modules.Module
 func (m *Module) Name() string {
-	return "mint"
+	return "inflation"
 }
