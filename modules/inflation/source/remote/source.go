@@ -46,7 +46,7 @@ func (s Source) CirculatingSupply(height int64) (sdk.DecCoin, error) {
 	return res.CirculatingSupply, nil
 }
 
-// EpochMintProvision implements mintsource.Source
+// EpochMintProvision implements inflationsource.Source
 func (s Source) EpochMintProvision(height int64) (sdk.DecCoin, error) {
 	res, err := s.querier.EpochMintProvision(remote.GetHeightRequestContext(s.Ctx, height), &inflationtypes.QueryEpochMintProvisionRequest{})
 	if err != nil {
