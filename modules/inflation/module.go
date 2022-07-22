@@ -14,7 +14,7 @@ var (
 	_ modules.PeriodicOperationsModule = &Module{}
 )
 
-// Module represent database/mint module
+// Module represent database/inflation module
 type Module struct {
 	cdc    codec.Codec
 	db     *database.Db
