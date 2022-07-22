@@ -43,7 +43,7 @@ func (s Source) Params(height int64) (inflationtypes.Params, error) {
 	return res.Params, nil
 }
 
-// CirculatingSupply implements mintsource.Source
+// CirculatingSupply implements inflationsource.Source
 func (s Source) CirculatingSupply(height int64) (sdk.DecCoin, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
