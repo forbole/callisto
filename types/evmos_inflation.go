@@ -29,7 +29,7 @@ type EvmosInflationData struct {
 	Height             int64
 }
 
-// NewEvmosInflationData allows to build a new InflationData instance
+// NewEvmosInflationData allows to build a new EvmosInflationData instance
 func NewEvmosInflationData(
 	circulatingSupply sdk.DecCoins, epochMintProvision sdk.DecCoins, inflationRate sdk.Dec,
 	inflationPeriod uint64, skippedEpochs uint64, height int64,
