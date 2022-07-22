@@ -26,7 +26,7 @@ func NewSource(source *remote.Source, querier inflationtypes.QueryClient) *Sourc
 	}
 }
 
-// Params implements mintsource.Source
+// Params implements inflationsource.Source
 func (s Source) Params(height int64) (inflationtypes.Params, error) {
 	res, err := s.querier.Params(remote.GetHeightRequestContext(s.Ctx, height), &inflationtypes.QueryParamsRequest{})
 	if err != nil {
