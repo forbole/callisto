@@ -28,7 +28,7 @@ func NewSource(source *local.Source, querier inflationtypes.QueryServer) *Source
 	}
 }
 
-// Params implements mintsource.Source
+// Params implements inflationsource.Source
 func (s Source) Params(height int64) (inflationtypes.Params, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
