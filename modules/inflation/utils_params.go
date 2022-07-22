@@ -13,11 +13,11 @@ func (m *Module) UpdateParams(height int64) error {
 	log.Debug().Str("module", "mint").Int64("height", height).
 		Msg("updating params")
 
+	// Get inflation params and store in the database
 	params, err := m.source.Params(height)
 	if err != nil {
-		return fmt.Errorf("error while getting params: %s", err)
+		return fmt.Errorf("error while getting inflation params: %s", err)
 	}
 
-	return m.db.SaveMintParams(types.NewMintParams(params, height))
-
+	return m.db.SaveInflationParams(types.NewInflationParams(params, height))
 }
