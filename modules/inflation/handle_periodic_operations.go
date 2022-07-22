@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/forbole/bdjuno/v3/modules/utils"
+	"github.com/forbole/bdjuno/v3/types"
 
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
@@ -36,41 +37,41 @@ func (m *Module) updateInflationData() error {
 	}
 
 	// Get evmos inflation data
-	evmosInfation, err := m.getInflationData(height)
+	evmosInfationData, err := m.getInflationData(height)
 	if err != nil {
 		return fmt.Errorf("error while storing evmos inflation data: %s", err)
 	}
 
-	return m.db.SaveEvmosInflation(evmosInfation, height)
+	return m.db.SaveEvmosInflationData(evmosInfationData, height)
 }
 
-func (m *Module) getInflationData(height int64) (types.EvmosInflation, error) {
+func (m *Module) getInflationData(height int64) (*types.EvmosInflationData, error) {
 	circulatingSupply, err := m.source.CirculatingSupply(height)
 	if err != nil {
-		return fmt.Errorf("error while getting inflation rate: %s", err)
+		return nil, fmt.Errorf("error while getting inflation rate: %s", err)
 	}
 
 	epochMintProvision, err := m.source.EpochMintProvision(height)
 	if err != nil {
-		return fmt.Errorf("error while getting epoch mint provision: %s", err)
+		return nil, fmt.Errorf("error while getting epoch mint provision: %s", err)
 	}
 
 	inflationRate, err := m.source.InflationRate(height)
 	if err != nil {
-		return fmt.Errorf("error while getting inflation rate: %s", err)
+		return nil, fmt.Errorf("error while getting inflation rate: %s", err)
 	}
 
 	inflationPeriod, err := m.source.InflationPeriod(height)
 	if err != nil {
-		return fmt.Errorf("error while getting inflation period: %s", err)
+		return nil, fmt.Errorf("error while getting inflation period: %s", err)
 	}
 
 	skippedEpochs, err := m.source.SkippedEpochs(height)
 	if err != nil {
-		return fmt.Errorf("error while getting skipped epochs: %s", err)
+		return nil, fmt.Errorf("error while getting skipped epochs: %s", err)
 	}
 
-	return types.NewEvmosInflation(
+	return types.NewEvmosInflationData(
 		circulatingSupply, epochMintProvision, inflationRate, inflationPeriod, skippedEpochs, height,
 	), nil
 }
