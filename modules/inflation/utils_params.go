@@ -10,7 +10,7 @@ import (
 
 // UpdateParams gets the updated params and stores them inside the database
 func (m *Module) UpdateParams(height int64) error {
-	log.Debug().Str("module", "mint").Int64("height", height).
+	log.Debug().Str("module", "inflation").Int64("height", height).
 		Msg("updating params")
 
 	// Get inflation params and store in the database
