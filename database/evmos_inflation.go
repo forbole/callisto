@@ -59,7 +59,7 @@ WHERE evmos_inflation_data.height <= excluded.height`
 	)
 
 	if err != nil {
-		return fmt.Errorf("error while storing evmos inflation params: %s", err)
+		return fmt.Errorf("error while storing evmos inflation data: %s", err)
 	}
 
 	return nil
