@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	dbtypes "github.com/forbole/bdjuno/v3/database/types"
+
 	"github.com/forbole/bdjuno/v3/types"
 	"github.com/lib/pq"
 )
@@ -46,9 +48,14 @@ ON CONFLICT (one_row_id) DO UPDATE
         height = excluded.height
 WHERE evmos_inflation_data.height <= excluded.height`
 
+	// Inflation rate is missing '%' sign so it needs to be multiplied by 0.01
+	// Example: when inflaionRate is 150, it's actually 1.5 (150%)
+	inflationRate := data.InflationRate.Mul(sdk.NewDecWithPrec(1, 2)).String()
+
 	_, err := db.Sql.Exec(stmt,
-		pq.Array(dbtypes.NewDbDecCoins(data.CirculatingSupply)), pq.Array(dbtypes.NewDbDecCoins(data.EpochMintProvision)),
-		data.InflationRate, data.InflationPeriod, data.SkippedEpochs, data.Height,
+		pq.Array(dbtypes.NewDbDecCoins(data.CirculatingSupply)),
+		pq.Array(dbtypes.NewDbDecCoins(data.EpochMintProvision)),
+		inflationRate, data.InflationPeriod, data.SkippedEpochs, data.Height,
 	)
 
 	if err != nil {
