@@ -73,7 +73,7 @@ func (s Source) EpochMintProvision(height int64) (sdk.DecCoin, error) {
 	return res.EpochMintProvision, nil
 }
 
-// InflationRate implements mintsource.Source
+// InflationRate implements inflationsource.Source
 func (s Source) InflationRate(height int64) (sdk.Dec, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
