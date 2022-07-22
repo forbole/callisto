@@ -12,7 +12,7 @@ var (
 	_ inflationsource.Source = &Source{}
 )
 
-// Source implements mintsource.Source using a remote node
+// Source implements inflationsource.Source using a remote node
 type Source struct {
 	*remote.Source
 	querier inflationtypes.QueryClient
