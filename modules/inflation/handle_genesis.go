@@ -20,7 +20,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	var genState inflationtypes.GenesisState
 	err := m.cdc.UnmarshalJSON(appState[inflationtypes.ModuleName], &genState)
 	if err != nil {
-		return fmt.Errorf("error while reading mint genesis data: %s", err)
+		return fmt.Errorf("error while reading evmos inflation genesis data: %s", err)
 	}
 
 	// Save the params
