@@ -34,11 +34,9 @@ func (m *Module) updateInflationData() error {
 		Msg("getting inflation data")
 
 	height, err := m.db.GetLastBlockHeight()
-	// if err != nil {
-	// 	return err
-	// }
-
-	height = 1845915
+	if err != nil {
+		return err
+	}
 
 	evmosInfationData, err := m.getInflationData(height)
 	if err != nil {
