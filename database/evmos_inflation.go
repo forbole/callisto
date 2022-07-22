@@ -32,7 +32,7 @@ WHERE evmos_inflation_params.height <= excluded.height`
 	return nil
 }
 
-// SaveEvmosInflationParams allows to store the given params inside the database
+// SaveEvmosInflationData allows to store the given inflation data inside the database
 func (db *Db) SaveEvmosInflationData(data *types.EvmosInflationData) error {
 	stmt := `
 INSERT INTO evmos_inflation_data (circulating_supply, epoch_mint_provision, inflation_rate, inflation_period, skipped_epochs, height) 

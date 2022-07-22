@@ -1,4 +1,4 @@
-package mint
+package inflation
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
