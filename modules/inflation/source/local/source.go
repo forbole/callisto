@@ -88,7 +88,7 @@ func (s Source) InflationRate(height int64) (sdk.Dec, error) {
 	return res.InflationRate, nil
 }
 
-// InflationPeriod implements mintsource.Source
+// InflationPeriod implements inflationsource.Source
 func (s Source) InflationPeriod(height int64) (uint64, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
