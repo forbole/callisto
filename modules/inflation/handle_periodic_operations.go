@@ -31,7 +31,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 func (m *Module) updateInflationData() error {
 	log.Debug().
 		Str("module", "inflation").
-		Msg("getting inflation data")
+		Msg("getting evmos inflation data")
 
 	height, err := m.db.GetLastBlockHeight()
 	if err != nil {
