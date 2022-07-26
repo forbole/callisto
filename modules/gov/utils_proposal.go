@@ -20,7 +20,7 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 )
 
-func (m *Module) UpdateProposal(height int64, blockVals *tmctypes.ResultValidators, id uint64) error {
+func (m *Module) UpdateProposal(height int64, id uint64) error {
 	// Get the proposal
 	proposal, err := m.source.Proposal(height, id)
 	if err != nil {
@@ -51,8 +51,11 @@ func (m *Module) UpdateProposal(height int64, blockVals *tmctypes.ResultValidato
 	if err != nil {
 		return fmt.Errorf("error while updating account: %s", err)
 	}
+	return nil
+}
 
-	err = m.updateProposalStakingPoolSnapshot(height, id)
+func (m *Module) UpdateProposalSnapshots(height int64, blockVals *tmctypes.ResultValidators, id uint64) error {
+	err := m.updateProposalStakingPoolSnapshot(height, id)
 	if err != nil {
 		return fmt.Errorf("error while updating proposal staking pool snapshot: %s", err)
 	}
@@ -85,7 +88,7 @@ func (m *Module) updateDeletedProposalStatus(id uint64) error {
 
 // handleParamChangeProposal updates params to the corresponding modules if a ParamChangeProposal has passed
 func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Proposal) error {
-	if proposal.Status.String() != types.ProposalStatusPassed {
+	if proposal.Status != govtypes.StatusPassed {
 		// If the status of ParamChangeProposal is not passed, do nothing
 		return nil
 	}
@@ -100,6 +103,7 @@ func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Propo
 	if !ok {
 		return nil
 	}
+
 	for _, change := range paramChangeProposal.Changes {
 		// Update the params for corresponding modules
 		switch change.Subspace {
@@ -117,6 +121,12 @@ func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Propo
 			err = m.mintModule.UpdateParams(height)
 			if err != nil {
 				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", minttypes.ModuleName, err)
+			}
+
+			// Update the inflation
+			err = m.mintModule.UpdateInflation()
+			if err != nil {
+				return fmt.Errorf("error while updating inflation with ParamChangeProposal: %s", err)
 			}
 		case profilestypes.ModuleName:
 			err = m.profilesModule.UpdateParams(height)
