@@ -17,6 +17,8 @@ import (
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+
+	inflationtypes "github.com/evmos/evmos/v6/x/inflation/types"
 )
 
 func (m *Module) UpdateProposal(height int64, blockVals *tmctypes.ResultValidators, id uint64) error {
@@ -102,6 +104,11 @@ func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Propo
 	for _, change := range paramChangeProposal.Changes {
 		// Update the params for corresponding modules
 		switch change.Subspace {
+		case inflationtypes.ModuleName:
+			err = m.inflationModule.UpdateParams(height)
+			if err != nil {
+				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", inflationtypes.ModuleName, err)
+			}
 		case distrtypes.ModuleName:
 			err = m.distrModule.UpdateParams(height)
 			if err != nil {

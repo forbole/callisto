@@ -1,3 +1,8 @@
+## Unreleased
+
+### Inflation module
+- ([\#438](https://github.com/forbole/bdjuno/pull/438)) Implement `evmos` `x/inflation` module
+
 ## Version v3.1.0
 ### Dependencies
 - ([\#412](https://github.com/forbole/bdjuno/pull/412)) Updated Juno to `v3.2.1`

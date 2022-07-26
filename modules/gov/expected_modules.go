@@ -15,6 +15,10 @@ type DistrModule interface {
 	UpdateParams(height int64) error
 }
 
+type InflationModule interface {
+	UpdateParams(height int64) error
+}
+
 type MintModule interface {
 	UpdateParams(height int64) error
 }
