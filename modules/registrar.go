@@ -24,9 +24,9 @@ import (
 	"github.com/forbole/bdjuno/v3/modules/distribution"
 	"github.com/forbole/bdjuno/v3/modules/feegrant"
 
+	"github.com/forbole/bdjuno/v3/modules/deployment"
 	"github.com/forbole/bdjuno/v3/modules/gov"
 	"github.com/forbole/bdjuno/v3/modules/market"
-	"github.com/forbole/bdjuno/v3/modules/deployment"
 	"github.com/forbole/bdjuno/v3/modules/mint"
 	"github.com/forbole/bdjuno/v3/modules/modules"
 	"github.com/forbole/bdjuno/v3/modules/pricefeed"
