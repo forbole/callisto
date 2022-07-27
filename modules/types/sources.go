@@ -23,6 +23,7 @@ import (
 
 	desmosapp "github.com/desmos-labs/desmos/v4/app"
 	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
+
 	banksource "github.com/forbole/bdjuno/v3/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v3/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v3/modules/bank/source/remote"

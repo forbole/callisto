@@ -8,11 +8,12 @@ import (
 
 	parsegenesis "github.com/forbole/juno/v3/cmd/parse/genesis"
 
+	parsetransaction "github.com/forbole/juno/v3/cmd/parse/transactions"
+
 	parseauth "github.com/forbole/bdjuno/v3/cmd/parse/auth"
 	parsefeegrant "github.com/forbole/bdjuno/v3/cmd/parse/feegrant"
 	parsegov "github.com/forbole/bdjuno/v3/cmd/parse/gov"
 	parsestaking "github.com/forbole/bdjuno/v3/cmd/parse/staking"
-	parsetransaction "github.com/forbole/juno/v3/cmd/parse/transactions"
 )
 
 // NewParseCmd returns the Cobra command allowing to parse some chain data without having to re-sync the whole database

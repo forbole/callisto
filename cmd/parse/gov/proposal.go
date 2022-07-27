@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"strconv"
 
-	modulestypes "github.com/forbole/bdjuno/v3/modules/types"
 	"github.com/rs/zerolog/log"
+
+	modulestypes "github.com/forbole/bdjuno/v3/modules/types"
 
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"

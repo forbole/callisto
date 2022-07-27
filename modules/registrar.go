@@ -11,6 +11,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/forbole/bdjuno/v3/modules/profiles"
 
 	jmodules "github.com/forbole/juno/v3/modules"
