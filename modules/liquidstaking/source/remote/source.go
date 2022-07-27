@@ -44,3 +44,13 @@ func (s Source) GetLiquidValidators(height int64) ([]liquidstakingtypes.LiquidVa
 
 	return res.LiquidValidators, nil
 }
+
+// GetLiquidStakingStates implements liquidstakingtypes.Source
+func (s Source) GetLiquidStakingStates(height int64) (liquidstakingtypes.NetAmountState, error) {
+	res, err := s.querier.States(remote.GetHeightRequestContext(s.Ctx, height), &liquidstakingtypes.QueryStatesRequest{})
+	if err != nil {
+		return liquidstakingtypes.NetAmountState{}, nil
+	}
+
+	return res.NetAmountState, nil
+}
