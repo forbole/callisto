@@ -51,8 +51,8 @@ func NewDbInfo(info providertypes.ProviderInfo) DbProviderInfo {
 }
 
 // Equal tells whether both object are the same
-func (a DbProviderInfo) Equal(b DbProviderInfo) bool {
-	return a.EMail == b.EMail && a.Website == b.Website
+func (info DbProviderInfo) Equal(b DbProviderInfo) bool {
+	return info.EMail == b.EMail && info.Website == b.Website
 }
 
 // Value implements driver.Valuer
