@@ -1,6 +1,7 @@
 ## Unreleased
 ### Dependencies
 - ([\#440](https://github.com/forbole/bdjuno/pull/440)) Updated Juno to `v3.3.0`
+
 ### Changes
 #### Mint module
 - ([\#432](https://github.com/forbole/bdjuno/pull/432)) Update inflation rate when mint param change proposal is passed
