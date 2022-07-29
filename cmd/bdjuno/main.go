@@ -16,7 +16,6 @@ import (
 	"github.com/forbole/bdjuno/v3/database"
 	"github.com/forbole/bdjuno/v3/modules"
 
-	// gaiaapp "github.com/cosmos/gaia/v6/app"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	akashapp "github.com/ovrclk/akash/app"
 )
