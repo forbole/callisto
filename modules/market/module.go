@@ -11,7 +11,7 @@ var (
 	_ modules.GenesisModule = &Module{}
 )
 
-// Module represent database/market module
+// Module represent x/market module
 type Module struct {
 	cdc codec.Codec
 	db  *database.Db
