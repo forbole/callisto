@@ -3,8 +3,10 @@ package gov
 import (
 	"encoding/hex"
 	"fmt"
+	"strconv"
 
 	modulestypes "github.com/forbole/bdjuno/v3/modules/types"
+	"github.com/rs/zerolog/log"
 
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
@@ -14,7 +16,11 @@ import (
 	"github.com/forbole/juno/v3/parser"
 
 	"github.com/forbole/bdjuno/v3/database"
+	"github.com/forbole/bdjuno/v3/modules/distribution"
 	"github.com/forbole/bdjuno/v3/modules/gov"
+	"github.com/forbole/bdjuno/v3/modules/mint"
+	"github.com/forbole/bdjuno/v3/modules/slashing"
+	"github.com/forbole/bdjuno/v3/modules/staking"
 	"github.com/forbole/bdjuno/v3/utils"
 )
 
@@ -24,7 +30,10 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 		Use:   "proposal [id]",
 		Short: "Get the description, votes and everything related to a proposal given its id",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			proposalID := args[0]
+			proposalID, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
 
 			parseCtx, err := parsecmdtypes.GetParserContext(config.Cfg, parseConfig)
 			if err != nil {
@@ -39,8 +48,14 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			// Get the database
 			db := database.Cast(parseCtx.Database)
 
+			// Build expected modules of gov modules for handleParamChangeProposal
+			distrModule := distribution.NewModule(sources.DistrSource, parseCtx.EncodingConfig.Marshaler, db)
+			mintModule := mint.NewModule(sources.MintSource, parseCtx.EncodingConfig.Marshaler, db)
+			slashingModule := slashing.NewModule(sources.SlashingSource, parseCtx.EncodingConfig.Marshaler, db)
+			stakingModule := staking.NewModule(sources.StakingSource, slashingModule, parseCtx.EncodingConfig.Marshaler, db)
+
 			// Build the gov module
-			govModule := gov.NewModule(sources.GovSource, nil, nil, nil, nil, nil, parseCtx.EncodingConfig.Marshaler, db)
+			govModule := gov.NewModule(sources.GovSource, nil, distrModule, mintModule, slashingModule, stakingModule, parseCtx.EncodingConfig.Marshaler, db)
 
 			err = refreshProposalDetails(parseCtx, proposalID, govModule)
 			if err != nil {
@@ -57,14 +72,27 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				return err
 			}
 
+			// Update the proposal to the latest status
+			height, err := parseCtx.Node.LatestHeight()
+			if err != nil {
+				return fmt.Errorf("error while getting chain latest block height: %s", err)
+			}
+
+			err = govModule.UpdateProposal(height, proposalID)
+			if err != nil {
+				return err
+			}
+
 			return nil
 		},
 	}
 }
 
-func refreshProposalDetails(parseCtx *parser.Context, proposalID string, govModule *gov.Module) error {
+func refreshProposalDetails(parseCtx *parser.Context, proposalID uint64, govModule *gov.Module) error {
+	log.Debug().Msg("refreshing proposal details")
+
 	// Get the tx that created the proposal
-	txs, err := utils.QueryTxs(parseCtx.Node, fmt.Sprintf("submit_proposal.proposal_id=%s", proposalID))
+	txs, err := utils.QueryTxs(parseCtx.Node, fmt.Sprintf("submit_proposal.proposal_id=%d", proposalID))
 	if err != nil {
 		return err
 	}
@@ -94,9 +122,11 @@ func refreshProposalDetails(parseCtx *parser.Context, proposalID string, govModu
 	return nil
 }
 
-func refreshProposalDeposits(parseCtx *parser.Context, proposalID string, govModule *gov.Module) error {
+func refreshProposalDeposits(parseCtx *parser.Context, proposalID uint64, govModule *gov.Module) error {
+	log.Debug().Msg("refreshing proposal deposits")
+
 	// Get the tx that deposited to the proposal
-	txs, err := utils.QueryTxs(parseCtx.Node, fmt.Sprintf("proposal_deposit.proposal_id=%s", proposalID))
+	txs, err := utils.QueryTxs(parseCtx.Node, fmt.Sprintf("proposal_deposit.proposal_id=%d", proposalID))
 	if err != nil {
 		return err
 	}
@@ -124,9 +154,11 @@ func refreshProposalDeposits(parseCtx *parser.Context, proposalID string, govMod
 	return nil
 }
 
-func refreshProposalVotes(parseCtx *parser.Context, proposalID string, govModule *gov.Module) error {
+func refreshProposalVotes(parseCtx *parser.Context, proposalID uint64, govModule *gov.Module) error {
+	log.Debug().Msg("refreshing proposal votes")
+
 	// Get the tx that voted the proposal
-	txs, err := utils.QueryTxs(parseCtx.Node, fmt.Sprintf("proposal_vote.proposal_id=%s", proposalID))
+	txs, err := utils.QueryTxs(parseCtx.Node, fmt.Sprintf("proposal_vote.proposal_id=%d", proposalID))
 	if err != nil {
 		return err
 	}
