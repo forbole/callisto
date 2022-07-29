@@ -34,7 +34,7 @@ func (db *Db) SaveProviders(providers []providertypes.Provider, height int64) er
 	return nil
 }
 
-// saveProviders allows to store provider inside the database
+// saveProviders allows to store providers inside the database
 func (db *Db) saveProviders(paramsNumber int, providers []providertypes.Provider, height int64) error {
 	stmt := `INSERT INTO provider (owner_address, host_uri, attributes, info, height) VALUES `
 	var params []interface{}
