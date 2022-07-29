@@ -11,7 +11,7 @@ var (
 	_ modules.GenesisModule = &Module{}
 )
 
-// Module represent database/deployment module
+// Module represent x/deployment module
 type Module struct {
 	cdc codec.Codec
 	db  *database.Db
