@@ -20,6 +20,16 @@ func (m *Module) handleMsgRegisterUser(tx *juno.Tx, index int, msg *types.MsgReg
 		return types.ErrInvalidPublicKeyField
 	}
 
+	if msg.ReferrerHash != "" {
+		affiliateAcc, err := m.accountRepo.GetAccounts(filter.NewFilter().SetArgument(dbtypes.FieldHash, msg.ReferrerHash))
+		switch {
+		case err != nil:
+			return err
+		case len(affiliateAcc) != 1:
+			msg.ReferrerHash = ""
+		}
+	}
+
 	newAcc := types.Account{
 		Hash:      msg.Hash,
 		Address:   msg.Address,
