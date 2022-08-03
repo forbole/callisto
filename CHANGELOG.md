@@ -1,11 +1,19 @@
-## Unreleased
+## Version v3.2.0
+### Changes
 
-### Changes 
 #### Liquidstaking module
 - ([\#419](https://github.com/forbole/bdjuno/pull/419)) [crescent] Added `x/liquidstaking` module parsing
 
 #### Mint module
+- ([\#432](https://github.com/forbole/bdjuno/pull/432)) Update inflation rate when mint param change proposal is passed
 - ([\#435](https://github.com/forbole/bdjuno/pull/435)) [crescent] Applied crescent custom mint types to `x/mint` & manually calculate inflation
+
+#### Gov module
+- ([\#401](https://github.com/forbole/bdjuno/pull/401)) Update the proposal status to the latest in `bdjuno parse gov proposal [id]` command
+- ([\#430](https://github.com/forbole/bdjuno/pull/430)) Update the proposals that have invalid status but can still be in voting or deposit periods 
+
+### Dependencies
+- ([\#440](https://github.com/forbole/bdjuno/pull/440)) Updated Juno to `v3.3.0`
 
 ## Version v3.1.0
 ### Dependencies
