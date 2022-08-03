@@ -10,7 +10,6 @@ import (
 
 const (
 	ProposalStatusInvalid = "PROPOSAL_STATUS_INVALID"
-	ProposalStatusPassed  = "PROPOSAL_STATUS_PASSED"
 )
 
 // DepositParams contains the data of the deposit parameters of the x/gov module
