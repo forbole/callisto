@@ -30,9 +30,14 @@ func (m *Module) updateProposals(height int64, blockVals *tmctypes.ResultValidat
 	}
 
 	for _, id := range ids {
-		err = m.UpdateProposal(height, blockVals, id)
+		err = m.UpdateProposal(height, id)
 		if err != nil {
 			return fmt.Errorf("error while updating proposal: %s", err)
+		}
+
+		err = m.UpdateProposalSnapshots(height, blockVals, id)
+		if err != nil {
+			return fmt.Errorf("error while updating proposal snapshots: %s", err)
 		}
 	}
 	return nil
