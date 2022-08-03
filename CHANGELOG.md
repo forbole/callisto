@@ -1,14 +1,18 @@
-## Unreleased
+## Version v3.2.0
+### Changes
+#### Mint module
+- ([\#432](https://github.com/forbole/bdjuno/pull/432)) Update inflation rate when mint param change proposal is passed
 
-### Changes 
-#### Shield module
-- ([\#418](https://github.com/forbole/bdjuno/pull/418)) [certik] Added `x/shield` module parsing
+#### Gov module
+- ([\#401](https://github.com/forbole/bdjuno/pull/401)) Update the proposal status to the latest in `bdjuno parse gov proposal [id]` command
+- ([\#430](https://github.com/forbole/bdjuno/pull/430)) Update the proposals that have invalid status but can still be in voting or deposit periods 
+- ([\#414](https://github.com/forbole/bdjuno/pull/414)) Apply `certik` custom types: proposal, deposit params, and tally params
 
 ### Dependencies
-- ([\#412](https://github.com/forbole/bdjuno/pull/412)) Updated Juno to `v3.2.1`
+- ([\#440](https://github.com/forbole/bdjuno/pull/440)) Updated Juno to `v3.3.0`
 
-### Gov module
-- ([\#414](https://github.com/forbole/bdjuno/pull/414)) Apply `certik` custom types: proposal, deposit params, and tally params
+#### Shield module
+- ([\#418](https://github.com/forbole/bdjuno/pull/418)) [certik] Added `x/shield` module parsing
 
 
 ## Version v3.1.0
