@@ -6,8 +6,8 @@ require (
 	github.com/MonikaCat/provenance v1.10.1-0.20220617151414-ca82aea8317e
 	github.com/cosmos/cosmos-sdk v0.45.4
 	github.com/cosmos/gaia/v6 v6.0.4
-	github.com/forbole/juno/v3 v3.2.2-0.20220526111705-99d09a80c1a3
-	github.com/go-co-op/gocron v1.13.0
+	github.com/forbole/juno/v3 v3.3.1-0.20220803134534-55af63c839ac
+	github.com/go-co-op/gocron v1.16.1
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.6
