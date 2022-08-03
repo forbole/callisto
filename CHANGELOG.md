@@ -1,4 +1,4 @@
-## Unreleased
+## Version v3.2.0
 ### Changes
 #### Mint module
 - ([\#432](https://github.com/forbole/bdjuno/pull/432)) Update inflation rate when mint param change proposal is passed
@@ -8,7 +8,7 @@
 - ([\#430](https://github.com/forbole/bdjuno/pull/430)) Update the proposals that have invalid status but can still be in voting or deposit periods 
 
 ### Dependencies
-- ([\#412](https://github.com/forbole/bdjuno/pull/412)) Updated Juno to `v3.2.1`
+- ([\#440](https://github.com/forbole/bdjuno/pull/440)) Updated Juno to `v3.3.0`
 
 ## Version v3.1.0
 ### Dependencies
