@@ -2,6 +2,7 @@ FROM golang:1.16-alpine AS builder
 RUN apk update && apk add --no-cache make git
 WORKDIR /go/src/github.com/forbole/bdjuno
 COPY . ./
+RUN go mod download
 RUN make build
 
 FROM alpine:latest
