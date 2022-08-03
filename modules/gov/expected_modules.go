@@ -21,6 +21,7 @@ type InflationModule interface {
 
 type MintModule interface {
 	UpdateParams(height int64) error
+	UpdateInflation() error
 }
 
 type SlashingModule interface {
