@@ -209,6 +209,16 @@ func (db *Db) GetOpenProposalsIds() ([]uint64, error) {
 	var ids []uint64
 	stmt := `SELECT id FROM proposal WHERE status = $1 OR status = $2`
 	err := db.Sqlx.Select(&ids, stmt, govtypes.StatusDepositPeriod.String(), govtypes.StatusVotingPeriod.String())
+	if err != nil {
+		return ids, err
+	}
+
+	// Get also the invalid status proposals due to gRPC failure but still are in deposit period or voting period
+	var idsInvalid []uint64
+	stmt = `SELECT id FROM proposal WHERE status = $1 AND (voting_end_time > NOW() OR deposit_end_time > NOW())`
+	err = db.Sqlx.Select(&idsInvalid, stmt, types.ProposalStatusInvalid)
+	ids = append(ids, idsInvalid...)
+
 	return ids, err
 }
 
