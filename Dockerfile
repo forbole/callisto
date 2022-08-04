@@ -5,7 +5,7 @@ COPY . ./
 RUN go mod download
 RUN make build
 
-FROM alpine:latest
+FROM gcr.io/distroless/base
 WORKDIR /bdjuno
 COPY --from=builder /go/src/github.com/forbole/bdjuno/build/bdjuno /usr/bin/bdjuno
-CMD [ "bdjuno" ]
+ENTRYPOINT [ "bdjuno" ]
