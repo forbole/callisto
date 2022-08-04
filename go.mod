@@ -4,8 +4,8 @@ go 1.17
 
 require (
 	github.com/cosmos/cosmos-sdk v0.45.4
-	github.com/forbole/juno/v3 v3.2.2-0.20220526111705-99d09a80c1a3
-	github.com/go-co-op/gocron v1.13.0
+	github.com/forbole/juno/v3 v3.3.0
+	github.com/go-co-op/gocron v1.16.1
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.6
@@ -40,6 +40,7 @@ require (
 	github.com/cosmos/gorocksdb v1.2.0 // indirect
 	github.com/cosmos/iavl v0.17.3 // indirect
 	github.com/cosmos/ibc-go/v2 v2.2.0 // indirect
+	github.com/cosmos/ibc-go/v3 v3.0.0 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.11.1 // indirect
 	github.com/danieljoos/wincred v1.0.2 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
