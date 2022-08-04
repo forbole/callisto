@@ -1,4 +1,10 @@
-FROM golang:1.16-alpine AS builder
+FROM golang:1.18-alpine AS builder
+
+ARG GIT_TOKEN
+
+RUN go env -w GOPRIVATE=github.com/NibiruChain
+RUN git config --global url."https://git:${GIT_TOKEN}@github.com".insteadOf "https://github.com"
+
 RUN apk update && apk add --no-cache make git
 WORKDIR /go/src/github.com/forbole/bdjuno
 COPY . ./

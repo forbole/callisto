@@ -7,6 +7,9 @@ on:
     branches:
       - chains/nibiru
 
+env:
+  GOPRIVATE: github.com/NibiruChain
+
 jobs:
   Unit-tests:
     runs-on: ubuntu-latest
@@ -14,12 +17,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Configure git for private modules
+        env:
+          TOKEN: ${{ secrets.NIBIBOT_GIT_TOKEN }}
+        run: git config --global url."https://nibibot:${TOKEN}@github.com".insteadOf "https://github.com"
+
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
           go-version: 1.18
+
       - name: Test & Create coverage report
         run: make install test-unit stop-docker-test
+
       - name: Upload cove coverage
         uses: codecov/codecov-action@v3
         with:
