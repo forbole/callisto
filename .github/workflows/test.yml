@@ -1,21 +1,13 @@
 name: Tests
 # Tests / Code Coverage workflow runs unit tests and uploads a code coverage report.
-# This workflow is run on pushes to master & every Pull Requests where a .go, .mod, .sum have been changed.
+# This workflow is run on pushes to chains/nibiru & every Pull Requests where a .go, .mod, .sum have been changed.
 on:
   pull_request:
   push:
     branches:
-      - master
+      - chains/nibiru
 
 jobs:
-  Cleanup-runs:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: rokroskar/workflow-run-cleanup-action@master
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-    if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master'"
-
   Unit-tests:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -25,7 +17,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: 1.17
+          go-version: 1.18
       - name: Test & Create coverage report
         run: make install test-unit stop-docker-test
       - name: Upload cove coverage
