@@ -654,13 +654,11 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 		dbtypes.NewValidatorStatusRow(
 			1,
 			false,
-			false,
 			validator1.GetConsAddr(),
 			10,
 		),
 		dbtypes.NewValidatorStatusRow(
 			2,
-			true,
 			true,
 			validator2.GetConsAddr(),
 			10,
@@ -699,13 +697,11 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 		dbtypes.NewValidatorStatusRow(
 			1,
 			false,
-			false,
 			validator1.GetConsAddr(),
 			10,
 		),
 		dbtypes.NewValidatorStatusRow(
 			3,
-			true,
 			true,
 			validator2.GetConsAddr(),
 			11,
