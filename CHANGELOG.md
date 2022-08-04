@@ -1,3 +1,13 @@
+## Unreleased
+
+### Akash
+#### custom modules
+- ([\#439](https://github.com/forbole/bdjuno/pull/439)) Implement akash custom modules:
+  - `x/deployment`: store params from genesis
+  - `x/market`: store params from genesis
+  - `x/provider`: store providers data
+
+
 ## Version v3.2.0
 ### Changes
 #### Mint module

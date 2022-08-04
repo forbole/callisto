@@ -24,10 +24,13 @@ import (
 	"github.com/forbole/bdjuno/v3/modules/distribution"
 	"github.com/forbole/bdjuno/v3/modules/feegrant"
 
+	"github.com/forbole/bdjuno/v3/modules/deployment"
 	"github.com/forbole/bdjuno/v3/modules/gov"
+	"github.com/forbole/bdjuno/v3/modules/market"
 	"github.com/forbole/bdjuno/v3/modules/mint"
 	"github.com/forbole/bdjuno/v3/modules/modules"
 	"github.com/forbole/bdjuno/v3/modules/pricefeed"
+	"github.com/forbole/bdjuno/v3/modules/provider"
 	"github.com/forbole/bdjuno/v3/modules/staking"
 )
 
@@ -75,9 +78,12 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	authModule := auth.NewModule(r.parser, cdc, db)
 	bankModule := bank.NewModule(r.parser, sources.BankSource, cdc, db)
 	consensusModule := consensus.NewModule(db)
+	deploymentModule := deployment.NewModule(cdc, db)
 	distrModule := distribution.NewModule(sources.DistrSource, cdc, db)
 	feegrantModule := feegrant.NewModule(cdc, db)
+	marketModule := market.NewModule(cdc, db)
 	mintModule := mint.NewModule(sources.MintSource, cdc, db)
+	providerModule := provider.NewModule(sources.ProviderSource, cdc, db)
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
 	stakingModule := staking.NewModule(sources.StakingSource, slashingModule, cdc, db)
 	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakingModule, cdc, db)
@@ -91,12 +97,15 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		authModule,
 		bankModule,
 		consensusModule,
+		deploymentModule,
 		distrModule,
 		feegrantModule,
 		govModule,
+		marketModule,
 		mintModule,
 		modules.NewModule(ctx.JunoConfig.Chain, db),
 		pricefeed.NewModule(ctx.JunoConfig, cdc, db),
+		providerModule,
 		slashingModule,
 		stakingModule,
 	}
