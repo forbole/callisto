@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/cosmos/cosmos-sdk v0.45.1
-	github.com/forbole/juno/v3 v3.3.0-stargate.0.20220804122838-2abd1c78211c // sub-branch of v3.2.1-stargate
+	github.com/forbole/juno/v3 v3.3.0-stargate.0.20220805030442-ba5b5af28446 // sub-branch of v3.3.0-stargate: "cosmos/stargate-likecoin"
 	github.com/go-co-op/gocron v1.16.1
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
