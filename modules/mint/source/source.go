@@ -1,8 +1,8 @@
 package source
 
 import (
-	minttypes "github.com/MonOsmosis/osmosis/v10/x/mint/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	minttypes "github.com/osmosis-labs/osmosis/v10/x/mint/types"
 )
 
 type Source interface {

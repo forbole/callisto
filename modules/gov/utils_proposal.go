@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	minttypes "github.com/MonOsmosis/osmosis/v10/x/mint/types"
+	minttypes "github.com/osmosis-labs/osmosis/v10/x/mint/types"
 
 	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
