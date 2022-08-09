@@ -27,7 +27,6 @@ type MarkerAccount struct {
 	MarkerType             markertypes.MarkerType
 	Status                 markertypes.MarkerStatus
 	TotalSupply            []MarkerSupply
-	Price                  float64
 	Height                 int64
 }
 
@@ -39,7 +38,7 @@ func NewMarkerAccount(
 	denom string,
 	markerType markertypes.MarkerType,
 	status markertypes.MarkerStatus,
-	totalSupply []MarkerSupply, price float64,
+	totalSupply []MarkerSupply,
 	height int64) MarkerAccount {
 	return MarkerAccount{
 		Address:                address,
@@ -49,7 +48,6 @@ func NewMarkerAccount(
 		MarkerType:             markerType,
 		Status:                 status,
 		TotalSupply:            totalSupply,
-		Price:                  price,
 		Height:                 height,
 	}
 }

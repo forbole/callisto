@@ -33,7 +33,7 @@ type MarkerAccountRow struct {
 	Denom                  string `db:"denom"`
 	MarkerType             string `db:"marker_type"`
 	Status                 string `db:"status"`
-	Supply                 string `db:"supply"`
+	TotalSupply            string `db:"total_supply"`
 	Height                 int64  `db:"height"`
 }
 
@@ -45,7 +45,7 @@ func NewMarkerAccountRow(
 	denom string,
 	markerType string,
 	status string,
-	supply string,
+	totalSupply string,
 	height int64,
 ) MarkerAccountRow {
 	return MarkerAccountRow{
@@ -55,7 +55,7 @@ func NewMarkerAccountRow(
 		Denom:                  denom,
 		MarkerType:             markerType,
 		Status:                 status,
-		Supply:                 supply,
+		TotalSupply:            totalSupply,
 		Height:                 height,
 	}
 }
@@ -68,6 +68,6 @@ func (w MarkerAccountRow) Equals(v MarkerAccountRow) bool {
 		w.Denom == v.Denom &&
 		w.MarkerType == v.MarkerType &&
 		w.Status == v.Status &&
-		w.Supply == v.Supply &&
+		w.TotalSupply == v.TotalSupply &&
 		w.Height == v.Height
 }
