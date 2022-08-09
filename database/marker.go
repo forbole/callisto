@@ -38,7 +38,7 @@ func (db *Db) SaveMarkersAccounts(markersList []types.MarkerAccount) error {
 
 	stmt := `
 	INSERT INTO marker_account (address, access_control, allow_governance_control, 
-		denom, marker_type, status, supply, height)
+		denom, marker_type, status, total_supply, height)
 	VALUES `
 	var accounts []types.Account
 	var markerParams []interface{}
@@ -89,7 +89,7 @@ ON CONFLICT (address) DO UPDATE
 		denom = excluded.denom,
 		marker_type = excluded.marker_type,
 		status = excluded.status,
-		supply = excluded.supply,
+		total_supply = excluded.total_supply,
 		height = excluded.height
 WHERE marker_account.height <= excluded.height`
 	_, err = db.Sql.Exec(stmt, markerParams...)

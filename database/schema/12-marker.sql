@@ -14,7 +14,7 @@ CREATE TABLE marker_account
     denom                    TEXT       NOT NULL,
     marker_type              TEXT       NOT NULL,
     status                   TEXT       NOT NULL,
-    supply                   TEXT       NOT NULL,
+    total_supply                   TEXT       NOT NULL,
     height                   BIGINT     NOT NULL
 );
 CREATE INDEX marker_account_height_index ON marker_account (height);
