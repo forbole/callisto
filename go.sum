@@ -90,8 +90,6 @@ github.com/HdrHistogram/hdrhistogram-go v1.1.2/go.mod h1:yDgFjdqOqDEKOvasDdhWNXY
 github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible/go.mod h1:r7JcOSlj0wfOMncg0iLm8Leh48TZaKVeNIfJntJ2wa0=
 github.com/Microsoft/go-winio v0.5.1/go.mod h1:JPGBdM1cNvN/6ISo+n8V5iA4v8pBzdOpzfwIujj1a84=
 github.com/Microsoft/go-winio v0.5.2 h1:a9IhgEQBCUEk6QCdml9CiJGhAws+YwffDHEMp1VMrpA=
-github.com/MonOsmosis/osmosis/v10 v10.0.1-0.20220614123149-5d3c2f93cb1c h1:Z1msno6CYSUWiDrXTdAUMeQtfPG2/G4YEH79Elq5kx0=
-github.com/MonOsmosis/osmosis/v10 v10.0.1-0.20220614123149-5d3c2f93cb1c/go.mod h1:rJ/LMhYxuiQuw1BOI1g9NmqGW6vZTnj1ft76+nfy/3U=
 github.com/MonikaCat/tendermint v0.34.20-0.20220510093325-405517310d66 h1:pXFeky7KOX4NQ6vHmgBmBpe1LiGTnFOa4JZa4o/52rY=
 github.com/MonikaCat/tendermint v0.34.20-0.20220510093325-405517310d66/go.mod h1:R5+wgIwSxMdKQcmOaeudL0Cjkr3HDkhpcdum6VeU3R4=
 github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 h1:TngWCqHvy9oXAN6lEVMRuU21PR1EtLVZJmdB18Gu3Rw=
@@ -308,8 +306,8 @@ github.com/felixge/httpsnoop v1.0.1 h1:lvB5Jl89CsZtGIWuTcDM1E/vkVs49/Ml7JJe07l8S
 github.com/felixge/httpsnoop v1.0.1/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
 github.com/fjl/memsize v0.0.0-20180418122429-ca190fb6ffbc/go.mod h1:VvhXpOYNQvB+uIk2RvXzuaQtkQJzzIx6lSBe1xv7hi0=
 github.com/fogleman/gg v1.2.1-0.20190220221249-0403632d5b90/go.mod h1:R/bRT+9gY/C5z7JzPU0zXsXHKM4/ayA+zqcVNZzPa1k=
-github.com/forbole/juno/v3 v3.3.1-0.20220803155817-84f1d4e38f64 h1:9kmJdT47kTZnOavs7YBe27p49gbdWlb7gaivqcQUGto=
-github.com/forbole/juno/v3 v3.3.1-0.20220803155817-84f1d4e38f64/go.mod h1:4qrAGZTQbUU2V3iua9wCRdQMP3bAEkEhwaRbem14vdA=
+github.com/forbole/juno/v3 v3.3.1-0.20220808101630-1d627bc6f7c7 h1:PjkYMLSIUOqhHz0AGC8DOqB/Hi6qQVC5bgLuxeB+uaU=
+github.com/forbole/juno/v3 v3.3.1-0.20220808101630-1d627bc6f7c7/go.mod h1:x8U0/QZ0wWYoh5cZLUlYC/NWIrltarJSs+aLe1ELs20=
 github.com/fortytw2/leaktest v1.3.0 h1:u8491cBMTQ8ft8aeV+adlcytMZylmA5nnwwkRZjI8vw=
 github.com/fortytw2/leaktest v1.3.0/go.mod h1:jDsjWgpAGjm2CA7WthBh/CdZYEPF31XHquHwclZch5g=
 github.com/franela/goblin v0.0.0-20200105215937-c9ffbefa60db/go.mod h1:7dvUGVsVBjqR7JHJk0brhHOZYGmfBYOrK0ZhYMEtBr4=
@@ -788,6 +786,8 @@ github.com/osmosis-labs/cosmos-sdk v0.45.1-0.20220611234148-f59c62f19567 h1:8KQS
 github.com/osmosis-labs/cosmos-sdk v0.45.1-0.20220611234148-f59c62f19567/go.mod h1:pMiEr6WR7drhXAXK1FOdAKPazWCi7b+WOyWOF4O0OXY=
 github.com/osmosis-labs/iavl v0.17.3-osmo-v7 h1:6KcADC/WhL7yDmNQxUIJt2XmzNt4FfRmq9gRke45w74=
 github.com/osmosis-labs/iavl v0.17.3-osmo-v7/go.mod h1:lJEOIlsd3sVO0JDyXWIXa9/Ur5FBscP26zJx0KxHjto=
+github.com/osmosis-labs/osmosis/v10 v10.1.1 h1:xmf+9Z7nE3PzqnMQ5chSx3rHTk0qlJmGNRHgcfU99OI=
+github.com/osmosis-labs/osmosis/v10 v10.1.1/go.mod h1:FBZVwn25TdxIxfllVAtGYkgrr//zB7Bg74qRvH4EigQ=
 github.com/osmosis-labs/wasmd v0.27.0-rc2.0.20220517191021-59051aa18d58 h1:15l3Iss2oCGCeJRi2g3CuCnqmEjpAr3Le7cDnoN/LS0=
 github.com/osmosis-labs/wasmd v0.27.0-rc2.0.20220517191021-59051aa18d58/go.mod h1:0h8WBsFhyingomsrN+34JVZe/qRySHYHICyTEokCkYU=
 github.com/otiai10/copy v1.7.0 h1:hVoPiN+t+7d2nzzwMiDHPSOogsWAStewq3TwU05+clE=

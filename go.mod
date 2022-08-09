@@ -3,14 +3,14 @@ module github.com/forbole/bdjuno/v3
 go 1.18
 
 require (
-	github.com/MonOsmosis/osmosis/v10 v10.0.1-0.20220614123149-5d3c2f93cb1c
-	github.com/cosmos/cosmos-sdk v0.45.4
+	github.com/cosmos/cosmos-sdk v0.45.6
 	github.com/cosmos/gaia/v7 v7.0.2
-	github.com/forbole/juno/v3 v3.3.1-0.20220803155817-84f1d4e38f64
+	github.com/forbole/juno/v3 v3.3.1-0.20220808101630-1d627bc6f7c7
 	github.com/go-co-op/gocron v1.16.1
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.6
+	github.com/osmosis-labs/osmosis/v10 v10.1.1
 	github.com/pelletier/go-toml v1.9.5
 	github.com/prometheus/client_golang v1.12.2
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
@@ -139,9 +139,7 @@ replace (
 	github.com/CosmWasm/wasmd => github.com/osmosis-labs/wasmd v0.27.0-rc2.0.20220517191021-59051aa18d58
 	github.com/cosmos/cosmos-sdk => github.com/osmosis-labs/cosmos-sdk v0.45.1-0.20220611234148-f59c62f19567
 	github.com/cosmos/iavl => github.com/osmosis-labs/iavl v0.17.3-osmo-v7
-	github.com/cosmos/ibc-go/v2 => github.com/osmosis-labs/ibc-go/v2 v2.0.2-osmo
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	github.com/tendermint/tendermint => github.com/MonikaCat/tendermint v0.34.20-0.20220510093325-405517310d66
 	google.golang.org/grpc => google.golang.org/grpc v1.33.2
-
 )

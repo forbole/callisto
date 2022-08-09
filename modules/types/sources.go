@@ -10,20 +10,19 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/forbole/juno/v3/node/remote"
 
-	minttypes "github.com/MonOsmosis/osmosis/v10/x/mint/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	minttypes "github.com/osmosis-labs/osmosis/v10/x/mint/types"
 
-	mintkeeper "github.com/MonOsmosis/osmosis/v10/x/mint/keeper"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/juno/v3/node/local"
+	mintkeeper "github.com/osmosis-labs/osmosis/v10/x/mint/keeper"
 
 	nodeconfig "github.com/forbole/juno/v3/node/config"
 
-	osmosisapp "github.com/MonOsmosis/osmosis/v10/app"
 	banksource "github.com/forbole/bdjuno/v3/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v3/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v3/modules/bank/source/remote"
@@ -42,6 +41,7 @@ import (
 	stakingsource "github.com/forbole/bdjuno/v3/modules/staking/source"
 	localstakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/remote"
+	osmosisapp "github.com/osmosis-labs/osmosis/v10/app"
 )
 
 type Sources struct {
