@@ -82,7 +82,7 @@ func OsmoMessageAddressesParser(_ codec.Codec, cosmosMsg sdk.Msg) ([]string, err
 
 	case *gammtypes.MsgCreateBalancerPool:
 		return []string{msg.Sender, msg.FuturePoolGovernor}, nil
-	default:
-		return []string{msg.Signer.String()}, nil
 	}
+
+	return nil, messages.MessageNotSupported(cosmosMsg)
 }
