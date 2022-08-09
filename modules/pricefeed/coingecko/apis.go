@@ -7,6 +7,7 @@ import (
 	"math"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/forbole/bdjuno/v3/types"
 )
@@ -27,6 +28,20 @@ func GetTokensPrices(ids []string) ([]types.TokenPrice, error) {
 	}
 
 	return ConvertCoingeckoPrices(prices), nil
+}
+
+// GetTokenPrice queries the remote APIs to get the token price with the given id
+func GetTokenPrice(id string) ([]types.TokenPrice, error) {
+	var price []MarketTicker
+	query := fmt.Sprintf("/coins/markets?vs_currency=usd&ids=%s", id)
+	err := queryCoinGecko(query, &price)
+	if err != nil {
+		var defaultPrice []types.TokenPrice
+		defaultPrice = append(defaultPrice, types.NewTokenPrice(id, 0, 0, time.Now()))
+		return defaultPrice, nil
+	}
+
+	return ConvertCoingeckoPrices(price), nil
 }
 
 func ConvertCoingeckoPrices(prices []MarketTicker) []types.TokenPrice {
