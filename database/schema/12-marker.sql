@@ -15,8 +15,17 @@ CREATE TABLE marker_account
     marker_type              TEXT       NOT NULL,
     status                   TEXT       NOT NULL,
     total_supply             TEXT       NOT NULL,
-    price                    DECIMAL    NOT NULL,
     height                   BIGINT     NOT NULL
 );
 CREATE INDEX marker_account_height_index ON marker_account (height);
 CREATE INDEX marker_account_address_index ON marker_account (address);
+
+CREATE TABLE marker_token_price
+(
+    id         SERIAL                      NOT NULL PRIMARY KEY,
+    unit_name  TEXT                        NOT NULL UNIQUE REFERENCES marker_account (denom),
+    price      DECIMAL                     NOT NULL,
+    market_cap BIGINT                      NOT NULL,
+    timestamp  TIMESTAMP WITHOUT TIME ZONE NOT NULL
+);
+CREATE INDEX marker_token_price_timestamp_index ON marker_token_price (timestamp);
