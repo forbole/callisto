@@ -1,3 +1,8 @@
+## Unreleased
+### Changes
+#### Osmosis version
+- ([\#448](https://github.com/forbole/bdjuno/pull/448)) update osmosis to `v10.1.1` and move osmosis address parser from `juno` to `bdjuno`
+
 ## Version v3.2.0
 ### Changes
 #### Mint module
