@@ -78,9 +78,8 @@ func getAddressesParser() messages.MessageAddressesParser {
 // OsmoMessageAddressesParser returns the list of all the accounts involved in the given
 // message if it's related to the x/gamm module
 func OsmoMessageAddressesParser(_ codec.Codec, cosmosMsg sdk.Msg) ([]string, error) {
-	switch msg := cosmosMsg.(type) {
 
-	case *gammtypes.MsgCreateBalancerPool:
+	if msg, ok := cosmosMsg.(*gammtypes.MsgCreateBalancerPool); ok {
 		return []string{msg.Sender, msg.FuturePoolGovernor}, nil
 	}
 
