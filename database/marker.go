@@ -38,7 +38,7 @@ func (db *Db) SaveMarkersAccounts(markersList []types.MarkerAccount) error {
 
 	stmt := `
 	INSERT INTO marker_account (address, access_control, allow_governance_control, 
-		denom, marker_type, status, total_supply, height)
+		denom, marker_type, status, total_supply, price, height)
 	VALUES `
 	var accounts []types.Account
 	var markerParams []interface{}
@@ -50,7 +50,7 @@ func (db *Db) SaveMarkersAccounts(markersList []types.MarkerAccount) error {
 			return err
 		}
 
-		supplyValue, err := json.Marshal(&marker.Supply)
+		supplyValue, err := json.Marshal(&marker.TotalSupply)
 		if err != nil {
 			return err
 		}
@@ -70,6 +70,7 @@ func (db *Db) SaveMarkersAccounts(markersList []types.MarkerAccount) error {
 			marker.MarkerType.String(),
 			marker.Status,
 			string(supplyValue),
+			marker.Price,
 			marker.Height,
 		)
 	}
