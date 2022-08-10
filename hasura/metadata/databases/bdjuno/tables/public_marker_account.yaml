@@ -16,6 +16,7 @@ select_permissions:
     - marker_type
     - status
     - total_supply
+    - price
     - height
     filter: {}
   role: anonymous
