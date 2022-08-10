@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	markertypes "github.com/MonikaCat/provenance/x/marker/types"
-	sdk "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/forbole/bdjuno/v3/modules/pricefeed/coingecko"
 	"github.com/forbole/bdjuno/v3/modules/utils"
 	"github.com/forbole/bdjuno/v3/types"
@@ -18,7 +17,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	log.Debug().Str("module", "marker").Msg("setting up periodic tasks")
 
 	// Setup a cron job to run every hour
-	if _, err := scheduler.Every(5).Minute().Do(func() {
+	if _, err := scheduler.Every(2).Minutes().Do(func() {
 		utils.WatchMethod(m.updateMarkersAccounts)
 	}); err != nil {
 		return err
@@ -54,10 +53,18 @@ func (m *Module) updateMarkersAccounts() error {
 		}
 
 		var supply []types.MarkerSupply
+		var tokenPrice float64
+		
 		// custom function GetSupplyValues
 		supplyDenom, supplyAmount := accountI.GetSupplyValues()
 		supply = append(supply, types.NewMarkerSupply(supplyDenom, supplyAmount.String()))
 
+		if !strings.ContainsAny(accountI.GetDenom(), ".") {
+			price, _ := coingecko.GetTokensPrices([]string{accountI.GetDenom()})
+			if len(price) > 0 {
+				tokenPrice = price[0].Price
+			}
+		}
 		markers[index] = types.NewMarkerAccount(
 			accountI.GetAddress().String(),
 			accountI.GetAccessList(),
@@ -66,42 +73,9 @@ func (m *Module) updateMarkersAccounts() error {
 			accountI.GetMarkerType(),
 			accountI.GetStatus(),
 			supply,
+			tokenPrice,
 			height)
 	}
 
-	err = m.db.SaveMarkersAccounts(markers)
-	if err != nil {
-		return fmt.Errorf("error while storing markers accounts: %s", err)
-	}
-
-	return m.updateMarkersTokenPrice(markersList)
-}
-
-// updateMarkersTokenPrice fetches the latest token price from coingecko
-// and saves it inside the database.
-func (m *Module) updateMarkersTokenPrice(markersList []*sdk.Any) error {
-	log.Debug().
-		Str("module", "marker").
-		Msg("getting markers tokens prices")
-
-	var tokens []string
-
-	for _, marker := range markersList {
-		var accountI markertypes.MarkerAccountI
-		err := m.cdc.UnpackAny(marker, &accountI)
-		if err != nil {
-			return err
-		}
-
-		if !strings.ContainsAny(accountI.GetDenom(), ".") {
-			tokens = append(tokens, accountI.GetDenom())
-		}
-	}
-
-	price, err := coingecko.GetTokensPrices(tokens)
-	if err != nil {
-		return fmt.Errorf("error while getting markers tokens prices: %s", err)
-	}
-
-	return m.db.SaveMarkersTokenPrice(price)
+	return m.db.SaveMarkersAccounts(markers)
 }

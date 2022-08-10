@@ -38,7 +38,7 @@ func (db *Db) SaveMarkersAccounts(markersList []types.MarkerAccount) error {
 
 	stmt := `
 	INSERT INTO marker_account (address, access_control, allow_governance_control, 
-		denom, marker_type, status, total_supply, height)
+		denom, marker_type, status, total_supply, price, height)
 	VALUES `
 	var accounts []types.Account
 	var markerParams []interface{}
@@ -58,9 +58,9 @@ func (db *Db) SaveMarkersAccounts(markersList []types.MarkerAccount) error {
 		accounts = append(accounts, types.NewAccount(marker.Address))
 
 		// Prepare the marker query
-		vi := i * 8
-		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
-			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8)
+		vi := i * 9
+		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
+			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9)
 
 		markerParams = append(markerParams,
 			marker.Address,
@@ -70,6 +70,7 @@ func (db *Db) SaveMarkersAccounts(markersList []types.MarkerAccount) error {
 			marker.MarkerType.String(),
 			marker.Status,
 			string(supplyValue),
+			marker.Price,
 			marker.Height,
 		)
 	}
@@ -99,4 +100,3 @@ WHERE marker_account.height <= excluded.height`
 
 	return nil
 }
-
