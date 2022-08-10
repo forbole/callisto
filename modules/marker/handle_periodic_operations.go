@@ -16,8 +16,8 @@ import (
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	log.Debug().Str("module", "marker").Msg("setting up periodic tasks")
 
-	// Setup a cron job to run every hour
-	if _, err := scheduler.Every(2).Minutes().Do(func() {
+	// Setup a cron job to run every 5 minutes
+	if _, err := scheduler.Every(5).Minutes().Do(func() {
 		utils.WatchMethod(m.updateMarkersAccounts)
 	}); err != nil {
 		return err
@@ -54,7 +54,7 @@ func (m *Module) updateMarkersAccounts() error {
 
 		var supply []types.MarkerSupply
 		var tokenPrice float64
-		
+
 		// custom function GetSupplyValues
 		supplyDenom, supplyAmount := accountI.GetSupplyValues()
 		supply = append(supply, types.NewMarkerSupply(supplyDenom, supplyAmount.String()))
