@@ -1,3 +1,7 @@
+## Unreleased
+#### x/marker module
+- ([\#450](https://github.com/forbole/bdjuno/pull/450)) [provenance] Fetch the latest values of markers token prices from coingecko and store them in db
+
 ## Version v3.2.0
 ### Changes
 

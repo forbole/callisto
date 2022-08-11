@@ -2,11 +2,12 @@ package marker
 
 import (
 	"fmt"
-
-	"github.com/forbole/bdjuno/v3/modules/utils"
-	"github.com/forbole/bdjuno/v3/types"
+	"strings"
 
 	markertypes "github.com/MonikaCat/provenance/x/marker/types"
+	"github.com/forbole/bdjuno/v3/modules/pricefeed/coingecko"
+	"github.com/forbole/bdjuno/v3/modules/utils"
+	"github.com/forbole/bdjuno/v3/types"
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
 )
@@ -15,8 +16,8 @@ import (
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	log.Debug().Str("module", "marker").Msg("setting up periodic tasks")
 
-	// Setup a cron job to run every hour
-	if _, err := scheduler.Every(1).Minute().Do(func() {
+	// Setup a cron job to run every 5 minutes
+	if _, err := scheduler.Every(5).Minutes().Do(func() {
 		utils.WatchMethod(m.updateMarkersAccounts)
 	}); err != nil {
 		return err
@@ -52,10 +53,18 @@ func (m *Module) updateMarkersAccounts() error {
 		}
 
 		var supply []types.MarkerSupply
+		var tokenPrice float64
+
 		// custom function GetSupplyValues
 		supplyDenom, supplyAmount := accountI.GetSupplyValues()
 		supply = append(supply, types.NewMarkerSupply(supplyDenom, supplyAmount.String()))
 
+		if !strings.ContainsAny(accountI.GetDenom(), ".") {
+			price, _ := coingecko.GetTokensPrices([]string{accountI.GetDenom()})
+			if len(price) > 0 {
+				tokenPrice = price[0].Price
+			}
+		}
 		markers[index] = types.NewMarkerAccount(
 			accountI.GetAddress().String(),
 			accountI.GetAccessList(),
@@ -64,6 +73,7 @@ func (m *Module) updateMarkersAccounts() error {
 			accountI.GetMarkerType(),
 			accountI.GetStatus(),
 			supply,
+			tokenPrice,
 			height)
 	}
 

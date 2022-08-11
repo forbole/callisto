@@ -27,14 +27,15 @@ func (m MarkerParamsRow) Equal(n MarkerParamsRow) bool {
 
 // MarkerAccountRow represents a single row inside the marker account table
 type MarkerAccountRow struct {
-	Address                string `db:"address"`
-	AccessControl          string `db:"access_control"`
-	AllowGovernanceControl bool   `db:"allow_governance_control"`
-	Denom                  string `db:"denom"`
-	MarkerType             string `db:"marker_type"`
-	Status                 string `db:"status"`
-	Supply                 string `db:"supply"`
-	Height                 int64  `db:"height"`
+	Address                string  `db:"address"`
+	AccessControl          string  `db:"access_control"`
+	AllowGovernanceControl bool    `db:"allow_governance_control"`
+	Denom                  string  `db:"denom"`
+	MarkerType             string  `db:"marker_type"`
+	Status                 string  `db:"status"`
+	TotalSupply            string  `db:"total_supply"`
+	Price                  float64 `db:"price"`
+	Height                 int64   `db:"height"`
 }
 
 // NewMarkerAccountRow allows to easily create a new MarkerAccountRow
@@ -45,7 +46,8 @@ func NewMarkerAccountRow(
 	denom string,
 	markerType string,
 	status string,
-	supply string,
+	totalSupply string,
+	price float64,
 	height int64,
 ) MarkerAccountRow {
 	return MarkerAccountRow{
@@ -55,7 +57,8 @@ func NewMarkerAccountRow(
 		Denom:                  denom,
 		MarkerType:             markerType,
 		Status:                 status,
-		Supply:                 supply,
+		TotalSupply:            totalSupply,
+		Price:                  price,
 		Height:                 height,
 	}
 }
@@ -68,6 +71,7 @@ func (w MarkerAccountRow) Equals(v MarkerAccountRow) bool {
 		w.Denom == v.Denom &&
 		w.MarkerType == v.MarkerType &&
 		w.Status == v.Status &&
-		w.Supply == v.Supply &&
+		w.TotalSupply == v.TotalSupply &&
+		w.Price == v.Price &&
 		w.Height == v.Height
 }

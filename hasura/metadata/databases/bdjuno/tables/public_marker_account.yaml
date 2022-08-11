@@ -15,7 +15,8 @@ select_permissions:
     - denom
     - marker_type
     - status
-    - supply
+    - total_supply
+    - price
     - height
     filter: {}
   role: anonymous
