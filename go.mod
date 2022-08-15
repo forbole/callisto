@@ -3,13 +3,13 @@ module github.com/forbole/bdjuno/v3
 go 1.17
 
 require (
-	github.com/cosmos/cosmos-sdk v0.45.1
+	github.com/cosmos/cosmos-sdk v0.45.6
 	github.com/forbole/juno/v3 v3.3.0-stargate.0.20220805030442-ba5b5af28446 // sub-branch of v3.3.0-stargate: "cosmos/stargate-likecoin"
 	github.com/go-co-op/gocron v1.16.1
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.5
-	github.com/likecoin/likechain v1.2.0
+	github.com/likecoin/likecoin-chain/v3 v3.0.0
 	github.com/pelletier/go-toml v1.9.5
 	github.com/prometheus/client_golang v1.12.1
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
@@ -37,7 +37,7 @@ require (
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
 	github.com/cosmos/gorocksdb v1.2.0 // indirect
 	github.com/cosmos/iavl v0.17.3 // indirect
-	github.com/cosmos/ibc-go/v2 v2.1.0 // indirect
+	github.com/cosmos/ibc-go/v2 v2.3.0 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.11.1 // indirect
 	github.com/cosmos/ledger-go v0.9.2 // indirect
 	github.com/danieljoos/wincred v1.0.2 // indirect
@@ -135,7 +135,6 @@ require (
 replace (
 	github.com/cosmos/cosmos-sdk => github.com/likecoin/cosmos-sdk v0.44.8-dual-prefix
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-	github.com/likecoin/likechain => github.com/likecoin/likechain v0.0.0-20220420101415-ab5e5b206987
 	github.com/tendermint/tendermint => github.com/forbole/tendermint v0.34.13-0.20210820072129-a2a4af55563d
 	google.golang.org/grpc => google.golang.org/grpc v1.33.2
 

@@ -1,7 +1,7 @@
 package iscn
 
 import (
-	iscntypes "github.com/likecoin/likechain/x/iscn/types"
+	iscntypes "github.com/likecoin/likecoin-chain/v3/x/iscn/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	juno "github.com/forbole/juno/v3/types"

@@ -1,7 +1,7 @@
 package source
 
 import (
-	iscntypes "github.com/likecoin/likechain/x/iscn/types"
+	iscntypes "github.com/likecoin/likecoin-chain/v3/x/iscn/types"
 )
 
 type Source interface {

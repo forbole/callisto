@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
-	likeapp "github.com/likecoin/likechain/app"
+	likeapp "github.com/likecoin/likecoin-chain/v3/app"
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
@@ -19,7 +19,7 @@ import (
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/juno/v3/node/local"
-	iscntypes "github.com/likecoin/likechain/x/iscn/types"
+	iscntypes "github.com/likecoin/likecoin-chain/v3/x/iscn/types"
 
 	nodeconfig "github.com/forbole/juno/v3/node/config"
 
