@@ -4,7 +4,7 @@ CREATE TYPE PROVIDER_INFO AS
     website     TEXT
 );
 
-CREATE TABLE provider
+CREATE TABLE akash_provider
 (
     owner_address   TEXT            NOT NULL REFERENCES account (address),
     host_uri        TEXT            NOT NULL,

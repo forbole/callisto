@@ -81,7 +81,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	deploymentModule := deployment.NewModule(cdc, db)
 	distrModule := distribution.NewModule(sources.DistrSource, cdc, db)
 	feegrantModule := feegrant.NewModule(cdc, db)
-	marketModule := market.NewModule(cdc, db)
+	marketModule := market.NewModule(sources.MarketSource, cdc, db)
 	mintModule := mint.NewModule(sources.MintSource, cdc, db)
 	providerModule := provider.NewModule(sources.ProviderSource, cdc, db)
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
