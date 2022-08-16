@@ -24,6 +24,7 @@ import (
 	"github.com/forbole/bdjuno/v3/modules/distribution"
 	"github.com/forbole/bdjuno/v3/modules/feegrant"
 
+	"github.com/forbole/bdjuno/v3/modules/block"
 	"github.com/forbole/bdjuno/v3/modules/gov"
 	"github.com/forbole/bdjuno/v3/modules/mint"
 	"github.com/forbole/bdjuno/v3/modules/modules"
@@ -74,6 +75,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	actionsModule := actions.NewModule(ctx.JunoConfig, ctx.EncodingConfig)
 	authModule := auth.NewModule(r.parser, cdc, db)
 	bankModule := bank.NewModule(r.parser, sources.BankSource, cdc, db)
+	blockModule := block.NewModule(db)
 	consensusModule := consensus.NewModule(db)
 	distrModule := distribution.NewModule(sources.DistrSource, cdc, db)
 	feegrantModule := feegrant.NewModule(cdc, db)
@@ -90,6 +92,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		actionsModule,
 		authModule,
 		bankModule,
+		blockModule,
 		consensusModule,
 		distrModule,
 		feegrantModule,
