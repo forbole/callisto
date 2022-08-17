@@ -2,9 +2,6 @@ package staking
 
 import (
 	"fmt"
-	"strings"
-
-	"google.golang.org/grpc/codes"
 
 	juno "github.com/forbole/juno/v3/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
@@ -176,17 +173,11 @@ func (m *Module) GetValidatorsStatuses(height int64, validators []stakingtypes.V
 			return nil, fmt.Errorf("error while getting validator consensus public key: %s", err)
 		}
 
-		valSigningInfo, err := m.slashingModule.GetSigningInfo(height, consAddr)
-		if err != nil && !strings.Contains(err.Error(), codes.NotFound.String()) {
-			return nil, fmt.Errorf("error while getting validator signing info: %s", err)
-		}
-
 		statuses[index] = types.NewValidatorStatus(
 			consAddr.String(),
 			consPubKey.String(),
 			int(validator.GetStatus()),
 			validator.IsJailed(),
-			valSigningInfo.Tombstoned,
 			height,
 		)
 	}

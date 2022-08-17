@@ -1,3 +1,8 @@
+## Unreleased
+### Changes
+#### Staking Module
+- ([\#443](https://github.com/forbole/bdjuno/pull/443)) Remove tombstone status from staking module(already stored in slashing module)
+
 ## Version v3.2.0
 ### Changes
 #### Mint module
