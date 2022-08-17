@@ -28,7 +28,7 @@ func NewSource(source *remote.Source, marketClient markettypes.QueryClient) *Sou
 	}
 }
 
-// GetLeases implements marketsource.Source
+// GetActiveLeases implements marketsource.Source
 func (s Source) GetActiveLeases(height int64) ([]markettypes.QueryLeaseResponse, error) {
 	var leasesResponse []markettypes.QueryLeaseResponse
 	var nextKey []byte
