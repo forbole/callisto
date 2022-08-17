@@ -29,13 +29,17 @@ func NewSource(source *remote.Source, marketClient markettypes.QueryClient) *Sou
 }
 
 // GetLeases implements marketsource.Source
-func (s Source) GetLeases(height int64) ([]markettypes.QueryLeaseResponse, error) {
+func (s Source) GetActiveLeases(height int64) ([]markettypes.QueryLeaseResponse, error) {
 	var leasesResponse []markettypes.QueryLeaseResponse
 	var nextKey []byte
 	var stop bool
 	for !stop {
 		res, err := s.marketClient.Leases(remote.GetHeightRequestContext(s.Ctx, height),
 			&markettypes.QueryLeasesRequest{
+				Filters: markettypes.LeaseFilters{
+					// Get only active leases
+					State: markettypes.LeaseActive.String(),
+				},
 				Pagination: &query.PageRequest{
 					Key:   nextKey,
 					Limit: 1000, // Query 1000 lease at a time

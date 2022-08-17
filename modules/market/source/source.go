@@ -5,5 +5,5 @@ import (
 )
 
 type Source interface {
-	GetLeases(height int64) ([]markettypes.QueryLeaseResponse, error)
+	GetActiveLeases(height int64) ([]markettypes.QueryLeaseResponse, error)
 }

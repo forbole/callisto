@@ -13,12 +13,10 @@ import (
 func (m *Module) updateLeases(height int64) error {
 	log.Debug().Str("module", "market").Int64("height", height).Msg("getting leases")
 
-	leasesResponse, err := m.source.GetLeases(height)
+	leasesResponse, err := m.source.GetActiveLeases(height)
 	if err != nil {
 		return fmt.Errorf("error while getting akash leases: %s", err)
 	}
-
-	fmt.Println("len(leasesResponse): ", len(leasesResponse))
 
 	leases := m.convertLeaseFromResponse(leasesResponse, height)
 

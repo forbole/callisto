@@ -89,8 +89,6 @@ func (db *Db) saveLeases(paramsCount int, leases []*types.MarketLease, height in
     	height = excluded.height 
 WHERE akash_lease.height <= excluded.height`
 
-	fmt.Println("params lens: ", len(params))
-
 	_, err := db.Sql.Exec(stmt, params...)
 	if err != nil {
 		return fmt.Errorf("error while storing akash leases: %s", err)

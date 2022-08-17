@@ -31,7 +31,7 @@ func NewSource(source *local.Source, querier markettypes.QueryServer) *Source {
 }
 
 // GetLeases implements marketsource.Source
-func (s Source) GetLeases(height int64) ([]markettypes.QueryLeaseResponse, error) {
+func (s Source) GetActiveLeases(height int64) ([]markettypes.QueryLeaseResponse, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
 		return nil, fmt.Errorf("error while loading height: %s", err)
@@ -43,6 +43,10 @@ func (s Source) GetLeases(height int64) ([]markettypes.QueryLeaseResponse, error
 	for !stop {
 		res, err := s.q.Leases(sdk.WrapSDKContext(ctx),
 			&markettypes.QueryLeasesRequest{
+				Filters: markettypes.LeaseFilters{
+					// Get only active leases
+					State: markettypes.LeaseActive.String(),
+				},
 				Pagination: &query.PageRequest{
 					Key:   nextKey,
 					Limit: 1000, // Query 1000 leases at a time
