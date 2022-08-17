@@ -1,4 +1,4 @@
-package block
+package daily_refetch
 
 import (
 	"github.com/forbole/juno/v3/node"
@@ -31,5 +31,5 @@ func NewModule(
 
 // Name implements modules.Module
 func (m *Module) Name() string {
-	return "block"
+	return "daily refetch"
 }

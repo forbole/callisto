@@ -1,4 +1,4 @@
-package block
+package daily_refetch
 
 import (
 	"fmt"
@@ -14,20 +14,20 @@ import (
 )
 
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
-	log.Debug().Str("module", "block refetch").Msg("setting up periodic tasks")
+	log.Debug().Str("module", "daily refetch").Msg("setting up periodic tasks")
 
 	if _, err := scheduler.Every(2).Minutes().Do(func() {
-		m.checkMissingBlocks()
+		m.refetchMissingBlocks()
 	}); err != nil {
-		return fmt.Errorf("error while setting up block refetch periodic operation: %s", err)
+		return fmt.Errorf("error while setting up daily refetch periodic operation: %s", err)
 	}
 
 	return nil
 }
 
-// checkMissingBlocks checks for any missing blocks from one day ago and refetches it
-func (m *Module) checkMissingBlocks() error {
-	log.Trace().Str("module", "blocks").Str("refetching", "blocks").
+// refetchMissingBlocks checks for missing blocks from one day ago and refetches them 
+func (m *Module) refetchMissingBlocks() error {
+	log.Trace().Str("module", "daily refetch").Str("refetching", "blocks").
 		Msg("refetching missing blocks")
 
 	latestBlock, err := m.node.LatestHeight()
