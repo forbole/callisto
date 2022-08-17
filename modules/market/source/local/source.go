@@ -31,13 +31,13 @@ func NewSource(source *local.Source, querier markettypes.QueryServer) *Source {
 }
 
 // GetLeases implements marketsource.Source
-func (s Source) GetLeases(height int64) ([]markettypes.Lease, error) {
+func (s Source) GetLeases(height int64) ([]markettypes.QueryLeaseResponse, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
 		return nil, fmt.Errorf("error while loading height: %s", err)
 	}
 
-	var leases []markettypes.Lease
+	var leasesResponse []markettypes.QueryLeaseResponse
 	var nextKey []byte
 	var stop bool
 	for !stop {
@@ -55,10 +55,8 @@ func (s Source) GetLeases(height int64) ([]markettypes.Lease, error) {
 		nextKey = res.Pagination.NextKey
 		stop = len(res.Pagination.NextKey) == 0
 
-		for _, l := range res.Leases {
-			leases = append(leases, l.Lease)
-		}
+		leasesResponse = append(leasesResponse, res.Leases...)
 	}
 
-	return leases, nil
+	return leasesResponse, nil
 }

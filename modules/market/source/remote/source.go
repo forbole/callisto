@@ -29,8 +29,8 @@ func NewSource(source *remote.Source, marketClient markettypes.QueryClient) *Sou
 }
 
 // GetLeases implements marketsource.Source
-func (s Source) GetLeases(height int64) ([]markettypes.Lease, error) {
-	var leases []markettypes.Lease
+func (s Source) GetLeases(height int64) ([]markettypes.QueryLeaseResponse, error) {
+	var leasesResponse []markettypes.QueryLeaseResponse
 	var nextKey []byte
 	var stop bool
 	for !stop {
@@ -48,10 +48,9 @@ func (s Source) GetLeases(height int64) ([]markettypes.Lease, error) {
 		nextKey = res.Pagination.NextKey
 		stop = len(res.Pagination.NextKey) == 0
 
-		for _, l := range res.Leases {
-			leases = append(leases, l.Lease)
-		}
+		leasesResponse = append(leasesResponse, res.Leases...)
+
 	}
 
-	return leases, nil
+	return leasesResponse, nil
 }
