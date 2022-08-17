@@ -16,7 +16,8 @@ import (
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	log.Debug().Str("module", "daily refetch").Msg("setting up periodic tasks")
 
-	if _, err := scheduler.Every(2).Minutes().Do(func() {
+	// Setup a cron job to run every midnight
+	if _, err := scheduler.Every(1).Day().At("00:00").Do(func() {
 		m.refetchMissingBlocks()
 	}); err != nil {
 		return fmt.Errorf("error while setting up daily refetch periodic operation: %s", err)
@@ -25,7 +26,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	return nil
 }
 
-// refetchMissingBlocks checks for missing blocks from one day ago and refetches them 
+// refetchMissingBlocks checks for missing blocks from one day ago and refetches them
 func (m *Module) refetchMissingBlocks() error {
 	log.Trace().Str("module", "daily refetch").Str("refetching", "blocks").
 		Msg("refetching missing blocks")
