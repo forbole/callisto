@@ -4,12 +4,12 @@ import (
 	"fmt"
 
 	"github.com/forbole/juno/v3/parser"
+	"github.com/forbole/juno/v3/types/config"
 
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
 
 	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
-	"github.com/forbole/juno/v3/types/config"
 )
 
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
@@ -49,7 +49,7 @@ func (m *Module) checkMissingBlocks() error {
 	var endHeight int64 = 123911
 
 	if blockCount != latestBlock {
-		parseCtx, err := parsecmdtypes.GetParserContext(config.Cfg, m.config)
+		parseCtx, err := parsecmdtypes.GetParserContext(config.Cfg, parsecmdtypes.NewConfig())
 		if err != nil {
 			return err
 		}
