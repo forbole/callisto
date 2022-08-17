@@ -3,6 +3,10 @@
 #### Staking Module
 - ([\#443](https://github.com/forbole/bdjuno/pull/443)) Remove tombstone status from staking module(already stored in slashing module)
 
+#### Daily refetch
+- ([\#454](https://github.com/forbole/bdjuno/pull/454)) Added `daily refetch` module to refetch missing blocks every day
+
+
 ## Version v3.2.0
 ### Changes
 #### Mint module
