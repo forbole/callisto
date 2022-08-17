@@ -2,6 +2,7 @@ package block
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/forbole/juno/v3/parser"
 	"github.com/forbole/juno/v3/types/config"
@@ -24,7 +25,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	return nil
 }
 
-// checkMissingBlocks checks for any missing blocks and refetches it
+// checkMissingBlocks checks for any missing blocks from one day ago and refetches it
 func (m *Module) checkMissingBlocks() error {
 	log.Trace().Str("module", "blocks").Str("refetching", "blocks").
 		Msg("refetching missing blocks")
@@ -36,17 +37,14 @@ func (m *Module) checkMissingBlocks() error {
 
 	blockCount, err := m.database.GetTotalBlocks()
 	if err != nil {
-		return fmt.Errorf("error while getting last block: %s", err)
+		return fmt.Errorf("error while getting block count: %s", err)
 	}
 
-	// averageBlockPerDay, err := m.db.GetAverageBlockPerDay()
-	// if err != nil {
-	// 	return fmt.Errorf("error while getting average day block time: %s", err)
-	// }
-
-	var startHeight int64 = 1
-
-	var endHeight int64 = 123911
+	blockHeightDayAgo, err := m.database.GetBlockHeightTimeDayAgo(time.Now())
+	if err != nil {
+		return fmt.Errorf("error while getting block height from a day ago: %s", err)
+	}
+	var startHeight int64 = blockHeightDayAgo.Height
 
 	if blockCount != latestBlock {
 		parseCtx, err := parsecmdtypes.GetParserContext(config.Cfg, parsecmdtypes.NewConfig())
@@ -57,9 +55,9 @@ func (m *Module) checkMissingBlocks() error {
 		workerCtx := parser.NewContext(parseCtx.EncodingConfig, parseCtx.Node, parseCtx.Database, parseCtx.Logger, parseCtx.Modules)
 		worker := parser.NewWorker(workerCtx, nil, 0)
 
-		log.Info().Int64("start height", startHeight).Int64("end height", endHeight).
-			Msg("getting missing blocks and transactions")
-		for k := startHeight; k <= endHeight; k++ {
+		log.Info().Int64("start height", startHeight).Int64("end height", latestBlock).
+			Msg("getting missing blocks and transactions from a day ago")
+		for k := startHeight; k <= latestBlock; k++ {
 			err = worker.ProcessIfNotExists(k)
 			if err != nil {
 				return fmt.Errorf("error while re-fetching block %d: %s", k, err)
