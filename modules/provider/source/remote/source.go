@@ -81,12 +81,12 @@ func (s Source) ProviderStatus(address string, height int64) (*provider.Status, 
 		return nil, fmt.Errorf("error while converting address to AccAddress: %s", err)
 	}
 
-	cctx, err := sdkclient.GetClientTxContext(nil)
-	if err != nil {
-		return nil, fmt.Errorf("error while getting client tx context: %s", err)
-	}
+	// cctx, err := sdkclient.GetClientTxContext(nil)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("error while getting client tx context: %s", err)
+	// }
 
-	gclient, err := gwrest.NewClient(akashclient.NewQueryClientFromCtx(cctx), bech32Addr, nil)
+	gclient, err := gwrest.NewClient(akashclient.NewQueryClientFromCtx(sdkclient.Context{NodeURI: "https://rpc.akash.forbole.com:443"}), bech32Addr, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error while building new akash gateway rest client: %s", err)
 	}
