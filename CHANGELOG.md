@@ -7,6 +7,9 @@
   - `x/market`: store params from genesis
   - `x/provider`: store providers data
 
+#### custom modules
+- ([\#453](https://github.com/forbole/bdjuno/pull/453))
+  - `x/market`: store active leases
 
 ## Version v3.2.0
 ### Changes
