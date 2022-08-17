@@ -24,10 +24,10 @@ func (m *Module) updateLeases(height int64) error {
 	return m.db.SaveLeases(leases, height)
 }
 
-func (m *Module) convertLeaseFromResponse(res []markettypes.QueryLeaseResponse, height int64) []types.MarketLease {
-	leases := make([]types.MarketLease, len(res))
+func (m *Module) convertLeaseFromResponse(res []markettypes.QueryLeaseResponse, height int64) []*types.MarketLease {
+	leases := make([]*types.MarketLease, len(res))
 	for i, r := range res {
-		leases[i] = *types.NewMarketLease(r, height)
+		leases[i] = types.NewMarketLease(r, height)
 	}
 
 	return leases

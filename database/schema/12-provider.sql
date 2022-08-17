@@ -13,4 +13,4 @@ CREATE TABLE akash_provider
     height          BIGINT          NOT NULL,
     CONSTRAINT unique_provider UNIQUE (owner_address)
 );
-CREATE INDEX provider_address_index ON provider (owner_address);
+CREATE INDEX provider_address_index ON akash_provider (owner_address);

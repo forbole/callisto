@@ -32,6 +32,7 @@ type MarketLease struct {
 	Price     sdk.DecCoin
 	CreatedAt int64
 	ClosedOn  int64
+	Height    int64
 }
 
 // NewMarketLease allows to build a new MarketLease instance
@@ -46,5 +47,6 @@ func NewMarketLease(res markettypes.QueryLeaseResponse, height int64) *MarketLea
 		Price:     res.Lease.Price,
 		CreatedAt: res.Lease.CreatedAt,
 		ClosedOn:  res.Lease.ClosedOn,
+		Height:    height,
 	}
 }
