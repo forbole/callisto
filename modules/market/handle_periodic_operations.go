@@ -13,9 +13,9 @@ import (
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	log.Debug().Str("module", "market").Msg("setting up periodic tasks")
 
-	// Update the community pool every 30 minutes
+	// Update the market leases state every 30 minutes
 	if _, err := scheduler.Every(30).Minutes().Do(func() {
-		utils.WatchMethod(m.getLatestLeasesStatus)
+		utils.WatchMethod(m.getLatestActiveLeases)
 	}); err != nil {
 		return fmt.Errorf("error while scheduling market periodic operation: %s", err)
 	}
@@ -23,8 +23,8 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	return nil
 }
 
-// getLatestLeasesStatus gets the latest status of all leases from the chain and stores inside the database
-func (m *Module) getLatestLeasesStatus() error {
+// getLatestActiveLeases gets the latest status of all active leases from the chain and stores inside the database
+func (m *Module) getLatestActiveLeases() error {
 	height, err := m.db.GetLastBlockHeight()
 	if err != nil {
 		return fmt.Errorf("error while getting latest block height: %s", err)
