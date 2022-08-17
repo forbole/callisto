@@ -18,6 +18,8 @@ func (m *Module) updateLeases(height int64) error {
 		return fmt.Errorf("error while getting akash leases: %s", err)
 	}
 
+	fmt.Println("len(leasesResponse): ", len(leasesResponse))
+
 	leases := m.convertLeaseFromResponse(leasesResponse, height)
 
 	// Store the leases into the database
