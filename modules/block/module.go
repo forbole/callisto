@@ -16,19 +16,15 @@ var (
 type Module struct {
 	node     node.Node
 	database *bdjunodb.Db
-	// config   parsecmdtypes.Config
-	// config.Config
 }
 
 // NewModule builds a new Module instance
 func NewModule(
 	node node.Node,
-	// config parsecmdtypes.Config,
 	database *bdjunodb.Db,
 ) *Module {
 	return &Module{
-		node: node,
-		// config:   config,
+		node:     node,
 		database: database,
 	}
 }
