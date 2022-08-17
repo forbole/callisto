@@ -30,7 +30,7 @@ func NewSource(source *local.Source, querier markettypes.QueryServer) *Source {
 	}
 }
 
-// GetLeases implements marketsource.Source
+// GetActiveLeases implements marketsource.Source
 func (s Source) GetActiveLeases(height int64) ([]markettypes.QueryLeaseResponse, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
