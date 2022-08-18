@@ -41,30 +41,32 @@ func (m *Module) refetchMissingBlocks() error {
 		return fmt.Errorf("error while getting block count: %s", err)
 	}
 
+	if blockCount >= latestBlock {
+		return nil
+	}
+
+	parseCtx, err := parsecmdtypes.GetParserContext(config.Cfg, parsecmdtypes.NewConfig())
+	if err != nil {
+		return err
+	}
+
+	workerCtx := parser.NewContext(parseCtx.EncodingConfig, parseCtx.Node, parseCtx.Database, parseCtx.Logger, parseCtx.Modules)
+	worker := parser.NewWorker(workerCtx, nil, 0)
+
 	blockHeightDayAgo, err := m.database.GetBlockHeightTimeDayAgo(time.Now())
 	if err != nil {
 		return fmt.Errorf("error while getting block height from a day ago: %s", err)
 	}
+
 	var startHeight int64 = blockHeightDayAgo.Height
 
-	if blockCount != latestBlock {
-		parseCtx, err := parsecmdtypes.GetParserContext(config.Cfg, parsecmdtypes.NewConfig())
+	log.Info().Int64("start height", startHeight).Int64("end height", latestBlock).
+		Msg("getting missing blocks and transactions from a day ago")
+	for k := startHeight; k <= latestBlock; k++ {
+		err = worker.ProcessIfNotExists(k)
 		if err != nil {
-			return err
+			return fmt.Errorf("error while re-fetching block %d: %s", k, err)
 		}
-
-		workerCtx := parser.NewContext(parseCtx.EncodingConfig, parseCtx.Node, parseCtx.Database, parseCtx.Logger, parseCtx.Modules)
-		worker := parser.NewWorker(workerCtx, nil, 0)
-
-		log.Info().Int64("start height", startHeight).Int64("end height", latestBlock).
-			Msg("getting missing blocks and transactions from a day ago")
-		for k := startHeight; k <= latestBlock; k++ {
-			err = worker.ProcessIfNotExists(k)
-			if err != nil {
-				return fmt.Errorf("error while re-fetching block %d: %s", k, err)
-			}
-		}
-
 	}
 
 	return nil
