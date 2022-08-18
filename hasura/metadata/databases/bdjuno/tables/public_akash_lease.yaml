@@ -1,0 +1,19 @@
+table:
+  name: akash_lease
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - owner
+    - d_seq
+    - g_seq
+    - o_seq
+    - provider
+    - lease_state
+    - price
+    - created_at
+    - closed_on
+    - height
+    filter: {}
+  role: anonymous

@@ -4,7 +4,7 @@ CREATE TYPE PROVIDER_INFO AS
     website     TEXT
 );
 
-CREATE TABLE provider
+CREATE TABLE akash_provider
 (
     owner_address   TEXT            NOT NULL REFERENCES account (address),
     host_uri        TEXT            NOT NULL,
@@ -13,4 +13,4 @@ CREATE TABLE provider
     height          BIGINT          NOT NULL,
     CONSTRAINT unique_provider UNIQUE (owner_address)
 );
-CREATE INDEX provider_address_index ON provider (owner_address);
+CREATE INDEX provider_address_index ON akash_provider (owner_address);
