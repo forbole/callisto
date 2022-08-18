@@ -36,7 +36,9 @@ func (m *Module) GetStakingPool(height int64) (*types.Pool, error) {
 		}
 	}
 
+	stakedNotBondedTokens := pool.NotBondedTokens.Sub(sdk.NewInt(unbondingTokens))
+
 	fmt.Printf("\n \n totalUnbondingTokens %v \n \n", unbondingTokens)
 
-	return types.NewPool(pool.BondedTokens, pool.NotBondedTokens, sdk.NewInt(unbondingTokens), height), nil
+	return types.NewPool(pool.BondedTokens, pool.NotBondedTokens, sdk.NewInt(unbondingTokens), stakedNotBondedTokens, height), nil
 }
