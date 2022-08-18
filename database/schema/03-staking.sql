@@ -16,6 +16,7 @@ CREATE TABLE staking_pool
     one_row_id        BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
     bonded_tokens     TEXT    NOT NULL,
     not_bonded_tokens TEXT    NOT NULL,
+    unbonding_tokens  TEXT    NOT NULL,
     height            BIGINT  NOT NULL,
     CHECK (one_row_id)
 );
