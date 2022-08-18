@@ -46,6 +46,10 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	akashprovider "github.com/ovrclk/akash/x/provider"
+
+	sdkclient "github.com/cosmos/cosmos-sdk/client"
+	akashclient "github.com/ovrclk/akash/client"
+	httpclient "github.com/tendermint/tendermint/rpc/client/http"
 )
 
 type Sources struct {
@@ -121,13 +125,39 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		return nil, fmt.Errorf("error while creating remote source: %s", err)
 	}
 
+	akashclient, err := buildAkashClient(cfg.RPC.Address)
+	if err != nil {
+		return nil, fmt.Errorf("error while building akash client: %s", err)
+	}
+
 	return &Sources{
 		BankSource:     remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
 		DistrSource:    remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
 		GovSource:      remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
-		ProviderSource: remoteprovidersource.NewSource(source, providertypes.NewQueryClient(source.GrpcConn)),
+		ProviderSource: remoteprovidersource.NewSource(source, providertypes.NewQueryClient(source.GrpcConn), akashclient),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
 	}, nil
+}
+
+func buildAkashClient(rpcAddress string) (akashclient.QueryClient, error) {
+	// Build rpc client
+	rpcClient, err := httpclient.New(rpcAddress, "/websocket")
+	if err != nil {
+		return nil, fmt.Errorf("error while building rpc client: %s", err)
+	}
+
+	err = rpcClient.Start()
+	if err != nil {
+		return nil, fmt.Errorf("error while starting rpc client: %s", err)
+	}
+
+	// Build akashClient
+	akashclient := akashclient.NewQueryClientFromCtx(sdkclient.Context{
+		Client:  rpcClient,
+		NodeURI: rpcAddress,
+	})
+
+	return akashclient, nil
 }
