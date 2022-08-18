@@ -15,7 +15,7 @@ func (m *Module) GetStakingPool(height int64) (*types.Pool, error) {
 
 	validatorsList, err := m.db.GetValidators()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error while getting validators list: %s", err)
 	}
 
 	var totalUnbondingTokens int64
@@ -26,7 +26,7 @@ func (m *Module) GetStakingPool(height int64) (*types.Pool, error) {
 			nil,
 		)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("error while getting unbonding delegations: %s", err)
 		}
 
 		for _, unbonding := range unbondingDelegations.UnbondingResponses {
