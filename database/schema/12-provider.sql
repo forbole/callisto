@@ -6,7 +6,7 @@ CREATE TYPE PROVIDER_INFO AS
 
 CREATE TABLE akash_provider
 (
-    owner_address   TEXT            NOT NULL REFERENCES account (address),
+    owner_address   TEXT            NOT NULL,
     host_uri        TEXT            NOT NULL,
     attributes      JSONB           NOT NULL DEFAULT '[]'::JSONB,
     info            PROVIDER_INFO   NOT NULL,

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/forbole/bdjuno/v3/types"
 	"github.com/rs/zerolog/log"
 
 	providertypes "github.com/ovrclk/akash/x/provider/types/v1beta2"
@@ -30,7 +31,12 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 }
 
 func (m *Module) saveGenesisProviders(genProviders []providertypes.Provider, height int64) error {
-	err := m.db.SaveProviders(genProviders, height)
+	providers := make([]*types.Provider, len(genProviders))
+	for index, info := range genProviders {
+		providers[index] = types.NewProvider(info, height)
+	}
+
+	err := m.db.SaveProviders(providers, height)
 	if err != nil {
 		return err
 	}

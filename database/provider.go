@@ -6,12 +6,11 @@ import (
 
 	dbtypes "github.com/forbole/bdjuno/v3/database/types"
 	dbutils "github.com/forbole/bdjuno/v3/database/utils"
-
-	providertypes "github.com/ovrclk/akash/x/provider/types/v1beta2"
+	"github.com/forbole/bdjuno/v3/types"
 )
 
 // SaveProviders allows to store the providers inside the database
-func (db *Db) SaveProviders(providers []providertypes.Provider, height int64) error {
+func (db *Db) SaveProviders(providers []*types.Provider, height int64) error {
 	if len(providers) == 0 {
 		return nil
 	}
@@ -35,8 +34,8 @@ func (db *Db) SaveProviders(providers []providertypes.Provider, height int64) er
 }
 
 // saveProviders allows to store providers inside the database
-func (db *Db) saveProviders(paramsNumber int, providers []providertypes.Provider, height int64) error {
-	stmt := `INSERT INTO provider (owner_address, host_uri, attributes, info, height) VALUES `
+func (db *Db) saveProviders(paramsNumber int, providers []*types.Provider, height int64) error {
+	stmt := `INSERT INTO akash_provider (owner_address, host_uri, attributes, info, height) VALUES `
 	var params []interface{}
 
 	for i, provider := range providers {
@@ -55,7 +54,7 @@ func (db *Db) saveProviders(paramsNumber int, providers []providertypes.Provider
 			return fmt.Errorf("error while converting provider info to DbProviderInfo: %s", err)
 		}
 
-		params = append(params, provider.Owner, provider.HostURI, string(attributesBz), infoValue, height)
+		params = append(params, provider.OwnerAddress, provider.HostURI, string(attributesBz), infoValue, height)
 	}
 
 	stmt = stmt[:len(stmt)-1]
@@ -65,7 +64,7 @@ ON CONFLICT ON CONSTRAINT unique_provider DO UPDATE
 		attributes = excluded.attributes,
 		info = excluded.info,
 	    height = excluded.height 
-WHERE provider.height <= excluded.height`
+WHERE akash_provider.height <= excluded.height`
 
 	_, err := db.Sql.Exec(stmt, params...)
 	if err != nil {
