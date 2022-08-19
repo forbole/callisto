@@ -25,20 +25,22 @@ func (m *Module) GetStakingPool(height int64) (*types.Pool, error) {
 			validator.GetOperator(),
 			nil,
 		)
+
 		if err != nil {
-			return nil, fmt.Errorf("error while getting unbonding delegations: %s", err)
+			// Do nothing
+			continue
 		}
 
+		// calculate total unbonding tokens value
 		for _, unbonding := range unbondingDelegations.UnbondingResponses {
 			for _, entry := range unbonding.Entries {
+				// add to total unbonding value
 				unbondingTokens += entry.Balance.Int64()
 			}
 		}
 	}
 
-	stakedNotBondedTokens := pool.NotBondedTokens.Sub(sdk.NewInt(unbondingTokens))
+	stakedNotBondedTokens := pool.NotBondedTokens.Int64() - unbondingTokens
 
-	fmt.Printf("\n \n totalUnbondingTokens %v \n \n", unbondingTokens)
-
-	return types.NewPool(pool.BondedTokens, pool.NotBondedTokens, sdk.NewInt(unbondingTokens), stakedNotBondedTokens, height), nil
+	return types.NewPool(pool.BondedTokens, pool.NotBondedTokens, sdk.NewInt(unbondingTokens), sdk.NewInt(stakedNotBondedTokens), height), nil
 }
