@@ -8,5 +8,7 @@ select_permissions:
     - height
     - bonded_tokens
     - not_bonded_tokens
+    - unbonding_tokens
+    - staked_not_bonded_tokens
     filter: {}
   role: anonymous
