@@ -53,8 +53,6 @@ import (
 	akashmarket "github.com/ovrclk/akash/x/market"
 	akashprovider "github.com/ovrclk/akash/x/provider"
 
-	sdkclient "github.com/cosmos/cosmos-sdk/client"
-	akashclient "github.com/ovrclk/akash/client"
 	httpclient "github.com/tendermint/tendermint/rpc/client/http"
 
 	akashapp "github.com/ovrclk/akash/app"
@@ -142,9 +140,10 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		return nil, fmt.Errorf("error while creating remote source: %s", err)
 	}
 
-	akashclient, err := buildAkashClient(cfg.RPC.Address)
+	// Build rpc client that times out in 5 secs
+	rpcClient, err := httpclient.NewWithTimeout(cfg.RPC.Address, "/websocket", 3)
 	if err != nil {
-		return nil, fmt.Errorf("error while building akash client: %s", err)
+		return nil, fmt.Errorf("error while building rpc client: %s", err)
 	}
 
 	return &Sources{
@@ -153,29 +152,8 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		GovSource:      remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
 		MarketSource:   remotemarketsource.NewSource(source, markettypes.NewQueryClient(source.GrpcConn)),
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
-		ProviderSource: remoteprovidersource.NewSource(source, providertypes.NewQueryClient(source.GrpcConn), akashclient),
+		ProviderSource: remoteprovidersource.NewSource(source, providertypes.NewQueryClient(source.GrpcConn), rpcClient),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
 	}, nil
-}
-
-func buildAkashClient(rpcAddress string) (akashclient.QueryClient, error) {
-	// Build rpc client
-	rpcClient, err := httpclient.New(rpcAddress, "/websocket")
-	if err != nil {
-		return nil, fmt.Errorf("error while building rpc client: %s", err)
-	}
-
-	err = rpcClient.Start()
-	if err != nil {
-		return nil, fmt.Errorf("error while starting rpc client: %s", err)
-	}
-
-	// Build akashClient
-	akashclient := akashclient.NewQueryClientFromCtx(sdkclient.Context{
-		Client:  rpcClient,
-		NodeURI: rpcAddress,
-	})
-
-	return akashclient, nil
 }

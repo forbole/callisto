@@ -82,6 +82,6 @@ func (s Source) GetProviders(height int64) ([]providertypes.Provider, error) {
 	return providers, nil
 }
 
-func (s Source) GetProviderProvisionStatus(address string) (*provider.Status, error) {
-	return nil, fmt.Errorf("provider status can only be queried with node.type = remote")
+func (s Source) GetProviderInventoryStatus(address string) (*provider.Status, error) {
+	return nil, fmt.Errorf("provider inventory status can only be queried with node.type = remote")
 }

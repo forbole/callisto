@@ -10,12 +10,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/forbole/juno/v3/node/remote"
 
-	akashclient "github.com/ovrclk/akash/client"
 	"github.com/ovrclk/akash/provider"
 	gwrest "github.com/ovrclk/akash/provider/gateway/rest"
 	providertypes "github.com/ovrclk/akash/x/provider/types/v1beta2"
-	// sdkclient "github.com/cosmos/cosmos-sdk/client"
-	// httpclient "github.com/tendermint/tendermint/rpc/client/http"
+
+	sdkclient "github.com/cosmos/cosmos-sdk/client"
+	akashclient "github.com/ovrclk/akash/client"
+	httpclient "github.com/tendermint/tendermint/rpc/client/http"
 )
 
 var (
@@ -26,15 +27,15 @@ var (
 type Source struct {
 	*remote.Source
 	providerClient providertypes.QueryClient
-	akashClient    akashclient.QueryClient
+	rpcClient      *httpclient.HTTP
 }
 
 // NewSource returns a new Source instance
-func NewSource(source *remote.Source, providerClient providertypes.QueryClient, akashClient akashclient.QueryClient) *Source {
+func NewSource(source *remote.Source, providerClient providertypes.QueryClient, rpcClient *httpclient.HTTP) *Source {
 	return &Source{
 		Source:         source,
 		providerClient: providerClient,
-		akashClient:    akashClient,
+		rpcClient:      rpcClient,
 	}
 }
 
@@ -77,7 +78,8 @@ func (s Source) GetProviders(height int64) ([]providertypes.Provider, error) {
 	return providers, nil
 }
 
-func (s Source) GetProviderProvisionStatus(address string) (*provider.Status, error) {
+func (s Source) GetProviderInventoryStatus(address string) (*provider.Status, error) {
+	s.rpcClient.Start()
 
 	// Get sdk address
 	bech32Addr, err := sdk.AccAddressFromBech32(address)
@@ -85,15 +87,21 @@ func (s Source) GetProviderProvisionStatus(address string) (*provider.Status, er
 		return nil, fmt.Errorf("error while converting address to AccAddress: %s", err)
 	}
 
+	// Build akashClient
+	akashclient := akashclient.NewQueryClientFromCtx(sdkclient.Context{
+		Client:  s.rpcClient,
+		NodeURI: "https://rpc.akash.forbole.com:443",
+	})
+
 	// Builde gateway rest client
-	gclient, err := gwrest.NewClient(s.akashClient, bech32Addr, nil)
+	gclient, err := gwrest.NewClient(akashclient, bech32Addr, nil)
 	if err != nil {
-		return nil, fmt.Errorf("error while building new akash gateway rest client: %s", err)
+		return nil, fmt.Errorf("error while building rest client: %s", err)
 	}
 
 	res, err := gclient.Status(s.Ctx)
 	if err != nil {
-		return nil, fmt.Errorf("error while getting provider status with gateway rest client: %s", err)
+		return nil, fmt.Errorf("error while getting provider inventory status with rest client: %s", err)
 	}
 
 	return res, nil

@@ -83,3 +83,19 @@ func (db *Db) DeleteProvider(ownerAddress string) error {
 	}
 	return nil
 }
+
+// GetAkashProviders returns the akash provider addresses stored inside the database
+func (db *Db) GetAkashProviders() ([]string, error) {
+	stmt := `SELECT owner_address FROM akash_provider`
+
+	var addresses []string
+	if err := db.Sqlx.Select(&addresses, stmt); err != nil {
+		return nil, err
+	}
+
+	if len(addresses) == 0 {
+		return nil, fmt.Errorf("no provider was saved")
+	}
+
+	return addresses, nil
+}
