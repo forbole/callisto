@@ -10,7 +10,7 @@ import (
 func (db *Db) SaveStakingPool(pool *types.Pool) error {
 	stmt := `
 INSERT INTO staking_pool (bonded_tokens, not_bonded_tokens, unbonding_tokens, staked_not_bonded_tokens, height) 
-VALUES ($1, $2, $3)
+VALUES ($1, $2, $3, $4, $5)
 ON CONFLICT (one_row_id) DO UPDATE 
     SET bonded_tokens = excluded.bonded_tokens, 
         not_bonded_tokens = excluded.not_bonded_tokens, 
