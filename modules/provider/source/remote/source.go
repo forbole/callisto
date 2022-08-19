@@ -77,7 +77,7 @@ func (s Source) GetProviders(height int64) ([]providertypes.Provider, error) {
 	return providers, nil
 }
 
-func (s Source) GetProviderLiveStatus(address string) (*provider.Status, error) {
+func (s Source) GetProviderProvisionStatus(address string) (*provider.Status, error) {
 
 	// Get sdk address
 	bech32Addr, err := sdk.AccAddressFromBech32(address)
