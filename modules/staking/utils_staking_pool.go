@@ -31,7 +31,7 @@ func (m *Module) GetStakingPool(height int64) (*types.Pool, error) {
 			continue
 		}
 
-		// calculate total unbonding tokens value
+		// calculate total value of unbonding tokens
 		for _, unbonding := range unbondingDelegations.UnbondingResponses {
 			for _, entry := range unbonding.Entries {
 				// add to total unbonding value
@@ -40,6 +40,7 @@ func (m *Module) GetStakingPool(height int64) (*types.Pool, error) {
 		}
 	}
 
+	// calculate total value of staked tokens that are not bonded
 	stakedNotBondedTokens := pool.NotBondedTokens.Int64() - unbondingTokens
 
 	return types.NewPool(pool.BondedTokens, pool.NotBondedTokens, sdk.NewInt(unbondingTokens), sdk.NewInt(stakedNotBondedTokens), height), nil
