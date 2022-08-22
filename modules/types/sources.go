@@ -140,8 +140,10 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		return nil, fmt.Errorf("error while creating remote source: %s", err)
 	}
 
-	// Build rpc client that times out in 5 secs
-	rpcClient, err := httpclient.NewWithTimeout(cfg.RPC.Address, "/websocket", 3)
+	// rpcAddress := "https://akash-rpc.polkachu.com:443"
+	rpcAddress := cfg.RPC.Address
+	// Build rpc client
+	rpcClient, err := httpclient.NewWithTimeout(rpcAddress, "/websocket", 5)
 	if err != nil {
 		return nil, fmt.Errorf("error while building rpc client: %s", err)
 	}
@@ -152,7 +154,7 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		GovSource:      remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
 		MarketSource:   remotemarketsource.NewSource(source, markettypes.NewQueryClient(source.GrpcConn)),
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
-		ProviderSource: remoteprovidersource.NewSource(source, providertypes.NewQueryClient(source.GrpcConn), rpcClient),
+		ProviderSource: remoteprovidersource.NewSource(source, providertypes.NewQueryClient(source.GrpcConn), rpcClient, rpcAddress),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
 	}, nil

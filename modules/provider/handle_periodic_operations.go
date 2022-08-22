@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/forbole/bdjuno/v3/modules/utils"
-	"github.com/forbole/bdjuno/v3/types"
 
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
@@ -21,7 +20,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	}
 
 	// Setup a cron job to run every 10 minutes
-	if _, err := scheduler.Every(120).Seconds().Do(func() {
+	if _, err := scheduler.Every(10).Minutes().Do(func() {
 		utils.WatchMethod(m.updateProviderStatus)
 	}); err != nil {
 		return err
@@ -55,51 +54,24 @@ func (m *Module) updateProviders() error {
 func (m *Module) updateProviderStatus() error {
 	log.Debug().
 		Str("module", "provider").
-		Str("operation", "provider status").
-		Msg("getting provider provision")
+		Str("operation", "status").
+		Msg("getting provider inventory status")
 
 	height, err := m.db.GetLastBlockHeight()
 	if err != nil {
 		return err
 	}
 
-	// Get provider addresses
+	// Get provider addresses from the database
 	addresses, err := m.db.GetAkashProviders()
 	if err != nil {
 		return err
 	}
 
-	fmt.Println("len(addresses): ", len(addresses))
-
-	invChan := make(chan *types.ProviderStatus)
-
-	goroutineCount := 0
 	for _, address := range addresses {
-		// Get providers inventory status
-		go m.getProviderInventory(address, height, invChan)
-		goroutineCount++
-		fmt.Println("goroutineCount: ", goroutineCount)
+		// Get providers inventory status concurrently
+		go m.updateProviderInventoryStatus(address, height)
 	}
 
-	handledCounter := 0
-	i := 0
-	ii := 0
-	for ch := range invChan {
-		if ch.Active {
-			fmt.Println(ch)
-			i++
-			fmt.Println("active count: ", i)
-		}
-
-		ii++
-		fmt.Println("total count: ", ii)
-
-		handledCounter++
-		if handledCounter == len(addresses) {
-			close(invChan)
-		}
-	}
-
-	// return m.db.SaveProviderInventoryStatus(<-invChan, height)
 	return nil
 }

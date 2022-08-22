@@ -3,24 +3,32 @@ package provider
 import (
 	"github.com/forbole/bdjuno/v3/types"
 	"github.com/ovrclk/akash/provider"
+	"github.com/rs/zerolog/log"
 )
 
-func (m *Module) getProviderInventory(address string, height int64, invCh chan *types.ProviderStatus) {
-	// Get the provision status of a provider
+func (m *Module) updateProviderInventoryStatus(address string, height int64) {
+	// Get the inventory status of a provider
 	status, err := m.source.GetProviderInventoryStatus(address)
 	if err != nil {
-		invCh <- types.NewInactiveProviderStatus(
-			address, false, nil, nil, nil, nil, height,
-		)
-		return
+		err := m.db.SetProviderInactive(address)
+		if err != nil {
+			log.Error().Str("module", "provider").
+				Str("operation", "inventory").
+				Msgf("error while setting provider status inactive %s", err)
+		}
 	}
 
 	// Calculate inventory sum of each state
 	active, pending, available := m.calculateInventorySum(status)
 
-	invCh <- types.NewProviderStatus(
+	err = m.db.StoreProviderInventoryStatus(types.NewProviderStatus(
 		address, true, status, active, pending, available, height,
-	)
+	))
+	if err != nil {
+		log.Error().Str("module", "provider").
+			Str("operation", "inventory").
+			Msgf("error while setting provider status inactive %s", err)
+	}
 }
 
 // calculateInventorySum calculates the sum of inventory in different statuses

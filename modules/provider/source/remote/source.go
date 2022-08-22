@@ -28,14 +28,16 @@ type Source struct {
 	*remote.Source
 	providerClient providertypes.QueryClient
 	rpcClient      *httpclient.HTTP
+	rpcAddress     string
 }
 
 // NewSource returns a new Source instance
-func NewSource(source *remote.Source, providerClient providertypes.QueryClient, rpcClient *httpclient.HTTP) *Source {
+func NewSource(source *remote.Source, providerClient providertypes.QueryClient, rpcClient *httpclient.HTTP, rpcAddress string) *Source {
 	return &Source{
 		Source:         source,
 		providerClient: providerClient,
 		rpcClient:      rpcClient,
+		rpcAddress:     rpcAddress,
 	}
 }
 
@@ -79,8 +81,6 @@ func (s Source) GetProviders(height int64) ([]providertypes.Provider, error) {
 }
 
 func (s Source) GetProviderInventoryStatus(address string) (*provider.Status, error) {
-	s.rpcClient.Start()
-
 	// Get sdk address
 	bech32Addr, err := sdk.AccAddressFromBech32(address)
 	if err != nil {
@@ -90,7 +90,7 @@ func (s Source) GetProviderInventoryStatus(address string) (*provider.Status, er
 	// Build akashClient
 	akashclient := akashclient.NewQueryClientFromCtx(sdkclient.Context{
 		Client:  s.rpcClient,
-		NodeURI: "https://rpc.akash.forbole.com:443",
+		NodeURI: s.rpcAddress,
 	})
 
 	// Builde gateway rest client
