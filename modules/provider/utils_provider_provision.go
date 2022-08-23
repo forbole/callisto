@@ -32,7 +32,7 @@ func (m *Module) updateProviderInventoryStatus(address string, height int64) {
 
 // calculateInventorySum calculates the sum of inventory in different statuses
 func (m *Module) calculateInventorySum(status *provider.Status) (
-	activeInventorySum *types.Resource, pendingInventorySum *types.Resource, availableInventorySum *types.Resource,
+	*types.Resource, *types.Resource, *types.Resource,
 ) {
 	var cpu uint64 = 0
 	var memory uint64 = 0
@@ -44,7 +44,7 @@ func (m *Module) calculateInventorySum(status *provider.Status) (
 		memory += active.Memory
 		storage += active.StorageEphemeral
 	}
-	activeInventorySum = types.NewProviderResouce(cpu, memory, storage)
+	activeInventorySum := types.NewProviderResouce(cpu, memory, storage)
 
 	// Sum up pending inventory
 	cpu = 0
@@ -55,7 +55,7 @@ func (m *Module) calculateInventorySum(status *provider.Status) (
 		memory += pending.Memory
 		storage += pending.StorageEphemeral
 	}
-	pendingInventorySum = types.NewProviderResouce(cpu, memory, storage)
+	pendingInventorySum := types.NewProviderResouce(cpu, memory, storage)
 
 	// Sum up available inventory
 	cpu = 0
@@ -66,7 +66,7 @@ func (m *Module) calculateInventorySum(status *provider.Status) (
 		memory += available.Memory
 		storage += available.StorageEphemeral
 	}
-	availableInventorySum = types.NewProviderResouce(cpu, memory, storage)
+	availableInventorySum := types.NewProviderResouce(cpu, memory, storage)
 
-	return
+	return activeInventorySum, pendingInventorySum, availableInventorySum
 }
