@@ -2,7 +2,7 @@ table:
   name: akash_provider_inventory
   schema: public
 object_relationships:
-- name: account
+- name: akash_provider
   using:
     foreign_key_constraint_on: provider_address
 select_permissions:
