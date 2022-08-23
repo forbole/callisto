@@ -10,17 +10,18 @@ func (m *Module) updateProviderInventoryStatus(address string, height int64) {
 	// Get the inventory status of a provider
 	status, err := m.source.GetProviderInventoryStatus(address)
 	if err != nil {
-		err := m.db.SetProviderInactive(address)
+		err := m.db.SetProviderStatus(address, false, height)
 		if err != nil {
 			log.Error().Str("module", "provider").
 				Msgf("error while setting provider status inactive %s", err)
 		}
+		return
 	}
 
 	// Calculate inventory sum of each state
 	active, pending, available := m.calculateInventorySum(status)
 
-	err = m.db.StoreProviderInventoryStatus(types.NewProviderStatus(
+	err = m.db.SaveProviderInventoryStatus(types.NewProviderInventoryStatus(
 		address, true, status, active, pending, available, height,
 	))
 	if err != nil {

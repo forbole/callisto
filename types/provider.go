@@ -26,38 +26,38 @@ func NewProvider(p providertypes.Provider, height int64) *Provider {
 	}
 }
 
-type ProviderStatus struct {
-	ProviderAddress       string
-	Active                bool
-	LeasesNumber          uint32
-	BidengineOrders       uint32
-	ManifestDeployments   uint32
-	ClusterPublicHostname string
-	InventoryStatusRaw    clustertypes.InventoryStatus
-	ActiveInventorySum    *Resource
-	PendingInventorySum   *Resource
-	AvailableInventorySum *Resource
-	Height                int64
+type ProviderInventoryStatus struct {
+	ProviderAddress         string
+	Active                  bool
+	LeaseCount              uint32
+	BidengineOrderCount     uint32
+	ManifestDeploymentCount uint32
+	ClusterPublicHostname   string
+	InventoryStatusRaw      clustertypes.InventoryStatus
+	ActiveInventorySum      *Resource
+	PendingInventorySum     *Resource
+	AvailableInventorySum   *Resource
+	Height                  int64
 }
 
-// NewProviderStatus allows to build a new ProviderStatus instance
-func NewProviderStatus(
+// NewProviderInventoryStatus allows to build a new ProviderInventoryStatus instance
+func NewProviderInventoryStatus(
 	providerAddress string, active bool, s *provider.Status,
 	activeInventorySum *Resource, pendingInventorySum *Resource, availableInventorySum *Resource,
 	height int64,
-) *ProviderStatus {
-	return &ProviderStatus{
-		ProviderAddress:       providerAddress,
-		Active:                active,
-		LeasesNumber:          s.Cluster.Leases,
-		BidengineOrders:       s.Bidengine.Orders,
-		ManifestDeployments:   s.Manifest.Deployments,
-		ClusterPublicHostname: s.ClusterPublicHostname,
-		InventoryStatusRaw:    s.Cluster.Inventory,
-		ActiveInventorySum:    activeInventorySum,
-		PendingInventorySum:   pendingInventorySum,
-		AvailableInventorySum: availableInventorySum,
-		Height:                height,
+) *ProviderInventoryStatus {
+	return &ProviderInventoryStatus{
+		ProviderAddress:         providerAddress,
+		Active:                  active,
+		LeaseCount:              s.Cluster.Leases,
+		BidengineOrderCount:     s.Bidengine.Orders,
+		ManifestDeploymentCount: s.Manifest.Deployments,
+		ClusterPublicHostname:   s.ClusterPublicHostname,
+		InventoryStatusRaw:      s.Cluster.Inventory,
+		ActiveInventorySum:      activeInventorySum,
+		PendingInventorySum:     pendingInventorySum,
+		AvailableInventorySum:   availableInventorySum,
+		Height:                  height,
 	}
 }
 
@@ -66,8 +66,8 @@ func NewInactiveProviderStatus(
 	providerAddress string, active bool, s *provider.Status,
 	activeInventorySum *Resource, pendingInventorySum *Resource, availableInventorySum *Resource,
 	height int64,
-) *ProviderStatus {
-	return &ProviderStatus{
+) *ProviderInventoryStatus {
+	return &ProviderInventoryStatus{
 		ProviderAddress: providerAddress,
 		Active:          active,
 		Height:          height,

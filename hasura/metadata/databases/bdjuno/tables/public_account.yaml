@@ -52,7 +52,7 @@ array_relationships:
     foreign_key_constraint_on:
       column: owner_address
       table:
-        name: provider
+        name: akash_provider
         schema: public
 select_permissions:
 - permission:

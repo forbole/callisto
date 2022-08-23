@@ -35,9 +35,11 @@ func (db *Db) SaveProviders(providers []*types.Provider, height int64) error {
 
 // saveProviders allows to store providers inside the database
 func (db *Db) saveProviders(paramsNumber int, providers []*types.Provider, height int64) error {
+
 	stmt := `INSERT INTO akash_provider (owner_address, host_uri, attributes, info, height) VALUES `
 	var params []interface{}
 
+	accounts := make([]types.Account, len(providers))
 	for i, provider := range providers {
 
 		bi := i * paramsNumber
@@ -55,6 +57,7 @@ func (db *Db) saveProviders(paramsNumber int, providers []*types.Provider, heigh
 		}
 
 		params = append(params, provider.OwnerAddress, provider.HostURI, string(attributesBz), infoValue, height)
+		accounts[i] = types.NewAccount(provider.OwnerAddress)
 	}
 
 	stmt = stmt[:len(stmt)-1]
@@ -66,7 +69,12 @@ ON CONFLICT ON CONSTRAINT unique_provider DO UPDATE
 	    height = excluded.height 
 WHERE akash_provider.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt, params...)
+	err := db.SaveAccounts(accounts)
+	if err != nil {
+		return fmt.Errorf("error while storing accounts: %s", err)
+	}
+
+	_, err = db.Sql.Exec(stmt, params...)
 	if err != nil {
 		return fmt.Errorf("error while storing providers: %s", err)
 	}
@@ -98,4 +106,69 @@ func (db *Db) GetAkashProviders() ([]string, error) {
 	}
 
 	return addresses, nil
+}
+
+// SaveProviderInventoryStatus allows to store provider inventory status inside the database
+func (db *Db) SaveProviderInventoryStatus(status *types.ProviderInventoryStatus) error {
+	stmt := `INSERT INTO akash_provider_inventory 
+	( 
+		provider_address, active, lease_count, 
+		bidengine_order_count, manifest_deployment_count, 
+		cluster_public_hostname, inventory_status_raw, 
+		active_inventory_sum, pending_inventory_sum, available_inventory_sum, 
+		height 
+	) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) 
+ON CONFLICT (provider_address) DO UPDATE 
+	SET active = excluded.active, 
+		lease_count = excluded.lease_count, 
+		bidengine_order_count = excluded.bidengine_order_count, 
+		manifest_deployment_count = excluded.manifest_deployment_count, 
+		cluster_public_hostname = excluded.cluster_public_hostname, 
+		inventory_status_raw = excluded.inventory_status_raw, 
+		active_inventory_sum = excluded.active_inventory_sum, 
+		pending_inventory_sum = excluded.pending_inventory_sum, 
+		available_inventory_sum = excluded.available_inventory_sum, 
+		height = excluded.height 
+	WHERE akash_provider_inventory.height <= excluded.height`
+
+	// Marshal inventory raw status
+	inventoryStatusBz, err := json.Marshal(&status.InventoryStatusRaw)
+	if err != nil {
+		return fmt.Errorf("error while marshaling provider inventory raw status: %s", err)
+	}
+
+	// Get value for active inventory sum
+	active := dbtypes.NewDbAkashResource(status.ActiveInventorySum)
+	activeValue, _ := active.Value()
+
+	// Get value for active inventory sum
+	pending := dbtypes.NewDbAkashResource(status.PendingInventorySum)
+	pendingValue, _ := pending.Value()
+
+	// Get value for active inventory sum
+	available := dbtypes.NewDbAkashResource(status.AvailableInventorySum)
+	availableValue, _ := available.Value()
+
+	_, err = db.Sql.Exec(stmt,
+		status.ProviderAddress, status.Active, status.LeaseCount,
+		status.BidengineOrderCount, status.ManifestDeploymentCount,
+		status.ClusterPublicHostname, string(inventoryStatusBz),
+		activeValue, pendingValue, availableValue,
+		status.Height,
+	)
+	if err != nil {
+		return fmt.Errorf("error while storing inventory status of provider %s: %s", status.ProviderAddress, err)
+	}
+
+	return nil
+}
+
+// SetProviderStatus allows to update the provider status inside the database
+func (db *Db) SetProviderStatus(providerAddress string, active bool, height int64) error {
+	stmt := `UPDATE akash_provider_inventory SET active = $1 WHERE provider_address = $2`
+	_, err := db.Sql.Exec(stmt, active, providerAddress)
+	if err != nil {
+		return fmt.Errorf("error while updating active status of provider %s: %s", providerAddress, err)
+	}
+	return nil
 }

@@ -19,9 +19,9 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 		return fmt.Errorf("error while setting up consensus periodic operation: %s", err)
 	}
 
-	// Setup a cron job to run every 10 minutes
-	if _, err := scheduler.Every(10).Minutes().Do(func() {
-		utils.WatchMethod(m.updateProviderStatus)
+	// Setup a cron job to run every 30 minutes
+	if _, err := scheduler.Every(30).Minutes().Do(func() {
+		utils.WatchMethod(m.updateProviderInventory)
 	}); err != nil {
 		return err
 	}
@@ -49,9 +49,9 @@ func (m *Module) updateProviders() error {
 	return m.db.SaveProviders(providers, height)
 }
 
-// updateProviderStatus fetches from the REST APIs the latest value for the provider resources
+// updateProviderInventory fetches from the REST APIs the latest value for the provider resources
 // including vCPU, memory and ephemeral storage, and saves them inside the database.
-func (m *Module) updateProviderStatus() error {
+func (m *Module) updateProviderInventory() error {
 	log.Debug().
 		Str("module", "provider").
 		Str("operation", "status").

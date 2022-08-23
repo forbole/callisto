@@ -4,6 +4,7 @@ import (
 	"database/sql/driver"
 	"fmt"
 
+	"github.com/forbole/bdjuno/v3/types"
 	providertypes "github.com/ovrclk/akash/x/provider/types/v1beta2"
 )
 
@@ -58,4 +59,30 @@ func (info DbProviderInfo) Equal(b DbProviderInfo) bool {
 // Value implements driver.Valuer
 func (info *DbProviderInfo) Value() (driver.Value, error) {
 	return fmt.Sprintf("(%s,%s)", info.EMail, info.Website), nil
+}
+
+// DbAkashResource represents the information stored inside the database about a single akash resource
+type DbAkashResource struct {
+	CPU              uint64
+	Memory           uint64
+	StorageEphemeral uint64
+}
+
+// NewDbAkashResource builds a DbAkashResource from an akash resource
+func NewDbAkashResource(resource *types.Resource) DbAkashResource {
+	return DbAkashResource{
+		CPU:              resource.CPU,
+		Memory:           resource.Memory,
+		StorageEphemeral: resource.StorageEphemeral,
+	}
+}
+
+// Equal tells whether both object are the same
+func (a DbAkashResource) Equal(b DbAkashResource) bool {
+	return a.CPU == b.CPU && a.Memory == b.Memory && a.StorageEphemeral == b.StorageEphemeral
+}
+
+// Value implements driver.Valuer
+func (resource *DbAkashResource) Value() (driver.Value, error) {
+	return fmt.Sprintf("(%v,%v,%v)", resource.CPU, resource.Memory, resource.StorageEphemeral), nil
 }
