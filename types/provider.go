@@ -61,19 +61,6 @@ func NewProviderInventoryStatus(
 	}
 }
 
-// NewInactiveProviderStatus allows to build a new ProviderStatus instance of inactive status
-func NewInactiveProviderStatus(
-	providerAddress string, active bool, s *provider.Status,
-	activeInventorySum *Resource, pendingInventorySum *Resource, availableInventorySum *Resource,
-	height int64,
-) *ProviderInventoryStatus {
-	return &ProviderInventoryStatus{
-		ProviderAddress: providerAddress,
-		Active:          active,
-		Height:          height,
-	}
-}
-
 type Resource struct {
 	CPU              uint64
 	Memory           uint64
