@@ -21,4 +21,5 @@ select_permissions:
     - attributes
     - info
     - height
+    filter: {}
   role: anonymous

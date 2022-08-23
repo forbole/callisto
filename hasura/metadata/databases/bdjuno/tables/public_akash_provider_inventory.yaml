@@ -20,4 +20,5 @@ select_permissions:
     - pending_inventory_sum
     - available_inventory_sum
     - height
+    filter: {}
   role: anonymous
