@@ -18,7 +18,7 @@ func (m *Module) GetStakingPool(height int64) (*types.Pool, error) {
 		return nil, fmt.Errorf("error while getting validators list: %s", err)
 	}
 
-	var unbondingTokens int64
+	var unbondingTokens sdk.Int
 	for _, validator := range validatorsList {
 		unbondingDelegations, err := m.source.GetUnbondingDelegationsFromValidator(
 			height,
@@ -35,13 +35,13 @@ func (m *Module) GetStakingPool(height int64) (*types.Pool, error) {
 		for _, unbonding := range unbondingDelegations.UnbondingResponses {
 			for _, entry := range unbonding.Entries {
 				// add to total unbonding value
-				unbondingTokens += entry.Balance.Int64()
+				unbondingTokens = unbondingTokens.Add(entry.Balance)
 			}
 		}
 	}
 
 	// calculate total value of staked tokens that are not bonded
-	stakedNotBondedTokens := pool.NotBondedTokens.Int64() - unbondingTokens
+	stakedNotBondedTokens := pool.NotBondedTokens.Sub(unbondingTokens)
 
-	return types.NewPool(pool.BondedTokens, pool.NotBondedTokens, sdk.NewInt(unbondingTokens), sdk.NewInt(stakedNotBondedTokens), height), nil
+	return types.NewPool(pool.BondedTokens, pool.NotBondedTokens, unbondingTokens, stakedNotBondedTokens, height), nil
 }
