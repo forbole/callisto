@@ -13,7 +13,6 @@ func (m *Module) updateProviderInventoryStatus(address string, height int64) {
 		err := m.db.SetProviderInactive(address)
 		if err != nil {
 			log.Error().Str("module", "provider").
-				Str("operation", "inventory").
 				Msgf("error while setting provider status inactive %s", err)
 		}
 	}
@@ -26,8 +25,7 @@ func (m *Module) updateProviderInventoryStatus(address string, height int64) {
 	))
 	if err != nil {
 		log.Error().Str("module", "provider").
-			Str("operation", "inventory").
-			Msgf("error while setting provider status inactive %s", err)
+			Msgf("error while storing provider inventory status %s", err)
 	}
 }
 
