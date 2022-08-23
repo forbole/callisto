@@ -20,18 +20,20 @@ func (m *Module) GetStakingPool(height int64) (*types.Pool, error) {
 		return nil, fmt.Errorf("error while getting validators list: %s", err)
 	}
 
-	var unbondingTokens sdk.Int
+	var unbondingTokens = sdk.NewInt(0)
+
 	for _, validator := range validatorsList {
 		// get list of all unbonding delegations for each validator
 		unbondingDelegations := m.getTotalUnbondingDelegationsFromValidator(height, validator.GetOperator())
-
-		// calculate total value of unbonding tokens
-		for _, unbonding := range unbondingDelegations {
-			for _, entry := range unbonding.Entries {
-				// add to total unbonding value
-				unbondingTokens = unbondingTokens.Add(entry.Balance)
+		if len(unbondingDelegations) > 0 {
+			// calculate total value of unbonding tokens
+			for _, unbonding := range unbondingDelegations {
+				for _, entry := range unbonding.Entries {
+					unbondingTokens = unbondingTokens.Add(entry.Balance)
+				}
 			}
 		}
+
 	}
 
 	// calculate total value of staked tokens that are not bonded
