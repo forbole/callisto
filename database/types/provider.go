@@ -78,8 +78,8 @@ func NewDbAkashResource(resource *types.Resource) DbAkashResource {
 }
 
 // Equal tells whether both object are the same
-func (a DbAkashResource) Equal(b DbAkashResource) bool {
-	return a.CPU == b.CPU && a.Memory == b.Memory && a.StorageEphemeral == b.StorageEphemeral
+func (resource DbAkashResource) Equal(b DbAkashResource) bool {
+	return resource.CPU == b.CPU && resource.Memory == b.Memory && resource.StorageEphemeral == b.StorageEphemeral
 }
 
 // Value implements driver.Valuer
