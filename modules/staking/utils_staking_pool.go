@@ -47,10 +47,14 @@ func (m *Module) getTotalUnbondingDelegationsFromValidator(height int64, valOper
 	var nextKey []byte
 	var stop = false
 	for !stop {
-		res, _ := m.source.GetUnbondingDelegationsFromValidator(height,
+		res, err := m.source.GetUnbondingDelegationsFromValidator(height,
 			valOperatorAddress,
 			&query.PageRequest{Key: nextKey},
 		)
+		if err != nil {
+			return []stakingtypes.UnbondingDelegation{}
+		}
+
 		nextKey = res.Pagination.NextKey
 		stop = len(res.Pagination.NextKey) == 0
 		unbondingDelegations = append(unbondingDelegations, res.UnbondingResponses...)
