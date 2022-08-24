@@ -145,7 +145,7 @@ ON CONFLICT (provider_address) DO UPDATE
 	pending := dbtypes.NewDbAkashResource(status.PendingInventorySum)
 	pendingValue, _ := pending.Value()
 
-	// Get value for active inventory sum
+	// Get value for available inventory sum
 	available := dbtypes.NewDbAkashResource(status.AvailableInventorySum)
 	availableValue, _ := available.Value()
 
