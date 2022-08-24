@@ -1,6 +1,11 @@
 package provider
 
 import (
+	"crypto/tls"
+	"encoding/json"
+	"fmt"
+	"net/http"
+
 	"github.com/forbole/bdjuno/v3/types"
 	"github.com/ovrclk/akash/provider"
 	"github.com/rs/zerolog/log"
@@ -8,7 +13,7 @@ import (
 
 func (m *Module) updateProviderInventoryStatus(address string, height int64) {
 	// Get the inventory status of a provider
-	status, err := m.source.GetProviderInventoryStatus(address)
+	status, err := m.getProviderInventoryStatus(address)
 	if err != nil {
 		err := m.db.SetProviderStatus(address, false, height)
 		if err != nil {
@@ -28,6 +33,27 @@ func (m *Module) updateProviderInventoryStatus(address string, height int64) {
 		log.Error().Str("module", "provider").
 			Msgf("error while storing provider inventory status %s", err)
 	}
+}
+
+func (m *Module) getProviderInventoryStatus(hostURI string) (*provider.Status, error) {
+	transport := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Transport: transport}
+	res, err := client.Get(hostURI)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	defer res.Body.Close()
+
+	var providerStatus = new(provider.Status)
+	err = json.NewDecoder(res.Body).Decode(providerStatus)
+	if err != nil {
+		return nil, fmt.Errorf("error while reading json response : %s", err)
+	}
+
+	return providerStatus, nil
 }
 
 // calculateInventorySum calculates the sum of inventory in different statuses
