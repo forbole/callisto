@@ -16,7 +16,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	if _, err := scheduler.Every(1).Day().At("00:00").Do(func() {
 		utils.WatchMethod(m.updateProviders)
 	}); err != nil {
-		return fmt.Errorf("error while setting up consensus periodic operation: %s", err)
+		return fmt.Errorf("error while setting up provider periodic operation: %s", err)
 	}
 
 	// Setup a cron job to run every 30 minutes
