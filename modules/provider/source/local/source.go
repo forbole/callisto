@@ -7,7 +7,6 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/forbole/juno/v3/node/local"
-	"github.com/ovrclk/akash/provider"
 	providertypes "github.com/ovrclk/akash/x/provider/types/v1beta2"
 
 	providersource "github.com/forbole/bdjuno/v3/modules/provider/source"
@@ -80,8 +79,4 @@ func (s Source) GetProviders(height int64) ([]providertypes.Provider, error) {
 	}
 
 	return providers, nil
-}
-
-func (s Source) GetProviderInventoryStatus(address string) (*provider.Status, error) {
-	return nil, fmt.Errorf("provider inventory status can only be queried with node.type = remote")
 }

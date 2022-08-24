@@ -53,8 +53,6 @@ import (
 	akashmarket "github.com/ovrclk/akash/x/market"
 	akashprovider "github.com/ovrclk/akash/x/provider"
 
-	httpclient "github.com/tendermint/tendermint/rpc/client/http"
-
 	akashapp "github.com/ovrclk/akash/app"
 )
 
@@ -140,19 +138,13 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		return nil, fmt.Errorf("error while creating remote source: %s", err)
 	}
 
-	// Build rpc client
-	rpcClient, err := httpclient.NewWithTimeout(cfg.RPC.Address, "/websocket", 5)
-	if err != nil {
-		return nil, fmt.Errorf("error while building rpc client: %s", err)
-	}
-
 	return &Sources{
 		BankSource:     remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
 		DistrSource:    remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
 		GovSource:      remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
 		MarketSource:   remotemarketsource.NewSource(source, markettypes.NewQueryClient(source.GrpcConn)),
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
-		ProviderSource: remoteprovidersource.NewSource(source, providertypes.NewQueryClient(source.GrpcConn), rpcClient, cfg.RPC.Address),
+		ProviderSource: remoteprovidersource.NewSource(source, providertypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
 	}, nil
