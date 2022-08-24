@@ -16,6 +16,7 @@ import (
 	"github.com/forbole/bdjuno/v3/database"
 	"github.com/forbole/bdjuno/v3/modules"
 
+	strideapp "github.com/Stride-Labs/stride/app"
 	gaiaapp "github.com/cosmos/gaia/v7/app"
 )
 
@@ -56,6 +57,7 @@ func main() {
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
 		gaiaapp.ModuleBasics,
+		strideapp.ModuleBasics,
 	}
 }
 
