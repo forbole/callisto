@@ -49,6 +49,7 @@ func (m *Module) updateProviderInventoryStatus(address string, height int64) {
 // getProviderInventoryStatus allows to get provider inventory status by rest client with insecure TLS config
 func (m *Module) getProviderInventoryStatus(statusURL string) (*provider.Status, error) {
 	transport := &http.Transport{
+		//nolint:gosec
 		TLSClientConfig: &tls.Config{
 			InsecureSkipVerify: true,
 		},
