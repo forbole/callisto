@@ -2,6 +2,8 @@
 ### Changes
 #### Staking Module
 - ([\#443](https://github.com/forbole/bdjuno/pull/443)) Remove tombstone status from staking module(already stored in slashing module)
+- ([\#455](https://github.com/forbole/bdjuno/pull/455)) Added `unbonding_tokens` and `staked_not_bonded_tokens` values to staking pool table
+
 
 ## Version v3.2.0
 ### Changes
