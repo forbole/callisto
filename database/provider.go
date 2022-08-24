@@ -108,6 +108,22 @@ func (db *Db) GetAkashProviders() ([]string, error) {
 	return addresses, nil
 }
 
+// GetProviderHostURI returns the akash provider's host URI stored inside the database
+func (db *Db) GetProviderHostURI(address string) (string, error) {
+	stmt := `SELECT host_uri FROM akash_provider where owner_address = $1`
+
+	var hostURI []string
+	if err := db.Sqlx.Select(&hostURI, stmt, address); err != nil {
+		return "", err
+	}
+
+	if len(hostURI) == 0 {
+		return "", fmt.Errorf("no host uri is found for provider address %s", address)
+	}
+
+	return hostURI[0], nil
+}
+
 // SaveProviderInventoryStatus allows to store provider inventory status inside the database
 func (db *Db) SaveProviderInventoryStatus(status *types.ProviderInventoryStatus) error {
 	stmt := `INSERT INTO akash_provider_inventory 

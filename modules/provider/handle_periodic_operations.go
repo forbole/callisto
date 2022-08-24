@@ -13,7 +13,7 @@ import (
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	log.Debug().Str("module", "provider").Msg("setting up periodic tasks")
 
-	if _, err := scheduler.Every(1).Day().At("00:00").Do(func() {
+	if _, err := scheduler.Every(1).Minute().Do(func() {
 		utils.WatchMethod(m.updateProviders)
 	}); err != nil {
 		return fmt.Errorf("error while setting up provider periodic operation: %s", err)

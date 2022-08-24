@@ -11,14 +11,25 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+var (
+	statusEndpoint string = "/status"
+)
+
 func (m *Module) updateProviderInventoryStatus(address string, height int64) {
+	hostURI, err := m.db.GetProviderHostURI(address)
+	if err != nil {
+		log.Error().Str("module", "provider").
+			Msgf("error while getting provider host URI: %s", err)
+	}
+
 	// Get the inventory status of a provider
-	status, err := m.getProviderInventoryStatus(address)
+	statusURL := hostURI + statusEndpoint
+	status, err := m.getProviderInventoryStatus(statusURL)
 	if err != nil {
 		err := m.db.SetProviderStatus(address, false, height)
 		if err != nil {
 			log.Error().Str("module", "provider").
-				Msgf("error while setting provider status inactive %s", err)
+				Msgf("error while setting provider status inactive: %s", err)
 		}
 		return
 	}
@@ -31,18 +42,21 @@ func (m *Module) updateProviderInventoryStatus(address string, height int64) {
 	))
 	if err != nil {
 		log.Error().Str("module", "provider").
-			Msgf("error while storing provider inventory status %s", err)
+			Msgf("error while storing provider inventory status: %s", err)
 	}
 }
 
-func (m *Module) getProviderInventoryStatus(hostURI string) (*provider.Status, error) {
+// getProviderInventoryStatus allows to get provider inventory status by rest client with insecure TLS config
+func (m *Module) getProviderInventoryStatus(statusURL string) (*provider.Status, error) {
 	transport := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: true,
+		},
 	}
 	client := &http.Client{Transport: transport}
-	res, err := client.Get(hostURI)
+	res, err := client.Get(statusURL)
 	if err != nil {
-		fmt.Println(err)
+		return nil, fmt.Errorf("error while getting inventory status with client: %s", err)
 	}
 
 	defer res.Body.Close()
@@ -50,7 +64,7 @@ func (m *Module) getProviderInventoryStatus(hostURI string) (*provider.Status, e
 	var providerStatus = new(provider.Status)
 	err = json.NewDecoder(res.Body).Decode(providerStatus)
 	if err != nil {
-		return nil, fmt.Errorf("error while reading json response : %s", err)
+		return nil, fmt.Errorf("error while reading json response: %s", err)
 	}
 
 	return providerStatus, nil
