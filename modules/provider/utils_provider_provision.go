@@ -15,13 +15,7 @@ var (
 	statusEndpoint string = "/status"
 )
 
-func (m *Module) updateProviderInventoryStatus(address string, height int64) {
-	hostURI, err := m.db.GetProviderHostURI(address)
-	if err != nil {
-		log.Error().Str("module", "provider").
-			Msgf("error while getting provider host URI: %s", err)
-	}
-
+func (m *Module) updateProviderInventoryStatus(address string, hostURI string, height int64) {
 	// Get the inventory status of a provider
 	statusURL := hostURI + statusEndpoint
 	status, err := m.getProviderInventoryStatus(statusURL)

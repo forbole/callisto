@@ -13,17 +13,10 @@ import (
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	log.Debug().Str("module", "provider").Msg("setting up periodic tasks")
 
-	if _, err := scheduler.Every(1).Day().At("00:00").Do(func() {
+	if _, err := scheduler.Every(10).Minutes().Do(func() {
 		utils.WatchMethod(m.updateProviders)
 	}); err != nil {
 		return fmt.Errorf("error while setting up provider periodic operation: %s", err)
-	}
-
-	// Setup a cron job to run every 5 minutes
-	if _, err := scheduler.Every(5).Minutes().Do(func() {
-		utils.WatchMethod(m.updateProviderInventory)
-	}); err != nil {
-		return fmt.Errorf("error while setting up provider inventory periodic operation: %s", err)
 	}
 
 	return nil
@@ -33,44 +26,28 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 func (m *Module) updateProviders() error {
 	log.Debug().
 		Str("module", "provider").
-		Msg("getting provider list")
+		Msg("updating provider list and inventory status")
 
 	height, err := m.db.GetLastBlockHeight()
 	if err != nil {
 		return err
 	}
 
-	// Get provider addresses
+	// Get providers info
 	providers, err := m.getProviderList(height)
 	if err != nil {
 		return err
 	}
 
-	return m.db.SaveProviders(providers, height)
-}
-
-// updateProviderInventory fetches from the REST APIs the latest value for the provider resources
-// including vCPU, memory and ephemeral storage, and saves them inside the database.
-func (m *Module) updateProviderInventory() error {
-	log.Debug().
-		Str("module", "provider").
-		Str("operation", "status").
-		Msg("getting provider inventory status")
-
-	height, err := m.db.GetLastBlockHeight()
+	// Save providers into the database
+	err = m.db.SaveProviders(providers, height)
 	if err != nil {
 		return err
 	}
 
-	// Get provider addresses from the database
-	addresses, err := m.db.GetAkashProviders()
-	if err != nil {
-		return err
-	}
-
-	for _, address := range addresses {
-		// Get providers inventory status concurrently
-		go m.updateProviderInventoryStatus(address, height)
+	// Get provider inventory statuses concurrently and save them into the database
+	for _, p := range providers {
+		go m.updateProviderInventoryStatus(p.OwnerAddress, p.HostURI, height)
 	}
 
 	return nil
