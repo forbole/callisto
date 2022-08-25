@@ -36,12 +36,16 @@ func (m *Module) refetchMissingBlocks() error {
 		return fmt.Errorf("error while getting latest block: %s", err)
 	}
 
-	blockCount, err := m.database.GetTotalBlocks()
+	blockHeightDayAgo, err := m.database.GetBlockHeightTimeDayAgo(time.Now())
 	if err != nil {
-		return fmt.Errorf("error while getting block count: %s", err)
+		return fmt.Errorf("error while getting block height from a day ago: %s", err)
 	}
+	var startHeight int64 = blockHeightDayAgo.Height
 
-	if blockCount >= latestBlock {
+	missingBlocks := m.database.GetMissingBlocks(startHeight, latestBlock)
+
+	// return if no blocks are missing
+	if len(missingBlocks) == 0 {
 		return nil
 	}
 
@@ -53,19 +57,12 @@ func (m *Module) refetchMissingBlocks() error {
 	workerCtx := parser.NewContext(parseCtx.EncodingConfig, parseCtx.Node, parseCtx.Database, parseCtx.Logger, parseCtx.Modules)
 	worker := parser.NewWorker(workerCtx, nil, 0)
 
-	blockHeightDayAgo, err := m.database.GetBlockHeightTimeDayAgo(time.Now())
-	if err != nil {
-		return fmt.Errorf("error while getting block height from a day ago: %s", err)
-	}
-
-	var startHeight int64 = blockHeightDayAgo.Height
-
 	log.Info().Int64("start height", startHeight).Int64("end height", latestBlock).
 		Msg("getting missing blocks and transactions from a day ago")
-	for k := startHeight; k <= latestBlock; k++ {
-		err = worker.ProcessIfNotExists(k)
+	for _, block := range missingBlocks {
+		err = worker.ProcessIfNotExists(block)
 		if err != nil {
-			return fmt.Errorf("error while re-fetching block %d: %s", k, err)
+			return fmt.Errorf("error while re-fetching block %d: %s", block, err)
 		}
 	}
 
