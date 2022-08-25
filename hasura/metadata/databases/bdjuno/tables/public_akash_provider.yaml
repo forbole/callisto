@@ -1,6 +1,14 @@
 table:
   name: akash_provider
   schema: public
+array_relationships: 
+- name: akash_provider_inventories
+  using:
+    foreign_key_constraint_on:
+      column: provider_address
+      table:
+        name: akash_provider_inventory
+        schema: public
 object_relationships:
 - name: account
   using:
