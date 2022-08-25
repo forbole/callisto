@@ -23,7 +23,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	if _, err := scheduler.Every(5).Minutes().Do(func() {
 		utils.WatchMethod(m.updateProviderInventory)
 	}); err != nil {
-		return err
+		return fmt.Errorf("error while setting up provider inventory periodic operation: %s", err)
 	}
 
 	return nil
