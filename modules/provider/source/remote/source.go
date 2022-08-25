@@ -3,11 +3,12 @@ package remote
 import (
 	"fmt"
 
+	providersource "github.com/forbole/bdjuno/v3/modules/provider/source"
+
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/forbole/juno/v3/node/remote"
-	providertypes "github.com/ovrclk/akash/x/provider/types/v1beta2"
 
-	providersource "github.com/forbole/bdjuno/v3/modules/provider/source"
+	providertypes "github.com/ovrclk/akash/x/provider/types/v1beta2"
 )
 
 var (

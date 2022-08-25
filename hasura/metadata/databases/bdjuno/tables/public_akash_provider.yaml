@@ -5,6 +5,13 @@ object_relationships:
 - name: account
   using:
     foreign_key_constraint_on: owner_address
+- name: provider_inventory_status
+  using:
+    foreign_key_constraint_on:
+      column: provider_address
+      table:
+        name: akash_provider_inventory
+        schema: public
 select_permissions:
 - permission:
     allow_aggregations: true
@@ -14,4 +21,5 @@ select_permissions:
     - attributes
     - info
     - height
+    filter: {}
   role: anonymous

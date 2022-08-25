@@ -1,6 +1,7 @@
 - "!include public_account.yaml"
-- "!include public_akash_provider.yaml"
 - "!include public_akash_lease.yaml"
+- "!include public_akash_provider_inventory.yaml"
+- "!include public_akash_provider.yaml"
 - "!include public_average_block_time_from_genesis.yaml"
 - "!include public_average_block_time_per_day.yaml"
 - "!include public_average_block_time_per_hour.yaml"
