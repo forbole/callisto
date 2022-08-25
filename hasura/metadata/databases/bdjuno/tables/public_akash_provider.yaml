@@ -5,7 +5,7 @@ object_relationships:
 - name: account
   using:
     foreign_key_constraint_on: owner_address
-- name: provider_addresses
+- name: provider_inventory_status
   using:
     foreign_key_constraint_on:
       column: provider_address
