@@ -60,7 +60,7 @@ func (m *Module) refetchMissingBlocks() error {
 	log.Info().Int64("start height", startHeight).Int64("end height", latestBlock).
 		Msg("getting missing blocks and transactions from a day ago")
 	for _, block := range missingBlocks {
-		err = worker.ProcessIfNotExists(block)
+		err = worker.Process(block)
 		if err != nil {
 			return fmt.Errorf("error while re-fetching block %d: %s", block, err)
 		}
