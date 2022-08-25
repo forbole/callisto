@@ -54,6 +54,13 @@ array_relationships:
       table:
         name: akash_provider
         schema: public
+- name: akash_provider_inventories
+  using:
+    foreign_key_constraint_on:
+      column: provider_address
+      table:
+        name: akash_provider_inventory
+        schema: public
 select_permissions:
 - permission:
     allow_aggregations: true
