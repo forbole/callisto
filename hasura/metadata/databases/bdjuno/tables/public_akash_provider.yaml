@@ -5,7 +5,7 @@ object_relationships:
 - name: account
   using:
     foreign_key_constraint_on: owner_address
-- name: akash_provider_inventories
+- name: provider_addresses
   using:
     foreign_key_constraint_on:
       column: provider_address
