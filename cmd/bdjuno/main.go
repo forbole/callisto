@@ -17,7 +17,7 @@ import (
 	"github.com/forbole/bdjuno/v3/modules"
 
 	gaiaapp "github.com/cosmos/gaia/v6/app"
-	regenapp "github.com/regen-network/regen-ledger/v2/app"
+	regenapp "github.com/regen-network/regen-ledger/v4/app"
 )
 
 func main() {
