@@ -2,6 +2,8 @@
 ### Changes
 #### Staking Module
 - ([\#443](https://github.com/forbole/bdjuno/pull/443)) Remove tombstone status from staking module(already stored in slashing module)
+- ([\#455](https://github.com/forbole/bdjuno/pull/455)) Added `unbonding_tokens` and `staked_not_bonded_tokens` values to staking pool table
+
 
 #### Daily refetch
 - ([\#454](https://github.com/forbole/bdjuno/pull/454)) Added `daily refetch` module to refetch missing blocks every day
