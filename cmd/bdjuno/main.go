@@ -17,6 +17,7 @@ import (
 	"github.com/forbole/bdjuno/v3/modules"
 
 	gaiaapp "github.com/cosmos/gaia/v7/app"
+	quicksilverapp "github.com/ingenuity-build/quicksilver/app"
 )
 
 func main() {
@@ -56,6 +57,7 @@ func main() {
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
 		gaiaapp.ModuleBasics,
+		quicksilverapp.ModuleBasics,
 	}
 }
 
