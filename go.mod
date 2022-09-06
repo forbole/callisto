@@ -3,7 +3,7 @@ module github.com/forbole/bdjuno/v3
 go 1.18
 
 require (
-	github.com/Sifchain/sifnode v0.0.0-20220910043445-e4bdf6eafdc7 // v1.0-beta.10
+	github.com/Sifchain/sifnode v0.17.0
 	github.com/cosmos/cosmos-sdk v0.45.6
 	github.com/cosmos/gaia/v6 v6.0.0
 	github.com/forbole/juno/v3 v3.3.1-0.20220803134534-55af63c839ac
