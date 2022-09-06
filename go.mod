@@ -3,7 +3,7 @@ module github.com/forbole/bdjuno/v3
 go 1.17
 
 require (
-	github.com/Sifchain/sifnode v0.17.0
+	github.com/Sifchain/sifnode v0.17.1-0.20220906040827-0a8b174005c2
 	github.com/cosmos/cosmos-sdk v0.45.6
 	github.com/cosmos/gaia/v6 v6.0.0
 	github.com/forbole/juno/v3 v3.3.1-0.20220803134534-55af63c839ac
@@ -48,7 +48,7 @@ require (
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/dvsekhvalnov/jose2go v0.0.0-20200901110807-248326c1351b // indirect
 	github.com/enigmampc/btcutil v1.0.3-0.20200723161021-e2fb6adb2a25 // indirect
-	github.com/ethereum/go-ethereum v1.10.11 // indirect
+	github.com/ethereum/go-ethereum v1.10.13 // indirect
 	github.com/felixge/httpsnoop v1.0.1 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/go-kit/kit v0.12.0 // indirect
