@@ -2,6 +2,7 @@ package modules
 
 import (
 	"github.com/forbole/bdjuno/v3/modules/actions"
+	"github.com/forbole/bdjuno/v3/modules/margin"
 	"github.com/forbole/bdjuno/v3/modules/types"
 
 	"github.com/forbole/juno/v3/modules/pruning"
@@ -77,6 +78,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	consensusModule := consensus.NewModule(db)
 	distrModule := distribution.NewModule(sources.DistrSource, cdc, db)
 	feegrantModule := feegrant.NewModule(cdc, db)
+	marginModule := margin.NewModule(cdc, db)
 	mintModule := mint.NewModule(sources.MintSource, cdc, db)
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
 	stakingModule := staking.NewModule(sources.StakingSource, slashingModule, cdc, db)
@@ -94,6 +96,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		distrModule,
 		feegrantModule,
 		govModule,
+		marginModule,
 		mintModule,
 		modules.NewModule(ctx.JunoConfig.Chain, db),
 		pricefeed.NewModule(ctx.JunoConfig, cdc, db),
