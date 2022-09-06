@@ -10,6 +10,7 @@ import (
 var (
 	_ modules.Module        = &Module{}
 	_ modules.GenesisModule = &Module{}
+	_ modules.MessageModule = &Module{}
 )
 
 // Module represent database/margin module
