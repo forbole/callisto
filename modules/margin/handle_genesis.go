@@ -18,7 +18,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 
 	// Read the genesis state
 	var genState margintypes.GenesisState
-	err := m.cdc.UnmarshalJSON(appState["margin"], &genState)
+	err := m.cdc.UnmarshalJSON(appState[margintypes.ModuleName], &genState)
 	if err != nil {
 		return fmt.Errorf("error while reading margin genesis data: %s", err)
 	}

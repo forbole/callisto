@@ -70,8 +70,8 @@ github.com/OneOfOne/xxhash v1.2.2 h1:KMrpdQIwFcEqXDklaen+P1axHaj9BSKzvpUUfnHldSE
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/Shopify/sarama v1.19.0/go.mod h1:FVkBWblsNy7DGZRfXLU0O9RCGt5g3g3yEuWXgklEdEo=
 github.com/Shopify/toxiproxy v2.1.4+incompatible/go.mod h1:OXgGpZ6Cli1/URJOF1DMxUHB2q5Ap20/P/eIdh4G0pI=
-github.com/Sifchain/sifnode v0.17.0 h1:hG/WlD92lCM8NyRROku52a9d48YOdETvTYNC2pFwNMU=
-github.com/Sifchain/sifnode v0.17.0/go.mod h1:zbk1nG4NbyilrvlWAd6z+wKRJigivTIayClDM84E+4s=
+github.com/Sifchain/sifnode v0.17.1-0.20220906040827-0a8b174005c2 h1:/uz1dZjdPsf1HLYAlkOkE8LLF1lhb/Q5szxiRhwAl6Y=
+github.com/Sifchain/sifnode v0.17.1-0.20220906040827-0a8b174005c2/go.mod h1:E4NDO9i+Yoj9Ij46edVqZZc2hFn2mnPnWvWDM5EU9bI=
 github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6/go.mod h1:3eOhrUMpNV+6aFIbp5/iudMxNCF27Vw2OZgy4xEx0Fg=
 github.com/VictoriaMetrics/fastcache v1.5.7/go.mod h1:ptDBkNMQI4RtmVo8VS/XwRY6RoTu1dAWCbrk+6WsEM8=
 github.com/VictoriaMetrics/fastcache v1.6.0/go.mod h1:0qHz5QP0GMX4pfmMA/zt5RgfNuXJrTP0zS7DqpHGGTw=
