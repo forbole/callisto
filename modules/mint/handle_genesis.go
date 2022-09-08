@@ -8,7 +8,7 @@ import (
 
 	"github.com/forbole/bdjuno/v3/types"
 
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+	minttypes "github.com/ingenuity-build/quicksilver/x/mint/types"
 	"github.com/rs/zerolog/log"
 )
 
