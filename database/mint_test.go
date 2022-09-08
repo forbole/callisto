@@ -15,7 +15,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveMintParams() {
 	mintParams := minttypes.NewParams(
 		"udaric",
 		sdk.NewDecWithPrec(4, 1),
-		"",
+		"day",
 		sdk.NewDecWithPrec(8, 1),
 		4,
 		minttypes.DistributionProportions{},
