@@ -23,6 +23,10 @@ type SlashingModule interface {
 	UpdateParams(height int64) error
 }
 
+type StakeIBCModule interface {
+	UpdateParams(height int64) error
+}
+
 type StakingModule interface {
 	GetStakingPool(height int64) (*types.Pool, error)
 	GetValidatorsWithStatus(height int64, status string) ([]stakingtypes.Validator, []types.Validator, error)

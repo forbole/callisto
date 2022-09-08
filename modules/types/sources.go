@@ -23,6 +23,7 @@ import (
 
 	strideapp "github.com/Stride-Labs/stride/app"
 	mintkeeper "github.com/Stride-Labs/stride/x/mint/keeper"
+	stakeibctypes "github.com/Stride-Labs/stride/x/stakeibc/types"
 	banksource "github.com/forbole/bdjuno/v3/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v3/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v3/modules/bank/source/remote"
@@ -38,6 +39,9 @@ import (
 	slashingsource "github.com/forbole/bdjuno/v3/modules/slashing/source"
 	localslashingsource "github.com/forbole/bdjuno/v3/modules/slashing/source/local"
 	remoteslashingsource "github.com/forbole/bdjuno/v3/modules/slashing/source/remote"
+	stakeibcsource "github.com/forbole/bdjuno/v3/modules/stakeibc/source"
+	localstakeibcsource "github.com/forbole/bdjuno/v3/modules/stakeibc/source/local"
+	remotestakeibcsource "github.com/forbole/bdjuno/v3/modules/stakeibc/source/remote"
 	stakingsource "github.com/forbole/bdjuno/v3/modules/staking/source"
 	localstakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/remote"
@@ -49,6 +53,7 @@ type Sources struct {
 	GovSource      govsource.Source
 	MintSource     mintsource.Source
 	SlashingSource slashingsource.Source
+	StakeIBCSource stakeibcsource.Source
 	StakingSource  stakingsource.Source
 }
 
@@ -81,6 +86,7 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
 		MintSource:     localmintsource.NewSource(source, mintkeeper.Querier{Keeper: app.MintKeeper}),
 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
+		StakeIBCSource: localstakeibcsource.NewSource(source, stakeibctypes.QueryServer(app.StakeibcKeeper)),
 		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
 	}
 
@@ -120,6 +126,7 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		GovSource:      remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
+		StakeIBCSource: remotestakeibcsource.NewSource(source, stakeibctypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }

@@ -80,9 +80,9 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	feegrantModule := feegrant.NewModule(cdc, db)
 	mintModule := mint.NewModule(sources.MintSource, cdc, db)
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
-	stakeIBCModule := stakeibc.NewModule(cdc, db)
+	stakeIBCModule := stakeibc.NewModule(sources.StakeIBCSource, cdc, db)
 	stakingModule := staking.NewModule(sources.StakingSource, cdc, db)
-	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakingModule, cdc, db)
+	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakeIBCModule, stakingModule, cdc, db)
 
 	return []jmodules.Module{
 		messages.NewModule(r.parser, cdc, ctx.Database),

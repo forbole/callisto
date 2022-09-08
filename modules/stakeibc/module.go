@@ -5,6 +5,7 @@ import (
 	"github.com/forbole/juno/v3/modules"
 
 	"github.com/forbole/bdjuno/v3/database"
+	stakeibcsource "github.com/forbole/bdjuno/v3/modules/stakeibc/source"
 )
 
 var (
@@ -14,15 +15,17 @@ var (
 
 // Module represent database/stakeibc module
 type Module struct {
-	cdc codec.Codec
-	db  *database.Db
+	cdc    codec.Codec
+	db     *database.Db
+	source stakeibcsource.Source
 }
 
 // NewModule returns a new Module instance
-func NewModule(cdc codec.Codec, db *database.Db) *Module {
+func NewModule(source stakeibcsource.Source, cdc codec.Codec, db *database.Db) *Module {
 	return &Module{
-		cdc: cdc,
-		db:  db,
+		cdc:    cdc,
+		db:     db,
+		source: source,
 	}
 }
 

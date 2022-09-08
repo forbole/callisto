@@ -26,6 +26,7 @@ type Module struct {
 	distrModule    DistrModule
 	mintModule     MintModule
 	slashingModule SlashingModule
+	stakeIBCModule StakeIBCModule
 	stakingModule  StakingModule
 }
 
@@ -36,6 +37,7 @@ func NewModule(
 	distrModule DistrModule,
 	mintModule MintModule,
 	slashingModule SlashingModule,
+	stakeIBCModule StakeIBCModule,
 	stakingModule StakingModule,
 	cdc codec.Codec,
 	db *database.Db,
@@ -47,6 +49,7 @@ func NewModule(
 		distrModule:    distrModule,
 		mintModule:     mintModule,
 		slashingModule: slashingModule,
+		stakeIBCModule: stakeIBCModule,
 		stakingModule:  stakingModule,
 		db:             db,
 	}

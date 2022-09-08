@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	minttypes "github.com/Stride-Labs/stride/x/mint/types"
+	stakeibctypes "github.com/Stride-Labs/stride/x/stakeibc/types"
 	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -125,6 +126,11 @@ func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Propo
 			err = m.slashingModule.UpdateParams(height)
 			if err != nil {
 				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", slashingtypes.ModuleName, err)
+			}
+		case stakeibctypes.ModuleName:
+			err = m.stakeIBCModule.UpdateParams(height)
+			if err != nil {
+				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", stakeibctypes.ModuleName, err)
 			}
 		case stakingtypes.ModuleName:
 			err = m.stakingModule.UpdateParams(height)
