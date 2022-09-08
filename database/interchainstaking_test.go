@@ -22,7 +22,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInterchainStakingParams() {
 	suite.Require().NoError(err)
 
 	var rows []dbtypes.InterchainStakingParamsRow
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM interchain_staking_params`)
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM interchainstaking_params`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 

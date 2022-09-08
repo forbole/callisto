@@ -15,12 +15,12 @@ func (db *Db) SaveInterchainStakingParams(params *types.InterchainStakingParams)
 	}
 
 	stmt := `
-INSERT INTO interchain_staking_params (params, height) 
+INSERT INTO interchainstaking_params (params, height) 
 VALUES ($1, $2)
 ON CONFLICT (one_row_id) DO UPDATE 
     SET params = excluded.params,
         height = excluded.height
-WHERE interchain_staking_params.height <= excluded.height`
+WHERE interchainstaking_params.height <= excluded.height`
 
 	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
 	if err != nil {

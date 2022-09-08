@@ -1,6 +1,6 @@
 package types
 
-// InterchainStakingParamsRow represents a single row inside the interchain_staking_params table
+// InterchainStakingParamsRow represents a single row inside the interchainstaking_params table
 type InterchainStakingParamsRow struct {
 	OneRowID bool   `db:"one_row_id"`
 	Params   string `db:"params"`

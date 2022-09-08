@@ -1,6 +1,6 @@
 /* ---- PARAMS ---- */
 
-CREATE TABLE interchain_staking_params
+CREATE TABLE interchainstaking_params
 (
     one_row_id BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
     params     JSONB   NOT NULL,
