@@ -18,7 +18,12 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveMintParams() {
 		"day",
 		sdk.NewDecWithPrec(8, 1),
 		4,
-		minttypes.DistributionProportions{},
+		minttypes.DistributionProportions{
+			Staking:              sdk.NewDec(0),
+			PoolIncentives:       sdk.NewDec(0),
+			ParticipationRewards: sdk.NewDec(0),
+			CommunityPool:        sdk.NewDec(0),
+		},
 		5006000,
 	)
 	err := suite.database.SaveMintParams(types.NewMintParams(mintParams, 10))
