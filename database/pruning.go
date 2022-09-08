@@ -21,11 +21,6 @@ func (db *Db) Prune(height int64) error {
 		return fmt.Errorf("error while pruning staking: %s", err)
 	}
 
-	err = db.pruneMint(height)
-	if err != nil {
-		return fmt.Errorf("error while pruning mint: %s", err)
-	}
-
 	err = db.pruneDistribution(height)
 	if err != nil {
 		return fmt.Errorf("error while pruning distribution: %s", err)
@@ -79,11 +74,6 @@ func (db *Db) pruneStaking(height int64) error {
 	}
 
 	return nil
-}
-
-func (db *Db) pruneMint(height int64) error {
-	_, err := db.Sql.Exec(`DELETE FROM inflation WHERE height = $1`, height)
-	return fmt.Errorf("error while pruning inflation: %s", err)
 }
 
 func (db *Db) pruneDistribution(height int64) error {

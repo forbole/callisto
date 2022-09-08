@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+	minttypes "github.com/Stride-Labs/stride/x/mint/types"
 	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -120,12 +120,6 @@ func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Propo
 			err = m.mintModule.UpdateParams(height)
 			if err != nil {
 				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", minttypes.ModuleName, err)
-			}
-
-			// Update the inflation
-			err = m.mintModule.UpdateInflation()
-			if err != nil {
-				return fmt.Errorf("error while updating inflation with ParamChangeProposal: %s", err)
 			}
 		case slashingtypes.ModuleName:
 			err = m.slashingModule.UpdateParams(height)

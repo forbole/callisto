@@ -3,8 +3,8 @@ package local
 import (
 	"fmt"
 
+	minttypes "github.com/Stride-Labs/stride/x/mint/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	"github.com/forbole/juno/v3/node/local"
 
 	mintsource "github.com/forbole/bdjuno/v3/modules/mint/source"
@@ -26,21 +26,6 @@ func NewSource(source *local.Source, querier minttypes.QueryServer) *Source {
 		Source:  source,
 		querier: querier,
 	}
-}
-
-// GetInflation implements mintsource.Source
-func (s Source) GetInflation(height int64) (sdk.Dec, error) {
-	ctx, err := s.LoadHeight(height)
-	if err != nil {
-		return sdk.Dec{}, fmt.Errorf("error while loading height: %s", err)
-	}
-
-	res, err := s.querier.Inflation(sdk.WrapSDKContext(ctx), &minttypes.QueryInflationRequest{})
-	if err != nil {
-		return sdk.Dec{}, err
-	}
-
-	return res.Inflation, nil
 }
 
 // Params implements mintsource.Source
