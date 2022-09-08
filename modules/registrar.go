@@ -23,6 +23,7 @@ import (
 	"github.com/forbole/bdjuno/v3/modules/consensus"
 	"github.com/forbole/bdjuno/v3/modules/distribution"
 	"github.com/forbole/bdjuno/v3/modules/feegrant"
+	"github.com/forbole/bdjuno/v3/modules/interchainstaking"
 
 	dailyrefetch "github.com/forbole/bdjuno/v3/modules/daily_refetch"
 	"github.com/forbole/bdjuno/v3/modules/gov"
@@ -79,6 +80,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	dailyRefetchModule := dailyrefetch.NewModule(ctx.Proxy, db)
 	distrModule := distribution.NewModule(sources.DistrSource, cdc, db)
 	feegrantModule := feegrant.NewModule(cdc, db)
+	interchainstakingModule := interchainstaking.NewModule(cdc, db)
 	mintModule := mint.NewModule(sources.MintSource, cdc, db)
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
 	stakingModule := staking.NewModule(sources.StakingSource, cdc, db)
@@ -97,6 +99,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		distrModule,
 		feegrantModule,
 		govModule,
+		interchainstakingModule,
 		mintModule,
 		modules.NewModule(ctx.JunoConfig.Chain, db),
 		pricefeed.NewModule(ctx.JunoConfig, cdc, db),
