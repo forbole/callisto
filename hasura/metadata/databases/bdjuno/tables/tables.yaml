@@ -8,6 +8,8 @@
 - "!include public_distribution_params.yaml"
 - "!include public_double_sign_evidence.yaml"
 - "!include public_double_sign_vote.yaml"
+- "!include public_emoney_gas_prices.yaml"
+- "!include public_emoney_inflation.yaml"
 - "!include public_fee_grant_allowance.yaml"
 - "!include public_genesis.yaml"
 - "!include public_gov_params.yaml"
