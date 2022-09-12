@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/cosmos/cosmos-sdk v0.45.7
-	github.com/cosmos/gaia/v7 v7.0.2
+	github.com/cosmos/gaia/v7 v7.0.3
 	github.com/desmos-labs/desmos/v4 v4.4.1
 	github.com/forbole/juno/v3 v3.3.0
 	github.com/go-co-op/gocron v1.16.1
@@ -44,8 +44,8 @@ require (
 	github.com/cosmos/iavl v0.19.1 // indirect
 	github.com/cosmos/ibc-go/v3 v3.2.0 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.11.1 // indirect
-	github.com/cosmos/ledger-go v0.9.2 // indirect
-	github.com/danieljoos/wincred v1.0.2 // indirect
+	github.com/cosmos/ledger-go v0.9.3 // indirect
+	github.com/danieljoos/wincred v1.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.0.1 // indirect
 	github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f // indirect
@@ -73,7 +73,7 @@ require (
 	github.com/gorilla/handlers v1.5.1 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
-	github.com/gravity-devs/liquidity v1.5.0 // indirect
+	github.com/gravity-devs/liquidity v1.5.1 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.0.1 // indirect
