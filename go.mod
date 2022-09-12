@@ -150,6 +150,7 @@ replace (
 	github.com/cosmos/ledger-cosmos-go => github.com/desmos-labs/ledger-desmos-go v0.11.2-0.20210814121638-5d87e392e8a9
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
+	github.com/gravity-devs/liquidity => github.com/forbole/liquidity v1.5.1-bdjuno
 	github.com/tendermint/tendermint => github.com/MonikaCat/tendermint v0.34.20-0.20220510093325-405517310d66
 	google.golang.org/grpc => google.golang.org/grpc v1.33.2
 )
