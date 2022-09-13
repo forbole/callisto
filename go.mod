@@ -4,16 +4,16 @@ go 1.18
 
 require (
 	github.com/cosmos/cosmos-sdk v0.42.9
-	github.com/forbole/juno/v3 v3.3.0-stargate
-	github.com/go-co-op/gocron v1.16.2
+	github.com/forbole/juno/v3 v3.4.0-stargate
+	github.com/go-co-op/gocron v1.17.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/jmoiron/sqlx v1.3.5
-	github.com/lib/pq v1.10.6
+	github.com/lib/pq v1.10.7
 	github.com/pelletier/go-toml v1.9.5
 	github.com/prometheus/client_golang v1.13.0
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
-	github.com/rs/zerolog v1.27.0
+	github.com/rs/zerolog v1.28.0
 	github.com/spf13/cobra v1.5.0
 	github.com/stretchr/testify v1.8.0
 	github.com/tendermint/tendermint v0.34.14
