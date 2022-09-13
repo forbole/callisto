@@ -272,8 +272,8 @@ github.com/felixge/httpsnoop v1.0.1 h1:lvB5Jl89CsZtGIWuTcDM1E/vkVs49/Ml7JJe07l8S
 github.com/felixge/httpsnoop v1.0.1/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
 github.com/fjl/memsize v0.0.0-20180418122429-ca190fb6ffbc/go.mod h1:VvhXpOYNQvB+uIk2RvXzuaQtkQJzzIx6lSBe1xv7hi0=
 github.com/fogleman/gg v1.2.1-0.20190220221249-0403632d5b90/go.mod h1:R/bRT+9gY/C5z7JzPU0zXsXHKM4/ayA+zqcVNZzPa1k=
-github.com/forbole/juno/v3 v3.3.0-stargate.0.20220913061639-a44369982d66 h1:lwtVwu4YUp32BslzBtCRsgay3eSQmOW+9VBXnDU1KKg=
-github.com/forbole/juno/v3 v3.3.0-stargate.0.20220913061639-a44369982d66/go.mod h1:h9fUH8YWDitHXnPqR57/oTDzaKmEYW+MDUpSPBP+J58=
+github.com/forbole/juno/v3 v3.4.0-stargate.0.20220913061639-a44369982d66 h1:10hgXflLBSxSrAEHjNOav8m4AKoKtBkpFST55RxkkNA=
+github.com/forbole/juno/v3 v3.4.0-stargate.0.20220913061639-a44369982d66/go.mod h1:h9fUH8YWDitHXnPqR57/oTDzaKmEYW+MDUpSPBP+J58=
 github.com/forbole/tendermint v0.34.13-0.20210820072129-a2a4af55563d h1:pUqGUgTUU24ibHeloQeg1F2pFbgQllddsuZ+x+CcUzw=
 github.com/forbole/tendermint v0.34.13-0.20210820072129-a2a4af55563d/go.mod h1:aeHL7alPh4uTBIJQ8mgFEE8VwJLXI1VD3rVOmH2Mcy0=
 github.com/fortytw2/leaktest v1.3.0 h1:u8491cBMTQ8ft8aeV+adlcytMZylmA5nnwwkRZjI8vw=
