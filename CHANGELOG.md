@@ -6,6 +6,7 @@
 
 #### Gov Module
 - ([\#461](https://github.com/forbole/bdjuno/pull/461)) Parse `x/gov` genesis with `genesisDoc.InitialHeight` instead of the hard-coded height 1
+- ([\#465](https://github.com/forbole/bdjuno/pull/461)) Get open proposal ids in deposit or voting period by block time instead of current time
 
 #### Daily refetch
 - ([\#454](https://github.com/forbole/bdjuno/pull/454)) Added `daily refetch` module to refetch missing blocks every day
