@@ -8,6 +8,7 @@ import (
 	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"google.golang.org/grpc/codes"
@@ -31,11 +32,6 @@ func (m *Module) UpdateProposal(height int64, id uint64) error {
 		return fmt.Errorf("error while getting proposal: %s", err)
 	}
 
-	err = m.handleParamChangeProposal(height, proposal)
-	if err != nil {
-		return fmt.Errorf("error while updating params from ParamChangeProposal: %s", err)
-	}
-
 	err = m.updateProposalStatus(proposal)
 	if err != nil {
 		return fmt.Errorf("error while updating proposal status: %s", err)
@@ -50,6 +46,36 @@ func (m *Module) UpdateProposal(height int64, id uint64) error {
 	if err != nil {
 		return fmt.Errorf("error while updating account: %s", err)
 	}
+
+	// Refresh relevant data while a proposal is passed
+	if proposal.Status != govtypes.StatusPassed {
+		return nil
+	}
+
+	// Unpack proposal
+	var content govtypes.Content
+	err = m.db.EncodingConfig.Marshaler.UnpackAny(proposal.Content, &content)
+	if err != nil {
+		return fmt.Errorf("error while handling ParamChangeProposal: %s", err)
+	}
+
+	switch p := content.(type) {
+	case *proposaltypes.ParameterChangeProposal:
+		// Update params while parameter change proposal passed
+		err = m.handleParamChangeProposal(height, p)
+		if err != nil {
+			return fmt.Errorf("error while updating params from ParamChangeProposal: %s", err)
+		}
+	case *upgradetypes.SoftwareUpgradeProposal:
+		// TODO: Store software upgrade time
+		p.Plan.Time
+		// Refresh validator details while software upgrade proposal passed
+		err = m.stakingModule.RefreshAllValidatorInfos(height)
+		if err != nil {
+			return fmt.Errorf("error while updating params from ParamChangeProposal: %s", err)
+		}
+	}
+
 	return nil
 }
 
@@ -86,23 +112,7 @@ func (m *Module) updateDeletedProposalStatus(id uint64) error {
 }
 
 // handleParamChangeProposal updates params to the corresponding modules if a ParamChangeProposal has passed
-func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Proposal) error {
-	if proposal.Status != govtypes.StatusPassed {
-		// If the status of ParamChangeProposal is not passed, do nothing
-		return nil
-	}
-
-	var content govtypes.Content
-	err := m.db.EncodingConfig.Marshaler.UnpackAny(proposal.Content, &content)
-	if err != nil {
-		return fmt.Errorf("error while handling ParamChangeProposal: %s", err)
-	}
-
-	paramChangeProposal, ok := content.(*proposaltypes.ParameterChangeProposal)
-	if !ok {
-		return nil
-	}
-
+func (m *Module) handleParamChangeProposal(height int64, paramChangeProposal *proposaltypes.ParameterChangeProposal) (err error) {
 	for _, change := range paramChangeProposal.Changes {
 		// Update the params for corresponding modules
 		switch change.Subspace {
