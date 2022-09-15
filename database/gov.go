@@ -403,13 +403,13 @@ func (db *Db) SaveSoftwareUpgradePlan(proposalID uint64, plan upgradetypes.Plan,
 
 	stmt := `
 INSERT INTO software_upgrade_plan(proposal_id, plan_name, upgrade_height, info, height) 
-VALUES ($1, $2, $3, $4, $5, $6, $7)
+VALUES ($1, $2, $3, $4, $5)
 ON CONFLICT (proposal_id) DO UPDATE SET
 	plan_name = excluded.plan_name, 
 	upgrade_height = excluded.upgrade_height, 
 	info = excluded.info, 
 	height = excluded.height 
-WHERE software_upgrade_prooposal.height <= excluded.height`
+WHERE software_upgrade_plan.height <= excluded.height`
 
 	_, err := db.Sql.Exec(stmt,
 		proposalID, plan.Name, plan.Height, plan.Info, height)
