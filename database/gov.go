@@ -414,7 +414,7 @@ WHERE software_upgrade_plan.height <= excluded.height`
 	_, err := db.Sql.Exec(stmt,
 		proposalID, plan.Name, plan.Height, plan.Info, height)
 	if err != nil {
-		return fmt.Errorf("error while storing software upgrade proposal: %s", err)
+		return fmt.Errorf("error while storing software upgrade plan: %s", err)
 	}
 
 	return nil
@@ -426,10 +426,21 @@ func (db *Db) DeleteSoftwareUpgradePlan(proposalID uint64) error {
 
 	_, err := db.Sql.Exec(stmt, proposalID)
 	if err != nil {
-		return fmt.Errorf("error while deleting software upgrade proposal: %s", err)
+		return fmt.Errorf("error while deleting software upgrade plan: %s", err)
 	}
 
 	return nil
 }
 
-// TODO: check if an upgrade plan happens at certain height
+// GetSoftwareUpgradePlan returns true if an upgrade plan exist at given height
+func (db *Db) GetSoftwareUpgradePlan(height int64) (bool, error) {
+	var exist bool
+
+	stmt := `SELECT EXISTS (SELECT 1 FROM software_upgrade_plan WHERE height=$1)`
+	err := db.Sql.QueryRow(stmt, height).Scan(&exist)
+	if err != nil {
+		return exist, fmt.Errorf("error while checking software upgrade plan existence: %s", err)
+	}
+
+	return exist, nil
+}
