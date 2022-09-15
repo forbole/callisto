@@ -21,6 +21,19 @@ func (m *Module) HandleBlock(
 }
 
 func (m *Module) refreshDataUponSoftwareUpgrade(height int64) error {
-	// refresh validator details
+	exist, err := m.db.CheckSoftwareUpgradePlan(height)
+	if err != nil {
+		return fmt.Errorf("error while checking software upgrade plan existence: %s", err)
+	}
+	if !exist {
+		return nil
+	}
+
+	// Refresh validator details
+	err = m.stakingModule.RefreshAllValidatorInfos(height)
+	if err != nil {
+		return fmt.Errorf("error while refreshing validator infos upon software upgrade: %s", err)
+	}
+
 	return nil
 }
