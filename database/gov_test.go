@@ -215,6 +215,20 @@ func (suite *DbTestSuite) TestBigDipperDb_GetOpenProposalsIds() {
 
 	content1 := govtypes.NewTextProposal("title", "description")
 	content2 := govtypes.NewTextProposal("title1", "description1")
+
+	invalidProposal := types.NewProposal(
+		6,
+		"proposalRoute1",
+		"proposalType1",
+		content2,
+		types.ProposalStatusInvalid,
+		time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+		time.Date(2020, 1, 2, 01, 00, 00, 000, time.UTC),
+		time.Date(2020, 1, 2, 02, 00, 00, 000, time.UTC),
+		time.Date(2020, 1, 2, 03, 00, 00, 000, time.UTC),
+		proposer2.String(),
+	)
+
 	input := []types.Proposal{
 		types.NewProposal(
 			1,
@@ -264,14 +278,16 @@ func (suite *DbTestSuite) TestBigDipperDb_GetOpenProposalsIds() {
 			time.Date(2020, 1, 2, 03, 00, 00, 000, time.UTC),
 			proposer2.String(),
 		),
+		invalidProposal,
 	}
 
 	err := suite.database.SaveProposals(input)
 	suite.Require().NoError(err)
 
-	ids, err := suite.database.GetOpenProposalsIds()
+	timeBeforeDepositEnd := invalidProposal.DepositEndTime.Add(-1 * time.Hour)
+	ids, err := suite.database.GetOpenProposalsIds(timeBeforeDepositEnd)
 	suite.Require().NoError(err)
-	suite.Require().Equal([]uint64{1, 2}, ids)
+	suite.Require().Equal([]uint64{1, 2, 6}, ids)
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_UpdateProposal() {
