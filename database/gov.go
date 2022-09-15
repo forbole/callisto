@@ -426,8 +426,10 @@ func (db *Db) DeleteSoftwareUpgradePlan(proposalID uint64) error {
 
 	_, err := db.Sql.Exec(stmt, proposalID)
 	if err != nil {
-		return fmt.Errorf("error while deleteing software upgrade proposal: %s", err)
+		return fmt.Errorf("error while deleting software upgrade proposal: %s", err)
 	}
 
 	return nil
 }
+
+// TODO: check if an upgrade plan happens at certain height
