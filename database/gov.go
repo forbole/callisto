@@ -432,8 +432,8 @@ func (db *Db) DeleteSoftwareUpgradePlan(proposalID uint64) error {
 	return nil
 }
 
-// GetSoftwareUpgradePlan returns true if an upgrade plan exist at given height
-func (db *Db) GetSoftwareUpgradePlan(height int64) (bool, error) {
+// CheckSoftwareUpgradePlan returns true if an upgrade plan exist at given height
+func (db *Db) CheckSoftwareUpgradePlan(height int64) (bool, error) {
 	var exist bool
 
 	stmt := `SELECT EXISTS (SELECT 1 FROM software_upgrade_plan WHERE height=$1)`
