@@ -6,6 +6,7 @@ import (
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	"github.com/gogo/protobuf/proto"
 
 	"github.com/forbole/bdjuno/v3/types"
@@ -392,6 +393,40 @@ WHERE proposal_validator_status_snapshot.height <= excluded.height`
 	_, err := db.Sql.Exec(stmt, args...)
 	if err != nil {
 		return fmt.Errorf("error while storing proposal validator statuses snapshot: %s", err)
+	}
+
+	return nil
+}
+
+// SaveSoftwareUpgradePlan allows to save the given SoftwareUpgradePlan
+func (db *Db) SaveSoftwareUpgradePlan(proposalID uint64, plan upgradetypes.Plan, height int64) error {
+
+	stmt := `
+INSERT INTO software_upgrade_plan(proposal_id, plan_name, upgrade_height, info, height) 
+VALUES ($1, $2, $3, $4, $5, $6, $7)
+ON CONFLICT (proposal_id) DO UPDATE SET
+	plan_name = excluded.plan_name, 
+	upgrade_height = excluded.upgrade_height, 
+	info = excluded.info, 
+	height = excluded.height 
+WHERE software_upgrade_prooposal.height <= excluded.height`
+
+	_, err := db.Sql.Exec(stmt,
+		proposalID, plan.Name, plan.Height, plan.Info, height)
+	if err != nil {
+		return fmt.Errorf("error while storing software upgrade proposal: %s", err)
+	}
+
+	return nil
+}
+
+// DeleteSoftwareUpgradePlan allows to delete a SoftwareUpgradePlan with proposal ID
+func (db *Db) DeleteSoftwareUpgradePlan(proposalID uint64) error {
+	stmt := `DELETE FROM software_upgrade_plan WHERE proposal_id = $1`
+
+	_, err := db.Sql.Exec(stmt, proposalID)
+	if err != nil {
+		return fmt.Errorf("error while deleteing software upgrade proposal: %s", err)
 	}
 
 	return nil

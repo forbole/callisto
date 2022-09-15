@@ -1,0 +1,18 @@
+table:
+  name: software_upgrade_plan
+  schema: public
+object_relationships:
+- name: proposal
+  using:
+    foreign_key_constraint_on: proposal_id
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - proposal_id
+    - plan_name
+    - upgrade_height
+    - info
+    - height
+    filter: {}
+  role: anonymous

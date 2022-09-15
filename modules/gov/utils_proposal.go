@@ -47,33 +47,9 @@ func (m *Module) UpdateProposal(height int64, id uint64) error {
 		return fmt.Errorf("error while updating account: %s", err)
 	}
 
-	// Refresh relevant data while a proposal is passed
-	if proposal.Status != govtypes.StatusPassed {
-		return nil
-	}
-
-	// Unpack proposal
-	var content govtypes.Content
-	err = m.db.EncodingConfig.Marshaler.UnpackAny(proposal.Content, &content)
+	err = m.handlePassedProposal(proposal, height)
 	if err != nil {
-		return fmt.Errorf("error while handling ParamChangeProposal: %s", err)
-	}
-
-	switch p := content.(type) {
-	case *proposaltypes.ParameterChangeProposal:
-		// Update params while parameter change proposal passed
-		err = m.handleParamChangeProposal(height, p)
-		if err != nil {
-			return fmt.Errorf("error while updating params from ParamChangeProposal: %s", err)
-		}
-	case *upgradetypes.SoftwareUpgradeProposal:
-		// TODO: Store software upgrade time
-		p.Plan.Time
-		// Refresh validator details while software upgrade proposal passed
-		err = m.stakingModule.RefreshAllValidatorInfos(height)
-		if err != nil {
-			return fmt.Errorf("error while updating params from ParamChangeProposal: %s", err)
-		}
+		return fmt.Errorf("error while handling passed proposals: %s", err)
 	}
 
 	return nil
@@ -288,4 +264,42 @@ func findStatus(consAddr string, statuses []types.ValidatorStatus) (types.Valida
 		}
 	}
 	return types.ValidatorStatus{}, fmt.Errorf("cannot find status for validator with consensus address %s", consAddr)
+}
+
+func (m *Module) handlePassedProposal(proposal govtypes.Proposal, height int64) error {
+	if proposal.Status != govtypes.StatusPassed {
+		// If proposal status is not passed, do nothing
+		return nil
+	}
+
+	// Unpack proposal
+	var content govtypes.Content
+	err := m.db.EncodingConfig.Marshaler.UnpackAny(proposal.Content, &content)
+	if err != nil {
+		return fmt.Errorf("error while handling ParamChangeProposal: %s", err)
+	}
+
+	switch p := content.(type) {
+	case *proposaltypes.ParameterChangeProposal:
+		// Update params while ParameterChangeProposal passed
+		err = m.handleParamChangeProposal(height, p)
+		if err != nil {
+			return fmt.Errorf("error while updating params from ParamChangeProposal: %s", err)
+		}
+
+	case *upgradetypes.SoftwareUpgradeProposal:
+		// Store software upgrade plan while SoftwareUpgradeProposal passed
+		err = m.db.SaveSoftwareUpgradePlan(proposal.ProposalId, p.Plan, height)
+		if err != nil {
+			return fmt.Errorf("error while storing passed SoftwareUpgradeProposal: %s", err)
+		}
+
+	case *upgradetypes.CancelSoftwareUpgradeProposal:
+		// Delete software upgrade plan while CancelSoftwareUpgradeProposal passed
+		err = m.db.DeleteSoftwareUpgradePlan(proposal.ProposalId)
+		if err != nil {
+			return fmt.Errorf("error while deleting SoftwareUpgradeProposal: %s", err)
+		}
+	}
+	return nil
 }
