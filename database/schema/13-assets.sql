@@ -4,10 +4,10 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_assets_assets(
     issuer         TEXT NOT NULL,             -- assets issuer
     policies       INT[],                     -- assets policies
     state          INT,                       -- assets state
-    issued         BIGINT,                    -- assets issued
-    burned         BIGINT,                    -- assets burned
-    withdrawn      BIGINT,                    -- assets withdrawn
-    in_circulation BIGINT,                    -- assets in_circulation
+    issued         NUMERIC,                    -- assets issued
+    burned         NUMERIC,                    -- assets burned
+    withdrawn      NUMERIC,                    -- assets withdrawn
+    in_circulation NUMERIC,                    -- assets in_circulation
     precision      INT,                       -- assets precision
     fee_percent    INT,                       -- assets fee_percent
     extras         JSONB                      -- assets extras
@@ -30,10 +30,10 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_assets_manage(
     state            INT,           -- manage assets state
     precision        INT,           -- assets precision
     fee_percent      INT,           -- assets fee_percent
-    issued           BIGINT,        -- manage assets issued
-    burned           BIGINT,        -- manage assets burned
-    withdrawn        BIGINT,        -- manage assets withdrawn
-    in_circulation   BIGINT         -- manage assets in_circulation
+    issued           NUMERIC,        -- manage assets issued
+    burned           NUMERIC,        -- manage assets burned
+    withdrawn        NUMERIC,        -- manage assets withdrawn
+    in_circulation   NUMERIC         -- manage assets in_circulation
 );
 
 CREATE TABLE IF NOT EXISTS vipcoin_chain_assets_create(

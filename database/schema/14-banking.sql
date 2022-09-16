@@ -2,7 +2,7 @@
 CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_base_transfers (
     id                  SERIAL UNIQUE PRIMARY KEY NOT NULL,                           -- banking id
     asset               TEXT NOT NULL REFERENCES vipcoin_chain_assets_assets (name),  -- banking asset
-    amount              BIGSERIAL,                                                    -- banking amount
+    amount              NUMERIC,                                                    -- banking amount
     kind                INT,                                                          -- banking kind
     extras              JSONB,                                                        -- banking extras
     timestamp           TIMESTAMP WITHOUT TIME ZONE NOT NULL,                         -- banking timestamp
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_payment (
     id                  SERIAL UNIQUE PRIMARY KEY NOT NULL,                               -- banking id
     wallet_from         TEXT NOT NULL REFERENCES vipcoin_chain_wallets_wallets (address), -- banking wallet from
     wallet_to           TEXT NOT NULL REFERENCES vipcoin_chain_wallets_wallets (address), -- banking wallet to
-    fee                 BIGSERIAL,                                                        -- banking fee
+    fee                 NUMERIC,                                                        -- banking fee
     CONSTRAINT payment_transfers_id_pkey FOREIGN KEY(id)
         REFERENCES vipcoin_chain_banking_base_transfers(id)
 );
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_msg_system_transfer (
     wallet_from         TEXT       NOT NULL,                    -- banking wallet from
     wallet_to           TEXT       NOT NULL,                    -- banking wallet to
     asset               TEXT       NOT NULL,                    -- banking asset
-    amount              BIGINT,                                 -- banking amount
+    amount              NUMERIC,                                 -- banking amount
     extras              JSONB                                   -- banking extras
 );
 
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_system_msg_reward_transfer (
     wallet_from         TEXT NOT NULL,                          -- banking wallet from
     wallet_to           TEXT NOT NULL,                          -- banking wallet to
     asset               TEXT NOT NULL,                          -- banking asset
-    amount              BIGINT,                                 -- banking amount
+    amount              NUMERIC,                                 -- banking amount
     extras              JSONB                                   -- banking extras
 );
 
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_msg_payment (
     wallet_from         TEXT NOT NULL,                          -- banking wallet from
     wallet_to           TEXT NOT NULL,                          -- banking wallet to
     asset               TEXT NOT NULL,                          -- banking asset
-    amount              BIGINT,                                 -- banking amount
+    amount              NUMERIC,                                 -- banking amount
     extras              JSONB                                   -- banking extras
 );
 
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_msg_withdraw (
     creator             TEXT NOT NULL,                          -- banking creator
     wallet              TEXT NOT NULL,                          -- banking wallet
     asset               TEXT NOT NULL,                          -- banking asset
-    amount              BIGINT,                                 -- banking amount
+    amount              NUMERIC,                                 -- banking amount
     extras              JSONB                                   -- banking extras
 );
 
@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_msg_issue (
     creator             TEXT NOT NULL,                          -- banking creator
     wallet              TEXT NOT NULL,                          -- banking wallet
     asset               TEXT NOT NULL,                          -- banking asset
-    amount              BIGINT,                                 -- banking amount
+    amount              NUMERIC,                                 -- banking amount
     extras              JSONB                                   -- banking extras
 );
 
