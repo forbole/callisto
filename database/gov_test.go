@@ -812,16 +812,10 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveSoftwareUpgradePlan() {
-	_ = suite.getBlock(9)
-	_ = suite.getBlock(10)
-	_ = suite.getBlock(11)
 	_ = suite.getProposalRow(1)
-	_ = suite.getProposalRow(2)
 
 	// ----------------------------------------------------------------------------------------------------------------
-	// Save 2 software upgrade plans at height 10
-
-	// Upgrade height = 100
+	// Save software upgrade plan at height 10 with upgrade height at 100
 	var plan = upgradetypes.Plan{
 		Name:   "name",
 		Height: 100,
@@ -885,7 +879,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSoftwareUpgradePlan() {
 		Info:   "info_edit_3",
 	}
 
-	err = suite.database.SaveSoftwareUpgradePlan(1, planEdit3, 12)
+	err = suite.database.SaveSoftwareUpgradePlan(1, planEdit3, 11)
 	suite.Require().NoError(err)
 
 	rows = []dbtypes.SoftwareUpgradePlanRow{}
@@ -893,6 +887,30 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSoftwareUpgradePlan() {
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().Equal(rows, []dbtypes.SoftwareUpgradePlanRow{
-		dbtypes.NewSoftwareUpgradePlanRow(1, planEdit3.Name, planEdit3.Height, planEdit3.Info, 12),
+		dbtypes.NewSoftwareUpgradePlanRow(1, planEdit3.Name, planEdit3.Height, planEdit3.Info, 11),
 	})
+}
+
+func (suite *DbTestSuite) TestBigDipperDb_DeleteSoftwareUpgradePlan() {
+	_ = suite.getProposalRow(1)
+
+	// Save software upgrade plan at height 10 with upgrade height at 100
+	var plan = upgradetypes.Plan{
+		Name:   "name",
+		Height: 100,
+		Info:   "info",
+	}
+
+	err := suite.database.SaveSoftwareUpgradePlan(1, plan, 10)
+	suite.Require().NoError(err)
+
+	// Delete software upgrade plan
+	err = suite.database.DeleteSoftwareUpgradePlan(1)
+	suite.Require().NoError(err)
+
+	var rows []dbtypes.SoftwareUpgradePlanRow
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM software_upgrade_plan`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 0)
+
 }
