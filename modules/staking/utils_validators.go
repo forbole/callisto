@@ -80,7 +80,7 @@ func (m *Module) convertValidatorDescription(
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// RefreshAllValidatorInfos refreshes the info of all the validators at the provided height
+// RefreshAllValidatorInfos refreshes the info of all the validators at the given height
 func (m *Module) RefreshAllValidatorInfos(height int64) error {
 	// Get all validators
 	validators, err := m.source.GetValidatorsWithStatus(height, "")

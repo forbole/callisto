@@ -29,7 +29,7 @@ func (m *Module) refreshDataUponSoftwareUpgrade(height int64) error {
 		return nil
 	}
 
-	// Refresh validator details
+	// Refresh validator infos
 	err = m.stakingModule.RefreshAllValidatorInfos(height)
 	if err != nil {
 		return fmt.Errorf("error while refreshing validator infos upon software upgrade: %s", err)

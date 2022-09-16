@@ -398,7 +398,7 @@ WHERE proposal_validator_status_snapshot.height <= excluded.height`
 	return nil
 }
 
-// SaveSoftwareUpgradePlan allows to save the given SoftwareUpgradePlan
+// SaveSoftwareUpgradePlan allows to save the given software upgrade plan with its proposal id
 func (db *Db) SaveSoftwareUpgradePlan(proposalID uint64, plan upgradetypes.Plan, height int64) error {
 
 	stmt := `
@@ -432,7 +432,7 @@ func (db *Db) DeleteSoftwareUpgradePlan(proposalID uint64) error {
 	return nil
 }
 
-// CheckSoftwareUpgradePlan returns true if an upgrade plan exist at given height
+// CheckSoftwareUpgradePlan returns true if an upgrade is scheduled at the given height
 func (db *Db) CheckSoftwareUpgradePlan(height int64) (bool, error) {
 	var exist bool
 
