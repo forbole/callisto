@@ -16,8 +16,7 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return nil
 	}
 
-	switch cosmosMsg := msg.(type) {
-	case *margintypes.MsgUpdateParams:
+	if cosmosMsg, ok := msg.(*margintypes.MsgUpdateParams); ok {
 		return m.handleMsgUpdateParams(tx.Height, cosmosMsg)
 	}
 
