@@ -914,3 +914,27 @@ func (suite *DbTestSuite) TestBigDipperDb_DeleteSoftwareUpgradePlan() {
 	suite.Require().Len(rows, 0)
 
 }
+
+func (suite *DbTestSuite) TestBigDipperDb_CheckSoftwareUpgradePlan() {
+	_ = suite.getProposalRow(1)
+
+	// Save software upgrade plan at height 10 with upgrade height at 100
+	var plan = upgradetypes.Plan{
+		Name:   "name",
+		Height: 100,
+		Info:   "info",
+	}
+
+	err := suite.database.SaveSoftwareUpgradePlan(1, plan, 10)
+	suite.Require().NoError(err)
+
+	// Check software upgrade plan at existing height
+	exist, err := suite.database.CheckSoftwareUpgradePlan(10)
+	suite.Require().NoError(err)
+	suite.Require().Equal(true, exist)
+
+	// Check software upgrade plan at non-existing height
+	exist, err = suite.database.CheckSoftwareUpgradePlan(11)
+	suite.Require().NoError(err)
+	suite.Require().Equal(false, exist)
+}
