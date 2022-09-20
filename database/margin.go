@@ -29,3 +29,19 @@ WHERE margin_params.height <= excluded.height`
 
 	return nil
 }
+
+// SaveMarginEvent allows to store the given x/margin events inside the database
+func (db *Db) SaveMarginEvent(event types.MarginEvent) error {
+
+	stmt := `
+INSERT INTO margin_events (transaction_hash, index, type, value, involved_accounts_addresses, height) 
+VALUES ($1, $2, $3, $4, $5, $6)
+ON CONFLICT DO NOTHING`
+
+	_, err := db.Sql.Exec(stmt, event.TxHash, event.Index, event.MsgType, event.Value, event.Addressess, event.Height)
+	if err != nil {
+		return fmt.Errorf("error while storing margin event: %s", err)
+	}
+
+	return nil
+}
