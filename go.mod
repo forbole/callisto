@@ -6,7 +6,7 @@ require (
 	github.com/Sifchain/sifnode v0.17.1-0.20220906040827-0a8b174005c2
 	github.com/cosmos/cosmos-sdk v0.45.6
 	github.com/cosmos/gaia/v6 v6.0.0
-	github.com/forbole/juno/v3 v3.3.1-0.20220803134534-55af63c839ac
+	github.com/forbole/juno/v3 v3.4.1-0.20220916105321-27e7a3ace72d
 	github.com/go-co-op/gocron v1.17.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
