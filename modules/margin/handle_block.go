@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	margintypes "github.com/Sifchain/sifnode/x/margin/types"
+	"github.com/forbole/bdjuno/v3/types"
 	juno "github.com/forbole/juno/v3/types"
-	abci "github.com/tendermint/tendermint/abci/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
 
@@ -14,7 +14,7 @@ func (m *Module) HandleBlock(
 	block *tmctypes.ResultBlock, results *tmctypes.ResultBlockResults, tx []*juno.Tx, _ *tmctypes.ResultValidators,
 ) error {
 	// Get x/margin module events
-	err := m.getMarginEvents(block.Block.Height, results.EndBlockEvents, results.BeginBlockEvents, tx)
+	err := m.getMarginEvents(block.Block.Height, tx)
 	if err != nil {
 		return fmt.Errorf("error while getting x/margin events: %s", err)
 	}
@@ -23,8 +23,8 @@ func (m *Module) HandleBlock(
 }
 
 // getMarginEvents reads the events from txs and stores its values inside the database
-func (m *Module) getMarginEvents(height int64, events []abci.Event, eventsBegin []abci.Event, tx []*juno.Tx) error {
-	var msgs []*juno.Message
+func (m *Module) getMarginEvents(height int64, tx []*juno.Tx) error {
+	var events []types.MarginEvent
 	var involvedAccounts []string
 
 	for _, e := range tx {
@@ -33,30 +33,30 @@ func (m *Module) getMarginEvents(height int64, events []abci.Event, eventsBegin 
 			involvedAccounts = append(involvedAccounts, address.String())
 			switch ev.Type {
 			case margintypes.EventForceClose:
-				msgs = append(msgs, juno.NewMessage(e.TxHash, 0, ev.Type, ev.String(), involvedAccounts, height))
+				events = append(events, *types.NewMarginEvent(e.TxHash, 0, ev.Type, ev.String(), involvedAccounts, height))
 			case margintypes.EventOpen:
-				msgs = append(msgs, juno.NewMessage(e.TxHash, 0, ev.Type, ev.String(), involvedAccounts, height))
+				events = append(events, *types.NewMarginEvent(e.TxHash, 0, ev.Type, ev.String(), involvedAccounts, height))
 			case margintypes.EventInterestRateComputation:
-				msgs = append(msgs, juno.NewMessage(e.TxHash, 0, ev.Type, ev.String(), involvedAccounts, height))
+				events = append(events, *types.NewMarginEvent(e.TxHash, 0, ev.Type, ev.String(), involvedAccounts, height))
 			case margintypes.EventRepayFund:
-				msgs = append(msgs, juno.NewMessage(e.TxHash, 0, ev.Type, ev.String(), involvedAccounts, height))
+				events = append(events, *types.NewMarginEvent(e.TxHash, 0, ev.Type, ev.String(), involvedAccounts, height))
 			case margintypes.EventBelowRemovalThreshold:
-				msgs = append(msgs, juno.NewMessage(e.TxHash, 0, ev.Type, ev.String(), involvedAccounts, height))
+				events = append(events, *types.NewMarginEvent(e.TxHash, 0, ev.Type, ev.String(), involvedAccounts, height))
 			case margintypes.EventAboveRemovalThreshold:
-				msgs = append(msgs, juno.NewMessage(e.TxHash, 0, ev.Type, ev.String(), involvedAccounts, height))
+				events = append(events, *types.NewMarginEvent(e.TxHash, 0, ev.Type, ev.String(), involvedAccounts, height))
 			case margintypes.EventIncrementalPayFund:
-				msgs = append(msgs, juno.NewMessage(e.TxHash, 0, ev.Type, ev.String(), involvedAccounts, height))
+				events = append(events, *types.NewMarginEvent(e.TxHash, 0, ev.Type, ev.String(), involvedAccounts, height))
 			case margintypes.EventMarginUpdateParams:
-				msgs = append(msgs, juno.NewMessage(e.TxHash, 0, ev.Type, ev.String(), involvedAccounts, height))
+				events = append(events, *types.NewMarginEvent(e.TxHash, 0, ev.Type, ev.String(), involvedAccounts, height))
 			}
 		}
 
 	}
 
-	for _, i := range msgs {
-		err := m.db.SaveMessage(i)
+	for _, i := range events {
+		err := m.db.SaveMarginEvent(i)
 		if err != nil {
-			fmt.Errorf("error while saving messages %s", err)
+			fmt.Errorf("error while saving x/margin events %s", err)
 		}
 	}
 
