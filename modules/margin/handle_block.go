@@ -30,7 +30,9 @@ func (m *Module) getMarginEvents(height int64, tx []*juno.Tx) error {
 	for _, e := range tx {
 		for _, event := range e.Events {
 			address, _ := juno.FindAttributeByKey(event, "address")
-			involvedAccounts = append(involvedAccounts, address.String())
+			if len(address.String()) > 0 {
+				involvedAccounts = append(involvedAccounts, address.String())
+			}
 			switch event.Type {
 			case margintypes.EventForceClose:
 				events = append(events, *types.NewMarginEvent(e.TxHash, 0, event.Type, event, involvedAccounts, height))
