@@ -1,6 +1,9 @@
 package types
 
-import margintypes "github.com/Sifchain/sifnode/x/margin/types"
+import (
+	margintypes "github.com/Sifchain/sifnode/x/margin/types"
+	sdk "github.com/tendermint/tendermint/abci/types"
+)
 
 // MarginParams represents the x/margin parameters
 type MarginParams struct {
@@ -20,13 +23,13 @@ type MarginEvent struct {
 	TxHash     string
 	Index      int
 	MsgType    string
-	Value      string
+	Value      sdk.Event
 	Addressess []string
 	Height     int64
 }
 
 func NewMarginEvent(txHash string, index int,
-	msgType string, value string, addresses []string,
+	msgType string, value sdk.Event, addresses []string,
 	height int64) *MarginEvent {
 	return &MarginEvent{
 		TxHash:     txHash,

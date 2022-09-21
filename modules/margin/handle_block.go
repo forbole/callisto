@@ -28,37 +28,30 @@ func (m *Module) getMarginEvents(height int64, tx []*juno.Tx) error {
 	var involvedAccounts []string
 
 	for _, e := range tx {
-		for _, ev := range e.Events {
-			address, _ := juno.FindAttributeByKey(ev, "address")
+		for _, event := range e.Events {
+			address, _ := juno.FindAttributeByKey(event, "address")
 			involvedAccounts = append(involvedAccounts, address.String())
-			switch ev.Type {
+			switch event.Type {
 			case margintypes.EventForceClose:
-				events = append(events, *types.NewMarginEvent(e.TxHash, 0, ev.Type, ev.String(), involvedAccounts, height))
+				events = append(events, *types.NewMarginEvent(e.TxHash, 0, event.Type, event, involvedAccounts, height))
 			case margintypes.EventOpen:
-				events = append(events, *types.NewMarginEvent(e.TxHash, 0, ev.Type, ev.String(), involvedAccounts, height))
+				events = append(events, *types.NewMarginEvent(e.TxHash, 0, event.Type, event, involvedAccounts, height))
 			case margintypes.EventInterestRateComputation:
-				events = append(events, *types.NewMarginEvent(e.TxHash, 0, ev.Type, ev.String(), involvedAccounts, height))
+				events = append(events, *types.NewMarginEvent(e.TxHash, 0, event.Type, event, involvedAccounts, height))
 			case margintypes.EventRepayFund:
-				events = append(events, *types.NewMarginEvent(e.TxHash, 0, ev.Type, ev.String(), involvedAccounts, height))
+				events = append(events, *types.NewMarginEvent(e.TxHash, 0, event.Type, event, involvedAccounts, height))
 			case margintypes.EventBelowRemovalThreshold:
-				events = append(events, *types.NewMarginEvent(e.TxHash, 0, ev.Type, ev.String(), involvedAccounts, height))
+				events = append(events, *types.NewMarginEvent(e.TxHash, 0, event.Type, event, involvedAccounts, height))
 			case margintypes.EventAboveRemovalThreshold:
-				events = append(events, *types.NewMarginEvent(e.TxHash, 0, ev.Type, ev.String(), involvedAccounts, height))
+				events = append(events, *types.NewMarginEvent(e.TxHash, 0, event.Type, event, involvedAccounts, height))
 			case margintypes.EventIncrementalPayFund:
-				events = append(events, *types.NewMarginEvent(e.TxHash, 0, ev.Type, ev.String(), involvedAccounts, height))
+				events = append(events, *types.NewMarginEvent(e.TxHash, 0, event.Type, event, involvedAccounts, height))
 			case margintypes.EventMarginUpdateParams:
-				events = append(events, *types.NewMarginEvent(e.TxHash, 0, ev.Type, ev.String(), involvedAccounts, height))
+				events = append(events, *types.NewMarginEvent(e.TxHash, 0, event.Type, event, involvedAccounts, height))
 			}
 		}
 
 	}
 
-	for _, i := range events {
-		err := m.db.SaveMarginEvent(i)
-		if err != nil {
-			fmt.Errorf("error while saving x/margin events %s", err)
-		}
-	}
-
-	return nil
+	return m.db.SaveMarginEvent(events)
 }
