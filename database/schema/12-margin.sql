@@ -10,12 +10,12 @@ CREATE TABLE margin_params
 
 CREATE TABLE margin_events
 (
-    transaction_hash            TEXT   NOT NULL REFERENCES transaction(hash),
+    transaction_hash            TEXT   NOT NULL,
     index                       BIGINT NOT NULL,
     type                        TEXT   NOT NULL,
     value                       JSONB  NOT NULL,
     involved_accounts_addresses TEXT[] NOT NULL,
-    height                      BIGINT NOT NULL,
+    height                      BIGINT NOT NULL REFERENCES block(height)
 );
 CREATE INDEX margin_events_type_index ON margin_events (type);
 CREATE INDEX margin_events_transaction_hash_index ON margin_events (transaction_hash);
