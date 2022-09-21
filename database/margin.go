@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/bdjuno/v3/types"
+	"github.com/lib/pq"
 )
 
 // SaveMarginParams allows to store the given params inside the database
@@ -31,16 +33,35 @@ WHERE margin_params.height <= excluded.height`
 }
 
 // SaveMarginEvent allows to store the given x/margin events inside the database
-func (db *Db) SaveMarginEvent(event types.MarginEvent) error {
+func (db *Db) SaveMarginEvent(events []types.MarginEvent) error {
+	stmt := `INSERT INTO margin_events (transaction_hash, index, type, value, involved_accounts_addresses, height) VALUES`
 
-	stmt := `
-INSERT INTO margin_events (transaction_hash, index, type, value, involved_accounts_addresses, height) 
-VALUES ($1, $2, $3, $4, $5, $6)
+	if len(events) == 0 {
+		return nil
+	}
+
+	var marginEvents []interface{}
+
+	for i, event := range events {
+		vi := i * 6
+		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6)
+
+		ev := sdk.StringifyEvent(event.Value)
+		eventBz, err := json.Marshal(&ev.Attributes)
+		if err != nil {
+			return fmt.Errorf("error while marshaling x/margin events: %s", err)
+		}
+
+		marginEvents = append(marginEvents, event.TxHash, event.Index, event.MsgType, string(eventBz), pq.Array(event.Addressess), event.Height)
+	}
+
+	stmt = stmt[:len(stmt)-1] // Remove trailing ","
+	stmt += `
 ON CONFLICT DO NOTHING`
 
-	_, err := db.Sql.Exec(stmt, event.TxHash, event.Index, event.MsgType, event.Value, event.Addressess, event.Height)
+	_, err := db.Sql.Exec(stmt, marginEvents...)
 	if err != nil {
-		return fmt.Errorf("error while storing margin event: %s", err)
+		return fmt.Errorf("error while storing x/margin events: %s", err)
 	}
 
 	return nil
