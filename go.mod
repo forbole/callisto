@@ -1,6 +1,6 @@
 module github.com/forbole/bdjuno/v3
 
-go 1.17
+go 1.18
 
 require (
 	github.com/Sifchain/sifnode v0.0.0-20220910043445-e4bdf6eafdc7 // v1.0-beta.10
