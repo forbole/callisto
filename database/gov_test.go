@@ -215,6 +215,20 @@ func (suite *DbTestSuite) TestBigDipperDb_GetOpenProposalsIds() {
 
 	content1 := govtypes.NewTextProposal("title", "description")
 	content2 := govtypes.NewTextProposal("title1", "description1")
+
+	invalidProposal := types.NewProposal(
+		6,
+		"proposalRoute1",
+		"proposalType1",
+		content2,
+		types.ProposalStatusInvalid,
+		time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+		time.Date(2020, 1, 2, 01, 00, 00, 000, time.UTC),
+		time.Date(2020, 1, 2, 02, 00, 00, 000, time.UTC),
+		time.Date(2020, 1, 2, 03, 00, 00, 000, time.UTC),
+		proposer2.String(),
+	)
+
 	input := []types.Proposal{
 		types.NewProposal(
 			1,
@@ -264,14 +278,16 @@ func (suite *DbTestSuite) TestBigDipperDb_GetOpenProposalsIds() {
 			time.Date(2020, 1, 2, 03, 00, 00, 000, time.UTC),
 			proposer2.String(),
 		),
+		invalidProposal,
 	}
 
 	err := suite.database.SaveProposals(input)
 	suite.Require().NoError(err)
 
-	ids, err := suite.database.GetOpenProposalsIds()
+	timeBeforeDepositEnd := invalidProposal.DepositEndTime.Add(-1 * time.Hour)
+	ids, err := suite.database.GetOpenProposalsIds(timeBeforeDepositEnd)
 	suite.Require().NoError(err)
-	suite.Require().Equal([]uint64{1, 2}, ids)
+	suite.Require().Equal([]uint64{1, 2, 6}, ids)
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_UpdateProposal() {
@@ -508,6 +524,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalStakingPoolSnapshot() {
 	snapshot := types.NewProposalStakingPoolSnapshot(1, types.NewPool(
 		sdk.NewInt(100),
 		sdk.NewInt(200),
+		sdk.NewInt(20),
+		sdk.NewInt(30),
 		10,
 	))
 	err := suite.database.SaveProposalStakingPoolSnapshot(snapshot)
@@ -530,6 +548,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalStakingPoolSnapshot() {
 	err = suite.database.SaveProposalStakingPoolSnapshot(types.NewProposalStakingPoolSnapshot(1, types.NewPool(
 		sdk.NewInt(200),
 		sdk.NewInt(500),
+		sdk.NewInt(14),
+		sdk.NewInt(10),
 		9,
 	)))
 	suite.Require().NoError(err)
@@ -551,6 +571,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalStakingPoolSnapshot() {
 	err = suite.database.SaveProposalStakingPoolSnapshot(types.NewProposalStakingPoolSnapshot(1, types.NewPool(
 		sdk.NewInt(500),
 		sdk.NewInt(1000),
+		sdk.NewInt(20),
+		sdk.NewInt(30),
 		10,
 	)))
 	suite.Require().NoError(err)
@@ -572,6 +594,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalStakingPoolSnapshot() {
 	err = suite.database.SaveProposalStakingPoolSnapshot(types.NewProposalStakingPoolSnapshot(1, types.NewPool(
 		sdk.NewInt(1000),
 		sdk.NewInt(2000),
+		sdk.NewInt(80),
+		sdk.NewInt(40),
 		11,
 	)))
 	suite.Require().NoError(err)

@@ -2,6 +2,7 @@ package gov
 
 import (
 	"fmt"
+	"time"
 
 	juno "github.com/forbole/juno/v3/types"
 
@@ -14,7 +15,7 @@ import (
 func (m *Module) HandleBlock(
 	b *tmctypes.ResultBlock, _ *tmctypes.ResultBlockResults, _ []*juno.Tx, vals *tmctypes.ResultValidators,
 ) error {
-	err := m.updateProposals(b.Block.Height, vals)
+	err := m.updateProposals(b.Block.Height, b.Block.Time, vals)
 	if err != nil {
 		log.Error().Str("module", "gov").Int64("height", b.Block.Height).
 			Err(err).Msg("error while updating proposals")
@@ -23,8 +24,8 @@ func (m *Module) HandleBlock(
 }
 
 // updateProposals updates the proposals
-func (m *Module) updateProposals(height int64, blockVals *tmctypes.ResultValidators) error {
-	ids, err := m.db.GetOpenProposalsIds()
+func (m *Module) updateProposals(height int64, blockTime time.Time, blockVals *tmctypes.ResultValidators) error {
+	ids, err := m.db.GetOpenProposalsIds(blockTime)
 	if err != nil {
 		log.Error().Err(err).Str("module", "gov").Msg("error while getting open ids")
 	}
