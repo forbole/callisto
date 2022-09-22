@@ -3,10 +3,13 @@ package database
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/bdjuno/v3/types"
 	"github.com/lib/pq"
+	abci "github.com/tendermint/tendermint/abci/types"
+	// abci "github.com/tendermint/tendermint/abci/types"
 )
 
 // SaveMarginParams allows to store the given params inside the database
@@ -45,8 +48,14 @@ func (db *Db) SaveMarginEvent(events []types.MarginEvent) error {
 	for i, event := range events {
 		vi := i * 6
 		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6)
+		var eventAttr []abci.EventAttribute
+		for _, attr := range event.Value.Attributes {
+			value := []byte(strings.Replace(string(attr.Value), " ", ", ", -1))
+			eventAttr = append(eventAttr, abci.EventAttribute{Key: attr.Key, Value: value})
+		}
+		eventObj := abci.Event{Type: event.Value.Type, Attributes: eventAttr}
 
-		ev := sdk.StringifyEvent(event.Value)
+		ev := sdk.StringifyEvent(eventObj)
 		eventBz, err := json.Marshal(&ev.Attributes)
 		if err != nil {
 			return fmt.Errorf("error while marshaling x/margin events: %s", err)
