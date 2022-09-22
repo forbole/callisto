@@ -7,9 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/bdjuno/v3/types"
-	"github.com/lib/pq"
 	abci "github.com/tendermint/tendermint/abci/types"
-	// abci "github.com/tendermint/tendermint/abci/types"
 )
 
 // SaveMarginParams allows to store the given params inside the database
@@ -37,7 +35,7 @@ WHERE margin_params.height <= excluded.height`
 
 // SaveMarginEvent allows to store the given x/margin events inside the database
 func (db *Db) SaveMarginEvent(events []types.MarginEvent) error {
-	stmt := `INSERT INTO margin_events (transaction_hash, index, type, value, involved_accounts_addresses, height) VALUES`
+	stmt := `INSERT INTO margin_events (transaction_hash, index, type, value, height) VALUES`
 
 	if len(events) == 0 {
 		return nil
@@ -47,7 +45,7 @@ func (db *Db) SaveMarginEvent(events []types.MarginEvent) error {
 
 	for i, event := range events {
 		vi := i * 6
-		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5, vi+6)
+		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5)
 		var eventAttr []abci.EventAttribute
 		for _, attr := range event.Value.Attributes {
 			value := []byte(strings.Replace(string(attr.Value), " ", ", ", -1))
@@ -61,7 +59,7 @@ func (db *Db) SaveMarginEvent(events []types.MarginEvent) error {
 			return fmt.Errorf("error while marshaling x/margin events: %s", err)
 		}
 
-		marginEvents = append(marginEvents, event.TxHash, event.Index, event.MsgType, string(eventBz), pq.Array(event.Addressess), event.Height)
+		marginEvents = append(marginEvents, event.TxHash, event.Index, event.MsgType, string(eventBz), event.Height)
 	}
 
 	stmt = stmt[:len(stmt)-1] // Remove trailing ","

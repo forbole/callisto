@@ -20,23 +20,21 @@ func NewMarginParams(params *margintypes.Params, height int64) *MarginParams {
 }
 
 type MarginEvent struct {
-	TxHash     string
-	Index      int
-	MsgType    string
-	Value      sdk.Event
-	Addressess []string
-	Height     int64
+	TxHash  string
+	Index   int
+	MsgType string
+	Value   sdk.Event
+	Height  int64
 }
 
 func NewMarginEvent(txHash string, index int,
-	msgType string, value sdk.Event, addresses []string,
+	msgType string, value sdk.Event,
 	height int64) *MarginEvent {
 	return &MarginEvent{
-		TxHash:     txHash,
-		Index:      index,
-		MsgType:    msgType,
-		Value:      value,
-		Addressess: addresses,
-		Height:     height,
+		TxHash:  txHash,
+		Index:   index,
+		MsgType: msgType,
+		Value:   value,
+		Height:  height,
 	}
 }
