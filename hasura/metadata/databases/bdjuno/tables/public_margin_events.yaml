@@ -1,0 +1,24 @@
+table:
+  name: margin_events
+  schema: public
+object_relationships:
+- name: block
+  using:
+    manual_configuration:
+      column_mapping:
+        height: height
+      insertion_order: null
+      remote_table:
+        name: block
+        schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - transaction_hash
+    - index
+    - type
+    - value
+    - height
+    filter: {}
+  role: anonymous
