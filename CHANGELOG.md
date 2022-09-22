@@ -7,6 +7,9 @@
 - ([\#401](https://github.com/forbole/bdjuno/pull/401)) Update the proposal status to the latest in `bdjuno parse gov proposal [id]` command
 - ([\#430](https://github.com/forbole/bdjuno/pull/430)) Update the proposals that have invalid status but can still be in voting or deposit periods 
 
+#### [Sifchain] Margin Module
+- ([\#464](https://github.com/forbole/bdjuno/pull/464)) Added `x/margin` module, stored `x/margin` params and events in database 
+
 ### Dependencies
 - ([\#440](https://github.com/forbole/bdjuno/pull/440)) Updated Juno to `v3.3.0`
 
