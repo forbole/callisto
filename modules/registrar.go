@@ -25,6 +25,7 @@ import (
 	"github.com/forbole/bdjuno/v3/modules/distribution"
 	"github.com/forbole/bdjuno/v3/modules/feegrant"
 
+	dailyrefetch "github.com/forbole/bdjuno/v3/modules/daily_refetch"
 	"github.com/forbole/bdjuno/v3/modules/gov"
 	"github.com/forbole/bdjuno/v3/modules/mint"
 	"github.com/forbole/bdjuno/v3/modules/modules"
@@ -76,12 +77,13 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	authModule := auth.NewModule(r.parser, cdc, db)
 	bankModule := bank.NewModule(r.parser, sources.BankSource, cdc, db)
 	consensusModule := consensus.NewModule(db)
+	dailyRefetchModule := dailyrefetch.NewModule(ctx.Proxy, db)
 	distrModule := distribution.NewModule(sources.DistrSource, cdc, db)
 	feegrantModule := feegrant.NewModule(cdc, db)
 	marginModule := margin.NewModule(cdc, sources.MarginSource, db)
 	mintModule := mint.NewModule(sources.MintSource, cdc, db)
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
-	stakingModule := staking.NewModule(sources.StakingSource, slashingModule, cdc, db)
+	stakingModule := staking.NewModule(sources.StakingSource, cdc, db)
 	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakingModule, cdc, db)
 
 	return []jmodules.Module{
@@ -93,6 +95,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		authModule,
 		bankModule,
 		consensusModule,
+		dailyRefetchModule,
 		distrModule,
 		feegrantModule,
 		govModule,
