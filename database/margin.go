@@ -48,7 +48,7 @@ func (db *Db) SaveMarginEvent(events []types.MarginEvent) error {
 		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5)
 		var eventAttr []abci.EventAttribute
 		for _, attr := range event.Value.Attributes {
-			value := []byte(strings.Replace(string(attr.Value), " ", ", ", -1))
+			value := []byte(strings.ReplaceAll(string(attr.Value), " ", ", "))
 			eventAttr = append(eventAttr, abci.EventAttribute{Key: attr.Key, Value: value})
 		}
 		eventObj := abci.Event{Type: event.Value.Type, Attributes: eventAttr}
