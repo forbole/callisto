@@ -3,7 +3,6 @@ package database
 import (
 	"encoding/json"
 	"fmt"
-	"time"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
@@ -205,8 +204,8 @@ func (db *Db) GetProposal(id uint64) (*types.Proposal, error) {
 	return &proposal, nil
 }
 
-// GetOpenProposalsIds returns all the ids of the proposals that are in deposit or voting period at the given block time
-func (db *Db) GetOpenProposalsIds(blockTime time.Time) ([]uint64, error) {
+// GetOpenProposalsIds returns all the ids of the proposals that are currently in deposit or voting period
+func (db *Db) GetOpenProposalsIds() ([]uint64, error) {
 	var ids []uint64
 	stmt := `SELECT id FROM proposal WHERE status = $1 OR status = $2`
 	err := db.Sqlx.Select(&ids, stmt, govtypes.StatusDepositPeriod.String(), govtypes.StatusVotingPeriod.String())
@@ -216,8 +215,8 @@ func (db *Db) GetOpenProposalsIds(blockTime time.Time) ([]uint64, error) {
 
 	// Get also the invalid status proposals due to gRPC failure but still are in deposit period or voting period
 	var idsInvalid []uint64
-	stmt = `SELECT id FROM proposal WHERE status = $1 AND (voting_end_time > $2 OR deposit_end_time > $2)`
-	err = db.Sqlx.Select(&idsInvalid, stmt, types.ProposalStatusInvalid, blockTime)
+	stmt = `SELECT id FROM proposal WHERE status = $1 AND (voting_end_time > NOW() OR deposit_end_time > NOW())`
+	err = db.Sqlx.Select(&idsInvalid, stmt, types.ProposalStatusInvalid)
 	ids = append(ids, idsInvalid...)
 
 	return ids, err

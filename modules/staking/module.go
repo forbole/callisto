@@ -9,28 +9,30 @@ import (
 )
 
 var (
-	_ modules.Module                   = &Module{}
-	_ modules.GenesisModule            = &Module{}
-	_ modules.BlockModule              = &Module{}
-	_ modules.MessageModule            = &Module{}
-	_ modules.PeriodicOperationsModule = &Module{}
+	_ modules.Module        = &Module{}
+	_ modules.GenesisModule = &Module{}
+	_ modules.BlockModule   = &Module{}
+	_ modules.MessageModule = &Module{}
 )
 
 // Module represents the x/staking module
 type Module struct {
-	cdc    codec.Codec
-	db     *database.Db
-	source stakingsource.Source
+	cdc            codec.Codec
+	db             *database.Db
+	source         stakingsource.Source
+	slashingModule SlashingModule
 }
 
 // NewModule returns a new Module instance
 func NewModule(
-	source stakingsource.Source, cdc codec.Codec, db *database.Db,
+	source stakingsource.Source, slashingModule SlashingModule,
+	cdc codec.Codec, db *database.Db,
 ) *Module {
 	return &Module{
-		cdc:    cdc,
-		db:     db,
-		source: source,
+		cdc:            cdc,
+		db:             db,
+		source:         source,
+		slashingModule: slashingModule,
 	}
 }
 
