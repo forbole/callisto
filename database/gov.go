@@ -433,14 +433,26 @@ func (db *Db) DeleteSoftwareUpgradePlan(proposalID uint64) error {
 }
 
 // CheckSoftwareUpgradePlan returns true if an upgrade is scheduled at the given height
-func (db *Db) CheckSoftwareUpgradePlan(height int64) (bool, error) {
+func (db *Db) CheckSoftwareUpgradePlan(upgradeHeight int64) (bool, error) {
 	var exist bool
 
-	stmt := `SELECT EXISTS (SELECT 1 FROM software_upgrade_plan WHERE height=$1)`
-	err := db.Sql.QueryRow(stmt, height).Scan(&exist)
+	stmt := `SELECT EXISTS (SELECT 1 FROM software_upgrade_plan WHERE upgrade_height=$1)`
+	err := db.Sql.QueryRow(stmt, upgradeHeight).Scan(&exist)
 	if err != nil {
 		return exist, fmt.Errorf("error while checking software upgrade plan existence: %s", err)
 	}
 
 	return exist, nil
+}
+
+// TruncateSoftwareUpgradePlan delete software upgrade plans once the upgrade height passed
+func (db *Db) TruncateSoftwareUpgradePlan(height int64) error {
+	stmt := `DELETE FROM software_upgrade_plan WHERE upgrade_height <= $1`
+
+	_, err := db.Sql.Exec(stmt, height)
+	if err != nil {
+		return fmt.Errorf("error while deleting software upgrade plan: %s", err)
+	}
+
+	return nil
 }

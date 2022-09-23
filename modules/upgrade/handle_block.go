@@ -35,5 +35,11 @@ func (m *Module) refreshDataUponSoftwareUpgrade(height int64) error {
 		return fmt.Errorf("error while refreshing validator infos upon software upgrade: %s", err)
 	}
 
+	// Delete plan after refreshing data
+	err = m.db.TruncateSoftwareUpgradePlan(height)
+	if err != nil {
+		return fmt.Errorf("error while truncating software upgrade plan: %s", err)
+	}
+
 	return nil
 }
