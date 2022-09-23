@@ -11,7 +11,7 @@ var (
 	_ modules.BlockModule = &Module{}
 )
 
-// Module implements the consensus utils
+// Module represents the x/upgrade module
 type Module struct {
 	db            *database.Db
 	stakingModule StakingModule
