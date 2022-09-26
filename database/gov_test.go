@@ -920,7 +920,8 @@ func (suite *DbTestSuite) TestBigDipperDb_CheckSoftwareUpgradePlan() {
 
 	// Save software upgrade plan at height 10 with upgrade height at 100
 	var plan = upgradetypes.Plan{
-		Name:   "name",
+		Name: "name",
+		// the Height here is the upgrade height
 		Height: 100,
 		Info:   "info",
 	}
@@ -929,7 +930,7 @@ func (suite *DbTestSuite) TestBigDipperDb_CheckSoftwareUpgradePlan() {
 	suite.Require().NoError(err)
 
 	// Check software upgrade plan at existing height
-	exist, err := suite.database.CheckSoftwareUpgradePlan(10)
+	exist, err := suite.database.CheckSoftwareUpgradePlan(100)
 	suite.Require().NoError(err)
 	suite.Require().Equal(true, exist)
 
