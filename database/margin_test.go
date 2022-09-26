@@ -43,7 +43,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveMarginParams() {
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 
-	var storedParams margintypes.Params
+	var storedParams *margintypes.Params
 	err = json.Unmarshal([]byte(rows[0].Params), &storedParams)
 	suite.Require().NoError(err)
 	suite.Require().Equal(marginParams, storedParams)
