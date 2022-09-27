@@ -9,7 +9,7 @@ require (
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.6
-	github.com/ovrclk/akash v0.16.3
+	github.com/ovrclk/akash v0.16.6
 	github.com/pelletier/go-toml v1.9.5
 	github.com/prometheus/client_golang v1.12.2
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
@@ -61,7 +61,6 @@ require (
 	github.com/go-playground/validator/v10 v10.4.1 // indirect
 	github.com/godbus/dbus v0.0.0-20190726142602-4481cbc300e2 // indirect
 	github.com/gogo/gateway v1.1.0 // indirect
-	github.com/golang-jwt/jwt/v4 v4.1.0 // indirect
 	github.com/golang/glog v1.0.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
@@ -69,8 +68,6 @@ require (
 	github.com/google/go-cmp v0.5.7 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/orderedcode v0.0.1 // indirect
-	github.com/googleapis/gnostic v0.4.1 // indirect
-	github.com/gorilla/context v1.1.1 // indirect
 	github.com/gorilla/handlers v1.5.1 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
@@ -83,7 +80,6 @@ require (
 	github.com/hashicorp/golang-lru v0.5.5-0.20210104140557-80c98217689d // indirect
 	github.com/hashicorp/hcl v1.0.1-0.20191016231534-914dc3f8dd7c // indirect
 	github.com/hdevalence/ed25519consensus v0.0.0-20210204194344-59a8610d2b87 // indirect
-	github.com/imdario/mergo v0.3.5 // indirect
 	github.com/improbable-eng/grpc-web v0.14.1 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jmhodges/levigo v1.0.1-0.20191019112844-b572e7f4cdac // indirect
@@ -142,7 +138,7 @@ require (
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20211223182754-3ac035c7e7cb // indirect
-	google.golang.org/protobuf v1.27.1 // indirect
+	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/ini.v1 v1.66.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
@@ -150,7 +146,6 @@ require (
 	k8s.io/apimachinery v0.21.3 // indirect
 	k8s.io/client-go v0.21.3 // indirect
 	k8s.io/klog/v2 v2.8.0 // indirect
-	k8s.io/metrics v0.21.3 // indirect
 	k8s.io/utils v0.0.0-20201110183641-67b214c5f920 // indirect
 	nhooyr.io/websocket v1.8.6 // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.1.2 // indirect
