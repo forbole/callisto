@@ -5,7 +5,6 @@ select_permissions:
 - permission:
     allow_aggregations: true
     columns:
-    - one_row_id
     - params
     - height
     filter: {}

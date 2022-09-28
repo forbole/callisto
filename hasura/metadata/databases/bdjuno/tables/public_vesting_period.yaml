@@ -9,7 +9,6 @@ select_permissions:
 - permission:
     allow_aggregations: true
     columns:
-    - vesting_account_id
     - period_order
     - length
     - amount

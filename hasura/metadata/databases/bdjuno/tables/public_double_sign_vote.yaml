@@ -24,7 +24,6 @@ select_permissions:
 - permission:
     allow_aggregations: true
     columns:
-    - id
     - type
     - height
     - round
@@ -37,7 +36,6 @@ select_permissions:
 - permission:
     allow_aggregations: true
     columns:
-    - id
     - type
     - height
     - round

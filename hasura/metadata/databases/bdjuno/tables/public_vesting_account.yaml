@@ -17,7 +17,6 @@ select_permissions:
 - permission:
     allow_aggregations: true
     columns:
-    - id
     - type
     - address
     - original_vesting

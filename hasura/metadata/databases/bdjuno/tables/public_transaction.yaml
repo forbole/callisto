@@ -21,6 +21,5 @@ select_permissions:
     - gas_used
     - raw_log
     - logs
-    - partition_id
     filter: {}
   role: anonymous

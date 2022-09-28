@@ -14,7 +14,6 @@ select_permissions:
     allow_aggregations: true
     columns:
     - chain_id
-    - one_row_id
     - time
     filter: {}
   role: client
