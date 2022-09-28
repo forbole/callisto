@@ -69,4 +69,5 @@ select_permissions:
     - status
     - content
     filter: {}
+    limit: 100
   role: anonymous

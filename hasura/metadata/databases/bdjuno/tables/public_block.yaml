@@ -60,4 +60,5 @@ select_permissions:
     - proposer_address
     - timestamp
     filter: {}
+    limit: 100
   role: anonymous

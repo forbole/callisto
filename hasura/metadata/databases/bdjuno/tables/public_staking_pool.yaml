@@ -11,4 +11,5 @@ select_permissions:
     - unbonding_tokens
     - staked_not_bonded_tokens
     filter: {}
+    limit: 1
   role: anonymous

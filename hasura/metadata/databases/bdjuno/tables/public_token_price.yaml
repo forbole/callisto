@@ -14,4 +14,5 @@ select_permissions:
     - market_cap
     - timestamp
     filter: {}
+    limit: 1
   role: anonymous

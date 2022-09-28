@@ -14,4 +14,5 @@ select_permissions:
     - not_bonded_tokens
     - height
     filter: {}
+    limit: 100
   role: anonymous

@@ -22,4 +22,5 @@ select_permissions:
     - involved_accounts_addresses
     - height
     filter: {}
+    limit: 100
   role: anonymous

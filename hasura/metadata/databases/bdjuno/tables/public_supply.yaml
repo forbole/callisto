@@ -8,4 +8,5 @@ select_permissions:
     - coins
     - height
     filter: {}
+    limit: 1
   role: anonymous

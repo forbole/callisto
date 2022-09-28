@@ -8,4 +8,5 @@ select_permissions:
     - average_time
     - height
     filter: {}
+    limit: 1
   role: anonymous

@@ -7,4 +7,5 @@ select_permissions:
     columns:
     - module_name
     filter: {}
+    limit: 100
   role: anonymous

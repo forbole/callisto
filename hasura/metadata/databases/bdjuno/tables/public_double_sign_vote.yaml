@@ -32,16 +32,5 @@ select_permissions:
     - validator_index
     - signature
     filter: {}
+    limit: 100
   role: anonymous
-- permission:
-    allow_aggregations: true
-    columns:
-    - type
-    - height
-    - round
-    - block_id
-    - validator_address
-    - validator_index
-    - signature
-    filter: {}
-  role: client

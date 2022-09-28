@@ -17,4 +17,5 @@ select_permissions:
     - allowance
     - height
     filter: {}
+    limit: 100
   role: anonymous

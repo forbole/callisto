@@ -53,4 +53,5 @@ select_permissions:
     columns:
     - address
     filter: {}
+    limit: 100
   role: anonymous

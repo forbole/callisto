@@ -16,4 +16,5 @@ select_permissions:
     - no_with_veto
     - height
     filter: {}
+    limit: 100
   role: anonymous

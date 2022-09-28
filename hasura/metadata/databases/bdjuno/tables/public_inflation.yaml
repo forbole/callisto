@@ -8,10 +8,5 @@ select_permissions:
     - value
     - height
     filter: {}
+    limit: 1
   role: anonymous
-- permission:
-    allow_aggregations: true
-    columns:
-    - height
-    filter: {}
-  role: client

@@ -10,4 +10,5 @@ select_permissions:
     - tally_params
     - height
     filter: {}
+    limit: 1
   role: anonymous

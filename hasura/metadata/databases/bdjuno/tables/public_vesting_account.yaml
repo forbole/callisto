@@ -23,4 +23,5 @@ select_permissions:
     - end_time
     - start_time
     filter: {}
+    limit: 100
   role: anonymous
