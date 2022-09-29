@@ -3,7 +3,7 @@ table:
   schema: public
 select_permissions:
 - permission:
-    allow_aggregations: true
+    allow_aggregations: false
     columns:
     - chain_id
     - initial_height

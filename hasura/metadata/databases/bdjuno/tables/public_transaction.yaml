@@ -7,7 +7,7 @@ object_relationships:
     foreign_key_constraint_on: height
 select_permissions:
 - permission:
-    allow_aggregations: true
+    allow_aggregations: false
     columns:
     - hash
     - height
