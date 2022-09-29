@@ -11,9 +11,11 @@
 #### Daily refetch
 - ([\#454](https://github.com/forbole/bdjuno/pull/454)) Added `daily refetch` module to refetch missing blocks every day
 
+#### Hasura
+- ([\#473](https://github.com/forbole/bdjuno/pull/473)) Improved Hasura permissions
+
 ### Dependencies
 - ([\#462](https://github.com/forbole/bdjuno/pull/462)) Updated Juno to `v3.4.0`
-
 
 ## Version v3.2.0
 ### Changes
