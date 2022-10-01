@@ -3,10 +3,10 @@ module github.com/forbole/bdjuno/v3
 go 1.18
 
 require (
-	github.com/Sifchain/sifnode v0.0.0-20220910043445-e4bdf6eafdc7 // v1.0-beta.10
+	github.com/Sifchain/sifnode v0.17.1-0.20220906040827-0a8b174005c2
 	github.com/cosmos/cosmos-sdk v0.45.6
 	github.com/cosmos/gaia/v6 v6.0.0
-	github.com/forbole/juno/v3 v3.3.1-0.20220803134534-55af63c839ac
+	github.com/forbole/juno/v3 v3.4.1-0.20220916105321-27e7a3ace72d
 	github.com/go-co-op/gocron v1.17.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
@@ -132,7 +132,9 @@ require (
 )
 
 replace (
+	github.com/cosmos/ibc-go/v2 => github.com/Sifchain/ibc-go/v2 v2.0.3-issue.850
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-	github.com/tendermint/tendermint => github.com/forbole/tendermint v0.34.13-0.20210820072129-a2a4af55563d
+	github.com/libp2p/go-buffer-pool => github.com/libp2p/go-buffer-pool v0.1.0
+	github.com/tendermint/tendermint => github.com/MonikaCat/tendermint v0.34.20-0.20220510093325-405517310d66
 	google.golang.org/grpc => google.golang.org/grpc v1.33.2
 )
