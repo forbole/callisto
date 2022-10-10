@@ -14,6 +14,9 @@ func (db *Db) GetLastBlock() (*dbtypes.BlockRow, error) {
 	stmt := `SELECT * FROM block ORDER BY height DESC LIMIT 1`
 
 	var blocks []dbtypes.BlockRow
+
+	time.Sleep(5 * time.Second)
+
 	if err := db.Sqlx.Select(&blocks, stmt); err != nil {
 		return nil, err
 	}
