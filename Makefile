@@ -38,7 +38,8 @@ endif
 
 install: go.sum
 	@echo "installing bdjuno binary..."
-	@go install -mod=readonly $(BUILD_FLAGS) ./cmd/bdjuno
+	#@go install -mod=readonly $(BUILD_FLAGS) ./cmd/bdjuno
+	@go install $(BUILD_FLAGS) ./cmd/bdjuno
 .PHONY: install
 
 ###############################################################################
