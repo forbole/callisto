@@ -1,13 +1,13 @@
 version: '3.6'
 services:
   hasura:
-    image: hasura/graphql-engine:v2.0.4
+    image: fedormelexin/graphql-engine-arm64
     ports:
     - "8080:8080"
     restart: always
     environment:
       ## this env var can be used to add the above postgres database to Hasura as a data source. this can be removed/updated based on your needs
-      HASURA_GRAPHQL_DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:secret@host.docker.internal:5432/bdjuno
       ## enable the console served by server
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
       ## enable debugging mode. It is recommended to disable this in production
@@ -16,11 +16,12 @@ services:
       ## uncomment next line to set an admin secret
       # HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
   bdjuno:
+    platform: linux/amd64
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: bdjuno/Dockerfile
     restart: always
-    command: bdjuno parse --home /bdjuno/.bdjuno
+    command: bdjuno start --home /bdjuno/.bdjuno
     volumes:
       ## Modify first path to match configuration file.
-      - /bdjuno/.bdjuno:/bdjuno/.bdjuno
+      - .config/:/bdjuno/.bdjuno

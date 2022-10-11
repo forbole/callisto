@@ -1,7 +1,11 @@
 FROM golang:1.18-alpine AS builder
 RUN apk update && apk add --no-cache make git
+
+WORKDIR /lava
+COPY ./lava .
+
 WORKDIR /go/src/github.com/forbole/bdjuno
-COPY . ./
+COPY ./bdjuno ./
 RUN go mod download
 RUN make build
 
