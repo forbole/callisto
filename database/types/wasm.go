@@ -42,18 +42,16 @@ func (cfg *DbAccessConfig) Equal(b *DbAccessConfig) bool {
 type WasmParams struct {
 	CodeUploadAccess             *DbAccessConfig `db:"code_upload_access"`
 	InstantiateDefaultPermission int32           `db:"instantiate_default_permission"`
-	MaxWasmCodeSize              uint64          `db:"max_wasm_code_size"`
 	Height                       int64           `db:"height"`
 }
 
 // NewWasmParams allows to build a new x/wasm params instance
 func NewWasmParams(
-	codeUploadAccess *DbAccessConfig, instantiateDefaultPermission int32, maxWasmCodeSize uint64, height int64,
+	codeUploadAccess *DbAccessConfig, instantiateDefaultPermission int32, height int64,
 ) WasmParams {
 	return WasmParams{
 		CodeUploadAccess:             codeUploadAccess,
 		InstantiateDefaultPermission: instantiateDefaultPermission,
-		MaxWasmCodeSize:              maxWasmCodeSize,
 		Height:                       height,
 	}
 }
