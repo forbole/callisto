@@ -5,6 +5,7 @@ import (
 	"time"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/gogo/protobuf/proto"
@@ -824,4 +825,133 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 			11,
 		),
 	})
+}
+
+func (suite *DbTestSuite) TestBigDipperDb_SaveSoftwareUpgradePlan() {
+	_ = suite.getProposalRow(1)
+
+	// ----------------------------------------------------------------------------------------------------------------
+	// Save software upgrade plan at height 10 with upgrade height at 100
+	var plan = upgradetypes.Plan{
+		Name:   "name",
+		Height: 100,
+		Info:   "info",
+	}
+
+	err := suite.database.SaveSoftwareUpgradePlan(1, plan, 10)
+	suite.Require().NoError(err)
+
+	var rows []dbtypes.SoftwareUpgradePlanRow
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM software_upgrade_plan`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	suite.Require().Equal(rows, []dbtypes.SoftwareUpgradePlanRow{
+		dbtypes.NewSoftwareUpgradePlanRow(1, plan.Name, plan.Height, plan.Info, 10),
+	})
+
+	// ----------------------------------------------------------------------------------------------------------------
+	// Update software upgrade plan with lower height
+	planEdit1 := upgradetypes.Plan{
+		Name:   "name_edit_1",
+		Height: 101,
+		Info:   "info_edit_1",
+	}
+
+	err = suite.database.SaveSoftwareUpgradePlan(1, planEdit1, 9)
+	suite.Require().NoError(err)
+
+	rows = []dbtypes.SoftwareUpgradePlanRow{}
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM software_upgrade_plan`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	suite.Require().Equal(rows, []dbtypes.SoftwareUpgradePlanRow{
+		dbtypes.NewSoftwareUpgradePlanRow(1, plan.Name, plan.Height, plan.Info, 10),
+	})
+
+	// ----------------------------------------------------------------------------------------------------------------
+	// Update software upgrade plan with same height
+	planEdit2 := upgradetypes.Plan{
+		Name:   "name_edit_2",
+		Height: 102,
+		Info:   "info_edit_2",
+	}
+
+	err = suite.database.SaveSoftwareUpgradePlan(1, planEdit2, 10)
+	suite.Require().NoError(err)
+
+	rows = []dbtypes.SoftwareUpgradePlanRow{}
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM software_upgrade_plan`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	suite.Require().Equal(rows, []dbtypes.SoftwareUpgradePlanRow{
+		dbtypes.NewSoftwareUpgradePlanRow(1, planEdit2.Name, planEdit2.Height, planEdit2.Info, 10),
+	})
+
+	// ----------------------------------------------------------------------------------------------------------------
+	// Update software upgrade plan with higher height
+	planEdit3 := upgradetypes.Plan{
+		Name:   "name_edit_3",
+		Height: 103,
+		Info:   "info_edit_3",
+	}
+
+	err = suite.database.SaveSoftwareUpgradePlan(1, planEdit3, 11)
+	suite.Require().NoError(err)
+
+	rows = []dbtypes.SoftwareUpgradePlanRow{}
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM software_upgrade_plan`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	suite.Require().Equal(rows, []dbtypes.SoftwareUpgradePlanRow{
+		dbtypes.NewSoftwareUpgradePlanRow(1, planEdit3.Name, planEdit3.Height, planEdit3.Info, 11),
+	})
+}
+
+func (suite *DbTestSuite) TestBigDipperDb_DeleteSoftwareUpgradePlan() {
+	_ = suite.getProposalRow(1)
+
+	// Save software upgrade plan at height 10 with upgrade height at 100
+	var plan = upgradetypes.Plan{
+		Name:   "name",
+		Height: 100,
+		Info:   "info",
+	}
+
+	err := suite.database.SaveSoftwareUpgradePlan(1, plan, 10)
+	suite.Require().NoError(err)
+
+	// Delete software upgrade plan
+	err = suite.database.DeleteSoftwareUpgradePlan(1)
+	suite.Require().NoError(err)
+
+	var rows []dbtypes.SoftwareUpgradePlanRow
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM software_upgrade_plan`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 0)
+
+}
+
+func (suite *DbTestSuite) TestBigDipperDb_CheckSoftwareUpgradePlan() {
+	_ = suite.getProposalRow(1)
+
+	// Save software upgrade plan at height 10 with upgrade height at 100
+	var plan = upgradetypes.Plan{
+		Name: "name",
+		// the Height here is the upgrade height
+		Height: 100,
+		Info:   "info",
+	}
+
+	err := suite.database.SaveSoftwareUpgradePlan(1, plan, 10)
+	suite.Require().NoError(err)
+
+	// Check software upgrade plan at existing height
+	exist, err := suite.database.CheckSoftwareUpgradePlan(100)
+	suite.Require().NoError(err)
+	suite.Require().Equal(true, exist)
+
+	// Check software upgrade plan at non-existing height
+	exist, err = suite.database.CheckSoftwareUpgradePlan(11)
+	suite.Require().NoError(err)
+	suite.Require().Equal(false, exist)
 }
