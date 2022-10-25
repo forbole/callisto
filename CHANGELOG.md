@@ -1,5 +1,9 @@
 ## Unreleased
 ### Changes
+
+#### Gov Module
+- ([\#489](https://github.com/forbole/bdjuno/pull/489)) Remove block height foreign key from proposal_vote and proposal_deposit tables
+
 #### Upgrade Module
 - ([\#467](https://github.com/forbole/bdjuno/pull/467)) Store software upgrade plan and refresh data at upgrade height
 
