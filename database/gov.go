@@ -248,15 +248,16 @@ func (db *Db) SaveDeposits(deposits []types.Deposit) error {
 		return nil
 	}
 
-	query := `INSERT INTO proposal_deposit (proposal_id, depositor_address, amount, height) VALUES `
+	query := `INSERT INTO proposal_deposit (proposal_id, depositor_address, amount, timestamp, height) VALUES `
 	var param []interface{}
 
 	for i, deposit := range deposits {
-		vi := i * 4
-		query += fmt.Sprintf("($%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4)
+		vi := i * 5
+		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5)
 		param = append(param, deposit.ProposalID,
 			deposit.Depositor,
 			pq.Array(dbtypes.NewDbCoins(deposit.Amount)),
+			deposit.Timestamp,
 			deposit.Height,
 		)
 	}
@@ -264,6 +265,7 @@ func (db *Db) SaveDeposits(deposits []types.Deposit) error {
 	query += `
 ON CONFLICT ON CONSTRAINT unique_deposit DO UPDATE
 	SET amount = excluded.amount,
+		timestamp = excluded.timestamp,
 		height = excluded.height
 WHERE proposal_deposit.height <= excluded.height`
 	_, err := db.Sql.Exec(query, param...)
@@ -279,10 +281,11 @@ WHERE proposal_deposit.height <= excluded.height`
 // SaveVote allows to save for the given height and the message vote
 func (db *Db) SaveVote(vote types.Vote) error {
 	query := `
-INSERT INTO proposal_vote (proposal_id, voter_address, option, height) 
-VALUES ($1, $2, $3, $4) 
+INSERT INTO proposal_vote (proposal_id, voter_address, option, timestamp, height) 
+VALUES ($1, $2, $3, $4, $5) 
 ON CONFLICT ON CONSTRAINT unique_vote DO UPDATE
 	SET option = excluded.option,
+		timestamp = excluded.timestamp,
 		height = excluded.height
 WHERE proposal_vote.height <= excluded.height`
 
@@ -292,7 +295,7 @@ WHERE proposal_vote.height <= excluded.height`
 		return fmt.Errorf("error while storing voter account: %s", err)
 	}
 
-	_, err = db.Sql.Exec(query, vote.ProposalID, vote.Voter, vote.Option.String(), vote.Height)
+	_, err = db.Sql.Exec(query, vote.ProposalID, vote.Voter, vote.Option.String(), vote.Timestamp, vote.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing vote: %s", err)
 	}

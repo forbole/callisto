@@ -30,6 +30,7 @@ CREATE TABLE proposal_deposit
     proposal_id       INTEGER NOT NULL REFERENCES proposal (id),
     depositor_address TEXT             REFERENCES account (address),
     amount            COIN[],
+    timestamp         TIMESTAMP,
     height            BIGINT  NOT NULL,
     CONSTRAINT unique_deposit UNIQUE (proposal_id, depositor_address)
 );
@@ -42,6 +43,7 @@ CREATE TABLE proposal_vote
     proposal_id   INTEGER NOT NULL REFERENCES proposal (id),
     voter_address TEXT    NOT NULL REFERENCES account (address),
     option        TEXT    NOT NULL,
+    timestamp     TIMESTAMP,
     height        BIGINT  NOT NULL,
     CONSTRAINT unique_vote UNIQUE (proposal_id, voter_address)
 );
