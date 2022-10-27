@@ -348,19 +348,23 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 	depositor3 := suite.getAccount("cosmos1gyds87lg3m52hex9yqta2mtwzw89pfukx3jl7g")
 	amount3 := sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(50000)))
 
+	timestamp1 := time.Date(2020, 1, 1, 15, 00, 00, 000, time.UTC)
+	timestamp2 := time.Date(2020, 1, 1, 16, 00, 00, 000, time.UTC)
+	timestamp3 := time.Date(2020, 1, 1, 17, 00, 00, 000, time.UTC)
+
 	deposit := []types.Deposit{
-		types.NewDeposit(proposal.ProposalID, depositor.String(), amount, 10),
-		types.NewDeposit(proposal.ProposalID, depositor2.String(), amount2, 10),
-		types.NewDeposit(proposal.ProposalID, depositor3.String(), amount3, 10),
+		types.NewDeposit(proposal.ProposalID, depositor.String(), amount, timestamp1, 10),
+		types.NewDeposit(proposal.ProposalID, depositor2.String(), amount2, timestamp2, 10),
+		types.NewDeposit(proposal.ProposalID, depositor3.String(), amount3, timestamp3, 10),
 	}
 
 	err := suite.database.SaveDeposits(deposit)
 	suite.Require().NoError(err)
 
 	expected := []dbtypes.DepositRow{
-		dbtypes.NewDepositRow(1, depositor.String(), dbtypes.NewDbCoins(amount), 10),
-		dbtypes.NewDepositRow(1, depositor2.String(), dbtypes.NewDbCoins(amount2), 10),
-		dbtypes.NewDepositRow(1, depositor3.String(), dbtypes.NewDbCoins(amount3), 10),
+		dbtypes.NewDepositRow(1, depositor.String(), dbtypes.NewDbCoins(amount), timestamp1, 10),
+		dbtypes.NewDepositRow(1, depositor2.String(), dbtypes.NewDbCoins(amount2), timestamp2, 10),
+		dbtypes.NewDepositRow(1, depositor3.String(), dbtypes.NewDbCoins(amount3), timestamp3, 10),
 	}
 	var result []dbtypes.DepositRow
 	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_deposit`)
@@ -377,9 +381,9 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 	amount3 = sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(30)))
 
 	deposit = []types.Deposit{
-		types.NewDeposit(proposal.ProposalID, depositor.String(), amount, 9),
-		types.NewDeposit(proposal.ProposalID, depositor2.String(), amount2, 10),
-		types.NewDeposit(proposal.ProposalID, depositor3.String(), amount3, 11),
+		types.NewDeposit(proposal.ProposalID, depositor.String(), amount, timestamp1, 9),
+		types.NewDeposit(proposal.ProposalID, depositor2.String(), amount2, timestamp2, 10),
+		types.NewDeposit(proposal.ProposalID, depositor3.String(), amount3, timestamp3, 11),
 	}
 
 	err = suite.database.SaveDeposits(deposit)
@@ -387,9 +391,9 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 
 	expected = []dbtypes.DepositRow{
 		dbtypes.NewDepositRow(1, depositor.String(), dbtypes.NewDbCoins(
-			sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(10000)))), 10),
-		dbtypes.NewDepositRow(1, depositor2.String(), dbtypes.NewDbCoins(amount2), 10),
-		dbtypes.NewDepositRow(1, depositor3.String(), dbtypes.NewDbCoins(amount3), 11),
+			sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(10000)))), timestamp1, 10),
+		dbtypes.NewDepositRow(1, depositor2.String(), dbtypes.NewDbCoins(amount2), timestamp2, 10),
+		dbtypes.NewDepositRow(1, depositor3.String(), dbtypes.NewDbCoins(amount3), timestamp3, 11),
 	}
 
 	result = []dbtypes.DepositRow{}
@@ -410,11 +414,13 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
 	proposal := suite.getProposalRow(1)
 	voter := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 
-	vote := types.NewVote(1, voter.String(), govtypes.OptionYes, 1)
+	timestamp := time.Date(2020, 1, 1, 15, 00, 00, 000, time.UTC)
+
+	vote := types.NewVote(1, voter.String(), govtypes.OptionYes, timestamp, 1)
 	err := suite.database.SaveVote(vote)
 	suite.Require().NoError(err)
 
-	expected := dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypes.OptionYes.String(), 1)
+	expected := dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypes.OptionYes.String(), timestamp, 1)
 
 	var result []dbtypes.VoteRow
 	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_vote`)
@@ -423,7 +429,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
 	suite.Require().True(expected.Equals(result[0]))
 
 	// Update with lower height should not change option
-	vote = types.NewVote(1, voter.String(), govtypes.OptionNo, 0)
+	vote = types.NewVote(1, voter.String(), govtypes.OptionNo, timestamp, 0)
 	err = suite.database.SaveVote(vote)
 	suite.Require().NoError(err)
 
@@ -434,11 +440,11 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
 	suite.Require().True(expected.Equals(result[0]))
 
 	// Update with same height should change option
-	vote = types.NewVote(1, voter.String(), govtypes.OptionAbstain, 1)
+	vote = types.NewVote(1, voter.String(), govtypes.OptionAbstain, timestamp, 1)
 	err = suite.database.SaveVote(vote)
 	suite.Require().NoError(err)
 
-	expected = dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypes.OptionAbstain.String(), 1)
+	expected = dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypes.OptionAbstain.String(), timestamp, 1)
 
 	result = []dbtypes.VoteRow{}
 	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_vote`)
@@ -447,11 +453,11 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
 	suite.Require().True(expected.Equals(result[0]))
 
 	// Update with higher height should change option
-	vote = types.NewVote(1, voter.String(), govtypes.OptionNoWithVeto, 2)
+	vote = types.NewVote(1, voter.String(), govtypes.OptionNoWithVeto, timestamp, 2)
 	err = suite.database.SaveVote(vote)
 	suite.Require().NoError(err)
 
-	expected = dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypes.OptionNoWithVeto.String(), 2)
+	expected = dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypes.OptionNoWithVeto.String(), timestamp, 2)
 
 	result = []dbtypes.VoteRow{}
 	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_vote`)

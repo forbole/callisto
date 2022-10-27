@@ -24,6 +24,7 @@ select_permissions:
     - proposal_id
     - depositor_address
     - amount
+    - timestamp
     - height
     filter: {}
     limit: 100
