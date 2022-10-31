@@ -18,6 +18,7 @@
 
 #### Hasura
 - ([\#473](https://github.com/forbole/bdjuno/pull/473)) Improved Hasura permissions
+- ([\#491](https://github.com/forbole/bdjuno/pull/491)) Add host address to Hasura actions
 
 ### Dependencies
 - ([\#462](https://github.com/forbole/bdjuno/pull/462)) Updated Juno to `v3.4.0`
