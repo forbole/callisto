@@ -17,6 +17,7 @@ func NewPeriodicTaskCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 		distributionCmd(parseConfig),
 		mintCmd(parseConfig),
 		pricefeedCmd(parseConfig),
+		stakingCmd(parseConfig),
 	)
 
 	return cmd
