@@ -29,7 +29,7 @@ func mintCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			// Get the database
 			db := database.Cast(parseCtx.Database)
 
-			// Build distribution module
+			// Build mint module
 			mintModule := mint.NewModule(sources.MintSource, parseCtx.EncodingConfig.Marshaler, db)
 
 			err = mintModule.UpdateInflation()
