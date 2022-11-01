@@ -26,7 +26,7 @@ func main() {
 	parseCfg := parsetypes.NewConfig().
 		WithDBBuilder(database.Builder).
 		WithEncodingConfigBuilder(config.MakeEncodingConfig(getBasicManagers())).
-		WithRegistrar(modules.NewRegistrar(getAddressesParser()))
+		WithRegistrar(modules.NewRegistrar(GetAddressesParser()))
 
 	cfg := cmd.NewConfig("bdjuno").
 		WithInitConfig(initCfg).
@@ -62,7 +62,7 @@ func getBasicManagers() []module.BasicManager {
 // getAddressesParser returns the messages parser that should be used to get the users involved in
 // a specific message.
 // This should be edited by custom implementations if needed.
-func getAddressesParser() messages.MessageAddressesParser {
+func GetAddressesParser() messages.MessageAddressesParser {
 	return messages.JoinMessageParsers(
 		messages.CosmosMessageAddressesParser,
 	)
