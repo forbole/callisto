@@ -1,6 +1,9 @@
 ## Unreleased
 ### Changes
 
+#### Parse Command
+- ([\#492](https://github.com/forbole/bdjuno/pull/492)) Run periodic tasks manually with parse command
+
 #### Upgrade Module
 - ([\#467](https://github.com/forbole/bdjuno/pull/467)) Store software upgrade plan and refresh data at upgrade height
 
