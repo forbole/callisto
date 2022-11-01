@@ -18,7 +18,7 @@ import (
 func bankCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:   "bank",
-		Short: "Refresh x/bank total supply",
+		Short: "Run x/bank periodic task",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			parseCtx, err := parsecmdtypes.GetParserContext(config.Cfg, parseConfig)
 			if err != nil {

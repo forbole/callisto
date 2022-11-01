@@ -6,15 +6,15 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/forbole/bdjuno/v3/database"
-	"github.com/forbole/bdjuno/v3/modules/distribution"
+	"github.com/forbole/bdjuno/v3/modules/mint"
 	modulestypes "github.com/forbole/bdjuno/v3/modules/types"
 )
 
-// distributionCmd returns the Cobra command allowing to refresh data that's obtained from x/distribution periodic tasks
-func distributionCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
+// mintCmd returns the Cobra command allowing to refresh data that's obtained from x/mint periodic tasks
+func mintCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 	return &cobra.Command{
-		Use:   "distribution",
-		Short: "Trigger x/distribution periodic task",
+		Use:   "mint",
+		Short: "Run x/mint periodic task",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			parseCtx, err := parsecmdtypes.GetParserContext(config.Cfg, parseConfig)
 			if err != nil {
@@ -30,9 +30,9 @@ func distributionCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			db := database.Cast(parseCtx.Database)
 
 			// Build distribution module
-			distrModule := distribution.NewModule(sources.DistrSource, parseCtx.EncodingConfig.Marshaler, db)
+			mintModule := mint.NewModule(sources.MintSource, parseCtx.EncodingConfig.Marshaler, db)
 
-			err = distrModule.GetLatestCommunityPool()
+			err = mintModule.UpdateInflation()
 			if err != nil {
 				return err
 			}

@@ -15,6 +15,7 @@ func NewPeriodicTaskCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 	cmd.AddCommand(
 		bankCmd(parseConfig),
 		distributionCmd(parseConfig),
+		mintCmd(parseConfig),
 	)
 
 	return cmd
