@@ -6,7 +6,6 @@ import (
 	modulestypes "github.com/forbole/bdjuno/v3/modules/types"
 
 	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
-	"github.com/forbole/juno/v3/modules/messages"
 	"github.com/forbole/juno/v3/types/config"
 	"github.com/spf13/cobra"
 
@@ -34,8 +33,7 @@ func bankCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			db := database.Cast(parseCtx.Database)
 
 			// Build bank module
-			msgParser := messages.JoinMessageParsers(messages.CosmosMessageAddressesParser)
-			bankModule := bank.NewModule(msgParser, sources.BankSource, parseCtx.EncodingConfig.Marshaler, db)
+			bankModule := bank.NewModule(nil, sources.BankSource, parseCtx.EncodingConfig.Marshaler, db)
 
 			err = bankModule.UpdateSupply()
 			if err != nil {
