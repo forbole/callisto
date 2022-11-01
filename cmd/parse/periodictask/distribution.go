@@ -14,7 +14,7 @@ import (
 func distributionCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:   "distribution",
-		Short: "Trigger x/distribution periodic task",
+		Short: "Run x/distribution periodic task",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			parseCtx, err := parsecmdtypes.GetParserContext(config.Cfg, parseConfig)
 			if err != nil {
