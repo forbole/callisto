@@ -1,15 +1,15 @@
 module github.com/forbole/bdjuno/v3
 
-go 1.17
+go 1.18
 
 require (
 	github.com/cosmos/cosmos-sdk v0.45.10-0.20221014225501-18eaf090ca1c
 	github.com/cosmos/gaia/v7 v7.0.2
-	github.com/forbole/juno/v3 v3.3.0
-	github.com/go-co-op/gocron v1.16.1
+	github.com/forbole/juno/v3 v3.4.0
+	github.com/go-co-op/gocron v1.17.1
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
-	github.com/lib/pq v1.10.6
+	github.com/lib/pq v1.10.7
 	github.com/pelletier/go-toml v1.9.5
 	github.com/persistenceOne/persistenceCore/v4 v4.0.0
 	github.com/prometheus/client_golang v1.13.0

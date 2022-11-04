@@ -10,9 +10,8 @@ object_relationships:
     foreign_key_constraint_on: validator_address
 select_permissions:
 - permission:
-    allow_aggregations: true
+    allow_aggregations: false
     columns:
-    - id
     - proposal_id
     - validator_address
     - voting_power
@@ -20,4 +19,5 @@ select_permissions:
     - jailed
     - height
     filter: {}
+    limit: 100
   role: anonymous

@@ -1,18 +1,18 @@
 table:
-  name: validator_status
+  name: software_upgrade_plan
   schema: public
 object_relationships:
-- name: validator
+- name: proposal
   using:
-    foreign_key_constraint_on: validator_address
+    foreign_key_constraint_on: proposal_id
 select_permissions:
 - permission:
     allow_aggregations: true
     columns:
-    - validator_address
-    - status
-    - jailed
+    - proposal_id
+    - plan_name
+    - upgrade_height
+    - info
     - height
     filter: {}
-    limit: 100
   role: anonymous
