@@ -1,4 +1,4 @@
-package periodictask
+package staking
 
 import (
 	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
@@ -10,11 +10,11 @@ import (
 	modulestypes "github.com/forbole/bdjuno/v3/modules/types"
 )
 
-// stakingCmd returns the Cobra command allowing to refresh data that's obtained from x/stakingCmd periodic tasks
-func stakingCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
+// poolCmd returns the Cobra command allowing to refresh x/staking pool
+func poolCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 	return &cobra.Command{
-		Use:   "staking",
-		Short: "Run x/staking periodic task",
+		Use:   "pool",
+		Short: "Refresh staking pool",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			parseCtx, err := parsecmdtypes.GetParserContext(config.Cfg, parseConfig)
 			if err != nil {
