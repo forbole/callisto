@@ -9,7 +9,7 @@ import (
 func NewPricefeedCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "pricefeed",
-		Short: "Fix things related to the x/mint module",
+		Short: "Fix things related to the pricefeed module",
 	}
 
 	cmd.AddCommand(
