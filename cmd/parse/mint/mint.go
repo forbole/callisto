@@ -1,4 +1,4 @@
-package periodictask
+package mint
 
 import (
 	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
@@ -10,11 +10,11 @@ import (
 	modulestypes "github.com/forbole/bdjuno/v3/modules/types"
 )
 
-// mintCmd returns the Cobra command allowing to refresh data that's obtained from x/mint periodic tasks
-func mintCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
+// inflationCmd returns the Cobra command allowing to refresh x/mint infaltion
+func inflationCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 	return &cobra.Command{
-		Use:   "mint",
-		Short: "Run x/mint periodic task",
+		Use:   "inflation",
+		Short: "Parse infaltion",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			parseCtx, err := parsecmdtypes.GetParserContext(config.Cfg, parseConfig)
 			if err != nil {
