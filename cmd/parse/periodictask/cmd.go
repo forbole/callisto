@@ -13,7 +13,6 @@ func NewPeriodicTaskCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 	}
 
 	cmd.AddCommand(
-		distributionCmd(parseConfig),
 		pricefeedCmd(parseConfig),
 		stakingCmd(parseConfig),
 	)

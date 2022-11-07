@@ -10,6 +10,7 @@ import (
 
 	parseauth "github.com/forbole/bdjuno/v3/cmd/parse/auth"
 	parsebank "github.com/forbole/bdjuno/v3/cmd/parse/bank"
+	parsedistribution "github.com/forbole/bdjuno/v3/cmd/parse/distribution"
 	parsefeegrant "github.com/forbole/bdjuno/v3/cmd/parse/feegrant"
 	parsegov "github.com/forbole/bdjuno/v3/cmd/parse/gov"
 	parsemint "github.com/forbole/bdjuno/v3/cmd/parse/mint"
@@ -30,6 +31,7 @@ func NewParseCmd(parseCfg *parse.Config) *cobra.Command {
 		parseauth.NewAuthCmd(parseCfg),
 		parsebank.NewBankCmd(parseCfg),
 		parseblocks.NewBlocksCmd(parseCfg),
+		parsedistribution.NewDistributionCmd(parseCfg),
 		parsefeegrant.NewFeegrantCmd(parseCfg),
 		parsegenesis.NewGenesisCmd(parseCfg),
 		parsegov.NewGovCmd(parseCfg),

@@ -1,4 +1,4 @@
-package periodictask
+package distribution
 
 import (
 	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
@@ -10,11 +10,11 @@ import (
 	modulestypes "github.com/forbole/bdjuno/v3/modules/types"
 )
 
-// distributionCmd returns the Cobra command allowing to refresh data that's obtained from x/distribution periodic tasks
-func distributionCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
+// communityPoolCmd returns the Cobra command allowing to refresh community pool
+func communityPoolCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 	return &cobra.Command{
-		Use:   "distribution",
-		Short: "Run x/distribution periodic task",
+		Use:   "community-pool",
+		Short: "Refresh community pool",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			parseCtx, err := parsecmdtypes.GetParserContext(config.Cfg, parseConfig)
 			if err != nil {
