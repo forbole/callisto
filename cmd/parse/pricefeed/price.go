@@ -1,4 +1,4 @@
-package periodictask
+package pricefeed
 
 import (
 	"fmt"
@@ -11,11 +11,11 @@ import (
 	"github.com/forbole/bdjuno/v3/modules/pricefeed"
 )
 
-// pricefeedCmd returns the Cobra command allowing to refresh data that's obtained from pricefeed periodic tasks
-func pricefeedCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
+// priceCmd returns the Cobra command allowing to refresh token price
+func priceCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 	return &cobra.Command{
-		Use:   "pricefeed",
-		Short: "Run pricefeed periodic task",
+		Use:   "price",
+		Short: "Refresh token price",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			parseCtx, err := parsecmdtypes.GetParserContext(config.Cfg, parseConfig)
 			if err != nil {
@@ -36,11 +36,6 @@ func pricefeedCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			err = pricefeedModule.UpdatePrice()
 			if err != nil {
 				return fmt.Errorf("error while updating price: %s", err)
-			}
-
-			err = pricefeedModule.UpdatePricesHistory()
-			if err != nil {
-				return fmt.Errorf("error while updating price history: %s", err)
 			}
 
 			return nil
