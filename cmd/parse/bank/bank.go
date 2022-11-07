@@ -1,20 +1,23 @@
-package mint
+package bank
 
 import (
+	"fmt"
+
+	modulestypes "github.com/forbole/bdjuno/v3/modules/types"
+
 	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
 	"github.com/forbole/juno/v3/types/config"
 	"github.com/spf13/cobra"
 
 	"github.com/forbole/bdjuno/v3/database"
-	"github.com/forbole/bdjuno/v3/modules/mint"
-	modulestypes "github.com/forbole/bdjuno/v3/modules/types"
+	"github.com/forbole/bdjuno/v3/modules/bank"
 )
 
-// inflationCmd returns the Cobra command allowing to refresh x/mint infaltion
-func inflationCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
+// supplyCmd returns the Cobra command allowing to refresh x/bank total supply
+func supplyCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 	return &cobra.Command{
-		Use:   "inflation",
-		Short: "Refresh infaltion",
+		Use:   "supply",
+		Short: "Refresh total supply",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			parseCtx, err := parsecmdtypes.GetParserContext(config.Cfg, parseConfig)
 			if err != nil {
@@ -29,12 +32,12 @@ func inflationCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			// Get the database
 			db := database.Cast(parseCtx.Database)
 
-			// Build mint module
-			mintModule := mint.NewModule(sources.MintSource, parseCtx.EncodingConfig.Marshaler, db)
+			// Build bank module
+			bankModule := bank.NewModule(nil, sources.BankSource, parseCtx.EncodingConfig.Marshaler, db)
 
-			err = mintModule.UpdateInflation()
+			err = bankModule.UpdateSupply()
 			if err != nil {
-				return err
+				return fmt.Errorf("error while getting latest bank supply: %s", err)
 			}
 
 			return nil
