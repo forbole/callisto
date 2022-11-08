@@ -14,7 +14,7 @@ import (
 func inflationCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:   "inflation",
-		Short: "Refresh infaltion",
+		Short: "Refresh inflation",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			parseCtx, err := parsecmdtypes.GetParserContext(config.Cfg, parseConfig)
 			if err != nil {
