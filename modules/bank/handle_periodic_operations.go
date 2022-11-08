@@ -22,7 +22,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	return nil
 }
 
-// updateSupply updates the supply of all the tokens
+// UpdateSupply updates the supply of all the tokens
 func (m *Module) UpdateSupply() error {
 	log.Trace().Str("module", "bank").Str("operation", "total supply").
 		Msg("updating total supply")
