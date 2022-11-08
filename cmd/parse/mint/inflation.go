@@ -34,7 +34,7 @@ func inflationCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 
 			err = mintModule.UpdateInflation()
 			if err != nil {
-				return err
+				return fmt.Errorf("error while updating inflation: %s", err)
 			}
 
 			return nil
