@@ -34,7 +34,7 @@ func poolCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 
 			err = stakingModule.UpdateStakingPool()
 			if err != nil {
-				return err
+				return fmt.Errorf("error while updating staking pool: %s", err)
 			}
 
 			return nil
