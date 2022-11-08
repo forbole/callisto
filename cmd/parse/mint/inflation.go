@@ -10,7 +10,7 @@ import (
 	modulestypes "github.com/forbole/bdjuno/v3/modules/types"
 )
 
-// inflationCmd returns the Cobra command allowing to refresh x/mint infaltion
+// inflationCmd returns the Cobra command allowing to refresh x/mint inflation
 func inflationCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:   "inflation",
