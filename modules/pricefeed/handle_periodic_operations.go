@@ -56,7 +56,7 @@ func (m *Module) getTokenPrices() ([]types.TokenPrice, error) {
 	return prices, nil
 }
 
-// UpdatePrice fetch total amount of coins in the system from RPC and store it into database
+// UpdatePrice fetches the total amount of coins in the system from RPC and stores it in database
 func (m *Module) UpdatePrice() error {
 	log.Debug().
 		Str("module", "pricefeed").
