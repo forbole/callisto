@@ -34,7 +34,7 @@ func communityPoolCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 
 			err = distrModule.GetLatestCommunityPool()
 			if err != nil {
-				return err
+				return fmt.Errorf("error while updating community pool: %s", err)
 			}
 
 			return nil
