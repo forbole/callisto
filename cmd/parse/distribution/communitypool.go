@@ -1,6 +1,8 @@
 package distribution
 
 import (
+	"fmt"
+
 	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
 	"github.com/forbole/juno/v3/types/config"
 	"github.com/spf13/cobra"
