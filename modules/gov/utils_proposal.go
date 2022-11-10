@@ -25,10 +25,10 @@ func (m *Module) UpdateProposal(height int64, blockTime time.Time, id uint64) er
 	// Get the proposal
 	proposal, err := m.source.Proposal(height, id)
 	if err != nil {
-		// Check if proposal has reached the deposit end time
-		passedDepositPeriod := blockTime.After(proposal.DepositEndTime)
+		// Check if proposal has reached the voting end time
+		passedVotingPeriod := blockTime.After(proposal.VotingEndTime)
 
-		if strings.Contains(err.Error(), codes.NotFound.String()) && passedDepositPeriod {
+		if strings.Contains(err.Error(), codes.NotFound.String()) && passedVotingPeriod {
 			// Handle case when a proposal is deleted from the chain (did not pass deposit period)
 			return m.updateDeletedProposalStatus(id)
 		}
