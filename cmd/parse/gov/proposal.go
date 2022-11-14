@@ -79,7 +79,7 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				return fmt.Errorf("error while getting chain latest block height: %s", err)
 			}
 
-			err = govModule.UpdateProposal(height, time.Time{}, proposalID)
+			err = govModule.UpdateProposal(height, time.Now(), proposalID)
 			if err != nil {
 				return err
 			}
