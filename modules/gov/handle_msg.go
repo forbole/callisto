@@ -55,6 +55,9 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypes.M
 	if err != nil {
 		return fmt.Errorf("error while getting proposal: %s", err)
 	}
+	if proposal.Content.GetCachedValue() == nil {
+		proposal.Content = msg.Content
+	}
 
 	// Store the proposal
 	proposalObj := types.NewProposal(
