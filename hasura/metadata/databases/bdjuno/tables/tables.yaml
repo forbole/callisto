@@ -15,6 +15,7 @@
 - "!include public_message.yaml"
 - "!include public_mint_params.yaml"
 - "!include public_modules.yaml"
+- "!include public_oracle_params.yaml"
 - "!include public_pre_commit.yaml"
 - "!include public_proposal.yaml"
 - "!include public_proposal_deposit.yaml"
