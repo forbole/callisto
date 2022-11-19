@@ -1,5 +1,5 @@
 table:
-  name: oracle
+  name: oracle_params
   schema: public
 select_permissions:
 - permission:
