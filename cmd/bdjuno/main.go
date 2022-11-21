@@ -16,7 +16,7 @@ import (
 	"github.com/forbole/bdjuno/v3/database"
 	"github.com/forbole/bdjuno/v3/modules"
 
-	gaiaapp "github.com/cosmos/gaia/v6/app"
+	gaiaapp "github.com/cosmos/gaia/v7/app"
 
 	bandapp "github.com/bandprotocol/chain/v2/app"
 )
