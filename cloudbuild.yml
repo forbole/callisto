@@ -1,0 +1,32 @@
+steps:
+  # 0. Get previous build for cache
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args: [ '-c', 'docker pull us-docker.pkg.dev/$PROJECT_ID/gcr.io/$REPO_NAME:latest || exit 0' ]
+
+  # 1. Build the image
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: bash
+    timeout: 1200s # 20 minutes
+    args: [
+      '-c',
+      'export DOCKER_BUILDKIT=1 && docker build
+       --cache-from us-docker.pkg.dev/$PROJECT_ID/gcr.io/$REPO_NAME:latest
+       -t us-docker.pkg.dev/$PROJECT_ID/gcr.io/$REPO_NAME:latest .',
+    ]
+
+  # 2. Push the image to GCR
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'us-docker.pkg.dev/$PROJECT_ID/gcr.io/$REPO_NAME:latest']
+
+  # 3. Redeploy image on instance
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: [
+      "compute",
+      "ssh",
+      "--zone",
+      "us-central1-a",
+      "bigdipper",
+      "--command",
+      "cd /bdjuno && docker compose down && docker image rm us-docker.pkg.dev/$PROJECT_ID/gcr.io/$REPO_NAME:latest && docker compose up -d"
+    ]
