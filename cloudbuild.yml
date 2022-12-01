@@ -46,3 +46,10 @@ steps:
       "--command",
       "cd /bdjuno && docker compose down && docker image rm us-docker.pkg.dev/$PROJECT_ID/gcr.io/$REPO_NAME:latest && docker compose up -d"
     ]
+
+options:
+  machineType: 'E2_HIGHCPU_8' # 8 cores
+  dynamic_substitutions: true
+images:
+  - 'us-docker.pkg.dev/$PROJECT_ID/gcr.io/$REPO_NAME:latest'
+logsBucket: gs://logs-ci-bdjuno
