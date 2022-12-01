@@ -19,19 +19,19 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'us-docker.pkg.dev/$PROJECT_ID/gcr.io/$REPO_NAME:latest']
 
-#  # 3. Setup docker auth
-#  - name: 'gcr.io/cloud-builders/gcloud'
-#    args: [
-#      "compute",
-#      "ssh",
-#      "--project",
-#      "$PROJECT_ID",
-#      "--zone",
-#      "us-central1-a",
-#      "bigdipper",
-#      "--command",
-#      "gcloud auth configure-docker us-docker.pkg.dev"
-#    ]
+  # 3. Setup docker auth
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: [
+      "compute",
+      "ssh",
+      "--project",
+      "$PROJECT_ID",
+      "--zone",
+      "us-central1-a",
+      "builder@bigdipper",
+      "--command",
+      "gcloud auth configure-docker us-docker.pkg.dev"
+    ]
 
   # 3.1. Redeploy image on instance
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -42,7 +42,7 @@ steps:
       "$PROJECT_ID",
       "--zone",
       "us-central1-a",
-      "bigdipper",
+      "builder@bigdipper",
       "--command",
       "cd /bdjuno && docker compose down && docker image rm us-docker.pkg.dev/$PROJECT_ID/gcr.io/$REPO_NAME:latest && docker compose up -d"
     ]
