@@ -8,3 +8,5 @@ config.yaml
 
 # Coverage
 coverage.*
+
+.terraform
