@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/forbole/bdjuno/v3/types"
-	"github.com/ovrclk/akash/provider"
+	provider "github.com/ovrclk/provider-services"
 	"github.com/rs/zerolog/log"
 )
 

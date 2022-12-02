@@ -5,11 +5,11 @@ go 1.17
 require (
 	github.com/cosmos/cosmos-sdk v0.45.4
 	github.com/forbole/juno/v3 v3.0.0-20220804055619-65c066944cfa // juno branch "v3.3.0-ibcgo-v2.2.0"
-	github.com/go-co-op/gocron v1.16.1
+	github.com/go-co-op/gocron v1.13.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.6
-	github.com/ovrclk/akash v0.16.6
+	github.com/ovrclk/akash v0.18.1
 	github.com/pelletier/go-toml v1.9.5
 	github.com/prometheus/client_golang v1.12.2
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
@@ -19,6 +19,7 @@ require (
 	github.com/tendermint/tendermint v0.34.19
 	google.golang.org/grpc v1.45.0
 	gopkg.in/yaml.v3 v3.0.1
+	github.com/ovrclk/provider-services v0.1.0
 )
 
 require (
