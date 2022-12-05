@@ -3,7 +3,7 @@ package local
 import (
 	"fmt"
 
-	stakeibctypes "github.com/Stride-Labs/stride/x/stakeibc/types"
+	stakeibctypes "github.com/Stride-Labs/stride/v4/x/stakeibc/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/juno/v3/node/local"
 

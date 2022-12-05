@@ -8,7 +8,7 @@ import (
 
 	"github.com/forbole/bdjuno/v3/types"
 
-	minttypes "github.com/Stride-Labs/stride/x/mint/types"
+	minttypes "github.com/Stride-Labs/stride/v4/x/mint/types"
 	"github.com/rs/zerolog/log"
 )
 

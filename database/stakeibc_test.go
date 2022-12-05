@@ -3,7 +3,7 @@ package database_test
 import (
 	"encoding/json"
 
-	stakeibctypes "github.com/Stride-Labs/stride/x/stakeibc/types"
+	stakeibctypes "github.com/Stride-Labs/stride/v4/x/stakeibc/types"
 
 	"github.com/forbole/bdjuno/v3/types"
 
@@ -25,6 +25,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveStakeIBCParams() {
 		10,
 		11,
 		9,
+		10,
 		10,
 		10,
 	)

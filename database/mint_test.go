@@ -3,7 +3,7 @@ package database_test
 import (
 	"encoding/json"
 
-	minttypes "github.com/Stride-Labs/stride/x/mint/types"
+	minttypes "github.com/Stride-Labs/stride/v4/x/mint/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/forbole/bdjuno/v3/types"

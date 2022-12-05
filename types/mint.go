@@ -1,6 +1,6 @@
 package types
 
-import minttypes "github.com/Stride-Labs/stride/x/mint/types"
+import minttypes "github.com/Stride-Labs/stride/v4/x/mint/types"
 
 // MintParams represents the x/mint parameters
 type MintParams struct {
