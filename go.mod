@@ -144,5 +144,5 @@ replace (
 	github.com/confio/ics23/go => github.com/cosmos/cosmos-sdk/ics23/go v0.8.0
 	github.com/cosmos/cosmos-sdk => github.com/osmosis-labs/cosmos-sdk v0.45.1-0.20221118211718-545aed73e94e
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-	github.com/tendermint/tendermint => github.com/tendermint/tendermint v0.34.21
+	github.com/tendermint/tendermint => github.com/MonOsmosis/tendermint v0.34.22-0.20221207065910-a2c2c72ad9e1
 )
