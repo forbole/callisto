@@ -18,10 +18,10 @@ import (
 	"github.com/forbole/bdjuno/v3/modules"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	gammtypes "github.com/osmosis-labs/osmosis/v10/x/gamm/pool-models/balancer"
+	gammtypes "github.com/osmosis-labs/osmosis/v13/x/gamm/pool-models/balancer"
 
 	gaiaapp "github.com/cosmos/gaia/v7/app"
-	osmosisapp "github.com/osmosis-labs/osmosis/v10/app"
+	osmosisapp "github.com/osmosis-labs/osmosis/v13/app"
 )
 
 func main() {

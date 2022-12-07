@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	mintsource "github.com/forbole/bdjuno/v3/modules/mint/source"
 	"github.com/forbole/juno/v3/node/local"
-	minttypes "github.com/osmosis-labs/osmosis/v10/x/mint/types"
+	minttypes "github.com/osmosis-labs/osmosis/v13/x/mint/types"
 )
 
 var (
