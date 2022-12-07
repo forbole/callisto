@@ -20,7 +20,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	gammtypes "github.com/osmosis-labs/osmosis/v13/x/gamm/pool-models/balancer"
 
-	gaiaapp "github.com/cosmos/gaia/v7/app"
 	osmosisapp "github.com/osmosis-labs/osmosis/v13/app"
 )
 
@@ -60,7 +59,6 @@ func main() {
 // This should be edited by custom implementations if needed.
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
-		gaiaapp.ModuleBasics,
 		osmosisapp.ModuleBasics,
 	}
 }
