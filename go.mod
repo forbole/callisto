@@ -7,7 +7,7 @@ require (
 	github.com/comdex-official/comdex v0.0.0-20221114182758-d8a016d3738a
 	github.com/cosmos/cosmos-sdk v0.45.9
 	github.com/cosmos/gaia/v7 v7.0.0
-	github.com/forbole/juno/v3 v3.3.0
+	github.com/forbole/juno/v3 v3.4.0
 	github.com/go-co-op/gocron v1.16.1
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
