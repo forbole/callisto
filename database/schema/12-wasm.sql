@@ -9,7 +9,6 @@ CREATE TABLE wasm_params
     one_row_id                      BOOLEAN         NOT NULL DEFAULT TRUE PRIMARY KEY,
     code_upload_access              ACCESS_CONFIG   NOT NULL,
     instantiate_default_permission  INT             NOT NULL,
-    max_wasm_code_size              INTEGER         NOT NULL,
     height                          BIGINT          NOT NULL
 );
 
@@ -17,7 +16,7 @@ CREATE TABLE wasm_params
 CREATE TABLE wasm_code
 (
     sender                  TEXT            NULL,
-    byte_code               BYTEA           NOT NULL,
+    byte_code               BYTEA           NULL NULL,
     instantiate_permission  ACCESS_CONFIG   NULL,
     code_id                 BIGINT          NOT NULL UNIQUE,
     height                  BIGINT          NOT NULL

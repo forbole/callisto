@@ -1,3 +1,8 @@
+### Unreleased
+#### Wasm module
+- ([\#](https://github.com/forbole/bdjuno/pull/)) Drop `max_wasm_code_size column` from `wasm_params`; implement parse cmd for x/wasm codes
+
+
 ## Version v3.2.0
 ### Changes
 #### Mint module
