@@ -44,6 +44,7 @@ INSERT INTO wasm_code(sender, byte_code, instantiate_permission, code_id, height
 VALUES `
 
 	var args []interface{}
+	var accounts = make([]types.Account, len(wasmCodes))
 	for i, code := range wasmCodes {
 		ii := i * 5
 
@@ -56,6 +57,7 @@ VALUES `
 
 		stmt += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d),", ii+1, ii+2, ii+3, ii+4, ii+5)
 		args = append(args, code.Sender, code.WasmByteCode, cfgValue, code.CodeID, code.Height)
+		accounts[i] = types.NewAccount(code.Sender)
 	}
 
 	stmt = stmt[:len(stmt)-1] // Remove trailing ","
@@ -68,7 +70,12 @@ VALUES `
 			height = excluded.height
 	WHERE wasm_code.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt, args...)
+	err := db.SaveAccounts(accounts)
+	if err != nil {
+		return fmt.Errorf("error while saving accounts: %s", err)
+	}
+
+	_, err = db.Sql.Exec(stmt, args...)
 	if err != nil {
 		return fmt.Errorf("error while saving wasm code: %s", err)
 	}
@@ -104,6 +111,7 @@ data, instantiated_at, contract_info_extension, contract_states, height)
 VALUES `
 
 	var args []interface{}
+	var accounts = make([]types.Account, len(wasmContracts))
 	for i, contract := range wasmContracts {
 		ii := i * paramsNumber
 		stmt += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d),",
@@ -113,6 +121,8 @@ VALUES `
 			pq.Array(dbtypes.NewDbCoins(contract.Funds)), contract.ContractAddress, contract.Data,
 			contract.InstantiatedAt, contract.ContractInfoExtension, string(contract.ContractStates), contract.Height,
 		)
+
+		accounts[i] = types.NewAccount(contract.Creator)
 	}
 
 	stmt = stmt[:len(stmt)-1] // Remove trailing ","
@@ -132,7 +142,12 @@ VALUES `
 			height = excluded.height
 	WHERE wasm_contract.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt, args...)
+	err := db.SaveAccounts(accounts)
+	if err != nil {
+		return fmt.Errorf("error while saving accounts: %s", err)
+	}
+
+	_, err = db.Sql.Exec(stmt, args...)
 	if err != nil {
 		return fmt.Errorf("error while saving wasm contracts: %s", err)
 	}
