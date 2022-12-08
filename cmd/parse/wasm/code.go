@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	modulestypes "github.com/forbole/bdjuno/v3/modules/types"
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v3/modules/wasm"
 
 	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
 	"github.com/forbole/juno/v3/types/config"
@@ -37,21 +37,11 @@ func codeCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				return err
 			}
 
-			// Get contract code list with infos
-			codesInfosRes, err := sources.WasmSource.GetCodesInfos(height)
+			wasmModule := wasm.NewModule(sources.WasmSource, parseCtx.EncodingConfig.Marshaler, db)
+
+			wasmCodes, err := wasmModule.GetWasmCodes(height)
 			if err != nil {
-				return fmt.Errorf("error while getting info of codes: %s", err)
-			}
-
-			var wasmCodes = make([]types.WasmCode, len(codesInfosRes))
-			for i, c := range codesInfosRes {
-				// Get code binary
-				bi, err := sources.WasmSource.GetCodeBinary(c.CodeID, height)
-				if err != nil {
-					return fmt.Errorf("error while getting code binary: %s", err)
-				}
-
-				wasmCodes[i] = types.NewWasmCode(c.Creator, bi, &c.InstantiatePermission, c.CodeID, height)
+				return fmt.Errorf("error while wasm codes: %s", err)
 			}
 
 			err = db.SaveWasmCodes(wasmCodes)
