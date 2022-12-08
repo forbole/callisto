@@ -18,7 +18,7 @@ require (
 	github.com/spf13/cobra v1.5.0
 	github.com/stretchr/testify v1.8.0
 	github.com/tendermint/tendermint v0.34.19
-	google.golang.org/grpc v1.50.0
+	google.golang.org/grpc v1.50.1
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -49,7 +49,7 @@ require (
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
 	github.com/cosmos/gorocksdb v1.2.0 // indirect
 	github.com/cosmos/iavl v0.17.3 // indirect
-	github.com/cosmos/ibc-go/v3 v3.0.0 // indirect
+	github.com/cosmos/ibc-go/v3 v3.0.1 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.11.1 // indirect
 	github.com/cosmos/ledger-go v0.9.2 // indirect
 	github.com/danieljoos/wincred v1.0.2 // indirect
@@ -99,7 +99,8 @@ require (
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hdevalence/ed25519consensus v0.0.0-20210204194344-59a8610d2b87 // indirect
 	github.com/iancoleman/strcase v0.2.0 // indirect
-	github.com/ignite-hq/cli v0.22.1 // indirect
+	// github.com/ignite-hq/cli v0.22.1 // indirect
+	github.com/ignite-hq/cli v0.22.1-0.20220610070456-1b33c09fceb7 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
 	github.com/improbable-eng/grpc-web v0.14.1 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
@@ -158,9 +159,9 @@ require (
 	github.com/takuoki/gocase v1.0.0 // indirect
 	github.com/tendermint/btcd v0.1.1 // indirect
 	github.com/tendermint/crypto v0.0.0-20191022145703-50d29ede1e15 // indirect
-	github.com/tendermint/fundraising v0.3.0 // indirect
+	github.com/tendermint/fundraising v0.3.1-0.20220613014523-03b4a2d4481a // indirect
 	github.com/tendermint/go-amino v0.16.0 // indirect
-	github.com/tendermint/spn v0.2.1-0.20220609194312-7833ecf4454a // indirect
+	github.com/tendermint/spn v0.2.1-0.20220708132853-26a17f03c072 // indirect
 	github.com/tendermint/tm-db v0.6.7 // indirect
 	github.com/tomasen/realip v0.0.0-20180522021738-f0c99a92ddce // indirect
 	github.com/xanzy/ssh-agent v0.2.1 // indirect
@@ -170,14 +171,14 @@ require (
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e // indirect
 	golang.org/x/exp v0.0.0-20220613132600-b0d781184e0d // indirect
-	golang.org/x/mod v0.6.0-dev.0.20220106191415-9b9b3d81d5e3 // indirect
-	golang.org/x/net v0.0.0-20221004154528-8021a29435af // indirect
+	golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4 // indirect
+	golang.org/x/net v0.2.0 // indirect
 	golang.org/x/sync v0.0.0-20220601150217-0de741cfad7f // indirect
-	golang.org/x/sys v0.0.0-20221010170243-090e33056c14 // indirect
-	golang.org/x/term v0.0.0-20220526004731-065cf7ba2467 // indirect
-	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/sys v0.2.0 // indirect
+	golang.org/x/term v0.2.0 // indirect
+	golang.org/x/text v0.4.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220517211312-f3a8303e98df // indirect
-	google.golang.org/genproto v0.0.0-20221010155953-15ba04fc1c0e // indirect
+	google.golang.org/genproto v0.0.0-20221114212237-e4508ebdbee1 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/ini.v1 v1.66.6 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
@@ -187,6 +188,6 @@ require (
 
 replace (
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-	github.com/lavanet/lava => /lava
+	github.com/lavanet/lava => ../lava
 	google.golang.org/grpc => google.golang.org/grpc v1.33.2
 )
