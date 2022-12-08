@@ -16,7 +16,7 @@ CREATE TABLE wasm_params
 CREATE TABLE wasm_code
 (
     sender                  TEXT            NULL,
-    byte_code               BYTEA           NULL NULL,
+    byte_code               BYTEA           NOT NULL,
     instantiate_permission  ACCESS_CONFIG   NULL,
     code_id                 BIGINT          NOT NULL UNIQUE,
     height                  BIGINT          NOT NULL
