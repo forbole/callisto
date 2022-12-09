@@ -43,6 +43,10 @@ func (db *Db) SaveWasmCodes(wasmCodes []types.WasmCode) error {
 INSERT INTO wasm_code(sender, byte_code, instantiate_permission, code_id, height) 
 VALUES `
 
+	if len(wasmCodes) == 0 {
+		return fmt.Errorf("wasm codes list is empty")
+	}
+	
 	var args []interface{}
 	var accounts = make([]types.Account, len(wasmCodes))
 	for i, code := range wasmCodes {
