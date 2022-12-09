@@ -38,22 +38,30 @@ func (cfg *DbAccessConfig) Equal(b *DbAccessConfig) bool {
 
 // ===================== Params =====================
 
-// WasmParams represents the CosmWasm code in x/wasm module
-type WasmParams struct {
+// WasmParamsRow represents a single row inside the wasm_params table
+type WasmParamsRow struct {
+	OneRowID                     bool            `db:"one_row_id"`
 	CodeUploadAccess             *DbAccessConfig `db:"code_upload_access"`
 	InstantiateDefaultPermission int32           `db:"instantiate_default_permission"`
 	Height                       int64           `db:"height"`
 }
 
-// NewWasmParams allows to build a new x/wasm params instance
-func NewWasmParams(
-	codeUploadAccess *DbAccessConfig, instantiateDefaultPermission int32, maxWasmCodeSize uint64, height int64,
-) WasmParams {
-	return WasmParams{
+// NewWasmParamsRow allows to build a New WasmParamsRow instance
+func NewWasmParamsRow(
+	codeUploadAccess *DbAccessConfig, instantiateDefaultPermission int32, height int64,
+) WasmParamsRow {
+	return WasmParamsRow{
 		CodeUploadAccess:             codeUploadAccess,
 		InstantiateDefaultPermission: instantiateDefaultPermission,
 		Height:                       height,
 	}
+}
+
+// Equals return true if one WasmParamsRow representing the same row as the original one
+func (a WasmParamsRow) Equals(b WasmParamsRow) bool {
+	return a.CodeUploadAccess.Equal(b.CodeUploadAccess) &&
+		a.InstantiateDefaultPermission == b.InstantiateDefaultPermission &&
+		a.Height == b.Height
 }
 
 // ===================== Code =====================

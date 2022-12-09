@@ -16,7 +16,7 @@ INSERT INTO wasm_params(code_upload_access, instantiate_default_permission, heig
 VALUES ($1, $2, $3) 
 ON CONFLICT (one_row_id) DO UPDATE 
 	SET code_upload_access = excluded.code_upload_access, 
-		instantiate_default_permission = excluded.instantiate_default_permission, 
+		instantiate_default_permission = excluded.instantiate_default_permission 
 WHERE wasm_params.height <= excluded.height
 `
 	accessConfig := dbtypes.NewDbAccessConfig(params.CodeUploadAccess)
@@ -46,7 +46,7 @@ VALUES `
 	if len(wasmCodes) == 0 {
 		return fmt.Errorf("wasm codes list is empty")
 	}
-	
+
 	var args []interface{}
 	var accounts = make([]types.Account, len(wasmCodes))
 	for i, code := range wasmCodes {
