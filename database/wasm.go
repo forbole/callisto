@@ -1,6 +1,7 @@
 package database
 
 import (
+	"encoding/json"
 	"fmt"
 
 	dbtypes "github.com/forbole/bdjuno/v3/database/types"
@@ -11,20 +12,21 @@ import (
 
 // SaveWasmParams allows to store the wasm params
 func (db *Db) SaveWasmParams(params types.WasmParams) error {
+	paramsBz, err := json.Marshal(&params.Params)
+	if err != nil {
+		return fmt.Errorf("error while marshaling staking params: %s", err)
+	}
+
 	stmt := `
-INSERT INTO wasm_params(code_upload_access, instantiate_default_permission, height) 
-VALUES ($1, $2, $3) 
+INSERT INTO wasm_params(params, height) 
+VALUES ($1, $2) 
 ON CONFLICT (one_row_id) DO UPDATE 
-	SET code_upload_access = excluded.code_upload_access, 
-		instantiate_default_permission = excluded.instantiate_default_permission 
+	SET params = excluded.params, 
 WHERE wasm_params.height <= excluded.height
 `
-	accessConfig := dbtypes.NewDbAccessConfig(params.CodeUploadAccess)
-	cfgValue, _ := accessConfig.Value()
 
-	_, err := db.Sql.Exec(stmt,
-		cfgValue, params.InstantiateDefaultPermission, params.Height,
-	)
+	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
+
 	if err != nil {
 		return fmt.Errorf("error while saving wasm params: %s", err)
 	}

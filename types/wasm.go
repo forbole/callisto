@@ -11,19 +11,17 @@ import (
 
 // WasmParams represents the CosmWasm code in x/wasm module
 type WasmParams struct {
-	CodeUploadAccess             *wasmtypes.AccessConfig
-	InstantiateDefaultPermission int32
-	Height                       int64
+	Params wasmtypes.Params
+	Height int64
 }
 
 // NewWasmParams allows to build a new x/wasm params instance
 func NewWasmParams(
-	codeUploadAccess *wasmtypes.AccessConfig, instantiateDefaultPermission int32, height int64,
+	params wasmtypes.Params, height int64,
 ) WasmParams {
 	return WasmParams{
-		CodeUploadAccess:             codeUploadAccess,
-		InstantiateDefaultPermission: instantiateDefaultPermission,
-		Height:                       height,
+		Params: params,
+		Height: height,
 	}
 }
 

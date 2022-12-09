@@ -6,12 +6,12 @@ CREATE TYPE ACCESS_CONFIG AS
 
 CREATE TABLE wasm_params
 (
-    one_row_id                      BOOLEAN         NOT NULL DEFAULT TRUE PRIMARY KEY,
-    code_upload_access              ACCESS_CONFIG   NOT NULL,
-    instantiate_default_permission  INT             NOT NULL,
-    height                          BIGINT          NOT NULL
+    one_row_id BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
+    params     JSONB   NOT NULL,
+    height     BIGINT  NOT NULL,
+    CHECK (one_row_id)
 );
-
+CREATE INDEX wasm_params_height_index ON staking_params (height);
 
 CREATE TABLE wasm_code
 (

@@ -1,6 +1,8 @@
 package database_test
 
 import (
+	"encoding/json"
+
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	dbtypes "github.com/forbole/bdjuno/v3/database/types"
 	"github.com/forbole/bdjuno/v3/types"
@@ -18,19 +20,19 @@ func (suite *DbTestSuite) TestSaveWasmParams() error {
 	}
 
 	err := suite.database.SaveWasmParams(
-		types.NewWasmParams(&wasmParams.CodeUploadAccess, int32(wasmParams.InstantiateDefaultPermission), 10),
+		types.NewWasmParams(wasmParams, 10),
 	)
 	suite.Require().NoError(err)
-
-	dbAccessConfig := dbtypes.NewDbAccessConfig(&wasmParams.CodeUploadAccess)
-	expected := dbtypes.NewWasmParamsRow(&dbAccessConfig, int32(wasmParams.InstantiateDefaultPermission), 10)
 
 	var rows []dbtypes.WasmParamsRow
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM wasm_params`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 
-	suite.Require().True(expected.Equals(rows[0]))
+	var stored wasmtypes.Params
+	err = json.Unmarshal([]byte(rows[0].Params), &stored)
+	suite.Require().NoError(err)
+	suite.Require().Equal(wasmParams, stored)
 
 	return nil
 }
