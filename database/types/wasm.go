@@ -42,7 +42,6 @@ func (cfg *DbAccessConfig) Equal(b *DbAccessConfig) bool {
 type WasmParams struct {
 	CodeUploadAccess             *DbAccessConfig `db:"code_upload_access"`
 	InstantiateDefaultPermission int32           `db:"instantiate_default_permission"`
-	MaxWasmCodeSize              uint64          `db:"max_wasm_code_size"`
 	Height                       int64           `db:"height"`
 }
 
@@ -53,7 +52,6 @@ func NewWasmParams(
 	return WasmParams{
 		CodeUploadAccess:             codeUploadAccess,
 		InstantiateDefaultPermission: instantiateDefaultPermission,
-		MaxWasmCodeSize:              maxWasmCodeSize,
 		Height:                       height,
 	}
 }

@@ -8,7 +8,6 @@ select_permissions:
     - one_row_id
     - code_upload_access
     - instantiate_default_permission
-    - max_wasm_code_size
     - height
     filter: {}
   role: anonymous
