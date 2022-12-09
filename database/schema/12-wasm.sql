@@ -1,9 +1,3 @@
-CREATE TYPE ACCESS_CONFIG AS
-(
-    permission  INT,
-    address     TEXT
-);
-
 CREATE TABLE wasm_params
 (
     one_row_id BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
@@ -17,7 +11,7 @@ CREATE TABLE wasm_code
 (
     sender                  TEXT            NULL,
     byte_code               BYTEA           NOT NULL,
-    instantiate_permission  ACCESS_CONFIG   NULL,
+    instantiate_permission  JSONB           NULL,
     code_id                 BIGINT          NOT NULL UNIQUE,
     height                  BIGINT          NOT NULL
 );

@@ -14,7 +14,7 @@ import (
 func (db *Db) SaveWasmParams(params types.WasmParams) error {
 	paramsBz, err := json.Marshal(&params.Params)
 	if err != nil {
-		return fmt.Errorf("error while marshaling staking params: %s", err)
+		return fmt.Errorf("error while marshaling wasm params: %s", err)
 	}
 
 	stmt := `
@@ -54,15 +54,17 @@ VALUES `
 	for i, code := range wasmCodes {
 		ii := i * 5
 
-		var accessConfig dbtypes.DbAccessConfig
+		var permissionBz []byte
+		var err error
 		if code.InstantiatePermission != nil {
-			accessConfig = dbtypes.NewDbAccessConfig(code.InstantiatePermission)
+			permissionBz, err = json.Marshal(code.InstantiatePermission)
+			if err != nil {
+				return fmt.Errorf("error while marshaling wasm instantiate permission: %s", err)
+			}
 		}
 
-		cfgValue, _ := accessConfig.Value()
-
 		stmt += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d),", ii+1, ii+2, ii+3, ii+4, ii+5)
-		args = append(args, code.Sender, code.WasmByteCode, cfgValue, code.CodeID, code.Height)
+		args = append(args, code.Sender, code.WasmByteCode, string(permissionBz), code.CodeID, code.Height)
 		accounts[i] = types.NewAccount(code.Sender)
 	}
 
