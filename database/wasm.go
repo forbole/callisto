@@ -21,7 +21,7 @@ func (db *Db) SaveWasmParams(params types.WasmParams) error {
 INSERT INTO wasm_params(params, height) 
 VALUES ($1, $2) 
 ON CONFLICT (one_row_id) DO UPDATE 
-	SET params = excluded.params, 
+	SET params = excluded.params 
 WHERE wasm_params.height <= excluded.height
 `
 
