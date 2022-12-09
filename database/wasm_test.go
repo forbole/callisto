@@ -2,6 +2,7 @@ package database_test
 
 import (
 	"encoding/json"
+	"time"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -65,6 +66,48 @@ func (suite *DbTestSuite) TestSaveWasmCodes() error {
 	err = json.Unmarshal([]byte(rows[0].InstantiatePermission), &storedAccessConfig)
 	suite.Require().NoError(err)
 	suite.Require().Equal(expected.InstantiatePermission, storedAccessConfig)
+
+	return nil
+}
+
+func (suite *DbTestSuite) TestSaveWasmContracts() error {
+	suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
+	address, _ := sdk.AccAddressFromBech32("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
+
+	contract := wasmtypes.Contract{
+		ContractAddress: "cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs",
+		ContractInfo: wasmtypes.NewContractInfo(
+			1,
+			address,
+			address,
+			"label",
+			&wasmtypes.AbsoluteTxPosition{
+				BlockHeight: 10,
+				TxIndex:     1,
+			},
+		),
+		ContractState: []wasmtypes.Model{},
+	}
+
+	instantiatedAt := time.Now()
+	expected := types.NewWasmContract(
+		contract.ContractInfo.Creator,
+		contract.ContractInfo.Admin,
+		contract.ContractInfo.CodeID,
+		contract.ContractInfo.Label,
+		[]byte(`{"key":"val"}`),
+		sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(10))),
+		contract.ContractAddress,
+		"",
+		instantiatedAt,
+		contract.ContractInfo.Creator,
+		"",
+		contract.ContractState,
+		10,
+	)
+
+	err := suite.database.SaveWasmContracts([]types.WasmContract{expected})
+	suite.Require().NoError(err)
 
 	return nil
 }

@@ -134,6 +134,12 @@ func (m *Module) HandleMsgInstantiateContract(index int, tx *juno.Tx, msg *wasmt
 		return fmt.Errorf("error while getting genesis contract states: %s", err)
 	}
 
+	fmt.Println("msg.Msg: ", string(msg.Msg))
+	for _, c := range contractStates {
+		fmt.Println("contractStates: ", c.Key.String())
+		fmt.Println("contractStates: ", c.Value)
+	}
+
 	contract := types.NewWasmContract(
 		msg.Sender, msg.Admin, msg.CodeID, msg.Label, msg.Msg, msg.Funds,
 		contractAddress, string(resultDataBz), timestamp,
