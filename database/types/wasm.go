@@ -4,34 +4,6 @@ import (
 	"time"
 )
 
-// // DbAccessConfig represents the information stored inside the database about a single access_config
-// type DbAccessConfig struct {
-// 	Permission int    `db:"permission"`
-// 	Address    string `db:"address"`
-// }
-
-// // NewDbAccessConfig builds a DbAccessConfig starting from an CosmWasm type AccessConfig
-// func NewDbAccessConfig(accessCfg *wasmtypes.AccessConfig) DbAccessConfig {
-// 	return DbAccessConfig{
-// 		Permission: int(accessCfg.Permission),
-// 		Address:    accessCfg.Address,
-// 	}
-// }
-
-// // Value implements driver.Valuer
-// func (cfg *DbAccessConfig) Value() (driver.Value, error) {
-// 	if cfg != nil {
-// 		return fmt.Sprintf("(%d,%s)", cfg.Permission, cfg.Address), nil
-// 	}
-
-// 	return fmt.Sprintf("(%d,%s)", wasmtypes.AccessTypeUnspecified, ""), nil
-// }
-
-// // Equal tells whether a and b represent the same access_config
-// func (cfg *DbAccessConfig) Equal(b *DbAccessConfig) bool {
-// 	return cfg.Address == b.Address && cfg.Permission == b.Permission
-// }
-
 // ===================== Params =====================
 
 // WasmParamsRow represents a single row inside the wasm_params table
@@ -68,15 +40,6 @@ func NewWasmCodeRow(
 		Height:                height,
 	}
 }
-
-// // Equals return true if one WasmCodeRow representing the same row as the original one
-// func (a WasmCodeRow) Equals(b WasmCodeRow) bool {
-// 	return a.Sender == b.Sender &&
-// 		a.WasmByteCode == b.WasmByteCode &&
-// 		a.InstantiatePermission.Equal(b.InstantiatePermission) &&
-// 		a.CodeID == b.CodeID &&
-// 		a.Height == b.Height
-// }
 
 // ===================== Contract =====================
 
