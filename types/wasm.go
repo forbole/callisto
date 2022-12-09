@@ -70,6 +70,9 @@ func NewWasmContract(
 	instantiatedAt time.Time, creator string, contractInfoExtension string, states []wasmtypes.Model, height int64,
 ) WasmContract {
 	rawContractMsg, _ := rawMsg.MarshalJSON()
+	if len(rawMsg) == 0 {
+		rawContractMsg, _ = json.Marshal("")
+	}
 	contractStateInfo := ConvertContractStates(states)
 
 	return WasmContract{

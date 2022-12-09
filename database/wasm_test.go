@@ -74,6 +74,18 @@ func (suite *DbTestSuite) TestSaveWasmContracts() error {
 	suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	address, _ := sdk.AccAddressFromBech32("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 
+	code := wasmtypes.Code{
+		CodeID:    1,
+		CodeInfo:  wasmtypes.NewCodeInfo(nil, address, wasmtypes.AllowEverybody),
+		CodeBytes: nil,
+		Pinned:    true,
+	}
+
+	err := suite.database.SaveWasmCodes(
+		[]types.WasmCode{types.NewWasmCode("", code.CodeBytes, &code.CodeInfo.InstantiateConfig, code.CodeID, 10)},
+	)
+	suite.Require().NoError(err)
+
 	contract := wasmtypes.Contract{
 		ContractAddress: "cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs",
 		ContractInfo: wasmtypes.NewContractInfo(
@@ -95,7 +107,7 @@ func (suite *DbTestSuite) TestSaveWasmContracts() error {
 		contract.ContractInfo.Admin,
 		contract.ContractInfo.CodeID,
 		contract.ContractInfo.Label,
-		[]byte(`{"key":"val"}`),
+		make(wasmtypes.RawContractMessage, 0),
 		sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(10))),
 		contract.ContractAddress,
 		"",
@@ -106,7 +118,7 @@ func (suite *DbTestSuite) TestSaveWasmContracts() error {
 		10,
 	)
 
-	err := suite.database.SaveWasmContracts([]types.WasmContract{expected})
+	err = suite.database.SaveWasmContracts([]types.WasmContract{expected})
 	suite.Require().NoError(err)
 
 	return nil
