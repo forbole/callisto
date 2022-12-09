@@ -41,7 +41,7 @@ func codeCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 
 			wasmCodes, err := wasmModule.GetWasmCodes(height)
 			if err != nil {
-				return fmt.Errorf("error while wasm codes: %s", err)
+				return fmt.Errorf("error while getting wasm codes: %s", err)
 			}
 
 			err = db.SaveWasmCodes(wasmCodes)
