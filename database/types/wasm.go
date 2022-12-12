@@ -1,10 +1,10 @@
 package types
 
 import (
-	"encoding/json"
 	"time"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+	"github.com/forbole/bdjuno/v3/types"
 )
 
 // ===================== Params =====================
@@ -78,10 +78,7 @@ func NewWasmContractRow(
 	contractInfoExtension string,
 	height int64,
 ) WasmContractRow {
-	rawContractMsg, _ := rawMsg.MarshalJSON()
-	if len(rawMsg) == 0 {
-		rawContractMsg, _ = json.Marshal("")
-	}
+	rawContractMsg := types.ConvertRawContractMessage(rawMsg)
 
 	return WasmContractRow{
 		Sender:                sender,
@@ -132,15 +129,17 @@ type WasmExecuteContractRow struct {
 func NewWasmExecuteContractRow(
 	sender string,
 	contractAddress string,
-	rawContractMessage string,
+	rawMsg wasmtypes.RawContractMessage,
 	funds *DbCoins,
 	data string,
 	executedAt time.Time,
 	height int64,
 ) WasmExecuteContractRow {
+	rawContractMsg := types.ConvertRawContractMessage(rawMsg)
+
 	return WasmExecuteContractRow{
 		Sender:             sender,
-		RawContractMessage: rawContractMessage,
+		RawContractMessage: string(rawContractMsg),
 		Funds:              funds,
 		ContractAddress:    contractAddress,
 		Data:               data,
@@ -156,6 +155,6 @@ func (a WasmExecuteContractRow) Equals(b WasmExecuteContractRow) bool {
 		a.RawContractMessage == b.RawContractMessage &&
 		a.Funds.Equal(a.Funds) &&
 		a.Data == b.Data &&
-		a.ExecutedAt == b.ExecutedAt &&
+		a.ExecutedAt.Equal(b.ExecutedAt) &&
 		a.Height == b.Height
 }

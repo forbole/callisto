@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	dbtypes "github.com/forbole/bdjuno/v3/database/types"
 	dbutils "github.com/forbole/bdjuno/v3/database/utils"
 	"github.com/forbole/bdjuno/v3/types"
@@ -226,15 +227,19 @@ VALUES `
 }
 
 func (db *Db) UpdateContractWithMsgMigrateContract(
-	sender string, contractAddress string, codeID uint64, rawContractMsg []byte, data string,
+	sender string, contractAddress string, codeID uint64, rawContractMsg wasmtypes.RawContractMessage, data string,
 ) error {
-
 	stmt := `UPDATE wasm_contract SET 
 sender = $1, code_id = $2, raw_contract_message = $3, data = $4 
 WHERE contract_address = $5 `
 
+	converted := types.ConvertRawContractMessage(rawContractMsg)
+
 	_, err := db.Sql.Exec(stmt,
-		sender, codeID, string(rawContractMsg), data,
+		sender,
+		codeID,
+		string(converted),
+		data,
 		contractAddress,
 	)
 	if err != nil {
@@ -247,7 +252,7 @@ WHERE contract_address = $5 `
 func (db *Db) UpdateContractAdmin(sender string, contractAddress string, newAdmin string) error {
 
 	stmt := `UPDATE wasm_contract SET 
-sender = $1, admin = $2 WHERE contract_address = $2 `
+sender = $1, admin = $2 WHERE contract_address = $3 `
 
 	_, err := db.Sql.Exec(stmt, sender, newAdmin, contractAddress)
 	if err != nil {
