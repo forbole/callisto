@@ -1,7 +1,10 @@
 package types
 
 import (
+	"encoding/json"
 	"time"
+
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 )
 
 // ===================== Params =====================
@@ -48,7 +51,7 @@ type WasmContractRow struct {
 	Sender                string    `db:"sender"`
 	Creator               string    `db:"creator"`
 	Admin                 string    `db:"admin"`
-	CodeID                int64     `db:"code_id"`
+	CodeID                uint64    `db:"code_id"`
 	Label                 string    `db:"label"`
 	RawContractMessage    string    `db:"raw_contract_message"`
 	Funds                 *DbCoins  `db:"funds"`
@@ -64,9 +67,9 @@ type WasmContractRow struct {
 func NewWasmContractRow(
 	sender string,
 	admin string,
-	codeID int64,
+	codeID uint64,
 	label string,
-	rawContractMessage string,
+	rawMsg wasmtypes.RawContractMessage,
 	funds *DbCoins,
 	contractAddress string,
 	data string,
@@ -75,12 +78,17 @@ func NewWasmContractRow(
 	contractInfoExtension string,
 	height int64,
 ) WasmContractRow {
+	rawContractMsg, _ := rawMsg.MarshalJSON()
+	if len(rawMsg) == 0 {
+		rawContractMsg, _ = json.Marshal("")
+	}
+
 	return WasmContractRow{
 		Sender:                sender,
 		Admin:                 admin,
 		CodeID:                codeID,
 		Label:                 label,
-		RawContractMessage:    rawContractMessage,
+		RawContractMessage:    string(rawContractMsg),
 		Funds:                 funds,
 		ContractAddress:       contractAddress,
 		Data:                  data,
@@ -102,7 +110,7 @@ func (a WasmContractRow) Equals(b WasmContractRow) bool {
 		a.Funds.Equal(a.Funds) &&
 		a.ContractAddress == b.ContractAddress &&
 		a.Data == b.Data &&
-		a.InstantiatedAt == b.InstantiatedAt &&
+		a.InstantiatedAt.Equal(b.InstantiatedAt) &&
 		a.ContractInfoExtension == b.ContractInfoExtension &&
 		a.Height == b.Height
 }

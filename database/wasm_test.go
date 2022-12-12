@@ -48,9 +48,9 @@ func (suite *DbTestSuite) TestSaveWasmCodes() error {
 		Pinned:    true,
 	}
 
-	expected := types.NewWasmCode("", code.CodeBytes, &code.CodeInfo.InstantiateConfig, code.CodeID, 10)
+	codeType := types.NewWasmCode("", code.CodeBytes, &code.CodeInfo.InstantiateConfig, code.CodeID, 10)
 
-	err := suite.database.SaveWasmCodes([]types.WasmCode{expected})
+	err := suite.database.SaveWasmCodes([]types.WasmCode{codeType})
 	suite.Require().NoError(err)
 
 	var rows []dbtypes.WasmCodeRow
@@ -58,14 +58,14 @@ func (suite *DbTestSuite) TestSaveWasmCodes() error {
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 
-	suite.Require().Equal(expected.Sender, rows[0].Sender)
-	suite.Require().Equal(expected.CodeID, rows[0].CodeID)
-	suite.Require().Equal(expected.Height, rows[0].Height)
+	suite.Require().Equal(codeType.Sender, rows[0].Sender)
+	suite.Require().Equal(codeType.CodeID, rows[0].CodeID)
+	suite.Require().Equal(codeType.Height, rows[0].Height)
 
 	var storedAccessConfig *wasmtypes.AccessConfig
 	err = json.Unmarshal([]byte(rows[0].InstantiatePermission), &storedAccessConfig)
 	suite.Require().NoError(err)
-	suite.Require().Equal(expected.InstantiatePermission, storedAccessConfig)
+	suite.Require().Equal(codeType.InstantiatePermission, storedAccessConfig)
 
 	return nil
 }
@@ -101,8 +101,8 @@ func (suite *DbTestSuite) TestSaveWasmContracts() error {
 		ContractState: []wasmtypes.Model{},
 	}
 
-	instantiatedAt := time.Now()
-	expected := types.NewWasmContract(
+	instantiatedAt := time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC)
+	contractType := types.NewWasmContract(
 		contract.ContractInfo.Creator,
 		contract.ContractInfo.Admin,
 		contract.ContractInfo.CodeID,
@@ -118,8 +118,31 @@ func (suite *DbTestSuite) TestSaveWasmContracts() error {
 		10,
 	)
 
-	err = suite.database.SaveWasmContracts([]types.WasmContract{expected})
+	err = suite.database.SaveWasmContracts([]types.WasmContract{contractType})
 	suite.Require().NoError(err)
+
+	// Verify the data
+	dbCoins := dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(10))))
+	expected := dbtypes.NewWasmContractRow(
+		contract.ContractInfo.Creator,
+		contract.ContractInfo.Admin,
+		contract.ContractInfo.CodeID,
+		contract.ContractInfo.Label,
+		make(wasmtypes.RawContractMessage, 0),
+		&dbCoins,
+		contract.ContractAddress,
+		"",
+		instantiatedAt,
+		contract.ContractInfo.Creator,
+		"",
+		10,
+	)
+
+	var rows []dbtypes.WasmContractRow
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM wasm_contract`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	suite.Require().True(rows[0].Equals(expected))
 
 	return nil
 }
