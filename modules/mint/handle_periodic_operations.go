@@ -1,6 +1,9 @@
 package mint
 
 import (
+	"math/big"
+	"strconv"
+
 	"github.com/forbole/bdjuno/v3/modules/utils"
 
 	"github.com/go-co-op/gocron"
@@ -34,11 +37,37 @@ func (m *Module) UpdateInflation() error {
 		return err
 	}
 
-	// Get the inflation
-	inflation, err := m.source.GetInflation(height)
+	mintParams, err := m.source.Params(height)
 	if err != nil {
 		return err
 	}
 
-	return m.db.SaveInflation(inflation, height)
+	// Get the epoch provisions
+	epochProvisions, err := m.source.GetEpochProvisions(height)
+	if err != nil {
+		return err
+	}
+
+	epochProvisionsFloat := new(big.Float).SetInt64(epochProvisions.RoundInt64())
+
+	// Normally 365 days
+	reductionPeriod := new(big.Float).SetInt64(mintParams.ReductionPeriodInEpochs)
+
+	// Get total supply
+	totalSupply, err := m.db.GetTotalSupply()
+	if err != nil {
+		return err
+	}
+	supply, err := strconv.ParseInt(totalSupply, 10, 64)
+	if err != nil {
+		return err
+	}
+
+	// Provision per epoch * reduction period(365 days) = yearly provision
+	totalProvisions := new(big.Float).Mul(epochProvisionsFloat, reductionPeriod)
+
+	// Inflation = yearly provision / current total supply
+	inflation := new(big.Float).Quo(totalProvisions, new(big.Float).SetInt64(supply))
+
+	return m.db.SaveInflation(inflation.String(), height)
 }

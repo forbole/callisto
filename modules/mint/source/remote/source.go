@@ -26,14 +26,14 @@ func NewSource(source *remote.Source, querier minttypes.QueryClient) *Source {
 	}
 }
 
-// GetInflation implements mintsource.Source
-func (s Source) GetInflation(height int64) (sdk.Dec, error) {
-	res, err := s.querier.Inflation(remote.GetHeightRequestContext(s.Ctx, height), &minttypes.QueryInflationRequest{})
+// GetEpochProvisions implements mintsource.Source
+func (s Source) GetEpochProvisions(height int64) (sdk.Dec, error) {
+	res, err := s.querier.EpochProvisions(remote.GetHeightRequestContext(s.Ctx, height), &minttypes.QueryEpochProvisionsRequest{})
 	if err != nil {
 		return sdk.Dec{}, err
 	}
 
-	return res.Inflation, nil
+	return res.EpochProvisions, nil
 }
 
 // Params implements mintsource.Source

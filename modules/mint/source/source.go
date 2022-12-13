@@ -6,6 +6,6 @@ import (
 )
 
 type Source interface {
-	GetInflation(height int64) (sdk.Dec, error)
+	GetEpochProvisions(height int64) (sdk.Dec, error)
 	Params(height int64) (minttypes.Params, error)
 }
