@@ -12,6 +12,7 @@
 - "!include public_genesis.yaml"
 - "!include public_gov_params.yaml"
 - "!include public_inflation.yaml"
+- "!include public_interchainstaking_params.yaml"
 - "!include public_message.yaml"
 - "!include public_mint_params.yaml"
 - "!include public_modules.yaml"
