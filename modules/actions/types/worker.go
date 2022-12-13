@@ -95,7 +95,13 @@ func (w *ActionsWorker) handleError(writer http.ResponseWriter, path string, err
 
 // Start starts the worker
 func (w *ActionsWorker) Start(port uint) {
-	err := http.ListenAndServe(fmt.Sprintf(":%d", port), w.mux)
+	server := &http.Server{
+		Addr:              fmt.Sprintf(":%d", port),
+		Handler:           w.mux,
+		ReadHeaderTimeout: 3 * time.Second,
+	}
+
+	err := server.ListenAndServe()
 	if err != nil {
 		panic(err)
 	}
