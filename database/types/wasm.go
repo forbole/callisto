@@ -153,7 +153,7 @@ func (a WasmExecuteContractRow) Equals(b WasmExecuteContractRow) bool {
 	return a.Sender == b.Sender &&
 		a.ContractAddress == b.ContractAddress &&
 		a.RawContractMessage == b.RawContractMessage &&
-		a.Funds.Equal(a.Funds) &&
+		a.Funds.Equal(b.Funds) &&
 		a.Data == b.Data &&
 		a.ExecutedAt.Equal(b.ExecutedAt) &&
 		a.Height == b.Height
