@@ -55,10 +55,10 @@ func (db *Db) GetTotalSupply() (string, error) {
 
 	var supply []dbtypes.SupplyRow
 	err := db.Sqlx.Select(&supply, stmt)
-	if err != nil {
+	if err != nil || len(supply) == 0 {
 		return "", err
 	}
 
-	coin := supply[0].Coins.ToCoins().String()
-	return coin[:len(coin)-5], nil
+	coin := supply[0].Coins.ToCoins().AmountOf("uqck")
+	return coin.BigInt().String(), nil
 }
