@@ -1,8 +1,9 @@
 package remote
 
 import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	"github.com/forbole/juno/v3/node/remote"
-	minttypes "github.com/ingenuity-build/quicksilver/x/mint/types"
 
 	mintsource "github.com/forbole/bdjuno/v3/modules/mint/source"
 )
@@ -23,6 +24,16 @@ func NewSource(source *remote.Source, querier minttypes.QueryClient) *Source {
 		Source:  source,
 		querier: querier,
 	}
+}
+
+// GetInflation implements mintsource.Source
+func (s Source) GetInflation(height int64) (sdk.Dec, error) {
+	res, err := s.querier.Inflation(remote.GetHeightRequestContext(s.Ctx, height), &minttypes.QueryInflationRequest{})
+	if err != nil {
+		return sdk.Dec{}, err
+	}
+
+	return res.Inflation, nil
 }
 
 // Params implements mintsource.Source
