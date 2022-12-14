@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/cheqd/cheqd-node/app"
+
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/forbole/juno/v3/cmd"
 	initcmd "github.com/forbole/juno/v3/cmd/init"
@@ -56,6 +58,7 @@ func main() {
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
 		gaiaapp.ModuleBasics,
+		app.ModuleBasics,
 	}
 }
 
@@ -65,5 +68,6 @@ func getBasicManagers() []module.BasicManager {
 func getAddressesParser() messages.MessageAddressesParser {
 	return messages.JoinMessageParsers(
 		messages.CosmosMessageAddressesParser,
+		CheqdAddressesParser,
 	)
 }
