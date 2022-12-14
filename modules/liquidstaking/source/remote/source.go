@@ -1,7 +1,7 @@
 package remote
 
 import (
-	liquidstakingtypes "github.com/crescent-network/crescent/v2/x/liquidstaking/types"
+	liquidstakingtypes "github.com/crescent-network/crescent/v3/x/liquidstaking/types"
 	"github.com/forbole/juno/v3/node/remote"
 
 	liquidstakingsource "github.com/forbole/bdjuno/v3/modules/liquidstaking/source"

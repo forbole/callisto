@@ -8,7 +8,7 @@ import (
 
 	"github.com/forbole/bdjuno/v3/types"
 
-	liquidstakingtypes "github.com/crescent-network/crescent/v2/x/liquidstaking/types"
+	liquidstakingtypes "github.com/crescent-network/crescent/v3/x/liquidstaking/types"
 	"github.com/rs/zerolog/log"
 )
 

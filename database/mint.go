@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	creminttypes "github.com/crescent-network/crescent/v2/x/mint/types"
+	creminttypes "github.com/crescent-network/crescent/v3/x/mint/types"
 	dbtypes "github.com/forbole/bdjuno/v3/database/types"
 	"github.com/forbole/bdjuno/v3/types"
 )

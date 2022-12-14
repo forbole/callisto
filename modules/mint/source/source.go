@@ -1,7 +1,7 @@
 package source
 
 import (
-	creminttypes "github.com/crescent-network/crescent/v2/x/mint/types"
+	creminttypes "github.com/crescent-network/crescent/v3/x/mint/types"
 )
 
 type Source interface {
