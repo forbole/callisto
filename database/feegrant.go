@@ -31,7 +31,7 @@ WHERE fee_grant_allowance.height <= excluded.height`
 		return fmt.Errorf("error while marshaling grant allowance: %s", err)
 	}
 
-	_, err = db.Sql.Exec(stmt, allowance.Grantee, allowance.Granter, allowanceJSON, allowance.Height)
+	_, err = db.SQL.Exec(stmt, allowance.Grantee, allowance.Granter, allowanceJSON, allowance.Height)
 	if err != nil {
 		return fmt.Errorf("error while saving fee grant allowance: %s", err)
 	}
@@ -42,7 +42,7 @@ WHERE fee_grant_allowance.height <= excluded.height`
 // DeleteFeeGrantAllowance removes the fee grant allowance data from the database
 func (db *Db) DeleteFeeGrantAllowance(allowance types.GrantRemoval) error {
 	stmt := `DELETE FROM fee_grant_allowance WHERE grantee_address = $1 AND granter_address = $2 AND height <= $3`
-	_, err := db.Sql.Exec(stmt, allowance.Grantee, allowance.Granter, allowance.Height)
+	_, err := db.SQL.Exec(stmt, allowance.Grantee, allowance.Granter, allowance.Height)
 
 	if err != nil {
 		return fmt.Errorf("error while deleting grant allowance: %s", err)
