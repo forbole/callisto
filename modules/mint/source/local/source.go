@@ -28,6 +28,21 @@ func NewSource(source *local.Source, querier minttypes.QueryServer) *Source {
 	}
 }
 
+// GetEpochProvisions implements mintsource.Source
+func (s Source) GetEpochProvisions(height int64) (sdk.Dec, error) {
+	ctx, err := s.LoadHeight(height)
+	if err != nil {
+		return sdk.Dec{}, fmt.Errorf("error while loading height: %s", err)
+	}
+
+	res, err := s.querier.EpochProvisions(sdk.WrapSDKContext(ctx), &minttypes.QueryEpochProvisionsRequest{})
+	if err != nil {
+		return sdk.Dec{}, err
+	}
+
+	return res.EpochProvisions, nil
+}
+
 // Params implements mintsource.Source
 func (s Source) Params(height int64) (minttypes.Params, error) {
 	ctx, err := s.LoadHeight(height)

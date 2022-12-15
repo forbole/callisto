@@ -5,7 +5,27 @@ import (
 	"fmt"
 
 	"github.com/forbole/bdjuno/v3/types"
+
+	dbtypes "github.com/forbole/bdjuno/v3/database/types"
 )
+
+// SaveInflation allows to store the inflation for the given block height as well as timestamp
+func (db *Db) SaveInflation(inflation string, height int64) error {
+	stmt := `
+INSERT INTO inflation (value, height) 
+VALUES ($1, $2) 
+ON CONFLICT (one_row_id) DO UPDATE 
+    SET value = excluded.value, 
+        height = excluded.height 
+WHERE inflation.height <= excluded.height`
+
+	_, err := db.Sql.Exec(stmt, inflation, height)
+	if err != nil {
+		return fmt.Errorf("error while storing inflation: %s", err)
+	}
+
+	return nil
+}
 
 // SaveMintParams allows to store the given params inside the database
 func (db *Db) SaveMintParams(params *types.MintParams) error {
@@ -28,4 +48,17 @@ WHERE mint_params.height <= excluded.height`
 	}
 
 	return nil
+}
+
+func (db *Db) GetTotalSupply() (string, error) {
+	stmt := `SELECT * FROM supply`
+
+	var supply []dbtypes.SupplyRow
+	err := db.Sqlx.Select(&supply, stmt)
+	if err != nil || len(supply) == 0 {
+		return "", err
+	}
+
+	coin := supply[0].Coins.ToCoins().AmountOf("uqck")
+	return coin.BigInt().String(), nil
 }

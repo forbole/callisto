@@ -1,6 +1,7 @@
 package remote
 
 import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/juno/v3/node/remote"
 	minttypes "github.com/ingenuity-build/quicksilver/x/mint/types"
 
@@ -23,6 +24,16 @@ func NewSource(source *remote.Source, querier minttypes.QueryClient) *Source {
 		Source:  source,
 		querier: querier,
 	}
+}
+
+// GetEpochProvisions implements mintsource.Source
+func (s Source) GetEpochProvisions(height int64) (sdk.Dec, error) {
+	res, err := s.querier.EpochProvisions(remote.GetHeightRequestContext(s.Ctx, height), &minttypes.QueryEpochProvisionsRequest{})
+	if err != nil {
+		return sdk.Dec{}, err
+	}
+
+	return res.EpochProvisions, nil
 }
 
 // Params implements mintsource.Source
