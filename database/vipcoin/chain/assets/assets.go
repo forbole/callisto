@@ -29,7 +29,7 @@ func NewRepository(db *sqlx.DB, cdc codec.Marshaler) *Repository {
 	}
 }
 
-// SaveAssets - method that save assets to the "vipcoin_chain_assets_assets" table
+// SaveAssets - method that save assets to the "overgold_chain_assets_assets" table
 func (r Repository) SaveAssets(assets ...*assetstypes.Asset) error {
 	if len(assets) == 0 {
 		return nil
@@ -44,7 +44,7 @@ func (r Repository) SaveAssets(assets ...*assetstypes.Asset) error {
 		_ = tx.Rollback()
 	}()
 
-	query := `INSERT INTO vipcoin_chain_assets_assets 
+	query := `INSERT INTO overgold_chain_assets_assets 
         ("issuer", "name", "policies", "state", "issued", "burned",
         "withdrawn", "in_circulation", "precision", "fee_percent", "extras")
      VALUES 
@@ -60,7 +60,7 @@ func (r Repository) SaveAssets(assets ...*assetstypes.Asset) error {
 	return tx.Commit()
 }
 
-// GetAssets - method that get assets from the "vipcoin_chain_assets_assets" table
+// GetAssets - method that get assets from the "overgold_chain_assets_assets" table
 func (r Repository) GetAssets(filter filter.Filter) ([]*assetstypes.Asset, error) {
 	query, args := filter.Build(tableAssets,
 		types.FieldIssuer, types.FieldName,
@@ -84,7 +84,7 @@ func (r Repository) GetAssets(filter filter.Filter) ([]*assetstypes.Asset, error
 	return assets, nil
 }
 
-// UpdateAssets - method that updates the assets in the "vipcoin_chain_assets_assets" table
+// UpdateAssets - method that updates the assets in the "overgold_chain_assets_assets" table
 func (r Repository) UpdateAssets(assets ...*assetstypes.Asset) error {
 	if len(assets) == 0 {
 		return nil
@@ -99,7 +99,7 @@ func (r Repository) UpdateAssets(assets ...*assetstypes.Asset) error {
 		_ = tx.Rollback()
 	}()
 
-	query := `UPDATE vipcoin_chain_assets_assets SET
+	query := `UPDATE overgold_chain_assets_assets SET
 				 issuer = :issuer, policies = :policies,
 				 state = :state, issued = :issued, burned = :burned, withdrawn = :withdrawn, 
 			     in_circulation = :in_circulation, precision = :precision, fee_percent = :fee_percent, extras = :extras

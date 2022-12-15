@@ -9,10 +9,10 @@ import (
 )
 
 const (
-	tableAssets         = "vipcoin_chain_assets_assets"
-	tableCreateAssets   = "vipcoin_chain_assets_create"
-	tableManageAsset    = "vipcoin_chain_assets_manage"
-	tableSetExtrasAsset = "vipcoin_chain_assets_set_extra"
+	tableAssets         = "overgold_chain_assets_assets"
+	tableCreateAssets   = "overgold_chain_assets_create"
+	tableManageAsset    = "overgold_chain_assets_manage"
+	tableSetExtrasAsset = "overgold_chain_assets_set_extra"
 )
 
 // toExtrasDB - mapping func to database model

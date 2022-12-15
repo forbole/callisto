@@ -19,7 +19,7 @@ func (m *module) scheduler() {
 	for {
 		lastBlock, err := m.lastBlockRepo.Get()
 		if err != nil {
-			m.logger.Error("Fail lastBlockRepo.Get", "module", "vipcoin", "error", err)
+			m.logger.Error("Fail lastBlockRepo.Get", "module", "overgold", "error", err)
 			continue
 		}
 
@@ -32,12 +32,12 @@ func (m *module) scheduler() {
 				continue
 			}
 
-			m.logger.Error("Fail parseBlock", "module", "vipcoin", "error", err)
+			m.logger.Error("Fail parseBlock", "module", "overgold", "error", err)
 			continue
 		}
 
 		if err = m.lastBlockRepo.Update(lastBlock); err != nil {
-			m.logger.Error("Fail lastBlockRepo.Update", "module", "vipcoin", "error", err)
+			m.logger.Error("Fail lastBlockRepo.Update", "module", "overgold", "error", err)
 			os.Exit(1)
 		}
 	}
@@ -105,7 +105,7 @@ func (m *module) parseMessages(tx *types.Tx) error {
 			return fmt.Errorf("error while unpacking message: %s", err)
 		}
 
-		for _, module := range m.vipcoinModules {
+		for _, module := range m.overgoldModules {
 			if messageModule, ok := module.(modules.MessageModule); ok {
 				if err := messageModule.HandleMsg(i, stdMsg, tx); err != nil {
 					m.logger.MsgError(module, tx, stdMsg, err)

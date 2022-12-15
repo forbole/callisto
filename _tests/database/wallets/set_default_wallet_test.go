@@ -35,8 +35,8 @@ func TestRepository_SaveMsgSetDefaultWallet(t *testing.T) {
 			args: args{
 				msg: []*walletstypes.MsgSetDefaultWallet{
 					{
-						Creator: "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
-						Address: "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
+						Creator: "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
+						Address: "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
 					},
 				},
 			},
@@ -74,12 +74,12 @@ func TestRepository_GetMsgSetDefaultWallet(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				filter: filter.NewFilter().SetArgument(dbtypes.FieldAddress, "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q"),
+				filter: filter.NewFilter().SetArgument(dbtypes.FieldAddress, "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx45q"),
 			},
 			want: []*walletstypes.MsgSetDefaultWallet{
 				{
-					Creator: "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
-					Address: "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
+					Creator: "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
+					Address: "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
 				},
 			},
 			wantErr: false,

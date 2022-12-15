@@ -10,7 +10,7 @@ import (
 
 // SaveAccountMigrate - saves the given account migrate inside the database
 func (r Repository) SaveAccountMigrate(msg *accountstypes.MsgAccountMigrate, transactionHash string) error {
-	query := `INSERT INTO vipcoin_chain_accounts_account_migrate 
+	query := `INSERT INTO overgold_chain_accounts_account_migrate 
 			(transaction_hash, creator, address, hash, public_key) 
 		VALUES 
 			(:transaction_hash, :creator, :address, :hash, :public_key)`

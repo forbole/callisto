@@ -10,7 +10,7 @@ import (
 
 // SaveCreateAccount - saves the given create account message inside the database
 func (r Repository) SaveCreateAccount(msg *accountstypes.MsgCreateAccount, transactionHash string) error {
-	query := `INSERT INTO vipcoin_chain_accounts_create_account 
+	query := `INSERT INTO overgold_chain_accounts_create_account 
 			(transaction_hash, creator, hash, address, public_key, kinds, state, extras) 
 		VALUES 
 			(:transaction_hash, :creator, :hash, :address, :public_key, :kinds, :state, :extras)`

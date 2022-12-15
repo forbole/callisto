@@ -36,7 +36,7 @@ func TestRepository_SaveAddAffiliate(t *testing.T) {
 			name: "valid",
 			args: args{[]*accountstypes.MsgAddAffiliate{
 				{
-					Creator:         "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
+					Creator:         "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
 					AccountHash:     "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd1",
 					AffiliationHash: "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd2",
 					Affiliation:     accountstypes.AFFILIATION_KIND_REFERRAL,
@@ -52,7 +52,7 @@ func TestRepository_SaveAddAffiliate(t *testing.T) {
 					},
 				},
 				{
-					Creator:         "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv1g",
+					Creator:         "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv1g",
 					AccountHash:     "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd3",
 					AffiliationHash: "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd4",
 					Affiliation:     accountstypes.AFFILIATION_KIND_REFERRAL,
@@ -104,11 +104,11 @@ func TestRepository_GetAddAffiliate(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				accountFilter: filter.NewFilter().SetArgument(types.FieldCreator, "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv1g"),
+				accountFilter: filter.NewFilter().SetArgument(types.FieldCreator, "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv1g"),
 			},
 			want: []*accountstypes.MsgAddAffiliate{
 				{
-					Creator:         "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv1g",
+					Creator:         "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv1g",
 					AccountHash:     "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd3",
 					AffiliationHash: "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd4",
 					Affiliation:     accountstypes.AFFILIATION_KIND_REFERRAL,

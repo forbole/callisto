@@ -1,5 +1,5 @@
 chain:
-    bech32_prefix: vcg
+    bech32_prefix: ovg
     modules:
         - modules
         - messages

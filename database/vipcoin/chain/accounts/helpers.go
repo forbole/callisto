@@ -14,17 +14,17 @@ import (
 )
 
 const (
-	tableState            = "vipcoin_chain_accounts_set_state"
-	tableKinds            = "vipcoin_chain_accounts_set_kinds"
-	tableRegisterUser     = "vipcoin_chain_accounts_register_user"
-	tableExtra            = "vipcoin_chain_accounts_set_extra"
-	tableAffiliateExtra   = "vipcoin_chain_accounts_set_affiliate_extra"
-	tableAffiliateAddress = "vipcoin_chain_accounts_set_affiliate_address"
-	tableAccountMigrate   = "vipcoin_chain_accounts_account_migrate"
-	tableAffiliates       = "vipcoin_chain_accounts_affiliates"
-	tableAccounts         = "vipcoin_chain_accounts_accounts"
-	tableCreateAccount    = "vipcoin_chain_accounts_create_account"
-	tableAddAffiliate     = "vipcoin_chain_accounts_add_affiliate"
+	tableState            = "overgold_chain_accounts_set_state"
+	tableKinds            = "overgold_chain_accounts_set_kinds"
+	tableRegisterUser     = "overgold_chain_accounts_register_user"
+	tableExtra            = "overgold_chain_accounts_set_extra"
+	tableAffiliateExtra   = "overgold_chain_accounts_set_affiliate_extra"
+	tableAffiliateAddress = "overgold_chain_accounts_set_affiliate_address"
+	tableAccountMigrate   = "overgold_chain_accounts_account_migrate"
+	tableAffiliates       = "overgold_chain_accounts_affiliates"
+	tableAccounts         = "overgold_chain_accounts_accounts"
+	tableCreateAccount    = "overgold_chain_accounts_create_account"
+	tableAddAffiliate     = "overgold_chain_accounts_add_affiliate"
 )
 
 // toAffiliateDatabase - mapping func to database model

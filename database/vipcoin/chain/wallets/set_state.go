@@ -11,9 +11,9 @@ import (
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
-// SaveStates - inserts into the "vipcoin_chain_wallets_set_wallet_state" table
+// SaveStates - inserts into the "overgold_chain_wallets_set_wallet_state" table
 func (r Repository) SaveStates(messages *walletstypes.MsgSetWalletState, transactionHash string) error {
-	query := `INSERT INTO vipcoin_chain_wallets_set_wallet_state 
+	query := `INSERT INTO overgold_chain_wallets_set_wallet_state 
 			(transaction_hash, creator, address, state) 
 			VALUES 
 			(:transaction_hash, :creator, :address, :state)`
@@ -25,9 +25,9 @@ func (r Repository) SaveStates(messages *walletstypes.MsgSetWalletState, transac
 	return nil
 }
 
-// GetStates - get states from the "vipcoin_chain_wallets_set_wallet_state" table
+// GetStates - get states from the "overgold_chain_wallets_set_wallet_state" table
 func (r Repository) GetStates(filter filter.Filter) ([]*walletstypes.MsgSetWalletState, error) {
-	query, args := filter.Build("vipcoin_chain_wallets_set_wallet_state",
+	query, args := filter.Build("overgold_chain_wallets_set_wallet_state",
 		`creator, address, state`)
 
 	var result []types.DBSetWalletState
@@ -43,7 +43,7 @@ func (r Repository) GetStates(filter filter.Filter) ([]*walletstypes.MsgSetWalle
 	return states, nil
 }
 
-// UpdateStates - method that updates states in the "vipcoin_chain_wallets_set_wallet_state" table
+// UpdateStates - method that updates states in the "overgold_chain_wallets_set_wallet_state" table
 func (r Repository) UpdateStates(messages ...*walletstypes.MsgSetWalletState) error {
 	if len(messages) == 0 {
 		return nil
@@ -56,7 +56,7 @@ func (r Repository) UpdateStates(messages ...*walletstypes.MsgSetWalletState) er
 
 	defer tx.Rollback()
 
-	query := `UPDATE vipcoin_chain_wallets_set_wallet_state SET
+	query := `UPDATE overgold_chain_wallets_set_wallet_state SET
 				 creator = :creator, address = :address, state = :state
 				 WHERE address = :address`
 

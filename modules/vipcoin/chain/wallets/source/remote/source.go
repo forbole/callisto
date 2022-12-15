@@ -5,11 +5,11 @@ import (
 
 	"github.com/forbole/juno/v2/node/remote"
 
-	vipcoinwalletskeeper "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets/source"
+	overgoldWalletsKeeper "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets/source"
 )
 
 var (
-	_ vipcoinwalletskeeper.Source = &Source{}
+	_ overgoldWalletsKeeper.Source = &Source{}
 )
 
 type Source struct {

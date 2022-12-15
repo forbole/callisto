@@ -10,7 +10,7 @@ import (
 
 // SaveAffiliateExtra - saves the given affiliate extra inside the database
 func (r Repository) SaveAffiliateExtra(msg *accountstypes.MsgSetAffiliateExtra, transactionHash string) error {
-	query := `INSERT INTO vipcoin_chain_accounts_set_affiliate_extra 
+	query := `INSERT INTO overgold_chain_accounts_set_affiliate_extra 
 			(transaction_hash, creator, account_hash, affiliation_hash, extras) 
 		VALUES 
 			(:transaction_hash, :creator, :account_hash, :affiliation_hash, :extras)`

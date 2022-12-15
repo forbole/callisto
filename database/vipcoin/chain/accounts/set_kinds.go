@@ -10,7 +10,7 @@ import (
 
 // SaveKinds - saves the given kinds inside the database
 func (r Repository) SaveKinds(msg *accountstypes.MsgSetKinds, transactionHash string) error {
-	query := `INSERT INTO vipcoin_chain_accounts_set_kinds 
+	query := `INSERT INTO overgold_chain_accounts_set_kinds 
 			(transaction_hash, creator, hash, kinds) 
 			VALUES 
 			(:transaction_hash, :creator, :hash, :kinds)`

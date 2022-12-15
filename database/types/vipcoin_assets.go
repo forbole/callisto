@@ -5,7 +5,7 @@ import (
 )
 
 type (
-	// DBAssets represents a single row inside the "vipcoin_chain_assets_assets" table
+	// DBAssets represents a single row inside the "overgold_chain_assets_assets" table
 	DBAssets struct {
 		Issuer        string        `db:"issuer"`
 		Name          string        `db:"name"`
@@ -20,7 +20,7 @@ type (
 		Extras        ExtraDB       `db:"extras"`
 	}
 
-	// DBAssetCreate represents a single row inside the "vipcoin_chain_assets_create" table
+	// DBAssetCreate represents a single row inside the "overgold_chain_assets_create" table
 	DBAssetCreate struct {
 		Hash       string        `db:"transaction_hash"`
 		Creator    string        `db:"creator"`
@@ -33,7 +33,7 @@ type (
 		Extras     ExtraDB       `db:"extras"`
 	}
 
-	// DBAssetManage represents a single row inside the "vipcoin_chain_assets_manage" table
+	// DBAssetManage represents a single row inside the "overgold_chain_assets_manage" table
 	DBAssetManage struct {
 		Hash          string        `db:"transaction_hash"`
 		Creator       string        `db:"creator"`
@@ -48,7 +48,7 @@ type (
 		InCirculation uint64        `db:"in_circulation"`
 	}
 
-	// DBAssetSetExtra represents a single row inside the "vipcoin_chain_assets_set_extra" table
+	// DBAssetSetExtra represents a single row inside the "overgold_chain_assets_set_extra" table
 	DBAssetSetExtra struct {
 		Hash    string  `db:"transaction_hash"`
 		Creator string  `db:"creator"`

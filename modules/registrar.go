@@ -58,15 +58,15 @@ import (
 	stakingsource "github.com/forbole/bdjuno/v2/modules/staking/source"
 	localstakingsource "github.com/forbole/bdjuno/v2/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v2/modules/staking/source/remote"
-	"github.com/forbole/bdjuno/v2/modules/vipcoin"
-	vipcoinaccountssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts/source"
-	remotevipcoinaccountssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts/source/remote"
-	vipcoinassetssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/assets/source"
-	remotevipcoinassetssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/assets/source/remote"
-	vipcoinbankingsource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/banking/source"
-	remotevipcoinbankingsource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/banking/source/remote"
-	vipcoinwalletssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets/source"
-	remotevipcoinwalletsssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets/source/remote"
+	overgold "github.com/forbole/bdjuno/v2/modules/vipcoin"
+	overgoldAccountsSource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts/source"
+	remoteOvergoldAccountsSource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts/source/remote"
+	overgoldAssetsSource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/assets/source"
+	remoteOvergoldAssetsSource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/assets/source/remote"
+	overgoldBankingSource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/banking/source"
+	remoteOvergoldBankingSource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/banking/source/remote"
+	overgoldWalletsSource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets/source"
+	remoteOvergoldWalletsSource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets/source/remote"
 	"github.com/forbole/bdjuno/v2/utils"
 )
 
@@ -119,15 +119,15 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	stakingModule := staking.NewModule(sources.StakingSource, slashingModule, cdc, db)
 	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakingModule, cdc, db)
 
-	vipcoinModules := vipcoin.NewModule(
+	overgoldModules := overgold.NewModule(
 		cdc,
 		db,
 		ctx.Logger,
 
-		sources.VipcoinAccountsSource,
-		sources.VipcoinWalletsSource,
-		sources.VipcoinBankingSource,
-		sources.VipcoinAssetsSource,
+		sources.OvergoldAccountsSource,
+		sources.OvergoldWalletsSource,
+		sources.OvergoldBankingSource,
+		sources.OvergoldAssetsSource,
 	)
 
 	return []jmodules.Module{
@@ -146,21 +146,21 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		slashingModule,
 		stakingModule,
 
-		vipcoinModules,
+		overgoldModules,
 	}
 }
 
 type Sources struct {
-	BankSource            banksource.Source
-	DistrSource           distrsource.Source
-	GovSource             govsource.Source
-	MintSource            mintsource.Source
-	SlashingSource        slashingsource.Source
-	StakingSource         stakingsource.Source
-	VipcoinAccountsSource vipcoinaccountssource.Source
-	VipcoinWalletsSource  vipcoinwalletssource.Source
-	VipcoinBankingSource  vipcoinbankingsource.Source
-	VipcoinAssetsSource   vipcoinassetssource.Source
+	BankSource             banksource.Source
+	DistrSource            distrsource.Source
+	GovSource              govsource.Source
+	MintSource             mintsource.Source
+	SlashingSource         slashingsource.Source
+	StakingSource          stakingsource.Source
+	OvergoldAccountsSource overgoldAccountsSource.Source
+	OvergoldWalletsSource  overgoldWalletsSource.Source
+	OvergoldBankingSource  overgoldBankingSource.Source
+	OvergoldAssetsSource   overgoldAssetsSource.Source
 }
 
 func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -226,15 +226,15 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 	}
 
 	return &Sources{
-		BankSource:            remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
-		DistrSource:           remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
-		GovSource:             remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
-		MintSource:            remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
-		SlashingSource:        remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
-		StakingSource:         remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
-		VipcoinAccountsSource: remotevipcoinaccountssource.NewSource(source, accountstypes.NewQueryClient(source.GrpcConn)),
-		VipcoinWalletsSource:  remotevipcoinwalletsssource.NewSource(source, walletstypes.NewQueryClient(source.GrpcConn)),
-		VipcoinBankingSource:  remotevipcoinbankingsource.NewSource(source, bankingtypes.NewQueryClient(source.GrpcConn)),
-		VipcoinAssetsSource:   remotevipcoinassetssource.NewSource(source, assetstypes.NewQueryClient(source.GrpcConn)),
+		BankSource:             remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
+		DistrSource:            remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
+		GovSource:              remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
+		MintSource:             remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
+		SlashingSource:         remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
+		StakingSource:          remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
+		OvergoldAccountsSource: remoteOvergoldAccountsSource.NewSource(source, accountstypes.NewQueryClient(source.GrpcConn)),
+		OvergoldWalletsSource:  remoteOvergoldWalletsSource.NewSource(source, walletstypes.NewQueryClient(source.GrpcConn)),
+		OvergoldBankingSource:  remoteOvergoldBankingSource.NewSource(source, bankingtypes.NewQueryClient(source.GrpcConn)),
+		OvergoldAssetsSource:   remoteOvergoldAssetsSource.NewSource(source, assetstypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }

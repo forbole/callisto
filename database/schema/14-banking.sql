@@ -1,7 +1,7 @@
 -- +migrate Up
-CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_base_transfers (
+CREATE TABLE IF NOT EXISTS overgold_chain_banking_base_transfers (
     id                  SERIAL UNIQUE PRIMARY KEY NOT NULL,                           -- banking id
-    asset               TEXT NOT NULL REFERENCES vipcoin_chain_assets_assets (name),  -- banking asset
+    asset               TEXT NOT NULL REFERENCES overgold_chain_assets_assets (name),  -- banking asset
     amount              NUMERIC,                                                    -- banking amount
     kind                INT,                                                          -- banking kind
     extras              JSONB,                                                        -- banking extras
@@ -9,38 +9,38 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_base_transfers (
     tx_hash             TEXT NOT NULL                                                 -- banking tx hash
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_system_transfer (
+CREATE TABLE IF NOT EXISTS overgold_chain_banking_system_transfer (
     id                  SERIAL UNIQUE PRIMARY KEY NOT NULL,                               -- banking id
-    wallet_from         TEXT NOT NULL REFERENCES vipcoin_chain_wallets_wallets (address), -- banking wallet from
-    wallet_to           TEXT NOT NULL REFERENCES vipcoin_chain_wallets_wallets (address), -- banking wallet to
+    wallet_from         TEXT NOT NULL REFERENCES overgold_chain_wallets_wallets (address), -- banking wallet from
+    wallet_to           TEXT NOT NULL REFERENCES overgold_chain_wallets_wallets (address), -- banking wallet to
     CONSTRAINT system_transfer_transfers_id_pkey FOREIGN KEY(id)
-        REFERENCES vipcoin_chain_banking_base_transfers(id)
+        REFERENCES overgold_chain_banking_base_transfers(id)
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_payment (
+CREATE TABLE IF NOT EXISTS overgold_chain_banking_payment (
     id                  SERIAL UNIQUE PRIMARY KEY NOT NULL,                               -- banking id
-    wallet_from         TEXT NOT NULL REFERENCES vipcoin_chain_wallets_wallets (address), -- banking wallet from
-    wallet_to           TEXT NOT NULL REFERENCES vipcoin_chain_wallets_wallets (address), -- banking wallet to
+    wallet_from         TEXT NOT NULL REFERENCES overgold_chain_wallets_wallets (address), -- banking wallet from
+    wallet_to           TEXT NOT NULL REFERENCES overgold_chain_wallets_wallets (address), -- banking wallet to
     fee                 NUMERIC,                                                        -- banking fee
     CONSTRAINT payment_transfers_id_pkey FOREIGN KEY(id)
-        REFERENCES vipcoin_chain_banking_base_transfers(id)
+        REFERENCES overgold_chain_banking_base_transfers(id)
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_withdraw (
+CREATE TABLE IF NOT EXISTS overgold_chain_banking_withdraw (
     id                  SERIAL UNIQUE PRIMARY KEY NOT NULL,                               -- banking id
-    wallet              TEXT NOT NULL REFERENCES vipcoin_chain_wallets_wallets (address), -- banking wallet
+    wallet              TEXT NOT NULL REFERENCES overgold_chain_wallets_wallets (address), -- banking wallet
     CONSTRAINT withdraw_transfers_id_pkey FOREIGN KEY(id)
-        REFERENCES vipcoin_chain_banking_base_transfers(id)
+        REFERENCES overgold_chain_banking_base_transfers(id)
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_issue (
+CREATE TABLE IF NOT EXISTS overgold_chain_banking_issue (
     id                  SERIAL UNIQUE PRIMARY KEY NOT NULL,                                -- banking id
-    wallet              TEXT NOT NULL REFERENCES vipcoin_chain_wallets_wallets (address),  -- banking wallet
+    wallet              TEXT NOT NULL REFERENCES overgold_chain_wallets_wallets (address),  -- banking wallet
     CONSTRAINT issue_transfers_id_pkey FOREIGN KEY(id)
-        REFERENCES vipcoin_chain_banking_base_transfers(id)
+        REFERENCES overgold_chain_banking_base_transfers(id)
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_msg_system_transfer (
+CREATE TABLE IF NOT EXISTS overgold_chain_banking_msg_system_transfer (
     id                  SERIAL UNIQUE PRIMARY KEY NOT NULL,
     transaction_hash    TEXT       NOT NULL REFERENCES transaction (hash),
     creator             TEXT       NOT NULL,                    -- banking creator
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_msg_system_transfer (
     extras              JSONB                                   -- banking extras
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_system_msg_reward_transfer (
+CREATE TABLE IF NOT EXISTS overgold_chain_banking_system_msg_reward_transfer (
     id                  SERIAL UNIQUE PRIMARY KEY NOT NULL,
     transaction_hash    TEXT NOT NULL REFERENCES transaction (hash),
     creator             TEXT NOT NULL,                          -- banking creator
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_system_msg_reward_transfer (
     extras              JSONB                                   -- banking extras
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_msg_payment (
+CREATE TABLE IF NOT EXISTS overgold_chain_banking_msg_payment (
     id                  SERIAL UNIQUE PRIMARY KEY NOT NULL,
     transaction_hash    TEXT NOT NULL REFERENCES transaction (hash),
     creator             TEXT NOT NULL,                          -- banking creator
@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_msg_payment (
     extras              JSONB                                   -- banking extras
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_msg_withdraw (
+CREATE TABLE IF NOT EXISTS overgold_chain_banking_msg_withdraw (
     id                  SERIAL UNIQUE PRIMARY KEY NOT NULL,
     transaction_hash    TEXT NOT NULL REFERENCES transaction (hash),
     creator             TEXT NOT NULL,                          -- banking creator
@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_msg_withdraw (
     extras              JSONB                                   -- banking extras
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_msg_issue (
+CREATE TABLE IF NOT EXISTS overgold_chain_banking_msg_issue (
     id                  SERIAL UNIQUE PRIMARY KEY NOT NULL,
     transaction_hash    TEXT NOT NULL REFERENCES transaction (hash),
     creator             TEXT NOT NULL,                          -- banking creator
@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_msg_issue (
     extras              JSONB                                   -- banking extras
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_set_transfer_extra (
+CREATE TABLE IF NOT EXISTS overgold_chain_banking_set_transfer_extra (
     msg_id              SERIAL UNIQUE PRIMARY KEY NOT NULL,
     transaction_hash    TEXT NOT NULL REFERENCES transaction (hash),
     creator             TEXT NOT NULL,                          -- banking creator
@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_set_transfer_extra (
     extras              JSONB                                   -- banking extras
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_set_reward_manager_address (
+CREATE TABLE IF NOT EXISTS overgold_chain_banking_set_reward_manager_address (
     id                  SERIAL UNIQUE PRIMARY KEY NOT NULL,
     transaction_hash    TEXT NOT NULL REFERENCES transaction (hash),
     creator             TEXT NOT NULL,                          -- banking creator
@@ -109,15 +109,15 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_banking_set_reward_manager_address (
 );
 
 -- +migrate Down
-DROP TABLE IF EXISTS vipcoin_chain_banking_system_transfer CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_banking_payment CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_banking_withdraw CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_banking_issue CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_banking_base_transfers CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_banking_system_msg_reward_transfer CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_banking_set_transfer_extra CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_banking_set_reward_manager_address CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_banking_msg_system_transfer CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_banking_msg_payment CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_banking_msg_withdraw CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_banking_msg_issue CASCADE;
+DROP TABLE IF EXISTS overgold_chain_banking_system_transfer CASCADE;
+DROP TABLE IF EXISTS overgold_chain_banking_payment CASCADE;
+DROP TABLE IF EXISTS overgold_chain_banking_withdraw CASCADE;
+DROP TABLE IF EXISTS overgold_chain_banking_issue CASCADE;
+DROP TABLE IF EXISTS overgold_chain_banking_base_transfers CASCADE;
+DROP TABLE IF EXISTS overgold_chain_banking_system_msg_reward_transfer CASCADE;
+DROP TABLE IF EXISTS overgold_chain_banking_set_transfer_extra CASCADE;
+DROP TABLE IF EXISTS overgold_chain_banking_set_reward_manager_address CASCADE;
+DROP TABLE IF EXISTS overgold_chain_banking_msg_system_transfer CASCADE;
+DROP TABLE IF EXISTS overgold_chain_banking_msg_payment CASCADE;
+DROP TABLE IF EXISTS overgold_chain_banking_msg_withdraw CASCADE;
+DROP TABLE IF EXISTS overgold_chain_banking_msg_issue CASCADE;

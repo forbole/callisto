@@ -190,7 +190,7 @@ func TestRepository_UpdateWithdraws(t *testing.T) {
 							Timestamp: 10800,
 							TxHash:    "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd2",
 						},
-						Wallet: "vcg12ndz92smw9pz34m7kfr5vqq6qscee7nv83test",
+						Wallet: "ovg12ndz92smw9pz34m7kfr5vqq6qscee7nv83test",
 					},
 				},
 			},

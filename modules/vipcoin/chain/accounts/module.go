@@ -2,12 +2,13 @@ package accounts
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/forbole/juno/v2/modules"
+
 	"github.com/forbole/bdjuno/v2/database"
 	"github.com/forbole/bdjuno/v2/database/vipcoin/chain/accounts"
 	"github.com/forbole/bdjuno/v2/database/vipcoin/chain/assets"
 	"github.com/forbole/bdjuno/v2/database/vipcoin/chain/wallets"
 	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts/source"
-	"github.com/forbole/juno/v2/modules"
 )
 
 var (
@@ -43,5 +44,5 @@ func NewModule(
 
 // Name implements modules.Module
 func (m *Module) Name() string {
-	return "vipcoin_accounts"
+	return "overgold_accounts"
 }

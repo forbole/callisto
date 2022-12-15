@@ -44,7 +44,7 @@ func TestRepository_SaveAccounts(t *testing.T) {
 				accounts: []*accountstypes.Account{
 					{
 						Hash:    "b8b6cb7629d68b3ecf9ce200f631ffc72232bc798a7db755307332a40add5e37",
-						Address: "vcg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdy",
+						Address: "ovg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdy",
 						PublicKey: &anytype.Any{
 							TypeUrl: "/cosmos.crypto.secp256k1.PubKey",
 							Value:   []uint8{10, 33, 2, 32, 174, 170, 220, 129, 199, 203, 202, 84, 205, 96, 6, 247, 144, 46, 61, 225, 73, 220, 82, 19, 53, 39, 205, 55, 45, 114, 65, 148, 77, 198, 60},
@@ -150,7 +150,7 @@ func TestRepository_UpdateAccounts(t *testing.T) {
 				accounts: []*accountstypes.Account{
 					{
 						Hash:    "b8b6cb7629d68b3ecf9ce200f631ffc72232bc798a7db755307332a40add5e37",
-						Address: "vcg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz",
+						Address: "ovg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz",
 						PublicKey: &anytype.Any{
 							TypeUrl: "/cosmos.crypto.secp256k1.PubKey",
 							Value:   []uint8{10, 33, 2, 32, 174, 170, 220, 129, 199, 203, 202, 84, 205, 96, 6, 247, 144, 46, 61, 225, 73, 220, 82, 19, 53, 39, 205, 55, 45, 114, 65, 148, 77, 198, 60},
@@ -205,7 +205,7 @@ func TestRepository_UpdateAccounts(t *testing.T) {
 				accounts: []*accountstypes.Account{
 					{
 						Hash:    "b8b6cb7629d68b3ecf9ce200f631ffc72232bc798a7db755307332a40add5e37",
-						Address: "vcg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz",
+						Address: "ovg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz",
 						PublicKey: &anytype.Any{
 							TypeUrl: "/cosmos.crypto.secp256k1.PubKey",
 							Value:   []uint8{10, 33, 2, 32, 174, 170, 220, 129, 199, 203, 202, 84, 205, 96, 6, 247, 144, 46, 61, 225, 73, 220, 82, 19, 53, 39, 205, 55, 45, 114, 65, 148, 77, 198, 60},
@@ -254,12 +254,12 @@ func TestRepository_GetAccounts(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				accountFilter: filter.NewFilter().SetArgument(types.FieldAddress, "vcg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdy"),
+				accountFilter: filter.NewFilter().SetArgument(types.FieldAddress, "ovg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdy"),
 			},
 			want: []*accountstypes.Account{
 				{
 					Hash:    "b8b6cb7629d68b3ecf9ce200f631ffc72232bc798a7db755307332a40add5e37",
-					Address: "vcg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdy",
+					Address: "ovg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdy",
 					PublicKey: &anytype.Any{
 						TypeUrl: "/cosmos.crypto.secp256k1.PubKey",
 						Value:   []uint8{10, 33, 2, 32, 174, 170, 220, 129, 199, 203, 202, 84, 205, 96, 6, 247, 144, 46, 61, 225, 73, 220, 82, 19, 53, 39, 205, 55, 45, 114, 65, 148, 77, 198, 60},

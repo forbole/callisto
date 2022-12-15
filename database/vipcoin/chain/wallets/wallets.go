@@ -29,7 +29,7 @@ func NewRepository(db *sqlx.DB, cdc codec.Marshaler) *Repository {
 	}
 }
 
-// SaveWallets - method that create wallets to the "vipcoin_chain_wallets_wallets" table
+// SaveWallets - method that create wallets to the "overgold_chain_wallets_wallets" table
 func (r Repository) SaveWallets(wallets ...*walletstypes.Wallet) error {
 	if len(wallets) == 0 {
 		return nil
@@ -42,7 +42,7 @@ func (r Repository) SaveWallets(wallets ...*walletstypes.Wallet) error {
 
 	defer tx.Rollback()
 
-	query := `INSERT INTO vipcoin_chain_wallets_wallets 
+	query := `INSERT INTO overgold_chain_wallets_wallets 
        ("address", "account_address", "kind", "state", "balance", "extras", "default_status") 
      VALUES 
        (:address, :account_address, :kind, :state, :balance, :extras, :default_status)`
@@ -56,9 +56,9 @@ func (r Repository) SaveWallets(wallets ...*walletstypes.Wallet) error {
 	return tx.Commit()
 }
 
-// GetWallets - method that get wallets from the "vipcoin_chain_wallets_wallets" table
+// GetWallets - method that get wallets from the "overgold_chain_wallets_wallets" table
 func (r Repository) GetWallets(filter filter.Filter) ([]*walletstypes.Wallet, error) {
-	query, args := filter.Build("vipcoin_chain_wallets_wallets",
+	query, args := filter.Build("overgold_chain_wallets_wallets",
 		types.FieldAddress, types.FieldAccountAddress, types.FieldKind, types.FieldState, types.FieldBalance, types.FieldExtras, types.FieldDefaultStatus)
 
 	var result []types.DBWallets
@@ -74,7 +74,7 @@ func (r Repository) GetWallets(filter filter.Filter) ([]*walletstypes.Wallet, er
 	return wallets, nil
 }
 
-// UpdateWallets - method that updates the wallet in the "vipcoin_chain_wallets_wallets" table
+// UpdateWallets - method that updates the wallet in the "overgold_chain_wallets_wallets" table
 func (r Repository) UpdateWallets(wallets ...*walletstypes.Wallet) error {
 	if len(wallets) == 0 {
 		return nil
@@ -87,7 +87,7 @@ func (r Repository) UpdateWallets(wallets ...*walletstypes.Wallet) error {
 
 	defer tx.Rollback()
 
-	query := `UPDATE vipcoin_chain_wallets_wallets SET
+	query := `UPDATE overgold_chain_wallets_wallets SET
 				 account_address = :account_address, kind = :kind,
 				 state = :state, balance = :balance, extras = :extras, default_status = :default_status
 			 WHERE address = :address`
@@ -101,7 +101,7 @@ func (r Repository) UpdateWallets(wallets ...*walletstypes.Wallet) error {
 	return tx.Commit()
 }
 
-// DeleteWallets - method that delete wallets in the "vipcoin_chain_wallets_wallets" table
+// DeleteWallets - method that delete wallets in the "overgold_chain_wallets_wallets" table
 func (r Repository) DeleteWallets(wallets ...*walletstypes.Wallet) error {
 	if len(wallets) == 0 {
 		return nil
@@ -114,7 +114,7 @@ func (r Repository) DeleteWallets(wallets ...*walletstypes.Wallet) error {
 
 	defer tx.Rollback()
 
-	query := `DELETE FROM vipcoin_chain_wallets_wallets WHERE address = :address`
+	query := `DELETE FROM overgold_chain_wallets_wallets WHERE address = :address`
 
 	for _, wallet := range wallets {
 		if _, err := tx.NamedExec(query, toWalletsDatabase(wallet)); err != nil {

@@ -9,7 +9,7 @@ import (
 )
 
 type (
-	// DBWallets represents a single row inside the "vipcoin_chain_wallets_wallets" table
+	// DBWallets represents a single row inside the "overgold_chain_wallets_wallets" table
 	DBWallets struct {
 		Address        string    `db:"address"`
 		AccountAddress string    `db:"account_address"`
@@ -20,7 +20,7 @@ type (
 		DefaultStatus  bool      `db:"default_status"`
 	}
 
-	// DBSetWalletKind represents a single row inside the "vipcoin_chain_wallets_set_wallet_kind" table
+	// DBSetWalletKind represents a single row inside the "overgold_chain_wallets_set_wallet_kind" table
 	DBSetWalletKind struct {
 		Hash    string `db:"transaction_hash"`
 		Creator string `db:"creator"`
@@ -28,7 +28,7 @@ type (
 		Kind    int32  `db:"kind"`
 	}
 
-	// DBSetWalletState represents a single row inside the "vipcoin_chain_wallets_set_wallet_state" table
+	// DBSetWalletState represents a single row inside the "overgold_chain_wallets_set_wallet_state" table
 	DBSetWalletState struct {
 		Hash    string `db:"transaction_hash"`
 		Creator string `db:"creator"`
@@ -36,7 +36,7 @@ type (
 		State   int32  `db:"state"`
 	}
 
-	// DBCreateWallet represents a single row inside the "vipcoin_chain_wallets_create_wallet" table
+	// DBCreateWallet represents a single row inside the "overgold_chain_wallets_create_wallet" table
 	DBCreateWallet struct {
 		Hash           string  `db:"transaction_hash"`
 		Creator        string  `db:"creator"`
@@ -47,7 +47,7 @@ type (
 		Extras         ExtraDB `db:"extras"`
 	}
 
-	// DBCreateWalletWithBalance represents a single row inside the "vipcoin_chain_wallets_create_wallet_with_balance" table
+	// DBCreateWalletWithBalance represents a single row inside the "overgold_chain_wallets_create_wallet_with_balance" table
 	DBCreateWalletWithBalance struct {
 		Hash           string    `db:"transaction_hash"`
 		Creator        string    `db:"creator"`
@@ -60,14 +60,14 @@ type (
 		Balance        BalanceDB `db:"balance"`
 	}
 
-	// DBSetDefaultWallet represents a single row inside the "vipcoin_chain_wallets_set_default_wallet" table
+	// DBSetDefaultWallet represents a single row inside the "overgold_chain_wallets_set_default_wallet" table
 	DBSetDefaultWallet struct {
 		Hash    string `db:"transaction_hash"`
 		Creator string `db:"creator"`
 		Address string `db:"address"`
 	}
 
-	// DBSetExtra represents a single row inside the "vipcoin_chain_wallets_set_extra" table
+	// DBSetExtra represents a single row inside the "overgold_chain_wallets_set_extra" table
 	DBSetExtra struct {
 		Hash    string  `db:"transaction_hash"`
 		Creator string  `db:"creator"`

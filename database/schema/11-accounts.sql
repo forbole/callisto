@@ -1,5 +1,5 @@
 -- +migrate Up
-CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_accounts (
+CREATE TABLE IF NOT EXISTS overgold_chain_accounts_accounts (
     address    TEXT      NOT NULL PRIMARY KEY,                   -- accounts address
     hash       TEXT      NOT NULL UNIQUE,                        -- accounts hash
     public_key TEXT      NOT NULL,                               -- accounts public_key
@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_accounts (
     wallets    TEXT[]                                            -- accounts wallets
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_affiliates(
+CREATE TABLE IF NOT EXISTS overgold_chain_accounts_affiliates(
     id               SERIAL PRIMARY KEY NOT NULL,                -- affiliates id
     account_hash     TEXT               NOT NULL,                -- affiliates account hash
     address          TEXT               NOT NULL,                -- affiliates address
@@ -17,10 +17,10 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_affiliates(
     extras           JSONB,                                      -- affiliates extras
     CONSTRAINT fk_accounts_accounts
       FOREIGN KEY(account_hash) 
-      REFERENCES vipcoin_chain_accounts_accounts(hash)
+      REFERENCES overgold_chain_accounts_accounts(hash)
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_set_kinds (
+CREATE TABLE IF NOT EXISTS overgold_chain_accounts_set_kinds (
     id               SERIAL UNIQUE PRIMARY KEY NOT NULL,
     transaction_hash TEXT  NOT NULL REFERENCES transaction (hash),
     creator          TEXT  NOT NULL,                                     -- set kinds creator
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_set_kinds (
     kinds            INT[]                                               -- set kinds kinds
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_set_affiliate_address (
+CREATE TABLE IF NOT EXISTS overgold_chain_accounts_set_affiliate_address (
     id                  SERIAL UNIQUE PRIMARY KEY NOT NULL,
     transaction_hash    TEXT  NOT NULL REFERENCES transaction (hash),
     creator             TEXT  NOT NULL,                                 -- set affiliate address creator
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_set_affiliate_address (
     new_address         TEXT  NOT NULL                                  -- set affiliate address new_address
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_register_user (
+CREATE TABLE IF NOT EXISTS overgold_chain_accounts_register_user (
     id                        SERIAL UNIQUE PRIMARY KEY NOT NULL,
     transaction_hash          TEXT  NOT NULL REFERENCES transaction (hash),
     creator                   TEXT  NOT NULL,                    -- register user creator
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_register_user (
     referrer_hash             TEXT                               -- register user referrer_hash
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_account_migrate (
+CREATE TABLE IF NOT EXISTS overgold_chain_accounts_account_migrate (
     id               SERIAL UNIQUE PRIMARY KEY NOT NULL,
     transaction_hash TEXT  NOT NULL REFERENCES transaction (hash),
     creator          TEXT  NOT NULL,                                   -- account migrate creator
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_account_migrate (
     public_key       TEXT  NOT NULL                                    -- accounts public_key
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_set_affiliate_extra (
+CREATE TABLE IF NOT EXISTS overgold_chain_accounts_set_affiliate_extra (
     id                SERIAL UNIQUE PRIMARY KEY NOT NULL,
     transaction_hash  TEXT  NOT NULL REFERENCES transaction (hash),
     creator           TEXT  NOT NULL,                            -- set affiliate extra creator
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_set_affiliate_extra (
     extras            JSONB                                      -- set affiliate extra extras
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_set_extra (
+CREATE TABLE IF NOT EXISTS overgold_chain_accounts_set_extra (
     id                SERIAL UNIQUE PRIMARY KEY NOT NULL,
     transaction_hash  TEXT  NOT NULL REFERENCES transaction (hash),
     creator           TEXT  NOT NULL,                            -- set extra creator
@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_set_extra (
     extras            JSONB                                      -- set extra extras
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_set_state (
+CREATE TABLE IF NOT EXISTS overgold_chain_accounts_set_state (
     id                SERIAL UNIQUE PRIMARY KEY NOT NULL,
     transaction_hash  TEXT  NOT NULL REFERENCES transaction (hash),
     creator           TEXT  NOT NULL,                            -- set state creator
@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_set_state (
     reason            TEXT  NOT NULL                             -- set state reason
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_add_affiliate (
+CREATE TABLE IF NOT EXISTS overgold_chain_accounts_add_affiliate (
     id                SERIAL UNIQUE PRIMARY KEY NOT NULL,
     transaction_hash  TEXT  NOT NULL REFERENCES transaction (hash),
     creator           TEXT  NOT NULL,                            -- add affiliate creator
@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_add_affiliate (
     extras            JSONB                                      -- add affiliate extras
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_create_account (
+CREATE TABLE IF NOT EXISTS overgold_chain_accounts_create_account (
     id                SERIAL UNIQUE PRIMARY KEY NOT NULL,
     transaction_hash  TEXT  NOT NULL REFERENCES transaction (hash),
     creator           TEXT  NOT NULL,                            -- create account creator
@@ -110,14 +110,14 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_accounts_create_account (
 
 
 -- +migrate Down
-DROP TABLE IF EXISTS vipcoin_chain_accounts_affiliates CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_accounts_accounts CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_accounts_set_kinds CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_accounts_set_affiliate_address CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_accounts_register_user CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_accounts_account_migrate CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_accounts_set_affiliate_extra CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_accounts_set_extra CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_accounts_set_state CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_accounts_add_affiliate CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_accounts_create_account CASCADE;
+DROP TABLE IF EXISTS overgold_chain_accounts_affiliates CASCADE;
+DROP TABLE IF EXISTS overgold_chain_accounts_accounts CASCADE;
+DROP TABLE IF EXISTS overgold_chain_accounts_set_kinds CASCADE;
+DROP TABLE IF EXISTS overgold_chain_accounts_set_affiliate_address CASCADE;
+DROP TABLE IF EXISTS overgold_chain_accounts_register_user CASCADE;
+DROP TABLE IF EXISTS overgold_chain_accounts_account_migrate CASCADE;
+DROP TABLE IF EXISTS overgold_chain_accounts_set_affiliate_extra CASCADE;
+DROP TABLE IF EXISTS overgold_chain_accounts_set_extra CASCADE;
+DROP TABLE IF EXISTS overgold_chain_accounts_set_state CASCADE;
+DROP TABLE IF EXISTS overgold_chain_accounts_add_affiliate CASCADE;
+DROP TABLE IF EXISTS overgold_chain_accounts_create_account CASCADE;

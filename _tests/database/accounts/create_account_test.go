@@ -37,9 +37,9 @@ func TestRepository_SaveCreateAccount(t *testing.T) {
 			args: args{
 				[]*accountstypes.MsgCreateAccount{
 					{
-						Creator:   "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
+						Creator:   "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
 						Hash:      "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd1",
-						Address:   "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
+						Address:   "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
 						PublicKey: "4133425431324570546d614730316858526a302f6e7a6437726d3663526751755367626a694244566f4a486e",
 						Kinds:     []accountstypes.AccountKind{accountstypes.ACCOUNT_KIND_SYSTEM},
 						State:     accountstypes.ACCOUNT_STATE_ACTIVE,
@@ -55,9 +55,9 @@ func TestRepository_SaveCreateAccount(t *testing.T) {
 						},
 					},
 					{
-						Creator:   "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv1g",
+						Creator:   "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv1g",
 						Hash:      "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd2",
-						Address:   "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx44q",
+						Address:   "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx44q",
 						PublicKey: "4133425431324570546d614730316858526a302f6e7a6437726d3663526751755367626a694244566f4a487e",
 						Kinds:     []accountstypes.AccountKind{accountstypes.ACCOUNT_KIND_SYSTEM},
 						State:     accountstypes.ACCOUNT_STATE_ACTIVE,
@@ -109,13 +109,13 @@ func TestRepository_GetCreateAccount(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				accfilter: filter.NewFilter().SetArgument(types.FieldAddress, "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q"),
+				accfilter: filter.NewFilter().SetArgument(types.FieldAddress, "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx45q"),
 			},
 			want: []*accountstypes.MsgCreateAccount{
 				{
-					Creator:   "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
+					Creator:   "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
 					Hash:      "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd1",
-					Address:   "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
+					Address:   "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
 					PublicKey: "4133425431324570546d614730316858526a302f6e7a6437726d3663526751755367626a694244566f4a486e",
 					Kinds:     []accountstypes.AccountKind{accountstypes.ACCOUNT_KIND_SYSTEM},
 					State:     accountstypes.ACCOUNT_STATE_ACTIVE,

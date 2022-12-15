@@ -11,13 +11,13 @@ import (
 	"github.com/forbole/bdjuno/v2/database"
 	"github.com/forbole/bdjuno/v2/database/vipcoin/chain/last_block"
 	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts"
-	vipcoinaccountssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts/source"
+	overgoldAccountsSource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/accounts/source"
 	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/assets"
-	vipcoinassetssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/assets/source"
+	overgoldAssetsSource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/assets/source"
 	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/banking"
-	vipcoinbankingsource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/banking/source"
+	overgoldBankingSource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/banking/source"
 	"github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets"
-	vipcoinwalletssource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets/source"
+	overgoldWalletsSource "github.com/forbole/bdjuno/v2/modules/vipcoin/chain/wallets/source"
 )
 
 var (
@@ -25,18 +25,18 @@ var (
 	_ modules.GenesisModule = &module{}
 )
 
-type vipcoinModule interface {
+type overgoldModule interface {
 	jmodules.Module
 	jmodules.GenesisModule
 	jmodules.MessageModule
 }
 
 type module struct {
-	cdc            codec.Marshaler
-	db             *database.Db
-	lastBlockRepo  last_block.Repository
-	logger         logging.Logger
-	vipcoinModules []vipcoinModule
+	cdc             codec.Marshaler
+	db              *database.Db
+	lastBlockRepo   last_block.Repository
+	logger          logging.Logger
+	overgoldModules []overgoldModule
 
 	schedulerRun bool
 	mutex        sync.RWMutex
@@ -47,21 +47,21 @@ func NewModule(
 	db *database.Db,
 	logger logging.Logger,
 
-	VipcoinAccountsSource vipcoinaccountssource.Source,
-	VipcoinWalletsSource vipcoinwalletssource.Source,
-	VipcoinBankingSource vipcoinbankingsource.Source,
-	VipcoinAssetsSource vipcoinassetssource.Source,
+	OvergoldAccountsSource overgoldAccountsSource.Source,
+	OvergoldWalletsSource overgoldWalletsSource.Source,
+	OvergoldBankingSource overgoldBankingSource.Source,
+	OvergoldAssetsSource overgoldAssetsSource.Source,
 ) *module {
 	module := &module{
 		cdc:           cdc,
 		db:            db,
 		lastBlockRepo: *last_block.NewRepository(db.Sqlx),
 		logger:        logger,
-		vipcoinModules: []vipcoinModule{
-			accounts.NewModule(VipcoinAccountsSource, cdc, db),
-			assets.NewModule(VipcoinAssetsSource, cdc, db),
-			banking.NewModule(VipcoinBankingSource, cdc, db),
-			wallets.NewModule(VipcoinWalletsSource, cdc, db),
+		overgoldModules: []overgoldModule{
+			accounts.NewModule(OvergoldAccountsSource, cdc, db),
+			assets.NewModule(OvergoldAssetsSource, cdc, db),
+			banking.NewModule(OvergoldBankingSource, cdc, db),
+			wallets.NewModule(OvergoldWalletsSource, cdc, db),
 		},
 	}
 
@@ -72,5 +72,5 @@ func NewModule(
 
 // Name implements modules.Module
 func (m *module) Name() string {
-	return "vipcoin"
+	return "overgold"
 }

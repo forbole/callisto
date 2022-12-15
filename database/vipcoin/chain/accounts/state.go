@@ -10,7 +10,7 @@ import (
 
 // SaveState - saves the given state inside the database
 func (r Repository) SaveState(msg *accountstypes.MsgSetState, transactionHash string) error {
-	query := `INSERT INTO vipcoin_chain_accounts_set_state 
+	query := `INSERT INTO overgold_chain_accounts_set_state 
 			(transaction_hash, creator, hash, state, reason) 
 			VALUES 
 			(:transaction_hash, :creator, :hash, :state, :reason)`

@@ -8,9 +8,9 @@ import (
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
-// SaveMsgSetRewardMgrAddress - method that save to the "vipcoin_chain_banking_set_reward_manager_address" table
+// SaveMsgSetRewardMgrAddress - method that save to the "overgold_chain_banking_set_reward_manager_address" table
 func (r Repository) SaveMsgSetRewardMgrAddress(addresses *bankingtypes.MsgSetRewardManagerAddress, transactionHash string) error {
-	query := `INSERT INTO vipcoin_chain_banking_set_reward_manager_address 
+	query := `INSERT INTO overgold_chain_banking_set_reward_manager_address 
 		(transaction_hash, creator, address) 
 		VALUES 
 		(:transaction_hash, :creator, :address)`
@@ -22,7 +22,7 @@ func (r Repository) SaveMsgSetRewardMgrAddress(addresses *bankingtypes.MsgSetRew
 	return nil
 }
 
-// GetMsgSetRewardMgrAddress - method that gets from the "vipcoin_chain_banking_set_reward_manager_address" table
+// GetMsgSetRewardMgrAddress - method that gets from the "overgold_chain_banking_set_reward_manager_address" table
 func (r Repository) GetMsgSetRewardMgrAddress(filter filter.Filter) ([]*bankingtypes.MsgSetRewardManagerAddress, error) {
 	query, args := filter.Build(
 		tableMsgSetRewardManagerAddress,

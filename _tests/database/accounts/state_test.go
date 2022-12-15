@@ -36,13 +36,13 @@ func TestRepository_SaveState(t *testing.T) {
 			args: args{
 				msg: []*accountstypes.MsgSetState{
 					{
-						Creator: "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
+						Creator: "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
 						Hash:    "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd1",
 						State:   accountstypes.ACCOUNT_STATE_ACTIVE,
 						Reason:  "valid account",
 					},
 					{
-						Creator: "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv1g",
+						Creator: "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv1g",
 						Hash:    "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd2",
 						State:   accountstypes.ACCOUNT_STATE_BLOCKED,
 						Reason:  "fraud",
@@ -88,7 +88,7 @@ func TestRepository_GetState(t *testing.T) {
 			},
 			want: []*accountstypes.MsgSetState{
 				{
-					Creator: "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv1g",
+					Creator: "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv1g",
 					Hash:    "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd2",
 					State:   accountstypes.ACCOUNT_STATE_BLOCKED,
 					Reason:  "fraud",

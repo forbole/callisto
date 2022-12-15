@@ -10,7 +10,7 @@ import (
 )
 
 type (
-	// DBAccount represents a single row inside the "vipcoin_chain_accounts_accounts" table
+	// DBAccount represents a single row inside the "overgold_chain_accounts_accounts" table
 	DBAccount struct {
 		Address   string         `db:"address"`
 		Hash      string         `db:"hash"`
@@ -21,7 +21,7 @@ type (
 		Wallets   pq.StringArray `db:"wallets"`
 	}
 
-	// DBAffiliates represents a single row inside the "vipcoin_chain_accounts_affiliates" table
+	// DBAffiliates represents a single row inside theovergold_chain_accounts_affiliates" table
 	DBAffiliates struct {
 		Id              uint64  `db:"id"`
 		AccountHash     string  `db:"account_hash"`
@@ -30,7 +30,7 @@ type (
 		Extras          ExtraDB `db:"extras"`
 	}
 
-	// DBRegisterUser represents a single row inside the "vipcoin_chain_accounts_register_user" table
+	// DBRegisterUser represents a single row inside the "overgold_chain_accounts_register_user" table
 	DBRegisterUser struct {
 		TransactionHash       string  `db:"transaction_hash"`
 		Creator               string  `db:"creator"`
@@ -44,7 +44,7 @@ type (
 		ReferrerHash          string  `db:"referrer_hash"`
 	}
 
-	// DBSetKinds represents a single row inside the "vipcoin_chain_accounts_set_kinds" table
+	// DBSetKinds represents a single row inside the "overgold_chain_accounts_set_kinds" table
 	DBSetKinds struct {
 		TransactionHash string        `db:"transaction_hash"`
 		Creator         string        `db:"creator"`
@@ -52,7 +52,7 @@ type (
 		Kinds           pq.Int32Array `db:"kinds"`
 	}
 
-	// DBSetAffiliateAddress represents a single row inside the "vipcoin_chain_accounts_set_affiliate_address" table
+	// DBSetAffiliateAddress represents a single row inside the "overgold_chain_accounts_set_affiliate_address" table
 	DBSetAffiliateAddress struct {
 		TransactionHash string `db:"transaction_hash"`
 		Creator         string `db:"creator"`
@@ -61,7 +61,7 @@ type (
 		NewAddress      string `db:"new_address"`
 	}
 
-	// DBAccountMigrate represents a single row inside the "vipcoin_chain_accounts_account_migrate" table
+	// DBAccountMigrate represents a single row inside the "overgold_chain_accounts_account_migrate" table
 	DBAccountMigrate struct {
 		TransactionHash string `db:"transaction_hash"`
 		Creator         string `db:"creator"`
@@ -70,7 +70,7 @@ type (
 		PublicKey       string `db:"public_key"`
 	}
 
-	// DBSetAccountExtra represents a single row inside the "vipcoin_chain_accounts_set_extra" table
+	// DBSetAccountExtra represents a single row inside the "overgold_chain_accounts_set_extra" table
 	DBSetAccountExtra struct {
 		TransactionHash string  `db:"transaction_hash"`
 		Creator         string  `db:"creator"`
@@ -78,7 +78,7 @@ type (
 		Extras          ExtraDB `db:"extras"`
 	}
 
-	// DBSetAffiliateExtra represents a single row inside the "vipcoin_chain_accounts_set_affiliate_extra" table
+	// DBSetAffiliateExtra represents a single row inside the "overgold_chain_accounts_set_affiliate_extra" table
 	DBSetAffiliateExtra struct {
 		TransactionHash string  `db:"transaction_hash"`
 		Creator         string  `db:"creator"`
@@ -87,7 +87,7 @@ type (
 		Extras          ExtraDB `db:"extras"`
 	}
 
-	// DBSetState represents a single row inside the "vipcoin_chain_accounts_set_state" table
+	// DBSetState represents a single row inside the "overgold_chain_accounts_set_state" table
 	DBSetState struct {
 		TransactionHash string `db:"transaction_hash"`
 		Creator         string `db:"creator"`
@@ -96,7 +96,7 @@ type (
 		Reason          string `db:"reason"`
 	}
 
-	// DBCreateAccount represents a single row inside the "vipcoin_chain_accounts_create_account" table
+	// DBCreateAccount represents a single row inside the "overgold_chain_accounts_create_account" table
 	DBCreateAccount struct {
 		TransactionHash string        `db:"transaction_hash"`
 		Creator         string        `db:"creator"`
@@ -108,7 +108,7 @@ type (
 		Extras          ExtraDB       `db:"extras"`
 	}
 
-	// DBAddAffiliate represents a single row inside the "vipcoin_chain_accounts_add_affiliate" table
+	// DBAddAffiliate represents a single row inside the "overgold_chain_accounts_add_affiliate" table
 	DBAddAffiliate struct {
 		TransactionHash string  `db:"transaction_hash"`
 		Creator         string  `db:"creator"`

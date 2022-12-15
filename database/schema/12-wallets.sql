@@ -1,5 +1,5 @@
 -- +migrate Up
-CREATE TABLE IF NOT EXISTS vipcoin_chain_wallets_wallets (
+CREATE TABLE IF NOT EXISTS overgold_chain_wallets_wallets (
     address             TEXT    NOT NULL PRIMARY KEY,       -- wallet address
     account_address     TEXT    NOT NULL,                   -- account address
     kind                INT,                                -- kind for different owners (issuer, holder, market etc.)
@@ -9,10 +9,10 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_wallets_wallets (
     default_status      BOOLEAN,                            -- wallet status for default use
     CONSTRAINT fk_accounts_accounts
       FOREIGN KEY(account_address) 
-      REFERENCES vipcoin_chain_accounts_accounts(address) ON UPDATE CASCADE
+      REFERENCES overgold_chain_accounts_accounts(address) ON UPDATE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_wallets_set_wallet_kind (
+CREATE TABLE IF NOT EXISTS overgold_chain_wallets_set_wallet_kind (
     id                SERIAL UNIQUE PRIMARY KEY NOT NULL,
     transaction_hash  TEXT    NOT NULL REFERENCES transaction (hash),
     creator           TEXT    NOT NULL,                           -- message creator
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_wallets_set_wallet_kind (
     kind              INT                                         -- new kind for target wallet
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_wallets_set_wallet_state (
+CREATE TABLE IF NOT EXISTS overgold_chain_wallets_set_wallet_state (
     id               SERIAL UNIQUE PRIMARY KEY NOT NULL,
     transaction_hash TEXT    NOT NULL REFERENCES transaction (hash),
     creator          TEXT    NOT NULL,                           -- message creator
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_wallets_set_wallet_state (
     state            INT                                         -- new state for target wallet
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_wallets_create_wallet (
+CREATE TABLE IF NOT EXISTS overgold_chain_wallets_create_wallet (
     id                  SERIAL UNIQUE PRIMARY KEY NOT NULL,
     transaction_hash    TEXT    NOT NULL REFERENCES transaction (hash),
     creator             TEXT    NOT NULL,                   -- message creator
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_wallets_create_wallet (
     extras              JSONB                               -- new extras for target wallet
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_wallets_create_wallet_with_balance (
+CREATE TABLE IF NOT EXISTS overgold_chain_wallets_create_wallet_with_balance (
     id                  SERIAL UNIQUE PRIMARY KEY NOT NULL,
     transaction_hash    TEXT        NOT NULL REFERENCES transaction (hash),
     creator             TEXT        NOT NULL,               -- message creator
@@ -52,14 +52,14 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_wallets_create_wallet_with_balance (
     balance             JSONB                               -- new balance for target wallet
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_wallets_set_default_wallet (
+CREATE TABLE IF NOT EXISTS overgold_chain_wallets_set_default_wallet (
     id               SERIAL UNIQUE PRIMARY KEY NOT NULL,
     transaction_hash TEXT        NOT NULL REFERENCES transaction (hash),
     creator          TEXT        NOT NULL,                       -- message creator
     address          TEXT        NOT NULL                        -- target wallet address
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_wallets_set_extra (
+CREATE TABLE IF NOT EXISTS overgold_chain_wallets_set_extra (
     id                SERIAL UNIQUE PRIMARY KEY NOT NULL,
     transaction_hash  TEXT        NOT NULL REFERENCES transaction (hash),
     creator           TEXT        NOT NULL,                       -- message creator
@@ -68,10 +68,10 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_wallets_set_extra (
 );
 
 -- +migrate Down
-DROP TABLE IF EXISTS vipcoin_chain_wallets_wallets CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_wallets_set_wallet_kind CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_wallets_set_wallet_state CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_wallets_create_wallet CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_wallets_create_wallet_with_balance CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_wallets_set_default_wallet CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_wallets_set_extra CASCADE;
+DROP TABLE IF EXISTS overgold_chain_wallets_wallets CASCADE;
+DROP TABLE IF EXISTS overgold_chain_wallets_set_wallet_kind CASCADE;
+DROP TABLE IF EXISTS overgold_chain_wallets_set_wallet_state CASCADE;
+DROP TABLE IF EXISTS overgold_chain_wallets_create_wallet CASCADE;
+DROP TABLE IF EXISTS overgold_chain_wallets_create_wallet_with_balance CASCADE;
+DROP TABLE IF EXISTS overgold_chain_wallets_set_default_wallet CASCADE;
+DROP TABLE IF EXISTS overgold_chain_wallets_set_extra CASCADE;

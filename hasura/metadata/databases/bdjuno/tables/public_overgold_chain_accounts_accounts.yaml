@@ -1,0 +1,31 @@
+table:
+  name: overgold_chain_accounts_accounts
+  schema: public
+array_relationships:
+  - name: affiliates
+    using:
+      foreign_key_constraint_on:
+        column: account_hash
+        table:
+          name: overgold_chain_accounts_affiliates
+          schema: public
+  - name: wallets_data
+    using:
+      foreign_key_constraint_on:
+        column: account_address
+        table:
+          name: overgold_chain_wallets_wallets
+          schema: public
+select_permissions:
+  - role: walletUI
+    permission:
+      columns:
+        - address
+        - hash
+        - public_key
+        - kinds
+        - state
+        - extras
+        - wallets
+      filter: {}
+      allow_aggregations: true

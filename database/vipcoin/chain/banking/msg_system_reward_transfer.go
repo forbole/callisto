@@ -8,9 +8,9 @@ import (
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
-// SaveMsgSystemRewardTransfers - method that create transfers to the "vipcoin_chain_banking_system_msg_reward_transfer"
+// SaveMsgSystemRewardTransfers - method that create transfers to the "overgold_chain_banking_system_msg_reward_transfer"
 func (r Repository) SaveMsgSystemRewardTransfers(transfers *bankingtypes.MsgSystemRewardTransfer, transactionHash string) error {
-	query := `INSERT INTO vipcoin_chain_banking_system_msg_reward_transfer 
+	query := `INSERT INTO overgold_chain_banking_system_msg_reward_transfer 
 		(transaction_hash, creator, wallet_from, wallet_to, asset, amount, extras) 
 		VALUES 
 		(:transaction_hash, :creator, :wallet_from, :wallet_to, :asset, :amount, :extras)`
@@ -22,7 +22,7 @@ func (r Repository) SaveMsgSystemRewardTransfers(transfers *bankingtypes.MsgSyst
 	return nil
 }
 
-// GetMsgSystemRewardTransfers - method that get transfers from the "vipcoin_chain_banking_system_msg_reward_transfer"
+// GetMsgSystemRewardTransfers - method that get transfers from the "overgold_chain_banking_system_msg_reward_transfer"
 func (r Repository) GetMsgSystemRewardTransfers(filter filter.Filter) ([]*bankingtypes.MsgSystemRewardTransfer, error) {
 	query, args := filter.Build(
 		tableMsgSystemRewardTransfer,

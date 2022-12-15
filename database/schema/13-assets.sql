@@ -1,5 +1,5 @@
 -- +migrate Up
-CREATE TABLE IF NOT EXISTS vipcoin_chain_assets_assets(
+CREATE TABLE IF NOT EXISTS overgold_chain_assets_assets(
     name           TEXT NOT NULL PRIMARY KEY, -- assets name
     issuer         TEXT NOT NULL,             -- assets issuer
     policies       INT[],                     -- assets policies
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_assets_assets(
     extras         JSONB                      -- assets extras
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_assets_set_extra(
+CREATE TABLE IF NOT EXISTS overgold_chain_assets_set_extra(
     id                SERIAL UNIQUE PRIMARY KEY NOT NULL,
     transaction_hash  TEXT NOT NULL REFERENCES transaction (hash),
     creator           TEXT NOT NULL, -- set extra creator
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_assets_set_extra(
     extras            JSONB          -- set extra extras
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_assets_manage(
+CREATE TABLE IF NOT EXISTS overgold_chain_assets_manage(
     id               SERIAL UNIQUE PRIMARY KEY NOT NULL,
     transaction_hash TEXT NOT NULL REFERENCES transaction (hash),
     creator          TEXT NOT NULL, -- manage assets creator
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_assets_manage(
     in_circulation   NUMERIC         -- manage assets in_circulation
 );
 
-CREATE TABLE IF NOT EXISTS vipcoin_chain_assets_create(
+CREATE TABLE IF NOT EXISTS overgold_chain_assets_create(
     id                SERIAL UNIQUE PRIMARY KEY NOT NULL,
     transaction_hash  TEXT NOT NULL REFERENCES transaction (hash),
     creator           TEXT NOT NULL, -- create assets creator
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS vipcoin_chain_assets_create(
 );
 
 -- +migrate Down
-DROP TABLE IF EXISTS vipcoin_chain_assets_assets CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_assets_set_extra CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_assets_manage CASCADE;
-DROP TABLE IF EXISTS vipcoin_chain_assets_create CASCADE;
+DROP TABLE IF EXISTS overgold_chain_assets_assets CASCADE;
+DROP TABLE IF EXISTS overgold_chain_assets_set_extra CASCADE;
+DROP TABLE IF EXISTS overgold_chain_assets_manage CASCADE;
+DROP TABLE IF EXISTS overgold_chain_assets_create CASCADE;
