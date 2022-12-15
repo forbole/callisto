@@ -105,7 +105,9 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		pricefeed.NewModule(ctx.JunoConfig, cdc, db),
 		slashingModule,
 		stakingModule,
-		topaccounts.NewModule(bankModule, distrModule, slashingModule, r.parser, cdc, db),
+		topaccounts.NewModule(bankModule,
+			// distrModule, slashingModule,
+			r.parser, cdc, db),
 		upgradeModule,
 	}
 }
