@@ -10,7 +10,7 @@ func (suite *DbTestSuite) TestBigDipperDb_InsertEnableModules() {
 	suite.Require().NoError(err)
 
 	var results types.ModuleRows
-	err = suite.database.Sqlx.Select(&results, "SELECT * FROM modules")
+	err = suite.database.SQL.Select(&results, "SELECT * FROM modules")
 	suite.Require().NoError(err)
 
 	expected := types.NewModuleRows(modules)

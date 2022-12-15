@@ -22,7 +22,7 @@ func (suite *DbTestSuite) TestSaveStakingParams() {
 	suite.Require().NoError(err)
 
 	var rows []dbtypes.StakingParamsRow
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM staking_params`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM staking_params`)
 	suite.Require().NoError(err)
 
 	suite.Require().Len(rows, 1)
@@ -45,7 +45,7 @@ func (suite *DbTestSuite) TestGetStakingParams() {
 	paramsBz, err := json.Marshal(&stakingParams)
 	suite.Require().NoError(err)
 
-	_, err = suite.database.Sql.Exec(
+	_, err = suite.database.SQL.Exec(
 		`INSERT INTO staking_params (params, height) VALUES ($1, $2)`,
 		string(paramsBz), 10,
 	)
