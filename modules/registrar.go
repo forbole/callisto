@@ -30,6 +30,7 @@ import (
 	"github.com/forbole/bdjuno/v3/modules/modules"
 	"github.com/forbole/bdjuno/v3/modules/pricefeed"
 	"github.com/forbole/bdjuno/v3/modules/staking"
+	topaccounts "github.com/forbole/bdjuno/v3/modules/top_accounts"
 	"github.com/forbole/bdjuno/v3/modules/upgrade"
 )
 
@@ -104,6 +105,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		pricefeed.NewModule(ctx.JunoConfig, cdc, db),
 		slashingModule,
 		stakingModule,
+		topaccounts.NewModule(bankModule, distrModule, slashingModule, r.parser, cdc, db),
 		upgradeModule,
 	}
 }
