@@ -7,7 +7,7 @@ object_relationships:
     foreign_key_constraint_on: validator_address
 select_permissions:
 - permission:
-    allow_aggregations: true
+    allow_aggregations: false
     columns:
     - validator_address
     - moniker
@@ -18,4 +18,5 @@ select_permissions:
     - height
     - avatar_url
     filter: {}
+    limit: 100
   role: anonymous
