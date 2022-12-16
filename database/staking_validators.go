@@ -56,14 +56,14 @@ VALUES `
 
 	selfDelegationAccQuery = selfDelegationAccQuery[:len(selfDelegationAccQuery)-1] // Remove trailing ","
 	selfDelegationAccQuery += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(selfDelegationAccQuery, selfDelegationParam...)
+	_, err := db.SQL.Exec(selfDelegationAccQuery, selfDelegationParam...)
 	if err != nil {
 		return fmt.Errorf("error while storing accounts: %s", err)
 	}
 
 	validatorQuery = validatorQuery[:len(validatorQuery)-1] // Remove trailing ","
 	validatorQuery += " ON CONFLICT DO NOTHING"
-	_, err = db.Sql.Exec(validatorQuery, validatorParams...)
+	_, err = db.SQL.Exec(validatorQuery, validatorParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing valdiators: %s", err)
 	}
@@ -78,7 +78,7 @@ ON CONFLICT (consensus_address) DO UPDATE
 		max_rate = excluded.max_rate,
 		height = excluded.height
 WHERE validator_info.height <= excluded.height`
-	_, err = db.Sql.Exec(validatorInfoQuery, validatorInfoParams...)
+	_, err = db.SQL.Exec(validatorInfoQuery, validatorInfoParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing validator infos: %s", err)
 	}
@@ -90,7 +90,7 @@ WHERE validator_info.height <= excluded.height`
 func (db *Db) GetValidatorConsensusAddress(address string) (sdk.ConsAddress, error) {
 	var result []string
 	stmt := `SELECT consensus_address FROM validator_info WHERE operator_address = $1`
-	err := db.Sqlx.Select(&result, stmt, address)
+	err := db.SQL.Select(&result, stmt, address)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +106,7 @@ func (db *Db) GetValidatorConsensusAddress(address string) (sdk.ConsAddress, err
 func (db *Db) GetValidatorOperatorAddress(consAddr string) (sdk.ValAddress, error) {
 	var result []string
 	stmt := `SELECT operator_address FROM validator_info WHERE consensus_address = $1`
-	err := db.Sqlx.Select(&result, stmt, consAddr)
+	err := db.SQL.Select(&result, stmt, consAddr)
 	if err != nil {
 		return nil, err
 	}
@@ -133,7 +133,7 @@ SELECT validator.consensus_address,
 FROM validator INNER JOIN validator_info ON validator.consensus_address=validator_info.consensus_address 
 WHERE validator_info.operator_address = $1`
 
-	err := db.Sqlx.Select(&result, stmt, valAddress)
+	err := db.SQL.Select(&result, stmt, valAddress)
 	if err != nil {
 		return nil, err
 	}
@@ -162,7 +162,7 @@ INNER JOIN validator_info
 ORDER BY validator.consensus_address`
 
 	var rows []dbtypes.ValidatorData
-	err := db.Sqlx.Select(&rows, sqlStmt)
+	err := db.SQL.Select(&rows, sqlStmt)
 	if err != nil {
 		return nil, err
 	}
@@ -189,7 +189,7 @@ SELECT validator.consensus_address,
 FROM validator INNER JOIN validator_info ON validator.consensus_address=validator_info.consensus_address 
 WHERE validator_info.self_delegate_address = $1`
 
-	err := db.Sqlx.Select(&result, stmt, address)
+	err := db.SQL.Select(&result, stmt, address)
 	if err != nil {
 		return nil, err
 	}
@@ -247,7 +247,7 @@ ON CONFLICT (validator_address) DO UPDATE
         height = excluded.height
 WHERE validator_description.height <= excluded.height`
 
-	_, err = db.Sql.Exec(stmt,
+	_, err = db.SQL.Exec(stmt,
 		dbtypes.ToNullString(consAddr.String()),
 		dbtypes.ToNullString(des.Moniker),
 		dbtypes.ToNullString(des.Identity),
@@ -270,7 +270,7 @@ func (db *Db) getValidatorDescription(address sdk.ConsAddress) (*types.Validator
 	var result []dbtypes.ValidatorDescriptionRow
 	stmt := `SELECT * FROM validator_description WHERE validator_description.validator_address = $1`
 
-	err := db.Sqlx.Select(&result, stmt, address.String())
+	err := db.SQL.Select(&result, stmt, address.String())
 	if err != nil {
 		return nil, false
 	}
@@ -340,7 +340,7 @@ ON CONFLICT (validator_address) DO UPDATE
         min_self_delegation = excluded.min_self_delegation,
         height = excluded.height
 WHERE validator_commission.height <= excluded.height`
-	_, err = db.Sql.Exec(stmt, consAddr.String(), commission, minSelfDelegation, data.Height)
+	_, err = db.SQL.Exec(stmt, consAddr.String(), commission, minSelfDelegation, data.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing validator commission: %s", err)
 	}
@@ -353,7 +353,7 @@ WHERE validator_commission.height <= excluded.height`
 func (db *Db) getValidatorCommission(address sdk.ConsAddress) (*dbtypes.ValidatorCommissionRow, bool) {
 	var rows []dbtypes.ValidatorCommissionRow
 	stmt := `SELECT * FROM validator_commission WHERE validator_address = $1`
-	err := db.Sqlx.Select(&rows, stmt, address.String())
+	err := db.SQL.Select(&rows, stmt, address.String())
 	if err != nil || len(rows) == 0 {
 		return nil, false
 	}
@@ -388,7 +388,7 @@ ON CONFLICT (validator_address) DO UPDATE
 		height = excluded.height
 WHERE validator_voting_power.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt, params...)
+	_, err := db.SQL.Exec(stmt, params...)
 	if err != nil {
 		return fmt.Errorf("error while storing validators voting power: %s", err)
 	}
@@ -422,7 +422,7 @@ func (db *Db) SaveValidatorsStatuses(statuses []types.ValidatorStatus) error {
 
 	validatorStmt = validatorStmt[:len(validatorStmt)-1]
 	validatorStmt += "ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(validatorStmt, valParams...)
+	_, err := db.SQL.Exec(validatorStmt, valParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing validators: %s", err)
 	}
@@ -435,7 +435,7 @@ ON CONFLICT (validator_address) DO UPDATE
 	    tombstoned = excluded.tombstoned,
 	    height = excluded.height
 WHERE validator_status.height <= excluded.height`
-	_, err = db.Sql.Exec(statusStmt, statusParams...)
+	_, err = db.SQL.Exec(statusStmt, statusParams...)
 	if err != nil {
 		return fmt.Errorf("error while stroring validators statuses: %s", err)
 	}
@@ -451,7 +451,7 @@ INSERT INTO double_sign_vote
 VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT DO NOTHING RETURNING id`
 
 	var id int64
-	err := db.Sql.QueryRow(stmt,
+	err := db.SQL.QueryRow(stmt,
 		vote.Type, vote.Height, vote.Round, vote.BlockID, vote.ValidatorAddress, vote.ValidatorIndex, vote.Signature,
 	).Scan(&id)
 	return id, err
@@ -472,7 +472,7 @@ func (db *Db) SaveDoubleSignEvidence(evidence types.DoubleSignEvidence) error {
 	stmt := `
 INSERT INTO double_sign_evidence (height, vote_a_id, vote_b_id) 
 VALUES ($1, $2, $3) ON CONFLICT DO NOTHING`
-	_, err = db.Sql.Exec(stmt, evidence.Height, voteA, voteB)
+	_, err = db.SQL.Exec(stmt, evidence.Height, voteA, voteB)
 	if err != nil {
 		return fmt.Errorf("error while storing double sign evidence: %s", err)
 	}

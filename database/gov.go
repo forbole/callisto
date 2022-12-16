@@ -42,7 +42,7 @@ ON CONFLICT (one_row_id) DO UPDATE
 		tally_params = excluded.tally_params,
 		height = excluded.height
 WHERE gov_params.height <= excluded.height`
-	_, err = db.Sql.Exec(stmt, string(depositParamsBz), string(votingParamsBz), string(tallyingParams), params.Height)
+	_, err = db.SQL.Exec(stmt, string(depositParamsBz), string(votingParamsBz), string(tallyingParams), params.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing gov params: %s", err)
 	}
@@ -53,7 +53,7 @@ WHERE gov_params.height <= excluded.height`
 // GetGovParams returns the most recent governance parameters
 func (db *Db) GetGovParams() (*types.GovParams, error) {
 	var rows []dbtypes.GovParamsRow
-	err := db.Sqlx.Select(&rows, `SELECT * FROM gov_params`)
+	err := db.SQL.Select(&rows, `SELECT * FROM gov_params`)
 	if err != nil {
 		return nil, err
 	}
@@ -155,7 +155,7 @@ INSERT INTO proposal(
 	// Store the proposals
 	proposalsQuery = proposalsQuery[:len(proposalsQuery)-1] // Remove trailing ","
 	proposalsQuery += " ON CONFLICT DO NOTHING"
-	_, err = db.Sql.Exec(proposalsQuery, proposalsParams...)
+	_, err = db.SQL.Exec(proposalsQuery, proposalsParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing proposals: %s", err)
 	}
@@ -166,7 +166,7 @@ INSERT INTO proposal(
 // GetProposal returns the proposal with the given id, or nil if not found
 func (db *Db) GetProposal(id uint64) (*types.Proposal, error) {
 	var rows []*dbtypes.ProposalRow
-	err := db.Sqlx.Select(&rows, `SELECT * FROM proposal WHERE id = $1`, id)
+	err := db.SQL.Select(&rows, `SELECT * FROM proposal WHERE id = $1`, id)
 	if err != nil {
 		return nil, err
 	}
@@ -208,7 +208,7 @@ func (db *Db) GetProposal(id uint64) (*types.Proposal, error) {
 func (db *Db) GetOpenProposalsIds() ([]uint64, error) {
 	var ids []uint64
 	stmt := `SELECT id FROM proposal WHERE status = $1 OR status = $2`
-	err := db.Sqlx.Select(&ids, stmt, govtypes.StatusDepositPeriod.String(), govtypes.StatusVotingPeriod.String())
+	err := db.SQL.Select(&ids, stmt, govtypes.StatusDepositPeriod.String(), govtypes.StatusVotingPeriod.String())
 	if err != nil {
 		return ids, err
 	}
@@ -216,7 +216,7 @@ func (db *Db) GetOpenProposalsIds() ([]uint64, error) {
 	// Get also the invalid status proposals due to gRPC failure but still are in deposit period or voting period
 	var idsInvalid []uint64
 	stmt = `SELECT id FROM proposal WHERE status = $1 AND (voting_end_time > NOW() OR deposit_end_time > NOW())`
-	err = db.Sqlx.Select(&idsInvalid, stmt, types.ProposalStatusInvalid)
+	err = db.SQL.Select(&idsInvalid, stmt, types.ProposalStatusInvalid)
 	ids = append(ids, idsInvalid...)
 
 	return ids, err
@@ -227,7 +227,7 @@ func (db *Db) GetOpenProposalsIds() ([]uint64, error) {
 // UpdateProposal updates a proposal stored inside the database
 func (db *Db) UpdateProposal(update types.ProposalUpdate) error {
 	query := `UPDATE proposal SET status = $1, voting_start_time = $2, voting_end_time = $3 where id = $4`
-	_, err := db.Sql.Exec(query,
+	_, err := db.SQL.Exec(query,
 		update.Status,
 		update.VotingStartTime,
 		update.VotingEndTime,
@@ -264,7 +264,7 @@ ON CONFLICT ON CONSTRAINT unique_deposit DO UPDATE
 	SET amount = excluded.amount,
 		height = excluded.height
 WHERE proposal_deposit.height <= excluded.height`
-	_, err := db.Sql.Exec(query, param...)
+	_, err := db.SQL.Exec(query, param...)
 	if err != nil {
 		return fmt.Errorf("error while storing deposits: %s", err)
 	}
@@ -290,7 +290,7 @@ WHERE proposal_vote.height <= excluded.height`
 		return fmt.Errorf("error while storing voter account: %s", err)
 	}
 
-	_, err = db.Sql.Exec(query, vote.ProposalID, vote.Voter, vote.Option.String(), vote.Height)
+	_, err = db.SQL.Exec(query, vote.ProposalID, vote.Voter, vote.Option.String(), vote.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing vote: %s", err)
 	}
@@ -328,7 +328,7 @@ ON CONFLICT ON CONSTRAINT unique_tally_result DO UPDATE
 	    no_with_veto = excluded.no_with_veto,
 	    height = excluded.height
 WHERE proposal_tally_result.height <= excluded.height`
-	_, err := db.Sql.Exec(query, param...)
+	_, err := db.SQL.Exec(query, param...)
 	if err != nil {
 		return fmt.Errorf("error while storing tally result: %s", err)
 	}
@@ -350,7 +350,7 @@ ON CONFLICT ON CONSTRAINT unique_staking_pool_snapshot DO UPDATE SET
 	height = excluded.height
 WHERE proposal_staking_pool_snapshot.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt,
+	_, err := db.SQL.Exec(stmt,
 		snapshot.ProposalID, snapshot.Pool.BondedTokens.String(), snapshot.Pool.NotBondedTokens.String(), snapshot.Pool.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing proposal staking pool snapshot: %s", err)
@@ -389,7 +389,7 @@ ON CONFLICT ON CONSTRAINT unique_validator_status_snapshot DO UPDATE
 		jailed = excluded.jailed,
 		height = excluded.height
 WHERE proposal_validator_status_snapshot.height <= excluded.height`
-	_, err := db.Sql.Exec(stmt, args...)
+	_, err := db.SQL.Exec(stmt, args...)
 	if err != nil {
 		return fmt.Errorf("error while storing proposal validator statuses snapshot: %s", err)
 	}

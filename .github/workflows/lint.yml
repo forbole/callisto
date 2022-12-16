@@ -21,9 +21,5 @@ jobs:
             .go
             .mod
             .sum
-      - uses: golangci/golangci-lint-action@v3.2.0
-        with:
-          version: v1.28
-          args: --timeout 10m
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - run: make lint
         if: "env.GIT_DIFF != ''"

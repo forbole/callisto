@@ -4,8 +4,8 @@ import (
 	"github.com/forbole/bdjuno/v3/modules/actions"
 	"github.com/forbole/bdjuno/v3/modules/types"
 
-	"github.com/forbole/juno/v3/modules/pruning"
-	"github.com/forbole/juno/v3/modules/telemetry"
+	"github.com/forbole/juno/v4/modules/pruning"
+	"github.com/forbole/juno/v4/modules/telemetry"
 
 	"github.com/forbole/bdjuno/v3/modules/slashing"
 
@@ -14,9 +14,9 @@ import (
 
 	"github.com/forbole/bdjuno/v3/modules/profiles"
 
-	jmodules "github.com/forbole/juno/v3/modules"
-	"github.com/forbole/juno/v3/modules/messages"
-	"github.com/forbole/juno/v3/modules/registrar"
+	jmodules "github.com/forbole/juno/v4/modules"
+	"github.com/forbole/juno/v4/modules/messages"
+	"github.com/forbole/juno/v4/modules/registrar"
 
 	"github.com/forbole/bdjuno/v3/utils"
 

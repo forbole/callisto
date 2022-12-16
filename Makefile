@@ -60,19 +60,25 @@ test-unit: start-docker-test
 	@go test -mod=readonly -v -coverprofile coverage.txt ./...
 .PHONY: test-unit
 
+###############################################################################
+###                                Linting                                  ###
+###############################################################################
+golangci_lint_cmd=github.com/golangci/golangci-lint/cmd/golangci-lint
+
 lint:
-	golangci-lint run --out-format=tab
+	@echo "--> Running linter"
+	@go run $(golangci_lint_cmd) run --timeout=10m
 
 lint-fix:
-	golangci-lint run --fix --out-format=tab --issues-exit-code=0
+	@echo "--> Running linter"
+	@go run $(golangci_lint_cmd) run --fix --out-format=tab --issues-exit-code=0
+
 .PHONY: lint lint-fix
 
 format:
-	find . -name '*.go' -type f -not -path "*.git*" | xargs gofmt -w -s
-	find . -name '*.go' -type f -not -path "*.git*" | xargs misspell -w
-	find . -name '*.go' -type f -not -path "*.git*" | xargs goimports -w -local github.com/forbole/bdjuno
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -name '*.pb.go' -not -path "./venv" | xargs gofmt -w -s
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -name '*.pb.go' -not -path "./venv" | xargs misspell -w
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -name '*.pb.go' -not -path "./venv" | xargs goimports -w -local github.com/forbole/bdjuno
 .PHONY: format
 
-clean:
-	rm -f tools-stamp ./build/**
-.PHONY: clean
+.PHONY: lint lint-fix format

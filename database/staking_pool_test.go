@@ -17,7 +17,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveStakingPool() {
 	expected := dbtypes.NewStakingPoolRow(50, 100, 10)
 
 	var rows []dbtypes.StakingPoolRow
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM staking_pool`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM staking_pool`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().True(rows[0].Equal(expected))
@@ -31,7 +31,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveStakingPool() {
 
 	// Verify the data
 	rows = []dbtypes.StakingPoolRow{}
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM staking_pool`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM staking_pool`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().True(rows[0].Equal(expected), "updating with a lower height should not modify the data")
@@ -47,7 +47,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveStakingPool() {
 	expected = dbtypes.NewStakingPoolRow(1, 1, 10)
 
 	rows = []dbtypes.StakingPoolRow{}
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM staking_pool`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM staking_pool`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().True(rows[0].Equal(expected), "updating with a lower height should not modify the data")
@@ -63,7 +63,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveStakingPool() {
 	expected = dbtypes.NewStakingPoolRow(1000000, 1000000, 20)
 
 	rows = []dbtypes.StakingPoolRow{}
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM staking_pool`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM staking_pool`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().True(rows[0].Equal(expected), "updating with a lower height should not modify the data")

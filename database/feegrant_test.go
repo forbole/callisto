@@ -29,7 +29,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveFeeGrantAllowance() {
 
 	// Verify the data
 	var rows []dbtypes.FeeAllowanceRow
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM fee_grant_allowance`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM fee_grant_allowance`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().Equal(rows[0].Granter, granter.String())
@@ -66,7 +66,7 @@ func (suite *DbTestSuite) TestBigDipperDb_RemoveFeeGrantAllowance() {
 
 	// verify the data
 	var count int
-	err = suite.database.Sql.QueryRow(`SELECT COUNT(*) FROM fee_grant_allowance`).Scan(&count)
+	err = suite.database.SQL.QueryRow(`SELECT COUNT(*) FROM fee_grant_allowance`).Scan(&count)
 	suite.Require().NoError(err)
 	suite.Require().Equal(0, count)
 }

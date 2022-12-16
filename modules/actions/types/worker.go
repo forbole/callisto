@@ -3,7 +3,7 @@ package types
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"time"
 
@@ -36,7 +36,7 @@ func (w *ActionsWorker) RegisterHandler(path string, handler ActionHandler) {
 		writer.Header().Set("Content-Type", "application/json")
 
 		// Read the body
-		reqBody, err := ioutil.ReadAll(request.Body)
+		reqBody, err := io.ReadAll(request.Body)
 		if err != nil {
 			http.Error(writer, "invalid payload", http.StatusBadRequest)
 			return
@@ -95,7 +95,13 @@ func (w *ActionsWorker) handleError(writer http.ResponseWriter, path string, err
 
 // Start starts the worker
 func (w *ActionsWorker) Start(port uint) {
-	err := http.ListenAndServe(fmt.Sprintf(":%d", port), w.mux)
+	server := &http.Server{
+		Addr:              fmt.Sprintf(":%d", port),
+		ReadHeaderTimeout: 60 * time.Second,
+		Handler:           w.mux,
+	}
+
+	err := server.ListenAndServe()
 	if err != nil {
 		panic(err)
 	}

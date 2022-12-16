@@ -21,7 +21,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProfilesParams() {
 	suite.Require().NoError(err)
 
 	var rows []dbtypes.ProfilesParamsRow
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM profiles_params`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM profiles_params`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 

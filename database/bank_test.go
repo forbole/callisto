@@ -21,7 +21,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSupply() {
 	expected := bddbtypes.NewSupplyRow(dbtypes.NewDbCoins(original), 10)
 
 	var rows []bddbtypes.SupplyRow
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM supply`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM supply`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1, "supply table should contain only one row")
 	suite.Require().True(expected.Equals(rows[0]))
@@ -38,7 +38,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSupply() {
 
 	// Verify the data
 	rows = []bddbtypes.SupplyRow{}
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM supply`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM supply`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1, "supply table should contain only one row")
 	suite.Require().True(expected.Equals(rows[0]))
@@ -54,7 +54,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSupply() {
 	expected = bddbtypes.NewSupplyRow(dbtypes.NewDbCoins(coins), 10)
 
 	rows = []bddbtypes.SupplyRow{}
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM supply`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM supply`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1, "supply table should contain only one row")
 	suite.Require().True(expected.Equals(rows[0]))
@@ -70,7 +70,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSupply() {
 	expected = bddbtypes.NewSupplyRow(dbtypes.NewDbCoins(coins), 20)
 
 	rows = []bddbtypes.SupplyRow{}
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM supply`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM supply`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1, "supply table should contain only one row")
 	suite.Require().True(expected.Equals(rows[0]))

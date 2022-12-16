@@ -10,7 +10,7 @@ import (
 	reportstypes "github.com/desmos-labs/desmos/v4/x/reports/types"
 	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
 
-	junomessages "github.com/forbole/juno/v3/modules/messages"
+	junomessages "github.com/forbole/juno/v4/modules/messages"
 )
 
 // desmosMessageAddressesParser represents a parser able to get the addresses of the involved

@@ -2,22 +2,19 @@ package main
 
 import (
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/forbole/juno/v3/cmd"
-	initcmd "github.com/forbole/juno/v3/cmd/init"
-	parsetypes "github.com/forbole/juno/v3/cmd/parse/types"
-	startcmd "github.com/forbole/juno/v3/cmd/start"
-	"github.com/forbole/juno/v3/modules/messages"
-
-	migratecmd "github.com/forbole/bdjuno/v3/cmd/migrate"
-	parsecmd "github.com/forbole/bdjuno/v3/cmd/parse"
-
-	"github.com/forbole/bdjuno/v3/types/config"
-
-	"github.com/forbole/bdjuno/v3/database"
-	"github.com/forbole/bdjuno/v3/modules"
-
 	gaiaapp "github.com/cosmos/gaia/v7/app"
 	desmosapp "github.com/desmos-labs/desmos/v4/app"
+	"github.com/forbole/juno/v4/cmd"
+	initcmd "github.com/forbole/juno/v4/cmd/init"
+	migratecmd "github.com/forbole/juno/v4/cmd/migrate"
+	parsetypes "github.com/forbole/juno/v4/cmd/parse/types"
+	startcmd "github.com/forbole/juno/v4/cmd/start"
+	"github.com/forbole/juno/v4/modules/messages"
+
+	parsecmd "github.com/forbole/bdjuno/v3/cmd/parse"
+	"github.com/forbole/bdjuno/v3/database"
+	"github.com/forbole/bdjuno/v3/modules"
+	"github.com/forbole/bdjuno/v3/types/config"
 )
 
 func main() {

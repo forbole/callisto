@@ -12,13 +12,13 @@ import (
 func (suite *DbTestSuite) insertToken(name string) {
 	query := fmt.Sprintf(
 		`INSERT INTO token (name) VALUES ('%s')`, name)
-	_, err := suite.database.Sql.Query(query)
+	_, err := suite.database.SQL.Query(query)
 	suite.Require().NoError(err)
 
 	query = fmt.Sprintf(
 		`INSERT INTO token_unit (token_name, denom, exponent, price_id) VALUES ('%[1]s', 'u%[1]s', 0, 'u%[1]s'), ('%[1]s', 'm%[1]s', 3, 'm%[1]s'), ('%[1]s', '%[1]s', 6, '%[1]s')`,
 		name)
-	_, err = suite.database.Sql.Query(query)
+	_, err = suite.database.SQL.Query(query)
 	suite.Require().NoError(err)
 }
 
@@ -76,7 +76,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTokenPrice() {
 	}
 
 	var rows []dbtypes.TokenPriceRow
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM token_price`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM token_price`)
 	suite.Require().NoError(err)
 	for i, row := range rows {
 		suite.Require().True(expected[i].Equals(row))
@@ -117,7 +117,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTokenPrice() {
 	}
 
 	rows = []dbtypes.TokenPriceRow{}
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM token_price ORDER BY timestamp`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM token_price ORDER BY timestamp`)
 	suite.Require().NoError(err)
 	for i, row := range rows {
 		suite.Require().True(expected[i].Equals(row))
@@ -187,7 +187,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTokenPriceHistory() {
 	}
 
 	var rows []dbtypes.TokenPriceRow
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM token_price_history`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM token_price_history`)
 	suite.Require().NoError(err)
 
 	for i, row := range rows {
@@ -254,7 +254,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTokenPriceHistory() {
 	}
 
 	rows = []dbtypes.TokenPriceRow{}
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM token_price_history ORDER BY timestamp`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM token_price_history ORDER BY timestamp`)
 	suite.Require().NoError(err)
 
 	for i, row := range rows {

@@ -1,7 +1,7 @@
 package database_test
 
 import (
-	"io/ioutil"
+	"os"
 	"path"
 	"path/filepath"
 	"regexp"
@@ -9,15 +9,15 @@ import (
 	"testing"
 	"time"
 
-	dbconfig "github.com/forbole/juno/v3/database/config"
-	"github.com/forbole/juno/v3/logging"
+	dbconfig "github.com/forbole/juno/v4/database/config"
+	"github.com/forbole/juno/v4/logging"
 
-	junodb "github.com/forbole/juno/v3/database"
+	junodb "github.com/forbole/juno/v4/database"
 
 	"github.com/forbole/bdjuno/v3/database"
 	"github.com/forbole/bdjuno/v3/types"
 
-	juno "github.com/forbole/juno/v3/types"
+	juno "github.com/forbole/juno/v4/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	tmversion "github.com/tendermint/tendermint/proto/tendermint/version"
@@ -46,13 +46,7 @@ func (suite *DbTestSuite) SetupTest() {
 
 	// Build the database
 	dbCfg := dbconfig.NewDatabaseConfig(
-		"bdjuno",
-		"localhost",
-		6433,
-		"bdjuno",
-		"password",
-		"",
-		"public",
+		"postgresql://bdjuno:password@localhost:6433/bdjuno?sslmode=disable",
 		-1,
 		-1,
 		100000,
@@ -65,25 +59,25 @@ func (suite *DbTestSuite) SetupTest() {
 	suite.Require().True(ok)
 
 	// Delete the public schema
-	_, err = bigDipperDb.Sql.Exec(`DROP SCHEMA public CASCADE;`)
+	_, err = bigDipperDb.SQL.Exec(`DROP SCHEMA public CASCADE;`)
 	suite.Require().NoError(err)
 
 	// Re-create the schema
-	_, err = bigDipperDb.Sql.Exec(`CREATE SCHEMA public;`)
+	_, err = bigDipperDb.SQL.Exec(`CREATE SCHEMA public;`)
 	suite.Require().NoError(err)
 
 	dirPath := path.Join(".", "schema")
-	dir, err := ioutil.ReadDir(dirPath)
+	dir, err := os.ReadDir(dirPath)
 	suite.Require().NoError(err)
 
 	for _, fileInfo := range dir {
-		file, err := ioutil.ReadFile(filepath.Join(dirPath, fileInfo.Name()))
+		file, err := os.ReadFile(filepath.Join(dirPath, fileInfo.Name()))
 		suite.Require().NoError(err)
 
 		commentsRegExp := regexp.MustCompile(`/\*.*\*/`)
 		requests := strings.Split(string(file), ";")
 		for _, request := range requests {
-			_, err := bigDipperDb.Sql.Exec(commentsRegExp.ReplaceAllString(request, ""))
+			_, err := bigDipperDb.SQL.Exec(commentsRegExp.ReplaceAllString(request, ""))
 			suite.Require().NoError(err)
 		}
 	}
@@ -166,7 +160,7 @@ func (suite *DbTestSuite) getAccount(addr string) sdk.AccAddress {
 	delegator, err := sdk.AccAddressFromBech32(addr)
 	suite.Require().NoError(err)
 
-	_, err = suite.database.Sql.Exec(`INSERT INTO account (address) VALUES ($1) ON CONFLICT DO NOTHING`, delegator.String())
+	_, err = suite.database.SQL.Exec(`INSERT INTO account (address) VALUES ($1) ON CONFLICT DO NOTHING`, delegator.String())
 	suite.Require().NoError(err)
 
 	return delegator

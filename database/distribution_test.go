@@ -10,6 +10,7 @@ import (
 	"github.com/forbole/bdjuno/v3/types"
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+
 	bddbtypes "github.com/forbole/bdjuno/v3/database/types"
 )
 
@@ -22,7 +23,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveCommunityPool() {
 	// Verify data
 	expected := bddbtypes.NewCommunityPoolRow(dbtypes.NewDbDecCoins(original), 10)
 	var rows []bddbtypes.CommunityPoolRow
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM community_pool`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM community_pool`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1, "community_pool table should contain only one row")
 	suite.Require().True(expected.Equals(rows[0]))
@@ -37,7 +38,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveCommunityPool() {
 	// Verify data
 	expected = bddbtypes.NewCommunityPoolRow(dbtypes.NewDbDecCoins(original), 10)
 	rows = []bddbtypes.CommunityPoolRow{}
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM community_pool`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM community_pool`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1, "community_pool table should contain only one row")
 	suite.Require().True(expected.Equals(rows[0]), "updating with lower height should not modify the data")
@@ -52,7 +53,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveCommunityPool() {
 	// Verify data
 	expected = bddbtypes.NewCommunityPoolRow(dbtypes.NewDbDecCoins(coins), 10)
 	rows = []bddbtypes.CommunityPoolRow{}
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM community_pool`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM community_pool`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1, "community_pool table should contain only one row")
 	suite.Require().True(expected.Equals(rows[0]), "updating with same height should modify the data")
@@ -67,7 +68,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveCommunityPool() {
 	// Verify data
 	expected = bddbtypes.NewCommunityPoolRow(dbtypes.NewDbDecCoins(coins), 11)
 	rows = []bddbtypes.CommunityPoolRow{}
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM community_pool`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM community_pool`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1, "community_pool table should contain only one row")
 	suite.Require().True(expected.Equals(rows[0]), "updating with higher height should modify the data")
@@ -84,7 +85,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDistributionParams() {
 	suite.Require().NoError(err)
 
 	var rows []dbtypes.DistributionParamsRow
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM distribution_params`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM distribution_params`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 
