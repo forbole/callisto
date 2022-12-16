@@ -11,7 +11,7 @@ CREATE INDEX supply_height_index ON supply (height);
 
 CREATE TABLE account_balance
 (
-    address     TEXT   NOT NULL,
+    address     TEXT   NOT NULL UNIQUE,
     --  REFERENCES account (address) UNIQUE,
     coins       COIN[] NOT NULL DEFAULT '{}',
     height      BIGINT NOT NULL

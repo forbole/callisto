@@ -1,6 +1,6 @@
 CREATE TABLE top_accounts
 (
-    address         TEXT    NOT NULL,
+    address         TEXT    NOT NULL UNIQUE,
     --  REFERENCES account (address) PRIMARY KEY,
     available       BIGINT,
     delegation      BIGINT,

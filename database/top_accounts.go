@@ -19,7 +19,7 @@ func (db *Db) SaveTopAccountsBalance(col string, bals []types.NativeTokenBalance
 		bi := i * 2
 		stmt += fmt.Sprintf("($%d, $%d),", bi+1, bi+2)
 
-		params = append(params, bal.Address, bal.Balance)
+		params = append(params, bal.Address, bal.Balance.String())
 	}
 
 	stmt = stmt[:len(stmt)-1]

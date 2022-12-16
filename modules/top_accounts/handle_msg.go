@@ -21,13 +21,6 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	if err != nil {
 		return fmt.Errorf("error while parsing account addresses of message type %s: %s", proto.MessageName(msg), err)
 	}
-	fmt.Println(addresses)
-	fmt.Println(addresses)
-	fmt.Println(addresses)
-	fmt.Println(addresses)
-	fmt.Println(addresses)
-	fmt.Println(addresses)
-	fmt.Println(addresses)
 
 	balances, err := m.bankModule.UpdateBalances(utils.FilterNonAccountAddresses(addresses), tx.Height)
 	if err != nil {
@@ -69,7 +62,8 @@ func (m *Module) saveTopAccountsAvailable(accountBalances []types.AccountBalance
 	for index, bal := range accountBalances {
 		balances[index] = types.NewNativeTokenBalance(
 			bal.Address,
-			bal.Balance.AmountOf("uqck"),
+			// To-Do: use pricefeed method to get denom
+			bal.Balance.AmountOf("uatom"),
 		)
 		addresses[index] = bal.Address
 	}
