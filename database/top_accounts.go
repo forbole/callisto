@@ -28,9 +28,29 @@ ON CONFLICT (address) DO UPDATE
 	SET available = excluded.available`
 
 	_, err := db.Sql.Exec(stmt, params...)
+	return err
+
+}
+
+func (db *Db) GetAccountBalanceSum(address string) (string, error) {
+	stmt := `SELECT 
+COALESCE(available,0) + COALESCE(delegation,0) + COALESCE(redelegation,0) + COALESCE(unbonding,0) + COALESCE(reward,0) 
+as sum FROM top_accounts WHERE address = $1 
+`
+	var rows []string
+	err := db.Sqlx.Select(&rows, stmt, address)
 	if err != nil {
-		return err
+		return "", err
 	}
-	return nil
+
+	return rows[0], nil
+}
+
+func (db *Db) UpdateTopAccountsSum(address, sum string) error {
+	stmt := `INSERT INTO top_accounts (address, sum) VALUES ($1, $2) 
+ON CONFLICT (address) DO UPDATE SET sum = excluded.sum`
+
+	_, err := db.Sql.Exec(stmt, address, sum)
+	return err
 
 }

@@ -7,7 +7,7 @@ import (
 )
 
 type BankModule interface {
-	UpdateBalances(addresses []string, height int64) ([]types.AccountBalance, error)
+	UpdateBalances(addresses []string, height int64) ([]types.NativeTokenBalance, error)
 }
 
 type DistrModule interface {

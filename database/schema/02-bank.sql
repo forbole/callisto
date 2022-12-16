@@ -13,7 +13,7 @@ CREATE TABLE account_balance
 (
     address     TEXT   NOT NULL UNIQUE,
     --  REFERENCES account (address) UNIQUE,
-    coins       COIN[] NOT NULL DEFAULT '{}',
+    coin        BIGINT NOT NULL DEFAULT 0,
     height      BIGINT NOT NULL
 );
 CREATE INDEX account_balance_height_index ON account_balance (height);

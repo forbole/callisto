@@ -27,8 +27,13 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return fmt.Errorf("error while updating account available balances: %s", err)
 	}
 
+	height, err := m.db.GetLastBlockHeight()
+	if err != nil {
+		return fmt.Errorf("error while getting lasts block height: %s", err)
+	}
+
 	// Store native token balances to top_accounts table
-	err = m.saveTopAccountsAvailable(balances)
+	err = m.saveTopAccountsAvailable(balances, height)
 	if err != nil {
 		return fmt.Errorf("error while saving available balances to top_accounts table: %s", err)
 	}
@@ -56,21 +61,18 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	return nil
 }
 
-func (m *Module) saveTopAccountsAvailable(accountBalances []types.AccountBalance) error {
-	balances := make([]types.NativeTokenBalance, len(accountBalances))
-	addresses := make([]string, len(accountBalances))
-	for index, bal := range accountBalances {
-		balances[index] = types.NewNativeTokenBalance(
-			bal.Address,
-			// To-Do: use pricefeed method to get denom
-			bal.Balance.AmountOf("uatom"),
-		)
-		addresses[index] = bal.Address
+func (m *Module) saveTopAccountsAvailable(balances []types.NativeTokenBalance, height int64) error {
+	if len(balances) == 0 {
+		return nil
 	}
-
 	err := m.db.SaveTopAccountsBalance("available", balances)
 	if err != nil {
 		return fmt.Errorf("error while saving top accounts available balances: %s", err)
+	}
+
+	var addresses = make([]string, len(balances))
+	for index, bal := range balances {
+		addresses[index] = bal.Address
 	}
 
 	return m.refreshTopAccountsSum(addresses)

@@ -11,6 +11,8 @@ type Config struct {
 	Tokens []types.Token `yaml:"tokens"`
 }
 
+var PricefeedCfg *Config
+
 // NewConfig returns a new Config instance
 func NewConfig(tokens []types.Token) *Config {
 	return &Config{
@@ -24,5 +26,7 @@ func ParseConfig(bz []byte) (*Config, error) {
 	}
 	var cfg T
 	err := yaml.Unmarshal(bz, &cfg)
+	PricefeedCfg = cfg.Config
+
 	return cfg.Config, err
 }

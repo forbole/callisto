@@ -30,7 +30,7 @@ WHERE supply.height <= excluded.height`
 }
 
 // SaveAccountBalances allows to store the given balances inside the database
-func (db *Db) SaveAccountBalances(balances []types.AccountBalance) error {
+func (db *Db) SaveAccountBalances(balances []types.NativeTokenBalance) error {
 	paramsNumber := 3
 	slices := dbutils.SplitBalances(balances, paramsNumber)
 
@@ -49,22 +49,21 @@ func (db *Db) SaveAccountBalances(balances []types.AccountBalance) error {
 	return nil
 }
 
-func (db *Db) saveUpToDateBalances(paramsNumber int, balances []types.AccountBalance) error {
-	stmt := `INSERT INTO account_balance (address, coins, height) VALUES `
+func (db *Db) saveUpToDateBalances(paramsNumber int, balances []types.NativeTokenBalance) error {
+	stmt := `INSERT INTO account_balance (address, coin, height) VALUES `
 	var params []interface{}
 
 	for i, bal := range balances {
 		bi := i * paramsNumber
 		stmt += fmt.Sprintf("($%d, $%d, $%d),", bi+1, bi+2, bi+3)
 
-		available := pq.Array(dbtypes.NewDbCoins(bal.Balance))
-		params = append(params, bal.Address, available, bal.Height)
+		params = append(params, bal.Address, bal.Balance.String(), bal.Height)
 	}
 
 	stmt = stmt[:len(stmt)-1]
 	stmt += `
 ON CONFLICT (address) DO UPDATE 
-	SET coins = excluded.coins, 
+	SET coin = excluded.coin, 
 	    height = excluded.height 
 WHERE account_balance.height <= excluded.height`
 

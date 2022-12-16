@@ -9,7 +9,7 @@ import (
 
 // UpdateBalances updates the balances of the accounts having the given addresses,
 // taking the data at the provided height
-func (m *Module) UpdateBalances(addresses []string, height int64) ([]types.AccountBalance, error) {
+func (m *Module) UpdateBalances(addresses []string, height int64) ([]types.NativeTokenBalance, error) {
 	log.Debug().Str("module", "bank").Int64("height", height).Msg("updating balances")
 
 	balances, err := m.keeper.GetBalances(addresses, height)

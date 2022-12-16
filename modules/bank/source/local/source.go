@@ -10,6 +10,7 @@ import (
 	"github.com/forbole/juno/v3/node/local"
 
 	"github.com/forbole/bdjuno/v3/modules/bank/source"
+	"github.com/forbole/bdjuno/v3/modules/pricefeed"
 	"github.com/forbole/bdjuno/v3/types"
 )
 
@@ -31,21 +32,30 @@ func NewSource(source *local.Source, bk banktypes.QueryServer) *Source {
 	}
 }
 
-// GetBalances implements keeper.Source
-func (s Source) GetBalances(addresses []string, height int64) ([]types.AccountBalance, error) {
+// GetBalances implements bankkeeper.Source
+func (s Source) GetBalances(addresses []string, height int64) ([]types.NativeTokenBalance, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
 		return nil, fmt.Errorf("error while loading height: %s", err)
 	}
 
-	var balances []types.AccountBalance
+	var balances []types.NativeTokenBalance
 	for _, address := range addresses {
-		res, err := s.q.AllBalances(sdk.WrapSDKContext(ctx), &banktypes.QueryAllBalancesRequest{Address: address})
+		balRes, err := s.q.Balance(
+			sdk.WrapSDKContext(ctx),
+			&banktypes.QueryBalanceRequest{
+				Address: address,
+				Denom:   pricefeed.GetDenom(),
+			})
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("error while getting all balances: %s", err)
 		}
 
-		balances = append(balances, types.NewAccountBalance(address, res.Balances, height))
+		balances = append(balances, types.NewNativeTokenBalance(
+			address,
+			balRes.Balance.Amount,
+			height,
+		))
 	}
 
 	return balances, nil
