@@ -22,14 +22,14 @@ type Module struct {
 	messageParser junomessages.MessageAddressesParser
 	bankModule    BankModule
 	// distrModule   DistrModule
-	// stakingModule StakingModule
+	stakingModule StakingModule
 }
 
 // NewModule returns a new Module instance
 func NewModule(
 	bankModule BankModule,
 	// distrModule DistrModule,
-	// stakingModule StakingModule,
+	stakingModule StakingModule,
 	messageParser junomessages.MessageAddressesParser,
 	cdc codec.Codec,
 	db *database.Db,
@@ -39,8 +39,8 @@ func NewModule(
 		bankModule: bankModule,
 		// distrModule:   distrModule,
 		messageParser: messageParser,
-		// stakingModule: stakingModule,
-		db: db,
+		stakingModule: stakingModule,
+		db:            db,
 	}
 }
 

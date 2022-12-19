@@ -106,7 +106,8 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		slashingModule,
 		stakingModule,
 		topaccounts.NewModule(bankModule,
-			// distrModule, slashingModule,
+			// distrModule,
+			stakingModule,
 			r.parser, cdc, db),
 		upgradeModule,
 	}

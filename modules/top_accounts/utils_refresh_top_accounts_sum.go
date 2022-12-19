@@ -11,8 +11,6 @@ func (m *Module) refreshTopAccountsSum(addresses []string) error {
 			return fmt.Errorf("error while getting account balance sum : %s", err)
 		}
 
-		fmt.Println(addr)
-		fmt.Println("sum: ", sum)
 		err = m.db.UpdateTopAccountsSum(addr, sum)
 		if err != nil {
 			return fmt.Errorf("error while updating top accounts sum : %s", err)

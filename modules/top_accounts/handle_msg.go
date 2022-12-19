@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/bdjuno/v3/modules/utils"
 	"github.com/forbole/bdjuno/v3/types"
 	juno "github.com/forbole/juno/v3/types"
@@ -38,25 +39,25 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return fmt.Errorf("error while saving available balances to top_accounts table: %s", err)
 	}
 
-	// switch cosmosMsg := msg.(type) {
-	// // Handle x/staking delegations, redelegations, and unbondings
-	// case *stakingtypes.MsgDelegate:
-	// 	return m.stakingModule.HandleMsgDelegate(tx.Height, cosmosMsg)
+	switch cosmosMsg := msg.(type) {
+	// Handle x/staking delegations, redelegations, and unbondings
+	case *stakingtypes.MsgDelegate:
+		return m.stakingModule.HandleMsgDelegate(tx.Height, cosmosMsg)
 
-	// case *stakingtypes.MsgBeginRedelegate:
-	// 	return m.stakingModule.HandleMsgBeginRedelegate(tx, index, cosmosMsg)
+	case *stakingtypes.MsgBeginRedelegate:
+		return m.stakingModule.HandleMsgBeginRedelegate(tx, index, cosmosMsg)
 
-	// case *stakingtypes.MsgUndelegate:
-	// 	return m.stakingModule.HandleMsgUndelegate(tx, index, cosmosMsg)
+	case *stakingtypes.MsgUndelegate:
+		return m.stakingModule.HandleMsgUndelegate(tx, index, cosmosMsg)
 
-	// // Handle x/distribution delegator rewards
-	// case *distritypes.MsgWithdrawDelegatorReward:
-	// 	err := m.distrModule.RefreshDelegatorRewards([]string{cosmosMsg.DelegatorAddress}, tx.Height)
-	// 	if err != nil {
-	// 		return fmt.Errorf("error while refreshing delegator rewards from message: %s", err)
-	// 	}
+		// // Handle x/distribution delegator rewards
+		// case *distritypes.MsgWithdrawDelegatorReward:
+		// 	err := m.distrModule.RefreshDelegatorRewards([]string{cosmosMsg.DelegatorAddress}, tx.Height)
+		// 	if err != nil {
+		// 		return fmt.Errorf("error while refreshing delegator rewards from message: %s", err)
+		// 	}
 
-	// }
+	}
 
 	return nil
 }
