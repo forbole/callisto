@@ -27,11 +27,11 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	case *stakingtypes.MsgDelegate:
 		return m.stakingModule.HandleMsgDelegate(tx.Height, cosmosMsg)
 
-	case *stakingtypes.MsgBeginRedelegate:
-		return m.stakingModule.HandleMsgBeginRedelegate(tx, index, cosmosMsg)
+		// case *stakingtypes.MsgBeginRedelegate:
+		// 	return m.stakingModule.HandleMsgBeginRedelegate(tx, index, cosmosMsg)
 
-	case *stakingtypes.MsgUndelegate:
-		return m.stakingModule.HandleMsgUndelegate(tx, index, cosmosMsg)
+		// case *stakingtypes.MsgUndelegate:
+		// 	return m.stakingModule.HandleMsgUndelegate(tx, index, cosmosMsg)
 
 		// // Handle x/distribution delegator rewards
 		// case *distritypes.MsgWithdrawDelegatorReward:

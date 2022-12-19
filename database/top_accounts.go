@@ -6,12 +6,12 @@ import (
 	"github.com/forbole/bdjuno/v3/types"
 )
 
-func (db *Db) SaveTopAccountsBalance(col string, bals []types.NativeTokenBalance) error {
+func (db *Db) SaveTopAccountsBalance(column string, bals []types.NativeTokenBalance) error {
 	if len(bals) == 0 {
 		return nil
 	}
 
-	stmt := fmt.Sprintf("INSERT INTO top_accounts (address, %s) VALUES ", col)
+	stmt := fmt.Sprintf("INSERT INTO top_accounts (address, %s) VALUES ", column)
 
 	var params []interface{}
 
@@ -39,8 +39,8 @@ as sum FROM top_accounts WHERE address = $1
 `
 	var rows []string
 	err := db.Sqlx.Select(&rows, stmt, address)
-	if err != nil {
-		return "", err
+	if err != nil || len(rows) == 0 {
+		return "0", err
 	}
 
 	return rows[0], nil
