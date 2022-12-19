@@ -6,7 +6,7 @@ import (
 	"github.com/forbole/bdjuno/v3/types"
 )
 
-func (db *Db) SaveTopAccountsBalance(column string, bals []types.NativeTokenBalance) error {
+func (db *Db) SaveTopAccountsBalance(column string, bals []types.NativeTokenAmount) error {
 	if len(bals) == 0 {
 		return nil
 	}
@@ -23,9 +23,7 @@ func (db *Db) SaveTopAccountsBalance(column string, bals []types.NativeTokenBala
 	}
 
 	stmt = stmt[:len(stmt)-1]
-	stmt += `
-ON CONFLICT (address) DO UPDATE 
-	SET available = excluded.available`
+	stmt += fmt.Sprintf("ON CONFLICT (address) DO UPDATE SET %s = excluded.%s ", column, column)
 
 	_, err := db.Sql.Exec(stmt, params...)
 	return err

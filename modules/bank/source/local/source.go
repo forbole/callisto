@@ -33,13 +33,13 @@ func NewSource(source *local.Source, bk banktypes.QueryServer) *Source {
 }
 
 // GetBalances implements bankkeeper.Source
-func (s Source) GetBalances(addresses []string, height int64) ([]types.NativeTokenBalance, error) {
+func (s Source) GetBalances(addresses []string, height int64) ([]types.NativeTokenAmount, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
 		return nil, fmt.Errorf("error while loading height: %s", err)
 	}
 
-	var balances []types.NativeTokenBalance
+	var balances []types.NativeTokenAmount
 	for _, address := range addresses {
 		balRes, err := s.q.Balance(
 			sdk.WrapSDKContext(ctx),
@@ -51,7 +51,7 @@ func (s Source) GetBalances(addresses []string, height int64) ([]types.NativeTok
 			return nil, fmt.Errorf("error while getting all balances: %s", err)
 		}
 
-		balances = append(balances, types.NewNativeTokenBalance(
+		balances = append(balances, types.NewNativeTokenAmount(
 			address,
 			balRes.Balance.Amount,
 			height,

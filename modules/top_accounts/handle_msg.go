@@ -25,7 +25,7 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	switch cosmosMsg := msg.(type) {
 	// Handle x/staking delegations, redelegations, and unbondings
 	case *stakingtypes.MsgDelegate:
-		return m.stakingModule.HandleMsgDelegate(tx.Height, cosmosMsg)
+		return m.handleMsgDelegate(tx.Height, cosmosMsg)
 
 		// case *stakingtypes.MsgBeginRedelegate:
 		// 	return m.stakingModule.HandleMsgBeginRedelegate(tx, index, cosmosMsg)
@@ -59,7 +59,21 @@ func (m *Module) refreshBalances(msg sdk.Msg, tx *juno.Tx) error {
 
 	err = m.refreshTopAccountsSum(addresses)
 	if err != nil {
-		return fmt.Errorf("error while refreshing top accounts sum: %s", err)
+		return fmt.Errorf("error while refreshing top accounts sum while refreshing balance: %s", err)
+	}
+
+	return nil
+}
+
+func (m *Module) handleMsgDelegate(height int64, msg *stakingtypes.MsgDelegate) error {
+	err := m.stakingModule.HandleMsgDelegate(height, msg)
+	if err != nil {
+		return fmt.Errorf("error while handling MsgDelegate: %s", err)
+	}
+
+	err = m.refreshTopAccountsSum([]string{msg.DelegatorAddress})
+	if err != nil {
+		return fmt.Errorf("error while refreshing top accounts sum while handling MsgDelegate: %s", err)
 	}
 
 	return nil
