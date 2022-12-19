@@ -5,16 +5,15 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/bdjuno/v3/modules/pricefeed"
 	"github.com/forbole/bdjuno/v3/types"
 	"github.com/rs/zerolog/log"
 )
 
-func (m *Module) HandleMsgDelegate(height int64, msg *stakingtypes.MsgDelegate) error {
+func (m *Module) RefreshDelegations(height int64, delegatorAddr string) error {
 	log.Debug().Str("module", "staking").Int64("height", height).Msg("updating delegation")
 
-	var balance = sdk.Coin{
+	var coin = sdk.Coin{
 		Denom:  pricefeed.GetDenom(),
 		Amount: sdk.NewInt(0),
 	}
@@ -23,7 +22,7 @@ func (m *Module) HandleMsgDelegate(height int64, msg *stakingtypes.MsgDelegate) 
 	for !stop {
 		res, err := m.source.GetDelegationsWithPagination(
 			height,
-			msg.DelegatorAddress,
+			delegatorAddr,
 			&query.PageRequest{
 				Key:   nextKey,
 				Limit: 100,
@@ -37,13 +36,13 @@ func (m *Module) HandleMsgDelegate(height int64, msg *stakingtypes.MsgDelegate) 
 		stop = len(res.Pagination.NextKey) == 0
 
 		for _, r := range res.DelegationResponses {
-			balance = balance.Add(r.Balance)
+			coin = coin.Add(r.Balance)
 		}
 	}
 
 	err := m.db.SaveTopAccountsBalance("delegation",
 		[]types.NativeTokenAmount{
-			types.NewNativeTokenAmount(msg.DelegatorAddress, balance.Amount, height),
+			types.NewNativeTokenAmount(delegatorAddr, coin.Amount, height),
 		})
 	if err != nil {
 		return fmt.Errorf("error while savting top accounts delegation from MsgDelegate: %s", err)

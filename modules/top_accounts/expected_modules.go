@@ -1,7 +1,7 @@
 package top_accounts
 
 import (
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	juno "github.com/forbole/juno/v3/types"
 )
 
 type BankModule interface {
@@ -13,7 +13,7 @@ type DistrModule interface {
 }
 
 type StakingModule interface {
-	HandleMsgDelegate(height int64, msg *stakingtypes.MsgDelegate) error
-	// HandleMsgBeginRedelegate(tx *juno.Tx, index int, msg *stakingtypes.MsgBeginRedelegate) error
+	RefreshDelegations(height int64, delegatorAddr string) error
+	RefreshRedelegations(tx *juno.Tx, index int, delegatorAddr string) error
 	// HandleMsgUndelegate(tx *juno.Tx, index int, msg *stakingtypes.MsgUndelegate) error
 }
