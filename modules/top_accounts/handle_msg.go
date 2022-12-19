@@ -5,6 +5,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	distritypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/bdjuno/v3/modules/utils"
 	juno "github.com/forbole/juno/v3/types"
@@ -23,7 +24,8 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return fmt.Errorf("error while parsing account addresses of message type %s: %s", proto.MessageName(msg), err)
 	}
 
-	err = m.bankModule.UpdateBalances(utils.FilterNonAccountAddresses(addresses), tx.Height)
+	addresses = utils.FilterNonAccountAddresses(addresses)
+	err = m.bankModule.UpdateBalances(addresses, tx.Height)
 	if err != nil {
 		return fmt.Errorf("error while updating account available balances: %s", err)
 	}
@@ -35,6 +37,7 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 
 	// Handle x/staking delegations, redelegations, and unbondings
 	switch cosmosMsg := msg.(type) {
+
 	case *stakingtypes.MsgDelegate:
 		return m.handleMsgDelegate(tx.Height, cosmosMsg.DelegatorAddress)
 
@@ -44,12 +47,9 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	case *stakingtypes.MsgUndelegate:
 		return m.handleMsgUndelegate(tx, index, cosmosMsg.DelegatorAddress)
 
-		// // Handle x/distribution delegator rewards
-		// case *distritypes.MsgWithdrawDelegatorReward:
-		// 	err := m.distrModule.RefreshDelegatorRewards([]string{cosmosMsg.DelegatorAddress}, tx.Height)
-		// 	if err != nil {
-		// 		return fmt.Errorf("error while refreshing delegator rewards from message: %s", err)
-		// 	}
+	// Handle x/distribution delegator rewards
+	case *distritypes.MsgWithdrawDelegatorReward:
+		return m.handleMsgWithdrawDelegatorReward(tx.Height, index, cosmosMsg.DelegatorAddress)
 
 	}
 
@@ -98,7 +98,7 @@ func (m *Module) handleMsgBeginRedelegate(
 		return err
 	}
 
-	// When the time expires, update the delegations & redelegations
+	// When the time expires, refresh the delegations & redelegations
 	time.AfterFunc(time.Until(completionTime), m.refreshDelegations(tx.Height, delAddr))
 	time.AfterFunc(time.Until(completionTime), m.refreshRedelegations(tx, index, delAddr))
 
@@ -132,9 +132,29 @@ func (m *Module) handleMsgUndelegate(tx *juno.Tx, index int, delAddr string) err
 		return err
 	}
 
+	// When the time expires, refresh the delegations & unbondings & available balance
 	time.AfterFunc(time.Until(completionTime), m.refreshDelegations(tx.Height, delAddr))
 	time.AfterFunc(time.Until(completionTime), m.refreshUnbondings(tx.Height, index, delAddr))
 	time.AfterFunc(time.Until(completionTime), m.refreshBalance(tx.Height, delAddr))
+
+	return nil
+}
+
+func (m *Module) handleMsgWithdrawDelegatorReward(height int64, index int, delAddr string) error {
+	err := m.distrModule.RefreshDelegatorRewards(height, []string{delAddr})
+	if err != nil {
+		return fmt.Errorf("error while refreshing delegator rewards: %s", err)
+	}
+
+	err = m.bankModule.UpdateBalances([]string{delAddr}, height)
+	if err != nil {
+		return fmt.Errorf("error while updating account available balances with MsgWithdrawDelegatorReward: %s", err)
+	}
+
+	err = m.refreshTopAccountsSum([]string{delAddr})
+	if err != nil {
+		return fmt.Errorf("error while refreshing top accounts sum while handling MsgDelegate: %s", err)
+	}
 
 	return nil
 }

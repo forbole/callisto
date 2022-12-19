@@ -21,23 +21,23 @@ type Module struct {
 	db            *database.Db
 	messageParser junomessages.MessageAddressesParser
 	bankModule    BankModule
-	// distrModule   DistrModule
+	distrModule   DistrModule
 	stakingModule StakingModule
 }
 
 // NewModule returns a new Module instance
 func NewModule(
 	bankModule BankModule,
-	// distrModule DistrModule,
+	distrModule DistrModule,
 	stakingModule StakingModule,
 	messageParser junomessages.MessageAddressesParser,
 	cdc codec.Codec,
 	db *database.Db,
 ) *Module {
 	return &Module{
-		cdc:        cdc,
-		bankModule: bankModule,
-		// distrModule:   distrModule,
+		cdc:           cdc,
+		bankModule:    bankModule,
+		distrModule:   distrModule,
 		messageParser: messageParser,
 		stakingModule: stakingModule,
 		db:            db,

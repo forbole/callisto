@@ -12,7 +12,6 @@ import (
 func (m *Module) RefreshUnbondings(height int64, index int, delegatorAddr string) error {
 	log.Debug().
 		Str("module", "staking").
-		Str("delegator", delegatorAddr).
 		Int64("height", height).Msg("updating unbonding delegations")
 
 	coin := sdk.NewInt(0)

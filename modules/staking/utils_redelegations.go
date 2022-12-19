@@ -13,7 +13,6 @@ import (
 func (m *Module) RefreshRedelegations(height int64, index int, delegatorAddr string) error {
 	log.Debug().
 		Str("module", "staking").
-		Str("delegator", delegatorAddr).
 		Int64("height", height).Msg("updating redelegations")
 
 	coin := sdk.NewInt(0)

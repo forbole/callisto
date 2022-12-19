@@ -5,7 +5,7 @@ type BankModule interface {
 }
 
 type DistrModule interface {
-	RefreshDelegatorRewards(addresses []string, height int64) error
+	RefreshDelegatorRewards(height int64, delegators []string) error
 }
 
 type StakingModule interface {
