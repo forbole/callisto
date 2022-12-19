@@ -2,12 +2,11 @@ package top_accounts
 
 import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/forbole/bdjuno/v3/types"
 	juno "github.com/forbole/juno/v3/types"
 )
 
 type BankModule interface {
-	UpdateBalances(addresses []string, height int64) ([]types.NativeTokenBalance, error)
+	UpdateBalances(addresses []string, height int64) error
 }
 
 type DistrModule interface {

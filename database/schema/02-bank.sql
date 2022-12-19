@@ -8,12 +8,3 @@ CREATE TABLE supply
     CHECK (one_row_id)
 );
 CREATE INDEX supply_height_index ON supply (height);
-
-CREATE TABLE account_balance
-(
-    address     TEXT   NOT NULL UNIQUE,
-    --  REFERENCES account (address) UNIQUE,
-    coin        BIGINT NOT NULL DEFAULT 0,
-    height      BIGINT NOT NULL
-);
-CREATE INDEX account_balance_height_index ON account_balance (height);

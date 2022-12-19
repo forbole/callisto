@@ -6,7 +6,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/bdjuno/v3/modules/utils"
-	"github.com/forbole/bdjuno/v3/types"
 	juno "github.com/forbole/juno/v3/types"
 	"github.com/gogo/protobuf/proto"
 )
@@ -18,25 +17,9 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	}
 
 	// Refresh account available balances
-	addresses, err := m.messageParser(m.cdc, msg)
+	err := m.refreshBalances(msg, tx)
 	if err != nil {
-		return fmt.Errorf("error while parsing account addresses of message type %s: %s", proto.MessageName(msg), err)
-	}
-
-	balances, err := m.bankModule.UpdateBalances(utils.FilterNonAccountAddresses(addresses), tx.Height)
-	if err != nil {
-		return fmt.Errorf("error while updating account available balances: %s", err)
-	}
-
-	height, err := m.db.GetLastBlockHeight()
-	if err != nil {
-		return fmt.Errorf("error while getting lasts block height: %s", err)
-	}
-
-	// Store native token balances to top_accounts table
-	err = m.saveTopAccountsAvailable(balances, height)
-	if err != nil {
-		return fmt.Errorf("error while saving available balances to top_accounts table: %s", err)
+		return fmt.Errorf("error while refreshing account available balances: %s", err)
 	}
 
 	switch cosmosMsg := msg.(type) {
@@ -62,19 +45,22 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	return nil
 }
 
-func (m *Module) saveTopAccountsAvailable(balances []types.NativeTokenBalance, height int64) error {
-	if len(balances) == 0 {
-		return nil
-	}
-	err := m.db.SaveTopAccountsBalance("available", balances)
+func (m *Module) refreshBalances(msg sdk.Msg, tx *juno.Tx) error {
+
+	addresses, err := m.messageParser(m.cdc, msg)
 	if err != nil {
-		return fmt.Errorf("error while saving top accounts available balances: %s", err)
+		return fmt.Errorf("error while parsing account addresses of message type %s: %s", proto.MessageName(msg), err)
 	}
 
-	var addresses = make([]string, len(balances))
-	for index, bal := range balances {
-		addresses[index] = bal.Address
+	err = m.bankModule.UpdateBalances(utils.FilterNonAccountAddresses(addresses), tx.Height)
+	if err != nil {
+		return fmt.Errorf("error while updating account available balances: %s", err)
 	}
 
-	return m.refreshTopAccountsSum(addresses)
+	err = m.refreshTopAccountsSum(addresses)
+	if err != nil {
+		return fmt.Errorf("error while refreshing top accounts sum: %s", err)
+	}
+
+	return nil
 }
