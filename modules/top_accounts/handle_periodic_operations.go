@@ -13,12 +13,7 @@ import (
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	log.Debug().Str("module", "top accounts").Msg("setting up periodic tasks")
 
-	// if _, err := scheduler.Every(1).Day().At("00:00").Do(func() {
-	// 	utils.WatchMethod(m.RefreshRewards)
-	// }); err != nil {
-	// 	return fmt.Errorf("error while setting up bank periodic operation: %s", err)
-	// }
-	if _, err := scheduler.Every(1).Minute().Do(func() {
+	if _, err := scheduler.Every(1).Day().At("00:00").Do(func() {
 		utils.WatchMethod(m.RefreshRewards)
 	}); err != nil {
 		return fmt.Errorf("error while setting up bank periodic operation: %s", err)
