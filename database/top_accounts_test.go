@@ -103,16 +103,41 @@ func (suite *DbTestSuite) TestGetAccountBalanceSum() {
 	suite.Require().NoError(err)
 
 	// Verify Data
+	expectedSum := "500"
 	sum, err := suite.database.GetAccountBalanceSum("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	suite.Require().NoError(err)
-	suite.Require().Equal("500", sum)
+	suite.Require().Equal(expectedSum, sum)
 
 	// Verify getting 0 amount
+	expectedSum = "0"
 	sum, err = suite.database.GetAccountBalanceSum("")
 	suite.Require().NoError(err)
-	suite.Require().Equal("0", sum)
+	suite.Require().Equal(expectedSum, sum)
 }
 
 func (suite *DbTestSuite) TestUpdateTopAccountsSum() {
+	suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 
+	// Store top accounts sum
+	amount := "100"
+	err := suite.database.UpdateTopAccountsSum("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs", amount)
+	suite.Require().NoError(err)
+
+	// Verify data
+	var rows []string
+	err = suite.database.Sqlx.Select(&rows, `SELECT sum FROM top_accounts`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	suite.Require().Equal(amount, rows[0])
+
+	// Store different amount
+	amount = "200"
+	err = suite.database.UpdateTopAccountsSum("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs", amount)
+	suite.Require().NoError(err)
+
+	// Verify data
+	err = suite.database.Sqlx.Select(&rows, `SELECT sum FROM top_accounts`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	suite.Require().Equal(amount, rows[0])
 }
