@@ -78,7 +78,39 @@ func (suite *DbTestSuite) TestSaveTopAccountsBalance() {
 }
 
 func (suite *DbTestSuite) TestGetAccountBalanceSum() {
+	suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 
+	// Store balances
+	amount := types.NewNativeTokenAmount(
+		"cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs",
+		sdk.NewInt(100),
+		10,
+	)
+
+	err := suite.database.SaveTopAccountsBalance("available", []types.NativeTokenAmount{amount})
+	suite.Require().NoError(err)
+
+	err = suite.database.SaveTopAccountsBalance("delegation", []types.NativeTokenAmount{amount})
+	suite.Require().NoError(err)
+
+	err = suite.database.SaveTopAccountsBalance("redelegation", []types.NativeTokenAmount{amount})
+	suite.Require().NoError(err)
+
+	err = suite.database.SaveTopAccountsBalance("unbonding", []types.NativeTokenAmount{amount})
+	suite.Require().NoError(err)
+
+	err = suite.database.SaveTopAccountsBalance("reward", []types.NativeTokenAmount{amount})
+	suite.Require().NoError(err)
+
+	// Verify Data
+	sum, err := suite.database.GetAccountBalanceSum("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
+	suite.Require().NoError(err)
+	suite.Require().Equal("500", sum)
+
+	// Verify getting 0 amount
+	sum, err = suite.database.GetAccountBalanceSum("")
+	suite.Require().NoError(err)
+	suite.Require().Equal("0", sum)
 }
 
 func (suite *DbTestSuite) TestUpdateTopAccountsSum() {
