@@ -73,7 +73,7 @@ func (m *Module) handleMsgDelegate(height int64, delAddr string) error {
 func (m *Module) handleMsgBeginRedelegate(
 	tx *juno.Tx, index int, delAddr string) error {
 
-	err := m.stakingModule.RefreshRedelegations(tx.Height, index, delAddr)
+	err := m.stakingModule.RefreshRedelegations(tx.Height, delAddr)
 	if err != nil {
 		return fmt.Errorf("error while refreshing redelegations while handling MsgBeginRedelegate: %s", err)
 	}
@@ -107,7 +107,7 @@ func (m *Module) handleMsgBeginRedelegate(
 
 // handleMsgUndelegate handles a MsgUndelegate storing the data inside the database
 func (m *Module) handleMsgUndelegate(tx *juno.Tx, index int, delAddr string) error {
-	err := m.stakingModule.RefreshUnbondings(tx.Height, index, delAddr)
+	err := m.stakingModule.RefreshUnbondings(tx.Height, delAddr)
 	if err != nil {
 		return fmt.Errorf("error while refreshing undelegations while handling MsgUndelegate: %s", err)
 	}
