@@ -11,6 +11,9 @@ object_relationships:
       remote_table:
         name: vesting_account
         schema: public
+- name: top_accounts
+  using:
+    foreign_key_constraint_on: address
 array_relationships:
 - name: proposal_deposits
   using:
