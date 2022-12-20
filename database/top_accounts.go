@@ -11,6 +11,7 @@ func (db *Db) SaveTopAccountsBalance(column string, bals []types.NativeTokenAmou
 		return nil
 	}
 
+	/* #nosec G201 */
 	stmt := fmt.Sprintf("INSERT INTO top_accounts (address, %s) VALUES ", column)
 
 	var params []interface{}
