@@ -100,7 +100,7 @@ func (m *Module) handleMsgBeginRedelegate(
 
 	// When the time expires, refresh the delegations & redelegations
 	time.AfterFunc(time.Until(completionTime), m.refreshDelegations(tx.Height, delAddr))
-	time.AfterFunc(time.Until(completionTime), m.refreshRedelegations(tx, index, delAddr))
+	time.AfterFunc(time.Until(completionTime), m.refreshRedelegations(tx, delAddr))
 
 	return nil
 }
@@ -134,7 +134,7 @@ func (m *Module) handleMsgUndelegate(tx *juno.Tx, index int, delAddr string) err
 
 	// When the time expires, refresh the delegations & unbondings & available balance
 	time.AfterFunc(time.Until(completionTime), m.refreshDelegations(tx.Height, delAddr))
-	time.AfterFunc(time.Until(completionTime), m.refreshUnbondings(tx.Height, index, delAddr))
+	time.AfterFunc(time.Until(completionTime), m.refreshUnbondings(tx.Height, delAddr))
 	time.AfterFunc(time.Until(completionTime), m.refreshBalance(tx.Height, delAddr))
 
 	return nil

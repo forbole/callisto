@@ -32,7 +32,7 @@ func (m *Module) refreshDelegations(height int64, delegator string) func() {
 	}
 }
 
-func (m *Module) refreshRedelegations(tx *juno.Tx, index int, delegatorAddr string) func() {
+func (m *Module) refreshRedelegations(tx *juno.Tx, delegatorAddr string) func() {
 	return func() {
 		err := m.stakingModule.RefreshRedelegations(tx.Height, delegatorAddr)
 		if err != nil {
@@ -42,7 +42,7 @@ func (m *Module) refreshRedelegations(tx *juno.Tx, index int, delegatorAddr stri
 	}
 }
 
-func (m *Module) refreshUnbondings(height int64, index int, delegatorAddr string) func() {
+func (m *Module) refreshUnbondings(height int64, delegatorAddr string) func() {
 	return func() {
 		err := m.stakingModule.RefreshUnbondings(height, delegatorAddr)
 		if err != nil {
