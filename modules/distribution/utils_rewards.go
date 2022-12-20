@@ -16,7 +16,6 @@ func (m *Module) RefreshDelegatorRewards(height int64, delegators []string) erro
 
 	nativeTokenAmounts := make([]types.NativeTokenAmount, len(delegators))
 	for index, del := range delegators {
-
 		rews, err := m.source.DelegatorTotalRewards(del, height)
 		if err != nil {
 			return fmt.Errorf("error while getting delegator rewards: %s", err)

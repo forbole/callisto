@@ -48,7 +48,7 @@ func (s Source) GetBalances(addresses []string, height int64) ([]types.NativeTok
 				Denom:   pricefeed.GetDenom(),
 			})
 		if err != nil {
-			return nil, fmt.Errorf("error while getting all balances: %s", err)
+			return nil, fmt.Errorf("error while getting balance: %s", err)
 		}
 
 		balances = append(balances, types.NewNativeTokenAmount(
