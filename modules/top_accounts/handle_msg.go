@@ -49,7 +49,7 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 
 	// Handle x/distribution delegator rewards
 	case *distritypes.MsgWithdrawDelegatorReward:
-		return m.handleMsgWithdrawDelegatorReward(tx.Height, index, cosmosMsg.DelegatorAddress)
+		return m.handleMsgWithdrawDelegatorReward(tx.Height, cosmosMsg.DelegatorAddress)
 
 	}
 
@@ -140,7 +140,7 @@ func (m *Module) handleMsgUndelegate(tx *juno.Tx, index int, delAddr string) err
 	return nil
 }
 
-func (m *Module) handleMsgWithdrawDelegatorReward(height int64, index int, delAddr string) error {
+func (m *Module) handleMsgWithdrawDelegatorReward(height int64, delAddr string) error {
 	err := m.distrModule.RefreshDelegatorRewards(height, []string{delAddr})
 	if err != nil {
 		return fmt.Errorf("error while refreshing delegator rewards: %s", err)
