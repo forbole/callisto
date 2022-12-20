@@ -53,17 +53,17 @@ func (m *Module) refreshUnbondings(height int64, delegatorAddr string) func() {
 }
 
 func (m *Module) refreshBalance(height int64, address string) func() {
-	err := m.bankModule.UpdateBalances([]string{address}, height)
-	if err != nil {
-		log.Error().Str("module", "top acconts").Err(err).
-			Str("operation", "update balance").Msg("error while updating account available balances")
-	}
+	return func() {
+		err := m.bankModule.UpdateBalances([]string{address}, height)
+		if err != nil {
+			log.Error().Str("module", "top acconts").Err(err).
+				Str("operation", "update balance").Msg("error while updating account available balances")
+		}
 
-	err = m.refreshTopAccountsSum([]string{address})
-	if err != nil {
-		log.Error().Str("module", "top acconts").Err(err).
-			Str("operation", "update balance").Msg("error while refreshing top accounts sum while refreshing balance")
+		err = m.refreshTopAccountsSum([]string{address})
+		if err != nil {
+			log.Error().Str("module", "top acconts").Err(err).
+				Str("operation", "update balance").Msg("error while refreshing top accounts sum while refreshing balance")
+		}
 	}
-
-	return nil
 }
