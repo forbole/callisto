@@ -48,7 +48,7 @@ func (m *Module) RefreshRedelegations(height int64, delegatorAddr string) error 
 			types.NewNativeTokenAmount(delegatorAddr, coin, height),
 		})
 	if err != nil {
-		return fmt.Errorf("error while savting top accounts delegation from MsgDelegate: %s", err)
+		return fmt.Errorf("error while saving top accounts redelegation from MsgBeginRedelegate: %s", err)
 	}
 	return nil
 }
