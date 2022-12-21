@@ -31,5 +31,6 @@ func (a TopAccountsRow) Equals(b TopAccountsRow) bool {
 		a.Delegation == b.Delegation &&
 		a.Redelegation == b.Redelegation &&
 		a.Unbonding == b.Unbonding &&
-		a.Reward == b.Reward
+		a.Reward == b.Reward &&
+		a.Sum == b.Sum
 }
