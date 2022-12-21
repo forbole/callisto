@@ -2,7 +2,7 @@
 ### Changes
 
 #### Top Accounts Module
-- ([\#510](https://github.com/forbole/bdjuno/pull/510)) Implemented top accounts module to store chain native token's balance for ranking 
+- ([\#510](https://github.com/forbole/bdjuno/pull/510)) Implemented `top_accounts` module to store chain native token's balance for ranking 
 
 
 #### CI
