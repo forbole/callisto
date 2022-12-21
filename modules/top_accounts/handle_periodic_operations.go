@@ -16,7 +16,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	if _, err := scheduler.Every(1).Day().At("00:00").Do(func() {
 		utils.WatchMethod(m.RefreshRewards)
 	}); err != nil {
-		return fmt.Errorf("error while setting up bank periodic operation: %s", err)
+		return fmt.Errorf("error while setting up top accounts periodic operation: %s", err)
 	}
 
 	return nil
