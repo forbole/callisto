@@ -50,7 +50,7 @@ func (m *Module) RefreshRewards() error {
 
 	err = m.refreshTopAccountsSum(delegators)
 	if err != nil {
-		return fmt.Errorf("error while refreshing top accounts sum while handling MsgDelegate: %s", err)
+		return fmt.Errorf("error while refreshing top accounts sum value: %s", err)
 	}
 
 	return nil
