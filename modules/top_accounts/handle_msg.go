@@ -80,7 +80,7 @@ func (m *Module) handleMsgBeginRedelegate(
 
 	err = m.refreshTopAccountsSum([]string{delAddr})
 	if err != nil {
-		return fmt.Errorf("error while refreshing top accounts sum while handling MsgDelegate: %s", err)
+		return fmt.Errorf("error while refreshing top accounts sum while handling MsgBeginRedelegate: %s", err)
 	}
 
 	event, err := tx.FindEventByType(index, stakingtypes.EventTypeRedelegate)
