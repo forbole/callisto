@@ -37,7 +37,7 @@ func (m *Module) refreshRedelegations(tx *juno.Tx, delegatorAddr string) func() 
 		err := m.stakingModule.RefreshRedelegations(tx.Height, delegatorAddr)
 		if err != nil {
 			log.Error().Str("module", "top_accounts").Err(err).
-				Str("operation", "refresh delegations").Msg("error while refreshing delegations")
+				Str("operation", "refresh redelegations").Msg("error while refreshing redelegations")
 		}
 	}
 }
