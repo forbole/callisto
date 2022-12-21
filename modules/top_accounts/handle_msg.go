@@ -153,7 +153,7 @@ func (m *Module) handleMsgWithdrawDelegatorReward(height int64, delAddr string) 
 
 	err = m.refreshTopAccountsSum([]string{delAddr})
 	if err != nil {
-		return fmt.Errorf("error while refreshing top accounts sum while handling MsgDelegate: %s", err)
+		return fmt.Errorf("error while refreshing top accounts sum while handling MsgWithdrawDelegatorReward: %s", err)
 	}
 
 	return nil
