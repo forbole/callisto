@@ -46,7 +46,7 @@ func (m *Module) refreshUnbondings(height int64, delegatorAddr string) func() {
 	return func() {
 		err := m.stakingModule.RefreshUnbondings(height, delegatorAddr)
 		if err != nil {
-			log.Error().Str("module", "top acconts").Err(err).
+			log.Error().Str("module", "top_accounts").Err(err).
 				Str("operation", "refresh unbondings").Msg("error while refreshing unbonding delegations")
 		}
 	}
