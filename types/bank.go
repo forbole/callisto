@@ -25,7 +25,7 @@ type NativeTokenAmount struct {
 	Height  int64
 }
 
-// NewNativeTokenAmount allows to build a new NativeTokenBalance instance
+// NewNativeTokenAmount allows to build a new NativeTokenAmount instance
 func NewNativeTokenAmount(address string, balance sdk.Int, height int64) NativeTokenAmount {
 	return NativeTokenAmount{
 		Address: address,
