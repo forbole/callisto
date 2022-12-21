@@ -62,7 +62,7 @@ func (m *Module) refreshBalance(height int64, address string) func() {
 
 		err = m.refreshTopAccountsSum([]string{address})
 		if err != nil {
-			log.Error().Str("module", "top acconts").Err(err).
+			log.Error().Str("module", "top_accounts").Err(err).
 				Str("operation", "update top accounts sum").Msg("error while refreshing top accounts sum while refreshing balance")
 		}
 	}
