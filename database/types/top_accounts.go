@@ -28,6 +28,7 @@ func NewTopAccountsRow(
 func (a TopAccountsRow) Equals(b TopAccountsRow) bool {
 	return a.Address == b.Address &&
 		a.Available == b.Available &&
+		a.Delegation == b.Delegation &&
 		a.Redelegation == b.Redelegation &&
 		a.Unbonding == b.Unbonding &&
 		a.Reward == b.Reward
