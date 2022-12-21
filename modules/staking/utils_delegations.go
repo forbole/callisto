@@ -13,7 +13,7 @@ import (
 func (m *Module) RefreshDelegations(height int64, delegatorAddr string) error {
 	log.Debug().
 		Str("module", "staking").
-		Int64("height", height).Msg("updating delegation")
+		Int64("height", height).Msg("updating delegations")
 
 	var coin = sdk.Coin{
 		Denom:  pricefeed.GetDenom(),
