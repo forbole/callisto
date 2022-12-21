@@ -59,7 +59,7 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 func (m *Module) handleMsgDelegate(height int64, delAddr string) error {
 	err := m.stakingModule.RefreshDelegations(height, delAddr)
 	if err != nil {
-		return fmt.Errorf("error while refreshing delegations: %s", err)
+		return fmt.Errorf("error while refreshing delegations while handling MsgDelegate: %s", err)
 	}
 
 	err = m.refreshTopAccountsSum([]string{delAddr})
