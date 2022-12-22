@@ -11,7 +11,7 @@ import (
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
-// SaveWithdraws - method that create withdraws to the "vipcoin_chain_banking_withdraw" table
+// SaveWithdraws - method that create withdraws to the "overgold_chain_banking_withdraw" table
 func (r Repository) SaveWithdraws(withdraws ...*bankingtypes.Withdraw) error {
 	if len(withdraws) == 0 {
 		return nil
@@ -24,12 +24,12 @@ func (r Repository) SaveWithdraws(withdraws ...*bankingtypes.Withdraw) error {
 
 	defer tx.Rollback()
 
-	queryBaseTransfer := `INSERT INTO vipcoin_chain_banking_base_transfers 
+	queryBaseTransfer := `INSERT INTO overgold_chain_banking_base_transfers 
        ("id", "asset", "amount", "kind", "extras", "timestamp", "tx_hash") 
      VALUES 
        (:id, :asset, :amount, :kind, :extras, :timestamp, :tx_hash)`
 
-	queryWithdraw := `INSERT INTO vipcoin_chain_banking_withdraw
+	queryWithdraw := `INSERT INTO overgold_chain_banking_withdraw
 			("id", "wallet")
 			VALUES
 			(:id, :wallet)`
@@ -49,12 +49,12 @@ func (r Repository) SaveWithdraws(withdraws ...*bankingtypes.Withdraw) error {
 	return tx.Commit()
 }
 
-// GetWithdraws - method that get withdraws from the "vipcoin_chain_banking_withdraw" table
+// GetWithdraws - method that get withdraws from the "overgold_chain_banking_withdraw" table
 func (r Repository) GetWithdraws(filter filter.Filter) ([]*bankingtypes.Withdraw, error) {
 	query, args := filter.ToJoiner().
 		PrepareTable(tableTransfers, types.FieldID, types.FieldAsset, types.FieldAmount, types.FieldKind, types.FieldExtras, types.FieldTimestamp, types.FieldTxHash).
 		PrepareTable(tableWithdraw, types.FieldID, types.FieldWallet).
-		PrepareJoinStatement("INNER JOIN vipcoin_chain_banking_base_transfers on vipcoin_chain_banking_base_transfers.id = vipcoin_chain_banking_withdraw.id").
+		PrepareJoinStatement("INNER JOIN overgold_chain_banking_base_transfers on overgold_chain_banking_base_transfers.id = overgold_chain_banking_withdraw.id").
 		Build(tableWithdraw)
 
 	var withdrawsDB []types.DBWithdraw
@@ -70,7 +70,7 @@ func (r Repository) GetWithdraws(filter filter.Filter) ([]*bankingtypes.Withdraw
 	return result, nil
 }
 
-// UpdateWithdraws - method that update the withdraw in the "vipcoin_chain_banking_withdraw" table
+// UpdateWithdraws - method that update the withdraw in the "overgold_chain_banking_withdraw" table
 func (r Repository) UpdateWithdraws(withdraws ...*bankingtypes.Withdraw) error {
 	if len(withdraws) == 0 {
 		return nil
@@ -83,12 +83,12 @@ func (r Repository) UpdateWithdraws(withdraws ...*bankingtypes.Withdraw) error {
 
 	defer tx.Rollback()
 
-	queryBaseTransfer := `UPDATE vipcoin_chain_banking_base_transfers SET
+	queryBaseTransfer := `UPDATE overgold_chain_banking_base_transfers SET
 	asset =:asset, amount =:amount, kind =:kind, extras =:extras, timestamp =:timestamp, tx_hash =:tx_hash
 	WHERE id =:id;
 	`
 
-	queryWithdraw := `UPDATE vipcoin_chain_banking_withdraw SET
+	queryWithdraw := `UPDATE overgold_chain_banking_withdraw SET
 	wallet =:wallet
 	WHERE id =:id;
 	`

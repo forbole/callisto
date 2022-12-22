@@ -8,9 +8,9 @@ import (
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
-// SaveMsgWithdraw - method that create withdraw to the "vipcoin_chain_banking_msg_withdraw" table
+// SaveMsgWithdraw - method that create withdraw to the "overgold_chain_banking_msg_withdraw" table
 func (r Repository) SaveMsgWithdraw(withdraws *bankingtypes.MsgWithdraw, transactionHash string) error {
-	query := `INSERT INTO vipcoin_chain_banking_msg_withdraw 
+	query := `INSERT INTO overgold_chain_banking_msg_withdraw 
 		(transaction_hash, creator, wallet, asset, amount, extras) 
 		VALUES 
 		(:transaction_hash, :creator, :wallet, :asset, :amount, :extras)`
@@ -22,7 +22,7 @@ func (r Repository) SaveMsgWithdraw(withdraws *bankingtypes.MsgWithdraw, transac
 	return nil
 }
 
-// GetSystemTransfers - method that get withdraw from the "vipcoin_chain_banking_msg_withdraw" table
+// GetSystemTransfers - method that get withdraw from the "overgold_chain_banking_msg_withdraw" table
 func (r Repository) GetMsgWithdraw(filter filter.Filter) ([]*bankingtypes.MsgWithdraw, error) {
 	query, args := filter.Build(
 		tableMsgWithdraw,

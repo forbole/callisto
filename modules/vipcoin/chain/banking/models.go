@@ -16,8 +16,8 @@ type baseTransfer struct {
 	TxHash    string `json:"tx_hash,omitempty"`
 }
 
-// toVipcoinBaseTransfer - convert to vipcoin base transfer
-func (b *baseTransfer) toVipcoinBaseTransfer() (banking.BaseTransfer, error) {
+// toOvergoldBaseTransfer - convert to overgold base transfer
+func (b *baseTransfer) toOvergoldBaseTransfer() (banking.BaseTransfer, error) {
 	id, err := strconv.ParseUint(b.Id, 10, 64)
 	if err != nil {
 		return banking.BaseTransfer{}, err

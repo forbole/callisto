@@ -29,7 +29,7 @@ func NewRepository(db *sqlx.DB, cdc codec.Marshaler) *Repository {
 	}
 }
 
-// SaveBaseTransfers - method that create transfers to the "vipcoin_chain_banking_transfers" table
+// SaveBaseTransfers - method that create transfers to the "overgold_chain_banking_transfers" table
 func (r Repository) SaveBaseTransfers(transfers ...*bankingtypes.BaseTransfer) error {
 	if len(transfers) == 0 {
 		return nil
@@ -44,7 +44,7 @@ func (r Repository) SaveBaseTransfers(transfers ...*bankingtypes.BaseTransfer) e
 		_ = tx.Rollback()
 	}()
 
-	query := `INSERT INTO vipcoin_chain_banking_base_transfers 
+	query := `INSERT INTO overgold_chain_banking_base_transfers 
        ("id", "asset", "amount", "kind", "extras", "timestamp", "tx_hash") 
      VALUES 
        (:id, :asset, :amount, :kind, :extras, :timestamp, :tx_hash)`
@@ -58,7 +58,7 @@ func (r Repository) SaveBaseTransfers(transfers ...*bankingtypes.BaseTransfer) e
 	return tx.Commit()
 }
 
-// UpdateBaseTransfers - method that updates the transfers in the "vipcoin_chain_banking_transfers" table
+// UpdateBaseTransfers - method that updates the transfers in the "overgold_chain_banking_transfers" table
 func (r Repository) UpdateBaseTransfers(transfers ...*bankingtypes.BaseTransfer) error {
 	if len(transfers) == 0 {
 		return nil
@@ -73,7 +73,7 @@ func (r Repository) UpdateBaseTransfers(transfers ...*bankingtypes.BaseTransfer)
 		_ = tx.Rollback()
 	}()
 
-	query := `UPDATE vipcoin_chain_banking_base_transfers SET
+	query := `UPDATE overgold_chain_banking_base_transfers SET
 				asset = :asset, amount = :amount,
 				kind = :kind, extras = :extras, timestamp = :timestamp,
 				tx_hash = :tx_hash
@@ -88,7 +88,7 @@ func (r Repository) UpdateBaseTransfers(transfers ...*bankingtypes.BaseTransfer)
 	return tx.Commit()
 }
 
-// GetBaseTransfers - method that get transfers from the "vipcoin_chain_banking_transfers" table
+// GetBaseTransfers - method that get transfers from the "overgold_chain_banking_transfers" table
 func (r Repository) GetBaseTransfers(filter filter.Filter) ([]*bankingtypes.BaseTransfer, error) {
 	query, args := filter.Build(
 		tableTransfers,

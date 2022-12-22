@@ -38,8 +38,8 @@ func TestRepository_SaveMsgIssue(t *testing.T) {
 			args: args{
 				issue: []*bankingtypes.MsgIssue{
 					{
-						Creator: "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv2g",
-						Wallet:  "vcg1k2gx4u0hwk87ja3wyakne8cl5gytnz0uc27xm4",
+						Creator: "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv2g",
+						Wallet:  "ovg1k2gx4u0hwk87ja3wyakne8cl5gytnz0uc27xm4",
 						Asset:   assets.AssetVCG,
 						Amount:  1_000_000,
 						Extras: []*extratypes.Extra{
@@ -54,8 +54,8 @@ func TestRepository_SaveMsgIssue(t *testing.T) {
 						},
 					},
 					{
-						Creator: "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv3g",
-						Wallet:  "vcg1k2gx4u0hwk87ja3wyakne8cl5gytnz0uc27xm5",
+						Creator: "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv3g",
+						Wallet:  "ovg1k2gx4u0hwk87ja3wyakne8cl5gytnz0uc27xm5",
 						Asset:   assets.AssetVCG,
 						Amount:  1_000_0123,
 						Extras: []*extratypes.Extra{
@@ -106,12 +106,12 @@ func TestRepository_GetMsgIssue(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				filter: filter.NewFilter().SetArgument(types.FieldCreator, "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv2g"),
+				filter: filter.NewFilter().SetArgument(types.FieldCreator, "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv2g"),
 			},
 			want: []*bankingtypes.MsgIssue{
 				{
-					Creator: "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv2g",
-					Wallet:  "vcg1k2gx4u0hwk87ja3wyakne8cl5gytnz0uc27xm4",
+					Creator: "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv2g",
+					Wallet:  "ovg1k2gx4u0hwk87ja3wyakne8cl5gytnz0uc27xm4",
 					Asset:   assets.AssetVCG,
 					Amount:  1_000_000,
 					Extras: []*extratypes.Extra{

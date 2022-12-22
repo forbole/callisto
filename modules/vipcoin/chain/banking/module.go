@@ -44,5 +44,5 @@ func NewModule(keeper source.Source, cdc codec.Marshaler, db *database.Db) *Modu
 
 // Name implements modules.Module
 func (m *Module) Name() string {
-	return "vipcoin_banking"
+	return "overgold_banking"
 }

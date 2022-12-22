@@ -9,9 +9,10 @@ import (
 	"git.ooo.ua/vipcoin/lib/filter"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
-	assetsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/assets"
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
+
+	assetsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/assets"
 )
 
 func TestRepository_SaveAsset(t *testing.T) {
@@ -40,7 +41,7 @@ func TestRepository_SaveAsset(t *testing.T) {
 			args: args{
 				assets: []*assetstypes.Asset{
 					{
-						Issuer: "vcg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz",
+						Issuer: "ovg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz",
 						Name:   "This is Name for assets name",
 						Policies: []assetstypes.AssetPolicy{
 							assetstypes.ASSET_POLICY_ISSUABLE,
@@ -97,8 +98,8 @@ func TestRepository_GetAsset(t *testing.T) {
 			},
 			assets: []*assetstypes.Asset{
 				{
-					Issuer: "vcg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdy",
-					Name:   "VCG",
+					Issuer: "ovg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdy",
+					Name:   assetstypes.AssetVCG,
 					Policies: []assetstypes.AssetPolicy{
 						assetstypes.ASSET_POLICY_ISSUABLE,
 					},
@@ -160,8 +161,8 @@ func TestRepository_UpdateAsset(t *testing.T) {
 			args: args{
 				assets: []*assetstypes.Asset{
 					{
-						Issuer: "vcg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz",
-						Name:   "VCG",
+						Issuer: "ovg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz",
+						Name:   assetstypes.AssetVCG,
 						Policies: []assetstypes.AssetPolicy{
 							assetstypes.ASSET_POLICY_ISSUABLE,
 						},

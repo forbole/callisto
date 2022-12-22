@@ -10,7 +10,7 @@ import (
 
 // SaveExtraAsset - saves the given extra inside the database
 func (r Repository) SaveExtraAsset(msg *assetstypes.MsgAssetSetExtra, transactionHash string) error {
-	query := `INSERT INTO vipcoin_chain_assets_set_extra 
+	query := `INSERT INTO overgold_chain_assets_set_extra 
 			(transaction_hash, creator, name, extras) 
 		VALUES 
 			(:transaction_hash, :creator, :name, :extras)`

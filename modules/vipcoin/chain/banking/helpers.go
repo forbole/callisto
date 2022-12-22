@@ -19,7 +19,7 @@ import (
 func getIssueFromTx(tx *juno.Tx, msg *banking.MsgIssue) (*banking.Issue, error) {
 	for _, log := range tx.TxResponse.Logs {
 		for _, event := range log.Events {
-			if event.Type != "vipcoin.chain.banking.Issue" {
+			if event.Type != "overgold.chain.banking.Issue" {
 				continue
 			}
 
@@ -49,7 +49,7 @@ func getIssueFromTx(tx *juno.Tx, msg *banking.MsgIssue) (*banking.Issue, error) 
 func getSystemTransferFromTx(tx *juno.Tx, msg *banking.MsgSystemTransfer) (*banking.SystemTransfer, error) {
 	for _, log := range tx.TxResponse.Logs {
 		for _, event := range log.Events {
-			if event.Type != "vipcoin.chain.banking.SystemTransfer" {
+			if event.Type != "overgold.chain.banking.SystemTransfer" {
 				continue
 			}
 
@@ -83,7 +83,7 @@ func getSystemTransferFromTx(tx *juno.Tx, msg *banking.MsgSystemTransfer) (*bank
 func getWithdrawFromTx(tx *juno.Tx, msg *banking.MsgWithdraw) (*banking.Withdraw, error) {
 	for _, log := range tx.TxResponse.Logs {
 		for _, event := range log.Events {
-			if event.Type != "vipcoin.chain.banking.Withdraw" {
+			if event.Type != "overgold.chain.banking.Withdraw" {
 				continue
 			}
 
@@ -113,7 +113,7 @@ func getWithdrawFromTx(tx *juno.Tx, msg *banking.MsgWithdraw) (*banking.Withdraw
 func getPaymentFromTx(tx *juno.Tx, msg *banking.MsgPayment) (*banking.Payment, error) {
 	for _, log := range tx.TxResponse.Logs {
 		for _, event := range log.Events {
-			if event.Type != "vipcoin.chain.banking.Payment" {
+			if event.Type != "overgold.chain.banking.Payment" {
 				continue
 			}
 
@@ -154,7 +154,7 @@ func (m *Module) getSystemTransfers(
 ) {
 	for _, log := range tx.TxResponse.Logs {
 		for _, event := range log.Events {
-			if event.Type != "vipcoin.chain.banking.SystemTransfer" {
+			if event.Type != "overgold.chain.banking.SystemTransfer" {
 				continue
 			}
 
@@ -192,19 +192,19 @@ func (m *Module) getSystemTransfersFromAttribute(
 		return nil, nil, errors.New("base_transfer not found in log")
 	}
 
-	var baseVipcoinList []banking.BaseTransfer
+	var baseOvergoldList []banking.BaseTransfer
 	for _, baseString := range baseString {
 		var base baseTransfer
 		if err := json.Unmarshal([]byte(baseString), &base); err != nil {
 			return nil, nil, err
 		}
 
-		baseVipcoin, err := base.toVipcoinBaseTransfer()
+		baseOvergold, err := base.toOvergoldBaseTransfer()
 		if err != nil {
 			return nil, nil, err
 		}
 
-		baseVipcoinList = append(baseVipcoinList, baseVipcoin)
+		baseOvergoldList = append(baseOvergoldList, baseOvergold)
 	}
 
 	wallet := getAttributeValueWithKey(attributes, "wallet_from")
@@ -253,7 +253,7 @@ func (m *Module) getSystemTransfersFromAttribute(
 				WalletTo:   walletTo,
 			}
 
-			systemReward.BaseTransfer, err = getTransfersWithKind(baseVipcoinList, banking.TRANSFER_KIND_SYSTEM_REWARD)
+			systemReward.BaseTransfer, err = getTransfersWithKind(baseOvergoldList, banking.TRANSFER_KIND_SYSTEM_REWARD)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -266,7 +266,7 @@ func (m *Module) getSystemTransfersFromAttribute(
 			WalletTo:   walletTo,
 		}
 
-		systemRefReward.BaseTransfer, err = getTransfersWithKind(baseVipcoinList, banking.TRANSFER_KIND_SYSTEM_REF_REWARD)
+		systemRefReward.BaseTransfer, err = getTransfersWithKind(baseOvergoldList, banking.TRANSFER_KIND_SYSTEM_REF_REWARD)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -302,13 +302,13 @@ func getPaymentTransferFromAttribute(attributes []sdk.Attribute) (*banking.Payme
 		return nil, err
 	}
 
-	baseVipcoin, err := base.toVipcoinBaseTransfer()
+	baseOvergold, err := base.toOvergoldBaseTransfer()
 	if err != nil {
 		return nil, err
 	}
 
 	paymentTransfer := banking.Payment{
-		BaseTransfer: baseVipcoin,
+		BaseTransfer: baseOvergold,
 		WalletFrom:   strings.ToLower(walletFrom),
 		WalletTo:     strings.ToLower(walletTo),
 		Fee:          feeUint,
@@ -329,13 +329,13 @@ func getIssueFromAttribute(attributes []sdk.Attribute) (*banking.Issue, error) {
 		return nil, err
 	}
 
-	baseVipcoin, err := base.toVipcoinBaseTransfer()
+	baseOvergold, err := base.toOvergoldBaseTransfer()
 	if err != nil {
 		return nil, err
 	}
 
 	issue := banking.Issue{
-		BaseTransfer: baseVipcoin,
+		BaseTransfer: baseOvergold,
 		Wallet:       strings.ToLower(wallet),
 	}
 
@@ -359,13 +359,13 @@ func getSystemTransferFromAttribute(attributes []sdk.Attribute) (*banking.System
 		return nil, err
 	}
 
-	baseVipcoin, err := base.toVipcoinBaseTransfer()
+	baseOvergold, err := base.toOvergoldBaseTransfer()
 	if err != nil {
 		return nil, err
 	}
 
 	systemTransfer := banking.SystemTransfer{
-		BaseTransfer: baseVipcoin,
+		BaseTransfer: baseOvergold,
 		WalletFrom:   strings.ToLower(walletFrom),
 		WalletTo:     strings.ToLower(walletTo),
 	}
@@ -385,13 +385,13 @@ func getWithdrawFromAttribute(attributes []sdk.Attribute) (*banking.Withdraw, er
 		return nil, err
 	}
 
-	baseVipcoin, err := base.toVipcoinBaseTransfer()
+	baseOvergold, err := base.toOvergoldBaseTransfer()
 	if err != nil {
 		return nil, err
 	}
 
 	issue := banking.Withdraw{
-		BaseTransfer: baseVipcoin,
+		BaseTransfer: baseOvergold,
 		Wallet:       strings.ToLower(wallet),
 	}
 

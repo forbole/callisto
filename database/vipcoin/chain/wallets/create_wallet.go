@@ -10,7 +10,7 @@ import (
 
 // SaveCreateWallet saves the given wallets inside the database
 func (r *Repository) SaveCreateWallet(msgWallet *walletstypes.MsgCreateWallet, transactionHash string) error {
-	query := `INSERT INTO vipcoin_chain_wallets_create_wallet 
+	query := `INSERT INTO overgold_chain_wallets_create_wallet 
 			(transaction_hash, creator, address, account_address, kind, state, extras) 
 		VALUES 
 			(:transaction_hash, :creator, :address, :account_address, :kind, :state, :extras)`
@@ -25,7 +25,7 @@ func (r *Repository) SaveCreateWallet(msgWallet *walletstypes.MsgCreateWallet, t
 // GetCreateWallet get the given wallet from database
 func (r *Repository) GetCreateWallet(walletFilter filter.Filter) ([]*walletstypes.MsgCreateWallet, error) {
 	query, args := walletFilter.Build(
-		"vipcoin_chain_wallets_create_wallet",
+		"overgold_chain_wallets_create_wallet",
 		`creator, address, account_address, kind, state, extras`,
 	)
 

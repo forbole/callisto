@@ -43,7 +43,7 @@ func (r Repository) SaveAccounts(accounts ...*accountstypes.Account) error {
 		_ = tx.Rollback()
 	}()
 
-	query := `INSERT INTO vipcoin_chain_accounts_accounts 
+	query := `INSERT INTO overgold_chain_accounts_accounts 
 			 ("address", "hash", "public_key", "kinds", "state", "extras", "wallets") 
 		 VALUES 
 			 (:address, :hash, :public_key, :kinds, :state, :extras, :wallets)`
@@ -71,7 +71,7 @@ func saveAffiliates(tx *sqlx.Tx, affiliates []*accountstypes.Affiliate, accHash 
 		return nil
 	}
 
-	query := `INSERT INTO vipcoin_chain_accounts_affiliates
+	query := `INSERT INTO overgold_chain_accounts_affiliates
 		 (account_hash, address, affiliation_kind, extras)
 	 VALUES
 		 (:account_hash, :address, :affiliation_kind, :extras)`
@@ -97,12 +97,12 @@ func (r Repository) UpdateAccounts(accounts ...*accountstypes.Account) error {
 		_ = tx.Rollback()
 	}()
 
-	query := `UPDATE vipcoin_chain_accounts_accounts SET
+	query := `UPDATE overgold_chain_accounts_accounts SET
 				 address = :address, public_key = :public_key, kinds = :kinds,
 				 state = :state, extras = :extras, wallets = :wallets
 			 WHERE hash = :hash`
 
-	deleteAffiliates := "DELETE FROM vipcoin_chain_accounts_affiliates WHERE account_hash=($1)"
+	deleteAffiliates := "DELETE FROM overgold_chain_accounts_affiliates WHERE account_hash=($1)"
 
 	for _, acc := range accounts {
 		accountDB, err := toAccountDatabase(acc, r.cdc)

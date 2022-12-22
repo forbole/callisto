@@ -10,7 +10,7 @@ import (
 
 // SaveRegisterUser - saves the given user inside the database
 func (r Repository) SaveRegisterUser(msg *accountstypes.MsgRegisterUser, transactionHash string) error {
-	query := `INSERT INTO vipcoin_chain_accounts_register_user 
+	query := `INSERT INTO overgold_chain_accounts_register_user 
 			(transaction_hash, creator, address, hash, public_key, holder_wallet, ref_reward_wallet, 
 			holder_wallet_extras, ref_reward_wallet_extras, referrer_hash) 
 		VALUES 

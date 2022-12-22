@@ -40,9 +40,9 @@ func TestRepository_SaveCreateAsset(t *testing.T) {
 			args: args{
 				msgAssetCreate: []*assetstypes.MsgAssetCreate{
 					{
-						Creator: "vcg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz",
+						Creator: "ovg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz",
 						Name:    "This is Name for assets name",
-						Issuer:  "vcg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz",
+						Issuer:  "ovg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz",
 						Policies: []assetstypes.AssetPolicy{
 							assetstypes.ASSET_POLICY_ISSUABLE,
 							assetstypes.ASSET_POLICY_EXCHANGEABLE,
@@ -90,13 +90,13 @@ func TestRepository_GetCreateAsset(t *testing.T) {
 		{
 			name: "[success] get create assets from db",
 			args: args{
-				accfilter: filter.NewFilter().SetArgument("creator", "vcg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz"),
+				accfilter: filter.NewFilter().SetArgument("creator", "ovg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz"),
 			},
 			msgAssetCreate: []*assetstypes.MsgAssetCreate{
 				{
-					Creator: "vcg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz",
+					Creator: "ovg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz",
 					Name:    "This is Name for assets name",
-					Issuer:  "vcg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz",
+					Issuer:  "ovg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz",
 					Policies: []assetstypes.AssetPolicy{
 						assetstypes.ASSET_POLICY_ISSUABLE,
 						assetstypes.ASSET_POLICY_EXCHANGEABLE,

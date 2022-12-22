@@ -8,9 +8,9 @@ import (
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
-// SaveMsgIssue - method that create issue to the "vipcoin_chain_banking_msg_issue" table
+// SaveMsgIssue - method that create issue to the "overgold_chain_banking_msg_issue" table
 func (r Repository) SaveMsgIssue(issue *bankingtypes.MsgIssue, transactionHash string) error {
-	query := `INSERT INTO vipcoin_chain_banking_msg_issue 
+	query := `INSERT INTO overgold_chain_banking_msg_issue 
 		(transaction_hash, creator, wallet, asset, amount, extras) 
 		VALUES 
 		(:transaction_hash, :creator, :wallet, :asset, :amount, :extras)`
@@ -22,7 +22,7 @@ func (r Repository) SaveMsgIssue(issue *bankingtypes.MsgIssue, transactionHash s
 	return nil
 }
 
-// GetMsgIssue - method that get issue from the "vipcoin_chain_banking_msg_issue" table
+// GetMsgIssue - method that get issue from the "overgold_chain_banking_msg_issue" table
 func (r Repository) GetMsgIssue(filter filter.Filter) ([]*bankingtypes.MsgIssue, error) {
 	query, args := filter.Build(
 		tableMsgIssue,

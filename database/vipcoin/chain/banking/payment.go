@@ -11,7 +11,7 @@ import (
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
-// SavePayments - method that create payments to the "vipcoin_chain_banking_payment" table
+// SavePayments - method that create payments to the "overgold_chain_banking_payment" table
 func (r Repository) SavePayments(payments ...*bankingtypes.Payment) error {
 	if len(payments) == 0 {
 		return nil
@@ -24,12 +24,12 @@ func (r Repository) SavePayments(payments ...*bankingtypes.Payment) error {
 
 	defer tx.Rollback()
 
-	queryBaseTransfer := `INSERT INTO vipcoin_chain_banking_base_transfers 
+	queryBaseTransfer := `INSERT INTO overgold_chain_banking_base_transfers 
        ("id", "asset", "amount", "kind", "extras", "timestamp", "tx_hash") 
      VALUES 
        (:id,:asset, :amount, :kind, :extras, :timestamp, :tx_hash)`
 
-	queryPayment := `INSERT INTO vipcoin_chain_banking_payment
+	queryPayment := `INSERT INTO overgold_chain_banking_payment
 			("id", "wallet_from", "wallet_to", "fee")
 			VALUES
 			(:id, :wallet_from, :wallet_to, :fee)`
@@ -49,12 +49,12 @@ func (r Repository) SavePayments(payments ...*bankingtypes.Payment) error {
 	return tx.Commit()
 }
 
-// GetPayments - method that get payments from the "vipcoin_chain_banking_payment" table
+// GetPayments - method that get payments from the "overgold_chain_banking_payment" table
 func (r Repository) GetPayments(filter filter.Filter) ([]*bankingtypes.Payment, error) {
 	query, args := filter.ToJoiner().
 		PrepareTable(tableTransfers, types.FieldID, types.FieldAsset, types.FieldAmount, types.FieldKind, types.FieldExtras, types.FieldTimestamp, types.FieldTxHash).
 		PrepareTable(tablePayment, types.FieldID, types.FieldWalletFrom, types.FieldWalletTo, types.FieldFee).
-		PrepareJoinStatement("INNER JOIN vipcoin_chain_banking_base_transfers on vipcoin_chain_banking_base_transfers.id = vipcoin_chain_banking_payment.id").
+		PrepareJoinStatement("INNER JOIN overgold_chain_banking_base_transfers on overgold_chain_banking_base_transfers.id = overgold_chain_banking_payment.id").
 		Build(tablePayment)
 
 	var paymentsDB []types.DBPayment
@@ -70,7 +70,7 @@ func (r Repository) GetPayments(filter filter.Filter) ([]*bankingtypes.Payment, 
 	return result, nil
 }
 
-// UpdatePayments - method that update the payment in the "vipcoin_chain_banking_payment" table
+// UpdatePayments - method that update the payment in the "overgold_chain_banking_payment" table
 func (r Repository) UpdatePayments(payments ...*bankingtypes.Payment) error {
 	if len(payments) == 0 {
 		return nil
@@ -83,12 +83,12 @@ func (r Repository) UpdatePayments(payments ...*bankingtypes.Payment) error {
 
 	defer tx.Rollback()
 
-	queryBaseTransfer := `UPDATE vipcoin_chain_banking_base_transfers SET
+	queryBaseTransfer := `UPDATE overgold_chain_banking_base_transfers SET
 	asset =:asset, amount =:amount, kind =:kind, extras =:extras, timestamp =:timestamp, tx_hash =:tx_hash
 	WHERE id =:id;
 	`
 
-	queryPayment := `UPDATE vipcoin_chain_banking_payment SET
+	queryPayment := `UPDATE overgold_chain_banking_payment SET
 	wallet_from =:wallet_from, wallet_to =:wallet_to, fee =:fee
 	WHERE id =:id;
 	`

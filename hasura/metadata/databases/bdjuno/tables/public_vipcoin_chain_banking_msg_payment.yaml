@@ -1,7 +1,0 @@
-table:
-  name: vipcoin_chain_banking_msg_payment
-  schema: public
-object_relationships:
-  - name: transaction
-    using:
-      foreign_key_constraint_on: transaction_hash

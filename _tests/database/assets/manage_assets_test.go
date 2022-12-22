@@ -39,7 +39,7 @@ func TestRepository_SaveManageAsset(t *testing.T) {
 			args: args{
 				msgAssetManage: []*assetstypes.MsgAssetManage{
 					{
-						Creator: "vcg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz",
+						Creator: "ovg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz",
 						Name:    "This is Name for assets name",
 						Policies: []assetstypes.AssetPolicy{
 							assetstypes.ASSET_POLICY_ISSUABLE,
@@ -91,11 +91,11 @@ func TestRepository_GetManageAsset(t *testing.T) {
 		{
 			name: "[success] get manage assets from db",
 			args: args{
-				accfilter: filter.NewFilter().SetArgument("creator", "vcg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz"),
+				accfilter: filter.NewFilter().SetArgument("creator", "ovg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz"),
 			},
 			msgAssetManage: []*assetstypes.MsgAssetManage{
 				{
-					Creator: "vcg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz",
+					Creator: "ovg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz",
 					Name:    "This is Name for assets name",
 					Policies: []assetstypes.AssetPolicy{
 						assetstypes.ASSET_POLICY_ISSUABLE,

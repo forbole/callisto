@@ -10,7 +10,7 @@ import (
 
 // SaveAffiliateAddress - saves the given affiliate address inside the database
 func (r Repository) SaveAffiliateAddress(msg *accountstypes.MsgSetAffiliateAddress, transactionHash string) error {
-	query := `INSERT INTO vipcoin_chain_accounts_set_affiliate_address 
+	query := `INSERT INTO overgold_chain_accounts_set_affiliate_address 
 			(transaction_hash, creator, hash, old_address, new_address) 
 		VALUES 
 			(:transaction_hash, :creator, :hash, :old_address, :new_address)`

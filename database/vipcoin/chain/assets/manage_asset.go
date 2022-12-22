@@ -10,7 +10,7 @@ import (
 
 // SaveManageAsset saves the given asset inside the database
 func (r *Repository) SaveManageAsset(msg *assetstypes.MsgAssetManage, transactionHash string) error {
-	query := `INSERT INTO vipcoin_chain_assets_manage 
+	query := `INSERT INTO overgold_chain_assets_manage 
 			(transaction_hash, creator, name, policies, state, precision, fee_percent, issued, burned, withdrawn, in_circulation) 
 		VALUES 
 			(:transaction_hash, :creator, :name, :policies, :state, :precision, :fee_percent, :issued, :burned, :withdrawn, :in_circulation)`

@@ -8,9 +8,9 @@ import (
 	"github.com/forbole/bdjuno/v2/database/types"
 )
 
-// SaveMsgSetTransferExtra - method that create extras to the "vipcoin_chain_banking_set_transfer_extra" table
+// SaveMsgSetTransferExtra - method that create extras to the "overgold_chain_banking_set_transfer_extra" table
 func (r Repository) SaveMsgSetTransferExtra(extras *bankingtypes.MsgSetTransferExtra, transactionHash string) error {
-	query := `INSERT INTO vipcoin_chain_banking_set_transfer_extra 
+	query := `INSERT INTO overgold_chain_banking_set_transfer_extra 
 		(transaction_hash, creator, id, extras) 
 		VALUES 
 		(:transaction_hash, :creator, :id, :extras)`
@@ -22,7 +22,7 @@ func (r Repository) SaveMsgSetTransferExtra(extras *bankingtypes.MsgSetTransferE
 	return nil
 }
 
-// GetMsgSetTransferExtra - method that get extras from the "vipcoin_chain_banking_set_transfer_extra" table
+// GetMsgSetTransferExtra - method that get extras from the "overgold_chain_banking_set_transfer_extra" table
 func (r Repository) GetMsgSetTransferExtra(filter filter.Filter) ([]*bankingtypes.MsgSetTransferExtra, error) {
 	query, args := filter.Build(
 		tableMsgSetTransferExtra,

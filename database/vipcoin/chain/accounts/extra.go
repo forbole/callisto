@@ -10,7 +10,7 @@ import (
 
 // SaveExtra - saves the given extra inside the database
 func (r Repository) SaveExtra(msg *accountstypes.MsgSetExtra, transactionHash string) error {
-	query := `INSERT INTO vipcoin_chain_accounts_set_extra 
+	query := `INSERT INTO overgold_chain_accounts_set_extra 
 			(transaction_hash, creator, hash, extras) 
 		VALUES 
 			(:transaction_hash, :creator, :hash, :extras)`

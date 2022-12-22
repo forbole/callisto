@@ -41,12 +41,12 @@ func TestRepository_SaveRegisterUser(t *testing.T) {
 			args: args{
 				msg: []*accountstypes.MsgRegisterUser{
 					{
-						Creator:         "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
-						Address:         "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
+						Creator:         "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
+						Address:         "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
 						Hash:            "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd1",
 						PublicKey:       "4133425431324570546d614730316858526a302f6e7a6437726d3663526751755367626a694244566f4a486e",
-						HolderWallet:    "vcg15hwngy8dys5l8kwqdyyuulhde39x6c6ad3wh0g",
-						RefRewardWallet: "vcg12ndz92smw9pz34m7kfr5vqq6qscee7nv83vset",
+						HolderWallet:    "ovg15hwngy8dys5l8kwqdyyuulhde39x6c6ad3wh0g",
+						RefRewardWallet: "ovg12ndz92smw9pz34m7kfr5vqq6qscee7nv83vset",
 						HolderWalletExtras: []*extratypes.Extra{
 							{
 								Kind: extratypes.EXTRA_KIND_WALLET,
@@ -62,12 +62,12 @@ func TestRepository_SaveRegisterUser(t *testing.T) {
 						ReferrerHash: "",
 					},
 					{
-						Creator:         "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv1g",
-						Address:         "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx42q",
+						Creator:         "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv1g",
+						Address:         "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx42q",
 						Hash:            "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd3",
 						PublicKey:       "4133425431324570546d614730316858526a302f6e7a6437726d3663526751755367626a694244566f4a485e",
-						HolderWallet:    "vcg15hwngy8dys5l8kwqdyyuulhde39x6c6ad3wh1g",
-						RefRewardWallet: "vcg12ndz92smw9pz34m7kfr5vqq6qscee7nv85vset",
+						HolderWallet:    "ovg15hwngy8dys5l8kwqdyyuulhde39x6c6ad3wh1g",
+						RefRewardWallet: "ovg12ndz92smw9pz34m7kfr5vqq6qscee7nv85vset",
 						HolderWalletExtras: []*extratypes.Extra{
 							{
 								Kind: extratypes.EXTRA_KIND_WALLET,
@@ -119,16 +119,16 @@ func TestRepository_GetRegisterUser(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				accountFilter: filter.NewFilter().SetArgument(types.FieldAddress, "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q"),
+				accountFilter: filter.NewFilter().SetArgument(types.FieldAddress, "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx45q"),
 			},
 			want: []*accountstypes.MsgRegisterUser{
 				{
-					Creator:         "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
-					Address:         "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
+					Creator:         "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
+					Address:         "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
 					Hash:            "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd1",
 					PublicKey:       "4133425431324570546d614730316858526a302f6e7a6437726d3663526751755367626a694244566f4a486e",
-					HolderWallet:    "vcg15hwngy8dys5l8kwqdyyuulhde39x6c6ad3wh0g",
-					RefRewardWallet: "vcg12ndz92smw9pz34m7kfr5vqq6qscee7nv83vset",
+					HolderWallet:    "ovg15hwngy8dys5l8kwqdyyuulhde39x6c6ad3wh0g",
+					RefRewardWallet: "ovg12ndz92smw9pz34m7kfr5vqq6qscee7nv83vset",
 					HolderWalletExtras: []*extratypes.Extra{
 						{
 							Kind: extratypes.EXTRA_KIND_WALLET,
