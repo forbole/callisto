@@ -7,7 +7,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func (m *Module) refreshTopAccountsSum(addresses []string) error {
+func (m *Module) RefreshTopAccountsSum(addresses []string) error {
 	for _, addr := range addresses {
 		sum, err := m.db.GetAccountBalanceSum(addr)
 		if err != nil {
@@ -60,7 +60,7 @@ func (m *Module) refreshBalance(height int64, address string) func() {
 				Str("operation", "update balance").Msg("error while updating account available balances")
 		}
 
-		err = m.refreshTopAccountsSum([]string{address})
+		err = m.RefreshTopAccountsSum([]string{address})
 		if err != nil {
 			log.Error().Str("module", "top_accounts").Err(err).
 				Str("operation", "update top accounts sum").Msg("error while refreshing top accounts sum while refreshing balance")

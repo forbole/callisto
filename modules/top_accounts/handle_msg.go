@@ -30,7 +30,7 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return fmt.Errorf("error while updating account available balances: %s", err)
 	}
 
-	err = m.refreshTopAccountsSum(addresses)
+	err = m.RefreshTopAccountsSum(addresses)
 	if err != nil {
 		return fmt.Errorf("error while refreshing top accounts sum while refreshing balance: %s", err)
 	}
@@ -62,7 +62,7 @@ func (m *Module) handleMsgDelegate(height int64, delAddr string) error {
 		return fmt.Errorf("error while refreshing delegations while handling MsgDelegate: %s", err)
 	}
 
-	err = m.refreshTopAccountsSum([]string{delAddr})
+	err = m.RefreshTopAccountsSum([]string{delAddr})
 	if err != nil {
 		return fmt.Errorf("error while refreshing top accounts sum while handling MsgDelegate: %s", err)
 	}
@@ -78,7 +78,7 @@ func (m *Module) handleMsgBeginRedelegate(
 		return fmt.Errorf("error while refreshing redelegations while handling MsgBeginRedelegate: %s", err)
 	}
 
-	err = m.refreshTopAccountsSum([]string{delAddr})
+	err = m.RefreshTopAccountsSum([]string{delAddr})
 	if err != nil {
 		return fmt.Errorf("error while refreshing top accounts sum while handling MsgBeginRedelegate: %s", err)
 	}
@@ -112,7 +112,7 @@ func (m *Module) handleMsgUndelegate(tx *juno.Tx, index int, delAddr string) err
 		return fmt.Errorf("error while refreshing undelegations while handling MsgUndelegate: %s", err)
 	}
 
-	err = m.refreshTopAccountsSum([]string{delAddr})
+	err = m.RefreshTopAccountsSum([]string{delAddr})
 	if err != nil {
 		return fmt.Errorf("error while refreshing top accounts sum while handling MsgUndelegate: %s", err)
 	}
@@ -151,7 +151,7 @@ func (m *Module) handleMsgWithdrawDelegatorReward(height int64, delAddr string) 
 		return fmt.Errorf("error while updating account available balances with MsgWithdrawDelegatorReward: %s", err)
 	}
 
-	err = m.refreshTopAccountsSum([]string{delAddr})
+	err = m.RefreshTopAccountsSum([]string{delAddr})
 	if err != nil {
 		return fmt.Errorf("error while refreshing top accounts sum while handling MsgWithdrawDelegatorReward: %s", err)
 	}
