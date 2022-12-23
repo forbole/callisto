@@ -17,3 +17,19 @@ func NewAccountBalance(address string, balance sdk.Coins, height int64) AccountB
 		Height:  height,
 	}
 }
+
+// NativeTokenAmount represents the native token balance of an account at a given height
+type NativeTokenAmount struct {
+	Address string
+	Balance sdk.Int
+	Height  int64
+}
+
+// NewNativeTokenAmount allows to build a new NativeTokenAmount instance
+func NewNativeTokenAmount(address string, balance sdk.Int, height int64) NativeTokenAmount {
+	return NativeTokenAmount{
+		Address: address,
+		Balance: balance,
+		Height:  height,
+	}
+}

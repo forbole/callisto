@@ -31,6 +31,7 @@ import (
 	"github.com/forbole/bdjuno/v3/modules/modules"
 	"github.com/forbole/bdjuno/v3/modules/pricefeed"
 	"github.com/forbole/bdjuno/v3/modules/staking"
+	topaccounts "github.com/forbole/bdjuno/v3/modules/top_accounts"
 )
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
@@ -103,5 +104,9 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		profilesModule,
 		slashingModule,
 		stakingModule,
+		topaccounts.NewModule(bankModule,
+			distrModule,
+			stakingModule,
+			r.parser, cdc, db),
 	}
 }
