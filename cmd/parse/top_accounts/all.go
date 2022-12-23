@@ -37,21 +37,24 @@ func allCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 
 			// Build modules
 			authModule := auth.NewModule(sources.AuthSource, nil, parseCtx.EncodingConfig.Marshaler, db)
-			stakingModule := staking.NewModule(sources.StakingSource, nil, parseCtx.EncodingConfig.Marshaler, db)
 			bankModule := bank.NewModule(nil, sources.BankSource, parseCtx.EncodingConfig.Marshaler, db)
 			distiModule := distribution.NewModule(sources.DistrSource, parseCtx.EncodingConfig.Marshaler, db)
+			stakingModule := staking.NewModule(sources.StakingSource, nil, parseCtx.EncodingConfig.Marshaler, db)
 			topaccountsModule := topaccounts.NewModule(nil, nil, nil, nil, parseCtx.EncodingConfig.Marshaler, db)
 
+			// Get all base accounts
 			accounts, err := authModule.GetAllBaseAccounts(0)
 			if err != nil {
 				return fmt.Errorf("error while getting account base accounts: %s", err)
 			}
 
+			// Store accounts
 			err = db.SaveAccounts(accounts)
 			if err != nil {
 				return err
 			}
 
+			// Traverse the account list, refresh available balance, delegation, redelegation, unbonding, and reward
 			for _, account := range accounts {
 				address := account.Address
 
