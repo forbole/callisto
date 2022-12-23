@@ -12,6 +12,7 @@ import (
 	parsefeegrant "github.com/forbole/bdjuno/v3/cmd/parse/feegrant"
 	parsegov "github.com/forbole/bdjuno/v3/cmd/parse/gov"
 	parsestaking "github.com/forbole/bdjuno/v3/cmd/parse/staking"
+	parsetopaccounts "github.com/forbole/bdjuno/v3/cmd/parse/top_accounts"
 	parsetransaction "github.com/forbole/juno/v3/cmd/parse/transactions"
 )
 
@@ -31,6 +32,7 @@ func NewParseCmd(parseCfg *parse.Config) *cobra.Command {
 		parsegov.NewGovCmd(parseCfg),
 		parsestaking.NewStakingCmd(parseCfg),
 		parsetransaction.NewTransactionsCmd(parseCfg),
+		parsetopaccounts.NewTopAccountsCmd(parseCfg),
 	)
 
 	return cmd

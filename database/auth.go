@@ -17,6 +17,8 @@ import (
 
 // SaveAccounts saves the given accounts inside the database
 func (db *Db) SaveAccounts(accounts []types.Account) error {
+	fmt.Println("total accounts: ", len(accounts))
+
 	paramsNumber := 1
 	slices := dbutils.SplitAccounts(accounts, paramsNumber)
 
@@ -39,6 +41,8 @@ func (db *Db) saveAccounts(paramsNumber int, accounts []types.Account) error {
 	if len(accounts) == 0 {
 		return nil
 	}
+
+	fmt.Printf("saving %v of accounts \n", len(accounts))
 
 	stmt := `INSERT INTO account (address) VALUES `
 	var params []interface{}
