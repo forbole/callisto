@@ -52,3 +52,14 @@ WHERE distribution_params.height <= excluded.height`
 
 	return nil
 }
+
+// GetDelegators returns the current delegators set
+func (db *Db) GetDelegators() ([]string, error) {
+	var rows []string
+	err := db.Sqlx.Select(&rows, `SELECT DISTINCT (address) FROM top_accounts `)
+	if err != nil {
+		return nil, err
+	}
+
+	return rows, nil
+}

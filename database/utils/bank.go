@@ -21,3 +21,21 @@ func SplitAccounts(accounts []types.Account, paramsNumber int) [][]types.Account
 
 	return slices
 }
+
+func SplitBalances(balances []types.NativeTokenAmount, paramsNumber int) [][]types.NativeTokenAmount {
+	maxPostgreSQLParams := 65535
+	maxBalancesPerSlice := maxPostgreSQLParams / paramsNumber
+
+	slices := make([][]types.NativeTokenAmount, len(balances)/maxBalancesPerSlice+1)
+
+	sliceIndex := 0
+	for index, balance := range balances {
+		slices[sliceIndex] = append(slices[sliceIndex], balance)
+
+		if index > 0 && index%(maxBalancesPerSlice-1) == 0 {
+			sliceIndex++
+		}
+	}
+
+	return slices
+}

@@ -31,6 +31,7 @@
 - "!include public_token_price.yaml"
 - "!include public_token_price_history.yaml"
 - "!include public_token_unit.yaml"
+- "!include public_top_accounts.yaml"
 - "!include public_transaction.yaml"
 - "!include public_validator.yaml"
 - "!include public_validator_commission.yaml"

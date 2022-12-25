@@ -1,6 +1,10 @@
 ## Unreleased
 ### Changes
 
+#### [cheqd] Top Accounts Module
+- ([\#510](https://github.com/forbole/bdjuno/pull/510)) Implemented `top_accounts` module to store chain native token's balance for ranking 
+
+
 #### CI
 - ([\#508](https://github.com/forbole/bdjuno/pull/508)) Upgrade workflow golangci version to v1.50.1
 

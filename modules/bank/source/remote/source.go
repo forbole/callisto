@@ -9,6 +9,7 @@ import (
 	"github.com/forbole/juno/v3/node/remote"
 
 	bankkeeper "github.com/forbole/bdjuno/v3/modules/bank/source"
+	pricefeed "github.com/forbole/bdjuno/v3/modules/pricefeed"
 	"github.com/forbole/bdjuno/v3/types"
 )
 
@@ -30,19 +31,22 @@ func NewSource(source *remote.Source, bankClient banktypes.QueryClient) *Source 
 }
 
 // GetBalances implements bankkeeper.Source
-func (s Source) GetBalances(addresses []string, height int64) ([]types.AccountBalance, error) {
+func (s Source) GetBalances(addresses []string, height int64) ([]types.NativeTokenAmount, error) {
 	ctx := remote.GetHeightRequestContext(s.Ctx, height)
 
-	var balances []types.AccountBalance
+	var balances []types.NativeTokenAmount
 	for _, address := range addresses {
-		balRes, err := s.bankClient.AllBalances(ctx, &banktypes.QueryAllBalancesRequest{Address: address})
+		balRes, err := s.bankClient.Balance(ctx, &banktypes.QueryBalanceRequest{
+			Address: address,
+			Denom:   pricefeed.GetDenom(),
+		})
 		if err != nil {
 			return nil, fmt.Errorf("error while getting all balances: %s", err)
 		}
 
-		balances = append(balances, types.NewAccountBalance(
+		balances = append(balances, types.NewNativeTokenAmount(
 			address,
-			balRes.Balances,
+			balRes.Balance.Amount,
 			height,
 		))
 	}

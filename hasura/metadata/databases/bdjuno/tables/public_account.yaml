@@ -11,6 +11,15 @@ object_relationships:
       remote_table:
         name: vesting_account
         schema: public
+- name: top_account
+  using:
+    manual_configuration:
+      column_mapping:
+        address: address
+      insertion_order: null
+      remote_table:
+        name: top_accounts
+        schema: public
 array_relationships:
 - name: proposal_deposits
   using:
