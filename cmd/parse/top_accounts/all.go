@@ -41,6 +41,7 @@ func allCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			distiModule := distribution.NewModule(sources.DistrSource, parseCtx.EncodingConfig.Marshaler, db)
 			stakingModule := staking.NewModule(sources.StakingSource, nil, parseCtx.EncodingConfig.Marshaler, db)
 			topaccountsModule := topaccounts.NewModule(nil, nil, nil, nil, parseCtx.EncodingConfig.Marshaler, db)
+			modules := BuildModules(bankModule, distiModule, stakingModule, topaccountsModule)
 
 			// Get all base accounts
 			accounts, err := authModule.GetAllBaseAccounts(0)
@@ -56,42 +57,62 @@ func allCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 
 			// Traverse the account list, refresh available balance, delegation, redelegation, unbonding, and reward
 			for count, account := range accounts {
-				log.Debug().Int("handled", count+1).Msg("refreshing top accounts table")
-
-				address := account.Address
-
-				err := bankModule.UpdateBalances([]string{address}, 0)
-				if err != nil {
-					log.Error().Msgf("error while refreshing account balance of account %s", address)
-				}
-
-				err = stakingModule.RefreshDelegations(0, address)
-				if err != nil {
-					log.Error().Msgf("error while refreshing delegations of account %s", address)
-				}
-
-				err = stakingModule.RefreshRedelegations(0, address)
-				if err != nil {
-					log.Error().Msgf("error while refreshing redelegations of account %s", address)
-				}
-
-				err = stakingModule.RefreshUnbondings(0, address)
-				if err != nil {
-					log.Error().Msgf("error while refreshing unbonding delegations of account %s", address)
-				}
-
-				err = distiModule.RefreshDelegatorRewards(0, []string{address})
-				if err != nil {
-					log.Error().Msgf("error while refreshing rewards of account %s", address)
-				}
-
-				err = topaccountsModule.RefreshTopAccountsSum([]string{address})
-				if err != nil {
-					log.Error().Msgf("error while refreshing top account sum of account %s", address)
-				}
+				log.Debug().Int("accounts handled", count+1).Msg("refreshing top accounts table")
+				go modules.refreshAll(account.Address)
 			}
 
 			return nil
 		},
+	}
+}
+
+type Modules struct {
+	bankModule        *bank.Module
+	distriModule      *distribution.Module
+	stakingModule     *staking.Module
+	topaccountsModule *topaccounts.Module
+}
+
+func BuildModules(
+	bankModule *bank.Module, distriModule *distribution.Module,
+	stakingModule *staking.Module, topaccountsModule *topaccounts.Module,
+) Modules {
+	return Modules{
+		bankModule:        bankModule,
+		distriModule:      distriModule,
+		stakingModule:     stakingModule,
+		topaccountsModule: topaccountsModule,
+	}
+}
+
+func (m *Modules) refreshAll(address string) {
+	err := m.bankModule.UpdateBalances([]string{address}, 0)
+	if err != nil {
+		log.Error().Msgf("error while refreshing account balance of account %s", address)
+	}
+
+	err = m.stakingModule.RefreshDelegations(0, address)
+	if err != nil {
+		log.Error().Msgf("error while refreshing delegations of account %s", address)
+	}
+
+	err = m.stakingModule.RefreshRedelegations(0, address)
+	if err != nil {
+		log.Error().Msgf("error while refreshing redelegations of account %s", address)
+	}
+
+	err = m.stakingModule.RefreshUnbondings(0, address)
+	if err != nil {
+		log.Error().Msgf("error while refreshing unbonding delegations of account %s", address)
+	}
+
+	err = m.distriModule.RefreshDelegatorRewards(0, []string{address})
+	if err != nil {
+		log.Error().Msgf("error while refreshing rewards of account %s", address)
+	}
+
+	err = m.topaccountsModule.RefreshTopAccountsSum([]string{address})
+	if err != nil {
+		log.Error().Msgf("error while refreshing top account sum of account %s", address)
 	}
 }

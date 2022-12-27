@@ -18,7 +18,7 @@ import (
 
 // SaveAccounts saves the given accounts inside the database
 func (db *Db) SaveAccounts(accounts []types.Account) error {
-	log.Debug().Int("account number", len(accounts)).Msg("saving accounts...")
+	log.Debug().Int("account number", len(accounts)).Msg("saving only base accounts...")
 	paramsNumber := 1
 	slices := dbutils.SplitAccounts(accounts, paramsNumber)
 
