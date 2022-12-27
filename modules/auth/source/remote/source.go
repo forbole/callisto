@@ -38,31 +38,34 @@ func (s Source) GetAllAnyAccounts(height int64) ([]*codectypes.Any, error) {
 	var stop = false
 	var counter uint64
 	var totalCounts uint64
+
+	// Get 1000 accounts per query
 	var pageLimit uint64 = 1000
 
 	for !stop {
+		// Get accounts
 		res, err := s.authClient.Accounts(
 			ctx,
 			&authtypes.QueryAccountsRequest{
 				Pagination: &query.PageRequest{
 					Key:        nextKey,
-					Limit:      pageLimit, // Query 100 supplies at time
+					Limit:      pageLimit,
 					CountTotal: true,
 				},
 			})
 		if err != nil {
 			return nil, fmt.Errorf("error while getting any accounts from source: %s", err)
 		}
-		counter += uint64(len(res.Accounts))
+		nextKey = res.Pagination.NextKey
+		stop = len(res.Pagination.NextKey) == 0
+		accounts = append(accounts, res.Accounts...)
+
+		// Log get accounts progress
 		if res.Pagination.GetTotal() != 0 {
 			totalCounts = res.Pagination.GetTotal()
 		}
+		counter += uint64(len(res.Accounts))
 		log.Debug().Uint64("total any account", totalCounts).Uint64("current counter", counter).Msg("getting accounts...")
-
-		nextKey = res.Pagination.NextKey
-		stop = len(res.Pagination.NextKey) == 0
-
-		accounts = append(accounts, res.Accounts...)
 	}
 
 	return accounts, nil
