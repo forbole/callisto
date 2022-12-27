@@ -66,7 +66,7 @@ func allCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 
 			waitGroup.Add(1)
 
-			// Get all base accounts
+			// Get all base accounts, height set to 0 for querying the latest data on chain
 			accounts, err := authModule.GetAllBaseAccounts(0)
 			if err != nil {
 				return fmt.Errorf("error while getting base accounts: %s", err)
