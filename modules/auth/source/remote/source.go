@@ -30,7 +30,7 @@ func NewSource(source *remote.Source, authClient authtypes.QueryClient) *Source 
 }
 
 func (s Source) GetAllAnyAccounts(height int64) ([]*codectypes.Any, error) {
-	log.Debug().Msg("getting all any accounts")
+	log.Debug().Msg("getting all accounts")
 	ctx := remote.GetHeightRequestContext(s.Ctx, height)
 
 	var accounts []*codectypes.Any

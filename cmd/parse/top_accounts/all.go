@@ -55,7 +55,9 @@ func allCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			}
 
 			// Traverse the account list, refresh available balance, delegation, redelegation, unbonding, and reward
-			for _, account := range accounts {
+			for count, account := range accounts {
+				log.Debug().Int("handled", count+1).Msg("refreshing top accounts table")
+
 				address := account.Address
 
 				err := bankModule.UpdateBalances([]string{address}, 0)
