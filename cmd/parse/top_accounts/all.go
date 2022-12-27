@@ -2,12 +2,17 @@ package top_accounts
 
 import (
 	"fmt"
+	"os"
+	"os/signal"
+	"sync"
+	"syscall"
 
 	"github.com/forbole/bdjuno/v3/modules/bank"
 	"github.com/forbole/bdjuno/v3/modules/distribution"
 	"github.com/forbole/bdjuno/v3/modules/staking"
 	topaccounts "github.com/forbole/bdjuno/v3/modules/top_accounts"
 	modulestypes "github.com/forbole/bdjuno/v3/modules/types"
+	"github.com/forbole/bdjuno/v3/types"
 	"github.com/rs/zerolog/log"
 
 	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
@@ -18,8 +23,16 @@ import (
 	"github.com/forbole/bdjuno/v3/modules/auth"
 )
 
+var (
+	waitGroup sync.WaitGroup
+)
+
+const (
+	flagWorker = "worker"
+)
+
 func allCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use: "all",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			parseCtx, err := parsecmdtypes.GetParserContext(config.Cfg, parseConfig)
@@ -41,12 +54,21 @@ func allCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			distiModule := distribution.NewModule(sources.DistrSource, parseCtx.EncodingConfig.Marshaler, db)
 			stakingModule := staking.NewModule(sources.StakingSource, nil, parseCtx.EncodingConfig.Marshaler, db)
 			topaccountsModule := topaccounts.NewModule(nil, nil, nil, nil, parseCtx.EncodingConfig.Marshaler, db)
-			modules := BuildModules(bankModule, distiModule, stakingModule, topaccountsModule)
+
+			// Get workers
+			exportQueue := NewQueue(5)
+			workerCount, _ := cmd.Flags().GetInt64(flagWorker)
+			workers := make([]Worker, workerCount)
+			for i := range workers {
+				workers[i] = NewWorker(exportQueue, bankModule, distiModule, stakingModule, topaccountsModule)
+			}
+
+			waitGroup.Add(1)
 
 			// Get all base accounts
 			accounts, err := authModule.GetAllBaseAccounts(0)
 			if err != nil {
-				return fmt.Errorf("error while getting account base accounts: %s", err)
+				return fmt.Errorf("error while getting base accounts: %s", err)
 			}
 
 			// Store accounts
@@ -55,64 +77,42 @@ func allCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				return err
 			}
 
-			// Traverse the account list, refresh available balance, delegation, redelegation, unbonding, and reward
-			for count, account := range accounts {
-				log.Debug().Int("accounts handled", count+1).Msg("refreshing top accounts table")
-				go modules.refreshAll(account.Address)
+			for i, w := range workers {
+				log.Debug().Int("number", i+1).Msg("starting worker...")
+				go w.start()
 			}
 
+			trapSignal()
+
+			go enqueueAddresses(exportQueue, accounts)
+
+			waitGroup.Wait()
 			return nil
 		},
 	}
+
+	cmd.Flags().Int64(flagWorker, 1, "worker count")
+
+	return cmd
 }
 
-type Modules struct {
-	bankModule        *bank.Module
-	distriModule      *distribution.Module
-	stakingModule     *staking.Module
-	topaccountsModule *topaccounts.Module
-}
-
-func BuildModules(
-	bankModule *bank.Module, distriModule *distribution.Module,
-	stakingModule *staking.Module, topaccountsModule *topaccounts.Module,
-) Modules {
-	return Modules{
-		bankModule:        bankModule,
-		distriModule:      distriModule,
-		stakingModule:     stakingModule,
-		topaccountsModule: topaccountsModule,
+func enqueueAddresses(exportQueue AddressQueue, accounts []types.Account) {
+	for _, account := range accounts {
+		exportQueue <- account.Address
 	}
 }
 
-func (m *Modules) refreshAll(address string) {
-	err := m.bankModule.UpdateBalances([]string{address}, 0)
-	if err != nil {
-		log.Error().Msgf("error while refreshing account balance of account %s", address)
-	}
+// trapSignal will listen for any OS signal and invoke Done on the main
+// WaitGroup allowing the main process to gracefully exit.
+func trapSignal() {
+	var sigCh = make(chan os.Signal, 1)
 
-	err = m.stakingModule.RefreshDelegations(0, address)
-	if err != nil {
-		log.Error().Msgf("error while refreshing delegations of account %s", address)
-	}
+	signal.Notify(sigCh, syscall.SIGTERM)
+	signal.Notify(sigCh, syscall.SIGINT)
 
-	err = m.stakingModule.RefreshRedelegations(0, address)
-	if err != nil {
-		log.Error().Msgf("error while refreshing redelegations of account %s", address)
-	}
-
-	err = m.stakingModule.RefreshUnbondings(0, address)
-	if err != nil {
-		log.Error().Msgf("error while refreshing unbonding delegations of account %s", address)
-	}
-
-	err = m.distriModule.RefreshDelegatorRewards(0, []string{address})
-	if err != nil {
-		log.Error().Msgf("error while refreshing rewards of account %s", address)
-	}
-
-	err = m.topaccountsModule.RefreshTopAccountsSum([]string{address})
-	if err != nil {
-		log.Error().Msgf("error while refreshing top account sum of account %s", address)
-	}
+	go func() {
+		sig := <-sigCh
+		log.Info().Str("signal", sig.String()).Msg("caught signal; shutting down...")
+		defer waitGroup.Done()
+	}()
 }
