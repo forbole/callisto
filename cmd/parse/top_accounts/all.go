@@ -16,6 +16,7 @@ import (
 	"github.com/rs/zerolog/log"
 
 	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
+	"github.com/forbole/juno/v3/parser"
 	"github.com/forbole/juno/v3/types/config"
 	"github.com/spf13/cobra"
 
@@ -82,7 +83,7 @@ func allCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				go w.start()
 			}
 
-			trapSignal()
+			trapSignal(parseCtx)
 
 			go enqueueAddresses(exportQueue, accounts)
 
@@ -104,7 +105,7 @@ func enqueueAddresses(exportQueue AddressQueue, accounts []types.Account) {
 
 // trapSignal will listen for any OS signal and invoke Done on the main
 // WaitGroup allowing the main process to gracefully exit.
-func trapSignal() {
+func trapSignal(ctx *parser.Context) {
 	var sigCh = make(chan os.Signal, 1)
 
 	signal.Notify(sigCh, syscall.SIGTERM)
@@ -113,6 +114,8 @@ func trapSignal() {
 	go func() {
 		sig := <-sigCh
 		log.Info().Str("signal", sig.String()).Msg("caught signal; shutting down...")
+		defer ctx.Node.Stop()
+		defer ctx.Database.Close()
 		defer waitGroup.Done()
 	}()
 }
