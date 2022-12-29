@@ -52,7 +52,7 @@ func allCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			// Build modules
 			authModule := auth.NewModule(sources.AuthSource, nil, parseCtx.EncodingConfig.Marshaler, db)
 			bankModule := bank.NewModule(nil, sources.BankSource, parseCtx.EncodingConfig.Marshaler, db)
-			distiModule := distribution.NewModule(sources.DistrSource, parseCtx.EncodingConfig.Marshaler, db)
+			distriModule := distribution.NewModule(sources.DistrSource, parseCtx.EncodingConfig.Marshaler, db)
 			stakingModule := staking.NewModule(sources.StakingSource, parseCtx.EncodingConfig.Marshaler, db)
 			topaccountsModule := topaccounts.NewModule(nil, nil, nil, nil, parseCtx.EncodingConfig.Marshaler, db)
 
@@ -61,7 +61,7 @@ func allCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			workerCount, _ := cmd.Flags().GetInt64(flagWorker)
 			workers := make([]Worker, workerCount)
 			for i := range workers {
-				workers[i] = NewWorker(exportQueue, bankModule, distiModule, stakingModule, topaccountsModule)
+				workers[i] = NewWorker(exportQueue, bankModule, distriModule, stakingModule, topaccountsModule)
 			}
 
 			waitGroup.Add(1)
