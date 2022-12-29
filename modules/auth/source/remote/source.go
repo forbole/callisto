@@ -60,7 +60,7 @@ func (s Source) GetAllAnyAccounts(height int64) ([]*codectypes.Any, error) {
 		stop = len(res.Pagination.NextKey) == 0
 		accounts = append(accounts, res.Accounts...)
 
-		// Log get accounts progress
+		// Log getting accounts progress
 		if res.Pagination.GetTotal() != 0 {
 			totalCounts = res.Pagination.GetTotal()
 		}
