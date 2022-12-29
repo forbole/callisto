@@ -20,10 +20,10 @@ type Source struct {
 }
 
 // NewSource builds a new Source instance
-func NewSource(source *local.Source, bk authtypes.QueryServer) *Source {
+func NewSource(source *local.Source, q authtypes.QueryServer) *Source {
 	return &Source{
 		Source: source,
-		q:      bk,
+		q:      q,
 	}
 }
 
