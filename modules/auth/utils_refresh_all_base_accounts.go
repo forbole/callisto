@@ -31,10 +31,7 @@ func (m *Module) unpackAnyAccounts(anyAccounts []*codectypes.Any) ([]types.Accou
 			return nil, fmt.Errorf("error while unpacking any account: %s", err)
 		}
 
-		// Get only base accounts
-		if baseAccount, ok := accountI.(*authtypes.BaseAccount); ok {
-			accounts = append(accounts, types.NewAccount(baseAccount.Address))
-		}
+		accounts = append(accounts, types.NewAccount(accountI.GetAddress().String()))
 	}
 
 	return accounts, nil
