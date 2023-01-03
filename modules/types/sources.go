@@ -13,7 +13,6 @@ import (
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
@@ -28,9 +27,6 @@ import (
 	distrsource "github.com/forbole/bdjuno/v3/modules/distribution/source"
 	localdistrsource "github.com/forbole/bdjuno/v3/modules/distribution/source/local"
 	remotedistrsource "github.com/forbole/bdjuno/v3/modules/distribution/source/remote"
-	govsource "github.com/forbole/bdjuno/v3/modules/gov/source"
-	localgovsource "github.com/forbole/bdjuno/v3/modules/gov/source/local"
-	remotegovsource "github.com/forbole/bdjuno/v3/modules/gov/source/remote"
 	inflationsource "github.com/forbole/bdjuno/v3/modules/inflation/source"
 	localinflationsource "github.com/forbole/bdjuno/v3/modules/inflation/source/local"
 	remoteinflationsource "github.com/forbole/bdjuno/v3/modules/inflation/source/remote"
@@ -48,9 +44,9 @@ import (
 )
 
 type Sources struct {
-	BankSource      banksource.Source
-	DistrSource     distrsource.Source
-	GovSource       govsource.Source
+	BankSource  banksource.Source
+	DistrSource distrsource.Source
+	// GovSource       govsource.Source
 	InflationSource inflationsource.Source
 	MintSource      mintsource.Source
 	SlashingSource  slashingsource.Source
@@ -86,9 +82,9 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 	)
 
 	sources := &Sources{
-		BankSource:      localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
-		DistrSource:     localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
-		GovSource:       localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
+		BankSource:  localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
+		DistrSource: localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
+		// GovSource:       localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
 		InflationSource: localinflationsource.NewSource(source, inflationtypes.QueryServer(evmosApp.InflationKeeper)),
 		MintSource:      localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
 		SlashingSource:  localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
@@ -126,9 +122,9 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 	}
 
 	return &Sources{
-		BankSource:      remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
-		DistrSource:     remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
-		GovSource:       remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
+		BankSource:  remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
+		DistrSource: remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
+		// GovSource:       remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
 		InflationSource: remoteinflationsource.NewSource(source, inflationtypes.NewQueryClient(source.GrpcConn)),
 		MintSource:      remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource:  remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),

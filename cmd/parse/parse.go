@@ -29,7 +29,7 @@ func NewParseCmd(parseCfg *parse.Config) *cobra.Command {
 		parseblocks.NewBlocksCmd(parseCfg),
 		parsefeegrant.NewFeegrantCmd(parseCfg),
 		parsegenesis.NewGenesisCmd(parseCfg),
-		parsegov.NewGovCmd(parseCfg),
+		// parsegov.NewGovCmd(parseCfg),
 		parsestaking.NewStakingCmd(parseCfg),
 		parsetransaction.NewTransactionsCmd(parseCfg),
 	)
