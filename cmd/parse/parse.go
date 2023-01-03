@@ -10,7 +10,8 @@ import (
 
 	parseauth "github.com/forbole/bdjuno/v3/cmd/parse/auth"
 	parsefeegrant "github.com/forbole/bdjuno/v3/cmd/parse/feegrant"
-	parsegov "github.com/forbole/bdjuno/v3/cmd/parse/gov"
+
+	// parsegov "github.com/forbole/bdjuno/v3/cmd/parse/gov"
 	parsestaking "github.com/forbole/bdjuno/v3/cmd/parse/staking"
 	parsetransaction "github.com/forbole/juno/v4/cmd/parse/transactions"
 )
