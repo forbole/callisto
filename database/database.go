@@ -31,7 +31,7 @@ func Builder(ctx *db.Context) (db.Database, error) {
 
 	return &Db{
 		Database: psqlDb,
-		Sqlx:     sqlx.NewDb(psqlDb.Sql, "postgresql"),
+		Sqlx:     sqlx.NewDb(psqlDb.SQL.DB, "postgresql"),
 	}, nil
 }
 
