@@ -8,7 +8,7 @@ import (
 
 	"github.com/forbole/bdjuno/v3/types"
 
-	inflationtypes "github.com/evmos/evmos/v6/x/inflation/types"
+	inflationtypes "github.com/evmos/evmos/v10/x/inflation/types"
 	"github.com/rs/zerolog/log"
 )
 

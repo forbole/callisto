@@ -18,7 +18,7 @@ import (
 
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 
-	inflationtypes "github.com/evmos/evmos/v6/x/inflation/types"
+	inflationtypes "github.com/evmos/evmos/v10/x/inflation/types"
 )
 
 func (m *Module) UpdateProposal(height int64, id uint64) error {

@@ -13,8 +13,8 @@ all: lint build test-unit
 ###                                Build flags                              ###
 ###############################################################################
 
-LD_FLAGS = -X github.com/forbole/juno/v3/cmd.Version=$(VERSION) \
-	-X github.com/forbole/juno/v3/cmd.Commit=$(COMMIT)
+LD_FLAGS = -X github.com/forbole/juno/v4/cmd.Version=$(VERSION) \
+	-X github.com/forbole/juno/v4/cmd.Commit=$(COMMIT)
 BUILD_FLAGS :=  -ldflags '$(LD_FLAGS)'
 
 
