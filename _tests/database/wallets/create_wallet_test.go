@@ -11,7 +11,7 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 
-	walletsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/wallets"
+	walletsdb "github.com/forbole/bdjuno/v2/database/overgold/chain/wallets"
 )
 
 func TestRepository_SaveCreateWallet(t *testing.T) {
