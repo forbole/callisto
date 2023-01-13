@@ -14,8 +14,8 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 
+	accountsdb "github.com/forbole/bdjuno/v2/database/overgold/chain/accounts"
 	"github.com/forbole/bdjuno/v2/database/types"
-	accountsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/accounts"
 )
 
 func TestRepository_SaveAffiliateAddress(t *testing.T) {

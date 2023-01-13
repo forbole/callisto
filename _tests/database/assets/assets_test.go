@@ -12,7 +12,7 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 
-	assetsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/assets"
+	assetsdb "github.com/forbole/bdjuno/v2/database/overgold/chain/assets"
 )
 
 func TestRepository_SaveAsset(t *testing.T) {
