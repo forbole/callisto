@@ -43,7 +43,7 @@ type (
 		Wallet string `db:"wallet"`
 	}
 
-	// DBSystemTransfer represents a single row inside the "overgold_chain_banking_msg_system_transfer" table
+	// DBMsgSystemTransfer represents a single row inside the "overgold_chain_banking_msg_system_transfer" table
 	DBMsgSystemTransfer struct {
 		Hash       string  `db:"transaction_hash"`
 		Creator    string  `db:"creator"`
@@ -54,7 +54,7 @@ type (
 		Extras     ExtraDB `db:"extras"`
 	}
 
-	// DBSystemRewardTransfer represents a single row inside the "overgold_chain_banking_system_msg_reward_transfer" table
+	// DBMsgSystemRewardTransfer represents a single row inside the "overgold_chain_banking_system_msg_reward_transfer" table
 	DBMsgSystemRewardTransfer struct {
 		Hash       string  `db:"transaction_hash"`
 		Creator    string  `db:"creator"`
@@ -65,7 +65,7 @@ type (
 		Extras     ExtraDB `db:"extras"`
 	}
 
-	// DBPayment represents a single row inside the "overgold_chain_banking_msg_payment" table
+	// DBMsgPayment represents a single row inside the "overgold_chain_banking_msg_payment" table
 	DBMsgPayment struct {
 		Hash       string  `db:"transaction_hash"`
 		Creator    string  `db:"creator"`
@@ -76,7 +76,7 @@ type (
 		Extras     ExtraDB `db:"extras"`
 	}
 
-	// DBWithdraw represents a single row inside the "overgold_chain_banking_msg_withdraw" table
+	// DBMsgWithdraw represents a single row inside the "overgold_chain_banking_msg_withdraw" table
 	DBMsgWithdraw struct {
 		Hash    string  `db:"transaction_hash"`
 		Creator string  `db:"creator"`
@@ -86,7 +86,7 @@ type (
 		Extras  ExtraDB `db:"extras"`
 	}
 
-	// DBIssue represents a single row inside the "overgold_chain_banking_msg_issue" table
+	// DBMsgIssue represents a single row inside the "overgold_chain_banking_msg_issue" table
 	DBMsgIssue struct {
 		Hash    string  `db:"transaction_hash"`
 		Creator string  `db:"creator"`

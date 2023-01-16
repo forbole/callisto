@@ -21,7 +21,7 @@ type (
 		Wallets   pq.StringArray `db:"wallets"`
 	}
 
-	// DBAffiliates represents a single row inside theovergold_chain_accounts_affiliates" table
+	// DBAffiliates represents a single row inside the "overgold_chain_accounts_affiliates" table
 	DBAffiliates struct {
 		Id              uint64  `db:"id"`
 		AccountHash     string  `db:"account_hash"`

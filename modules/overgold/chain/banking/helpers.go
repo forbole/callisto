@@ -19,7 +19,7 @@ import (
 func getIssueFromTx(tx *juno.Tx, msg *banking.MsgIssue) (*banking.Issue, error) {
 	for _, log := range tx.TxResponse.Logs {
 		for _, event := range log.Events {
-			if event.Type != "overgold.chain.banking.Issue" {
+			if event.Type != "vipcoin.chain.banking.Issue" {
 				continue
 			}
 
@@ -49,7 +49,7 @@ func getIssueFromTx(tx *juno.Tx, msg *banking.MsgIssue) (*banking.Issue, error) 
 func getSystemTransferFromTx(tx *juno.Tx, msg *banking.MsgSystemTransfer) (*banking.SystemTransfer, error) {
 	for _, log := range tx.TxResponse.Logs {
 		for _, event := range log.Events {
-			if event.Type != "overgold.chain.banking.SystemTransfer" {
+			if event.Type != "vipcoin.chain.banking.SystemTransfer" {
 				continue
 			}
 
@@ -83,7 +83,7 @@ func getSystemTransferFromTx(tx *juno.Tx, msg *banking.MsgSystemTransfer) (*bank
 func getWithdrawFromTx(tx *juno.Tx, msg *banking.MsgWithdraw) (*banking.Withdraw, error) {
 	for _, log := range tx.TxResponse.Logs {
 		for _, event := range log.Events {
-			if event.Type != "overgold.chain.banking.Withdraw" {
+			if event.Type != "vipcoin.chain.banking.Withdraw" {
 				continue
 			}
 
@@ -113,7 +113,7 @@ func getWithdrawFromTx(tx *juno.Tx, msg *banking.MsgWithdraw) (*banking.Withdraw
 func getPaymentFromTx(tx *juno.Tx, msg *banking.MsgPayment) (*banking.Payment, error) {
 	for _, log := range tx.TxResponse.Logs {
 		for _, event := range log.Events {
-			if event.Type != "overgold.chain.banking.Payment" {
+			if event.Type != "vipcoin.chain.banking.Payment" {
 				continue
 			}
 
@@ -154,7 +154,7 @@ func (m *Module) getSystemTransfers(
 ) {
 	for _, log := range tx.TxResponse.Logs {
 		for _, event := range log.Events {
-			if event.Type != "overgold.chain.banking.SystemTransfer" {
+			if event.Type != "vipcoin.chain.banking.SystemTransfer" {
 				continue
 			}
 
