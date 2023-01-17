@@ -12,8 +12,8 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 
+	bankingdb "github.com/forbole/bdjuno/v2/database/overgold/chain/banking"
 	"github.com/forbole/bdjuno/v2/database/types"
-	bankingdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/banking"
 )
 
 func TestRepository_SaveMsgSystemTransfers(t *testing.T) {
@@ -38,9 +38,9 @@ func TestRepository_SaveMsgSystemTransfers(t *testing.T) {
 			args: args{
 				transfers: []*bankingtypes.MsgSystemTransfer{
 					{
-						Creator:    "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv2g",
-						WalletFrom: "vcg1k2gx4u0hwk87ja3wyakne8cl5gytnz0uc27xm4",
-						WalletTo:   "vcg10z0f2qdu483pn04cpfa9ux9njk8jplk9y8hfs5",
+						Creator:    "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv2g",
+						WalletFrom: "ovg1k2gx4u0hwk87ja3wyakne8cl5gytnz0uc27xm4",
+						WalletTo:   "ovg10z0f2qdu483pn04cpfa9ux9njk8jplk9y8hfs5",
 						Asset:      assets.AssetVCG,
 						Amount:     1_000_000,
 						Extras: []*extratypes.Extra{
@@ -55,9 +55,9 @@ func TestRepository_SaveMsgSystemTransfers(t *testing.T) {
 						},
 					},
 					{
-						Creator:    "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv3g",
-						WalletFrom: "vcg1k2gx4u0hwk87ja3wyakne8cl5gytnz0uc27xm1",
-						WalletTo:   "vcg10z0f2qdu483pn04cpfa9ux9njk8jplk9y8hfs2",
+						Creator:    "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv3g",
+						WalletFrom: "ovg1k2gx4u0hwk87ja3wyakne8cl5gytnz0uc27xm1",
+						WalletTo:   "ovg10z0f2qdu483pn04cpfa9ux9njk8jplk9y8hfs2",
 						Asset:      assets.AssetVCG,
 						Amount:     1_000_010,
 						Extras: []*extratypes.Extra{
@@ -108,13 +108,13 @@ func TestRepository_GetMsgSystemTransfers(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				filter: filter.NewFilter().SetArgument(types.FieldCreator, "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv2g"),
+				filter: filter.NewFilter().SetArgument(types.FieldCreator, "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv2g"),
 			},
 			want: []*bankingtypes.MsgSystemTransfer{
 				{
-					Creator:    "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv2g",
-					WalletFrom: "vcg1k2gx4u0hwk87ja3wyakne8cl5gytnz0uc27xm4",
-					WalletTo:   "vcg10z0f2qdu483pn04cpfa9ux9njk8jplk9y8hfs5",
+					Creator:    "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv2g",
+					WalletFrom: "ovg1k2gx4u0hwk87ja3wyakne8cl5gytnz0uc27xm4",
+					WalletTo:   "ovg10z0f2qdu483pn04cpfa9ux9njk8jplk9y8hfs5",
 					Asset:      assets.AssetVCG,
 					Amount:     1_000_000,
 					Extras: []*extratypes.Extra{

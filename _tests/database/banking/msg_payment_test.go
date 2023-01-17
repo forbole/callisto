@@ -12,8 +12,8 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 
+	bankingdb "github.com/forbole/bdjuno/v2/database/overgold/chain/banking"
 	"github.com/forbole/bdjuno/v2/database/types"
-	bankingdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/banking"
 )
 
 func TestRepository_SaveMsgPayments(t *testing.T) {
@@ -38,9 +38,9 @@ func TestRepository_SaveMsgPayments(t *testing.T) {
 			args: args{
 				payments: []*bankingtypes.MsgPayment{
 					{
-						Creator:    "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
-						WalletFrom: "vcg10xq8z7refmx3eqkv2ym76jkw72xkd5949k30gj",
-						WalletTo:   "vcg1fvz25fze4c7cwg2xvv6p0trlf34w9pu5m4vwk5",
+						Creator:    "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
+						WalletFrom: "ovg10xq8z7refmx3eqkv2ym76jkw72xkd5949k30gj",
+						WalletTo:   "ovg1fvz25fze4c7cwg2xvv6p0trlf34w9pu5m4vwk5",
 						Asset:      assets.AssetVCG,
 						Amount:     1000,
 						Extras: []*extratypes.Extra{
@@ -55,9 +55,9 @@ func TestRepository_SaveMsgPayments(t *testing.T) {
 						},
 					},
 					{
-						Creator:    "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv2g",
-						WalletFrom: "vcg10xq8z7refmx3eqkv2ym76jkw72xkd5949k33gj",
-						WalletTo:   "vcg1fvz25fze4c7cwg2xvv6p0trlf34w9pu5m4vwk4",
+						Creator:    "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv2g",
+						WalletFrom: "ovg10xq8z7refmx3eqkv2ym76jkw72xkd5949k33gj",
+						WalletTo:   "ovg1fvz25fze4c7cwg2xvv6p0trlf34w9pu5m4vwk4",
 						Asset:      assets.AssetVCG,
 						Amount:     1001,
 						Extras: []*extratypes.Extra{
@@ -108,13 +108,13 @@ func TestRepository_GetMsgPayments(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				filter: filter.NewFilter().SetArgument(types.FieldCreator, "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g"),
+				filter: filter.NewFilter().SetArgument(types.FieldCreator, "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g"),
 			},
 			want: []*bankingtypes.MsgPayment{
 				{
-					Creator:    "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
-					WalletFrom: "vcg10xq8z7refmx3eqkv2ym76jkw72xkd5949k30gj",
-					WalletTo:   "vcg1fvz25fze4c7cwg2xvv6p0trlf34w9pu5m4vwk5",
+					Creator:    "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
+					WalletFrom: "ovg10xq8z7refmx3eqkv2ym76jkw72xkd5949k30gj",
+					WalletTo:   "ovg1fvz25fze4c7cwg2xvv6p0trlf34w9pu5m4vwk5",
 					Asset:      assets.AssetVCG,
 					Amount:     1000,
 					Extras: []*extratypes.Extra{

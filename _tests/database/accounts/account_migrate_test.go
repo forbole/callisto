@@ -14,8 +14,8 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 
+	accountsdb "github.com/forbole/bdjuno/v2/database/overgold/chain/accounts"
 	"github.com/forbole/bdjuno/v2/database/types"
-	accountsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/accounts"
 )
 
 func TestRepository_SaveAccountMigrate(t *testing.T) {
@@ -40,14 +40,14 @@ func TestRepository_SaveAccountMigrate(t *testing.T) {
 			args: args{
 				[]*accountstypes.MsgAccountMigrate{
 					{
-						Creator:   "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
-						Address:   "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
+						Creator:   "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
+						Address:   "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
 						Hash:      "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd1",
 						PublicKey: "4133425431324570546d614730316858526a302f6e7a6437726d3663526751755367626a694244566f4a486e",
 					},
 					{
-						Creator:   "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv1g",
-						Address:   "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx46q",
+						Creator:   "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv1g",
+						Address:   "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx46q",
 						Hash:      "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd2",
 						PublicKey: "4133425431324570546d614730316858526a302f6e7a6437726d3663526751755367626a694244566f4a484e",
 					},
@@ -88,12 +88,12 @@ func TestRepository_GetAccountMigrate(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				accountFilter: filter.NewFilter().SetArgument(types.FieldAddress, "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q"),
+				accountFilter: filter.NewFilter().SetArgument(types.FieldAddress, "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx45q"),
 			},
 			want: []*accountstypes.MsgAccountMigrate{
 				{
-					Creator:   "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
-					Address:   "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
+					Creator:   "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
+					Address:   "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
 					Hash:      "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd1",
 					PublicKey: "4133425431324570546d614730316858526a302f6e7a6437726d3663526751755367626a694244566f4a486e",
 				},

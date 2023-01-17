@@ -10,8 +10,8 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 
+	bankingdb "github.com/forbole/bdjuno/v2/database/overgold/chain/banking"
 	"github.com/forbole/bdjuno/v2/database/types"
-	bankingdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/banking"
 )
 
 func TestRepository_SaveMsgSetRewardManagerAddress(t *testing.T) {
@@ -36,8 +36,8 @@ func TestRepository_SaveMsgSetRewardManagerAddress(t *testing.T) {
 			args: args{
 				address: []*bankingtypes.MsgSetRewardManagerAddress{
 					{
-						Creator: "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv2g",
-						Address: "vcg1k2gx4u0hwk87ja3wyakne8cl5gytnz0uc27xm4",
+						Creator: "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv2g",
+						Address: "ovg1k2gx4u0hwk87ja3wyakne8cl5gytnz0uc27xm4",
 					},
 				},
 			},
@@ -76,12 +76,12 @@ func TestRepository_GetSaveMsgSetRewardManagerAddress(t *testing.T) {
 		{
 			name: "[success] save message into db",
 			args: args{
-				filter: filter.NewFilter().SetArgument(types.FieldCreator, "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv2g"),
+				filter: filter.NewFilter().SetArgument(types.FieldCreator, "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv2g"),
 			},
 			want: []*bankingtypes.MsgSetRewardManagerAddress{
 				{
-					Creator: "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv2g",
-					Address: "vcg1k2gx4u0hwk87ja3wyakne8cl5gytnz0uc27xm4",
+					Creator: "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv2g",
+					Address: "ovg1k2gx4u0hwk87ja3wyakne8cl5gytnz0uc27xm4",
 				},
 			},
 			wantErr: false,

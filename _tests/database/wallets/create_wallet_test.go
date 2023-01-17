@@ -11,7 +11,7 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 
-	walletsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/wallets"
+	walletsdb "github.com/forbole/bdjuno/v2/database/overgold/chain/wallets"
 )
 
 func TestRepository_SaveCreateWallet(t *testing.T) {
@@ -36,9 +36,9 @@ func TestRepository_SaveCreateWallet(t *testing.T) {
 			args: args{
 				msg: []*walletstypes.MsgCreateWallet{
 					{
-						Creator:        "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
-						Address:        "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
-						AccountAddress: "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
+						Creator:        "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
+						Address:        "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
+						AccountAddress: "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
 						Kind:           walletstypes.WALLET_KIND_HOLDER,
 						State:          walletstypes.WALLET_STATE_ACTIVE,
 						Extras:         []*extratypes.Extra{},
@@ -80,13 +80,13 @@ func TestRepository_GetCreateWallet(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				accfilter: filter.NewFilter().SetArgument("creator", "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g"),
+				accfilter: filter.NewFilter().SetArgument("creator", "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g"),
 			},
 			msg: []*walletstypes.MsgCreateWallet{
 				{
-					Creator:        "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
-					Address:        "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
-					AccountAddress: "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
+					Creator:        "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
+					Address:        "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
+					AccountAddress: "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
 					Kind:           walletstypes.WALLET_KIND_HOLDER,
 					State:          walletstypes.WALLET_STATE_ACTIVE,
 					Extras:         []*extratypes.Extra{},

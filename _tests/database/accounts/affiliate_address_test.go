@@ -14,8 +14,8 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 
+	accountsdb "github.com/forbole/bdjuno/v2/database/overgold/chain/accounts"
 	"github.com/forbole/bdjuno/v2/database/types"
-	accountsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/accounts"
 )
 
 func TestRepository_SaveAffiliateAddress(t *testing.T) {
@@ -40,16 +40,16 @@ func TestRepository_SaveAffiliateAddress(t *testing.T) {
 			args: args{
 				msg: []*accountstypes.MsgSetAffiliateAddress{
 					{
-						Creator:    "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
+						Creator:    "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
 						Hash:       "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd1",
-						OldAddress: "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
-						NewAddress: "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx46q",
+						OldAddress: "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
+						NewAddress: "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx46q",
 					},
 					{
-						Creator:    "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv1g",
+						Creator:    "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv1g",
 						Hash:       "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd2",
-						OldAddress: "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx43q",
-						NewAddress: "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx44q",
+						OldAddress: "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx43q",
+						NewAddress: "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx44q",
 					},
 				},
 			},
@@ -92,10 +92,10 @@ func TestRepository_GetAffiliateAddress(t *testing.T) {
 			},
 			want: []*accountstypes.MsgSetAffiliateAddress{
 				{
-					Creator:    "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
+					Creator:    "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
 					Hash:       "a935ea2c467d7f666ea2a67870564f2efb902c05f0a2bb4b6202832aedd26cd1",
-					OldAddress: "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
-					NewAddress: "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx46q",
+					OldAddress: "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
+					NewAddress: "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx46q",
 				},
 			},
 			wantErr: false,

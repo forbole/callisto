@@ -12,8 +12,8 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 
+	walletsdb "github.com/forbole/bdjuno/v2/database/overgold/chain/wallets"
 	typesdb "github.com/forbole/bdjuno/v2/database/types"
-	walletsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/wallets"
 )
 
 func TestRepository_SaveCreateWalletWithBalance(t *testing.T) {
@@ -38,9 +38,9 @@ func TestRepository_SaveCreateWalletWithBalance(t *testing.T) {
 			args: args{
 				msg: []*walletstypes.MsgCreateWalletWithBalance{
 					{
-						Creator:        "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
-						Address:        "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
-						AccountAddress: "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
+						Creator:        "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
+						Address:        "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
+						AccountAddress: "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
 						Kind:           walletstypes.WALLET_KIND_HOLDER,
 						State:          walletstypes.WALLET_STATE_ACTIVE,
 						Extras:         []*extratypes.Extra{},
@@ -84,13 +84,13 @@ func TestRepository_GetCreateWalletWithBalance(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				walletFilter: filter.NewFilter().SetArgument(typesdb.FieldCreator, "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g"),
+				walletFilter: filter.NewFilter().SetArgument(typesdb.FieldCreator, "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g"),
 			},
 			msg: []*walletstypes.MsgCreateWalletWithBalance{
 				{
-					Creator:        "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
-					Address:        "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
-					AccountAddress: "vcg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
+					Creator:        "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
+					Address:        "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
+					AccountAddress: "ovg1hwxejcutmafuedd8trjqumfdkst2498pggx45q",
 					Kind:           walletstypes.WALLET_KIND_HOLDER,
 					State:          walletstypes.WALLET_STATE_ACTIVE,
 					Extras:         []*extratypes.Extra{},

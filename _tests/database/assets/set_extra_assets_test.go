@@ -11,7 +11,7 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 
-	assetsdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/assets"
+	assetsdb "github.com/forbole/bdjuno/v2/database/overgold/chain/assets"
 )
 
 func TestRepository_SaveSetExtraAsset(t *testing.T) {
@@ -40,7 +40,7 @@ func TestRepository_SaveSetExtraAsset(t *testing.T) {
 			args: args{
 				msgAssetSetExtra: []*assetstypes.MsgAssetSetExtra{
 					{
-						Creator: "vcg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz",
+						Creator: "ovg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz",
 						Name:    "This is Name for assets name",
 						Extras: []*extratypes.Extra{
 							{
@@ -93,7 +93,7 @@ func TestRepository_GetSetExtraAsset(t *testing.T) {
 			},
 			msgAssetSetExtra: []*assetstypes.MsgAssetSetExtra{
 				{
-					Creator: "vcg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz",
+					Creator: "ovg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz",
 					Name:    "This is Name for assets name",
 					Extras: []*extratypes.Extra{
 						{

@@ -11,8 +11,8 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 
+	bankingdb "github.com/forbole/bdjuno/v2/database/overgold/chain/banking"
 	"github.com/forbole/bdjuno/v2/database/types"
-	bankingdb "github.com/forbole/bdjuno/v2/database/vipcoin/chain/banking"
 )
 
 func TestRepository_SaveMsgSetTransferExtra(t *testing.T) {
@@ -37,7 +37,7 @@ func TestRepository_SaveMsgSetTransferExtra(t *testing.T) {
 			args: args{
 				extras: []*bankingtypes.MsgSetTransferExtra{
 					{
-						Creator: "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
+						Creator: "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
 						Id:      1,
 						Extras: []*extratypes.Extra{
 							{
@@ -51,7 +51,7 @@ func TestRepository_SaveMsgSetTransferExtra(t *testing.T) {
 						},
 					},
 					{
-						Creator: "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv2g",
+						Creator: "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv2g",
 						Id:      2,
 						Extras: []*extratypes.Extra{
 							{
@@ -105,7 +105,7 @@ func TestRepository_GetMsgSetTransferExtra(t *testing.T) {
 			},
 			want: []*bankingtypes.MsgSetTransferExtra{
 				{
-					Creator: "vcg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
+					Creator: "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv0g",
 					Id:      1,
 					Extras: []*extratypes.Extra{
 						{
