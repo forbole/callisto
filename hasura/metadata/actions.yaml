@@ -2,7 +2,7 @@ actions:
   - name: action_account_balance
     definition:
       kind: ""
-      handler: https://bdjuno.vidiscount.com/account_balance
+      handler: https://bdjuno.overgold.com/account_balance
       headers:
         - name: Content-Type
           value: application/json
@@ -11,7 +11,7 @@ actions:
   - name: action_delegation
     definition:
       kind: ""
-      handler: https://bdjuno.vidiscount.com/delegation
+      handler: https://bdjuno.overgold.com/delegation
       headers:
         - name: Content-Type
           value: application/json
@@ -20,7 +20,7 @@ actions:
   - name: action_delegation_reward
     definition:
       kind: ""
-      handler: https://bdjuno.vidiscount.com/delegation_reward
+      handler: https://bdjuno.overgold.com/delegation_reward
       headers:
         - name: Content-Type
           value: application/json
@@ -29,7 +29,7 @@ actions:
   - name: action_delegation_total
     definition:
       kind: ""
-      handler: https://bdjuno.vidiscount.com/delegation_total
+      handler: https://bdjuno.overgold.com/delegation_total
       headers:
         - name: Content-Type
           value: application/json
@@ -38,7 +38,7 @@ actions:
   - name: action_delegator_withdraw_address
     definition:
       kind: ""
-      handler: https://bdjuno.vidiscount.com/delegator_withdraw_address
+      handler: https://bdjuno.overgold.com/delegator_withdraw_address
       headers:
         - name: Content-Type
           value: application/json
@@ -47,7 +47,7 @@ actions:
   - name: action_redelegation
     definition:
       kind: ""
-      handler: https://bdjuno.vidiscount.com/redelegation
+      handler: https://bdjuno.overgold.com/redelegation
       headers:
         - name: Content-Type
           value: application/json
@@ -56,7 +56,7 @@ actions:
   - name: action_unbonding_delegation
     definition:
       kind: ""
-      handler: https://bdjuno.vidiscount.com/unbonding_delegation
+      handler: https://bdjuno.overgold.com/unbonding_delegation
       headers:
         - name: Content-Type
           value: application/json
@@ -65,7 +65,7 @@ actions:
   - name: action_unbonding_delegation_total
     definition:
       kind: ""
-      handler: https://bdjuno.vidiscount.com/unbonding_delegation_total
+      handler: https://bdjuno.overgold.com/unbonding_delegation_total
       headers:
         - name: Content-Type
           value: application/json
@@ -74,7 +74,7 @@ actions:
   - name: action_validator_commission_amount
     definition:
       kind: ""
-      handler: https://bdjuno.vidiscount.com/validator_commission_amount
+      handler: https://bdjuno.overgold.com/validator_commission_amount
       headers:
         - name: Content-Type
           value: application/json
@@ -83,7 +83,7 @@ actions:
   - name: action_validator_delegations
     definition:
       kind: ""
-      handler: https://bdjuno.vidiscount.com/validator_delegations
+      handler: https://bdjuno.overgold.com/validator_delegations
       headers:
         - name: Content-Type
           value: application/json
@@ -92,7 +92,7 @@ actions:
   - name: action_validator_redelegations_from
     definition:
       kind: ""
-      handler: https://bdjuno.vidiscount.com/validator_redelegations_from
+      handler: https://bdjuno.overgold.com/validator_redelegations_from
       headers:
         - name: Content-Type
           value: application/json
@@ -101,7 +101,7 @@ actions:
   - name: action_validator_unbonding_delegations
     definition:
       kind: ""
-      handler: https://bdjuno.vidiscount.com/validator_unbonding_delegations
+      handler: https://bdjuno.overgold.com/validator_unbonding_delegations
       headers:
         - name: Content-Type
           value: application/json
