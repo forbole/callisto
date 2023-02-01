@@ -156,6 +156,7 @@ type Deposit struct {
 	ProposalID uint64
 	Depositor  string
 	Amount     sdk.Coins
+	Timestamp  time.Time
 	Height     int64
 }
 
@@ -164,12 +165,14 @@ func NewDeposit(
 	proposalID uint64,
 	depositor string,
 	amount sdk.Coins,
+	timestamp time.Time,
 	height int64,
 ) Deposit {
 	return Deposit{
 		ProposalID: proposalID,
 		Depositor:  depositor,
 		Amount:     amount,
+		Timestamp:  timestamp,
 		Height:     height,
 	}
 }
@@ -181,6 +184,7 @@ type Vote struct {
 	ProposalID uint64
 	Voter      string
 	Option     govtypes.VoteOption
+	Timestamp  time.Time
 	Height     int64
 }
 
@@ -189,12 +193,14 @@ func NewVote(
 	proposalID uint64,
 	voter string,
 	option govtypes.VoteOption,
+	timestamp time.Time,
 	height int64,
 ) Vote {
 	return Vote{
 		ProposalID: proposalID,
 		Voter:      voter,
 		Option:     option,
+		Timestamp:  timestamp,
 		Height:     height,
 	}
 }
