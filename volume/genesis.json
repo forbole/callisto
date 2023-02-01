@@ -176,7 +176,25 @@
       "starting_proposal_id": "1",
       "deposits": [],
       "votes": [],
-      "proposals": [],
+      "proposals": [
+        {
+          "status": "PROPOSAL_STATUS_REJECTED",
+          "content": {
+            "plan": {
+              "name": "v0.45.6",
+              "height": "5371000"
+            },
+            "@type": "/cosmos.upgrade.v1beta1.SoftwareUpgradeProposal",
+            "title": "upgrade",
+            "description": "upgrade"
+          },
+          "proposalId": "1",
+          "submitTime": "2023-01-02T15:04:05.999999999Z",
+          "depositEndTime": "2023-01-02T15:04:05.999999999Z",
+          "votingStartTime": "2023-01-02T15:04:05.999999999Z",
+          "votingEndTime": "2023-01-02T15:04:05.999999999Z"
+        }
+      ],
       "deposit_params": {
         "min_deposit": [
           {
