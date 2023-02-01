@@ -8,9 +8,8 @@ import (
 
 	"github.com/forbole/bdjuno/v3/types"
 
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
-
 	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
+	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/rs/zerolog/log"
 )
 
@@ -19,23 +18,23 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	log.Debug().Str("module", "gov").Msg("parsing genesis")
 
 	// Read the genesis state
-	var genState govtypes.GenesisState
-	err := m.cdc.UnmarshalJSON(appState[gov.ModuleName], &genState)
+	var genStatev1beta1 govtypesv1beta1.GenesisState
+	err := m.cdc.UnmarshalJSON(appState[gov.ModuleName], &genStatev1beta1)
 	if err != nil {
-		return fmt.Errorf("error while reading gov genesis data: %s", err)
+		return fmt.Errorf("error while reading gov genesis data1111: %s", err)
 	}
 
 	// Save the proposals
-	err = m.saveProposals(genState.Proposals, doc)
+	err = m.saveGenesisProposals(genStatev1beta1.Proposals, doc)
 	if err != nil {
 		return fmt.Errorf("error while storing genesis governance proposals: %s", err)
 	}
 
 	// Save the params
-	err = m.db.SaveGovParams(types.NewGovParams(
-		types.NewVotingParams(genState.VotingParams),
-		types.NewDepositParam(genState.DepositParams),
-		types.NewTallyParams(genState.TallyParams),
+	err = m.db.SaveGenesisGovParams(types.NewGenesisGovParams(
+		types.NewGenesisVotingParams(&genStatev1beta1.VotingParams),
+		types.NewGenesisDepositParam(&genStatev1beta1.DepositParams),
+		types.NewGenesisTallyParams(&genStatev1beta1.TallyParams),
 		doc.InitialHeight,
 	))
 	if err != nil {
@@ -46,7 +45,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 }
 
 // saveProposals save proposals from genesis file
-func (m *Module) saveProposals(slice govtypes.Proposals, genDoc *tmtypes.GenesisDoc) error {
+func (m *Module) saveGenesisProposals(slice govtypesv1beta1.Proposals, genDoc *tmtypes.GenesisDoc) error {
 	proposals := make([]types.Proposal, len(slice))
 	tallyResults := make([]types.TallyResult, len(slice))
 	deposits := make([]types.Deposit, len(slice))
@@ -54,30 +53,29 @@ func (m *Module) saveProposals(slice govtypes.Proposals, genDoc *tmtypes.Genesis
 	for index, proposal := range slice {
 		// Since it's not possible to get the proposer, set it to nil
 		proposals[index] = types.NewProposal(
-			proposal.Id,
-			// proposal.ProposalRoute(),
-			proposal.GetMetadata(),
-			proposal.Messages[0].TypeUrl,
-			string(proposal.Messages[0].Value),
+			proposal.ProposalId,
+			proposal.ProposalRoute(),
+			proposal.ProposalType(),
+			proposal.GetContent(),
 			proposal.Status.String(),
-			proposal.SubmitTime,
-			proposal.DepositEndTime,
-			proposal.VotingStartTime,
-			proposal.VotingEndTime,
+			&proposal.SubmitTime,
+			&proposal.DepositEndTime,
+			&proposal.VotingStartTime,
+			&proposal.VotingEndTime,
 			"",
 		)
 
 		tallyResults[index] = types.NewTallyResult(
-			proposal.Id,
-			proposal.FinalTallyResult.YesCount,
-			proposal.FinalTallyResult.AbstainCount,
-			proposal.FinalTallyResult.NoCount,
-			proposal.FinalTallyResult.NoWithVetoCount,
+			proposal.ProposalId,
+			proposal.FinalTallyResult.Yes.String(),
+			proposal.FinalTallyResult.Abstain.String(),
+			proposal.FinalTallyResult.No.String(),
+			proposal.FinalTallyResult.NoWithVeto.String(),
 			genDoc.InitialHeight,
 		)
 
 		deposits[index] = types.NewDeposit(
-			proposal.Id,
+			proposal.ProposalId,
 			"",
 			proposal.TotalDeposit,
 			genDoc.GenesisTime,
