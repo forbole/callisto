@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"strconv"
+	"time"
 
 	modulestypes "github.com/forbole/bdjuno/v3/modules/types"
 	"github.com/rs/zerolog/log"
@@ -55,7 +56,7 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			inflationModule := inflation.NewModule(sources.InflationSource, parseCtx.EncodingConfig.Marshaler, db)
 			mintModule := mint.NewModule(sources.MintSource, parseCtx.EncodingConfig.Marshaler, db)
 			slashingModule := slashing.NewModule(sources.SlashingSource, parseCtx.EncodingConfig.Marshaler, db)
-			stakingModule := staking.NewModule(sources.StakingSource, slashingModule, parseCtx.EncodingConfig.Marshaler, db)
+			stakingModule := staking.NewModule(sources.StakingSource, parseCtx.EncodingConfig.Marshaler, db)
 
 			// Build the gov module
 			govModule := gov.NewModule(sources.GovSource, nil, distrModule, inflationModule, mintModule, slashingModule, stakingModule, parseCtx.EncodingConfig.Marshaler, db)
@@ -81,7 +82,7 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				return fmt.Errorf("error while getting chain latest block height: %s", err)
 			}
 
-			err = govModule.UpdateProposal(height, proposalID)
+			err = govModule.UpdateProposal(height, time.Now(), proposalID)
 			if err != nil {
 				return err
 			}

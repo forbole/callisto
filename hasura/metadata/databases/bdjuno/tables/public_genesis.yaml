@@ -3,18 +3,11 @@ table:
   schema: public
 select_permissions:
 - permission:
-    allow_aggregations: true
+    allow_aggregations: false
     columns:
     - chain_id
     - initial_height
     - time
     filter: {}
+    limit: 1
   role: anonymous
-- permission:
-    allow_aggregations: true
-    columns:
-    - chain_id
-    - one_row_id
-    - time
-    filter: {}
-  role: client

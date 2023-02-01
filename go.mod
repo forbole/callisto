@@ -1,23 +1,23 @@
 module github.com/forbole/bdjuno/v3
 
-go 1.17
+go 1.18
 
 require (
 	github.com/cosmos/cosmos-sdk v0.45.5
 	github.com/cosmos/gaia/v7 v7.0.2
 	github.com/evmos/ethermint v0.17.1
 	github.com/evmos/evmos/v6 v6.0.2
-	github.com/forbole/juno/v3 v3.3.0
-	github.com/go-co-op/gocron v1.16.1
+	github.com/forbole/juno/v3 v3.4.0
+	github.com/go-co-op/gocron v1.18.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
-	github.com/lib/pq v1.10.6
+	github.com/lib/pq v1.10.7
 	github.com/pelletier/go-toml v1.9.5
-	github.com/prometheus/client_golang v1.12.2
+	github.com/prometheus/client_golang v1.14.0
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
-	github.com/rs/zerolog v1.27.0
-	github.com/spf13/cobra v1.5.0
-	github.com/stretchr/testify v1.8.0
+	github.com/rs/zerolog v1.29.0
+	github.com/spf13/cobra v1.6.1
+	github.com/stretchr/testify v1.8.1
 	github.com/tendermint/tendermint v0.34.20-0.20220517115723-e6f071164839
 	google.golang.org/grpc v1.47.0
 	gopkg.in/yaml.v3 v3.0.1
@@ -87,7 +87,7 @@ require (
 	github.com/holiman/bloomfilter/v2 v2.0.3 // indirect
 	github.com/holiman/uint256 v1.2.0 // indirect
 	github.com/huin/goupnp v1.0.2 // indirect
-	github.com/inconshreveable/mousetrap v1.0.0 // indirect
+	github.com/inconshreveable/mousetrap v1.0.1 // indirect
 	github.com/jackpal/go-nat-pmp v1.0.2 // indirect
 	github.com/jmhodges/levigo v1.0.0 // indirect
 	github.com/keybase/go-keychain v0.0.0-20190712205309-48d3d31d256d // indirect
@@ -108,9 +108,9 @@ require (
 	github.com/petermattis/goid v0.0.0-20180202154549-b0b1615b78e5 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/prometheus/client_model v0.2.0 // indirect
-	github.com/prometheus/common v0.32.1 // indirect
-	github.com/prometheus/procfs v0.7.3 // indirect
+	github.com/prometheus/client_model v0.3.0 // indirect
+	github.com/prometheus/common v0.37.0 // indirect
+	github.com/prometheus/procfs v0.8.0 // indirect
 	github.com/prometheus/tsdb v0.10.0 // indirect
 	github.com/rakyll/statik v0.1.7 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
@@ -142,12 +142,12 @@ require (
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d // indirect
 	golang.org/x/net v0.0.0-20220614195744-fb05da6f9022 // indirect
-	golang.org/x/sync v0.0.0-20220513210516-0976fa681c29 // indirect
+	golang.org/x/sync v0.0.0-20220601150217-0de741cfad7f // indirect
 	golang.org/x/sys v0.0.0-20220614162138-6c1b26c55098 // indirect
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/genproto v0.0.0-20220627200112-0a929928cb33 // indirect
-	google.golang.org/protobuf v1.28.0 // indirect
+	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/ini.v1 v1.66.4 // indirect
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
 	gopkg.in/olebedev/go-duktape.v3 v3.0.0-20200619000410-60c24ae608a6 // indirect
