@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/forbole/bdjuno/v3/modules/stakeibc"
 	modulestypes "github.com/forbole/bdjuno/v3/modules/types"
@@ -80,7 +81,7 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				return fmt.Errorf("error while getting chain latest block height: %s", err)
 			}
 
-			err = govModule.UpdateProposal(height, proposalID)
+			err = govModule.UpdateProposal(height, time.Now(), proposalID)
 			if err != nil {
 				return err
 			}
