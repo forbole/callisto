@@ -7,6 +7,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	sdkmath "cosmossdk.io/math"
 
 	dbtypes "github.com/forbole/bdjuno/v3/database/types"
 )
@@ -16,7 +17,7 @@ func newDecPts(value int64, prec int64) *sdk.Dec {
 	return &dec
 }
 
-func newIntPtr(value int64) *sdk.Int {
+func newIntPtr(value int64) *sdkmath.Int {
 	val := sdk.NewInt(value)
 	return &val
 }
