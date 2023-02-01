@@ -1,8 +1,8 @@
 package types
 
 import (
+	markettypes "github.com/akash-network/node/x/market/types/v1beta2"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	markettypes "github.com/ovrclk/akash/x/market/types/v1beta2"
 )
 
 // ------- x/market params -------

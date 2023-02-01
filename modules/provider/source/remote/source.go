@@ -8,7 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/forbole/juno/v3/node/remote"
 
-	providertypes "github.com/ovrclk/akash/x/provider/types/v1beta2"
+	providertypes "github.com/akash-network/node/x/provider/types/v1beta2"
 )
 
 var (

@@ -3,14 +3,14 @@ module github.com/forbole/bdjuno/v3
 go 1.18
 
 require (
+	github.com/akash-network/node v0.22.0
+	github.com/akash-network/provider v0.2.1
 	github.com/cosmos/cosmos-sdk v0.45.9
 	github.com/forbole/juno/v3 v3.4.0
 	github.com/go-co-op/gocron v1.18.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.7
-	github.com/ovrclk/akash v0.18.1
-	github.com/ovrclk/provider-services v0.1.0
 	github.com/pelletier/go-toml v1.9.5
 	github.com/prometheus/client_golang v1.14.0
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244

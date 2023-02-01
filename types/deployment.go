@@ -1,6 +1,6 @@
 package types
 
-import deploymenttypes "github.com/ovrclk/akash/x/deployment/types/v1beta2"
+import deploymenttypes "github.com/akash-network/node/x/deployment/types/v1beta2"
 
 // DeploymentParams represents the x/deployment parameters
 type DeploymentParams struct {

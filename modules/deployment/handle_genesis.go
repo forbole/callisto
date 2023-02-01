@@ -8,7 +8,7 @@ import (
 
 	"github.com/forbole/bdjuno/v3/types"
 
-	deploymenttypes "github.com/ovrclk/akash/x/deployment/types/v1beta2"
+	deploymenttypes "github.com/akash-network/node/x/deployment/types/v1beta2"
 	"github.com/rs/zerolog/log"
 )
 

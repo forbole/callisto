@@ -4,8 +4,8 @@ import (
 	"database/sql/driver"
 	"fmt"
 
+	providertypes "github.com/akash-network/node/x/provider/types/v1beta2"
 	"github.com/forbole/bdjuno/v3/types"
-	providertypes "github.com/ovrclk/akash/x/provider/types/v1beta2"
 )
 
 // ProviderRow represents a single row inside the provider table

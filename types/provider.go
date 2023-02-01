@@ -1,10 +1,10 @@
 package types
 
 import (
-	akashtypes "github.com/ovrclk/akash/types/v1beta2"
-	providertypes "github.com/ovrclk/akash/x/provider/types/v1beta2"
-	provider "github.com/ovrclk/provider-services"
-	clustertypes "github.com/ovrclk/provider-services/cluster/types/v1beta2"
+	akashtypes "github.com/akash-network/node/types/v1beta2"
+	providertypes "github.com/akash-network/node/x/provider/types/v1beta2"
+	provider "github.com/akash-network/provider"
+	clustertypes "github.com/akash-network/provider/cluster/types/v1beta2"
 )
 
 type Provider struct {

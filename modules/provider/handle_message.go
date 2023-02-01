@@ -1,10 +1,10 @@
 package provider
 
 import (
+	providertypes "github.com/akash-network/node/x/provider/types/v1beta2"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/bdjuno/v3/types"
 	junotypes "github.com/forbole/juno/v3/types"
-	providertypes "github.com/ovrclk/akash/x/provider/types/v1beta2"
 )
 
 // HandleMsg implements modules.MessageModule

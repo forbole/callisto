@@ -5,9 +5,9 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	providertypes "github.com/akash-network/node/x/provider/types/v1beta2"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/forbole/juno/v3/node/local"
-	providertypes "github.com/ovrclk/akash/x/provider/types/v1beta2"
 
 	providersource "github.com/forbole/bdjuno/v3/modules/provider/source"
 )

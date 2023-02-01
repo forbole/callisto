@@ -3,9 +3,9 @@ package remote
 import (
 	"fmt"
 
+	markettypes "github.com/akash-network/node/x/market/types/v1beta2"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/forbole/juno/v3/node/remote"
-	markettypes "github.com/ovrclk/akash/x/market/types/v1beta2"
 
 	marketsource "github.com/forbole/bdjuno/v3/modules/market/source"
 )

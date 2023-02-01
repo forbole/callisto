@@ -10,6 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/forbole/juno/v3/node/remote"
 
+	markettypes "github.com/akash-network/node/x/market/types/v1beta2"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
@@ -18,10 +19,10 @@ import (
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/juno/v3/node/local"
-	markettypes "github.com/ovrclk/akash/x/market/types/v1beta2"
 
 	nodeconfig "github.com/forbole/juno/v3/node/config"
 
+	providertypes "github.com/akash-network/node/x/provider/types/v1beta2"
 	banksource "github.com/forbole/bdjuno/v3/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v3/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v3/modules/bank/source/remote"
@@ -46,14 +47,13 @@ import (
 	stakingsource "github.com/forbole/bdjuno/v3/modules/staking/source"
 	localstakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/remote"
-	providertypes "github.com/ovrclk/akash/x/provider/types/v1beta2"
 
+	escrowKeeper "github.com/akash-network/node/x/escrow/keeper"
+	akashmarket "github.com/akash-network/node/x/market"
+	akashprovider "github.com/akash-network/node/x/provider"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	escrowKeeper "github.com/ovrclk/akash/x/escrow/keeper"
-	akashmarket "github.com/ovrclk/akash/x/market"
-	akashprovider "github.com/ovrclk/akash/x/provider"
 
-	akashapp "github.com/ovrclk/akash/app"
+	akashapp "github.com/akash-network/node/app"
 )
 
 type Sources struct {

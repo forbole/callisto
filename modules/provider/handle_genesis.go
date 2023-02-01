@@ -7,7 +7,7 @@ import (
 	"github.com/forbole/bdjuno/v3/types"
 	"github.com/rs/zerolog/log"
 
-	providertypes "github.com/ovrclk/akash/x/provider/types/v1beta2"
+	providertypes "github.com/akash-network/node/x/provider/types/v1beta2"
 	tmtypes "github.com/tendermint/tendermint/types"
 )
 

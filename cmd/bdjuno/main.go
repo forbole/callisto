@@ -16,8 +16,8 @@ import (
 	"github.com/forbole/bdjuno/v3/database"
 	"github.com/forbole/bdjuno/v3/modules"
 
+	akashapp "github.com/akash-network/node/app"
 	"github.com/cosmos/cosmos-sdk/simapp"
-	akashapp "github.com/ovrclk/akash/app"
 )
 
 func main() {

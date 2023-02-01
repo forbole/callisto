@@ -1,7 +1,7 @@
 package source
 
 import (
-	providertypes "github.com/ovrclk/akash/x/provider/types/v1beta2"
+	providertypes "github.com/akash-network/node/x/provider/types/v1beta2"
 )
 
 type Source interface {

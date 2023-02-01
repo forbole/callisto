@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"net/http"
 
+	provider "github.com/akash-network/provider"
 	"github.com/forbole/bdjuno/v3/types"
-	provider "github.com/ovrclk/provider-services"
 	"github.com/rs/zerolog/log"
 )
 

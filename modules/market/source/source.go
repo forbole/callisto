@@ -1,7 +1,7 @@
 package source
 
 import (
-	markettypes "github.com/ovrclk/akash/x/market/types/v1beta2"
+	markettypes "github.com/akash-network/node/x/market/types/v1beta2"
 )
 
 type Source interface {
