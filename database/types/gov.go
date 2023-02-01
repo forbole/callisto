@@ -17,18 +17,18 @@ type GovParamsRow struct {
 
 // ProposalRow represents a single row inside the proposal table
 type ProposalRow struct {
-	Title           string    `db:"title"`
-	Description     string    `db:"description"`
-	Content         string    `db:"content"`
-	ProposalRoute   string    `db:"proposal_route"`
-	ProposalType    string    `db:"proposal_type"`
-	ProposalID      uint64    `db:"id"`
-	SubmitTime      time.Time `db:"submit_time"`
-	DepositEndTime  time.Time `db:"deposit_end_time"`
-	VotingStartTime time.Time `db:"voting_start_time"`
-	VotingEndTime   time.Time `db:"voting_end_time"`
-	Proposer        string    `db:"proposer_address"`
-	Status          string    `db:"status"`
+	Title           string     `db:"title"`
+	Description     string     `db:"description"`
+	Content         string     `db:"content"`
+	ProposalRoute   string     `db:"proposal_route"`
+	ProposalType    string     `db:"proposal_type"`
+	ProposalID      uint64     `db:"id"`
+	SubmitTime      *time.Time `db:"submit_time"`
+	DepositEndTime  *time.Time `db:"deposit_end_time"`
+	VotingStartTime *time.Time `db:"voting_start_time"`
+	VotingEndTime   *time.Time `db:"voting_end_time"`
+	Proposer        string     `db:"proposer_address"`
+	Status          string     `db:"status"`
 }
 
 // NewProposalRow allows to easily create a new ProposalRow
@@ -39,10 +39,10 @@ func NewProposalRow(
 	title string,
 	description string,
 	content string,
-	submitTime time.Time,
-	depositEndTime time.Time,
-	votingStartTime time.Time,
-	votingEndTime time.Time,
+	submitTime *time.Time,
+	depositEndTime *time.Time,
+	votingStartTime *time.Time,
+	votingEndTime *time.Time,
 	proposer string,
 	status string,
 ) ProposalRow {
@@ -69,10 +69,10 @@ func (w ProposalRow) Equals(v ProposalRow) bool {
 		w.ProposalRoute == v.ProposalRoute &&
 		w.ProposalType == v.ProposalType &&
 		w.ProposalID == v.ProposalID &&
-		w.SubmitTime.Equal(v.SubmitTime) &&
-		w.DepositEndTime.Equal(v.DepositEndTime) &&
-		w.VotingStartTime.Equal(v.VotingStartTime) &&
-		w.VotingEndTime.Equal(v.VotingEndTime) &&
+		w.SubmitTime == v.SubmitTime &&
+		w.DepositEndTime == v.DepositEndTime &&
+		w.VotingStartTime == v.VotingStartTime &&
+		w.VotingEndTime == v.VotingEndTime &&
 		w.Proposer == v.Proposer &&
 		w.Status == v.Status
 }

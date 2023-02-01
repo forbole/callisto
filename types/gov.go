@@ -5,6 +5,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
+
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 )
 
@@ -79,7 +81,7 @@ type Proposal struct {
 	ProposalRoute   string
 	ProposalType    string
 	ProposalID      uint64
-	Content         string
+	Content         govtypesv1beta1.Content
 	Status          string
 	SubmitTime      *time.Time
 	DepositEndTime  *time.Time
@@ -93,7 +95,7 @@ func NewProposal(
 	proposalID uint64,
 	proposalRoute string,
 	proposalType string,
-	content string,
+	content govtypesv1beta1.Content,
 	status string,
 	submitTime *time.Time,
 	depositEndTime *time.Time,

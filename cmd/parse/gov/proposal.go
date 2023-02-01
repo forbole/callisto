@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	modulestypes "github.com/forbole/bdjuno/v3/modules/types"
@@ -105,6 +106,11 @@ func refreshProposalDetails(parseCtx *parser.Context, proposalID uint64, govModu
 		return fmt.Errorf("expecting only one create proposal transaction, found %d", len(txs))
 	}
 
+	if len(txs) == 0 {
+		fmt.Printf("error: couldn't find submit proposal tx info:  ", txs)
+
+		return nil
+	}
 	// Get the tx details
 	tx, err := parseCtx.Node.Tx(hex.EncodeToString(txs[0].Tx.Hash()))
 	if err != nil {
@@ -137,7 +143,7 @@ func refreshProposalDeposits(parseCtx *parser.Context, proposalID uint64, govMod
 
 	for _, tx := range txs {
 		// Get the tx details
-		junoTx, err := parseCtx.Node.Tx(hex.EncodeToString(tx.Tx.Hash()))
+		junoTx, err := parseCtx.Node.Tx(strings.ToUpper(hex.EncodeToString(tx.Tx.Hash())))
 		if err != nil {
 			return err
 		}
