@@ -19,7 +19,7 @@ ON CONFLICT (one_row_id) DO UPDATE
     	height = excluded.height
 WHERE supply.height <= excluded.height`
 
-	_, err := db.Sql.Exec(query, pq.Array(dbtypes.NewDbCoins(coins)), height)
+	_, err := db.SQL.Exec(query, pq.Array(dbtypes.NewDbCoins(coins)), height)
 	if err != nil {
 		return fmt.Errorf("error while storing supply: %s", err)
 	}

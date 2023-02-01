@@ -5,16 +5,16 @@ import (
 	"github.com/forbole/bdjuno/v3/modules/stakeibc"
 	"github.com/forbole/bdjuno/v3/modules/types"
 
-	"github.com/forbole/juno/v3/modules/pruning"
-	"github.com/forbole/juno/v3/modules/telemetry"
+	"github.com/forbole/juno/v4/modules/pruning"
+	"github.com/forbole/juno/v4/modules/telemetry"
 
 	"github.com/forbole/bdjuno/v3/modules/slashing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	jmodules "github.com/forbole/juno/v3/modules"
-	"github.com/forbole/juno/v3/modules/messages"
-	"github.com/forbole/juno/v3/modules/registrar"
+	jmodules "github.com/forbole/juno/v4/modules"
+	"github.com/forbole/juno/v4/modules/messages"
+	"github.com/forbole/juno/v4/modules/registrar"
 
 	"github.com/forbole/bdjuno/v3/utils"
 
@@ -26,12 +26,10 @@ import (
 	"github.com/forbole/bdjuno/v3/modules/feegrant"
 
 	dailyrefetch "github.com/forbole/bdjuno/v3/modules/daily_refetch"
-	"github.com/forbole/bdjuno/v3/modules/gov"
 	"github.com/forbole/bdjuno/v3/modules/mint"
 	"github.com/forbole/bdjuno/v3/modules/modules"
 	"github.com/forbole/bdjuno/v3/modules/pricefeed"
 	"github.com/forbole/bdjuno/v3/modules/staking"
-	"github.com/forbole/bdjuno/v3/modules/upgrade"
 )
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
@@ -66,7 +64,7 @@ func NewRegistrar(parser messages.MessageAddressesParser) *Registrar {
 
 // BuildModules implements modules.Registrar
 func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
-	cdc := ctx.EncodingConfig.Marshaler
+	cdc := ctx.EncodingConfig.Codec
 	db := database.Cast(ctx.Database)
 
 	sources, err := types.BuildSources(ctx.JunoConfig.Node, ctx.EncodingConfig)
@@ -85,8 +83,8 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
 	stakeIBCModule := stakeibc.NewModule(sources.StakeIBCSource, cdc, db)
 	stakingModule := staking.NewModule(sources.StakingSource, cdc, db)
-	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakeIBCModule, stakingModule, cdc, db)
-	upgradeModule := upgrade.NewModule(db, stakingModule)
+	// govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakeIBCModule, stakingModule, cdc, db)
+	// upgradeModule := upgrade.NewModule(db, stakingModule)
 
 	return []jmodules.Module{
 		messages.NewModule(r.parser, cdc, ctx.Database),
@@ -100,13 +98,13 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		dailyRefetchModule,
 		distrModule,
 		feegrantModule,
-		govModule,
+		// govModule,
 		mintModule,
 		modules.NewModule(ctx.JunoConfig.Chain, db),
 		pricefeed.NewModule(ctx.JunoConfig, cdc, db),
 		slashingModule,
 		stakeIBCModule,
 		stakingModule,
-		upgradeModule,
+		// upgradeModule,
 	}
 }

@@ -2,7 +2,7 @@ package stakeibc
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/forbole/juno/v3/modules"
+	"github.com/forbole/juno/v4/modules"
 
 	"github.com/forbole/bdjuno/v3/database"
 	stakeibcsource "github.com/forbole/bdjuno/v3/modules/stakeibc/source"

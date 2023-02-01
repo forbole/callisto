@@ -1,6 +1,6 @@
 package types
 
-import stakeibctypes "github.com/Stride-Labs/stride/v4/x/stakeibc/types"
+import stakeibctypes "github.com/Stride-Labs/stride/v5/x/stakeibc/types"
 
 // StakeIBCParams represents the x/stakeibc parameters
 type StakeIBCParams struct {

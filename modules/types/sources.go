@@ -8,31 +8,27 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/forbole/juno/v3/node/remote"
+	"github.com/forbole/juno/v4/node/remote"
 
-	minttypes "github.com/Stride-Labs/stride/v4/x/mint/types"
+	minttypes "github.com/Stride-Labs/stride/v5/x/mint/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/forbole/juno/v3/node/local"
+	"github.com/forbole/juno/v4/node/local"
 
-	nodeconfig "github.com/forbole/juno/v3/node/config"
+	nodeconfig "github.com/forbole/juno/v4/node/config"
 
-	strideapp "github.com/Stride-Labs/stride/v4/app"
-	mintkeeper "github.com/Stride-Labs/stride/v4/x/mint/keeper"
-	stakeibctypes "github.com/Stride-Labs/stride/v4/x/stakeibc/types"
+	strideapp "github.com/Stride-Labs/stride/v5/app"
+	mintkeeper "github.com/Stride-Labs/stride/v5/x/mint/keeper"
+	stakeibctypes "github.com/Stride-Labs/stride/v5/x/stakeibc/types"
 	banksource "github.com/forbole/bdjuno/v3/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v3/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v3/modules/bank/source/remote"
 	distrsource "github.com/forbole/bdjuno/v3/modules/distribution/source"
 	localdistrsource "github.com/forbole/bdjuno/v3/modules/distribution/source/local"
 	remotedistrsource "github.com/forbole/bdjuno/v3/modules/distribution/source/remote"
-	govsource "github.com/forbole/bdjuno/v3/modules/gov/source"
-	localgovsource "github.com/forbole/bdjuno/v3/modules/gov/source/local"
-	remotegovsource "github.com/forbole/bdjuno/v3/modules/gov/source/remote"
 	mintsource "github.com/forbole/bdjuno/v3/modules/mint/source"
 	localmintsource "github.com/forbole/bdjuno/v3/modules/mint/source/local"
 	remotemintsource "github.com/forbole/bdjuno/v3/modules/mint/source/remote"
@@ -48,9 +44,9 @@ import (
 )
 
 type Sources struct {
-	BankSource     banksource.Source
-	DistrSource    distrsource.Source
-	GovSource      govsource.Source
+	BankSource  banksource.Source
+	DistrSource distrsource.Source
+	// GovSource      govsource.Source
 	MintSource     mintsource.Source
 	SlashingSource slashingsource.Source
 	StakeIBCSource stakeibcsource.Source
@@ -81,9 +77,9 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 	)
 
 	sources := &Sources{
-		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
-		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
-		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
+		BankSource:  localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
+		DistrSource: localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
+		// GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
 		MintSource:     localmintsource.NewSource(source, mintkeeper.Querier{Keeper: app.MintKeeper}),
 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
 		StakeIBCSource: localstakeibcsource.NewSource(source, stakeibctypes.QueryServer(app.StakeibcKeeper)),
@@ -121,9 +117,9 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 	}
 
 	return &Sources{
-		BankSource:     remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
-		DistrSource:    remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
-		GovSource:      remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
+		BankSource:  remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
+		DistrSource: remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
+		// GovSource:      remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakeIBCSource: remotestakeibcsource.NewSource(source, stakeibctypes.NewQueryClient(source.GrpcConn)),
