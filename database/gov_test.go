@@ -6,14 +6,15 @@ import (
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+	"github.com/gogo/protobuf/proto"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	"github.com/gogo/protobuf/proto"
 
 	"github.com/forbole/bdjuno/v3/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
 	dbtypes "github.com/forbole/bdjuno/v3/database/types"
 )
@@ -22,7 +23,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveGovParams() {
 	votingParams := govtypes.NewVotingParams(time.Second * 10)
 	tallyParams := govtypes.NewTallyParams(sdk.NewDec(10), sdk.NewDec(10), sdk.NewDec(10))
 	depositParams := govtypes.NewDepositParams(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(10))), time.Minute*5)
-	original := types.NewGovParams(types.NewVotingParams(votingParams), types.NewDepositParam(depositParams), types.NewTallyParams(tallyParams), 10)
+	original := types.NewGovParams(types.NewVotingParams(&votingParams), types.NewDepositParam(&depositParams), types.NewTallyParams(&tallyParams), 10)
 
 	err := suite.database.SaveGovParams(original)
 	suite.Require().NoError(err)
@@ -34,7 +35,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveGovParams() {
 	// ----------------------------------------------------------------------------------------------------------------
 	// Try updating with a lower height
 	depositParams = govtypes.NewDepositParams(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(1000))), time.Minute*5)
-	updated := types.NewGovParams(types.NewVotingParams(votingParams), types.NewDepositParam(depositParams), types.NewTallyParams(tallyParams), 9)
+	updated := types.NewGovParams(types.NewVotingParams(&votingParams), types.NewDepositParam(&depositParams), types.NewTallyParams(&tallyParams), 9)
 
 	err = suite.database.SaveGovParams(updated)
 	suite.Require().NoError(err)
@@ -45,7 +46,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveGovParams() {
 
 	// ----------------------------------------------------------------------------------------------------------------
 	// Try updating with the same height	depositParams = govtypes.NewDepositParams(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(1000))), time.Minute*5)
-	updated = types.NewGovParams(types.NewVotingParams(votingParams), types.NewDepositParam(depositParams), types.NewTallyParams(tallyParams), 10)
+	updated = types.NewGovParams(types.NewVotingParams(&votingParams), types.NewDepositParam(&depositParams), types.NewTallyParams(&tallyParams), 10)
 
 	err = suite.database.SaveGovParams(updated)
 	suite.Require().NoError(err)
@@ -58,7 +59,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveGovParams() {
 	// Try updating with a higher height
 	tallyParams = govtypes.NewTallyParams(sdk.NewDec(100), sdk.NewDec(100), sdk.NewDec(100))
 	depositParams = govtypes.NewDepositParams(sdk.NewCoins(sdk.NewCoin("udesmos", sdk.NewInt(10000))), time.Minute*5)
-	updated = types.NewGovParams(types.NewVotingParams(votingParams), types.NewDepositParam(depositParams), types.NewTallyParams(tallyParams), 11)
+	updated = types.NewGovParams(types.NewVotingParams(&votingParams), types.NewDepositParam(&depositParams), types.NewTallyParams(&tallyParams), 11)
 
 	err = suite.database.SaveGovParams(updated)
 	suite.Require().NoError(err)
@@ -77,17 +78,21 @@ func (suite *DbTestSuite) getProposalRow(id int) types.Proposal {
 	description := fmt.Sprintf("description%d", id)
 	proposalRoute := fmt.Sprintf("proposalRoute%d", id)
 	proposalType := fmt.Sprintf("proposalType%d", id)
+	timestamp1 := time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC)
+	timestamp2 := time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC)
+	timestamp3 := time.Date(2020, 1, 1, 02, 00, 00, 000, time.UTC)
+	timestamp4 := time.Date(2020, 1, 1, 03, 00, 00, 000, time.UTC)
 
 	proposal := types.NewProposal(
 		uint64(id),
 		proposalRoute,
 		proposalType,
-		govtypes.NewTextProposal(title, description),
+		govtypesv1beta1.NewTextProposal(title, description),
 		govtypes.StatusPassed.String(),
-		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 1, 02, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 1, 03, 00, 00, 000, time.UTC),
+		&timestamp1,
+		&timestamp2,
+		&timestamp3,
+		&timestamp4,
 		proposer.String(),
 	)
 
@@ -114,8 +119,19 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 	proposer1 := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	proposer2 := suite.getAccount("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 
-	content1 := govtypes.NewTextProposal("title", "description")
-	content2 := govtypes.NewTextProposal("title1", "description1")
+	content1 := govtypesv1beta1.NewTextProposal("title", "description")
+	content2 := govtypesv1beta1.NewTextProposal("title1", "description1")
+
+	timestamp1 := time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC)
+	timestamp2 := time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC)
+	timestamp3 := time.Date(2020, 1, 1, 02, 00, 00, 000, time.UTC)
+	timestamp4 := time.Date(2020, 1, 1, 03, 00, 00, 000, time.UTC)
+
+	timestamp5 := time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC)
+	timestamp6 := time.Date(2020, 1, 2, 01, 00, 00, 000, time.UTC)
+	timestamp7 := time.Date(2020, 1, 2, 02, 00, 00, 000, time.UTC)
+	timestamp8 := time.Date(2020, 1, 2, 03, 00, 00, 000, time.UTC)
+
 	input := []types.Proposal{
 		types.NewProposal(
 			1,
@@ -123,10 +139,10 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 			"proposalType",
 			content1,
 			govtypes.StatusDepositPeriod.String(),
-			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 1, 02, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 1, 03, 00, 00, 000, time.UTC),
+			&timestamp1,
+			&timestamp2,
+			&timestamp3,
+			&timestamp4,
 			proposer1.String(),
 		),
 		types.NewProposal(
@@ -135,10 +151,10 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 			"proposalType1",
 			content2,
 			govtypes.StatusPassed.String(),
-			time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 2, 01, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 2, 02, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 2, 03, 00, 00, 000, time.UTC),
+			&timestamp5,
+			&timestamp6,
+			&timestamp7,
+			&timestamp8,
 			proposer2.String(),
 		),
 	}
@@ -158,10 +174,10 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 			"title",
 			"description",
 			suite.encodeProposalContent(content1),
-			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 1, 02, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 1, 03, 00, 00, 000, time.UTC),
+			&timestamp1,
+			&timestamp2,
+			&timestamp3,
+			&timestamp4,
 			proposer1.String(),
 			govtypes.StatusDepositPeriod.String(),
 		),
@@ -172,10 +188,10 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 			"title1",
 			"description1",
 			suite.encodeProposalContent(content2),
-			time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 2, 01, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 2, 02, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 2, 03, 00, 00, 000, time.UTC),
+			&timestamp5,
+			&timestamp6,
+			&timestamp7,
+			&timestamp8,
 			proposer2.String(),
 			govtypes.StatusPassed.String(),
 		),
@@ -186,18 +202,24 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_GetProposal() {
-	content := govtypes.NewTextProposal("title", "description")
+	content := govtypesv1beta1.NewTextProposal("title", "description")
 	proposer := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
+	
+	timestamp1 := time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC)
+	timestamp2 := time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC)
+	timestamp3 := time.Date(2020, 1, 1, 02, 00, 00, 000, time.UTC)
+	timestamp4 := time.Date(2020, 1, 1, 03, 00, 00, 000, time.UTC)
+
 	proposal := types.NewProposal(
 		1,
 		"proposalRoute",
 		"proposalType",
 		content,
 		govtypes.StatusDepositPeriod.String(),
-		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 1, 02, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 1, 03, 00, 00, 000, time.UTC),
+		&timestamp1,
+		&timestamp2,
+		&timestamp3,
+		&timestamp4,
 		proposer.String(),
 	)
 	input := []types.Proposal{proposal}
@@ -214,19 +236,28 @@ func (suite *DbTestSuite) TestBigDipperDb_GetOpenProposalsIds() {
 	proposer1 := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	proposer2 := suite.getAccount("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 
-	content1 := govtypes.NewTextProposal("title", "description")
-	content2 := govtypes.NewTextProposal("title1", "description1")
+	content1 := govtypesv1beta1.NewTextProposal("title", "description")
+	content2 := govtypesv1beta1.NewTextProposal("title1", "description1")
 
+	timestamp1 := time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC)
+	timestamp2 := time.Date(2020, 1, 2, 01, 00, 00, 000, time.UTC)
+	timestamp3 := time.Date(2020, 1, 2, 02, 00, 00, 000, time.UTC)
+	timestamp4 := time.Date(2020, 1, 2, 03, 00, 00, 000, time.UTC)
+
+	timestamp5 := time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC)
+	timestamp6 := time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC)
+	timestamp7 := time.Date(2020, 1, 1, 02, 00, 00, 000, time.UTC)
+	timestamp8 := time.Date(2020, 1, 1, 03, 00, 00, 000, time.UTC)
 	invalidProposal := types.NewProposal(
 		6,
 		"proposalRoute1",
 		"proposalType1",
 		content2,
 		types.ProposalStatusInvalid,
-		time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 2, 01, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 2, 02, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 2, 03, 00, 00, 000, time.UTC),
+		&timestamp1,
+		&timestamp2,
+		&timestamp3,
+		&timestamp4,
 		proposer2.String(),
 	)
 
@@ -237,10 +268,10 @@ func (suite *DbTestSuite) TestBigDipperDb_GetOpenProposalsIds() {
 			"proposalType",
 			content1,
 			govtypes.StatusVotingPeriod.String(),
-			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 1, 02, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 1, 03, 00, 00, 000, time.UTC),
+			&timestamp5,
+			&timestamp6,
+			&timestamp7,
+			&timestamp8,
 			proposer1.String(),
 		),
 		types.NewProposal(
@@ -249,10 +280,10 @@ func (suite *DbTestSuite) TestBigDipperDb_GetOpenProposalsIds() {
 			"proposalType",
 			content1,
 			govtypes.StatusDepositPeriod.String(),
-			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 1, 02, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 1, 03, 00, 00, 000, time.UTC),
+			&timestamp5,
+			&timestamp6,
+			&timestamp7,
+			&timestamp8,
 			proposer1.String(),
 		),
 		types.NewProposal(
@@ -261,10 +292,10 @@ func (suite *DbTestSuite) TestBigDipperDb_GetOpenProposalsIds() {
 			"proposalType1",
 			content2,
 			govtypes.StatusPassed.String(),
-			time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 2, 01, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 2, 02, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 2, 03, 00, 00, 000, time.UTC),
+			&timestamp1,
+			&timestamp2,
+			&timestamp3,
+			&timestamp4,
 			proposer2.String(),
 		),
 		types.NewProposal(
@@ -273,10 +304,10 @@ func (suite *DbTestSuite) TestBigDipperDb_GetOpenProposalsIds() {
 			"proposalType1",
 			content2,
 			govtypes.StatusRejected.String(),
-			time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 2, 01, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 2, 02, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 2, 03, 00, 00, 000, time.UTC),
+			&timestamp1,
+			&timestamp2,
+			&timestamp3,
+			&timestamp4,
 			proposer2.String(),
 		),
 		invalidProposal,
@@ -296,11 +327,14 @@ func (suite *DbTestSuite) TestBigDipperDb_UpdateProposal() {
 	proposer, err := sdk.AccAddressFromBech32(proposal.Proposer)
 	suite.Require().NoError(err)
 
+	timestamp1 := time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC)
+	timestamp2 := time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC)
+
 	update := types.NewProposalUpdate(
 		proposal.ProposalID,
 		govtypes.StatusPassed.String(),
-		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC),
+		&timestamp1,
+		&timestamp2,
 	)
 
 	err = suite.database.UpdateProposal(update)
@@ -315,8 +349,8 @@ func (suite *DbTestSuite) TestBigDipperDb_UpdateProposal() {
 		suite.encodeProposalContent(proposal.Content),
 		proposal.SubmitTime,
 		proposal.DepositEndTime,
-		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC),
+		&timestamp1,
+		&timestamp2,
 		proposer.String(),
 		govtypes.StatusPassed.String(),
 	)
