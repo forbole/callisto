@@ -107,10 +107,10 @@ func refreshProposalDetails(parseCtx *parser.Context, proposalID uint64, govModu
 	}
 
 	if len(txs) == 0 {
-		fmt.Printf("error: couldn't find submit proposal tx info:  ", txs)
-
+		fmt.Printf("error: couldn't find submit proposal tx info")
 		return nil
 	}
+
 	// Get the tx details
 	tx, err := parseCtx.Node.Tx(hex.EncodeToString(txs[0].Tx.Hash()))
 	if err != nil {
