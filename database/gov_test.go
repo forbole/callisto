@@ -102,7 +102,7 @@ func (suite *DbTestSuite) getProposalRow(id int) types.Proposal {
 	return proposal
 }
 
-func (suite *DbTestSuite) encodeProposalContent(content govtypes.Content) string {
+func (suite *DbTestSuite) encodeProposalContent(content govtypesv1beta1.Content) string {
 	protoContent, ok := content.(proto.Message)
 	suite.Require().True(ok)
 
@@ -204,7 +204,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 func (suite *DbTestSuite) TestBigDipperDb_GetProposal() {
 	content := govtypesv1beta1.NewTextProposal("title", "description")
 	proposer := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
-	
+
 	timestamp1 := time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC)
 	timestamp2 := time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC)
 	timestamp3 := time.Date(2020, 1, 1, 02, 00, 00, 000, time.UTC)
