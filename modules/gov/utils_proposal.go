@@ -9,10 +9,12 @@ import (
 	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-
-	// upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 	"google.golang.org/grpc/codes"
+
+	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
+	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+
+	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"github.com/forbole/bdjuno/v3/types"
 
@@ -29,10 +31,8 @@ func (m *Module) UpdateProposal(height int64, blockTime time.Time, id uint64) er
 	// Get the proposal
 	proposal, err := m.source.Proposal(height, id)
 	if err != nil {
-		// Check if proposal has reached the voting end time
-		passedVotingPeriod := blockTime.After(*proposal.VotingEndTime)
-
-		if strings.Contains(err.Error(), codes.NotFound.String()) && passedVotingPeriod {
+		// Check if proposal exist on the chain
+		if strings.Contains(err.Error(), codes.NotFound.String()) && strings.Contains(err.Error(), "doesn't exist") {
 			// Handle case when a proposal is deleted from the chain (did not pass deposit period)
 			return m.updateDeletedProposalStatus(id)
 		}
@@ -284,34 +284,34 @@ func (m *Module) handlePassedProposal(proposal *govtypes.Proposal, height int64)
 		return nil
 	}
 
-	// // Unpack proposal
-	// var content []string
-	// err := m.db.EncodingConfig.Codec.UnpackAny(proposal.Messages[0], &content)
-	// if err != nil {
-	// 	return fmt.Errorf("error while handling ParamChangeProposal: %s", err)
-	// }
+	// Unpack proposal
+	var content govtypesv1beta1.Content
+	err := m.db.EncodingConfig.Codec.UnpackAny(proposal.Messages[0], &content)
+	if err != nil {
+		return fmt.Errorf("error while handling ParamChangeProposal: %s", err)
+	}
 
-	// switch p := content.(type) {
-	// case *proposaltypes.ParameterChangeProposal:
-	// 	// Update params while ParameterChangeProposal passed
-	// 	err = m.handleParamChangeProposal(height, p)
-	// 	if err != nil {
-	// 		return fmt.Errorf("error while updating params from ParamChangeProposal: %s", err)
-	// 	}
+	switch p := content.(type) {
+	case *proposaltypes.ParameterChangeProposal:
+		// Update params while ParameterChangeProposal passed
+		err = m.handleParamChangeProposal(height, p)
+		if err != nil {
+			return fmt.Errorf("error while updating params from ParamChangeProposal: %s", err)
+		}
 
-	// case *upgradetypes.SoftwareUpgradeProposal:
-	// 	// Store software upgrade plan while SoftwareUpgradeProposal passed
-	// 	err = m.db.SaveSoftwareUpgradePlan(proposal.Id, p.Plan, height)
-	// 	if err != nil {
-	// 		return fmt.Errorf("error while storing software upgrade plan: %s", err)
-	// 	}
+	case *upgradetypes.SoftwareUpgradeProposal:
+		// Store software upgrade plan while SoftwareUpgradeProposal passed
+		err = m.db.SaveSoftwareUpgradePlan(proposal.Id, p.Plan, height)
+		if err != nil {
+			return fmt.Errorf("error while storing software upgrade plan: %s", err)
+		}
 
-	// case *upgradetypes.CancelSoftwareUpgradeProposal:
-	// 	// Delete software upgrade plan while CancelSoftwareUpgradeProposal passed
-	// 	err = m.db.DeleteSoftwareUpgradePlan(proposal.Id)
-	// 	if err != nil {
-	// 		return fmt.Errorf("error while deleting software upgrade plan: %s", err)
-	// 	}
-	// }
+	case *upgradetypes.CancelSoftwareUpgradeProposal:
+		// Delete software upgrade plan while CancelSoftwareUpgradeProposal passed
+		err = m.db.DeleteSoftwareUpgradePlan(proposal.Id)
+		if err != nil {
+			return fmt.Errorf("error while deleting software upgrade plan: %s", err)
+		}
+	}
 	return nil
 }
