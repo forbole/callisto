@@ -7,7 +7,7 @@ import (
 
 	providertypes "github.com/akash-network/node/x/provider/types/v1beta2"
 	"github.com/cosmos/cosmos-sdk/types/query"
-	"github.com/forbole/juno/v3/node/local"
+	"github.com/forbole/juno/v4/node/local"
 
 	providersource "github.com/forbole/bdjuno/v3/modules/provider/source"
 )

@@ -74,7 +74,7 @@ WHERE akash_provider.height <= excluded.height`
 		return fmt.Errorf("error while storing accounts: %s", err)
 	}
 
-	_, err = db.Sql.Exec(stmt, params...)
+	_, err = db.SQL.Exec(stmt, params...)
 	if err != nil {
 		return fmt.Errorf("error while storing providers: %s", err)
 	}
@@ -85,7 +85,7 @@ WHERE akash_provider.height <= excluded.height`
 // DeleteProvider allows to remove provider record from the database
 func (db *Db) DeleteProvider(ownerAddress string) error {
 	stmt := `DELETE FROM providers WHERE owner = $1`
-	_, err := db.Sql.Exec(stmt, ownerAddress)
+	_, err := db.SQL.Exec(stmt, ownerAddress)
 	if err != nil {
 		return fmt.Errorf("error while deleting provider: %s", err)
 	}
@@ -165,7 +165,7 @@ ON CONFLICT (provider_address) DO UPDATE
 	available := dbtypes.NewDbAkashResource(status.AvailableInventorySum)
 	availableValue, _ := available.Value()
 
-	_, err = db.Sql.Exec(stmt,
+	_, err = db.SQL.Exec(stmt,
 		status.ProviderAddress, status.Active, status.LeaseCount,
 		status.BidengineOrderCount, status.ManifestDeploymentCount,
 		status.ClusterPublicHostname, string(inventoryStatusBz),
@@ -182,7 +182,7 @@ ON CONFLICT (provider_address) DO UPDATE
 // SetProviderStatus allows to update the provider status inside the database
 func (db *Db) SetProviderStatus(providerAddress string, active bool, height int64) error {
 	stmt := `UPDATE akash_provider_inventory SET active = $1 WHERE provider_address = $2`
-	_, err := db.Sql.Exec(stmt, active, providerAddress)
+	_, err := db.SQL.Exec(stmt, active, providerAddress)
 	if err != nil {
 		return fmt.Errorf("error while updating active status of provider %s: %s", providerAddress, err)
 	}

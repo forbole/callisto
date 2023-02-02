@@ -27,7 +27,7 @@ ON CONFLICT (one_row_id) DO UPDATE
         height = excluded.height
 WHERE market_params.height <= excluded.height`
 
-	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
+	_, err = db.SQL.Exec(stmt, string(paramsBz), params.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing market params: %s", err)
 	}
@@ -89,7 +89,7 @@ func (db *Db) saveLeases(paramsCount int, leases []*types.MarketLease, height in
     	height = excluded.height 
 WHERE akash_lease.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt, params...)
+	_, err := db.SQL.Exec(stmt, params...)
 	if err != nil {
 		return fmt.Errorf("error while storing akash leases: %s", err)
 	}
