@@ -8,7 +8,7 @@ import (
 
 var (
 	_ modules.Module      = &Module{}
-	// _ modules.BlockModule = &Module{}
+	_ modules.BlockModule = &Module{}
 )
 
 // Module represents the x/upgrade module
