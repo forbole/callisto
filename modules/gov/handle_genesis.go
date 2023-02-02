@@ -21,7 +21,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	var genStatev1beta1 govtypesv1beta1.GenesisState
 	err := m.cdc.UnmarshalJSON(appState[gov.ModuleName], &genStatev1beta1)
 	if err != nil {
-		return fmt.Errorf("error while reading gov genesis data1111: %s", err)
+		return fmt.Errorf("error while reading gov genesis data: %s", err)
 	}
 
 	// Save the proposals
@@ -44,7 +44,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	return nil
 }
 
-// saveProposals save proposals from genesis file
+// saveGenesisProposals save proposals from genesis file
 func (m *Module) saveGenesisProposals(slice govtypesv1beta1.Proposals, genDoc *tmtypes.GenesisDoc) error {
 	proposals := make([]types.Proposal, len(slice))
 	tallyResults := make([]types.TallyResult, len(slice))

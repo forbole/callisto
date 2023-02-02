@@ -178,7 +178,6 @@ func (m *Module) updateProposalTallyResult(proposal *govtypes.Proposal) error {
 // updateAccounts updates any account that might be involved in the proposal (eg. fund community recipient)
 func (m *Module) updateAccounts(proposal *govtypes.Proposal) error {
 	content, ok := proposal.Messages[0].GetCachedValue().(*distrtypes.CommunityPoolSpendProposal)
-	// Content.GetCachedValue().(*distrtypes.CommunityPoolSpendProposal)
 	if ok {
 		height, err := m.db.GetLastBlockHeight()
 		if err != nil {

@@ -135,7 +135,6 @@ func (db *Db) SaveProposals(proposals []types.Proposal) error {
 		return nil
 	}
 
-	fmt.Printf("\n \n proposals: %v \n\n", proposals)
 	var accounts []types.Account
 
 	proposalsQuery := `

@@ -40,7 +40,6 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1beta1.MsgSubmitProposal) error {
 	// Get the proposal id
 	event, err := tx.FindEventByType(index, gov.EventTypeSubmitProposal)
-	// govtypes.TypeMsgSubmitProposal
 	if err != nil {
 		return fmt.Errorf("error while searching for EventTypeSubmitProposal: %s", err)
 	}
