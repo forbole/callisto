@@ -27,7 +27,7 @@ func (w Worker) start() {
 	for address := range w.queue {
 		err := w.topaccountsModule.RefreshAll(address)
 		if err != nil {
-			log.Error().Str("account", address).Msg("re-enqueueing failed address")
+			log.Error().Str("account", address).Err(err).Msg("re-enqueueing failed address")
 
 			go func(address string) {
 				w.queue <- address
