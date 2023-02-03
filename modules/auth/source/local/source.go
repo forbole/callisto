@@ -18,7 +18,7 @@ var (
 	_ source.Source = &Source{}
 )
 
-// Source represents the implementation of the bank keeper that works on a local node
+// Source implements authsource.Source by using a local node
 type Source struct {
 	*local.Source
 	q authtypes.QueryServer
