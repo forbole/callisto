@@ -58,10 +58,10 @@ func (m *Module) saveGenesisProposals(slice govtypesv1beta1.Proposals, genDoc *t
 			proposal.ProposalType(),
 			proposal.GetContent(),
 			proposal.Status.String(),
-			&proposal.SubmitTime,
-			&proposal.DepositEndTime,
-			&proposal.VotingStartTime,
-			&proposal.VotingEndTime,
+			proposal.SubmitTime,
+			proposal.DepositEndTime,
+			proposal.VotingStartTime,
+			proposal.VotingEndTime,
 			"",
 		)
 

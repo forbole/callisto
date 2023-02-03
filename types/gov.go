@@ -132,10 +132,10 @@ type Proposal struct {
 	ProposalID      uint64
 	Content         govtypesv1beta1.Content
 	Status          string
-	SubmitTime      *time.Time
-	DepositEndTime  *time.Time
-	VotingStartTime *time.Time
-	VotingEndTime   *time.Time
+	SubmitTime      time.Time
+	DepositEndTime  time.Time
+	VotingStartTime time.Time
+	VotingEndTime   time.Time
 	Proposer        string
 }
 
@@ -146,10 +146,10 @@ func NewProposal(
 	proposalType string,
 	content govtypesv1beta1.Content,
 	status string,
-	submitTime *time.Time,
-	depositEndTime *time.Time,
-	votingStartTime *time.Time,
-	votingEndTime *time.Time,
+	submitTime time.Time,
+	depositEndTime time.Time,
+	votingStartTime time.Time,
+	votingEndTime time.Time,
 	proposer string,
 ) Proposal {
 	return Proposal{
@@ -171,12 +171,12 @@ func (p Proposal) Equal(other Proposal) bool {
 	return p.ProposalRoute == other.ProposalRoute &&
 		p.ProposalType == other.ProposalType &&
 		p.ProposalID == other.ProposalID &&
-		p.Content == other.Content &&
+		p.Content.String() == other.Content.String() &&
 		p.Status == other.Status &&
-		p.SubmitTime == other.SubmitTime &&
-		p.DepositEndTime == other.DepositEndTime &&
-		p.VotingStartTime == other.VotingStartTime &&
-		p.VotingEndTime == other.VotingEndTime &&
+		p.SubmitTime.Equal(other.SubmitTime) &&
+		p.DepositEndTime.Equal(other.DepositEndTime) &&
+		p.VotingStartTime.Equal(other.VotingStartTime) &&
+		p.VotingEndTime.Equal(other.VotingEndTime) &&
 		p.Proposer == other.Proposer
 }
 

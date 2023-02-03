@@ -87,8 +87,8 @@ func (m *Module) updateDeletedProposalStatus(id uint64) error {
 		types.NewProposalUpdate(
 			stored.ProposalID,
 			types.ProposalStatusInvalid,
-			stored.VotingStartTime,
-			stored.VotingEndTime,
+			&stored.VotingStartTime,
+			&stored.VotingEndTime,
 		),
 	)
 }
