@@ -68,8 +68,8 @@ github.com/OneOfOne/xxhash v1.2.2 h1:KMrpdQIwFcEqXDklaen+P1axHaj9BSKzvpUUfnHldSE
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/Stride-Labs/cast v0.0.3 h1:eM3n/t3hSxb+iw9LDo3r/uGBp3w4U7wPv40GKMtJ1dI=
 github.com/Stride-Labs/cast v0.0.3/go.mod h1:SpXXQ5YoyJw6s3/6cMTQuxvgRl3PCJiyaX9p6b155UU=
-github.com/Stride-Labs/stride/v5 v5.0.0 h1:wq/de6XMb1sTV+fJ7z6AqKxo/lzpJVVguv9iCWXNSUE=
-github.com/Stride-Labs/stride/v5 v5.0.0/go.mod h1:nSvQS7jkHlgfk1sn7A/EnMK6586Nu59jh69mgjSuQeI=
+github.com/Stride-Labs/stride/v5 v5.1.1 h1:y+lTXpow1M6xt/6ODFj9QXHoTuhm3xMj6m+h1T147uE=
+github.com/Stride-Labs/stride/v5 v5.1.1/go.mod h1:nSvQS7jkHlgfk1sn7A/EnMK6586Nu59jh69mgjSuQeI=
 github.com/VividCortex/gohistogram v1.0.0 h1:6+hBz+qvs0JOrrNhhmR7lFxo5sINxBCGXrdtl/UvroE=
 github.com/Workiva/go-datastructures v1.0.53 h1:J6Y/52yX10Xc5JjXmGtWoSSxs3mZnGSaq37xZZh7Yig=
 github.com/Workiva/go-datastructures v1.0.53/go.mod h1:1yZL+zfsztete+ePzZz/Zb1/t5BnDuE2Ya2MMGhzP6A=
