@@ -48,7 +48,7 @@ func (suite *DbTestSuite) TestGetStakingParams() {
 	paramsBz, err := json.Marshal(&stakingParams)
 	suite.Require().NoError(err)
 
-	_, err = suite.database.Sql.Exec(
+	_, err = suite.database.SQL.Exec(
 		`INSERT INTO staking_params (params, height) VALUES ($1, $2)`,
 		string(paramsBz), 10,
 	)

@@ -3,11 +3,11 @@ package main
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/forbole/juno/v3/cmd"
-	initcmd "github.com/forbole/juno/v3/cmd/init"
-	parsetypes "github.com/forbole/juno/v3/cmd/parse/types"
-	startcmd "github.com/forbole/juno/v3/cmd/start"
-	"github.com/forbole/juno/v3/modules/messages"
+	"github.com/forbole/juno/v4/cmd"
+	initcmd "github.com/forbole/juno/v4/cmd/init"
+	parsetypes "github.com/forbole/juno/v4/cmd/parse/types"
+	startcmd "github.com/forbole/juno/v4/cmd/start"
+	"github.com/forbole/juno/v4/modules/messages"
 
 	migratecmd "github.com/forbole/bdjuno/v3/cmd/migrate"
 	parsecmd "github.com/forbole/bdjuno/v3/cmd/parse"
@@ -18,9 +18,9 @@ import (
 	"github.com/forbole/bdjuno/v3/modules"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	gammtypes "github.com/osmosis-labs/osmosis/v13/x/gamm/pool-models/balancer"
+	gammtypes "github.com/osmosis-labs/osmosis/v14/x/gamm/pool-models/balancer"
 
-	osmosisapp "github.com/osmosis-labs/osmosis/v13/app"
+	osmosisapp "github.com/osmosis-labs/osmosis/v14/app"
 )
 
 func main() {

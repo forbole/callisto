@@ -8,18 +8,18 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/forbole/juno/v3/node/remote"
+	"github.com/forbole/juno/v4/node/remote"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	minttypes "github.com/osmosis-labs/osmosis/v13/x/mint/types"
+	minttypes "github.com/osmosis-labs/osmosis/v14/x/mint/types"
 
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/forbole/juno/v3/node/local"
-	mintkeeper "github.com/osmosis-labs/osmosis/v13/x/mint/keeper"
+	"github.com/forbole/juno/v4/node/local"
+	mintkeeper "github.com/osmosis-labs/osmosis/v14/x/mint/keeper"
 
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banksource "github.com/forbole/bdjuno/v3/modules/bank/source"
@@ -40,8 +40,8 @@ import (
 	stakingsource "github.com/forbole/bdjuno/v3/modules/staking/source"
 	localstakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/remote"
-	nodeconfig "github.com/forbole/juno/v3/node/config"
-	osmosisapp "github.com/osmosis-labs/osmosis/v13/app"
+	nodeconfig "github.com/forbole/juno/v4/node/config"
+	osmosisapp "github.com/osmosis-labs/osmosis/v14/app"
 )
 
 type Sources struct {
