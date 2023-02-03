@@ -30,7 +30,7 @@ func (m *Module) RefreshAll(address string) error {
 
 	err = m.refreshTopAccountsSum([]string{address})
 	if err != nil {
-		return fmt.Errorf("error while refreshing top account sum of account %s", address)
+		return fmt.Errorf("error while refreshing top accounts sum")
 	}
 
 	return nil
