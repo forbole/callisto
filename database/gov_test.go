@@ -331,9 +331,6 @@ func (suite *DbTestSuite) TestBigDipperDb_UpdateProposal() {
 	suite.Require().NoError(err)
 	suite.Require().Len(result, 1)
 	for _, r := range result {
-		// fmt.Printf("\n\n expected proposal row: %v \n\n", expected)
-		// fmt.Printf("\n\n resulted proposal row: %v \n\n", r)
-
 		suite.Require().True(expected.Equals(r))
 	}
 }
