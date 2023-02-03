@@ -72,6 +72,7 @@ func allCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				return fmt.Errorf("error while getting base accounts: %s", err)
 			}
 
+			log.Debug().Int("total", len(accounts)).Msg("saving accounts...")
 			// Store accounts
 			err = db.SaveAccounts(accounts)
 			if err != nil {

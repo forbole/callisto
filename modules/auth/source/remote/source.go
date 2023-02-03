@@ -65,7 +65,7 @@ func (s Source) GetAllAnyAccounts(height int64) ([]*codectypes.Any, error) {
 			totalCounts = res.Pagination.GetTotal()
 		}
 		counter += uint64(len(res.Accounts))
-		log.Debug().Uint64("total any account", totalCounts).Uint64("current counter", counter).Msg("getting accounts...")
+		log.Debug().Uint64("total accounts", totalCounts).Uint64("current counter", counter).Msg("getting accounts...")
 	}
 
 	return accounts, nil
