@@ -5,7 +5,7 @@ import "fmt"
 func (m *Module) RefreshAll(address string) error {
 	err := m.bankModule.UpdateBalances([]string{address}, 0)
 	if err != nil {
-		return fmt.Errorf("error while refreshing account balance of account %s", address)
+		return fmt.Errorf("error while refreshing balance of account %s", address)
 	}
 
 	err = m.stakingModule.RefreshDelegations(0, address)
