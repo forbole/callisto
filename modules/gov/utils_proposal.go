@@ -11,7 +11,6 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"google.golang.org/grpc/codes"
 
-	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
@@ -21,6 +20,7 @@ import (
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
 	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
 
@@ -297,14 +297,14 @@ func (m *Module) handlePassedProposal(proposal *govtypes.Proposal, height int64)
 		if err != nil {
 			return fmt.Errorf("error while updating params from ParamChangeProposal: %s", err)
 		}
-
+		//lint:ignore SA1019 using depricated upgrade proposals type until fix is implemented
 	case *upgradetypes.SoftwareUpgradeProposal:
 		// Store software upgrade plan while SoftwareUpgradeProposal passed
 		err = m.db.SaveSoftwareUpgradePlan(proposal.Id, p.Plan, height)
 		if err != nil {
 			return fmt.Errorf("error while storing software upgrade plan: %s", err)
 		}
-
+		//lint:ignore SA1019 using depricated upgrade proposals type until fix is implemented
 	case *upgradetypes.CancelSoftwareUpgradeProposal:
 		// Delete software upgrade plan while CancelSoftwareUpgradeProposal passed
 		err = m.db.DeleteSoftwareUpgradePlan(proposal.Id)
