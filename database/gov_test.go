@@ -304,8 +304,8 @@ func (suite *DbTestSuite) TestBigDipperDb_UpdateProposal() {
 	update := types.NewProposalUpdate(
 		proposal.ProposalID,
 		govtypes.StatusPassed.String(),
-		&timestamp1,
-		&timestamp2,
+		timestamp1,
+		timestamp2,
 	)
 
 	err = suite.database.UpdateProposal(update)
