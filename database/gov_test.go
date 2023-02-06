@@ -5,6 +5,7 @@ import (
 	"time"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/gogo/protobuf/proto"
@@ -215,6 +216,20 @@ func (suite *DbTestSuite) TestBigDipperDb_GetOpenProposalsIds() {
 
 	content1 := govtypes.NewTextProposal("title", "description")
 	content2 := govtypes.NewTextProposal("title1", "description1")
+
+	invalidProposal := types.NewProposal(
+		6,
+		"proposalRoute1",
+		"proposalType1",
+		content2,
+		types.ProposalStatusInvalid,
+		time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
+		time.Date(2020, 1, 2, 01, 00, 00, 000, time.UTC),
+		time.Date(2020, 1, 2, 02, 00, 00, 000, time.UTC),
+		time.Date(2020, 1, 2, 03, 00, 00, 000, time.UTC),
+		proposer2.String(),
+	)
+
 	input := []types.Proposal{
 		types.NewProposal(
 			1,
@@ -264,14 +279,16 @@ func (suite *DbTestSuite) TestBigDipperDb_GetOpenProposalsIds() {
 			time.Date(2020, 1, 2, 03, 00, 00, 000, time.UTC),
 			proposer2.String(),
 		),
+		invalidProposal,
 	}
 
 	err := suite.database.SaveProposals(input)
 	suite.Require().NoError(err)
 
-	ids, err := suite.database.GetOpenProposalsIds()
+	timeBeforeDepositEnd := invalidProposal.DepositEndTime.Add(-1 * time.Hour)
+	ids, err := suite.database.GetOpenProposalsIds(timeBeforeDepositEnd)
 	suite.Require().NoError(err)
-	suite.Require().Equal([]uint64{1, 2}, ids)
+	suite.Require().Equal([]uint64{1, 2, 6}, ids)
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_UpdateProposal() {
@@ -331,19 +348,23 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 	depositor3 := suite.getAccount("cosmos1gyds87lg3m52hex9yqta2mtwzw89pfukx3jl7g")
 	amount3 := sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(50000)))
 
+	timestamp1 := time.Date(2020, 1, 1, 15, 00, 00, 000, time.UTC)
+	timestamp2 := time.Date(2020, 1, 1, 16, 00, 00, 000, time.UTC)
+	timestamp3 := time.Date(2020, 1, 1, 17, 00, 00, 000, time.UTC)
+
 	deposit := []types.Deposit{
-		types.NewDeposit(proposal.ProposalID, depositor.String(), amount, 10),
-		types.NewDeposit(proposal.ProposalID, depositor2.String(), amount2, 10),
-		types.NewDeposit(proposal.ProposalID, depositor3.String(), amount3, 10),
+		types.NewDeposit(proposal.ProposalID, depositor.String(), amount, timestamp1, 10),
+		types.NewDeposit(proposal.ProposalID, depositor2.String(), amount2, timestamp2, 10),
+		types.NewDeposit(proposal.ProposalID, depositor3.String(), amount3, timestamp3, 10),
 	}
 
 	err := suite.database.SaveDeposits(deposit)
 	suite.Require().NoError(err)
 
 	expected := []dbtypes.DepositRow{
-		dbtypes.NewDepositRow(1, depositor.String(), dbtypes.NewDbCoins(amount), 10),
-		dbtypes.NewDepositRow(1, depositor2.String(), dbtypes.NewDbCoins(amount2), 10),
-		dbtypes.NewDepositRow(1, depositor3.String(), dbtypes.NewDbCoins(amount3), 10),
+		dbtypes.NewDepositRow(1, depositor.String(), dbtypes.NewDbCoins(amount), timestamp1, 10),
+		dbtypes.NewDepositRow(1, depositor2.String(), dbtypes.NewDbCoins(amount2), timestamp2, 10),
+		dbtypes.NewDepositRow(1, depositor3.String(), dbtypes.NewDbCoins(amount3), timestamp3, 10),
 	}
 	var result []dbtypes.DepositRow
 	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_deposit`)
@@ -360,9 +381,9 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 	amount3 = sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(30)))
 
 	deposit = []types.Deposit{
-		types.NewDeposit(proposal.ProposalID, depositor.String(), amount, 9),
-		types.NewDeposit(proposal.ProposalID, depositor2.String(), amount2, 10),
-		types.NewDeposit(proposal.ProposalID, depositor3.String(), amount3, 11),
+		types.NewDeposit(proposal.ProposalID, depositor.String(), amount, timestamp1, 9),
+		types.NewDeposit(proposal.ProposalID, depositor2.String(), amount2, timestamp2, 10),
+		types.NewDeposit(proposal.ProposalID, depositor3.String(), amount3, timestamp3, 11),
 	}
 
 	err = suite.database.SaveDeposits(deposit)
@@ -370,9 +391,9 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 
 	expected = []dbtypes.DepositRow{
 		dbtypes.NewDepositRow(1, depositor.String(), dbtypes.NewDbCoins(
-			sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(10000)))), 10),
-		dbtypes.NewDepositRow(1, depositor2.String(), dbtypes.NewDbCoins(amount2), 10),
-		dbtypes.NewDepositRow(1, depositor3.String(), dbtypes.NewDbCoins(amount3), 11),
+			sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(10000)))), timestamp1, 10),
+		dbtypes.NewDepositRow(1, depositor2.String(), dbtypes.NewDbCoins(amount2), timestamp2, 10),
+		dbtypes.NewDepositRow(1, depositor3.String(), dbtypes.NewDbCoins(amount3), timestamp3, 11),
 	}
 
 	result = []dbtypes.DepositRow{}
@@ -393,11 +414,13 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
 	proposal := suite.getProposalRow(1)
 	voter := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 
-	vote := types.NewVote(1, voter.String(), govtypes.OptionYes, 1)
+	timestamp := time.Date(2020, 1, 1, 15, 00, 00, 000, time.UTC)
+
+	vote := types.NewVote(1, voter.String(), govtypes.OptionYes, timestamp, 1)
 	err := suite.database.SaveVote(vote)
 	suite.Require().NoError(err)
 
-	expected := dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypes.OptionYes.String(), 1)
+	expected := dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypes.OptionYes.String(), timestamp, 1)
 
 	var result []dbtypes.VoteRow
 	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_vote`)
@@ -406,7 +429,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
 	suite.Require().True(expected.Equals(result[0]))
 
 	// Update with lower height should not change option
-	vote = types.NewVote(1, voter.String(), govtypes.OptionNo, 0)
+	vote = types.NewVote(1, voter.String(), govtypes.OptionNo, timestamp, 0)
 	err = suite.database.SaveVote(vote)
 	suite.Require().NoError(err)
 
@@ -417,11 +440,11 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
 	suite.Require().True(expected.Equals(result[0]))
 
 	// Update with same height should change option
-	vote = types.NewVote(1, voter.String(), govtypes.OptionAbstain, 1)
+	vote = types.NewVote(1, voter.String(), govtypes.OptionAbstain, timestamp, 1)
 	err = suite.database.SaveVote(vote)
 	suite.Require().NoError(err)
 
-	expected = dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypes.OptionAbstain.String(), 1)
+	expected = dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypes.OptionAbstain.String(), timestamp, 1)
 
 	result = []dbtypes.VoteRow{}
 	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_vote`)
@@ -430,11 +453,11 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
 	suite.Require().True(expected.Equals(result[0]))
 
 	// Update with higher height should change option
-	vote = types.NewVote(1, voter.String(), govtypes.OptionNoWithVeto, 2)
+	vote = types.NewVote(1, voter.String(), govtypes.OptionNoWithVeto, timestamp, 2)
 	err = suite.database.SaveVote(vote)
 	suite.Require().NoError(err)
 
-	expected = dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypes.OptionNoWithVeto.String(), 2)
+	expected = dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypes.OptionNoWithVeto.String(), timestamp, 2)
 
 	result = []dbtypes.VoteRow{}
 	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_vote`)
@@ -508,6 +531,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalStakingPoolSnapshot() {
 	snapshot := types.NewProposalStakingPoolSnapshot(1, types.NewPool(
 		sdk.NewInt(100),
 		sdk.NewInt(200),
+		sdk.NewInt(20),
+		sdk.NewInt(30),
 		10,
 	))
 	err := suite.database.SaveProposalStakingPoolSnapshot(snapshot)
@@ -530,6 +555,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalStakingPoolSnapshot() {
 	err = suite.database.SaveProposalStakingPoolSnapshot(types.NewProposalStakingPoolSnapshot(1, types.NewPool(
 		sdk.NewInt(200),
 		sdk.NewInt(500),
+		sdk.NewInt(14),
+		sdk.NewInt(10),
 		9,
 	)))
 	suite.Require().NoError(err)
@@ -551,6 +578,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalStakingPoolSnapshot() {
 	err = suite.database.SaveProposalStakingPoolSnapshot(types.NewProposalStakingPoolSnapshot(1, types.NewPool(
 		sdk.NewInt(500),
 		sdk.NewInt(1000),
+		sdk.NewInt(20),
+		sdk.NewInt(30),
 		10,
 	)))
 	suite.Require().NoError(err)
@@ -572,6 +601,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalStakingPoolSnapshot() {
 	err = suite.database.SaveProposalStakingPoolSnapshot(types.NewProposalStakingPoolSnapshot(1, types.NewPool(
 		sdk.NewInt(1000),
 		sdk.NewInt(2000),
+		sdk.NewInt(80),
+		sdk.NewInt(40),
 		11,
 	)))
 	suite.Require().NoError(err)
@@ -800,4 +831,133 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 			11,
 		),
 	})
+}
+
+func (suite *DbTestSuite) TestBigDipperDb_SaveSoftwareUpgradePlan() {
+	_ = suite.getProposalRow(1)
+
+	// ----------------------------------------------------------------------------------------------------------------
+	// Save software upgrade plan at height 10 with upgrade height at 100
+	var plan = upgradetypes.Plan{
+		Name:   "name",
+		Height: 100,
+		Info:   "info",
+	}
+
+	err := suite.database.SaveSoftwareUpgradePlan(1, plan, 10)
+	suite.Require().NoError(err)
+
+	var rows []dbtypes.SoftwareUpgradePlanRow
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM software_upgrade_plan`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	suite.Require().Equal(rows, []dbtypes.SoftwareUpgradePlanRow{
+		dbtypes.NewSoftwareUpgradePlanRow(1, plan.Name, plan.Height, plan.Info, 10),
+	})
+
+	// ----------------------------------------------------------------------------------------------------------------
+	// Update software upgrade plan with lower height
+	planEdit1 := upgradetypes.Plan{
+		Name:   "name_edit_1",
+		Height: 101,
+		Info:   "info_edit_1",
+	}
+
+	err = suite.database.SaveSoftwareUpgradePlan(1, planEdit1, 9)
+	suite.Require().NoError(err)
+
+	rows = []dbtypes.SoftwareUpgradePlanRow{}
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM software_upgrade_plan`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	suite.Require().Equal(rows, []dbtypes.SoftwareUpgradePlanRow{
+		dbtypes.NewSoftwareUpgradePlanRow(1, plan.Name, plan.Height, plan.Info, 10),
+	})
+
+	// ----------------------------------------------------------------------------------------------------------------
+	// Update software upgrade plan with same height
+	planEdit2 := upgradetypes.Plan{
+		Name:   "name_edit_2",
+		Height: 102,
+		Info:   "info_edit_2",
+	}
+
+	err = suite.database.SaveSoftwareUpgradePlan(1, planEdit2, 10)
+	suite.Require().NoError(err)
+
+	rows = []dbtypes.SoftwareUpgradePlanRow{}
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM software_upgrade_plan`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	suite.Require().Equal(rows, []dbtypes.SoftwareUpgradePlanRow{
+		dbtypes.NewSoftwareUpgradePlanRow(1, planEdit2.Name, planEdit2.Height, planEdit2.Info, 10),
+	})
+
+	// ----------------------------------------------------------------------------------------------------------------
+	// Update software upgrade plan with higher height
+	planEdit3 := upgradetypes.Plan{
+		Name:   "name_edit_3",
+		Height: 103,
+		Info:   "info_edit_3",
+	}
+
+	err = suite.database.SaveSoftwareUpgradePlan(1, planEdit3, 11)
+	suite.Require().NoError(err)
+
+	rows = []dbtypes.SoftwareUpgradePlanRow{}
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM software_upgrade_plan`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 1)
+	suite.Require().Equal(rows, []dbtypes.SoftwareUpgradePlanRow{
+		dbtypes.NewSoftwareUpgradePlanRow(1, planEdit3.Name, planEdit3.Height, planEdit3.Info, 11),
+	})
+}
+
+func (suite *DbTestSuite) TestBigDipperDb_DeleteSoftwareUpgradePlan() {
+	_ = suite.getProposalRow(1)
+
+	// Save software upgrade plan at height 10 with upgrade height at 100
+	var plan = upgradetypes.Plan{
+		Name:   "name",
+		Height: 100,
+		Info:   "info",
+	}
+
+	err := suite.database.SaveSoftwareUpgradePlan(1, plan, 10)
+	suite.Require().NoError(err)
+
+	// Delete software upgrade plan
+	err = suite.database.DeleteSoftwareUpgradePlan(1)
+	suite.Require().NoError(err)
+
+	var rows []dbtypes.SoftwareUpgradePlanRow
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM software_upgrade_plan`)
+	suite.Require().NoError(err)
+	suite.Require().Len(rows, 0)
+
+}
+
+func (suite *DbTestSuite) TestBigDipperDb_CheckSoftwareUpgradePlan() {
+	_ = suite.getProposalRow(1)
+
+	// Save software upgrade plan at height 10 with upgrade height at 100
+	var plan = upgradetypes.Plan{
+		Name: "name",
+		// the Height here is the upgrade height
+		Height: 100,
+		Info:   "info",
+	}
+
+	err := suite.database.SaveSoftwareUpgradePlan(1, plan, 10)
+	suite.Require().NoError(err)
+
+	// Check software upgrade plan at existing height
+	exist, err := suite.database.CheckSoftwareUpgradePlan(100)
+	suite.Require().NoError(err)
+	suite.Require().Equal(true, exist)
+
+	// Check software upgrade plan at non-existing height
+	exist, err = suite.database.CheckSoftwareUpgradePlan(11)
+	suite.Require().NoError(err)
+	suite.Require().Equal(false, exist)
 }
