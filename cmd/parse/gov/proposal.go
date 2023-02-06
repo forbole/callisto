@@ -4,7 +4,6 @@ import (
 	"encoding/hex"
 	"fmt"
 	"strconv"
-	"strings"
 	"time"
 
 	modulestypes "github.com/forbole/bdjuno/v3/modules/types"
@@ -17,6 +16,7 @@ import (
 
 	"github.com/forbole/juno/v4/parser"
 
+	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/forbole/bdjuno/v3/database"
 	"github.com/forbole/bdjuno/v3/modules/distribution"
 	"github.com/forbole/bdjuno/v3/modules/gov"
@@ -119,7 +119,7 @@ func refreshProposalDetails(parseCtx *parser.Context, proposalID uint64, govModu
 
 	// Handle the MsgSubmitProposal messages
 	for index, msg := range tx.GetMsgs() {
-		if _, ok := msg.(*govtypes.MsgSubmitProposal); !ok {
+		if _, ok := msg.(*govtypesv1beta1.MsgSubmitProposal); !ok {
 			continue
 		}
 
@@ -143,7 +143,7 @@ func refreshProposalDeposits(parseCtx *parser.Context, proposalID uint64, govMod
 
 	for _, tx := range txs {
 		// Get the tx details
-		junoTx, err := parseCtx.Node.Tx(strings.ToUpper(hex.EncodeToString(tx.Tx.Hash())))
+		junoTx, err := parseCtx.Node.Tx(hex.EncodeToString(tx.Tx.Hash()))
 		if err != nil {
 			return err
 		}

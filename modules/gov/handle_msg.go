@@ -10,9 +10,9 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
-	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
 	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
+	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	juno "github.com/forbole/juno/v4/types"
 )
 
@@ -26,7 +26,7 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	case *govtypesv1beta1.MsgSubmitProposal:
 		return m.handleMsgSubmitProposal(tx, index, cosmosMsg)
 
-	case *govtypesv1beta1.MsgDeposit:
+	case *govtypes.MsgDeposit:
 		return m.handleMsgDeposit(tx, cosmosMsg)
 
 	case *govtypes.MsgVote:
@@ -62,15 +62,15 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1
 
 	// Store the proposal
 	proposalObj := types.NewProposal(
-		proposal.Id,
+		proposal.ProposalId,
 		msg.GetContent().ProposalRoute(),
 		msg.GetContent().ProposalType(),
 		msg.GetContent(),
 		proposal.Status.String(),
-		*proposal.SubmitTime,
-		*proposal.DepositEndTime,
-		*proposal.VotingStartTime,
-		*proposal.VotingEndTime,
+		proposal.SubmitTime,
+		proposal.DepositEndTime,
+		proposal.VotingStartTime,
+		proposal.VotingEndTime,
 		msg.Proposer,
 	)
 
@@ -85,12 +85,12 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1
 	}
 
 	// Store the deposit
-	deposit := types.NewDeposit(proposal.Id, msg.Proposer, msg.InitialDeposit, txTimestamp, tx.Height)
+	deposit := types.NewDeposit(proposal.ProposalId, msg.Proposer, msg.InitialDeposit, txTimestamp, tx.Height)
 	return m.db.SaveDeposits([]types.Deposit{deposit})
 }
 
 // handleMsgDeposit allows to properly handle a handleMsgDeposit
-func (m *Module) handleMsgDeposit(tx *juno.Tx, msg *govtypesv1beta1.MsgDeposit) error {
+func (m *Module) handleMsgDeposit(tx *juno.Tx, msg *govtypes.MsgDeposit) error {
 	deposit, err := m.source.ProposalDeposit(tx.Height, msg.ProposalId, msg.Depositor)
 	if err != nil {
 		return fmt.Errorf("error while getting proposal deposit: %s", err)

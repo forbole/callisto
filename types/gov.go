@@ -184,13 +184,13 @@ func (p Proposal) Equal(other Proposal) bool {
 type ProposalUpdate struct {
 	ProposalID      uint64
 	Status          string
-	VotingStartTime *time.Time
-	VotingEndTime   *time.Time
+	VotingStartTime time.Time
+	VotingEndTime   time.Time
 }
 
 // NewProposalUpdate allows to build a new ProposalUpdate instance
 func NewProposalUpdate(
-	proposalID uint64, status string, votingStartTime, votingEndTime *time.Time,
+	proposalID uint64, status string, votingStartTime, votingEndTime time.Time,
 ) ProposalUpdate {
 	return ProposalUpdate{
 		ProposalID:      proposalID,

@@ -4,6 +4,7 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	"github.com/forbole/juno/v4/node/remote"
 
+	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	govsource "github.com/forbole/bdjuno/v3/modules/gov/source"
 )
 
@@ -14,25 +15,27 @@ var (
 // Source implements govsource.Source using a remote node
 type Source struct {
 	*remote.Source
-	govClient govtypes.QueryClient
+	govClient        govtypes.QueryClient
+	govClientv1beta1 govtypesv1beta1.QueryClient
 }
 
 // NewSource returns a new Source implementation
-func NewSource(source *remote.Source, govClient govtypes.QueryClient) *Source {
+func NewSource(source *remote.Source, govClient govtypes.QueryClient, govClientv1beta1 govtypesv1beta1.QueryClient) *Source {
 	return &Source{
-		Source:    source,
-		govClient: govClient,
+		Source:           source,
+		govClient:        govClient,
+		govClientv1beta1: govClientv1beta1,
 	}
 }
 
 // Proposal implements govsource.Source
-func (s Source) Proposal(height int64, id uint64) (*govtypes.Proposal, error) {
-	res, err := s.govClient.Proposal(
+func (s Source) Proposal(height int64, id uint64) (govtypesv1beta1.Proposal, error) {
+	res, err := s.govClientv1beta1.Proposal(
 		remote.GetHeightRequestContext(s.Ctx, height),
-		&govtypes.QueryProposalRequest{ProposalId: id},
+		&govtypesv1beta1.QueryProposalRequest{ProposalId: id},
 	)
 	if err != nil {
-		return nil, err
+		return govtypesv1beta1.Proposal{}, err
 	}
 
 	return res.Proposal, err

@@ -5,6 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
 	"github.com/forbole/juno/v4/node/local"
 
@@ -18,27 +19,29 @@ var (
 // Source implements govsource.Source by using a local node
 type Source struct {
 	*local.Source
-	q govtypes.QueryServer
+	q        govtypes.QueryServer
+	qv1beta1 govtypesv1beta1.QueryClient
 }
 
 // NewSource returns a new Source instance
-func NewSource(source *local.Source, govKeeper govtypes.QueryServer) *Source {
+func NewSource(source *local.Source, govKeeper govtypes.QueryServer, govKeeperv1beta1 govtypesv1beta1.QueryClient) *Source {
 	return &Source{
-		Source: source,
-		q:      govKeeper,
+		Source:   source,
+		q:        govKeeper,
+		qv1beta1: govKeeperv1beta1,
 	}
 }
 
 // Proposal implements govsource.Source
-func (s Source) Proposal(height int64, id uint64) (*govtypes.Proposal, error) {
+func (s Source) Proposal(height int64, id uint64) (govtypesv1beta1.Proposal, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
-		return nil, fmt.Errorf("error while loading height: %s", err)
+		return govtypesv1beta1.Proposal{}, fmt.Errorf("error while loading height: %s", err)
 	}
 
-	res, err := s.q.Proposal(sdk.WrapSDKContext(ctx), &govtypes.QueryProposalRequest{ProposalId: id})
+	res, err := s.qv1beta1.Proposal(sdk.WrapSDKContext(ctx), &govtypesv1beta1.QueryProposalRequest{ProposalId: id})
 	if err != nil {
-		return nil, err
+		return govtypesv1beta1.Proposal{}, err
 	}
 
 	return res.Proposal, nil
