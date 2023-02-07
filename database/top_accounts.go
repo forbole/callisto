@@ -25,7 +25,7 @@ func (db *Db) SaveTopAccountsBalance(column string, bals []types.NativeTokenAmou
 	stmt = stmt[:len(stmt)-1]
 	stmt += fmt.Sprintf("ON CONFLICT (address) DO UPDATE SET %s = excluded.%s ", column, column)
 
-	_, err := db.Sql.Exec(stmt, params...)
+	_, err := db.SQL.Exec(stmt, params...)
 	return err
 
 }
@@ -48,7 +48,7 @@ func (db *Db) UpdateTopAccountsSum(address, sum string) error {
 	stmt := `INSERT INTO top_accounts (address, sum) VALUES ($1, $2) 
 ON CONFLICT (address) DO UPDATE SET sum = excluded.sum`
 
-	_, err := db.Sql.Exec(stmt, address, sum)
+	_, err := db.SQL.Exec(stmt, address, sum)
 	return err
 
 }

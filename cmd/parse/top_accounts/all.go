@@ -50,11 +50,11 @@ func allCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			db := database.Cast(parseCtx.Database)
 
 			// Build modules
-			authModule := auth.NewModule(sources.AuthSource, nil, parseCtx.EncodingConfig.Marshaler, db)
-			bankModule := bank.NewModule(nil, sources.BankSource, parseCtx.EncodingConfig.Marshaler, db)
-			distriModule := distribution.NewModule(sources.DistrSource, parseCtx.EncodingConfig.Marshaler, db)
-			stakingModule := staking.NewModule(sources.StakingSource, parseCtx.EncodingConfig.Marshaler, db)
-			topaccountsModule := topaccounts.NewModule(bankModule, distriModule, stakingModule, nil, parseCtx.EncodingConfig.Marshaler, db)
+			authModule := auth.NewModule(sources.AuthSource, nil, parseCtx.EncodingConfig.Codec, db)
+			bankModule := bank.NewModule(nil, sources.BankSource, parseCtx.EncodingConfig.Codec, db)
+			distriModule := distribution.NewModule(sources.DistrSource, parseCtx.EncodingConfig.Codec, db)
+			stakingModule := staking.NewModule(sources.StakingSource, parseCtx.EncodingConfig.Codec, db)
+			topaccountsModule := topaccounts.NewModule(bankModule, distriModule, stakingModule, nil, parseCtx.EncodingConfig.Codec, db)
 
 			// Get workers
 			exportQueue := NewQueue(5)

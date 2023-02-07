@@ -32,7 +32,7 @@ func poolCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			db := database.Cast(parseCtx.Database)
 
 			// Build staking module
-			stakingModule := staking.NewModule(sources.StakingSource, parseCtx.EncodingConfig.Marshaler, db)
+			stakingModule := staking.NewModule(sources.StakingSource, parseCtx.EncodingConfig.Codec, db)
 
 			err = stakingModule.UpdateStakingPool()
 			if err != nil {
