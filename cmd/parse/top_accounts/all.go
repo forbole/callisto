@@ -15,9 +15,9 @@ import (
 	"github.com/forbole/bdjuno/v3/types"
 	"github.com/rs/zerolog/log"
 
-	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
-	"github.com/forbole/juno/v3/parser"
-	"github.com/forbole/juno/v3/types/config"
+	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
+	"github.com/forbole/juno/v4/parser"
+	"github.com/forbole/juno/v4/types/config"
 	"github.com/spf13/cobra"
 
 	"github.com/forbole/bdjuno/v3/database"
@@ -50,11 +50,11 @@ func allCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			db := database.Cast(parseCtx.Database)
 
 			// Build modules
-			authModule := auth.NewModule(sources.AuthSource, nil, parseCtx.EncodingConfig.Marshaler, db)
-			bankModule := bank.NewModule(nil, sources.BankSource, parseCtx.EncodingConfig.Marshaler, db)
-			distriModule := distribution.NewModule(sources.DistrSource, parseCtx.EncodingConfig.Marshaler, db)
-			stakingModule := staking.NewModule(sources.StakingSource, parseCtx.EncodingConfig.Marshaler, db)
-			topaccountsModule := topaccounts.NewModule(bankModule, distriModule, stakingModule, nil, parseCtx.EncodingConfig.Marshaler, db)
+			authModule := auth.NewModule(sources.AuthSource, nil, parseCtx.EncodingConfig.Codec, db)
+			bankModule := bank.NewModule(nil, sources.BankSource, parseCtx.EncodingConfig.Codec, db)
+			distriModule := distribution.NewModule(sources.DistrSource, parseCtx.EncodingConfig.Codec, db)
+			stakingModule := staking.NewModule(sources.StakingSource, parseCtx.EncodingConfig.Codec, db)
+			topaccountsModule := topaccounts.NewModule(bankModule, distriModule, stakingModule, nil, parseCtx.EncodingConfig.Codec, db)
 
 			// Get workers
 			exportQueue := NewQueue(5)
