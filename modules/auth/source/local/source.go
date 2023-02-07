@@ -8,7 +8,7 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/rs/zerolog/log"
 
-	"github.com/forbole/juno/v3/node/local"
+	"github.com/forbole/juno/v4/node/local"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	source "github.com/forbole/bdjuno/v3/modules/auth/source"

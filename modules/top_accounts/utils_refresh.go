@@ -3,7 +3,7 @@ package top_accounts
 import (
 	"fmt"
 
-	juno "github.com/forbole/juno/v3/types"
+	juno "github.com/forbole/juno/v4/types"
 	"github.com/rs/zerolog/log"
 )
 

@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/types/query"
-	"github.com/forbole/juno/v3/node/remote"
+	"github.com/forbole/juno/v4/node/remote"
 	"github.com/rs/zerolog/log"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
