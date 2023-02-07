@@ -2,8 +2,8 @@ package remote
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	inflationtypes "github.com/evmos/evmos/v6/x/inflation/types"
-	"github.com/forbole/juno/v3/node/remote"
+	inflationtypes "github.com/evmos/evmos/v10/x/inflation/types"
+	"github.com/forbole/juno/v4/node/remote"
 
 	inflationsource "github.com/forbole/bdjuno/v3/modules/inflation/source"
 )

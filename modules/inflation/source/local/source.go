@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	inflationtypes "github.com/evmos/evmos/v6/x/inflation/types"
-	"github.com/forbole/juno/v3/node/local"
+	inflationtypes "github.com/evmos/evmos/v10/x/inflation/types"
+	"github.com/forbole/juno/v4/node/local"
 
 	inflationsource "github.com/forbole/bdjuno/v3/modules/inflation/source"
 )

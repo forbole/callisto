@@ -2,7 +2,7 @@ package source
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	inflationtypes "github.com/evmos/evmos/v6/x/inflation/types"
+	inflationtypes "github.com/evmos/evmos/v10/x/inflation/types"
 )
 
 type Source interface {

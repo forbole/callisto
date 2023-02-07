@@ -26,7 +26,7 @@ WHERE evmos_inflation_params.height <= excluded.height`
 		return fmt.Errorf("error while marshaling evmos inflation params: %s", err)
 	}
 
-	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
+	_, err = db.SQL.Exec(stmt, string(paramsBz), params.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing evmos inflation params: %s", err)
 	}
@@ -52,7 +52,7 @@ WHERE evmos_inflation_data.height <= excluded.height`
 	// Example: when inflaionRate is 150, it's actually 1.5 (150%)
 	inflationRate := data.InflationRate.Mul(sdk.NewDecWithPrec(1, 2)).String()
 
-	_, err := db.Sql.Exec(stmt,
+	_, err := db.SQL.Exec(stmt,
 		pq.Array(dbtypes.NewDbDecCoins(data.CirculatingSupply)),
 		pq.Array(dbtypes.NewDbDecCoins(data.EpochMintProvision)),
 		inflationRate, data.InflationPeriod, data.SkippedEpochs, data.Height,

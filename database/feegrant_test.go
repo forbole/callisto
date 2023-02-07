@@ -37,7 +37,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveFeeGrantAllowance() {
 	suite.Require().Equal(rows[0].Height, int64(121622))
 
 	var stored feegranttypes.FeeAllowanceI
-	err = suite.database.EncodingConfig.Marshaler.UnmarshalInterfaceJSON([]byte(rows[0].Allowance), &stored)
+	err = suite.database.EncodingConfig.Codec.UnmarshalInterfaceJSON([]byte(rows[0].Allowance), &stored)
 	suite.Require().NoError(err)
 	suite.Require().Equal(allowance, stored)
 }
@@ -66,7 +66,7 @@ func (suite *DbTestSuite) TestBigDipperDb_RemoveFeeGrantAllowance() {
 
 	// verify the data
 	var count int
-	err = suite.database.Sql.QueryRow(`SELECT COUNT(*) FROM fee_grant_allowance`).Scan(&count)
+	err = suite.database.SQL.QueryRow(`SELECT COUNT(*) FROM fee_grant_allowance`).Scan(&count)
 	suite.Require().NoError(err)
 	suite.Require().Equal(0, count)
 }

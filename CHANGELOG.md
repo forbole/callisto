@@ -1,6 +1,9 @@
 ## Unreleased
 ### Changes
 
+#### Evmos Gov Module
+- ([\#519](https://github.com/forbole/bdjuno/pull/519)) Upgrade evmos version to `v10.0.0`, update proposals parsing to correctly parse `v1` gov module proposals details
+
 #### CI
 - ([\#508](https://github.com/forbole/bdjuno/pull/508)) Upgrade workflow golangci version to v1.50.1
 
