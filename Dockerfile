@@ -5,7 +5,7 @@ WORKDIR /lava
 COPY ./lava .
 
 WORKDIR /go/src/github.com/forbole/bdjuno
-COPY ./bdjuno ./
+COPY bdjuno ./
 RUN go mod download
 RUN make build
 
