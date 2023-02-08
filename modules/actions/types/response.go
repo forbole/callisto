@@ -1,11 +1,11 @@
 package types
 
 import (
-	"time"
-
+	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	stakingtype "github.com/cosmos/cosmos-sdk/x/staking/types"
+	"time"
 )
 
 type Coin struct {
@@ -95,6 +95,6 @@ type Redelegation struct {
 }
 
 type RedelegationEntry struct {
-	CompletionTime time.Time `json:"completion_time"`
-	Balance        sdk.Int   `json:"balance"`
+	CompletionTime time.Time   `json:"completion_time"`
+	Balance        sdkmath.Int `json:"balance"`
 }

@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	dbtypes "github.com/forbole/bdjuno/v3/database/types"
+	dbtypes "github.com/forbole/bdjuno/v4/database/types"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/lib/pq"
@@ -21,7 +21,7 @@ ON CONFLICT (one_row_id) DO UPDATE
     SET coins = excluded.coins,
         height = excluded.height
 WHERE community_pool.height <= excluded.height`
-	_, err := db.Sql.Exec(query, pq.Array(dbtypes.NewDbDecCoins(coin)), height)
+	_, err := db.SQL.Exec(query, pq.Array(dbtypes.NewDbDecCoins(coin)), height)
 	if err != nil {
 		return fmt.Errorf("error while storing community pool: %s", err)
 	}
@@ -45,7 +45,7 @@ ON CONFLICT (one_row_id) DO UPDATE
     SET params = excluded.params,
       	height = excluded.height
 WHERE distribution_params.height <= excluded.height`
-	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
+	_, err = db.SQL.Exec(stmt, string(paramsBz), params.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing distribution params: %s", err)
 	}

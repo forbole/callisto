@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 
-	dbtypes "github.com/forbole/bdjuno/v3/database/types"
+	dbtypes "github.com/forbole/bdjuno/v4/database/types"
 )
 
 // SaveInflation allows to store the inflation for the given block height as well as timestamp
@@ -19,7 +19,7 @@ ON CONFLICT (one_row_id) DO UPDATE
         height = excluded.height 
 WHERE inflation.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt, inflation, height)
+	_, err := db.SQL.Exec(stmt, inflation, height)
 	if err != nil {
 		return fmt.Errorf("error while storing inflation: %s", err)
 	}
@@ -42,7 +42,7 @@ ON CONFLICT (one_row_id) DO UPDATE
         height = excluded.height
 WHERE mint_params.height <= excluded.height`
 
-	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
+	_, err = db.SQL.Exec(stmt, string(paramsBz), params.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing mint params: %s", err)
 	}
