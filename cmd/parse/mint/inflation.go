@@ -3,8 +3,8 @@ package mint
 import (
 	"fmt"
 
-	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
-	"github.com/forbole/juno/v3/types/config"
+	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
+	"github.com/forbole/juno/v4/types/config"
 	"github.com/spf13/cobra"
 
 	"github.com/forbole/bdjuno/v3/database"
@@ -32,7 +32,7 @@ func inflationCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			db := database.Cast(parseCtx.Database)
 
 			// Build mint module
-			mintModule := mint.NewModule(sources.MintSource, parseCtx.EncodingConfig.Marshaler, db)
+			mintModule := mint.NewModule(sources.MintSource, parseCtx.EncodingConfig.Codec, db)
 
 			err = mintModule.UpdateInflation()
 			if err != nil {

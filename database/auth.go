@@ -51,7 +51,7 @@ func (db *Db) saveAccounts(paramsNumber int, accounts []types.Account) error {
 
 	stmt = stmt[:len(stmt)-1]
 	stmt += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(stmt, params...)
+	_, err := db.SQL.Exec(stmt, params...)
 	if err != nil {
 		return fmt.Errorf("error while storing accounts: %s", err)
 	}
@@ -99,7 +99,7 @@ func (db *Db) storeVestingAccount(account exported.VestingAccount) (int, error) 
 			RETURNING id `
 
 	var vestingAccountRowID int
-	err := db.Sql.QueryRow(stmt,
+	err := db.SQL.QueryRow(stmt,
 		proto.MessageName(account),
 		account.GetAddress().String(),
 		pq.Array(dbtypes.NewDbCoins(account.GetOriginalVesting())),
@@ -124,7 +124,7 @@ func (db *Db) StoreBaseVestingAccountFromMsg(bva *vestingtypes.BaseVestingAccoun
 			start_time = excluded.start_time, 
 			end_time = excluded.end_time`
 
-	_, err := db.Sql.Exec(stmt,
+	_, err := db.SQL.Exec(stmt,
 		proto.MessageName(bva),
 		bva.GetAddress().String(),
 		pq.Array(dbtypes.NewDbCoins(bva.OriginalVesting)),
@@ -140,7 +140,7 @@ func (db *Db) StoreBaseVestingAccountFromMsg(bva *vestingtypes.BaseVestingAccoun
 func (db *Db) storeVestingPeriods(id int, vestingPeriods []vestingtypes.Period) error {
 	// Delete already existing periods
 	stmt := `DELETE FROM vesting_period WHERE vesting_account_id = $1`
-	_, err := db.Sql.Exec(stmt, id)
+	_, err := db.SQL.Exec(stmt, id)
 	if err != nil {
 		return fmt.Errorf("error while deleting vesting period: %s", err)
 	}
@@ -161,7 +161,7 @@ VALUES `
 	}
 	stmt = stmt[:len(stmt)-1]
 
-	_, err = db.Sql.Exec(stmt, params...)
+	_, err = db.SQL.Exec(stmt, params...)
 	if err != nil {
 		return fmt.Errorf("error while saving vesting periods: %s", err)
 	}
