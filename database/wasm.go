@@ -26,7 +26,7 @@ ON CONFLICT (one_row_id) DO UPDATE
 WHERE wasm_params.height <= excluded.height
 `
 
-	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
+	_, err = db.SQL.Exec(stmt, string(paramsBz), params.Height)
 
 	if err != nil {
 		return fmt.Errorf("error while saving wasm params: %s", err)
@@ -84,7 +84,7 @@ VALUES `
 		return fmt.Errorf("error while saving accounts: %s", err)
 	}
 
-	_, err = db.Sql.Exec(stmt, args...)
+	_, err = db.SQL.Exec(stmt, args...)
 	if err != nil {
 		return fmt.Errorf("error while saving wasm code: %s", err)
 	}
@@ -166,7 +166,7 @@ VALUES `
 		return fmt.Errorf("error while saving accounts: %s", err)
 	}
 
-	_, err = db.Sql.Exec(stmt, args...)
+	_, err = db.SQL.Exec(stmt, args...)
 	if err != nil {
 		return fmt.Errorf("error while saving wasm contracts: %s", err)
 	}
@@ -218,7 +218,7 @@ VALUES `
 
 	stmt += ` ON CONFLICT DO NOTHING`
 
-	_, err := db.Sql.Exec(stmt, args...)
+	_, err := db.SQL.Exec(stmt, args...)
 	if err != nil {
 		return fmt.Errorf("error while saving wasm execute contracts: %s", err)
 	}
@@ -235,7 +235,7 @@ WHERE contract_address = $5 `
 
 	converted := types.ConvertRawContractMessage(rawContractMsg)
 
-	_, err := db.Sql.Exec(stmt,
+	_, err := db.SQL.Exec(stmt,
 		sender,
 		codeID,
 		string(converted),
@@ -254,7 +254,7 @@ func (db *Db) UpdateContractAdmin(sender string, contractAddress string, newAdmi
 	stmt := `UPDATE wasm_contract SET 
 sender = $1, admin = $2 WHERE contract_address = $3 `
 
-	_, err := db.Sql.Exec(stmt, sender, newAdmin, contractAddress)
+	_, err := db.SQL.Exec(stmt, sender, newAdmin, contractAddress)
 	if err != nil {
 		return fmt.Errorf("error while updating wsm contract admin: %s", err)
 	}

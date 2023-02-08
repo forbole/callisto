@@ -1,7 +1,7 @@
 package staking
 
 import (
-	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
+	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
 	"github.com/spf13/cobra"
 )
 
@@ -13,6 +13,7 @@ func NewStakingCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 	}
 
 	cmd.AddCommand(
+		poolCmd(parseConfig),
 		validatorsCmd(parseConfig),
 	)
 
