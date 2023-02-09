@@ -15,8 +15,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInterchainStakingParams() {
 	icsParams := icstypes.NewParams(
 		100,
 		10,
-		10,
 		sdk.NewDecWithPrec(4, 1),
+		true,
 	)
 	err := suite.database.SaveInterchainStakingParams(types.NewInterchainStakingParams(icsParams, 10))
 	suite.Require().NoError(err)
