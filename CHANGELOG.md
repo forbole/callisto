@@ -1,15 +1,14 @@
 ## Unreleased
 ### Changes
+
+#### Quicksilver
+- ([\#521](https://github.com/forbole/bdjuno/pull/521)) Upgraded `quicksilver` to `v1.3.2` and proposals parsing to correctly parse v0.46.x gov proposals 
+
 #### Mint Module
 - ([\#507](https://github.com/forbole/bdjuno/pull/507)) Calculate inflation with epoch provision
 
 #### CI
 - ([\#508](https://github.com/forbole/bdjuno/pull/508)) Upgrade workflow golangci version to v1.50.1
-
-
-#### CI
-- ([\#508](https://github.com/forbole/bdjuno/pull/508)) Upgrade workflow golangci version to v1.50.1
-
 
 #### Parse Command
 - ([\#492](https://github.com/forbole/bdjuno/pull/492)) Add parse command for periodic tasks: `x/bank` total supply, `x/distribution` community pool, `x/mint` inflation, `pricefeed` token price and price history, `x/staking` staking pool
