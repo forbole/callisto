@@ -8,8 +8,8 @@ import (
 	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	minttypes "github.com/ingenuity-build/quicksilver/x/mint/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+	minttypes "github.com/ingenuity-build/quicksilver/x/mint/types"
 	"google.golang.org/grpc/codes"
 
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"

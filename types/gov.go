@@ -40,7 +40,6 @@ func NewVotingParams(v *govtypesv1.VotingParams) VotingParams {
 	}
 }
 
-
 // GovParams contains the data of the x/gov module parameters
 type GovParams struct {
 	DepositParams DepositParams `json:"deposit_params" yaml:"deposit_params"`
@@ -48,7 +47,6 @@ type GovParams struct {
 	TallyParams   TallyParams   `json:"tally_params" yaml:"tally_params"`
 	Height        int64         `json:"height" ymal:"height"`
 }
-
 
 // TallyParams contains the tally parameters of the x/gov module
 type TallyParams struct {
@@ -65,7 +63,6 @@ func NewTallyParams(t *govtypesv1.TallyParams) TallyParams {
 		VetoThreshold: t.VetoThreshold,
 	}
 }
-
 
 // NewGovParams allows to build a new GovParams instance
 func NewGovParams(votingParams VotingParams, depositParams DepositParams, tallyParams TallyParams, height int64) *GovParams {
