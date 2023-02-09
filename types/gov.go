@@ -28,14 +28,6 @@ func NewDepositParam(d *govtypesv1.DepositParams) DepositParams {
 	}
 }
 
-// NewGenesisDepositParam allows to build a new DepositParams
-func NewGenesisDepositParam(d *govtypesv1beta1.DepositParams) DepositParams {
-	return DepositParams{
-		MinDeposit:       d.MinDeposit,
-		MaxDepositPeriod: d.MaxDepositPeriod.Nanoseconds(),
-	}
-}
-
 // VotingParams contains the voting parameters of the x/gov module
 type VotingParams struct {
 	VotingPeriod int64 `json:"voting_period,omitempty" yaml:"voting_period"`
@@ -48,12 +40,6 @@ func NewVotingParams(v *govtypesv1.VotingParams) VotingParams {
 	}
 }
 
-// NewGenesisVotingParams allows to build a new VotingParams instance
-func NewGenesisVotingParams(v *govtypesv1beta1.VotingParams) VotingParams {
-	return VotingParams{
-		VotingPeriod: v.VotingPeriod.Nanoseconds(),
-	}
-}
 
 // GovParams contains the data of the x/gov module parameters
 type GovParams struct {
@@ -63,26 +49,12 @@ type GovParams struct {
 	Height        int64         `json:"height" ymal:"height"`
 }
 
-// GenesisGovParams contains the data of the x/gov module parameters
-type GenesisGovParams struct {
-	DepositParams DepositParams      `json:"deposit_params" yaml:"deposit_params"`
-	VotingParams  VotingParams       `json:"voting_params" yaml:"voting_params"`
-	TallyParams   GenesisTallyParams `json:"tally_params" yaml:"tally_params"`
-	Height        int64              `json:"height" ymal:"height"`
-}
 
 // TallyParams contains the tally parameters of the x/gov module
 type TallyParams struct {
 	Quorum        string `json:"quorum,omitempty"`
 	Threshold     string `json:"threshold,omitempty"`
 	VetoThreshold string `json:"veto_threshold,omitempty" yaml:"veto_threshold"`
-}
-
-// GenesisTallyParams contains genesis tally parameters of the x/gov module
-type GenesisTallyParams struct {
-	Quorum        sdk.Dec `json:"quorum,omitempty"`
-	Threshold     sdk.Dec `json:"threshold,omitempty"`
-	VetoThreshold sdk.Dec `json:"veto_threshold,omitempty" yaml:"veto_threshold"`
 }
 
 // NewTallyParams allows to build a new TallyParams instance
@@ -94,28 +66,10 @@ func NewTallyParams(t *govtypesv1.TallyParams) TallyParams {
 	}
 }
 
-// NewGenesisTallyParams allows to build a new GenesisTallyParams instance
-func NewGenesisTallyParams(t *govtypesv1beta1.TallyParams) GenesisTallyParams {
-	return GenesisTallyParams{
-		Quorum:        t.Quorum,
-		Threshold:     t.Threshold,
-		VetoThreshold: t.VetoThreshold,
-	}
-}
 
 // NewGovParams allows to build a new GovParams instance
 func NewGovParams(votingParams VotingParams, depositParams DepositParams, tallyParams TallyParams, height int64) *GovParams {
 	return &GovParams{
-		DepositParams: depositParams,
-		VotingParams:  votingParams,
-		TallyParams:   tallyParams,
-		Height:        height,
-	}
-}
-
-// NewGenesisGovParams allows to build a new GenesisGovParams instance
-func NewGenesisGovParams(votingParams VotingParams, depositParams DepositParams, tallyParams GenesisTallyParams, height int64) *GenesisGovParams {
-	return &GenesisGovParams{
 		DepositParams: depositParams,
 		VotingParams:  votingParams,
 		TallyParams:   tallyParams,

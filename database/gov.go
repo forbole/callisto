@@ -54,41 +54,6 @@ WHERE gov_params.height <= excluded.height`
 	return nil
 }
 
-// SaveGenesisGovParams saves the genesis x/gov parameters inside the database
-func (db *Db) SaveGenesisGovParams(params *types.GenesisGovParams) error {
-
-	depositParamsBz, err := json.Marshal(&params.DepositParams)
-	if err != nil {
-		return fmt.Errorf("error while marshaling genesis deposit params: %s", err)
-	}
-
-	votingParamsBz, err := json.Marshal(&params.VotingParams)
-	if err != nil {
-		return fmt.Errorf("error while marshaling genesis voting params: %s", err)
-	}
-
-	tallyingParams, err := json.Marshal(&params.TallyParams)
-	if err != nil {
-		return fmt.Errorf("error while marshaling genesis tally params: %s", err)
-	}
-
-	stmt := `
-INSERT INTO gov_params(deposit_params, voting_params, tally_params, height)
-VALUES ($1, $2, $3, $4)
-ON CONFLICT (one_row_id) DO UPDATE
-	SET deposit_params = excluded.deposit_params,
-  		voting_params = excluded.voting_params,
-		tally_params = excluded.tally_params,
-		height = excluded.height
-WHERE gov_params.height <= excluded.height`
-	_, err = db.SQL.Exec(stmt, string(depositParamsBz), string(votingParamsBz), string(tallyingParams), params.Height)
-	if err != nil {
-		return fmt.Errorf("error while storing genesis gov params: %s", err)
-	}
-
-	return nil
-}
-
 // GetGovParams returns the most recent governance parameters
 func (db *Db) GetGovParams() (*types.GovParams, error) {
 	var rows []dbtypes.GovParamsRow
@@ -197,6 +162,66 @@ INSERT INTO proposal(
 	_, err = db.SQL.Exec(proposalsQuery, proposalsParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing proposals: %s", err)
+	}
+
+	return nil
+}
+
+// SaveGenesisProposals allows proposals from genesis file
+func (db *Db) SaveGenesisProposals(proposals []types.Proposal) error {
+	if len(proposals) == 0 {
+		return nil
+	}
+
+	var accounts []types.Account
+
+	proposalsQuery := `
+INSERT INTO proposal(
+	id, title, description, content, proposer_address, proposal_route, proposal_type, status,
+    submit_time, deposit_end_time, voting_start_time, voting_end_time
+) VALUES`
+	var proposalsParams []interface{}
+
+	// Set dummy proposal content until fix to parse genesis proposal content is found (sdk v0.46.7)
+	dummyContent := `{ "@type": "/cosmos.gov.v1beta1.TextProposal", "title": "title", "description": "description" }`
+
+	for i, proposal := range proposals {
+		// Prepare the account query
+		accounts = append(accounts, types.NewAccount(proposal.Proposer))
+
+		// Prepare the proposal query
+		vi := i * 12
+		proposalsQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
+			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11, vi+12)
+
+		proposalsParams = append(proposalsParams,
+			proposal.ProposalID,
+			"title",
+			"description",
+			dummyContent,
+			proposal.Proposer,
+			proposal.ProposalRoute,
+			proposal.ProposalType,
+			proposal.Status,
+			proposal.SubmitTime,
+			proposal.DepositEndTime,
+			proposal.VotingStartTime,
+			proposal.VotingEndTime,
+		)
+	}
+
+	// Store the accounts
+	err := db.SaveAccounts(accounts)
+	if err != nil {
+		return fmt.Errorf("error while storing genesis proposers accounts: %s", err)
+	}
+
+	// Store the proposals
+	proposalsQuery = proposalsQuery[:len(proposalsQuery)-1] // Remove trailing ","
+	proposalsQuery += " ON CONFLICT DO NOTHING"
+	_, err = db.SQL.Exec(proposalsQuery, proposalsParams...)
+	if err != nil {
+		return fmt.Errorf("error while storing genesis proposals: %s", err)
 	}
 
 	return nil
