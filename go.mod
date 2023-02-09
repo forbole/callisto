@@ -181,12 +181,11 @@ require (
 replace (
 	// https://github.com/CosmWasm/wasmd/pull/938
 	github.com/CosmWasm/wasmd => github.com/notional-labs/wasmd v0.29.0-sdk46.0.20221114145317-d6e67fd50956
+
 	// Fix upstream GHSA-h395-qcrw-5vmq vulnerability.
 	// TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.8.1
-	// github.com/cosmos/cosmos-sdk => github.com/ingenuity-build/cosmos-sdk v0.45.6-ls.1
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-
 	github.com/iqlusioninc/liquidity-staking-module => github.com/notional-labs/liquidity-staking-module v0.0.3-0.20220914043211-d4675d9af6ae
 
 	// use informal system fork of tendermint
