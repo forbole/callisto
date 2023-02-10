@@ -15,6 +15,8 @@ import (
 
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules"
+
+	quasarapp "github.com/MonikaCat/quasar/app"
 )
 
 func main() {
@@ -52,7 +54,9 @@ func main() {
 // support custom messages.
 // This should be edited by custom implementations if needed.
 func getBasicManagers() []module.BasicManager {
-	return []module.BasicManager{}
+	return []module.BasicManager{
+		quasarapp.ModuleBasics,
+	}
 }
 
 // getAddressesParser returns the messages parser that should be used to get the users involved in
