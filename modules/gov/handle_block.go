@@ -36,9 +36,14 @@ func (m *Module) updateProposals(height int64, blockTime time.Time, blockVals *t
 			return fmt.Errorf("error while updating proposal: %s", err)
 		}
 
-		err = m.UpdateProposalSnapshots(height, blockVals, id)
+		err = m.UpdateProposalValidatorStatusesSnapshot(height, blockVals, id)
 		if err != nil {
-			return fmt.Errorf("error while updating proposal snapshots: %s", err)
+			return fmt.Errorf("error while updating proposal validator statuses snapshots: %s", err)
+		}
+
+		err = m.UpdateProposalStakingPoolSnapshot(height, blockVals, id)
+		if err != nil {
+			return fmt.Errorf("error while updating proposal validator statuses snapshots: %s", err)
 		}
 	}
 	return nil
