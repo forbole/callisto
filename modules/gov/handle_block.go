@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	juno "github.com/forbole/juno/v3/types"
+	juno "github.com/forbole/juno/v4/types"
 
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 

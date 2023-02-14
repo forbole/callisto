@@ -46,7 +46,7 @@ ON CONFLICT (validator_address) DO UPDATE
 		height = excluded.height
 WHERE validator_signing_info.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt, args...)
+	_, err := db.SQL.Exec(stmt, args...)
 	if err != nil {
 		return fmt.Errorf("error while storing validators signing infos: %s", err)
 	}
@@ -69,7 +69,7 @@ ON CONFLICT (one_row_id) DO UPDATE
         height = excluded.height
 WHERE slashing_params.height <= excluded.height`
 
-	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
+	_, err = db.SQL.Exec(stmt, string(paramsBz), params.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing slashing params: %s", err)
 	}
