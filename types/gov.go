@@ -292,11 +292,11 @@ func NewTallyResult(
 // ProposalStakingPoolSnapshot contains the data about a single staking pool snapshot to be associated with a proposal
 type ProposalStakingPoolSnapshot struct {
 	ProposalID uint64
-	Pool       *Pool
+	Pool       *PoolSnapshot
 }
 
 // NewProposalStakingPoolSnapshot returns a new ProposalStakingPoolSnapshot instance
-func NewProposalStakingPoolSnapshot(proposalID uint64, pool *Pool) ProposalStakingPoolSnapshot {
+func NewProposalStakingPoolSnapshot(proposalID uint64, pool *PoolSnapshot) ProposalStakingPoolSnapshot {
 	return ProposalStakingPoolSnapshot{
 		ProposalID: proposalID,
 		Pool:       pool,
