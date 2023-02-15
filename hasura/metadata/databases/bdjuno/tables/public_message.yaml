@@ -13,14 +13,14 @@ object_relationships:
         transaction_hash: hash
 select_permissions:
 - permission:
-    allow_aggregations: true
+    allow_aggregations: false
     columns:
     - transaction_hash
     - index
     - type
     - value
     - involved_accounts_addresses
-    - partition_id
     - height
     filter: {}
+    limit: 100
   role: anonymous
