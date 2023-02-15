@@ -3,8 +3,9 @@ table:
   schema: public
 select_permissions:
 - permission:
-    allow_aggregations: true
+    allow_aggregations: false
     columns:
     - module_name
     filter: {}
+    limit: 100
   role: anonymous

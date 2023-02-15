@@ -80,6 +80,25 @@ func (m *Module) convertValidatorDescription(
 
 // --------------------------------------------------------------------------------------------------------------------
 
+// RefreshAllValidatorInfos refreshes the info of all the validators at the given height
+func (m *Module) RefreshAllValidatorInfos(height int64) error {
+	// Get all validators
+	validators, err := m.source.GetValidatorsWithStatus(height, "")
+	if err != nil {
+		return fmt.Errorf("error while getting validators: %s", err)
+	}
+
+	// Refresh each validator
+	for _, validator := range validators {
+		err = m.RefreshValidatorInfos(height, validator.OperatorAddress)
+		if err != nil {
+			return fmt.Errorf("error while refreshing validator: %s", err)
+		}
+	}
+
+	return nil
+}
+
 // RefreshValidatorInfos refreshes the info for the validator with the given operator address at the provided height
 func (m *Module) RefreshValidatorInfos(height int64, valOper string) error {
 	stakingValidator, err := m.source.GetValidator(height, valOper)
