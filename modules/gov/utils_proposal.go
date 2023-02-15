@@ -59,15 +59,19 @@ func (m *Module) UpdateProposal(height int64, blockTime time.Time, id uint64) er
 	return nil
 }
 
-func (m *Module) UpdateProposalSnapshots(height int64, blockVals *tmctypes.ResultValidators, id uint64) error {
+func (m *Module) UpdateProposalValidatorStatusesSnapshot(height int64, blockVals *tmctypes.ResultValidators, id uint64) error {
+	err := m.updateProposalValidatorStatusesSnapshot(height, id, blockVals)
+	if err != nil {
+		return fmt.Errorf("error while updating proposal validator statuses snapshot: %s", err)
+	}
+
+	return nil
+}
+
+func (m *Module) UpdateProposalStakingPoolSnapshot(height int64, blockVals *tmctypes.ResultValidators, id uint64) error {
 	err := m.updateProposalStakingPoolSnapshot(height, id)
 	if err != nil {
 		return fmt.Errorf("error while updating proposal staking pool snapshot: %s", err)
-	}
-
-	err = m.updateProposalValidatorStatusesSnapshot(height, id, blockVals)
-	if err != nil {
-		return fmt.Errorf("error while updating proposal validator statuses snapshot: %s", err)
 	}
 
 	return nil
@@ -192,7 +196,7 @@ func (m *Module) updateAccounts(proposal govtypes.Proposal) error {
 // updateProposalStakingPoolSnapshot updates the staking pool snapshot associated with the gov
 // proposal having the provided id
 func (m *Module) updateProposalStakingPoolSnapshot(height int64, proposalID uint64) error {
-	pool, err := m.stakingModule.GetStakingPool(height)
+	pool, err := m.stakingModule.GetStakingPoolSnapshot(height)
 	if err != nil {
 		return fmt.Errorf("error while getting staking pool: %s", err)
 	}
