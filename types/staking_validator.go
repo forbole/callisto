@@ -147,18 +147,16 @@ type ValidatorStatus struct {
 	ConsensusPubKey  string
 	Status           int
 	Jailed           bool
-	Tombstoned       bool
 	Height           int64
 }
 
 // NewValidatorStatus creates a new ValidatorVotingPower
-func NewValidatorStatus(valConsAddr, pubKey string, status int, jailed bool, tombstoned bool, height int64) ValidatorStatus {
+func NewValidatorStatus(valConsAddr, pubKey string, status int, jailed bool, height int64) ValidatorStatus {
 	return ValidatorStatus{
 		ConsensusAddress: valConsAddr,
 		ConsensusPubKey:  pubKey,
 		Status:           status,
 		Jailed:           jailed,
-		Tombstoned:       tombstoned,
 		Height:           height,
 	}
 }
