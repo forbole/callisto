@@ -13,6 +13,7 @@ func NewStakingCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 	}
 
 	cmd.AddCommand(
+		poolCmd(parseConfig),
 		validatorsCmd(parseConfig),
 	)
 

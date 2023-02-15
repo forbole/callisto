@@ -31,7 +31,7 @@ array_relationships:
         schema: public
 select_permissions:
 - permission:
-    allow_aggregations: true
+    allow_aggregations: false
     columns:
     - aliases
     - denom
@@ -39,4 +39,5 @@ select_permissions:
     - price_id
     - token_name
     filter: {}
+    limit: 100
   role: anonymous

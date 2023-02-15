@@ -3,9 +3,10 @@ table:
   schema: public
 select_permissions:
 - permission:
-    allow_aggregations: true
+    allow_aggregations: false
     columns:
     - average_time
     - height
     filter: {}
+    limit: 1
   role: anonymous

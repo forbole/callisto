@@ -25,13 +25,15 @@ import (
 	"github.com/forbole/bdjuno/v3/modules/distribution"
 	"github.com/forbole/bdjuno/v3/modules/feegrant"
 
+	dailyrefetch "github.com/forbole/bdjuno/v3/modules/daily_refetch"
 	"github.com/forbole/bdjuno/v3/modules/gov"
 	"github.com/forbole/bdjuno/v3/modules/mint"
 	"github.com/forbole/bdjuno/v3/modules/modules"
+	"github.com/forbole/bdjuno/v3/modules/oracle"
 	"github.com/forbole/bdjuno/v3/modules/pricefeed"
 	"github.com/forbole/bdjuno/v3/modules/staking"
-	"github.com/forbole/bdjuno/v3/modules/oracle"
 
+	"github.com/forbole/bdjuno/v3/modules/upgrade"
 )
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
@@ -78,12 +80,14 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	authModule := auth.NewModule(r.parser, cdc, db)
 	bankModule := bank.NewModule(r.parser, sources.BankSource, cdc, db)
 	consensusModule := consensus.NewModule(db)
+	dailyRefetchModule := dailyrefetch.NewModule(ctx.Proxy, db)
 	distrModule := distribution.NewModule(sources.DistrSource, cdc, db)
 	feegrantModule := feegrant.NewModule(cdc, db)
 	mintModule := mint.NewModule(sources.MintSource, cdc, db)
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
-	stakingModule := staking.NewModule(sources.StakingSource, slashingModule, cdc, db)
+	stakingModule := staking.NewModule(sources.StakingSource, cdc, db)
 	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakingModule, cdc, db)
+	upgradeModule := upgrade.NewModule(db, stakingModule)
 
 	return []jmodules.Module{
 		messages.NewModule(r.parser, cdc, ctx.Database),
@@ -94,6 +98,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		authModule,
 		bankModule,
 		consensusModule,
+		dailyRefetchModule,
 		distrModule,
 		feegrantModule,
 		govModule,
@@ -102,7 +107,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		pricefeed.NewModule(ctx.JunoConfig, cdc, db),
 		slashingModule,
 		stakingModule,
-
 		oracle.NewModule(sources.OracleSource, db),
+		upgradeModule,
 	}
 }
