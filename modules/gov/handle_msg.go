@@ -2,6 +2,7 @@ package gov
 
 import (
 	"fmt"
+	"time"
 
 	"strconv"
 
@@ -56,13 +57,6 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypes.M
 		return fmt.Errorf("error while getting proposal: %s", err)
 	}
 
-	// Unpack the content
-	var content govtypes.Content
-	err = m.cdc.UnpackAny(proposal.Content, &content)
-	if err != nil {
-		return fmt.Errorf("error while unpacking proposal content: %s", err)
-	}
-
 	// Store the proposal
 	proposalObj := types.NewProposal(
 		proposal.ProposalId,
@@ -81,8 +75,13 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypes.M
 		return err
 	}
 
+	txTimestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
+	if err != nil {
+		return fmt.Errorf("error while parsing time: %s", err)
+	}
+
 	// Store the deposit
-	deposit := types.NewDeposit(proposal.ProposalId, msg.Proposer, msg.InitialDeposit, tx.Height)
+	deposit := types.NewDeposit(proposal.ProposalId, msg.Proposer, msg.InitialDeposit, txTimestamp, tx.Height)
 	return m.db.SaveDeposits([]types.Deposit{deposit})
 }
 
@@ -93,13 +92,24 @@ func (m *Module) handleMsgDeposit(tx *juno.Tx, msg *govtypes.MsgDeposit) error {
 		return fmt.Errorf("error while getting proposal deposit: %s", err)
 	}
 
+	txTimestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
+	if err != nil {
+		return fmt.Errorf("error while parsing time: %s", err)
+	}
+
 	return m.db.SaveDeposits([]types.Deposit{
-		types.NewDeposit(msg.ProposalId, msg.Depositor, deposit.Amount, tx.Height),
+		types.NewDeposit(msg.ProposalId, msg.Depositor, deposit.Amount, txTimestamp, tx.Height),
 	})
 }
 
 // handleMsgVote allows to properly handle a handleMsgVote
 func (m *Module) handleMsgVote(tx *juno.Tx, msg *govtypes.MsgVote) error {
-	vote := types.NewVote(msg.ProposalId, msg.Voter, msg.Option, tx.Height)
+	txTimestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
+	if err != nil {
+		return fmt.Errorf("error while parsing time: %s", err)
+	}
+
+	vote := types.NewVote(msg.ProposalId, msg.Voter, msg.Option, txTimestamp, tx.Height)
+
 	return m.db.SaveVote(vote)
 }
