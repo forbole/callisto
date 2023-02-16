@@ -10,18 +10,11 @@ object_relationships:
     foreign_key_constraint_on: vote_b_id
 select_permissions:
 - permission:
-    allow_aggregations: true
+    allow_aggregations: false
     columns:
     - height
     - vote_a_id
     - vote_b_id
     filter: {}
+    limit: 100
   role: anonymous
-- permission:
-    allow_aggregations: true
-    columns:
-    - height
-    - vote_a_id
-    - vote_b_id
-    filter: {}
-  role: client

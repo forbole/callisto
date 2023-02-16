@@ -15,14 +15,5 @@ select_permissions:
     - voting_power
     - proposer_priority
     filter: {}
+    limit: 100
   role: anonymous
-- permission:
-    allow_aggregations: true
-    columns:
-    - validator_address
-    - height
-    - timestamp
-    - voting_power
-    - proposer_priority
-    filter: {}
-  role: client

@@ -7,7 +7,7 @@ object_relationships:
     foreign_key_constraint_on: proposal_id
 select_permissions:
 - permission:
-    allow_aggregations: true
+    allow_aggregations: false
     columns:
     - proposal_id
     - yes
@@ -16,4 +16,5 @@ select_permissions:
     - no_with_veto
     - height
     filter: {}
+    limit: 100
   role: anonymous
