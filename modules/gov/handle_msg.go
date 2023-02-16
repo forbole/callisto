@@ -62,7 +62,7 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypes.M
 		proposal.ProposalId,
 		proposal.ProposalRoute(),
 		proposal.ProposalType(),
-		proposal.GetContent(),
+		msg.GetContent(),
 		proposal.Status.String(),
 		proposal.SubmitTime,
 		proposal.DepositEndTime,
