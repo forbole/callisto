@@ -13,10 +13,12 @@ CREATE INDEX staking_params_height_index ON staking_params (height);
 
 CREATE TABLE staking_pool
 (
-    one_row_id        BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
-    bonded_tokens     TEXT    NOT NULL,
-    not_bonded_tokens TEXT    NOT NULL,
-    height            BIGINT  NOT NULL,
+    one_row_id               BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
+    bonded_tokens            TEXT    NOT NULL,
+    not_bonded_tokens        TEXT    NOT NULL,
+    unbonding_tokens         TEXT    NOT NULL,
+    staked_not_bonded_tokens TEXT    NOT NULL,
+    height                   BIGINT  NOT NULL,
     CHECK (one_row_id)
 );
 CREATE INDEX staking_pool_height_index ON staking_pool (height);
@@ -70,7 +72,6 @@ CREATE TABLE validator_status
     validator_address TEXT    NOT NULL REFERENCES validator (consensus_address) PRIMARY KEY,
     status            INT     NOT NULL,
     jailed            BOOLEAN NOT NULL,
-    tombstoned        BOOLEAN NOT NULL DEFAULT FALSE,
     height            BIGINT  NOT NULL
 );
 CREATE INDEX validator_status_height_index ON validator_status (height);
