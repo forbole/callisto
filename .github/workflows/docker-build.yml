@@ -55,6 +55,6 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          docker: "./${{ env.DOCKERFILE }}"
+          file: "./${{ env.DOCKERFILE }}"
           push: true
           tags: ${{ steps.prep.outputs.tags }}
