@@ -12,7 +12,7 @@ func (db *Db) InsertEnableModules(modules []string) error {
 
 	// Remove existing modules
 	stmt := "DELETE FROM modules WHERE TRUE"
-	_, err := db.Sql.Exec(stmt)
+	_, err := db.SQL.Exec(stmt)
 	if err != nil {
 		return fmt.Errorf("error while deleting modules: %s", err)
 	}
@@ -29,7 +29,7 @@ func (db *Db) InsertEnableModules(modules []string) error {
 	}
 	stmt = stmt[:len(stmt)-1] // remove tailing ","
 	stmt += " ON CONFLICT DO NOTHING"
-	_, err = db.Sql.Exec(stmt, values...)
+	_, err = db.SQL.Exec(stmt, values...)
 	if err != nil {
 		return fmt.Errorf("error while storing modules: %s", err)
 	}
