@@ -166,8 +166,8 @@ github.com/facebookgo/subset v0.0.0-20200203212716-c811ad88dec4 h1:7HZCaLC5+BZpm
 github.com/felixge/httpsnoop v1.0.1/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
 github.com/felixge/httpsnoop v1.0.2 h1:+nS9g82KMXccJ/wp0zyRW9ZBHFETmMGtkk+2CTTrW4o=
 github.com/felixge/httpsnoop v1.0.2/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
-github.com/forbole/juno/v4 v4.0.0 h1:B7QHNLx0DuwkdmckritXR0mYGHKF9HHZQtefAfYyCBM=
-github.com/forbole/juno/v4 v4.0.0/go.mod h1:BEnhv7VCPZ1n3ttOjipF0dDO+I0z8K/Xut4r1UAud7k=
+github.com/forbole/juno/v4 v4.1.0 h1:ysbIy+hui1Jp0DsBGYyv5KJcr2mc3LJaw0S79xQ/QsA=
+github.com/forbole/juno/v4 v4.1.0/go.mod h1:BEnhv7VCPZ1n3ttOjipF0dDO+I0z8K/Xut4r1UAud7k=
 github.com/fortytw2/leaktest v1.3.0 h1:u8491cBMTQ8ft8aeV+adlcytMZylmA5nnwwkRZjI8vw=
 github.com/frankban/quicktest v1.14.3 h1:FJKSZTDHjyhriyC81FLQ0LY93eSai0ZyR/ZIkd3ZUKE=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
