@@ -2,9 +2,6 @@ package staking
 
 import (
 	"fmt"
-	"strings"
-
-	"google.golang.org/grpc/codes"
 
 	juno "github.com/forbole/juno/v3/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
@@ -82,6 +79,25 @@ func (m *Module) convertValidatorDescription(
 }
 
 // --------------------------------------------------------------------------------------------------------------------
+
+// RefreshAllValidatorInfos refreshes the info of all the validators at the given height
+func (m *Module) RefreshAllValidatorInfos(height int64) error {
+	// Get all validators
+	validators, err := m.source.GetValidatorsWithStatus(height, "")
+	if err != nil {
+		return fmt.Errorf("error while getting validators: %s", err)
+	}
+
+	// Refresh each validator
+	for _, validator := range validators {
+		err = m.RefreshValidatorInfos(height, validator.OperatorAddress)
+		if err != nil {
+			return fmt.Errorf("error while refreshing validator: %s", err)
+		}
+	}
+
+	return nil
+}
 
 // RefreshValidatorInfos refreshes the info for the validator with the given operator address at the provided height
 func (m *Module) RefreshValidatorInfos(height int64, valOper string) error {
@@ -192,11 +208,6 @@ func (m *Module) GetValidatorsStatuses(height int64, validators []stakingtypes.V
 			return nil, fmt.Errorf("error while getting validator consensus public key: %s", err)
 		}
 
-		valSigningInfo, err := m.slashingModule.GetSigningInfo(height, consAddr)
-		if err != nil && !strings.Contains(err.Error(), codes.NotFound.String()) {
-			return nil, fmt.Errorf("error while getting validator signing info: %s", err)
-		}
-
 		isLiquidStakingValidator := false
 		for _, address := range liquidValidatorsList {
 			if address != consAddr.String() {
@@ -210,7 +221,6 @@ func (m *Module) GetValidatorsStatuses(height int64, validators []stakingtypes.V
 			consPubKey.String(),
 			int(validator.GetStatus()),
 			validator.IsJailed(),
-			valSigningInfo.Tombstoned,
 			isLiquidStakingValidator,
 			height,
 		)

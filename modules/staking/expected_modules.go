@@ -14,3 +14,4 @@ type SlashingModule interface {
 type LiquidStakingModule interface {
 	GetLiquidValidators(height int64) ([]liquidstakingtypes.LiquidValidatorState, error)
 }
+ 

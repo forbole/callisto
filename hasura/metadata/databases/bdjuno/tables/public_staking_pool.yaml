@@ -3,10 +3,13 @@ table:
   schema: public
 select_permissions:
 - permission:
-    allow_aggregations: true
+    allow_aggregations: false
     columns:
     - height
     - bonded_tokens
     - not_bonded_tokens
+    - unbonding_tokens
+    - staked_not_bonded_tokens
     filter: {}
+    limit: 1
   role: anonymous
