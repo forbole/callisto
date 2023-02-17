@@ -7,7 +7,7 @@ require (
 	github.com/cosmos/gaia/v7 v7.0.3
 	github.com/desmos-labs/desmos/v4 v4.7.0
 	github.com/forbole/juno/v4 v4.0.0
-	github.com/go-co-op/gocron v1.16.1
+	github.com/go-co-op/gocron v1.18.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/golangci/golangci-lint v1.50.1
 	github.com/jmoiron/sqlx v1.3.5
