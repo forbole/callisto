@@ -3,15 +3,10 @@ table:
   schema: public
 select_permissions:
 - permission:
-    allow_aggregations: true
+    allow_aggregations: false
     columns:
     - value
     - height
     filter: {}
+    limit: 1
   role: anonymous
-- permission:
-    allow_aggregations: true
-    columns:
-    - height
-    filter: {}
-  role: client

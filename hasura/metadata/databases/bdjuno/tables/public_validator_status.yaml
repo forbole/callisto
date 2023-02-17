@@ -14,4 +14,5 @@ select_permissions:
     - jailed
     - height
     filter: {}
+    limit: 100
   role: anonymous

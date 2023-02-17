@@ -10,7 +10,7 @@ object_relationships:
     foreign_key_constraint_on: consensus_address
 select_permissions:
 - permission:
-    allow_aggregations: true
+    allow_aggregations: false
     columns:
     - consensus_address
     - operator_address
@@ -18,4 +18,5 @@ select_permissions:
     - max_change_rate
     - max_rate
     filter: {}
+    limit: 100
   role: anonymous
