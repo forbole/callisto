@@ -6,7 +6,7 @@ require (
 	github.com/akash-network/node v0.22.0
 	github.com/akash-network/provider v0.2.1
 	github.com/cosmos/cosmos-sdk v0.45.9
-	github.com/forbole/juno/v4 v4.0.1-0.20230202075945-a10d97dc1e9a
+	github.com/forbole/juno/v4 v4.1.1-0.20230217054409-653dfbc79024
 	github.com/go-co-op/gocron v1.18.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
