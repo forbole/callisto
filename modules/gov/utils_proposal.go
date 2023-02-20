@@ -3,6 +3,7 @@ package gov
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
@@ -20,11 +21,14 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 )
 
-func (m *Module) UpdateProposal(height int64, id uint64) error {
+func (m *Module) UpdateProposal(height int64, blockTime time.Time, id uint64) error {
 	// Get the proposal
 	proposal, err := m.source.Proposal(height, id)
 	if err != nil {
-		if strings.Contains(err.Error(), codes.NotFound.String()) {
+		// Check if proposal has reached the voting end time
+		passedVotingPeriod := blockTime.After(proposal.VotingEndTime)
+
+		if strings.Contains(err.Error(), codes.NotFound.String()) && passedVotingPeriod {
 			// Handle case when a proposal is deleted from the chain (did not pass deposit period)
 			return m.updateDeletedProposalStatus(id)
 		}
@@ -55,15 +59,19 @@ func (m *Module) UpdateProposal(height int64, id uint64) error {
 	return nil
 }
 
-func (m *Module) UpdateProposalSnapshots(height int64, blockVals *tmctypes.ResultValidators, id uint64) error {
+func (m *Module) UpdateProposalValidatorStatusesSnapshot(height int64, blockVals *tmctypes.ResultValidators, id uint64) error {
+	err := m.updateProposalValidatorStatusesSnapshot(height, id, blockVals)
+	if err != nil {
+		return fmt.Errorf("error while updating proposal validator statuses snapshot: %s", err)
+	}
+
+	return nil
+}
+
+func (m *Module) UpdateProposalStakingPoolSnapshot(height int64, blockVals *tmctypes.ResultValidators, id uint64) error {
 	err := m.updateProposalStakingPoolSnapshot(height, id)
 	if err != nil {
 		return fmt.Errorf("error while updating proposal staking pool snapshot: %s", err)
-	}
-
-	err = m.updateProposalValidatorStatusesSnapshot(height, id, blockVals)
-	if err != nil {
-		return fmt.Errorf("error while updating proposal validator statuses snapshot: %s", err)
 	}
 
 	return nil
@@ -188,7 +196,7 @@ func (m *Module) updateAccounts(proposal govtypes.Proposal) error {
 // updateProposalStakingPoolSnapshot updates the staking pool snapshot associated with the gov
 // proposal having the provided id
 func (m *Module) updateProposalStakingPoolSnapshot(height int64, proposalID uint64) error {
-	pool, err := m.stakingModule.GetStakingPool(height)
+	pool, err := m.stakingModule.GetStakingPoolSnapshot(height)
 	if err != nil {
 		return fmt.Errorf("error while getting staking pool: %s", err)
 	}
