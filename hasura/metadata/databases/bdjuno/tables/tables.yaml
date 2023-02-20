@@ -41,3 +41,7 @@
 - "!include public_validator_voting_power.yaml"
 - "!include public_vesting_account.yaml"
 - "!include public_vesting_period.yaml"
+- "!include public_wasm_code.yaml"
+- "!include public_wasm_contract.yaml"
+- "!include public_wasm_execute_contract.yaml"
+- "!include public_wasm_params.yaml"
