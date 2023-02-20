@@ -12,7 +12,7 @@ select_permissions:
     - validator_address
     - status
     - jailed
-    - tombstoned
     - height
     filter: {}
+    limit: 100
   role: anonymous
