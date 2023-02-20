@@ -10,6 +10,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/forbole/juno/v3/node/remote"
 
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
@@ -39,6 +41,11 @@ import (
 	stakingsource "github.com/forbole/bdjuno/v3/modules/staking/source"
 	localstakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/remote"
+	wasmsource "github.com/forbole/bdjuno/v3/modules/wasm/source"
+	localwasmsource "github.com/forbole/bdjuno/v3/modules/wasm/source/local"
+	remotewasmsource "github.com/forbole/bdjuno/v3/modules/wasm/source/remote"
+	persistenceapp "github.com/persistenceOne/persistenceCore/v6/app"
+	persistenceappparams "github.com/persistenceOne/persistenceCore/v6/app/params"
 )
 
 type Sources struct {
@@ -48,6 +55,7 @@ type Sources struct {
 	MintSource     mintsource.Source
 	SlashingSource slashingsource.Source
 	StakingSource  stakingsource.Source
+	WasmSource     wasmsource.Source
 }
 
 func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -68,18 +76,24 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		return nil, err
 	}
 
+	persistenceApp := persistenceapp.NewApplication("", persistenceappparams.MakeEncodingConfig(), nil,
+		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, 0, map[int64]bool{},
+		cfg.Home, []wasmtypes.ProposalType{}, simapp.EmptyAppOptions{}, []wasmkeeper.Option{}, nil,
+	)
+
 	app := simapp.NewSimApp(
 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
 		cfg.Home, 0, simapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
 	)
 
 	sources := &Sources{
-		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
+		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(persistenceApp.BankKeeper)),
 		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
-		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
-		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
-		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
-		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
+		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(persistenceApp.GovKeeper)),
+		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(persistenceApp.MintKeeper)),
+		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(persistenceApp.SlashingKeeper)),
+		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: *persistenceApp.StakingKeeper}),
+		WasmSource:     localwasmsource.NewSource(source, wasmkeeper.Querier(persistenceApp.WasmKeeper)),
 	}
 
 	// Mount and initialize the stores
@@ -119,5 +133,6 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
+		WasmSource:     remotewasmsource.NewSource(source, wasmtypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }
