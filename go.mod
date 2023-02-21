@@ -6,7 +6,7 @@ require (
 	github.com/CosmWasm/wasmd v0.30.0
 	github.com/comdex-official/comdex/v8 v8.1.1
 	github.com/cosmos/cosmos-sdk v0.45.12
-	github.com/forbole/juno/v4 v4.0.1-0.20230208101932-3ab93fbccd60
+	github.com/forbole/juno/v4 v4.1.1-0.20230221021913-841842bdefed
 	github.com/go-co-op/gocron v1.18.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
