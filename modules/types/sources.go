@@ -8,37 +8,38 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/forbole/juno/v3/node/remote"
+	"github.com/forbole/juno/v4/node/remote"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/forbole/juno/v3/node/local"
+	"github.com/forbole/juno/v4/node/local"
 
-	nodeconfig "github.com/forbole/juno/v3/node/config"
+	nodeconfig "github.com/forbole/juno/v4/node/config"
 
-	banksource "github.com/forbole/bdjuno/v3/modules/bank/source"
-	localbanksource "github.com/forbole/bdjuno/v3/modules/bank/source/local"
-	remotebanksource "github.com/forbole/bdjuno/v3/modules/bank/source/remote"
-	distrsource "github.com/forbole/bdjuno/v3/modules/distribution/source"
-	localdistrsource "github.com/forbole/bdjuno/v3/modules/distribution/source/local"
-	remotedistrsource "github.com/forbole/bdjuno/v3/modules/distribution/source/remote"
-	govsource "github.com/forbole/bdjuno/v3/modules/gov/source"
-	localgovsource "github.com/forbole/bdjuno/v3/modules/gov/source/local"
-	remotegovsource "github.com/forbole/bdjuno/v3/modules/gov/source/remote"
-	mintsource "github.com/forbole/bdjuno/v3/modules/mint/source"
-	localmintsource "github.com/forbole/bdjuno/v3/modules/mint/source/local"
-	remotemintsource "github.com/forbole/bdjuno/v3/modules/mint/source/remote"
-	slashingsource "github.com/forbole/bdjuno/v3/modules/slashing/source"
-	localslashingsource "github.com/forbole/bdjuno/v3/modules/slashing/source/local"
-	remoteslashingsource "github.com/forbole/bdjuno/v3/modules/slashing/source/remote"
-	stakingsource "github.com/forbole/bdjuno/v3/modules/staking/source"
-	localstakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/local"
-	remotestakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/remote"
+	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
+	localbanksource "github.com/forbole/bdjuno/v4/modules/bank/source/local"
+	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"
+	distrsource "github.com/forbole/bdjuno/v4/modules/distribution/source"
+	localdistrsource "github.com/forbole/bdjuno/v4/modules/distribution/source/local"
+	remotedistrsource "github.com/forbole/bdjuno/v4/modules/distribution/source/remote"
+	govsource "github.com/forbole/bdjuno/v4/modules/gov/source"
+	localgovsource "github.com/forbole/bdjuno/v4/modules/gov/source/local"
+	remotegovsource "github.com/forbole/bdjuno/v4/modules/gov/source/remote"
+	mintsource "github.com/forbole/bdjuno/v4/modules/mint/source"
+	localmintsource "github.com/forbole/bdjuno/v4/modules/mint/source/local"
+	remotemintsource "github.com/forbole/bdjuno/v4/modules/mint/source/remote"
+	slashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source"
+	localslashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source/local"
+	remoteslashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source/remote"
+	stakingsource "github.com/forbole/bdjuno/v4/modules/staking/source"
+	localstakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/local"
+	remotestakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/remote"
 )
 
 type Sources struct {
@@ -76,7 +77,7 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 	sources := &Sources{
 		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
 		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
-		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
+		GovSource:      localgovsource.NewSource(source, govtypesv1.QueryServer(app.GovKeeper), nil),
 		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
 		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
@@ -115,7 +116,7 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 	return &Sources{
 		BankSource:     remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
 		DistrSource:    remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
-		GovSource:      remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
+		GovSource:      remotegovsource.NewSource(source, govtypesv1.NewQueryClient(source.GrpcConn), govtypesv1beta1.NewQueryClient(source.GrpcConn)),
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),

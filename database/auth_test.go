@@ -4,9 +4,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authttypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 
-	dbtypes "github.com/forbole/bdjuno/v3/database/types"
+	dbtypes "github.com/forbole/bdjuno/v4/database/types"
 )
 
 func (suite *DbTestSuite) TestSaveAccount() {
@@ -50,7 +50,7 @@ func (suite *DbTestSuite) TestBigDipperDb_GetAccounts() {
 	}
 
 	for _, query := range queries {
-		_, err := suite.database.Sql.Exec(query)
+		_, err := suite.database.SQL.Exec(query)
 		suite.Require().NoError(err)
 	}
 
