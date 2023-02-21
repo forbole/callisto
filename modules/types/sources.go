@@ -8,7 +8,7 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/forbole/juno/v3/node/remote"
+	"github.com/forbole/juno/v4/node/remote"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -16,14 +16,14 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	liquidstakingkeeper "github.com/crescent-network/crescent/v3/x/liquidstaking/keeper"
-	liquidstakingtypes "github.com/crescent-network/crescent/v3/x/liquidstaking/types"
-	creminttypes "github.com/crescent-network/crescent/v3/x/mint/types"
-	"github.com/forbole/juno/v3/node/local"
+	liquidstakingkeeper "github.com/crescent-network/crescent/v4/x/liquidstaking/keeper"
+	liquidstakingtypes "github.com/crescent-network/crescent/v4/x/liquidstaking/types"
+	creminttypes "github.com/crescent-network/crescent/v4/x/mint/types"
+	"github.com/forbole/juno/v4/node/local"
 
-	nodeconfig "github.com/forbole/juno/v3/node/config"
+	nodeconfig "github.com/forbole/juno/v4/node/config"
 
-	crescentapp "github.com/crescent-network/crescent/v3/app"
+	crescentapp "github.com/crescent-network/crescent/v4/app"
 	banksource "github.com/forbole/bdjuno/v3/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v3/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v3/modules/bank/source/remote"

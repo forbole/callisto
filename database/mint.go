@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	creminttypes "github.com/crescent-network/crescent/v3/x/mint/types"
+	creminttypes "github.com/crescent-network/crescent/v4/x/mint/types"
 	dbtypes "github.com/forbole/bdjuno/v3/database/types"
 	"github.com/forbole/bdjuno/v3/types"
 )
@@ -19,7 +19,7 @@ ON CONFLICT (one_row_id) DO UPDATE
         height = excluded.height 
 WHERE inflation.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt, inflation, height)
+	_, err := db.SQL.Exec(stmt, inflation, height)
 	if err != nil {
 		return fmt.Errorf("error while storing inflation: %s", err)
 	}
@@ -42,7 +42,7 @@ ON CONFLICT (one_row_id) DO UPDATE
         height = excluded.height
 WHERE mint_params.height <= excluded.height`
 
-	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
+	_, err = db.SQL.Exec(stmt, string(paramsBz), params.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing mint params: %s", err)
 	}

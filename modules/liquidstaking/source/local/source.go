@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/forbole/juno/v3/node/local"
+	"github.com/forbole/juno/v4/node/local"
 
-	liquidstakingtypes "github.com/crescent-network/crescent/v3/x/liquidstaking/types"
+	liquidstakingtypes "github.com/crescent-network/crescent/v4/x/liquidstaking/types"
 	liquidstakingsource "github.com/forbole/bdjuno/v3/modules/liquidstaking/source"
 )
 

@@ -2,7 +2,7 @@ package staking
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/forbole/juno/v3/modules"
+	"github.com/forbole/juno/v4/modules"
 
 	"github.com/forbole/bdjuno/v3/database"
 	liquidStakingSource "github.com/forbole/bdjuno/v3/modules/liquidstaking/source"
@@ -27,7 +27,7 @@ type Module struct {
 
 // NewModule returns a new Module instance
 func NewModule(
-	source stakingsource.Source, 
+	source stakingsource.Source,
 	liquidStakingSource liquidStakingSource.Source, cdc codec.Codec, db *database.Db,
 ) *Module {
 	return &Module{

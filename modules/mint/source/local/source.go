@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	creminttypes "github.com/crescent-network/crescent/v3/x/mint/types"
+	creminttypes "github.com/crescent-network/crescent/v4/x/mint/types"
 
-	"github.com/forbole/juno/v3/node/local"
+	"github.com/forbole/juno/v4/node/local"
 
 	mintsource "github.com/forbole/bdjuno/v3/modules/mint/source"
 )
