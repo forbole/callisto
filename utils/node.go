@@ -3,7 +3,7 @@ package utils
 import (
 	"fmt"
 
-	"github.com/forbole/juno/v3/node"
+	"github.com/forbole/juno/v4/node"
 	coretypes "github.com/tendermint/tendermint/rpc/core/types"
 )
 
