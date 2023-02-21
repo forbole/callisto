@@ -22,9 +22,8 @@ array_relationships:
         schema: public
 select_permissions:
 - permission:
-    allow_aggregations: true
+    allow_aggregations: false
     columns:
-    - id
     - type
     - height
     - round
@@ -33,17 +32,5 @@ select_permissions:
     - validator_index
     - signature
     filter: {}
+    limit: 100
   role: anonymous
-- permission:
-    allow_aggregations: true
-    columns:
-    - id
-    - type
-    - height
-    - round
-    - block_id
-    - validator_address
-    - validator_index
-    - signature
-    filter: {}
-  role: client

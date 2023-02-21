@@ -118,10 +118,11 @@ func (w TallyResultRow) Equals(v TallyResultRow) bool {
 
 // VoteRow represents a single row inside the vote table
 type VoteRow struct {
-	ProposalID int64  `db:"proposal_id"`
-	Voter      string `db:"voter_address"`
-	Option     string `db:"option"`
-	Height     int64  `db:"height"`
+	ProposalID int64     `db:"proposal_id"`
+	Voter      string    `db:"voter_address"`
+	Option     string    `db:"option"`
+	Timestamp  time.Time `db:"timestamp"`
+	Height     int64     `db:"height"`
 }
 
 // NewVoteRow allows to easily create a new VoteRow
@@ -129,12 +130,14 @@ func NewVoteRow(
 	proposalID int64,
 	voter string,
 	option string,
+	timestamp time.Time,
 	height int64,
 ) VoteRow {
 	return VoteRow{
 		ProposalID: proposalID,
 		Voter:      voter,
 		Option:     option,
+		Timestamp:  timestamp,
 		Height:     height,
 	}
 }
@@ -144,15 +147,17 @@ func (w VoteRow) Equals(v VoteRow) bool {
 	return w.ProposalID == v.ProposalID &&
 		w.Voter == v.Voter &&
 		w.Option == v.Option &&
+		w.Timestamp.Equal(v.Timestamp) &&
 		w.Height == v.Height
 }
 
 // DepositRow represents a single row inside the deposit table
 type DepositRow struct {
-	ProposalID int64   `db:"proposal_id"`
-	Depositor  string  `db:"depositor_address"`
-	Amount     DbCoins `db:"amount"`
-	Height     int64   `db:"height"`
+	ProposalID int64     `db:"proposal_id"`
+	Depositor  string    `db:"depositor_address"`
+	Amount     DbCoins   `db:"amount"`
+	Timestamp  time.Time `db:"timestamp"`
+	Height     int64     `db:"height"`
 }
 
 // NewDepositRow allows to easily create a new NewDepositRow
@@ -160,12 +165,14 @@ func NewDepositRow(
 	proposalID int64,
 	depositor string,
 	amount DbCoins,
+	timestamp time.Time,
 	height int64,
 ) DepositRow {
 	return DepositRow{
 		ProposalID: proposalID,
 		Depositor:  depositor,
 		Amount:     amount,
+		Timestamp:  timestamp,
 		Height:     height,
 	}
 }
@@ -175,6 +182,7 @@ func (w DepositRow) Equals(v DepositRow) bool {
 	return w.ProposalID == v.ProposalID &&
 		w.Depositor == v.Depositor &&
 		w.Amount.Equal(&v.Amount) &&
+		w.Timestamp.Equal(v.Timestamp) &&
 		w.Height == v.Height
 }
 

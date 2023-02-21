@@ -59,7 +59,7 @@ func migrateConfig() (Config, error) {
 	}
 
 	if cfg.Actions == nil {
-		cfg.Actions = actions.NewConfig(3000, nil)
+		cfg.Actions = actions.NewConfig("127.0.0.1", 3000, nil)
 	}
 
 	return cfg, nil

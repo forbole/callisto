@@ -15,13 +15,13 @@ array_relationships:
         schema: public
 select_permissions:
 - permission:
-    allow_aggregations: true
+    allow_aggregations: false
     columns:
-    - id
     - type
     - address
     - original_vesting
     - end_time
     - start_time
     filter: {}
+    limit: 100
   role: anonymous
