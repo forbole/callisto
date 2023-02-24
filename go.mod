@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/cosmos/cosmos-sdk v0.46.7
-	github.com/forbole/juno/v4 v4.0.0-20230203032610-569328895c5c
+	github.com/forbole/juno/v4 v4.1.1-0.20230224042450-1943a6dc1572
 	github.com/go-co-op/gocron v1.18.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
