@@ -31,6 +31,9 @@
 ### Dependencies
 - ([\#462](https://github.com/forbole/bdjuno/pull/462)) Updated Juno to `v3.4.0`
 
+### Dockerfiles
+- ([\#531](https://github.com/forbole/bdjuno/pull/531)) Add docker.io registry url to to FROM statements in Dockerfiles
+
 ## Version v3.2.0
 ### Changes
 #### Mint module
