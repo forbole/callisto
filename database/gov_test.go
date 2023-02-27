@@ -528,11 +528,9 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalStakingPoolSnapshot() {
 	// ----------------------------------------------------------------------------------------------------------------
 	// Save snapshot
 
-	snapshot := types.NewProposalStakingPoolSnapshot(1, types.NewPool(
+	snapshot := types.NewProposalStakingPoolSnapshot(1, types.NewPoolSnapshot(
 		sdk.NewInt(100),
 		sdk.NewInt(200),
-		sdk.NewInt(20),
-		sdk.NewInt(30),
 		10,
 	))
 	err := suite.database.SaveProposalStakingPoolSnapshot(snapshot)
@@ -552,11 +550,9 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalStakingPoolSnapshot() {
 	// ----------------------------------------------------------------------------------------------------------------
 	// Update with lower height
 
-	err = suite.database.SaveProposalStakingPoolSnapshot(types.NewProposalStakingPoolSnapshot(1, types.NewPool(
+	err = suite.database.SaveProposalStakingPoolSnapshot(types.NewProposalStakingPoolSnapshot(1, types.NewPoolSnapshot(
 		sdk.NewInt(200),
 		sdk.NewInt(500),
-		sdk.NewInt(14),
-		sdk.NewInt(10),
 		9,
 	)))
 	suite.Require().NoError(err)
@@ -575,11 +571,9 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalStakingPoolSnapshot() {
 	// ----------------------------------------------------------------------------------------------------------------
 	// Update with same height
 
-	err = suite.database.SaveProposalStakingPoolSnapshot(types.NewProposalStakingPoolSnapshot(1, types.NewPool(
+	err = suite.database.SaveProposalStakingPoolSnapshot(types.NewProposalStakingPoolSnapshot(1, types.NewPoolSnapshot(
 		sdk.NewInt(500),
 		sdk.NewInt(1000),
-		sdk.NewInt(20),
-		sdk.NewInt(30),
 		10,
 	)))
 	suite.Require().NoError(err)
@@ -598,11 +592,9 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalStakingPoolSnapshot() {
 	// ----------------------------------------------------------------------------------------------------------------
 	// Update with higher height
 
-	err = suite.database.SaveProposalStakingPoolSnapshot(types.NewProposalStakingPoolSnapshot(1, types.NewPool(
+	err = suite.database.SaveProposalStakingPoolSnapshot(types.NewProposalStakingPoolSnapshot(1, types.NewPoolSnapshot(
 		sdk.NewInt(1000),
 		sdk.NewInt(2000),
-		sdk.NewInt(80),
-		sdk.NewInt(40),
 		11,
 	)))
 	suite.Require().NoError(err)
