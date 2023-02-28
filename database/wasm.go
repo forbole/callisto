@@ -104,6 +104,8 @@ data, instantiated_at, contract_info_extension, contract_states, height)
 VALUES `
 
 	var args []interface{}
+	var accounts []types.Account
+
 	for i, contract := range wasmContracts {
 		ii := i * paramsNumber
 		stmt += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d),",
@@ -113,6 +115,12 @@ VALUES `
 			pq.Array(dbtypes.NewDbCoins(contract.Funds)), contract.ContractAddress, contract.Data,
 			contract.InstantiatedAt, contract.ContractInfoExtension, string(contract.ContractStates), contract.Height,
 		)
+		accounts = append(accounts, types.NewAccount(contract.Creator), types.NewAccount(contract.Sender))
+	}
+
+	err := db.SaveAccounts(accounts)
+	if err != nil {
+		return fmt.Errorf("error while storing wasm contract creator account: %s", err)
 	}
 
 	stmt = stmt[:len(stmt)-1] // Remove trailing ","
@@ -132,7 +140,7 @@ VALUES `
 			height = excluded.height
 	WHERE wasm_contract.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt, args...)
+	_, err = db.Sql.Exec(stmt, args...)
 	if err != nil {
 		return fmt.Errorf("error while saving wasm contracts: %s", err)
 	}
