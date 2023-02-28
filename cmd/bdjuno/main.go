@@ -16,7 +16,7 @@ import (
 	"github.com/forbole/bdjuno/v3/database"
 	"github.com/forbole/bdjuno/v3/modules"
 
-	strideapp "github.com/Stride-Labs/stride/v5/app"
+	strideapp "github.com/Stride-Labs/stride/v6/app"
 )
 
 func main() {
