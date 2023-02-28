@@ -116,7 +116,7 @@ func (s Source) GetCodes(height int64) ([]wasmtypes.CodeInfoResponse, error) {
 }
 
 // GetContractsByCode implements wasmsource.Source
-func (s Source) GetContractsByCode(height int64, CodeId uint64) ([]string, error) {
+func (s Source) GetContractsByCode(height int64, codeID uint64) ([]string, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
 		return nil, fmt.Errorf("error while loading height: %s", err)
@@ -126,7 +126,7 @@ func (s Source) GetContractsByCode(height int64, CodeId uint64) ([]string, error
 	res, err := s.q.ContractsByCode(
 		sdk.WrapSDKContext(ctx),
 		&wasmtypes.QueryContractsByCodeRequest{
-			CodeId: CodeId,
+			CodeId: codeID,
 		},
 	)
 	if err != nil {

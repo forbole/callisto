@@ -102,12 +102,12 @@ func (s Source) GetCodes(height int64) ([]wasmtypes.CodeInfoResponse, error) {
 }
 
 // GetContractsByCode implements wasmsource.Source
-func (s Source) GetContractsByCode(height int64, CodeId uint64) ([]string, error) {
+func (s Source) GetContractsByCode(height int64, codeID uint64) ([]string, error) {
 	var contracts []string
 	res, err := s.wasmClient.ContractsByCode(
 		remote.GetHeightRequestContext(s.Ctx, height),
 		&wasmtypes.QueryContractsByCodeRequest{
-			CodeId: CodeId,
+			CodeId: codeID,
 		},
 	)
 	if err != nil {
