@@ -1,7 +1,7 @@
 package types
 
 import (
-	markertypes "github.com/MonikaCat/provenance/x/marker/types"
+	markertypes "github.com/MonCatCat/provenance/x/marker/types"
 )
 
 // MarkerParams represents the x/marker parameters

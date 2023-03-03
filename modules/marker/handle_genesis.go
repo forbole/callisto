@@ -8,7 +8,7 @@ import (
 
 	"github.com/forbole/bdjuno/v3/types"
 
-	markertypes "github.com/MonikaCat/provenance/x/marker/types"
+	markertypes "github.com/MonCatCat/provenance/x/marker/types"
 	"github.com/rs/zerolog/log"
 )
 

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	markertypes "github.com/MonikaCat/provenance/x/marker/types"
+	markertypes "github.com/MonCatCat/provenance/x/marker/types"
 	"github.com/forbole/bdjuno/v3/modules/pricefeed/coingecko"
 	"github.com/forbole/bdjuno/v3/modules/utils"
 	"github.com/forbole/bdjuno/v3/types"

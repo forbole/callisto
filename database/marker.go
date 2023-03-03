@@ -22,7 +22,7 @@ ON CONFLICT (one_row_id) DO UPDATE
         height = excluded.height
 WHERE marker_params.height <= excluded.height`
 
-	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
+	_, err = db.SQL.Exec(stmt, string(paramsBz), params.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing marker params: %s", err)
 	}
@@ -93,7 +93,7 @@ ON CONFLICT (address) DO UPDATE
 		total_supply = excluded.total_supply,
 		height = excluded.height
 WHERE marker_account.height <= excluded.height`
-	_, err = db.Sql.Exec(stmt, markerParams...)
+	_, err = db.SQL.Exec(stmt, markerParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing markers accounts list: %s", err)
 	}

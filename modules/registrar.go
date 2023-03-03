@@ -4,16 +4,16 @@ import (
 	"github.com/forbole/bdjuno/v3/modules/actions"
 	"github.com/forbole/bdjuno/v3/modules/types"
 
-	"github.com/forbole/juno/v3/modules/pruning"
-	"github.com/forbole/juno/v3/modules/telemetry"
+	"github.com/forbole/juno/v4/modules/pruning"
+	"github.com/forbole/juno/v4/modules/telemetry"
 
 	"github.com/forbole/bdjuno/v3/modules/slashing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	jmodules "github.com/forbole/juno/v3/modules"
-	"github.com/forbole/juno/v3/modules/messages"
-	"github.com/forbole/juno/v3/modules/registrar"
+	jmodules "github.com/forbole/juno/v4/modules"
+	"github.com/forbole/juno/v4/modules/messages"
+	"github.com/forbole/juno/v4/modules/registrar"
 
 	"github.com/forbole/bdjuno/v3/utils"
 
@@ -30,6 +30,7 @@ import (
 	"github.com/forbole/bdjuno/v3/modules/modules"
 	"github.com/forbole/bdjuno/v3/modules/pricefeed"
 	"github.com/forbole/bdjuno/v3/modules/staking"
+	"github.com/forbole/bdjuno/v3/modules/wasm"
 )
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
@@ -64,7 +65,7 @@ func NewRegistrar(parser messages.MessageAddressesParser) *Registrar {
 
 // BuildModules implements modules.Registrar
 func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
-	cdc := ctx.EncodingConfig.Marshaler
+	cdc := ctx.EncodingConfig.Codec
 	db := database.Cast(ctx.Database)
 
 	sources, err := types.BuildSources(ctx.JunoConfig.Node, ctx.EncodingConfig)
@@ -83,6 +84,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
 	stakingModule := staking.NewModule(sources.StakingSource, slashingModule, cdc, db)
 	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakingModule, cdc, db)
+	wasmModule := wasm.NewModule(sources.WasmSource, cdc, db)
 
 	return []jmodules.Module{
 		messages.NewModule(r.parser, cdc, ctx.Database),
@@ -102,5 +104,6 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		pricefeed.NewModule(ctx.JunoConfig, cdc, db),
 		slashingModule,
 		stakingModule,
+		wasmModule,
 	}
 }

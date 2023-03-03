@@ -9,11 +9,11 @@ import (
 	"github.com/rs/zerolog/log"
 
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
-	"github.com/forbole/juno/v3/types/config"
+	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
+	"github.com/forbole/juno/v4/types/config"
 	"github.com/spf13/cobra"
 
-	"github.com/forbole/juno/v3/parser"
+	"github.com/forbole/juno/v4/parser"
 
 	"github.com/forbole/bdjuno/v3/database"
 	"github.com/forbole/bdjuno/v3/modules/distribution"
@@ -49,13 +49,13 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			db := database.Cast(parseCtx.Database)
 
 			// Build expected modules of gov modules for handleParamChangeProposal
-			distrModule := distribution.NewModule(sources.DistrSource, parseCtx.EncodingConfig.Marshaler, db)
-			mintModule := mint.NewModule(sources.MintSource, parseCtx.EncodingConfig.Marshaler, db)
-			slashingModule := slashing.NewModule(sources.SlashingSource, parseCtx.EncodingConfig.Marshaler, db)
-			stakingModule := staking.NewModule(sources.StakingSource, slashingModule, parseCtx.EncodingConfig.Marshaler, db)
+			distrModule := distribution.NewModule(sources.DistrSource, parseCtx.EncodingConfig.Codec, db)
+			mintModule := mint.NewModule(sources.MintSource, parseCtx.EncodingConfig.Codec, db)
+			slashingModule := slashing.NewModule(sources.SlashingSource, parseCtx.EncodingConfig.Codec, db)
+			stakingModule := staking.NewModule(sources.StakingSource, slashingModule, parseCtx.EncodingConfig.Codec, db)
 
 			// Build the gov module
-			govModule := gov.NewModule(sources.GovSource, nil, distrModule, mintModule, slashingModule, stakingModule, parseCtx.EncodingConfig.Marshaler, db)
+			govModule := gov.NewModule(sources.GovSource, nil, distrModule, mintModule, slashingModule, stakingModule, parseCtx.EncodingConfig.Codec, db)
 
 			err = refreshProposalDetails(parseCtx, proposalID, govModule)
 			if err != nil {
