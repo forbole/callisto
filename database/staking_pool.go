@@ -17,7 +17,7 @@ ON CONFLICT (one_row_id) DO UPDATE
         height = excluded.height
 WHERE staking_pool.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt, pool.BondedTokens.String(), pool.NotBondedTokens.String(), pool.Height)
+	_, err := db.SQL.Exec(stmt, pool.BondedTokens.String(), pool.NotBondedTokens.String(), pool.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing staking pool: %s", err)
 	}

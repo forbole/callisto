@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/cosmos/cosmos-sdk v0.45.13-ics
 	github.com/cosmos/gaia/v9 v9.0.0
-	github.com/forbole/juno/v3 v3.3.0
+	github.com/forbole/juno/v4 v4.0.1-0.20230208101932-3ab93fbccd60
 	github.com/go-co-op/gocron v1.16.1
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
@@ -39,7 +39,6 @@ require (
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
 	github.com/cosmos/gorocksdb v1.2.0 // indirect
 	github.com/cosmos/iavl v0.19.5 // indirect
-	github.com/cosmos/ibc-go/v3 v3.0.0 // indirect
 	github.com/cosmos/ibc-go/v4 v4.2.0 // indirect
 	github.com/cosmos/interchain-security v1.0.0 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.12.2 // indirect
@@ -141,12 +140,10 @@ replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
 	github.com/btcsuite/btcd => github.com/btcsuite/btcd v0.22.2 // indirect
 	github.com/confio/ics23/go => github.com/confio/ics23/go v0.9.0
-	// Cosmos SDK & IBC
 	github.com/cosmos/cosmos-sdk => github.com/cosmos/cosmos-sdk v0.45.13-ics
 	github.com/cosmos/ibc-go/v4 => github.com/cosmos/ibc-go/v4 v4.2.0
 	github.com/dgrijalva/jwt-go => github.com/golang-jwt/jwt/v4 v4.4.2
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.8.1
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	github.com/tendermint/tendermint => github.com/informalsystems/tendermint v0.34.26
-	google.golang.org/grpc => google.golang.org/grpc v1.33.2
 )
