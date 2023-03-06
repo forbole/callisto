@@ -17,7 +17,7 @@ import (
 	"github.com/forbole/bdjuno/v3/modules"
 	"github.com/cosmos/cosmos-sdk/simapp"
 
-	gaiaapp "github.com/cosmos/gaia/v7/app"
+	gaiaapp "github.com/cosmos/gaia/v9/app"
 )
 
 func main() {
