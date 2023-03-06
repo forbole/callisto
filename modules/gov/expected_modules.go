@@ -4,7 +4,7 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 )
 
 type AuthModule interface {
@@ -26,6 +26,7 @@ type SlashingModule interface {
 
 type StakingModule interface {
 	GetStakingPool(height int64) (*types.Pool, error)
+	GetStakingPoolSnapshot(height int64) (*types.PoolSnapshot, error)
 	GetValidatorsWithStatus(height int64, status string) ([]stakingtypes.Validator, []types.Validator, error)
 	GetValidatorsVotingPowers(height int64, vals *tmctypes.ResultValidators) ([]types.ValidatorVotingPower, error)
 	GetValidatorsStatuses(height int64, validators []stakingtypes.Validator) ([]types.ValidatorStatus, error)

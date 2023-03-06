@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 	"github.com/rs/zerolog/log"
 )
 

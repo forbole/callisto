@@ -7,7 +7,7 @@ import (
 	types "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
-	markersource "github.com/forbole/bdjuno/v3/modules/marker/source"
+	markersource "github.com/forbole/bdjuno/v4/modules/marker/source"
 	"github.com/forbole/juno/v4/node/local"
 )
 

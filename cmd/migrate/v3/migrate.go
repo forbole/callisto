@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/forbole/bdjuno/v3/modules/actions"
+	"github.com/forbole/bdjuno/v4/modules/actions"
 
 	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
 
@@ -59,7 +59,7 @@ func migrateConfig() (Config, error) {
 	}
 
 	if cfg.Actions == nil {
-		cfg.Actions = actions.NewConfig(3000, nil)
+		cfg.Actions = actions.NewConfig("127.0.0.1", 3000, nil)
 	}
 
 	return cfg, nil

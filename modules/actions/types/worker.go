@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/forbole/bdjuno/v3/modules/actions/logging"
+	"github.com/forbole/bdjuno/v4/modules/actions/logging"
 
 	"github.com/rs/zerolog/log"
 )
@@ -94,8 +94,15 @@ func (w *ActionsWorker) handleError(writer http.ResponseWriter, path string, err
 }
 
 // Start starts the worker
-func (w *ActionsWorker) Start(port uint) {
-	err := http.ListenAndServe(fmt.Sprintf(":%d", port), w.mux)
+func (w *ActionsWorker) Start(host string, port uint) {
+	server := &http.Server{
+		Addr:              fmt.Sprintf("%s:%d", host, port),
+		Handler:           w.mux,
+		ReadHeaderTimeout: 3 * time.Second,
+	}
+
+	err := server.ListenAndServe()
+
 	if err != nil {
 		panic(err)
 	}
