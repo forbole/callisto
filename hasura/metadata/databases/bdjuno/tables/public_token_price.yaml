@@ -7,12 +7,12 @@ object_relationships:
     foreign_key_constraint_on: unit_name
 select_permissions:
 - permission:
-    allow_aggregations: true
+    allow_aggregations: false
     columns:
-    - id
     - unit_name
     - price
     - market_cap
     - timestamp
     filter: {}
+    limit: 1
   role: anonymous
