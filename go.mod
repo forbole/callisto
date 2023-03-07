@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/cosmos/cosmos-sdk v0.45.13-ics
 	github.com/cosmos/gaia/v9 v9.0.0
+	github.com/cosmos/interchain-security v1.0.0
 	github.com/forbole/juno/v4 v4.0.1-0.20230208101932-3ab93fbccd60
 	github.com/go-co-op/gocron v1.16.1
 	github.com/gogo/protobuf v1.3.3
@@ -40,7 +41,6 @@ require (
 	github.com/cosmos/gorocksdb v1.2.0 // indirect
 	github.com/cosmos/iavl v0.19.5 // indirect
 	github.com/cosmos/ibc-go/v4 v4.2.0 // indirect
-	github.com/cosmos/interchain-security v1.0.0 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.12.2 // indirect
 	github.com/creachadair/taskgroup v0.3.2 // indirect
 	github.com/danieljoos/wincred v1.1.2 // indirect
