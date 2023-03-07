@@ -16,7 +16,7 @@ import (
 	"github.com/forbole/bdjuno/v3/database"
 	"github.com/forbole/bdjuno/v3/modules"
 
-	persistenceapp "github.com/persistenceOne/persistenceCore/v6/app"
+	persistenceapp "github.com/persistenceOne/persistenceCore/v7/app"
 )
 
 func main() {
