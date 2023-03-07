@@ -58,3 +58,19 @@ func (s Source) GetConsumerChainStarts(height int64) (*ccvprovidertypes.Consumer
 	return res.Proposals, nil
 
 }
+
+// GetConsumerChainStops implements ccvprovidersource.Source
+func (s Source) GetConsumerChainStops(height int64) (*ccvprovidertypes.ConsumerRemovalProposals, error) {
+	ctx, err := s.LoadHeight(height)
+	if err != nil {
+		return nil, fmt.Errorf("error while loading height: %s", err)
+	}
+
+	res, err := s.querier.QueryConsumerChainStops(sdk.WrapSDKContext(ctx), &ccvprovidertypes.QueryConsumerChainStopProposalsRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	return res.Proposals, nil
+
+}
