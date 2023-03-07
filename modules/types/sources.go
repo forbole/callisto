@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
-	inflationtypes "github.com/evmos/evmos/v10/x/inflation/types"
+	inflationtypes "github.com/evmos/evmos/v11/x/inflation/types"
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
@@ -24,7 +24,7 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
-	evmosapp "github.com/evmos/evmos/v10/app"
+	evmosapp "github.com/evmos/evmos/v11/app"
 	banksource "github.com/forbole/bdjuno/v3/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v3/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v3/modules/bank/source/remote"

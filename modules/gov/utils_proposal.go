@@ -22,7 +22,7 @@ import (
 
 	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
 
-	inflationtypes "github.com/evmos/evmos/v10/x/inflation/types"
+	inflationtypes "github.com/evmos/evmos/v11/x/inflation/types"
 )
 
 func (m *Module) UpdateProposal(height int64, blockTime time.Time, id uint64) error {

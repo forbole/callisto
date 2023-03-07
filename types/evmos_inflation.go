@@ -2,7 +2,7 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	inflationtypes "github.com/evmos/evmos/v10/x/inflation/types"
+	inflationtypes "github.com/evmos/evmos/v11/x/inflation/types"
 )
 
 // EvmosInflationParams represents the parameters of the evmos x/inflation module

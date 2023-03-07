@@ -16,7 +16,7 @@ import (
 	"github.com/forbole/bdjuno/v3/database"
 	"github.com/forbole/bdjuno/v3/modules"
 
-	evmosapp "github.com/evmos/evmos/v10/app"
+	evmosapp "github.com/evmos/evmos/v11/app"
 )
 
 func main() {
