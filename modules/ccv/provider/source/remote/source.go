@@ -30,9 +30,22 @@ func (s Source) GetAllConsumerChains(height int64) ([]*ccvprovidertypes.Chain, e
 
 	res, err := s.querier.QueryConsumerChains(ctx, &ccvprovidertypes.QueryConsumerChainsRequest{})
 	if err != nil {
-		return []*ccvprovidertypes.Chain{}, nil
+		return []*ccvprovidertypes.Chain{}, err
 	}
 
 	return res.Chains, nil
+
+}
+
+// GetConsumerChainStarts implements ccvprovidersource.Source
+func (s Source) GetConsumerChainStarts(height int64) (*ccvprovidertypes.ConsumerAdditionProposals, error) {
+	ctx := remote.GetHeightRequestContext(s.Ctx, height)
+
+	res, err := s.querier.QueryConsumerChainStarts(ctx, &ccvprovidertypes.QueryConsumerChainStartProposalsRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	return res.Proposals, nil
 
 }
