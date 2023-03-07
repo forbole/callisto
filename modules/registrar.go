@@ -20,6 +20,8 @@ import (
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules/auth"
 	"github.com/forbole/bdjuno/v4/modules/bank"
+	ccvconsumer "github.com/forbole/bdjuno/v4/modules/ccv/consumer"
+	ccvprovider "github.com/forbole/bdjuno/v4/modules/ccv/provider"
 	"github.com/forbole/bdjuno/v4/modules/consensus"
 	"github.com/forbole/bdjuno/v4/modules/distribution"
 	"github.com/forbole/bdjuno/v4/modules/feegrant"
@@ -74,6 +76,8 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	actionsModule := actions.NewModule(ctx.JunoConfig, ctx.EncodingConfig)
 	authModule := auth.NewModule(r.parser, cdc, db)
 	consensusModule := consensus.NewModule(db)
+	ccvConsumerModule := ccvconsumer.NewModule(cdc, db)
+	ccvProviderModule := ccvprovider.NewModule(r.parser, cdc, db)
 	distrModule := distribution.NewModule(sources.DistrSource, cdc, db)
 	feegrantModule := feegrant.NewModule(cdc, db)
 	mintModule := mint.NewModule(sources.MintSource, cdc, db)
@@ -91,6 +95,8 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		authModule,
 		bankModule,
 		consensusModule,
+		ccvConsumerModule,
+		ccvProviderModule,
 		distrModule,
 		feegrantModule,
 		govModule,

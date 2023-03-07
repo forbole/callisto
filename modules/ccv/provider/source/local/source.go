@@ -1,10 +1,6 @@
 package local
 
 import (
-	"fmt"
-
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/query"
 	ccvprovidertypes "github.com/cosmos/interchain-security/x/ccv/provider/types"
 	"github.com/forbole/juno/v4/node/local"
 
@@ -28,4 +24,3 @@ func NewSource(source *local.Source, querier ccvprovidertypes.QueryServer) *Sour
 		querier: querier,
 	}
 }
-
