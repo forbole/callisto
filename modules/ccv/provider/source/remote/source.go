@@ -23,3 +23,16 @@ func NewSource(source *remote.Source, querier ccvprovidertypes.QueryClient) *Sou
 		querier: querier,
 	}
 }
+
+// GetAllConsumerChains implements ccvprovidersource.Source
+func (s Source) GetAllConsumerChains(height int64) ([]*ccvprovidertypes.Chain, error) {
+	ctx := remote.GetHeightRequestContext(s.Ctx, height)
+
+	res, err := s.querier.QueryConsumerChains(ctx, &ccvprovidertypes.QueryConsumerChainsRequest{})
+	if err != nil {
+		return []*ccvprovidertypes.Chain{}, nil
+	}
+
+	return res.Chains, nil
+
+}
