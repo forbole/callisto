@@ -1,4 +1,11 @@
 /* ---- PARAMS ---- */
+CREATE TABLE ccv_consumer_params
+(
+    one_row_id BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
+    params     JSONB   NOT NULL,
+    height     BIGINT  NOT NULL,
+    CHECK (one_row_id)
+);
 
 CREATE TABLE ccv_provider_params
 (
@@ -8,15 +15,7 @@ CREATE TABLE ccv_provider_params
     CHECK (one_row_id)
 );
 
-CREATE TABLE ccv_consumer_params
-(
-    one_row_id BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
-    params     JSONB   NOT NULL,
-    height     BIGINT  NOT NULL,
-    CHECK (one_row_id)
-);
-
-
+/* ---- CCV CONSUMER CHAIN STATE ---- */
 CREATE TABLE ccv_consumer_chain
 (
     provider_client_id             TEXT UNIQUE NOT NULL,
@@ -34,3 +33,21 @@ CREATE TABLE ccv_consumer_chain
 );
 CREATE INDEX ccv_consumer_chain_height_index ON ccv_consumer_chain (height);
 CREATE INDEX ccv_consumer_chain_provider_client_id_index ON ccv_consumer_chain (provider_client_id);
+
+
+/* ---- CCV PROVIDER CHAIN STATE ---- */
+CREATE TABLE ccv_provider_chain
+(
+    valset_update_id             INTEGER,
+    consumer_states              JSONB,
+    unbonding_ops                JSONB,
+    mature_unbonding_ops         JSONB,
+    valset_update_id_to_height   JSONB,
+    consumer_addition_proposals  JSONB,
+    consumer_removal_proposals   JSONB,
+    validator_consumer_pubkeys   JSONB,
+    validators_by_consumer_addr  JSONB,
+    consumer_addrs_to_prune      JSONB,
+    height                       BIGINT  NOT NULL
+);
+CREATE INDEX ccv_provider_chain_height_index ON ccv_provider_chain (height);

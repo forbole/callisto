@@ -53,7 +53,7 @@ WHERE ccv_consumer_params.height <= excluded.height`
 	return nil
 }
 
-// SaveCcvConsumerChain saves the ccv consumer chain info for the given height
+// SaveCcvConsumerChain saves the ccv consumer chain state for the given height
 func (db *Db) SaveCcvConsumerChain(consumerChain *types.CcvConsumerChain) error {
 	providerClientState, err := json.Marshal(&consumerChain.ProviderClientState)
 	if err != nil {
@@ -114,7 +114,66 @@ WHERE ccv_consumer_chain.height <= excluded.height`
 		string(lastTransmissionBlockHeight), consumerChain.Height)
 
 	if err != nil {
-		return fmt.Errorf("error while storing ccv consumer chain info: %s", err)
+		return fmt.Errorf("error while storing ccv consumer chain state info: %s", err)
+	}
+
+	return nil
+}
+
+// SaveCcvProviderChain saves the ccv provider chain state for the given height
+func (db *Db) SaveCcvProviderChain(providerChain *types.CcvProviderChain) error {
+	consumerStates, err := json.Marshal(&providerChain.ConsumerStates)
+	if err != nil {
+		return err
+	}
+	unbondingOps, err := json.Marshal(&providerChain.UnbondingOps)
+	if err != nil {
+		return err
+	}
+	matureUnbondingOps, err := json.Marshal(&providerChain.MatureUnbondingOps)
+	if err != nil {
+		return err
+	}
+	valsetUpdateIdToHeight, err := json.Marshal(&providerChain.ValsetUpdateIdToHeight)
+	if err != nil {
+		return err
+	}
+	consumerAdditionProposals, err := json.Marshal(&providerChain.ConsumerAdditionProposals)
+	if err != nil {
+		return err
+	}
+	consumerRemovalProposals, err := json.Marshal(&providerChain.ConsumerRemovalProposals)
+	if err != nil {
+		return err
+	}
+	validatorConsumerPubkeys, err := json.Marshal(&providerChain.ValidatorConsumerPubkeys)
+	if err != nil {
+		return err
+	}
+	validatorsByConsumerAddr, err := json.Marshal(&providerChain.ValidatorsByConsumerAddr)
+	if err != nil {
+		return err
+	}
+	consumerAddrsToPrune, err := json.Marshal(&providerChain.ConsumerAddrsToPrune)
+	if err != nil {
+		return err
+	}
+
+	stmt := `
+INSERT INTO ccv_provider_chain (valset_update_id, consumer_states,unbonding_ops, 
+	mature_unbonding_ops, valset_update_id_to_height, consumer_addition_proposals,
+	consumer_removal_proposals, validator_consumer_pubkeys, 
+	validators_by_consumer_addr, consumer_addrs_to_prune,  height) 
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+ON CONFLICT DO NOTHING`
+
+	_, err = db.SQL.Exec(stmt, providerChain.ValsetUpdateID, string(consumerStates), string(unbondingOps), string(matureUnbondingOps),
+		string(valsetUpdateIdToHeight), string(consumerAdditionProposals), string(consumerRemovalProposals),
+		string(validatorConsumerPubkeys), string(validatorsByConsumerAddr),
+		string(consumerAddrsToPrune), providerChain.Height)
+
+	if err != nil {
+		return fmt.Errorf("error while storing ccv provider chain state info: %s", err)
 	}
 
 	return nil

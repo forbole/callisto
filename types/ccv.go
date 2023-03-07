@@ -36,7 +36,7 @@ func NewCcvConsumerParams(params ccvconsumertypes.Params, height int64) *CcvCons
 	}
 }
 
-// CcvConsumerChain represents ccv consumer chain at a given height
+// CcvConsumerChain represents ccv consumer chain state at a given height
 type CcvConsumerChain struct {
 	ProviderClientID            string
 	ProviderChannelID           string
@@ -74,5 +74,45 @@ func NewCcvConsumerChain(providerClientID, providerChannelID string, newChain bo
 		PendingConsumerPackets:      pendingConsumerPackets,
 		LastTransmissionBlockHeight: lastTransmissionBlockHeight,
 		Height:                      height,
+	}
+}
+
+// CcvProviderChain represents ccv provider chain state at a given height
+type CcvProviderChain struct {
+	ValsetUpdateID            uint64
+	ConsumerStates            []ccvprovidertypes.ConsumerState
+	UnbondingOps              []ccvprovidertypes.UnbondingOp
+	MatureUnbondingOps        *ccvtypes.MaturedUnbondingOps
+	ValsetUpdateIdToHeight    []ccvprovidertypes.ValsetUpdateIdToHeight
+	ConsumerAdditionProposals []ccvprovidertypes.ConsumerAdditionProposal
+	ConsumerRemovalProposals  []ccvprovidertypes.ConsumerRemovalProposal
+	ValidatorConsumerPubkeys  []ccvprovidertypes.ValidatorConsumerPubKey
+	ValidatorsByConsumerAddr  []ccvprovidertypes.ValidatorByConsumerAddr
+	ConsumerAddrsToPrune      []ccvprovidertypes.ConsumerAddrsToPrune
+	Height                    int64
+}
+
+// NewNewCcvProviderChain allows to build a new CcvProviderChain instance
+func NewCcvProviderChain(valsetUpdateID uint64, consumerStates []ccvprovidertypes.ConsumerState,
+	unbondingOps []ccvprovidertypes.UnbondingOp, matureUnbondingOps *ccvtypes.MaturedUnbondingOps,
+	valsetUpdateIdToHeight []ccvprovidertypes.ValsetUpdateIdToHeight,
+	consumerAdditionProposals []ccvprovidertypes.ConsumerAdditionProposal,
+	consumerRemovalProposals []ccvprovidertypes.ConsumerRemovalProposal,
+	validatorConsumerPubkeys []ccvprovidertypes.ValidatorConsumerPubKey,
+	validatorsByConsumerAddr []ccvprovidertypes.ValidatorByConsumerAddr,
+	consumerAddrsToPrune []ccvprovidertypes.ConsumerAddrsToPrune,
+	height int64) *CcvProviderChain {
+	return &CcvProviderChain{
+		ValsetUpdateID:            valsetUpdateID,
+		ConsumerStates:            consumerStates,
+		UnbondingOps:              unbondingOps,
+		MatureUnbondingOps:        matureUnbondingOps,
+		ValsetUpdateIdToHeight:    valsetUpdateIdToHeight,
+		ConsumerAdditionProposals: consumerAdditionProposals,
+		ConsumerRemovalProposals:  consumerRemovalProposals,
+		ValidatorConsumerPubkeys:  validatorConsumerPubkeys,
+		ValidatorsByConsumerAddr:  validatorsByConsumerAddr,
+		ConsumerAddrsToPrune:      consumerAddrsToPrune,
+		Height:                    height,
 	}
 }

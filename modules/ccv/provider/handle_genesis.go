@@ -29,5 +29,23 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 		return fmt.Errorf("error while storing genesis ccv provider params: %s", err)
 	}
 
+	// Save the provider chain info
+	err = m.db.SaveCcvProviderChain(types.NewCcvProviderChain(
+		genState.ValsetUpdateId,
+		genState.ConsumerStates,
+		genState.UnbondingOps,
+		genState.MatureUnbondingOps,
+		genState.ValsetUpdateIdToHeight,
+		genState.ConsumerAdditionProposals,
+		genState.ConsumerRemovalProposals,
+		genState.ValidatorConsumerPubkeys,
+		genState.ValidatorsByConsumerAddr,
+		genState.ConsumerAddrsToPrune,
+		doc.InitialHeight))
+
+	if err != nil {
+		return fmt.Errorf("error while storing genesis ccv provider chain state info: %s", err)
+	}
+
 	return nil
 }
