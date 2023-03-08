@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	ccvconsumertypes "github.com/cosmos/interchain-security/x/ccv/consumer/types"
 	"github.com/forbole/bdjuno/v4/types"
 )
 
@@ -174,6 +175,38 @@ ON CONFLICT DO NOTHING`
 
 	if err != nil {
 		return fmt.Errorf("error while storing ccv provider chain state info: %s", err)
+	}
+
+	return nil
+}
+
+// SaveNextFeeDistributionEstimate allows to store the next fee distribution estimate
+func (db *Db) SaveNextFeeDistributionEstimate(height int64, fee ccvconsumertypes.NextFeeDistributionEstimate) error {
+	// Store the accounts
+	var accounts []types.Account
+	accounts = append(accounts, types.NewAccount(fee.ToProvider), types.NewAccount(fee.ToConsumer))
+	err := db.SaveAccounts(accounts)
+	if err != nil {
+		return fmt.Errorf("error while storing provider and consumer fee distr accounts: %s", err)
+	}
+
+	stmt := `
+INSERT INTO ccv_fee_distribution(current_height, last_height, next_height, distribution_fraction,
+	total, to_provider, to_consumer, height) 
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
+ON CONFLICT ON CONSTRAINT unique_provider_consumer_fee_distribution DO UPDATE 
+    SET current_height = excluded.current_height,
+		last_height = excluded.last_height,
+		next_height = excluded.next_height,
+		distribution_fraction = excluded.distribution_fraction,
+		total = excluded.total,
+        height = excluded.height
+WHERE ccv_fee_distribution.height <= excluded.height`
+
+	_, err = db.SQL.Exec(stmt, fee.CurrentHeight, fee.LastHeight, fee.NextHeight,
+		fee.DistributionFraction, fee.Total, fee.ToProvider, fee.ToConsumer, height)
+	if err != nil {
+		return fmt.Errorf("error while saving next fee distribution estimate: %s", err)
 	}
 
 	return nil
