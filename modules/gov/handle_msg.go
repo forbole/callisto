@@ -10,6 +10,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	ibcclienttypes "github.com/cosmos/ibc-go/v4/modules/core/02-client/types"
 	ccvprovidertypes "github.com/cosmos/interchain-security/x/ccv/provider/types"
 	juno "github.com/forbole/juno/v4/types"
 )
@@ -173,6 +174,59 @@ func (m *Module) handleConsumerAdditionProposal(consAddProposal *ccvprovidertype
 }
 
 // handleConsumerRemovalProposal allows to properly handle a ConsumerRemovalProposal
-func (m *Module) handleConsumerRemovalProposal(c *ccvprovidertypes.ConsumerRemovalProposal, tx *juno.Tx, index int, msg *govtypes.MsgSubmitProposal) error {
-	return nil
+func (m *Module) handleConsumerRemovalProposal(consRemProposal *ccvprovidertypes.ConsumerRemovalProposal, tx *juno.Tx, index int, msg *govtypes.MsgSubmitProposal) error {
+	// Get the proposal id
+	event, err := tx.FindEventByType(index, govtypes.EventTypeSubmitProposal)
+	if err != nil {
+		return fmt.Errorf("error while searching for EventTypeSubmitProposal: %s", err)
+	}
+
+	id, err := tx.FindAttributeByKey(event, govtypes.AttributeKeyProposalID)
+	if err != nil {
+		return fmt.Errorf("error while searching for AttributeKeyProposalID: %s", err)
+	}
+
+	proposalID, err := strconv.ParseUint(id, 10, 64)
+	if err != nil {
+		return fmt.Errorf("error while parsing proposal id: %s", err)
+	}
+
+	// Get the proposal
+	proposal, err := m.source.Proposal(tx.Height, proposalID)
+	if err != nil {
+		return fmt.Errorf("error while getting proposal: %s", err)
+	}
+
+	// Store the ccv ConsumerAdditionProposal proposal
+	ccvProposalObj := types.NewCcvProposal(
+		proposal.ProposalId,
+		consRemProposal.Title,
+		consRemProposal.Description,
+		consRemProposal.ChainId,
+		"",
+		"",
+		consRemProposal.ProposalType(),
+		consRemProposal.ProposalRoute(),
+		time.Time{},
+		consRemProposal.StopTime,
+		ibcclienttypes.ZeroHeight(),
+		0,
+		0,
+		0,
+		"",
+		0,
+		0,
+		proposal.Status.String(),
+		tx.Timestamp,
+		msg.Proposer,
+	)
+
+	err = m.db.SaveCcvProposals(tx.Height, []types.CcvProposal{ccvProposalObj})
+	if err != nil {
+		return err
+	}
+
+	// Store the deposit
+	deposit := types.NewDeposit(proposal.ProposalId, msg.Proposer, msg.InitialDeposit, tx.Height)
+	return m.db.SaveDeposits([]types.Deposit{deposit})
 }
