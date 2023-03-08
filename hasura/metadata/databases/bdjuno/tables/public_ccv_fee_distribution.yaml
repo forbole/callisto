@@ -1,0 +1,24 @@
+table:
+  name: ccv_fee_distribution
+  schema: public
+object_relationships:
+- name: account
+  using:
+    foreign_key_constraint_on: to_provider
+- name: account
+  using:
+    foreign_key_constraint_on: to_consumer
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - current_height
+    - last_height
+    - next_height
+    - distribution_fraction
+    - total
+    - to_provider
+    - to_consumer
+    - height
+    filter: {}
+  role: anonymous

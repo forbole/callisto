@@ -1,0 +1,34 @@
+table:
+  name: ccv_proposal
+  schema: public
+object_relationships:
+- name: account
+  using:
+    foreign_key_constraint_on: proposer_address
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - id
+    - title
+    - description
+    - chain_id
+    - genesis_hash
+    - binary_hash
+    - proposal_type
+    - proposal_route
+    - spawn_time
+    - stop_time
+    - initial_height
+    - unbonding_period
+    - ccv_timeout_period
+    - transfer_timeout_period
+    - consumer_redistribution_fraction
+    - blocks_per_distribution_transmission
+    - historical_entries
+    - status
+    - submit_time
+    - proposer_address
+    - height
+    filter: {}
+  role: anonymous
