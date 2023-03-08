@@ -4,9 +4,9 @@ go 1.18
 
 require (
 	github.com/cosmos/cosmos-sdk v0.45.13-ics
-	github.com/cosmos/gaia/v9 v9.0.0
+	github.com/cosmos/gaia/v9 v9.0.0-rc7
 	github.com/cosmos/ibc-go/v4 v4.2.0
-	github.com/cosmos/interchain-security v1.0.0
+	github.com/cosmos/interchain-security v1.0.0-rc7
 	github.com/forbole/juno/v4 v4.0.1-0.20230208101932-3ab93fbccd60
 	github.com/go-co-op/gocron v1.16.1
 	github.com/gogo/protobuf v1.3.3
