@@ -68,3 +68,29 @@ CREATE TABLE ccv_fee_distribution
 
 );
 CREATE INDEX ccv_fee_distribution_height_index ON ccv_provider_chain (height);
+
+/* ---- CCV PROPOSAL ---- */
+CREATE TABLE ccv_proposal
+(
+    id                                    INTEGER    NOT NULL PRIMARY KEY,
+    title                                 TEXT       NOT NULL,
+    description                           TEXT       NOT NULL,
+    chain_id                              TEXT       NOT NULL,
+    genesis_hash                          TEXT       NOT NULL,
+    binary_hash                           TEXT       NOT NULL,
+    proposal_type                         TEXT       NOT NULL,
+    proposal_route                        TEXT       NOT NULL,
+    spawn_time                            TIMESTAMP,
+    stop_time                             TIMESTAMP,
+    initial_height                        BIGINT,
+    unbonding_period                      TIMESTAMP  NOT NULL,
+    ccv_timeout_period                    TIMESTAMP  NOT NULL,
+    consumer_redistribution_fraction      TEXT       NOT NULL, 
+    blocks_per_distribution_transmission  BIGINT     NOT NULL,
+    historical_entries                    INTEGER    NOT NULL,
+    status                                TEXT       NOT NULL,
+    submit_time                           TEXT       NOT NULL,
+    proposer_address                      TEXT       NOT NULL REFERENCES account (address),
+    height                                BIGINT     NOT NULL
+);
+CREATE INDEX ccv_proposal_proposer_address_index ON ccv_proposal (proposer_address);
