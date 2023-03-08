@@ -2,6 +2,7 @@ package gov
 
 import (
 	"fmt"
+	"time"
 
 	"strconv"
 
@@ -9,6 +10,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	ccvprovidertypes "github.com/cosmos/interchain-security/x/ccv/provider/types"
 	juno "github.com/forbole/juno/v4/types"
 )
 
@@ -20,8 +22,16 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 
 	switch cosmosMsg := msg.(type) {
 	case *govtypes.MsgSubmitProposal:
-		return m.handleMsgSubmitProposal(tx, index, cosmosMsg)
-
+		switch c := cosmosMsg.GetContent().(type) {
+		case *ccvprovidertypes.ConsumerAdditionProposal:
+			return m.handleConsumerAdditionProposal(c, tx, 0, cosmosMsg)
+		case *ccvprovidertypes.ConsumerRemovalProposal:
+			return m.handleConsumerRemovalProposal(c, tx, 0, cosmosMsg)
+		// case *ccvprovidertypes.EquivocationProposal:
+		// 	return k.HandleEquivocationProposal(ctx, c)
+		default:
+			return m.handleMsgSubmitProposal(tx, index, cosmosMsg)
+		}
 	case *govtypes.MsgDeposit:
 		return m.handleMsgDeposit(tx, cosmosMsg)
 
@@ -32,7 +42,7 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	return nil
 }
 
-// handleMsgSubmitProposal allows to properly handle a handleMsgSubmitProposal
+// handleMsgSubmitProposal allows to properly handle MsgSubmitProposal
 func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypes.MsgSubmitProposal) error {
 	// Get the proposal id
 	event, err := tx.FindEventByType(index, govtypes.EventTypeSubmitProposal)
@@ -86,7 +96,7 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypes.M
 	return m.db.SaveDeposits([]types.Deposit{deposit})
 }
 
-// handleMsgDeposit allows to properly handle a handleMsgDeposit
+// handleMsgDeposit allows to properly handle a MsgDeposit
 func (m *Module) handleMsgDeposit(tx *juno.Tx, msg *govtypes.MsgDeposit) error {
 	deposit, err := m.source.ProposalDeposit(tx.Height, msg.ProposalId, msg.Depositor)
 	if err != nil {
@@ -98,8 +108,71 @@ func (m *Module) handleMsgDeposit(tx *juno.Tx, msg *govtypes.MsgDeposit) error {
 	})
 }
 
-// handleMsgVote allows to properly handle a handleMsgVote
+// handleMsgVote allows to properly handle a MsgVote
 func (m *Module) handleMsgVote(tx *juno.Tx, msg *govtypes.MsgVote) error {
 	vote := types.NewVote(msg.ProposalId, msg.Voter, msg.Option, tx.Height)
 	return m.db.SaveVote(vote)
+}
+
+// handleConsumerAdditionProposal allows to properly handle a ConsumerAdditionProposal
+func (m *Module) handleConsumerAdditionProposal(consAddProposal *ccvprovidertypes.ConsumerAdditionProposal, tx *juno.Tx, index int, msg *govtypes.MsgSubmitProposal) error {
+	// Get the proposal id
+	event, err := tx.FindEventByType(index, govtypes.EventTypeSubmitProposal)
+	if err != nil {
+		return fmt.Errorf("error while searching for EventTypeSubmitProposal: %s", err)
+	}
+
+	id, err := tx.FindAttributeByKey(event, govtypes.AttributeKeyProposalID)
+	if err != nil {
+		return fmt.Errorf("error while searching for AttributeKeyProposalID: %s", err)
+	}
+
+	proposalID, err := strconv.ParseUint(id, 10, 64)
+	if err != nil {
+		return fmt.Errorf("error while parsing proposal id: %s", err)
+	}
+
+	// Get the proposal
+	proposal, err := m.source.Proposal(tx.Height, proposalID)
+	if err != nil {
+		return fmt.Errorf("error while getting proposal: %s", err)
+	}
+
+	// Store the ccv ConsumerAdditionProposal proposal
+	ccvProposalObj := types.NewCcvProposal(
+		proposal.ProposalId,
+		consAddProposal.Title,
+		consAddProposal.Description,
+		consAddProposal.ChainId,
+		string(consAddProposal.GenesisHash),
+		string(consAddProposal.BinaryHash),
+		consAddProposal.ProposalType(),
+		consAddProposal.ProposalRoute(),
+		consAddProposal.SpawnTime,
+		time.Time{},
+		consAddProposal.InitialHeight,
+		consAddProposal.UnbondingPeriod,
+		consAddProposal.CcvTimeoutPeriod,
+		consAddProposal.TransferTimeoutPeriod,
+		consAddProposal.ConsumerRedistributionFraction,
+		consAddProposal.BlocksPerDistributionTransmission,
+		consAddProposal.HistoricalEntries,
+		proposal.Status.String(),
+		tx.Timestamp,
+		msg.Proposer,
+	)
+
+	err = m.db.SaveCcvProposals(tx.Height, []types.CcvProposal{ccvProposalObj})
+	if err != nil {
+		return err
+	}
+
+	// Store the deposit
+	deposit := types.NewDeposit(proposal.ProposalId, msg.Proposer, msg.InitialDeposit, tx.Height)
+	return m.db.SaveDeposits([]types.Deposit{deposit})
+}
+
+// handleConsumerRemovalProposal allows to properly handle a ConsumerRemovalProposal
+func (m *Module) handleConsumerRemovalProposal(c *ccvprovidertypes.ConsumerRemovalProposal, tx *juno.Tx, index int, msg *govtypes.MsgSubmitProposal) error {
+	return nil
 }

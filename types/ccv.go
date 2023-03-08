@@ -1,6 +1,9 @@
 package types
 
 import (
+	"time"
+
+	ibcclienttypes "github.com/cosmos/ibc-go/v4/modules/core/02-client/types"
 	"github.com/cosmos/ibc-go/v4/modules/light-clients/07-tendermint/types"
 	ccvconsumertypes "github.com/cosmos/interchain-security/x/ccv/consumer/types"
 	ccvprovidertypes "github.com/cosmos/interchain-security/x/ccv/provider/types"
@@ -35,6 +38,8 @@ func NewCcvConsumerParams(params ccvconsumertypes.Params, height int64) *CcvCons
 		Height: height,
 	}
 }
+
+// --------------------------------------------------------------------------------------------------------------------
 
 // CcvConsumerChain represents ccv consumer chain state at a given height
 type CcvConsumerChain struct {
@@ -114,5 +119,78 @@ func NewCcvProviderChain(valsetUpdateID uint64, consumerStates []ccvprovidertype
 		ValidatorsByConsumerAddr:  validatorsByConsumerAddr,
 		ConsumerAddrsToPrune:      consumerAddrsToPrune,
 		Height:                    height,
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// CcvProposal represents a single ccv proposal
+type CcvProposal struct {
+	ProposalID                        uint64
+	Title                             string
+	Description                       string
+	ChainID                           string
+	GenesisHash                       string
+	BinaryHash                        string
+	ProposalType                      string
+	ProposalRoute                     string
+	SpawnTime                         time.Time
+	StopTime                          time.Time
+	InitialHeight                     ibcclienttypes.Height
+	UnbondingPeriod                   time.Duration
+	CcvTimeoutPeriod                  time.Duration
+	TransferTimeoutPeriod             time.Duration
+	ConsumerRedistributionFraction    string
+	BlocksPerDistributionTransmission int64
+	HistoricalEntries                 int64
+	Status                            string
+	SubmitTime                        string
+	Proposer                          string
+}
+
+// NewCcvProposal return a new CcvProposal instance
+func NewCcvProposal(
+	proposalID uint64,
+	title string,
+	description string,
+	chainID string,
+	genesisHash string,
+	binaryHash string,
+	proposalType string,
+	proposalRoute string,
+	spawnTime time.Time,
+	stopTime time.Time,
+	initialHeight ibcclienttypes.Height,
+	unbondingPeriod time.Duration,
+	ccvTimeoutPeriod time.Duration,
+	transferTimeoutPeriod time.Duration,
+	consumerRedistributionFraction string,
+	blocksPerDistributionTransmission int64,
+	historicalEntries int64,
+	status string,
+	submitTime string,
+	proposer string,
+) CcvProposal {
+	return CcvProposal{
+		ProposalID:                        proposalID,
+		Title:                             title,
+		Description:                       description,
+		ChainID:                           chainID,
+		GenesisHash:                       genesisHash,
+		BinaryHash:                        binaryHash,
+		ProposalType:                      proposalType,
+		ProposalRoute:                     proposalRoute,
+		SpawnTime:                         spawnTime,
+		StopTime:                          stopTime,
+		InitialHeight:                     initialHeight,
+		UnbondingPeriod:                   unbondingPeriod,
+		CcvTimeoutPeriod:                  ccvTimeoutPeriod,
+		TransferTimeoutPeriod:             transferTimeoutPeriod,
+		ConsumerRedistributionFraction:    consumerRedistributionFraction,
+		BlocksPerDistributionTransmission: blocksPerDistributionTransmission,
+		HistoricalEntries:                 historicalEntries,
+		Status:                            status,
+		SubmitTime:                        submitTime,
+		Proposer:                          proposer,
 	}
 }

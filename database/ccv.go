@@ -211,3 +211,75 @@ WHERE ccv_fee_distribution.height <= excluded.height`
 
 	return nil
 }
+
+// SaveCcvProposals allows to save ccv proposals for the given height
+func (db *Db) SaveCcvProposals(height int64, proposals []types.CcvProposal) error {
+	if len(proposals) == 0 {
+		return nil
+	}
+
+	var accounts []types.Account
+
+	proposalsQuery := `
+INSERT INTO ccv_proposal(
+	id, title, description, chain_id, genesis_hash, binary_hash, proposal_type, proposal_route, 
+    spawn_time, stop_time, initial_height, unbonding_period, ccv_timeout_period, transfer_timeout_period, 
+	consumer_redistribution_fraction, blocks_per_distribution_transmission, historical_entries, status, 
+	submit_time, proposer_address, height
+) VALUES`
+	var proposalsParams []interface{}
+
+	for i, proposal := range proposals {
+		// Prepare the account query
+		accounts = append(accounts, types.NewAccount(proposal.Proposer))
+		initialHeight, err := json.Marshal(&proposal.InitialHeight)
+		if err != nil {
+			return err
+		}
+		// Prepare the proposal query
+		vi := i * 21
+		proposalsQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
+			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11, vi+12, vi+13,
+			vi+14, vi+15, vi+16, vi+17, vi+18, vi+19, vi+20, vi+21)
+
+		proposalsParams = append(proposalsParams,
+			proposal.ProposalID,
+			proposal.Title,
+			proposal.Description,
+			proposal.ChainID,
+			proposal.GenesisHash,
+			proposal.BinaryHash,
+			proposal.ProposalType,
+			proposal.ProposalRoute,
+			proposal.SpawnTime,
+			proposal.StopTime,
+			string(initialHeight),
+			proposal.UnbondingPeriod,
+			proposal.CcvTimeoutPeriod,
+			proposal.TransferTimeoutPeriod,
+			proposal.ConsumerRedistributionFraction,
+			proposal.BlocksPerDistributionTransmission,
+			proposal.HistoricalEntries,
+			proposal.Status,
+			proposal.SubmitTime,
+			proposal.Proposer,
+			height,
+		)
+	}
+
+	// Store the accounts
+	err := db.SaveAccounts(accounts)
+	if err != nil {
+		return fmt.Errorf("error while storing ccv proposal proposers accounts: %s", err)
+	}
+
+	// Store the proposals
+	proposalsQuery = proposalsQuery[:len(proposalsQuery)-1] // Remove trailing ","
+	proposalsQuery += " ON CONFLICT DO NOTHING"
+	_, err = db.SQL.Exec(proposalsQuery, proposalsParams...)
+	if err != nil {
+		return fmt.Errorf("error while storing ccv proposals: %s", err)
+	}
+
+	return nil
+}
