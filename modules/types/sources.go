@@ -22,10 +22,13 @@ import (
 	nodeconfig "github.com/forbole/juno/v4/node/config"
 
 	gaiaapp "github.com/cosmos/gaia/v9/app"
+	ccvconsumerypes "github.com/cosmos/interchain-security/x/ccv/consumer/types"
 	ccvprovidertypes "github.com/cosmos/interchain-security/x/ccv/provider/types"
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v4/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"
+	ccvconsumersource "github.com/forbole/bdjuno/v4/modules/ccv/consumer/source"
+	remoteccvconsumersource "github.com/forbole/bdjuno/v4/modules/ccv/consumer/source/remote"
 	ccvprovidersource "github.com/forbole/bdjuno/v4/modules/ccv/provider/source"
 	localccvprovidersource "github.com/forbole/bdjuno/v4/modules/ccv/provider/source/local"
 	remoteccvprovidersource "github.com/forbole/bdjuno/v4/modules/ccv/provider/source/remote"
@@ -54,6 +57,7 @@ type Sources struct {
 	SlashingSource    slashingsource.Source
 	StakingSource     stakingsource.Source
 	CcvProviderSource ccvprovidersource.Source
+	CcvConsumerSource ccvconsumersource.Source
 }
 
 func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -78,7 +82,8 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		cfg.Home, 0, gaiaapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{})
 
 	sources := &Sources{
-		BankSource:        localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
+		BankSource: localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
+		// CcvConsumerSource: localccvconsumersource.NewSource(source, ccvconsumerypes.QueryServer()),
 		CcvProviderSource: localccvprovidersource.NewSource(source, ccvprovidertypes.QueryServer(app.ProviderKeeper)),
 		DistrSource:       localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
 		GovSource:         localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
@@ -119,6 +124,7 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 
 	return &Sources{
 		BankSource:        remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
+		CcvConsumerSource: remoteccvconsumersource.NewSource(source, ccvconsumerypes.NewQueryClient(source.GrpcConn)),
 		CcvProviderSource: remoteccvprovidersource.NewSource(source, ccvprovidertypes.NewQueryClient(source.GrpcConn)),
 		DistrSource:       remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
 		GovSource:         remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
