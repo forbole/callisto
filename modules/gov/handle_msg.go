@@ -170,7 +170,7 @@ func (m *Module) handleConsumerAdditionProposal(consAddProposal *ccvprovidertype
 
 	// Store the deposit
 	deposit := types.NewDeposit(proposal.ProposalId, msg.Proposer, msg.InitialDeposit, tx.Height)
-	return m.db.SaveDeposits([]types.Deposit{deposit})
+	return m.db.SaveCcvDeposits([]types.Deposit{deposit})
 }
 
 // handleConsumerRemovalProposal allows to properly handle a ConsumerRemovalProposal
@@ -197,7 +197,7 @@ func (m *Module) handleConsumerRemovalProposal(consRemProposal *ccvprovidertypes
 		return fmt.Errorf("error while getting proposal: %s", err)
 	}
 
-	// Store the ccv ConsumerAdditionProposal proposal
+	// Store the ccv ConsumerRemovalProposal proposal
 	ccvProposalObj := types.NewCcvProposal(
 		proposal.ProposalId,
 		consRemProposal.Title,
@@ -228,5 +228,5 @@ func (m *Module) handleConsumerRemovalProposal(consRemProposal *ccvprovidertypes
 
 	// Store the deposit
 	deposit := types.NewDeposit(proposal.ProposalId, msg.Proposer, msg.InitialDeposit, tx.Height)
-	return m.db.SaveDeposits([]types.Deposit{deposit})
+	return m.db.SaveCcvDeposits([]types.Deposit{deposit})
 }

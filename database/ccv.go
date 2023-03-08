@@ -5,7 +5,9 @@ import (
 	"fmt"
 
 	ccvconsumertypes "github.com/cosmos/interchain-security/x/ccv/consumer/types"
+	dbtypes "github.com/forbole/bdjuno/v4/database/types"
 	"github.com/forbole/bdjuno/v4/types"
+	"github.com/lib/pq"
 )
 
 // SaveCcvProviderParams saves the ccv provider params for the given height
@@ -279,6 +281,38 @@ INSERT INTO ccv_proposal(
 	_, err = db.SQL.Exec(proposalsQuery, proposalsParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing ccv proposals: %s", err)
+	}
+
+	return nil
+}
+
+// SaveCcvDeposits allows to save multiple ccv proposal deposits
+func (db *Db) SaveCcvDeposits(deposits []types.Deposit) error {
+	if len(deposits) == 0 {
+		return nil
+	}
+
+	query := `INSERT INTO ccv_proposal_deposit (proposal_id, depositor_address, amount, height) VALUES `
+	var param []interface{}
+
+	for i, deposit := range deposits {
+		vi := i * 4
+		query += fmt.Sprintf("($%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4)
+		param = append(param, deposit.ProposalID,
+			deposit.Depositor,
+			pq.Array(dbtypes.NewDbCoins(deposit.Amount)),
+			deposit.Height,
+		)
+	}
+	query = query[:len(query)-1] // Remove trailing ","
+	query += `
+ON CONFLICT ON CONSTRAINT unique_deposit DO UPDATE
+	SET amount = excluded.amount,
+		height = excluded.height
+WHERE ccv_proposal_deposit.height <= excluded.height`
+	_, err := db.SQL.Exec(query, param...)
+	if err != nil {
+		return fmt.Errorf("error while storing ccv proposal deposits: %s", err)
 	}
 
 	return nil

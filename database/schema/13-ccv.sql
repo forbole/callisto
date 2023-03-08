@@ -95,3 +95,17 @@ CREATE TABLE ccv_proposal
     height                                BIGINT     NOT NULL
 );
 CREATE INDEX ccv_proposal_proposer_address_index ON ccv_proposal (proposer_address);
+
+/* ---- CCV PROPOSAL DEPOSIT ---- */
+
+CREATE TABLE ccv_proposal_deposit
+(
+    proposal_id       INTEGER NOT NULL REFERENCES ccv_proposal (id),
+    depositor_address TEXT             REFERENCES account (address),
+    amount            COIN[],
+    height            BIGINT  NOT NULL,
+    CONSTRAINT unique_deposit UNIQUE (proposal_id, depositor_address)
+);
+CREATE INDEX ccv_proposal_id_index ON ccv_proposal (id);
+CREATE INDEX ccv_proposal_deposit_depositor_address_index ON ccv_proposal_deposit (depositor_address);
+CREATE INDEX ccv_proposal_deposit_depositor_height_index ON ccv_proposal_deposit (height);
