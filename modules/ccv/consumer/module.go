@@ -28,5 +28,5 @@ func NewModule(cdc codec.Codec, db *database.Db) *Module {
 
 // Name implements modules.Module
 func (m *Module) Name() string {
-	return "ccv_consumer"
+	return "ccvconsumer"
 }

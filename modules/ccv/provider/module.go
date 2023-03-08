@@ -31,5 +31,5 @@ func NewModule(source providersource.Source, cdc codec.Codec, db *database.Db) *
 
 // Name implements modules.Module
 func (m *Module) Name() string {
-	return "ccv_provider"
+	return "ccvprovider"
 }
