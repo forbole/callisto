@@ -7,6 +7,8 @@ import (
 	parseblocks "github.com/forbole/juno/v4/cmd/parse/blocks"
 
 	parsegenesis "github.com/forbole/juno/v4/cmd/parse/genesis"
+	parseccv "github.com/forbole/bdjuno/v4/cmd/parse/ccv"
+
 
 	parseauth "github.com/forbole/bdjuno/v4/cmd/parse/auth"
 	parsefeegrant "github.com/forbole/bdjuno/v4/cmd/parse/feegrant"
@@ -26,6 +28,7 @@ func NewParseCmd(parseCfg *parse.Config) *cobra.Command {
 	cmd.AddCommand(
 		parseauth.NewAuthCmd(parseCfg),
 		parseblocks.NewBlocksCmd(parseCfg),
+		parseccv.NewCcvCmd(parseCfg),
 		parsefeegrant.NewFeegrantCmd(parseCfg),
 		parsegenesis.NewGenesisCmd(parseCfg),
 		parsegov.NewGovCmd(parseCfg),
