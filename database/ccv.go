@@ -172,7 +172,7 @@ ON CONFLICT DO NOTHING`
 }
 
 // SaveNextFeeDistributionEstimate allows to store the next fee distribution estimate
-func (db *Db) SaveNextFeeDistributionEstimate(height int64, fee ccvconsumertypes.NextFeeDistributionEstimate) error {
+func (db *Db) SaveNextFeeDistributionEstimate(height int64, fee *ccvconsumertypes.NextFeeDistributionEstimate) error {
 	// Store the accounts
 	var accounts []types.Account
 	accounts = append(accounts, types.NewAccount(fee.ToProvider), types.NewAccount(fee.ToConsumer))
