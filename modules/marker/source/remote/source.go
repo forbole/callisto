@@ -1,11 +1,11 @@
 package remote
 
 import (
-	markertypes "github.com/MonikaCat/provenance/x/marker/types"
+	markertypes "github.com/MonCatCat/provenance/x/marker/types"
 	types "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
-	markersource "github.com/forbole/bdjuno/v3/modules/marker/source"
-	"github.com/forbole/juno/v3/node/remote"
+	markersource "github.com/forbole/bdjuno/v4/modules/marker/source"
+	"github.com/forbole/juno/v4/node/remote"
 )
 
 var (

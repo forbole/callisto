@@ -3,7 +3,7 @@ package database
 import (
 	"fmt"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 )
 
 // SaveStakingPool allows to save for the given height the given stakingtypes pool
@@ -19,7 +19,7 @@ ON CONFLICT (one_row_id) DO UPDATE
         height = excluded.height
 WHERE staking_pool.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt,
+	_, err := db.SQL.Exec(stmt,
 		pool.BondedTokens.String(),
 		pool.NotBondedTokens.String(),
 		pool.UnbondingTokens.String(),

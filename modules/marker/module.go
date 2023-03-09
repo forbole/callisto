@@ -2,10 +2,10 @@ package marker
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/forbole/juno/v3/modules"
+	"github.com/forbole/juno/v4/modules"
 
-	"github.com/forbole/bdjuno/v3/database"
-	markersource "github.com/forbole/bdjuno/v3/modules/marker/source"
+	"github.com/forbole/bdjuno/v4/database"
+	markersource "github.com/forbole/bdjuno/v4/modules/marker/source"
 )
 
 var (

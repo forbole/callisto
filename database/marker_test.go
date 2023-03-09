@@ -3,10 +3,10 @@ package database_test
 import (
 	"encoding/json"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 
-	markertypes "github.com/MonikaCat/provenance/x/marker/types"
-	dbtypes "github.com/forbole/bdjuno/v3/database/types"
+	markertypes "github.com/MonCatCat/provenance/x/marker/types"
+	dbtypes "github.com/forbole/bdjuno/v4/database/types"
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveMarkerParams() {
