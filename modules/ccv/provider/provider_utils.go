@@ -24,7 +24,6 @@ func (m *Module) UpdateAllConsumerChains(height int64) error {
 		consumerChainsList = append(consumerChainsList, types.NewCcvConsumerChain(
 			cc.ClientId,
 			"",
-			false,
 			cc.ChainId,
 			nil,
 			nil,
