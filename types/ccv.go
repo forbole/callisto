@@ -1,9 +1,6 @@
 package types
 
 import (
-	"time"
-
-	ibcclienttypes "github.com/cosmos/ibc-go/v4/modules/core/02-client/types"
 	"github.com/cosmos/ibc-go/v4/modules/light-clients/07-tendermint/types"
 	ccvconsumertypes "github.com/cosmos/interchain-security/x/ccv/consumer/types"
 	ccvprovidertypes "github.com/cosmos/interchain-security/x/ccv/provider/types"
@@ -119,101 +116,5 @@ func NewCcvProviderChain(valsetUpdateID uint64, consumerStates []ccvprovidertype
 		ValidatorsByConsumerAddr:  validatorsByConsumerAddr,
 		ConsumerAddrsToPrune:      consumerAddrsToPrune,
 		Height:                    height,
-	}
-}
-
-// --------------------------------------------------------------------------------------------------------------------
-
-// CcvProposalContent represents a single ccv proposal content
-type CcvProposalContent struct {
-	Title                             string
-	Description                       string
-	ChainID                           string
-	GenesisHash                       string
-	BinaryHash                        string
-	SpawnTime                         time.Time
-	StopTime                          time.Time
-	InitialHeight                     ibcclienttypes.Height
-	UnbondingPeriod                   time.Duration
-	CcvTimeoutPeriod                  time.Duration
-	TransferTimeoutPeriod             time.Duration
-	ConsumerRedistributionFraction    string
-	BlocksPerDistributionTransmission int64
-	HistoricalEntries                 int64
-}
-
-// NewCcvProposalContent return a new CcvProposalContent instance
-func NewCcvProposalContent(
-	title string,
-	description string,
-	chainID string,
-	genesisHash string,
-	binaryHash string,
-	spawnTime time.Time,
-	stopTime time.Time,
-	initialHeight ibcclienttypes.Height,
-	unbondingPeriod time.Duration,
-	ccvTimeoutPeriod time.Duration,
-	transferTimeoutPeriod time.Duration,
-	consumerRedistributionFraction string,
-	blocksPerDistributionTransmission int64,
-	historicalEntries int64,
-) CcvProposalContent {
-	return CcvProposalContent{
-		Title:                             title,
-		Description:                       description,
-		ChainID:                           chainID,
-		GenesisHash:                       genesisHash,
-		BinaryHash:                        binaryHash,
-		SpawnTime:                         spawnTime,
-		StopTime:                          stopTime,
-		InitialHeight:                     initialHeight,
-		UnbondingPeriod:                   unbondingPeriod,
-		CcvTimeoutPeriod:                  ccvTimeoutPeriod,
-		TransferTimeoutPeriod:             transferTimeoutPeriod,
-		ConsumerRedistributionFraction:    consumerRedistributionFraction,
-		BlocksPerDistributionTransmission: blocksPerDistributionTransmission,
-		HistoricalEntries:                 historicalEntries,
-	}
-}
-
-// CcvProposal represents a single ccv proposal
-type CcvProposal struct {
-	ProposalRoute   string
-	ProposalType    string
-	ProposalID      uint64
-	Content         CcvProposalContent
-	Status          string
-	SubmitTime      time.Time
-	DepositEndTime  time.Time
-	VotingStartTime time.Time
-	VotingEndTime   time.Time
-	Proposer        string
-}
-
-// NewCcvProposal return a new CcvProposal instance
-func NewCcvProposal(
-	proposalID uint64,
-	proposalRoute string,
-	proposalType string,
-	content CcvProposalContent,
-	status string,
-	submitTime time.Time,
-	depositEndTime time.Time,
-	votingStartTime time.Time,
-	votingEndTime time.Time,
-	proposer string,
-) CcvProposal {
-	return CcvProposal{
-		Content:         content,
-		ProposalRoute:   proposalRoute,
-		ProposalType:    proposalType,
-		ProposalID:      proposalID,
-		Status:          status,
-		SubmitTime:      submitTime,
-		DepositEndTime:  depositEndTime,
-		VotingStartTime: votingStartTime,
-		VotingEndTime:   votingEndTime,
-		Proposer:        proposer,
 	}
 }
