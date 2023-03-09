@@ -96,7 +96,7 @@ VALUES `
 	// Store the consumer chains
 	stmt = stmt[:len(stmt)-1] // Remove trailing ","
 	stmt += `
-ON CONFLICT (provider_client_id) DO UPDATE 
+ON CONFLICT ON CONSTRAINT unique_provider_id DO UPDATE
 	SET provider_channel_id = excluded.provider_channel_id,
 		chain_id = excluded.chain_id,
 		provider_client_state = excluded.provider_client_state,

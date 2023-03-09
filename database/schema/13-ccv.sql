@@ -24,7 +24,8 @@ CREATE TABLE ccv_consumer_chain
     provider_client_state          JSONB,
     provider_consensus_state       JSONB,
     initial_val_set                JSONB,
-    height                         BIGINT  NOT NULL
+    height                         BIGINT  NOT NULL,
+    CONSTRAINT unique_provider_id UNIQUE(provider_client_id, provider_channel_id) 
 );
 CREATE INDEX ccv_consumer_chain_height_index ON ccv_consumer_chain (height);
 CREATE INDEX ccv_consumer_chain_provider_client_id_index ON ccv_consumer_chain (provider_client_id);
