@@ -61,25 +61,17 @@ func (db *Db) SaveCcvConsumerChains(consumerChains []*types.CcvConsumerChain) er
 	}
 
 	stmt := `
-INSERT INTO ccv_consumer_chain (provider_client_id, provider_channel_id, new_chain, provider_client_state,
+INSERT INTO ccv_consumer_chain (provider_client_id, provider_channel_id, new_chain, chain_id, provider_client_state,
 	provider_consensus_state, initial_val_set, height) 
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-ON CONFLICT (provider_client_id) DO UPDATE 
-	SET provider_channel_id = excluded.provider_channel_id,
-		new_chain = excluded.new_chain,
-		provider_client_state = excluded.provider_client_state,
-		provider_consensus_state = excluded.provider_consensus_state,
-		initial_val_set = excluded.initial_val_set,
-		height = excluded.height
-WHERE ccv_consumer_chain.height <= excluded.height`
+VALUES `
 	var consumerChainsList []interface{}
 
 	for i, consumerChain := range consumerChains {
 
 		// Prepare the consumer chains query
-		vi := i * 6
-		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d),",
-			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6)
+		vi := i * 8
+		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
+			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8)
 
 		providerClientState, err := json.Marshal(&consumerChain.ProviderClientState)
 		if err != nil {
@@ -96,13 +88,23 @@ WHERE ccv_consumer_chain.height <= excluded.height`
 
 		consumerChainsList = append(consumerChainsList,
 			consumerChain.ProviderClientID, consumerChain.ProviderChannelID,
-			consumerChain.NewChain, string(providerClientState), string(providerConsensusState),
+			consumerChain.NewChain, consumerChain.ChainID, string(providerClientState), string(providerConsensusState),
 			string(initialValSet), consumerChain.Height,
 		)
 	}
 
 	// Store the consumer chains
 	stmt = stmt[:len(stmt)-1] // Remove trailing ","
+	stmt += `
+ON CONFLICT (provider_client_id) DO UPDATE 
+	SET provider_channel_id = excluded.provider_channel_id,
+		new_chain = excluded.new_chain,
+		chain_id = excluded.chain_id,
+		provider_client_state = excluded.provider_client_state,
+		provider_consensus_state = excluded.provider_consensus_state,
+		initial_val_set = excluded.initial_val_set,
+		height = excluded.height
+WHERE ccv_consumer_chain.height <= excluded.height`
 	_, err := db.SQL.Exec(stmt, consumerChainsList...)
 	if err != nil {
 		return fmt.Errorf("error while storing ccv consumer chain state info: %s", err)

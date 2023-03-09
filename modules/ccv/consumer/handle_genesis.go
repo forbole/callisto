@@ -34,6 +34,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 		genState.ProviderClientId,
 		genState.ProviderChannelId,
 		genState.NewChain,
+		genState.ProviderClientState.ChainId,
 		genState.ProviderClientState,
 		genState.ProviderConsensusState,
 		genState.InitialValSet,

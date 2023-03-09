@@ -43,6 +43,7 @@ type CcvConsumerChain struct {
 	ProviderClientID       string
 	ProviderChannelID      string
 	NewChain               bool
+	ChainID                string
 	ProviderClientState    *types.ClientState
 	ProviderConsensusState *types.ConsensusState
 	InitialValSet          []abcitypes.ValidatorUpdate
@@ -50,13 +51,14 @@ type CcvConsumerChain struct {
 }
 
 // NewCcvConsumerChain allows to build a new CcvConsumerChain instance
-func NewCcvConsumerChain(providerClientID, providerChannelID string, newChain bool,
+func NewCcvConsumerChain(providerClientID, providerChannelID string, newChain bool, chainID string,
 	providerClientState *types.ClientState, providerConsensusState *types.ConsensusState,
 	initialValSet []abcitypes.ValidatorUpdate, height int64) *CcvConsumerChain {
 	return &CcvConsumerChain{
 		ProviderClientID:       providerClientID,
 		ProviderChannelID:      providerChannelID,
 		NewChain:               newChain,
+		ChainID:                chainID,
 		ProviderClientState:    providerClientState,
 		ProviderConsensusState: providerConsensusState,
 		InitialValSet:          initialValSet,

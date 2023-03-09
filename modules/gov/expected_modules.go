@@ -11,6 +11,10 @@ type AuthModule interface {
 	RefreshAccounts(height int64, addresses []string) error
 }
 
+type CcvProviderModule interface {
+	UpdateAllConsumerChains(height int64) error
+}
+
 type DistrModule interface {
 	UpdateParams(height int64) error
 }

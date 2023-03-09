@@ -17,6 +17,8 @@ import (
 
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules/distribution"
+
+	ccvprovider "github.com/forbole/bdjuno/v4/modules/ccv/provider"
 	"github.com/forbole/bdjuno/v4/modules/gov"
 	"github.com/forbole/bdjuno/v4/modules/mint"
 	"github.com/forbole/bdjuno/v4/modules/slashing"
@@ -49,13 +51,14 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			db := database.Cast(parseCtx.Database)
 
 			// Build expected modules of gov modules for handleParamChangeProposal
+			ccvProviderModule := ccvprovider.NewModule(sources.CcvProviderSource, parseCtx.EncodingConfig.Marshaler, db)
 			distrModule := distribution.NewModule(sources.DistrSource, parseCtx.EncodingConfig.Marshaler, db)
 			mintModule := mint.NewModule(sources.MintSource, parseCtx.EncodingConfig.Marshaler, db)
 			slashingModule := slashing.NewModule(sources.SlashingSource, parseCtx.EncodingConfig.Marshaler, db)
 			stakingModule := staking.NewModule(sources.StakingSource, slashingModule, parseCtx.EncodingConfig.Marshaler, db)
 
 			// Build the gov module
-			govModule := gov.NewModule(sources.GovSource, nil, distrModule, mintModule, slashingModule, stakingModule, parseCtx.EncodingConfig.Marshaler, db)
+			govModule := gov.NewModule(sources.GovSource, nil, ccvProviderModule, distrModule, mintModule, slashingModule, stakingModule, parseCtx.EncodingConfig.Marshaler, db)
 
 			err = refreshProposalDetails(parseCtx, proposalID, govModule)
 			if err != nil {

@@ -15,6 +15,7 @@ import (
 	"github.com/forbole/bdjuno/v4/types"
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+	ccvprovidertypes "github.com/cosmos/interchain-security/x/ccv/provider/types"
 
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 )
@@ -34,6 +35,11 @@ func (m *Module) UpdateProposal(height int64, id uint64) error {
 	err = m.handleParamChangeProposal(height, proposal)
 	if err != nil {
 		return fmt.Errorf("error while updating params from ParamChangeProposal: %s", err)
+	}
+
+	err = m.handleConsumerAdditionProposal(height, proposal)
+	if err != nil {
+		return fmt.Errorf("error while updating consumer chains from ConsumerAdditionProposal: %s", err)
 	}
 
 	err = m.updateProposalStatus(proposal)
@@ -139,6 +145,33 @@ func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Propo
 			}
 		}
 	}
+	return nil
+}
+
+// handleConsumerAdditionProposal updates consumer chains if a ConsumerAdditionProposal has passed
+func (m *Module) handleConsumerAdditionProposal(height int64, proposal govtypes.Proposal) error {
+	if proposal.Status != govtypes.StatusPassed {
+		// If the status of ConsumerAdditionProposal is not passed, do nothing
+		return nil
+	}
+
+	var content govtypes.Content
+	err := m.db.EncodingConfig.Marshaler.UnpackAny(proposal.Content, &content)
+	if err != nil {
+		return fmt.Errorf("error while handling ConsumerAdditionProposal: %s", err)
+	}
+
+	_, ok := content.(*ccvprovidertypes.ConsumerAdditionProposal)
+	if !ok {
+		return nil
+	}
+
+	// Update all latest consumer chains
+	err = m.ccvProviderModule.UpdateAllConsumerChains(height)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
