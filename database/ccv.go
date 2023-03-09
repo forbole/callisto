@@ -5,9 +5,7 @@ import (
 	"fmt"
 
 	ccvconsumertypes "github.com/cosmos/interchain-security/x/ccv/consumer/types"
-	dbtypes "github.com/forbole/bdjuno/v4/database/types"
 	"github.com/forbole/bdjuno/v4/types"
-	"github.com/lib/pq"
 )
 
 // SaveCcvProviderParams saves the ccv provider params for the given height
@@ -214,7 +212,7 @@ WHERE ccv_fee_distribution.height <= excluded.height`
 	return nil
 }
 
-// SaveCcvProposals allows to save ccv proposals for the given height
+// SaveProposals allows to save for the given height the given total amount of coins
 func (db *Db) SaveCcvProposals(height int64, proposals []types.CcvProposal) error {
 	if len(proposals) == 0 {
 		return nil
@@ -223,49 +221,39 @@ func (db *Db) SaveCcvProposals(height int64, proposals []types.CcvProposal) erro
 	var accounts []types.Account
 
 	proposalsQuery := `
-INSERT INTO ccv_proposal(
-	id, title, description, chain_id, genesis_hash, binary_hash, proposal_type, proposal_route, 
-    spawn_time, stop_time, initial_height, unbonding_period, ccv_timeout_period, transfer_timeout_period, 
-	consumer_redistribution_fraction, blocks_per_distribution_transmission, historical_entries, status, 
-	submit_time, proposer_address, height
+INSERT INTO proposal(
+	id, title, description, content, proposer_address, proposal_route, proposal_type, status, 
+    submit_time, deposit_end_time, voting_start_time, voting_end_time
 ) VALUES`
 	var proposalsParams []interface{}
 
 	for i, proposal := range proposals {
 		// Prepare the account query
 		accounts = append(accounts, types.NewAccount(proposal.Proposer))
-		initialHeight, err := json.Marshal(&proposal.InitialHeight)
+
+		// Prepare the proposal query
+		vi := i * 12
+		proposalsQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
+			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11, vi+12)
+
+		contentBz, err := json.Marshal(&proposal.Content)
 		if err != nil {
 			return err
 		}
-		// Prepare the proposal query
-		vi := i * 21
-		proposalsQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
-			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11, vi+12, vi+13,
-			vi+14, vi+15, vi+16, vi+17, vi+18, vi+19, vi+20, vi+21)
 
 		proposalsParams = append(proposalsParams,
 			proposal.ProposalID,
-			proposal.Title,
-			proposal.Description,
-			proposal.ChainID,
-			proposal.GenesisHash,
-			proposal.BinaryHash,
-			proposal.ProposalType,
+			proposal.Content.Title,
+			proposal.Content.Description,
+			string(contentBz),
+			proposal.Proposer,
 			proposal.ProposalRoute,
-			proposal.SpawnTime,
-			proposal.StopTime,
-			string(initialHeight),
-			proposal.UnbondingPeriod,
-			proposal.CcvTimeoutPeriod,
-			proposal.TransferTimeoutPeriod,
-			proposal.ConsumerRedistributionFraction,
-			proposal.BlocksPerDistributionTransmission,
-			proposal.HistoricalEntries,
+			proposal.ProposalType,
 			proposal.Status,
 			proposal.SubmitTime,
-			proposal.Proposer,
-			height,
+			proposal.DepositEndTime,
+			proposal.VotingStartTime,
+			proposal.VotingEndTime,
 		)
 	}
 
@@ -281,38 +269,6 @@ INSERT INTO ccv_proposal(
 	_, err = db.SQL.Exec(proposalsQuery, proposalsParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing ccv proposals: %s", err)
-	}
-
-	return nil
-}
-
-// SaveCcvDeposits allows to save multiple ccv proposal deposits
-func (db *Db) SaveCcvDeposits(deposits []types.Deposit) error {
-	if len(deposits) == 0 {
-		return nil
-	}
-
-	query := `INSERT INTO ccv_proposal_deposit (proposal_id, depositor_address, amount, height) VALUES `
-	var param []interface{}
-
-	for i, deposit := range deposits {
-		vi := i * 4
-		query += fmt.Sprintf("($%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4)
-		param = append(param, deposit.ProposalID,
-			deposit.Depositor,
-			pq.Array(dbtypes.NewDbCoins(deposit.Amount)),
-			deposit.Height,
-		)
-	}
-	query = query[:len(query)-1] // Remove trailing ","
-	query += `
-ON CONFLICT ON CONSTRAINT unique_deposit DO UPDATE
-	SET amount = excluded.amount,
-		height = excluded.height
-WHERE ccv_proposal_deposit.height <= excluded.height`
-	_, err := db.SQL.Exec(query, param...)
-	if err != nil {
-		return fmt.Errorf("error while storing ccv proposal deposits: %s", err)
 	}
 
 	return nil

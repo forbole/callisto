@@ -28,8 +28,6 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 			return m.handleConsumerAdditionProposal(c, tx, 0, cosmosMsg)
 		case *ccvprovidertypes.ConsumerRemovalProposal:
 			return m.handleConsumerRemovalProposal(c, tx, 0, cosmosMsg)
-		// case *ccvprovidertypes.EquivocationProposal:
-		// 	return k.HandleEquivocationProposal(ctx, c)
 		default:
 			return m.handleMsgSubmitProposal(tx, index, cosmosMsg)
 		}
@@ -140,26 +138,21 @@ func (m *Module) handleConsumerAdditionProposal(consAddProposal *ccvprovidertype
 	}
 
 	// Store the ccv ConsumerAdditionProposal proposal
+	ccvProposalContent := types.NewCcvProposalContent(consAddProposal.Title, consAddProposal.Description, consAddProposal.ChainId, string(consAddProposal.GenesisHash), string(consAddProposal.BinaryHash),
+		consAddProposal.SpawnTime, time.Time{}, consAddProposal.InitialHeight, consAddProposal.UnbondingPeriod, consAddProposal.CcvTimeoutPeriod,
+		consAddProposal.TransferTimeoutPeriod, consAddProposal.ConsumerRedistributionFraction, consAddProposal.BlocksPerDistributionTransmission,
+		consAddProposal.HistoricalEntries)
+
 	ccvProposalObj := types.NewCcvProposal(
 		proposal.ProposalId,
-		consAddProposal.Title,
-		consAddProposal.Description,
-		consAddProposal.ChainId,
-		string(consAddProposal.GenesisHash),
-		string(consAddProposal.BinaryHash),
-		consAddProposal.ProposalType(),
 		consAddProposal.ProposalRoute(),
-		consAddProposal.SpawnTime,
-		time.Time{},
-		consAddProposal.InitialHeight,
-		consAddProposal.UnbondingPeriod,
-		consAddProposal.CcvTimeoutPeriod,
-		consAddProposal.TransferTimeoutPeriod,
-		consAddProposal.ConsumerRedistributionFraction,
-		consAddProposal.BlocksPerDistributionTransmission,
-		consAddProposal.HistoricalEntries,
+		consAddProposal.ProposalType(),
+		ccvProposalContent,
 		proposal.Status.String(),
-		tx.Timestamp,
+		proposal.SubmitTime,
+		proposal.DepositEndTime,
+		proposal.VotingStartTime,
+		proposal.VotingEndTime,
 		msg.Proposer,
 	)
 
@@ -170,7 +163,7 @@ func (m *Module) handleConsumerAdditionProposal(consAddProposal *ccvprovidertype
 
 	// Store the deposit
 	deposit := types.NewDeposit(proposal.ProposalId, msg.Proposer, msg.InitialDeposit, tx.Height)
-	return m.db.SaveCcvDeposits([]types.Deposit{deposit})
+	return m.db.SaveDeposits([]types.Deposit{deposit})
 }
 
 // handleConsumerRemovalProposal allows to properly handle a ConsumerRemovalProposal
@@ -198,26 +191,20 @@ func (m *Module) handleConsumerRemovalProposal(consRemProposal *ccvprovidertypes
 	}
 
 	// Store the ccv ConsumerRemovalProposal proposal
+	ccvProposalContent := types.NewCcvProposalContent(consRemProposal.Title, consRemProposal.Description,
+		consRemProposal.ChainId, "", "", time.Time{}, consRemProposal.StopTime, ibcclienttypes.ZeroHeight(),
+		0, 0, 0, "", 0, 0)
+
 	ccvProposalObj := types.NewCcvProposal(
 		proposal.ProposalId,
-		consRemProposal.Title,
-		consRemProposal.Description,
-		consRemProposal.ChainId,
-		"",
-		"",
-		consRemProposal.ProposalType(),
 		consRemProposal.ProposalRoute(),
-		time.Time{},
-		consRemProposal.StopTime,
-		ibcclienttypes.ZeroHeight(),
-		0,
-		0,
-		0,
-		"",
-		0,
-		0,
+		consRemProposal.ProposalType(),
+		ccvProposalContent,
 		proposal.Status.String(),
-		tx.Timestamp,
+		proposal.SubmitTime,
+		proposal.DepositEndTime,
+		proposal.VotingStartTime,
+		proposal.VotingEndTime,
 		msg.Proposer,
 	)
 
@@ -228,5 +215,5 @@ func (m *Module) handleConsumerRemovalProposal(consRemProposal *ccvprovidertypes
 
 	// Store the deposit
 	deposit := types.NewDeposit(proposal.ProposalId, msg.Proposer, msg.InitialDeposit, tx.Height)
-	return m.db.SaveCcvDeposits([]types.Deposit{deposit})
+	return m.db.SaveDeposits([]types.Deposit{deposit})
 }

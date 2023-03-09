@@ -124,16 +124,13 @@ func NewCcvProviderChain(valsetUpdateID uint64, consumerStates []ccvprovidertype
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// CcvProposal represents a single ccv proposal
-type CcvProposal struct {
-	ProposalID                        uint64
+// CcvProposalContent represents a single ccv proposal content
+type CcvProposalContent struct {
 	Title                             string
 	Description                       string
 	ChainID                           string
 	GenesisHash                       string
 	BinaryHash                        string
-	ProposalType                      string
-	ProposalRoute                     string
 	SpawnTime                         time.Time
 	StopTime                          time.Time
 	InitialHeight                     ibcclienttypes.Height
@@ -143,21 +140,15 @@ type CcvProposal struct {
 	ConsumerRedistributionFraction    string
 	BlocksPerDistributionTransmission int64
 	HistoricalEntries                 int64
-	Status                            string
-	SubmitTime                        string
-	Proposer                          string
 }
 
-// NewCcvProposal return a new CcvProposal instance
-func NewCcvProposal(
-	proposalID uint64,
+// NewCcvProposalContent return a new CcvProposalContent instance
+func NewCcvProposalContent(
 	title string,
 	description string,
 	chainID string,
 	genesisHash string,
 	binaryHash string,
-	proposalType string,
-	proposalRoute string,
 	spawnTime time.Time,
 	stopTime time.Time,
 	initialHeight ibcclienttypes.Height,
@@ -167,19 +158,13 @@ func NewCcvProposal(
 	consumerRedistributionFraction string,
 	blocksPerDistributionTransmission int64,
 	historicalEntries int64,
-	status string,
-	submitTime string,
-	proposer string,
-) CcvProposal {
-	return CcvProposal{
-		ProposalID:                        proposalID,
+) CcvProposalContent {
+	return CcvProposalContent{
 		Title:                             title,
 		Description:                       description,
 		ChainID:                           chainID,
 		GenesisHash:                       genesisHash,
 		BinaryHash:                        binaryHash,
-		ProposalType:                      proposalType,
-		ProposalRoute:                     proposalRoute,
 		SpawnTime:                         spawnTime,
 		StopTime:                          stopTime,
 		InitialHeight:                     initialHeight,
@@ -189,8 +174,46 @@ func NewCcvProposal(
 		ConsumerRedistributionFraction:    consumerRedistributionFraction,
 		BlocksPerDistributionTransmission: blocksPerDistributionTransmission,
 		HistoricalEntries:                 historicalEntries,
-		Status:                            status,
-		SubmitTime:                        submitTime,
-		Proposer:                          proposer,
+	}
+}
+
+// CcvProposal represents a single ccv proposal
+type CcvProposal struct {
+	ProposalRoute   string
+	ProposalType    string
+	ProposalID      uint64
+	Content         CcvProposalContent
+	Status          string
+	SubmitTime      time.Time
+	DepositEndTime  time.Time
+	VotingStartTime time.Time
+	VotingEndTime   time.Time
+	Proposer        string
+}
+
+// NewCcvProposal return a new CcvProposal instance
+func NewCcvProposal(
+	proposalID uint64,
+	proposalRoute string,
+	proposalType string,
+	content CcvProposalContent,
+	status string,
+	submitTime time.Time,
+	depositEndTime time.Time,
+	votingStartTime time.Time,
+	votingEndTime time.Time,
+	proposer string,
+) CcvProposal {
+	return CcvProposal{
+		Content:         content,
+		ProposalRoute:   proposalRoute,
+		ProposalType:    proposalType,
+		ProposalID:      proposalID,
+		Status:          status,
+		SubmitTime:      submitTime,
+		DepositEndTime:  depositEndTime,
+		VotingStartTime: votingStartTime,
+		VotingEndTime:   votingEndTime,
+		Proposer:        proposer,
 	}
 }
