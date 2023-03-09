@@ -29,8 +29,8 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 		return fmt.Errorf("error while storing genesis ccv consumer params: %s", err)
 	}
 
-	// Save the consumer chain info
-	err = m.db.SaveCcvConsumerChain(types.NewCcvConsumerChain(
+	var consumerChains []*types.CcvConsumerChain
+	consumerChains = append(consumerChains, types.NewCcvConsumerChain(
 		genState.ProviderClientId,
 		genState.ProviderChannelId,
 		genState.NewChain,
@@ -43,6 +43,9 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 		genState.PendingConsumerPackets,
 		genState.LastTransmissionBlockHeight,
 		doc.InitialHeight))
+
+	// Save the consumer chain info
+	err = m.db.SaveCcvConsumerChains(consumerChains)
 
 	if err != nil {
 		return fmt.Errorf("error while storing genesis ccv consumer chain info: %s", err)
