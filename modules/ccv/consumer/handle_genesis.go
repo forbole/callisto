@@ -33,7 +33,6 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	consumerChains = append(consumerChains, types.NewCcvConsumerChain(
 		genState.ProviderClientId,
 		genState.ProviderChannelId,
-		genState.NewChain,
 		genState.ProviderClientState.ChainId,
 		genState.ProviderClientState,
 		genState.ProviderConsensusState,

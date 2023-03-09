@@ -42,7 +42,6 @@ func NewCcvConsumerParams(params ccvconsumertypes.Params, height int64) *CcvCons
 type CcvConsumerChain struct {
 	ProviderClientID       string
 	ProviderChannelID      string
-	NewChain               bool
 	ChainID                string
 	ProviderClientState    *types.ClientState
 	ProviderConsensusState *types.ConsensusState
@@ -51,13 +50,12 @@ type CcvConsumerChain struct {
 }
 
 // NewCcvConsumerChain allows to build a new CcvConsumerChain instance
-func NewCcvConsumerChain(providerClientID, providerChannelID string, newChain bool, chainID string,
+func NewCcvConsumerChain(providerClientID, providerChannelID string, chainID string,
 	providerClientState *types.ClientState, providerConsensusState *types.ConsensusState,
 	initialValSet []abcitypes.ValidatorUpdate, height int64) *CcvConsumerChain {
 	return &CcvConsumerChain{
 		ProviderClientID:       providerClientID,
 		ProviderChannelID:      providerChannelID,
-		NewChain:               newChain,
 		ChainID:                chainID,
 		ProviderClientState:    providerClientState,
 		ProviderConsensusState: providerConsensusState,

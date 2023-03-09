@@ -20,7 +20,6 @@ CREATE TABLE ccv_consumer_chain
 (
     provider_client_id             TEXT UNIQUE NOT NULL,
     provider_channel_id            TEXT,
-    new_chain                      BOOLEAN NOT NULL DEFAULT FALSE,
     chain_id                       TEXT,
     provider_client_state          JSONB,
     provider_consensus_state       JSONB,

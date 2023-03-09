@@ -61,7 +61,7 @@ func (db *Db) SaveCcvConsumerChains(consumerChains []*types.CcvConsumerChain) er
 	}
 
 	stmt := `
-INSERT INTO ccv_consumer_chain (provider_client_id, provider_channel_id, new_chain, chain_id, provider_client_state,
+INSERT INTO ccv_consumer_chain (provider_client_id, provider_channel_id, chain_id, provider_client_state,
 	provider_consensus_state, initial_val_set, height) 
 VALUES `
 	var consumerChainsList []interface{}
@@ -69,9 +69,9 @@ VALUES `
 	for i, consumerChain := range consumerChains {
 
 		// Prepare the consumer chains query
-		vi := i * 8
-		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
-			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8)
+		vi := i * 7
+		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d),",
+			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7)
 
 		providerClientState, err := json.Marshal(&consumerChain.ProviderClientState)
 		if err != nil {
@@ -88,7 +88,7 @@ VALUES `
 
 		consumerChainsList = append(consumerChainsList,
 			consumerChain.ProviderClientID, consumerChain.ProviderChannelID,
-			consumerChain.NewChain, consumerChain.ChainID, string(providerClientState), string(providerConsensusState),
+			consumerChain.ChainID, string(providerClientState), string(providerConsensusState),
 			string(initialValSet), consumerChain.Height,
 		)
 	}
@@ -98,7 +98,6 @@ VALUES `
 	stmt += `
 ON CONFLICT (provider_client_id) DO UPDATE 
 	SET provider_channel_id = excluded.provider_channel_id,
-		new_chain = excluded.new_chain,
 		chain_id = excluded.chain_id,
 		provider_client_state = excluded.provider_client_state,
 		provider_consensus_state = excluded.provider_consensus_state,
