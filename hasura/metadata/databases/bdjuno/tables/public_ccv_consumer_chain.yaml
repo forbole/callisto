@@ -7,15 +7,10 @@ select_permissions:
     columns:
     - provider_client_id
     - provider_channel_id
-    - new_chain
+    - chain_id
     - provider_client_state
     - provider_consensus_state
-    - maturing_packets
     - initial_val_set
-    - height_to_valset_update_id
-    - outstanding_downtime_slashing
-    - pending_consumer_packets
-    - last_transmission_block_height
     - height
     filter: {}
   role: anonymous
