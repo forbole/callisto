@@ -36,12 +36,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 		genState.NewChain,
 		genState.ProviderClientState,
 		genState.ProviderConsensusState,
-		genState.MaturingPackets,
 		genState.InitialValSet,
-		genState.HeightToValsetUpdateId,
-		genState.OutstandingDowntimeSlashing,
-		genState.PendingConsumerPackets,
-		genState.LastTransmissionBlockHeight,
 		doc.InitialHeight))
 
 	// Save the consumer chain info

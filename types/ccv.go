@@ -40,42 +40,27 @@ func NewCcvConsumerParams(params ccvconsumertypes.Params, height int64) *CcvCons
 
 // CcvConsumerChain represents ccv consumer chain state at a given height
 type CcvConsumerChain struct {
-	ProviderClientID            string
-	ProviderChannelID           string
-	NewChain                    bool
-	ProviderClientState         *types.ClientState
-	ProviderConsensusState      *types.ConsensusState
-	MaturingPackets             []ccvconsumertypes.MaturingVSCPacket
-	InitialValSet               []abcitypes.ValidatorUpdate
-	HeightToValsetUpdateID      []ccvconsumertypes.HeightToValsetUpdateID
-	OutstandingDowntimeSlashing []ccvconsumertypes.OutstandingDowntime
-	PendingConsumerPackets      ccvtypes.ConsumerPacketDataList
-	LastTransmissionBlockHeight ccvconsumertypes.LastTransmissionBlockHeight
-	Height                      int64
+	ProviderClientID       string
+	ProviderChannelID      string
+	NewChain               bool
+	ProviderClientState    *types.ClientState
+	ProviderConsensusState *types.ConsensusState
+	InitialValSet          []abcitypes.ValidatorUpdate
+	Height                 int64
 }
 
 // NewCcvConsumerChain allows to build a new CcvConsumerChain instance
 func NewCcvConsumerChain(providerClientID, providerChannelID string, newChain bool,
 	providerClientState *types.ClientState, providerConsensusState *types.ConsensusState,
-	maturingPackets []ccvconsumertypes.MaturingVSCPacket, initialValSet []abcitypes.ValidatorUpdate,
-	heightToValsetUpdateID []ccvconsumertypes.HeightToValsetUpdateID,
-	outstandingDowntimeSlashing []ccvconsumertypes.OutstandingDowntime,
-	pendingConsumerPackets ccvtypes.ConsumerPacketDataList,
-	lastTransmissionBlockHeight ccvconsumertypes.LastTransmissionBlockHeight,
-	height int64) *CcvConsumerChain {
+	initialValSet []abcitypes.ValidatorUpdate, height int64) *CcvConsumerChain {
 	return &CcvConsumerChain{
-		ProviderClientID:            providerClientID,
-		ProviderChannelID:           providerChannelID,
-		NewChain:                    newChain,
-		ProviderClientState:         providerClientState,
-		ProviderConsensusState:      providerConsensusState,
-		MaturingPackets:             maturingPackets,
-		InitialValSet:               initialValSet,
-		HeightToValsetUpdateID:      heightToValsetUpdateID,
-		OutstandingDowntimeSlashing: outstandingDowntimeSlashing,
-		PendingConsumerPackets:      pendingConsumerPackets,
-		LastTransmissionBlockHeight: lastTransmissionBlockHeight,
-		Height:                      height,
+		ProviderClientID:       providerClientID,
+		ProviderChannelID:      providerChannelID,
+		NewChain:               newChain,
+		ProviderClientState:    providerClientState,
+		ProviderConsensusState: providerConsensusState,
+		InitialValSet:          initialValSet,
+		Height:                 height,
 	}
 }
 

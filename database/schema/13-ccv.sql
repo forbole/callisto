@@ -23,12 +23,7 @@ CREATE TABLE ccv_consumer_chain
     new_chain                      BOOLEAN NOT NULL DEFAULT TRUE,
     provider_client_state          JSONB,
     provider_consensus_state       JSONB,
-    maturing_packets               JSONB,
     initial_val_set                JSONB,
-    height_to_valset_update_id     JSONB,
-    outstanding_downtime_slashing  JSONB,
-    pending_consumer_packets       JSONB,
-    last_transmission_block_height JSONB,
     height                         BIGINT  NOT NULL
 );
 CREATE INDEX ccv_consumer_chain_height_index ON ccv_consumer_chain (height);
