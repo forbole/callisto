@@ -137,13 +137,9 @@ require (
 )
 
 replace (
-	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
-	github.com/btcsuite/btcd => github.com/btcsuite/btcd v0.22.2 // indirect
-	github.com/confio/ics23/go => github.com/confio/ics23/go v0.9.0
+	github.com/btcsuite/btcd => github.com/btcsuite/btcd v0.22.2 //indirect
 	github.com/cosmos/cosmos-sdk => github.com/cosmos/cosmos-sdk v0.45.13-ics
-	github.com/cosmos/ibc-go/v4 => github.com/cosmos/ibc-go/v4 v4.2.0
-	github.com/dgrijalva/jwt-go => github.com/golang-jwt/jwt/v4 v4.4.2
-	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.8.1
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
+	github.com/stretchr/testify => github.com/stretchr/testify v1.7.1
 	github.com/tendermint/tendermint => github.com/informalsystems/tendermint v0.34.26
 )
