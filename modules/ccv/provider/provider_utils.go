@@ -34,3 +34,11 @@ func (m *Module) UpdateAllConsumerChains(height int64) error {
 
 	return m.db.SaveCcvConsumerChains(consumerChainsList)
 }
+
+// RemoveConsumerChain removes consumer chain from database
+func (m *Module) RemoveConsumerChain(height int64, chainID string) error {
+	log.Debug().Str("module", "ccvprovider").Int64("height", height).
+		Msg("removing consumer chain from database")
+
+	return m.db.DeleteConsumerChainFromDB(height, chainID)
+}

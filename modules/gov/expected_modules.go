@@ -13,6 +13,7 @@ type AuthModule interface {
 
 type CcvProviderModule interface {
 	UpdateAllConsumerChains(height int64) error
+	RemoveConsumerChain(height int64, chainID string) error
 }
 
 type DistrModule interface {

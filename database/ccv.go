@@ -203,3 +203,8 @@ WHERE ccv_fee_distribution.height <= excluded.height`
 
 	return nil
 }
+
+func (db *Db) DeleteConsumerChainFromDB(height int64, chainID string) error {
+	_, err := db.SQL.Exec(`DELETE FROM ccv_consumer_chain WHERE chain_id = $1`, chainID)
+	return fmt.Errorf("error while removing consumer chain with chain_id %s: %s", chainID, err)
+}
