@@ -42,6 +42,11 @@ func (m *Module) UpdateProposal(height int64, id uint64) error {
 		return fmt.Errorf("error while updating consumer chains from ConsumerAdditionProposal: %s", err)
 	}
 
+	err = m.handleConsumerRemovalProposal(height, proposal, id)
+	if err != nil {
+		return fmt.Errorf("error while updating consumer chains from ConsumerRemovalProposal: %s", err)
+	}
+
 	err = m.updateProposalStatus(proposal)
 	if err != nil {
 		return fmt.Errorf("error while updating proposal status: %s", err)
@@ -168,6 +173,33 @@ func (m *Module) handleConsumerAdditionProposal(height int64, proposal govtypes.
 
 	// Update all latest consumer chains
 	err = m.ccvProviderModule.UpdateAllConsumerChains(height)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// handleConsumerRemovalProposal removes givev consumer chain from db if a ConsumerRemovalProposal has passed
+func (m *Module) handleConsumerRemovalProposal(height int64, proposal govtypes.Proposal, id uint64) error {
+	if proposal.Status != govtypes.StatusPassed {
+		// If the status of ConsumerRemovalProposal is not passed, do nothing
+		return nil
+	}
+
+	var content govtypes.Content
+	err := m.db.EncodingConfig.Marshaler.UnpackAny(proposal.Content, &content)
+	if err != nil {
+		return fmt.Errorf("error while handling ConsumerRemovalProposal: %s", err)
+	}
+
+	consumerRemowalProposal, ok := content.(*ccvprovidertypes.ConsumerRemovalProposal)
+	if !ok {
+		return nil
+	}
+
+	// Remove consumer chain from database as per proposal
+	err = m.ccvProviderModule.RemoveConsumerChain(height, consumerRemowalProposal.ChainId)
 	if err != nil {
 		return err
 	}
