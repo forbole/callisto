@@ -14,9 +14,10 @@ import (
 
 	"google.golang.org/grpc/codes"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+	ccvprovidertypes "github.com/cosmos/interchain-security/x/ccv/provider/types"
 
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 )
@@ -308,6 +309,21 @@ func (m *Module) handlePassedProposal(proposal govtypes.Proposal, height int64) 
 		if err != nil {
 			return fmt.Errorf("error while deleting software upgrade plan: %s", err)
 		}
+
+	case *ccvprovidertypes.ConsumerAdditionProposal:
+		// Update all consumer chains while ConsumerAdditionProposal passed
+		err = m.ccvProviderModule.UpdateAllConsumerChains(height)
+		if err != nil {
+			return err
+		}
+
+	case *ccvprovidertypes.ConsumerRemovalProposal:
+		// Remove consumer chain from database while ConsumerRemovalProposal passed
+		err = m.ccvProviderModule.RemoveConsumerChain(height, p.ChainId)
+		if err != nil {
+			return err
+		}
 	}
+
 	return nil
 }

@@ -1,0 +1,16 @@
+table:
+  name: ccv_consumer_chain
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - provider_client_id
+    - provider_channel_id
+    - chain_id
+    - provider_client_state
+    - provider_consensus_state
+    - initial_val_set
+    - height
+    filter: {}
+  role: anonymous

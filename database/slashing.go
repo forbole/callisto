@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 )
 
 // SaveValidatorsSigningInfos saves the given infos inside the database
@@ -33,7 +33,6 @@ VALUES `
 
 		counter++
 	}
-
 	stmt = stmt[:len(stmt)-1] // Remove trailing ","
 	stmt += `
 ON CONFLICT (validator_address) DO UPDATE 

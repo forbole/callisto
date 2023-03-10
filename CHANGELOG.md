@@ -1,6 +1,9 @@
 ## Unreleased
 ### Changes
 
+#### CCV Module
+- ([\#537](https://github.com/forbole/bdjuno/pull/537)) Upgrade gaia to v9.0.0 and adapt ICS upgrade 
+
 #### CI
 - ([\#508](https://github.com/forbole/bdjuno/pull/508)) Upgrade workflow golangci version to v1.50.1
 

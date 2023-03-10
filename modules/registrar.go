@@ -1,13 +1,13 @@
 package modules
 
 import (
-	"github.com/forbole/bdjuno/v3/modules/actions"
-	"github.com/forbole/bdjuno/v3/modules/types"
+	"github.com/forbole/bdjuno/v4/modules/actions"
+	"github.com/forbole/bdjuno/v4/modules/types"
 
 	"github.com/forbole/juno/v4/modules/pruning"
 	"github.com/forbole/juno/v4/modules/telemetry"
 
-	"github.com/forbole/bdjuno/v3/modules/slashing"
+	"github.com/forbole/bdjuno/v4/modules/slashing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -15,22 +15,24 @@ import (
 	"github.com/forbole/juno/v4/modules/messages"
 	"github.com/forbole/juno/v4/modules/registrar"
 
-	"github.com/forbole/bdjuno/v3/utils"
+	"github.com/forbole/bdjuno/v4/utils"
 
-	"github.com/forbole/bdjuno/v3/database"
-	"github.com/forbole/bdjuno/v3/modules/auth"
-	"github.com/forbole/bdjuno/v3/modules/bank"
-	"github.com/forbole/bdjuno/v3/modules/consensus"
-	"github.com/forbole/bdjuno/v3/modules/distribution"
-	"github.com/forbole/bdjuno/v3/modules/feegrant"
+	"github.com/forbole/bdjuno/v4/database"
+	"github.com/forbole/bdjuno/v4/modules/auth"
+	"github.com/forbole/bdjuno/v4/modules/bank"
+	ccvconsumer "github.com/forbole/bdjuno/v4/modules/ccv/consumer"
+	ccvprovider "github.com/forbole/bdjuno/v4/modules/ccv/provider"
+	"github.com/forbole/bdjuno/v4/modules/consensus"
+	"github.com/forbole/bdjuno/v4/modules/distribution"
+	"github.com/forbole/bdjuno/v4/modules/feegrant"
 
-	dailyrefetch "github.com/forbole/bdjuno/v3/modules/daily_refetch"
-	"github.com/forbole/bdjuno/v3/modules/gov"
-	"github.com/forbole/bdjuno/v3/modules/mint"
-	"github.com/forbole/bdjuno/v3/modules/modules"
-	"github.com/forbole/bdjuno/v3/modules/pricefeed"
-	"github.com/forbole/bdjuno/v3/modules/staking"
-	"github.com/forbole/bdjuno/v3/modules/upgrade"
+	dailyrefetch "github.com/forbole/bdjuno/v4/modules/daily_refetch"
+	"github.com/forbole/bdjuno/v4/modules/gov"
+	"github.com/forbole/bdjuno/v4/modules/mint"
+	"github.com/forbole/bdjuno/v4/modules/modules"
+	"github.com/forbole/bdjuno/v4/modules/pricefeed"
+	"github.com/forbole/bdjuno/v4/modules/staking"
+	"github.com/forbole/bdjuno/v4/modules/upgrade"
 )
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
@@ -77,15 +79,16 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	authModule := auth.NewModule(r.parser, cdc, db)
 	bankModule := bank.NewModule(r.parser, sources.BankSource, cdc, db)
 	consensusModule := consensus.NewModule(db)
+	ccvConsumerModule := ccvconsumer.NewModule(cdc, db)
+	ccvProviderModule := ccvprovider.NewModule(sources.CcvProviderSource, cdc, db)
 	dailyRefetchModule := dailyrefetch.NewModule(ctx.Proxy, db)
 	distrModule := distribution.NewModule(sources.DistrSource, cdc, db)
 	feegrantModule := feegrant.NewModule(cdc, db)
 	mintModule := mint.NewModule(sources.MintSource, cdc, db)
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
 	stakingModule := staking.NewModule(sources.StakingSource, cdc, db)
-	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakingModule, cdc, db)
+	govModule := gov.NewModule(sources.GovSource, authModule, ccvProviderModule, distrModule, mintModule, slashingModule, stakingModule, cdc, db)
 	upgradeModule := upgrade.NewModule(db, stakingModule)
-
 	return []jmodules.Module{
 		messages.NewModule(r.parser, cdc, ctx.Database),
 		telemetry.NewModule(ctx.JunoConfig),
@@ -95,6 +98,8 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		authModule,
 		bankModule,
 		consensusModule,
+		ccvConsumerModule,
+		ccvProviderModule,
 		dailyRefetchModule,
 		distrModule,
 		feegrantModule,
