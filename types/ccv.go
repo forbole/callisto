@@ -70,7 +70,7 @@ type CcvProviderChain struct {
 	ConsumerStates            []ccvprovidertypes.ConsumerState
 	UnbondingOps              []ccvprovidertypes.UnbondingOp
 	MatureUnbondingOps        *ccvtypes.MaturedUnbondingOps
-	ValsetUpdateIdToHeight    []ccvprovidertypes.ValsetUpdateIdToHeight
+	ValsetUpdateIDToHeight    []ccvprovidertypes.ValsetUpdateIdToHeight
 	ConsumerAdditionProposals []ccvprovidertypes.ConsumerAdditionProposal
 	ConsumerRemovalProposals  []ccvprovidertypes.ConsumerRemovalProposal
 	ValidatorConsumerPubkeys  []ccvprovidertypes.ValidatorConsumerPubKey
@@ -82,7 +82,7 @@ type CcvProviderChain struct {
 // NewNewCcvProviderChain allows to build a new CcvProviderChain instance
 func NewCcvProviderChain(valsetUpdateID uint64, consumerStates []ccvprovidertypes.ConsumerState,
 	unbondingOps []ccvprovidertypes.UnbondingOp, matureUnbondingOps *ccvtypes.MaturedUnbondingOps,
-	valsetUpdateIdToHeight []ccvprovidertypes.ValsetUpdateIdToHeight,
+	valsetUpdateIDToHeight []ccvprovidertypes.ValsetUpdateIdToHeight,
 	consumerAdditionProposals []ccvprovidertypes.ConsumerAdditionProposal,
 	consumerRemovalProposals []ccvprovidertypes.ConsumerRemovalProposal,
 	validatorConsumerPubkeys []ccvprovidertypes.ValidatorConsumerPubKey,
@@ -94,7 +94,7 @@ func NewCcvProviderChain(valsetUpdateID uint64, consumerStates []ccvprovidertype
 		ConsumerStates:            consumerStates,
 		UnbondingOps:              unbondingOps,
 		MatureUnbondingOps:        matureUnbondingOps,
-		ValsetUpdateIdToHeight:    valsetUpdateIdToHeight,
+		ValsetUpdateIDToHeight:    valsetUpdateIDToHeight,
 		ConsumerAdditionProposals: consumerAdditionProposals,
 		ConsumerRemovalProposals:  consumerRemovalProposals,
 		ValidatorConsumerPubkeys:  validatorConsumerPubkeys,

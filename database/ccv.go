@@ -131,7 +131,7 @@ func (db *Db) SaveCcvProviderChain(providerChain *types.CcvProviderChain) error 
 	if err != nil {
 		return err
 	}
-	valsetUpdateIdToHeight, err := json.Marshal(&providerChain.ValsetUpdateIdToHeight)
+	valsetUpdateIDToHeight, err := json.Marshal(&providerChain.ValsetUpdateIDToHeight)
 	if err != nil {
 		return err
 	}
@@ -165,7 +165,7 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 ON CONFLICT DO NOTHING`
 
 	_, err = db.SQL.Exec(stmt, providerChain.ValsetUpdateID, string(consumerStates),
-		string(unbondingOps), string(matureUnbondingOps), string(valsetUpdateIdToHeight),
+		string(unbondingOps), string(matureUnbondingOps), string(valsetUpdateIDToHeight),
 		string(consumerAdditionProposals), string(consumerRemovalProposals),
 		string(validatorConsumerPubkeys), string(validatorsByConsumerAddr),
 		string(consumerAddrsToPrune), providerChain.Height)
