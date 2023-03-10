@@ -13,7 +13,7 @@ func NewCcvCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 	}
 
 	cmd.AddCommand(
-		ccvAllChainsCmd(parseConfig),
+		consumerChainsCmd(parseConfig),
 	)
 
 	return cmd

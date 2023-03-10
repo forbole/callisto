@@ -11,11 +11,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// ccvAllChainsCmd returns a Cobra command that allows to refresh consumer chains info in database
-func ccvAllChainsCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
+// consumerChainsCmd returns a Cobra command that allows to refresh consumer chains info in database
+func consumerChainsCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 	return &cobra.Command{
-		Use:   "chains",
-		Short: "Fix the information about active consumer chains",
+		Use:   "consumer-chains",
+		Short: "Fix the consumer chains details stored in database",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			parseCtx, err := parsecmdtypes.GetParserContext(config.Cfg, parseConfig)
 			if err != nil {
