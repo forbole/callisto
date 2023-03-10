@@ -3,6 +3,7 @@ package local
 import (
 	"fmt"
 
+	"github.com/cosmos/cosmos-sdk/types/query"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -50,21 +51,35 @@ func (s Source) GetBalances(addresses []string, height int64) ([]types.AccountBa
 	return balances, nil
 }
 
-// GetSupply implements keeper.Source
-func (s Source) GetSupply(height int64, denom string) (sdk.Coins, error) {
-	var supply sdk.Coins
+// GetSupply implements bankkeeper.Source
+func (s Source) GetSupply(height int64) (sdk.Coins, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
 		return nil, fmt.Errorf("error while loading height: %s", err)
 	}
 
-	res, err := s.q.SupplyOf(sdk.WrapSDKContext(ctx), &banktypes.QuerySupplyOfRequest{Denom: denom})
-	if err != nil {
-		return nil, err
-	}
-	supply = append(supply, res.Amount)
+	var coins []sdk.Coin
+	var nextKey []byte
+	var stop = false
+	for !stop {
+		res, err := s.q.TotalSupply(
+			sdk.WrapSDKContext(ctx),
+			&banktypes.QueryTotalSupplyRequest{
+				Pagination: &query.PageRequest{
+					Key:   nextKey,
+					Limit: 100, // Query 100 supplies at time
+				},
+			})
+		if err != nil {
+			return nil, fmt.Errorf("error while getting total supply: %s", err)
+		}
 
-	return supply, nil
+		nextKey = res.Pagination.NextKey
+		stop = len(res.Pagination.NextKey) == 0
+		coins = append(coins, res.Supply...)
+	}
+
+	return coins, nil
 }
 
 // GetAccountBalances implements bankkeeper.Source

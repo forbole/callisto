@@ -27,14 +27,18 @@ func (db *Db) GetLastBlock() (*dbtypes.BlockRow, error) {
 
 // GetLastBlockHeight returns the last block height stored inside the database
 func (db *Db) GetLastBlockHeight() (int64, error) {
-	block, err := db.GetLastBlock()
-	if err != nil {
+	stmt := `SELECT height FROM block ORDER BY height DESC LIMIT 1`
+
+	var heights []int64
+	if err := db.Sqlx.Select(&heights, stmt); err != nil {
 		return 0, err
 	}
-	if block == nil {
-		return 0, fmt.Errorf("block table is empty")
+
+	if len(heights) == 0 {
+		return 0, nil
 	}
-	return block.Height, nil
+
+	return heights[0], nil
 }
 
 // -------------------------------------------------------------------------------------------------------------------

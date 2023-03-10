@@ -46,7 +46,7 @@ func (m *Module) RunAdditionalOperations() error {
 
 	// Start the worker
 	waitGroup.Add(1)
-	go worker.Start(m.cfg.Port)
+	go worker.Start(m.cfg.Host, m.cfg.Port)
 
 	// Block main process (signal capture will call WaitGroup's Done)
 	waitGroup.Wait()
