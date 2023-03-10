@@ -9,7 +9,7 @@ import (
 
 	"github.com/forbole/juno/v4/node/local"
 
-	govsource "github.com/forbole/bdjuno/v3/modules/gov/source"
+	govsource "github.com/forbole/bdjuno/v4/modules/gov/source"
 )
 
 var (

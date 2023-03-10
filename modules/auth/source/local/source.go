@@ -11,7 +11,7 @@ import (
 	"github.com/forbole/juno/v4/node/local"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	source "github.com/forbole/bdjuno/v3/modules/auth/source"
+	source "github.com/forbole/bdjuno/v4/modules/auth/source"
 )
 
 var (

@@ -1,7 +1,7 @@
 package top_accounts
 
 import (
-	topaccounts "github.com/forbole/bdjuno/v3/modules/top_accounts"
+	topaccounts "github.com/forbole/bdjuno/v4/modules/top_accounts"
 	"github.com/rs/zerolog/log"
 )
 

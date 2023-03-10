@@ -9,7 +9,7 @@ import (
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	source "github.com/forbole/bdjuno/v3/modules/auth/source"
+	source "github.com/forbole/bdjuno/v4/modules/auth/source"
 )
 
 var (
