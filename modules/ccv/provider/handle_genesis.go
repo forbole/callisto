@@ -44,7 +44,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 		doc.InitialHeight))
 
 	if err != nil {
-		return fmt.Errorf("error while storing genesis ccv provider chain state info: %s", err)
+		return fmt.Errorf("error while storing genesis ccv provider chain info: %s", err)
 	}
 
 	return nil

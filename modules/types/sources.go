@@ -83,7 +83,7 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 
 	sources := &Sources{
 		BankSource: localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
-		// CcvConsumerSource: localccvconsumersource.NewSource(source, ccvconsumerypes.QueryServer()),
+		// CcvConsumerSource: localccvconsumersource.NewSource(source, ccvconsumerypes.QueryServer()), // ConsumerKeeper not implemented
 		CcvProviderSource: localccvprovidersource.NewSource(source, ccvprovidertypes.QueryServer(app.ProviderKeeper)),
 		DistrSource:       localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
 		GovSource:         localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
