@@ -1,9 +1,9 @@
 package main
 
 import (
-	didMsgs "github.com/cheqd/cheqd-node/x/did/types"
+	didtypes "github.com/cheqd/cheqd-node/x/did/types"
 
-	resourceMsgs "github.com/cheqd/cheqd-node/x/resource/types"
+	resources "github.com/cheqd/cheqd-node/x/resource/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/juno/v4/modules/messages"
@@ -14,13 +14,13 @@ import (
 func CheqdAddressesParser(_ codec.Codec, cosmosMsg sdk.Msg) ([]string, error) {
 	switch msg := cosmosMsg.(type) {
 
-	case *didMsgs.MsgCreateDidDoc:
+	case *didtypes.MsgCreateDidDoc:
 		return []string{msg.GetPayload().GetId()}, nil
 
-	case *didMsgs.MsgUpdateDidDoc:
+	case *didtypes.MsgUpdateDidDoc:
 		return []string{msg.GetPayload().GetId()}, nil
 
-	case *resourceMsgs.MsgCreateResource:
+	case *resources.MsgCreateResource:
 		return []string{msg.GetPayload().GetId()}, nil
 
 	default:
