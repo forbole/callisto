@@ -47,21 +47,3 @@ CREATE TABLE ccv_provider_chain
     height                       BIGINT  NOT NULL
 );
 CREATE INDEX ccv_provider_chain_height_index ON ccv_provider_chain (height);
-
-
-/* ---- CCV FEE DISTRIBUTION ---- */
-CREATE TABLE ccv_fee_distribution
-(
-    current_height         BIGINT NOT NULL,
-    last_height            BIGINT,
-    next_height            BIGINT NOT NULL,
-    distribution_fraction  TEXT,
-    total                  TEXT,
-    to_provider            TEXT REFERENCES account (address),
-    to_consumer            TEXT REFERENCES account (address),
-    height                 BIGINT  NOT NULL,
-    CONSTRAINT unique_provider_consumer_fee_distribution UNIQUE(to_provider, to_consumer) 
-
-);
-CREATE INDEX ccv_fee_distribution_height_index ON ccv_provider_chain (height);
-

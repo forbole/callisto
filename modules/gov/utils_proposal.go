@@ -137,60 +137,6 @@ func (m *Module) handleParamChangeProposal(height int64, paramChangeProposal *pr
 	return nil
 }
 
-// handleConsumerAdditionProposal updates consumer chains if a ConsumerAdditionProposal has passed
-func (m *Module) handleConsumerAdditionProposal(height int64, proposal govtypes.Proposal) error {
-	if proposal.Status != govtypes.StatusPassed {
-		// If the status of ConsumerAdditionProposal is not passed, do nothing
-		return nil
-	}
-
-	var content govtypes.Content
-	err := m.db.EncodingConfig.Marshaler.UnpackAny(proposal.Content, &content)
-	if err != nil {
-		return fmt.Errorf("error while handling ConsumerAdditionProposal: %s", err)
-	}
-
-	_, ok := content.(*ccvprovidertypes.ConsumerAdditionProposal)
-	if !ok {
-		return nil
-	}
-
-	// Update all latest consumer chains
-	err = m.ccvProviderModule.UpdateAllConsumerChains(height)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// handleConsumerRemovalProposal removes givev consumer chain from db if a ConsumerRemovalProposal has passed
-func (m *Module) handleConsumerRemovalProposal(height int64, proposal govtypes.Proposal, id uint64) error {
-	if proposal.Status != govtypes.StatusPassed {
-		// If the status of ConsumerRemovalProposal is not passed, do nothing
-		return nil
-	}
-
-	var content govtypes.Content
-	err := m.db.EncodingConfig.Marshaler.UnpackAny(proposal.Content, &content)
-	if err != nil {
-		return fmt.Errorf("error while handling ConsumerRemovalProposal: %s", err)
-	}
-
-	consumerRemowalProposal, ok := content.(*ccvprovidertypes.ConsumerRemovalProposal)
-	if !ok {
-		return nil
-	}
-
-	// Remove consumer chain from database as per proposal
-	err = m.ccvProviderModule.RemoveConsumerChain(height, consumerRemowalProposal.ChainId)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 // updateProposalStatus updates the given proposal status
 func (m *Module) updateProposalStatus(proposal govtypes.Proposal) error {
 	return m.db.UpdateProposal(

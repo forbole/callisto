@@ -6,7 +6,6 @@
 - "!include public_block.yaml"
 - "!include public_ccv_consumer_chain.yaml"
 - "!include public_ccv_consumer_params.yaml"
-- "!include public_ccv_fee_distribution.yaml"
 - "!include public_ccv_provider_chain.yaml"
 - "!include public_ccv_provider_params.yaml"
 - "!include public_community_pool.yaml"
