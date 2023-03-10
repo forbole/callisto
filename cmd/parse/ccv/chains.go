@@ -41,7 +41,7 @@ func consumerChainsCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 
 			err = ccvProviderModule.UpdateAllConsumerChains(height)
 			if err != nil {
-				return err
+				return fmt.Errorf("error while updating all consumer chains at height: %s", err)
 			}
 
 			return nil

@@ -42,35 +42,3 @@ func (s Source) GetAllConsumerChains(height int64) ([]*ccvprovidertypes.Chain, e
 	return res.Chains, nil
 
 }
-
-// GetConsumerChainStarts implements ccvprovidersource.Source
-func (s Source) GetConsumerChainStarts(height int64) (*ccvprovidertypes.ConsumerAdditionProposals, error) {
-	ctx, err := s.LoadHeight(height)
-	if err != nil {
-		return nil, fmt.Errorf("error while loading height: %s", err)
-	}
-
-	res, err := s.querier.QueryConsumerChainStarts(sdk.WrapSDKContext(ctx), &ccvprovidertypes.QueryConsumerChainStartProposalsRequest{})
-	if err != nil {
-		return nil, err
-	}
-
-	return res.Proposals, nil
-
-}
-
-// GetConsumerChainStops implements ccvprovidersource.Source
-func (s Source) GetConsumerChainStops(height int64) (*ccvprovidertypes.ConsumerRemovalProposals, error) {
-	ctx, err := s.LoadHeight(height)
-	if err != nil {
-		return nil, fmt.Errorf("error while loading height: %s", err)
-	}
-
-	res, err := s.querier.QueryConsumerChainStops(sdk.WrapSDKContext(ctx), &ccvprovidertypes.QueryConsumerChainStopProposalsRequest{})
-	if err != nil {
-		return nil, err
-	}
-
-	return res.Proposals, nil
-
-}

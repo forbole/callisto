@@ -6,6 +6,4 @@ import (
 
 type Source interface {
 	GetAllConsumerChains(height int64) ([]*ccvprovidertypes.Chain, error)
-	GetConsumerChainStarts(height int64) (*ccvprovidertypes.ConsumerAdditionProposals, error)
-	GetConsumerChainStops(height int64) (*ccvprovidertypes.ConsumerRemovalProposals, error)
 }

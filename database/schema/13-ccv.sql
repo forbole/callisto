@@ -29,6 +29,8 @@ CREATE TABLE ccv_consumer_chain
 );
 CREATE INDEX ccv_consumer_chain_height_index ON ccv_consumer_chain (height);
 CREATE INDEX ccv_consumer_chain_provider_client_id_index ON ccv_consumer_chain (provider_client_id);
+CREATE INDEX ccv_consumer_chain_provider_channel_id_index ON ccv_consumer_chain (provider_channel_id);
+CREATE INDEX ccv_consumer_chain_chain_id_index ON ccv_consumer_chain (chain_id);
 
 
 /* ---- CCV PROVIDER CHAIN STATE ---- */

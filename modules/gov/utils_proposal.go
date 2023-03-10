@@ -311,7 +311,7 @@ func (m *Module) handlePassedProposal(proposal govtypes.Proposal, height int64) 
 		}
 
 	case *ccvprovidertypes.ConsumerAdditionProposal:
-		// Update all latest consumer chains while ConsumerAdditionProposal passed
+		// Update all consumer chains while ConsumerAdditionProposal passed
 		err = m.ccvProviderModule.UpdateAllConsumerChains(height)
 		if err != nil {
 			return err
