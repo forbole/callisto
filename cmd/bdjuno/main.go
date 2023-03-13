@@ -8,6 +8,7 @@ import (
 	startcmd "github.com/forbole/juno/v4/cmd/start"
 	"github.com/forbole/juno/v4/modules/messages"
 
+	"github.com/cosmos/cosmos-sdk/simapp"
 	migratecmd "github.com/forbole/bdjuno/v4/cmd/migrate"
 	parsecmd "github.com/forbole/bdjuno/v4/cmd/parse"
 
@@ -15,6 +16,7 @@ import (
 
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules"
+	humansaiapp "github.com/humansdotai/humans/app"
 )
 
 func main() {
@@ -52,7 +54,10 @@ func main() {
 // support custom messages.
 // This should be edited by custom implementations if needed.
 func getBasicManagers() []module.BasicManager {
-	return []module.BasicManager{}
+	return []module.BasicManager{
+		simapp.ModuleBasics,
+		humansaiapp.ModuleBasics,
+	}
 }
 
 // getAddressesParser returns the messages parser that should be used to get the users involved in
