@@ -27,5 +27,10 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 		return fmt.Errorf("error while storing genesis wormhole config: %s", err)
 	}
 
+	err = m.db.SaveGuardianValidatorList(genState.GuardianValidatorList, doc.InitialHeight)
+	if err != nil {
+		return fmt.Errorf("error while storing genesis guardian validator list: %s", err)
+	}
+
 	return nil
 }
