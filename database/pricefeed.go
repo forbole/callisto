@@ -35,7 +35,7 @@ func (db *Db) GetTokensPriceID() ([]string, error) {
 // SaveToken allows to save the given token details
 func (db *Db) SaveToken(token types.Token) error {
 	query := `INSERT INTO token (name) VALUES ($1) ON CONFLICT DO NOTHING`
-	_, err := db.Sql.Exec(query, token.Name)
+	_, err := db.SQL.Exec(query, token.Name)
 	if err != nil {
 		return err
 	}
@@ -52,7 +52,7 @@ func (db *Db) SaveToken(token types.Token) error {
 
 	query = query[:len(query)-1] // Remove trailing ","
 	query += " ON CONFLICT DO NOTHING"
-	_, err = db.Sql.Exec(query, params...)
+	_, err = db.SQL.Exec(query, params...)
 	if err != nil {
 		return fmt.Errorf("error while saving token: %s", err)
 	}
@@ -85,7 +85,7 @@ ON CONFLICT (unit_name) DO UPDATE
 	    timestamp = excluded.timestamp
 WHERE token_price.timestamp <= excluded.timestamp`
 
-	_, err := db.Sql.Exec(query, param...)
+	_, err := db.SQL.Exec(query, param...)
 	if err != nil {
 		return fmt.Errorf("error while saving tokens prices: %s", err)
 	}
@@ -114,7 +114,7 @@ ON CONFLICT ON CONSTRAINT unique_price_for_timestamp DO UPDATE
 	SET price = excluded.price,
 	    market_cap = excluded.market_cap`
 
-	_, err := db.Sql.Exec(query, param...)
+	_, err := db.SQL.Exec(query, param...)
 	if err != nil {
 		return fmt.Errorf("error while storing tokens price history: %s", err)
 	}
