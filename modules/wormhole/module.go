@@ -5,26 +5,30 @@ import (
 	"github.com/forbole/juno/v4/modules"
 
 	"github.com/forbole/bdjuno/v3/database"
+	wormholesource "github.com/forbole/bdjuno/v3/modules/wormhole/source"
 )
 
 var (
-	_ modules.Module        = &Module{}
-	_ modules.GenesisModule = &Module{}
+	_ modules.Module                   = &Module{}
+	_ modules.GenesisModule            = &Module{}
+	_ modules.PeriodicOperationsModule = &Module{}
 )
 
 // Module represents the x/wormhole module
 type Module struct {
-	cdc codec.Codec
-	db  *database.Db
+	cdc    codec.Codec
+	db     *database.Db
+	source wormholesource.Source
 }
 
 // NewModule returns a new Module instance
 func NewModule(
-	cdc codec.Codec, db *database.Db,
+	source wormholesource.Source, cdc codec.Codec, db *database.Db,
 ) *Module {
 	return &Module{
-		cdc: cdc,
-		db:  db,
+		cdc:    cdc,
+		db:     db,
+		source: source,
 	}
 }
 

@@ -19,8 +19,6 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/juno/v4/node/local"
 
-	nodeconfig "github.com/forbole/juno/v4/node/config"
-
 	banksource "github.com/forbole/bdjuno/v3/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v3/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v3/modules/bank/source/remote"
@@ -39,6 +37,11 @@ import (
 	stakingsource "github.com/forbole/bdjuno/v3/modules/staking/source"
 	localstakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/remote"
+	wormholesource "github.com/forbole/bdjuno/v3/modules/wormhole/source"
+	localwormholesource "github.com/forbole/bdjuno/v3/modules/wormhole/source/local"
+	remotewormholesource "github.com/forbole/bdjuno/v3/modules/wormhole/source/remote"
+	nodeconfig "github.com/forbole/juno/v4/node/config"
+	wormholetypes "github.com/wormhole-foundation/wormchain/x/wormhole/types"
 )
 
 type Sources struct {
@@ -48,6 +51,7 @@ type Sources struct {
 	MintSource     mintsource.Source
 	SlashingSource slashingsource.Source
 	StakingSource  stakingsource.Source
+	WormholeSource wormholesource.Source
 }
 
 func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -80,6 +84,7 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
 		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
+		WormholeSource: localwormholesource.NewSource(source, wormholetypes.QueryServer(nil)),
 	}
 
 	// Mount and initialize the stores
@@ -119,5 +124,6 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
+		WormholeSource: remotewormholesource.NewSource(source, wormholetypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }
