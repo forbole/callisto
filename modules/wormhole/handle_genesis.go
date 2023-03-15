@@ -37,5 +37,10 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 		return fmt.Errorf("error while storing genesis guardian set list: %s", err)
 	}
 
+	err = m.db.SaveValidatorAllowListFromGenesis(genState.AllowedAddresses, doc.InitialHeight)
+	if err != nil {
+		return fmt.Errorf("error while storing genesis validator allow list: %s", err)
+	}
+
 	return nil
 }

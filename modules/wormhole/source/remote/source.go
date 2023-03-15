@@ -68,7 +68,7 @@ func (s Source) GetGuardianValidatorAll(height int64) ([]wormholetypes.GuardianV
 			&wormholetypes.QueryAllGuardianValidatorRequest{
 				Pagination: &query.PageRequest{
 					Key:   nextKey,
-					Limit: 100, // Query 100 guardians set at once
+					Limit: 100, // Query 100 guardians validators at once
 				},
 			},
 		)
@@ -82,4 +82,33 @@ func (s Source) GetGuardianValidatorAll(height int64) ([]wormholetypes.GuardianV
 	}
 
 	return guardianValidatorList, nil
+}
+
+// GetAllowlistAll implements wormholesource.Source
+func (s Source) GetAllowlistAll(height int64) ([]*wormholetypes.ValidatorAllowedAddress, error) {
+	ctx := remote.GetHeightRequestContext(s.Ctx, height)
+
+	var validatorAllowedAddress []*wormholetypes.ValidatorAllowedAddress
+	var nextKey []byte
+	var stop = false
+	for !stop {
+		res, err := s.querier.AllowlistAll(
+			ctx,
+			&wormholetypes.QueryAllValidatorAllowlist{
+				Pagination: &query.PageRequest{
+					Key:   nextKey,
+					Limit: 100, // Query 100 at once
+				},
+			},
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		nextKey = res.Pagination.NextKey
+		stop = len(res.Pagination.NextKey) == 0
+		validatorAllowedAddress = append(validatorAllowedAddress, res.Allowlist...)
+	}
+
+	return validatorAllowedAddress, nil
 }

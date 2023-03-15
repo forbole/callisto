@@ -99,3 +99,65 @@ func (db *Db) SaveGuardianSetList(guardianSet []wormholetypes.GuardianSet, heigh
 
 	return nil
 }
+
+// SaveValidatorAllowListFromGenesis allows to store validator allowed list from genesis file inside the database
+func (db *Db) SaveValidatorAllowListFromGenesis(validatorAllowedList []wormholetypes.ValidatorAllowedAddress, height int64) error {
+	if len(validatorAllowedList) == 0 {
+		return nil
+	}
+
+	stmt := `INSERT INTO validator_allow_list (validator_address, allowed_address, name, height) VALUES `
+	var allowList []interface{}
+
+	for i, entry := range validatorAllowedList {
+		pi := i * 4
+		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d),", pi+1, pi+2, pi+3, pi+4)
+		allowList = append(allowList, entry.ValidatorAddress, entry.AllowedAddress, entry.Name, height)
+	}
+
+	stmt = stmt[:len(stmt)-1]
+	stmt += `ON CONFLICT DO NOTHING`
+
+	_, err := db.SQL.Exec(stmt, allowList...)
+	if err != nil {
+		return fmt.Errorf("error while storing validator allowed list: %s", err)
+	}
+
+	return nil
+}
+
+// SaveValidatorAllowList allows to store validator allowed list inside the database
+func (db *Db) SaveValidatorAllowList(validatorAllowedList []*wormholetypes.ValidatorAllowedAddress, height int64) error {
+	if len(validatorAllowedList) == 0 {
+		return nil
+	}
+
+	stmt := `INSERT INTO validator_allow_list (validator_address, allowed_address, name, height) VALUES `
+	var allowList []interface{}
+
+	for i, entry := range validatorAllowedList {
+		pi := i * 4
+		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d),", pi+1, pi+2, pi+3, pi+4)
+		allowList = append(allowList, entry.ValidatorAddress, entry.AllowedAddress, entry.Name, height)
+	}
+
+	stmt = stmt[:len(stmt)-1]
+	stmt += `ON CONFLICT DO NOTHING`
+
+	_, err := db.SQL.Exec(stmt, allowList...)
+	if err != nil {
+		return fmt.Errorf("error while storing validator allowed list: %s", err)
+	}
+
+	return nil
+}
+
+// DeleteValidatorAllowListEntry allows to remove validator allowed list entry from the database
+func (db *Db) DeleteValidatorAllowListEntry(address string) error {
+	_, err := db.SQL.Exec(`DELETE FROM validator_allow_list WHERE validator_address = $1`, address)
+	if err != nil {
+		return fmt.Errorf("error while deleting %s address from validator allow list table: %s", address, err)
+	}
+
+	return nil
+}

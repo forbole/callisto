@@ -30,3 +30,18 @@ CREATE TABLE guardian_set
     height             BIGINT  NOT NULL
 );
 CREATE INDEX guardian_set_keys_index ON guardian_set (keys);
+
+/* ---- ALLOW LIST  ---- */
+
+CREATE TABLE validator_allow_list
+(
+    validator_address  TEXT    NOT NULL,
+    allowed_address    TEXT    NOT NULL,
+    name               TEXT    NOT NULL,
+    height             BIGINT  NOT NULL
+);
+CREATE INDEX validator_allow_list_validator_address_index ON validator_allow_list (validator_address);
+CREATE INDEX validator_allow_listt_allowed_address_index ON validator_allow_list (allowed_address);
+CREATE INDEX validator_allow_list_name_index ON validator_allow_list (name);
+
+
