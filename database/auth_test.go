@@ -50,7 +50,7 @@ func (suite *DbTestSuite) TestBigDipperDb_GetAccounts() {
 	}
 
 	for _, query := range queries {
-		_, err := suite.database.Sql.Exec(query)
+		_, err := suite.database.SQL.Exec(query)
 		suite.Require().NoError(err)
 	}
 
