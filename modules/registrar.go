@@ -3,6 +3,7 @@ package modules
 import (
 	"github.com/forbole/bdjuno/v3/modules/actions"
 	"github.com/forbole/bdjuno/v3/modules/types"
+	"github.com/forbole/bdjuno/v3/modules/wasm"
 	"github.com/forbole/bdjuno/v3/modules/wormhole"
 
 	"github.com/forbole/juno/v4/modules/pruning"
@@ -86,6 +87,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	stakingModule := staking.NewModule(sources.StakingSource, cdc, db)
 	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakingModule, cdc, db)
 	upgradeModule := upgrade.NewModule(db, stakingModule)
+	wasmModule := wasm.NewModule(sources.WasmSource, cdc, db)
 	wormholeModule := wormhole.NewModule(sources.WormholeSource, cdc, db)
 
 	return []jmodules.Module{
@@ -107,6 +109,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		slashingModule,
 		stakingModule,
 		upgradeModule,
+		wasmModule,
 		wormholeModule,
 	}
 }

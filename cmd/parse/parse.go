@@ -16,8 +16,9 @@ import (
 	parsemint "github.com/forbole/bdjuno/v3/cmd/parse/mint"
 	parsepricefeed "github.com/forbole/bdjuno/v3/cmd/parse/pricefeed"
 	parsestaking "github.com/forbole/bdjuno/v3/cmd/parse/staking"
-	parsetransaction "github.com/forbole/juno/v4/cmd/parse/transactions"
+	parsewasm "github.com/forbole/bdjuno/v3/cmd/parse/wasm"
 	parsewormhole "github.com/forbole/bdjuno/v3/cmd/parse/wormhole"
+	parsetransaction "github.com/forbole/juno/v4/cmd/parse/transactions"
 )
 
 // NewParseCmd returns the Cobra command allowing to parse some chain data without having to re-sync the whole database
@@ -40,6 +41,7 @@ func NewParseCmd(parseCfg *parse.Config) *cobra.Command {
 		parsepricefeed.NewPricefeedCmd(parseCfg),
 		parsestaking.NewStakingCmd(parseCfg),
 		parsetransaction.NewTransactionsCmd(parseCfg),
+		parsewasm.NewWasmCmd(parseCfg),
 		parsewormhole.NewWormholeCmd(parseCfg),
 	)
 

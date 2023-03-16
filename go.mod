@@ -3,6 +3,7 @@ module github.com/forbole/bdjuno/v3
 go 1.18
 
 require (
+	github.com/CosmWasm/wasmd v0.30.0
 	github.com/cosmos/cosmos-sdk v0.45.12
 	github.com/forbole/juno/v4 v4.1.1-0.20230221021913-841842bdefed
 	github.com/go-co-op/gocron v1.18.0
@@ -25,7 +26,6 @@ require (
 	filippo.io/edwards25519 v1.0.0-beta.2 // indirect
 	github.com/99designs/keyring v1.2.1 // indirect
 	github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d // indirect
-	github.com/CosmWasm/wasmd v0.30.0 // indirect
 	github.com/CosmWasm/wasmvm v1.1.1 // indirect
 	github.com/Workiva/go-datastructures v1.0.53 // indirect
 	github.com/armon/go-metrics v0.4.0 // indirect
