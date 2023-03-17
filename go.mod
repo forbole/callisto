@@ -1,9 +1,11 @@
-module github.com/forbole/bdjuno/v3
+module github.com/forbole/bdjuno/v4
 
-go 1.18
+go 1.19
 
 require (
+	github.com/bitsongofficial/go-bitsong v0.14.0
 	github.com/cosmos/cosmos-sdk v0.45.11
+	github.com/cosmos/gaia/v7 v7.1.1
 	github.com/forbole/juno/v4 v4.1.0
 	github.com/go-co-op/gocron v1.16.1
 	github.com/gogo/protobuf v1.3.3
@@ -19,11 +21,6 @@ require (
 	github.com/tendermint/tendermint v0.34.24
 	google.golang.org/grpc v1.50.1
 	gopkg.in/yaml.v3 v3.0.1
-)
-
-require (
-	github.com/bitsongofficial/go-bitsong v0.14.0
-	github.com/cosmos/gaia/v7 v7.1.1
 )
 
 require (
