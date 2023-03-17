@@ -3,7 +3,7 @@ package wasm
 import (
 	"fmt"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 )
 
 func (m *Module) GetWasmCodes(height int64) ([]types.WasmCode, error) {

@@ -871,8 +871,6 @@ github.com/fogleman/gg v1.2.1-0.20190220221249-0403632d5b90/go.mod h1:R/bRT+9gY/
 github.com/fogleman/gg v1.3.0/go.mod h1:R/bRT+9gY/C5z7JzPU0zXsXHKM4/ayA+zqcVNZzPa1k=
 github.com/forbole/comdex/v8 v8.1.1 h1:Qj/8jEzYvnlFoUcWDFgdNDrrVCZYJ3aDCs48d2D4zGU=
 github.com/forbole/comdex/v8 v8.1.1/go.mod h1:Wxwmgoeu5/65vKzwmGuQXU9hkk6yEbiPAT3+DSkRDYQ=
-github.com/forbole/juno/v4 v4.0.1-0.20230208101932-3ab93fbccd60 h1:CapCRiS/GwWT6pq6KUcqmj4i154AZN56JYn09lRAcJI=
-github.com/forbole/juno/v4 v4.0.1-0.20230208101932-3ab93fbccd60/go.mod h1:hCRacfMD51xodLkIahDKnViP6fAh9/68Hg6EHkBEmlk=
 github.com/forbole/juno/v4 v4.1.1-0.20230221021913-841842bdefed h1:CCEhYXiZ+WFkQvNQRGSLbD/efV2nDptj/zujqoDAiBo=
 github.com/forbole/juno/v4 v4.1.1-0.20230221021913-841842bdefed/go.mod h1:hCRacfMD51xodLkIahDKnViP6fAh9/68Hg6EHkBEmlk=
 github.com/form3tech-oss/jwt-go v3.2.2+incompatible/go.mod h1:pbq4aXjuKjdthFRnoDwaVPLA+WlJuPGy+QneDUgJi2k=
