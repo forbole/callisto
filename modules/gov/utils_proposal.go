@@ -9,13 +9,13 @@ import (
 	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	profilestypes "github.com/desmos-labs/desmos/v2/x/profiles/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"google.golang.org/grpc/codes"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 
