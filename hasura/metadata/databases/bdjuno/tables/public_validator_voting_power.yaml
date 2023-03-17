@@ -16,4 +16,5 @@ select_permissions:
     - voting_power
     - height
     filter: {}
+    limit: 100
   role: anonymous
