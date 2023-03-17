@@ -6,8 +6,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
 
-	dbtypes "github.com/forbole/bdjuno/v3/database/types"
-	"github.com/forbole/bdjuno/v3/types"
+	dbtypes "github.com/forbole/bdjuno/v4/database/types"
+	"github.com/forbole/bdjuno/v4/types"
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveProfilesParams() {

@@ -5,8 +5,8 @@ import (
 
 	"github.com/forbole/juno/v4/modules"
 
-	"github.com/forbole/bdjuno/v3/database"
-	profilessource "github.com/forbole/bdjuno/v3/modules/profiles/source"
+	"github.com/forbole/bdjuno/v4/database"
+	profilessource "github.com/forbole/bdjuno/v4/modules/profiles/source"
 )
 
 var (
