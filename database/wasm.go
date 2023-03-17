@@ -22,7 +22,7 @@ WHERE wasm_params.height <= excluded.height
 	accessConfig := dbtypes.NewDbAccessConfig(params.CodeUploadAccess)
 	cfgValue, _ := accessConfig.Value()
 
-	_, err := db.Sql.Exec(stmt,
+	_, err := db.SQL.Exec(stmt,
 		cfgValue, params.InstantiateDefaultPermission, params.Height,
 	)
 	if err != nil {
@@ -68,7 +68,7 @@ VALUES `
 			height = excluded.height
 	WHERE wasm_code.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt, args...)
+	_, err := db.SQL.Exec(stmt, args...)
 	if err != nil {
 		return fmt.Errorf("error while saving wasm code: %s", err)
 	}
@@ -132,7 +132,7 @@ VALUES `
 			height = excluded.height
 	WHERE wasm_contract.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt, args...)
+	_, err := db.SQL.Exec(stmt, args...)
 	if err != nil {
 		return fmt.Errorf("error while saving wasm contracts: %s", err)
 	}
@@ -184,7 +184,7 @@ VALUES `
 
 	stmt += ` ON CONFLICT DO NOTHING`
 
-	_, err := db.Sql.Exec(stmt, args...)
+	_, err := db.SQL.Exec(stmt, args...)
 	if err != nil {
 		return fmt.Errorf("error while saving wasm execute contracts: %s", err)
 	}
@@ -200,7 +200,7 @@ func (db *Db) UpdateContractWithMsgMigrateContract(
 sender = $1, code_id = $2, raw_contract_message = $3, data = $4 
 WHERE contract_address = $5 `
 
-	_, err := db.Sql.Exec(stmt,
+	_, err := db.SQL.Exec(stmt,
 		sender, codeID, string(rawContractMsg), data,
 		contractAddress,
 	)
@@ -216,7 +216,7 @@ func (db *Db) UpdateContractAdmin(sender string, contractAddress string, newAdmi
 	stmt := `UPDATE wasm_contract SET 
 sender = $1, admin = $2 WHERE contract_address = $2 `
 
-	_, err := db.Sql.Exec(stmt, sender, newAdmin, contractAddress)
+	_, err := db.SQL.Exec(stmt, sender, newAdmin, contractAddress)
 	if err != nil {
 		return fmt.Errorf("error while updating wsm contract admin: %s", err)
 	}

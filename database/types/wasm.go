@@ -151,7 +151,7 @@ func (a WasmContractRow) Equals(b WasmContractRow) bool {
 		a.CodeID == b.CodeID &&
 		a.Label == b.Label &&
 		a.RawContractMessage == b.RawContractMessage &&
-		a.Funds.Equal(a.Funds) &&
+		a.Funds.Equal(b.Funds) &&
 		a.ContractAddress == b.ContractAddress &&
 		a.Data == b.Data &&
 		a.InstantiatedAt == b.InstantiatedAt &&
@@ -198,7 +198,7 @@ func (a WasmExecuteContractRow) Equals(b WasmExecuteContractRow) bool {
 	return a.Sender == b.Sender &&
 		a.ContractAddress == b.ContractAddress &&
 		a.RawContractMessage == b.RawContractMessage &&
-		a.Funds.Equal(a.Funds) &&
+		a.Funds.Equal(b.Funds) &&
 		a.Data == b.Data &&
 		a.ExecutedAt == b.ExecutedAt &&
 		a.Height == b.Height
