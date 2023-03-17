@@ -30,6 +30,8 @@
 
 ### Dependencies
 - ([\#462](https://github.com/forbole/bdjuno/pull/462)) Updated Juno to `v3.4.0`
+- ([\#540](https://github.com/forbole/bdjuno/pull/540)) Updated Desmos `v4.7.0` and Juno to `v4.1.0`
+
 
 ## Version v3.2.0
 ### Changes
