@@ -14,8 +14,8 @@ import (
 
 	junodb "github.com/forbole/juno/v4/database"
 
-	"github.com/forbole/bdjuno/v3/database"
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/database"
+	"github.com/forbole/bdjuno/v4/types"
 
 	juno "github.com/forbole/juno/v4/types"
 
@@ -46,13 +46,7 @@ func (suite *DbTestSuite) SetupTest() {
 
 	// Build the database
 	dbCfg := dbconfig.NewDatabaseConfig(
-		"bdjuno",
-		"localhost",
-		6433,
-		"bdjuno",
-		"password",
-		"",
-		"public",
+		"postgresql://bdjuno:password@localhost:6433/bdjuno?sslmode=disable&search_path=public",
 		-1,
 		-1,
 		100000,

@@ -6,7 +6,7 @@ import (
 	oracletypes "github.com/bandprotocol/chain/v2/x/oracle/types"
 	"github.com/forbole/juno/v4/node/remote"
 
-	oraclesource "github.com/forbole/bdjuno/v3/modules/oracle/source"
+	oraclesource "github.com/forbole/bdjuno/v4/modules/oracle/source"
 )
 
 var (
