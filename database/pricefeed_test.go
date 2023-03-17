@@ -4,21 +4,21 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 
-	dbtypes "github.com/forbole/bdjuno/v3/database/types"
+	dbtypes "github.com/forbole/bdjuno/v4/database/types"
 )
 
 func (suite *DbTestSuite) insertToken(name string) {
 	query := fmt.Sprintf(
 		`INSERT INTO token (name) VALUES ('%s')`, name)
-	_, err := suite.database.Sql.Query(query)
+	_, err := suite.database.SQL.Query(query)
 	suite.Require().NoError(err)
 
 	query = fmt.Sprintf(
 		`INSERT INTO token_unit (token_name, denom, exponent, price_id) VALUES ('%[1]s', 'u%[1]s', 0, 'u%[1]s'), ('%[1]s', 'm%[1]s', 3, 'm%[1]s'), ('%[1]s', '%[1]s', 6, '%[1]s')`,
 		name)
-	_, err = suite.database.Sql.Query(query)
+	_, err = suite.database.SQL.Query(query)
 	suite.Require().NoError(err)
 }
 

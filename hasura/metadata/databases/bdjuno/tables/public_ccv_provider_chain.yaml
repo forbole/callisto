@@ -1,0 +1,20 @@
+table:
+  name: ccv_provider_chain
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - valset_update_id
+    - consumer_states
+    - unbonding_ops
+    - mature_unbonding_ops
+    - valset_update_id_to_height
+    - consumer_addition_proposals
+    - consumer_removal_proposals
+    - validator_consumer_pubkeys
+    - validators_by_consumer_addr
+    - consumer_addrs_to_prune
+    - height
+    filter: {}
+  role: anonymous
