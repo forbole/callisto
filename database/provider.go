@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	dbtypes "github.com/forbole/bdjuno/v3/database/types"
-	dbutils "github.com/forbole/bdjuno/v3/database/utils"
-	"github.com/forbole/bdjuno/v3/types"
+	dbtypes "github.com/forbole/bdjuno/v4/database/types"
+	dbutils "github.com/forbole/bdjuno/v4/database/utils"
+	"github.com/forbole/bdjuno/v4/types"
 )
 
 // SaveProviders allows to store the providers inside the database

@@ -1,6 +1,6 @@
 package provider
 
-import "github.com/forbole/bdjuno/v3/types"
+import "github.com/forbole/bdjuno/v4/types"
 
 func (m *Module) getProviderList(height int64) ([]*types.Provider, error) {
 	providers, err := m.source.GetProviders(height)

@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 )
 
 func SplitProviders(providers []*types.Provider, paramsNumber int) [][]*types.Provider {

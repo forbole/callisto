@@ -2,10 +2,10 @@ package market
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/forbole/bdjuno/v3/database"
+	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/juno/v4/modules"
 
-	marketsource "github.com/forbole/bdjuno/v3/modules/market/source"
+	marketsource "github.com/forbole/bdjuno/v4/modules/market/source"
 )
 
 var (

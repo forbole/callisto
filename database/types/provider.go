@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	providertypes "github.com/akash-network/node/x/provider/types/v1beta2"
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 )
 
 // ProviderRow represents a single row inside the provider table

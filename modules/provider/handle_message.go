@@ -3,7 +3,7 @@ package provider
 import (
 	providertypes "github.com/akash-network/node/x/provider/types/v1beta2"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 	junotypes "github.com/forbole/juno/v4/types"
 )
 

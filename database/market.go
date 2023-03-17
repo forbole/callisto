@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	dbtypes "github.com/forbole/bdjuno/v3/database/types"
-	dbutils "github.com/forbole/bdjuno/v3/database/utils"
-	"github.com/forbole/bdjuno/v3/types"
+	dbtypes "github.com/forbole/bdjuno/v4/database/types"
+	dbutils "github.com/forbole/bdjuno/v4/database/utils"
+	"github.com/forbole/bdjuno/v4/types"
 	"github.com/lib/pq"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"

@@ -6,7 +6,7 @@ import (
 
 	tmtypes "github.com/tendermint/tendermint/types"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 
 	markettypes "github.com/akash-network/node/x/market/types/v1beta2"
 	"github.com/rs/zerolog/log"

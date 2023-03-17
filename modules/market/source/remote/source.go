@@ -7,7 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/forbole/juno/v4/node/remote"
 
-	marketsource "github.com/forbole/bdjuno/v3/modules/market/source"
+	marketsource "github.com/forbole/bdjuno/v4/modules/market/source"
 )
 
 var (

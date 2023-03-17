@@ -3,7 +3,7 @@ package market
 import (
 	"fmt"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 	"github.com/rs/zerolog/log"
 
 	markettypes "github.com/akash-network/node/x/market/types/v1beta2"

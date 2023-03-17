@@ -9,7 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/forbole/juno/v4/node/local"
 
-	providersource "github.com/forbole/bdjuno/v3/modules/provider/source"
+	providersource "github.com/forbole/bdjuno/v4/modules/provider/source"
 )
 
 var (
