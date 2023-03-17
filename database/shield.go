@@ -13,12 +13,11 @@ import (
 // SaveShieldPool allows to save for the given height the given shieldtypes pool
 func (db *Db) SaveShieldPool(pool *types.ShieldPool) error {
 	stmt := `
-INSERT INTO shield_pool (pool_id, shield, native_service_fees, foreign_service_fees, sponsor, sponsor_address, description, shield_limit, pause, height) 
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+INSERT INTO shield_pool (pool_id, shield, service_fees, sponsor, sponsor_address, description, shield_limit, pause, height) 
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 ON CONFLICT (pool_id) DO UPDATE 
     SET shield = excluded.shield, 
-	native_service_fees = excluded.native_service_fees, 
-	foreign_service_fees = excluded.foreign_service_fees, 
+	service_fees = excluded.service_fees, 
 	description = excluded.description, 
 	shield_limit = excluded.shield_limit, 
     height = excluded.height
@@ -27,8 +26,7 @@ WHERE shield_pool.height <= excluded.height`
 	_, err := db.SQL.Exec(stmt,
 		pool.PoolID,
 		pool.Shield.String(),
-		pq.Array(dbtypes.NewDbCoins(pool.NativeServiceFees)),
-		pq.Array(dbtypes.NewDbCoins(pool.ForeignServiceFees)),
+		pq.Array(dbtypes.NewDbCoins(pool.ServiceFees)),
 		pool.Sponsor,
 		pool.SponsorAddr,
 		pool.Description,
@@ -216,14 +214,13 @@ WHERE shield_claim_proposal_params.height <= excluded.height`
 // SaveShieldProvider allows to save the shield provider for the given height
 func (db *Db) SaveShieldProvider(provider *types.ShieldProvider) error {
 	stmt := `
-INSERT INTO shield_provider (address, collateral, delegation_bonded, native_rewards, 
-    foreign_rewards,total_locked, withdrawing, height) 
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+INSERT INTO shield_provider (address, collateral, delegation_bonded, rewards, 
+    total_locked, withdrawing, height) 
+VALUES ($1, $2, $3, $4, $5, $6, $7)
 ON CONFLICT (address) DO UPDATE 
     SET collateral = excluded.collateral, 
 	delegation_bonded = excluded.delegation_bonded, 
-	native_rewards = excluded.native_rewards, 
-	foreign_rewards = excluded.foreign_rewards, 
+	rewards = excluded.rewards, 
 	total_locked = excluded.total_locked, 
 	withdrawing = excluded.withdrawing, 
     height = excluded.height
@@ -233,8 +230,7 @@ WHERE shield_provider.height <= excluded.height`
 		provider.Address,
 		provider.Collateral,
 		provider.DelegationBonded,
-		pq.Array(dbtypes.NewDbDecCoins(provider.NativeRewards)),
-		pq.Array(dbtypes.NewDbDecCoins(provider.ForeignRewards)),
+		pq.Array(dbtypes.NewDbDecCoins(provider.Rewards)),
 		provider.TotalLocked,
 		provider.Withdrawing,
 		provider.Height,
@@ -270,15 +266,13 @@ VALUES ($1, $2, $3, $4)`
 // SaveShieldStatus allows to save the shield status for the given height
 func (db *Db) SaveShieldStatus(status *types.ShieldStatus) error {
 	stmt := `
-INSERT INTO shield_status (global_staking_pool, current_native_service_fees, current_foreign_service_fees, remaining_native_service_fees,
-	remaining_foreign_service_fees, total_collateral, total_shield, total_withdrawing, height) 
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+INSERT INTO shield_status (global_staking_pool, current_service_fees, remaining_service_fees, 
+	total_collateral, total_shield, total_withdrawing, height) 
+VALUES ($1, $2, $3, $4, $5, $6, $7)
 ON CONFLICT (one_row_id) DO UPDATE 
     SET global_staking_pool = excluded.global_staking_pool, 
-	current_native_service_fees = excluded.current_native_service_fees,
-	current_foreign_service_fees = excluded.current_foreign_service_fees,
-	remaining_native_service_fees = excluded.remaining_native_service_fees,
-	remaining_foreign_service_fees = excluded.remaining_foreign_service_fees, 
+	current_service_fees = excluded.current_service_fees,
+	remaining_service_fees = excluded.remaining_service_fees,
 	total_collateral = excluded.total_collateral, 
 	total_shield = excluded.total_shield, 
 	total_withdrawing = excluded.total_withdrawing, 
@@ -287,10 +281,8 @@ WHERE shield_status.height <= excluded.height`
 
 	_, err := db.SQL.Exec(stmt,
 		status.GobalStakingPool.Int64(),
-		pq.Array(dbtypes.NewDbDecCoins(status.CurrentNativeServiceFees)),
-		pq.Array(dbtypes.NewDbDecCoins(status.CurrentForeignServiceFees)),
-		pq.Array(dbtypes.NewDbDecCoins(status.RemainingNativeServiceFees)),
-		pq.Array(dbtypes.NewDbDecCoins(status.RemainingForeignServiceFees)),
+		pq.Array(dbtypes.NewDbDecCoins(status.CurrentServiceFees)),
+		pq.Array(dbtypes.NewDbDecCoins(status.RemainingServiceFees)),
 		status.TotalCollateral.Int64(),
 		status.TotalShield.Int64(),
 		status.TotalWithdrawing.Int64(),

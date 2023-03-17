@@ -10,7 +10,7 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	junov3 "github.com/forbole/juno/v4/cmd/migrate/v3"
+	junov3 "github.com/forbole/juno/v4/cmd/migrate/v4"
 	"github.com/forbole/juno/v4/types/config"
 )
 

@@ -80,7 +80,7 @@ func (m *Module) HandleMsgCreatePool(index int, tx *juno.Tx, msg *shieldtypes.Ms
 	}
 
 	pool := types.NewShieldPool(
-		poolID, msg.Shield[0].Amount, msg.Deposit.Native, msg.Deposit.Foreign, msg.Sponsor,
+		poolID, msg.Shield[0].Amount, msg.Deposit, msg.Sponsor,
 		msg.SponsorAddr, msg.Description, msg.ShieldLimit, false, tx.Height,
 	)
 
@@ -92,7 +92,7 @@ func (m *Module) HandleMsgUpdatePool(tx *juno.Tx, msg *shieldtypes.MsgUpdatePool
 
 	// Sponsor, sponsor address, and pool pause status will not be updated with ON CONFLICT statement
 	pool := types.NewShieldPool(
-		msg.PoolId, msg.Shield[0].Amount, msg.ServiceFees.Native, msg.ServiceFees.Foreign, "",
+		msg.PoolId, msg.Shield[0].Amount, msg.ServiceFees, "",
 		"", msg.Description, msg.ShieldLimit, false, tx.Height,
 	)
 

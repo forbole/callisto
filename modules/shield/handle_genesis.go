@@ -72,7 +72,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 // saveShieldPools stores the shield pools present inside the given genesis state
 func (m *Module) saveShieldPools(doc *tmtypes.GenesisDoc, pools []shieldtypes.Pool) error {
 	for _, pool := range pools {
-		poolRecord := types.NewShieldPool(pool.Id, pool.Shield, nil, nil,
+		poolRecord := types.NewShieldPool(pool.Id, pool.Shield, nil,
 			pool.Sponsor, pool.SponsorAddr, pool.Description, pool.ShieldLimit, !pool.Active, doc.InitialHeight)
 		err := m.db.SaveShieldPool(poolRecord)
 		if err != nil {
@@ -96,7 +96,7 @@ func (m *Module) saveShieldProviders(doc *tmtypes.GenesisDoc, providers []shield
 
 		// store shield provider in db
 		providerRecord := types.NewShieldProvider(provider.Address, provider.Collateral.Int64(), provider.DelegationBonded.Int64(),
-			provider.Rewards.Native, provider.Rewards.Foreign, provider.TotalLocked.Int64(), provider.Withdrawing.Int64(), doc.InitialHeight)
+			provider.Rewards, provider.TotalLocked.Int64(), provider.Withdrawing.Int64(), doc.InitialHeight)
 		err = m.db.SaveShieldProvider(providerRecord)
 		if err != nil {
 			return err
@@ -154,8 +154,7 @@ func (m *Module) saveShieldWithdraws(doc *tmtypes.GenesisDoc, withdraws []shield
 
 // saveShieldStatus stores the shield status present inside the given genesis state
 func (m *Module) saveShieldStatus(doc *tmtypes.GenesisDoc, status shieldtypes.GenesisState) error {
-	shieldStatus := types.NewShieldStatus(status.GlobalStakingPool, status.ServiceFees.Native,
-		status.ServiceFees.Foreign, status.RemainingServiceFees.Native, status.RemainingServiceFees.Foreign,
+	shieldStatus := types.NewShieldStatus(status.GlobalStakingPool, status.ServiceFees, status.RemainingServiceFees,
 		status.TotalCollateral, status.TotalShield, status.TotalWithdrawing, doc.InitialHeight)
 
 	err := m.db.SaveShieldStatus(shieldStatus)

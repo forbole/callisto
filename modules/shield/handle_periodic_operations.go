@@ -45,8 +45,8 @@ func (m *Module) updateShieldProviders() error {
 
 	for _, provider := range providers {
 		err := m.db.SaveShieldProvider(types.NewShieldProvider(provider.Address, provider.Collateral.Int64(),
-			provider.DelegationBonded.Int64(), provider.Rewards.Native, provider.Rewards.Foreign,
-			provider.TotalLocked.Int64(), provider.Withdrawing.Int64(), block.Height))
+			provider.DelegationBonded.Int64(), provider.Rewards, provider.TotalLocked.Int64(),
+			provider.Withdrawing.Int64(), block.Height))
 		if err != nil {
 			return err
 		}
@@ -68,8 +68,7 @@ func (m *Module) updateShieldStatus() error {
 	}
 
 	err = m.db.SaveShieldStatus(types.NewShieldStatus(shieldStatus.GlobalShieldStakingPool,
-		shieldStatus.CurrentServiceFees.Native, shieldStatus.CurrentServiceFees.Foreign,
-		shieldStatus.RemainingServiceFees.Native, shieldStatus.RemainingServiceFees.Foreign,
+		shieldStatus.CurrentServiceFees, shieldStatus.RemainingServiceFees,
 		shieldStatus.TotalCollateral, shieldStatus.TotalShield, shieldStatus.TotalWithdrawing, block.Height))
 	if err != nil {
 		return err
