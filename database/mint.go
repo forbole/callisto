@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	creminttypes "github.com/crescent-network/crescent/v4/x/mint/types"
-	dbtypes "github.com/forbole/bdjuno/v3/database/types"
-	"github.com/forbole/bdjuno/v3/types"
+	dbtypes "github.com/forbole/bdjuno/v4/database/types"
+	"github.com/forbole/bdjuno/v4/types"
 )
 
 // SaveInflation allows to store the inflation for the given block height as well as timestamp

@@ -4,7 +4,7 @@ import (
 	creminttypes "github.com/crescent-network/crescent/v4/x/mint/types"
 	"github.com/forbole/juno/v4/node/remote"
 
-	mintsource "github.com/forbole/bdjuno/v3/modules/mint/source"
+	mintsource "github.com/forbole/bdjuno/v4/modules/mint/source"
 )
 
 var (

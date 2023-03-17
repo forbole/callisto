@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
-	"github.com/forbole/bdjuno/v3/utils"
+	"github.com/forbole/bdjuno/v4/utils"
 )
 
 // GetAccountBalances implements bankkeeper.Source

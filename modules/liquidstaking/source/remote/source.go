@@ -4,7 +4,7 @@ import (
 	liquidstakingtypes "github.com/crescent-network/crescent/v4/x/liquidstaking/types"
 	"github.com/forbole/juno/v4/node/remote"
 
-	liquidstakingsource "github.com/forbole/bdjuno/v3/modules/liquidstaking/source"
+	liquidstakingsource "github.com/forbole/bdjuno/v4/modules/liquidstaking/source"
 )
 
 var (

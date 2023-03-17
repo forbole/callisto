@@ -4,7 +4,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	liquidstakingtypes "github.com/crescent-network/crescent/v4/x/liquidstaking/types"
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 )
 
 type SlashingModule interface {

@@ -6,7 +6,7 @@ import (
 
 	tmtypes "github.com/tendermint/tendermint/types"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 
 	creminttypes "github.com/crescent-network/crescent/v4/x/mint/types"
 	"github.com/rs/zerolog/log"
