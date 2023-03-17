@@ -2,9 +2,9 @@ package v3
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 
-	"github.com/forbole/bdjuno/v3/modules/actions"
+	"github.com/forbole/bdjuno/v4/modules/actions"
 
 	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
 
@@ -32,7 +32,7 @@ func RunMigration(parseConfig *parsecmdtypes.Config) error {
 		return fmt.Errorf("error while serializing config: %s", err)
 	}
 
-	err = ioutil.WriteFile(config.GetConfigFilePath(), bz, 0600)
+	err = os.WriteFile(config.GetConfigFilePath(), bz, 0600)
 	if err != nil {
 		return fmt.Errorf("error while writing v3 config: %s", err)
 	}
