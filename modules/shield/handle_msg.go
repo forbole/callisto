@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strconv"
 
-	shieldtypes "github.com/certikfoundation/shentu/v2/x/shield/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/bdjuno/v3/types"
-	juno "github.com/forbole/juno/v3/types"
+	juno "github.com/forbole/juno/v4/types"
+	shieldtypes "github.com/shentufoundation/shentu/v2/x/shield/types"
 )
 
 // HandleMsg implements modules.MessageModule

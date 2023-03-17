@@ -4,25 +4,25 @@ import (
 	"fmt"
 	"os"
 
-	certiksimapp "github.com/certikfoundation/shentu/v2/simapp"
 	"github.com/cosmos/cosmos-sdk/simapp"
-
+	certiksimapp "github.com/shentufoundation/shentu/v2/app"
+	shentuappparams "github.com/shentufoundation/shentu/v2/app/params"
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/forbole/juno/v3/node/remote"
+	"github.com/forbole/juno/v4/node/remote"
 
-	certikgovtypes "github.com/certikfoundation/shentu/v2/x/gov/types"
-	shieldtypes "github.com/certikfoundation/shentu/v2/x/shield/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/forbole/juno/v3/node/local"
+	"github.com/forbole/juno/v4/node/local"
+	certikgovtypes "github.com/shentufoundation/shentu/v2/x/gov/types"
+	shieldtypes "github.com/shentufoundation/shentu/v2/x/shield/types"
 
-	nodeconfig "github.com/forbole/juno/v3/node/config"
+	nodeconfig "github.com/forbole/juno/v4/node/config"
 
 	banksource "github.com/forbole/bdjuno/v3/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v3/modules/bank/source/local"
@@ -80,9 +80,9 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		cfg.Home, 0, simapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
 	)
 
-	certikapp := certiksimapp.NewSimApp(
+	certikapp := certiksimapp.NewShentuApp(
 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
-		cfg.Home, 0, simapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
+		cfg.Home, 0, shentuappparams.EncodingConfig{}, simapp.EmptyAppOptions{},
 	)
 
 	sources := &Sources{

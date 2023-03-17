@@ -24,7 +24,7 @@ ON CONFLICT (pool_id) DO UPDATE
     height = excluded.height
 WHERE shield_pool.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt,
+	_, err := db.SQL.Exec(stmt,
 		pool.PoolID,
 		pool.Shield.String(),
 		pq.Array(dbtypes.NewDbCoins(pool.NativeServiceFees)),
@@ -48,7 +48,7 @@ WHERE shield_pool.height <= excluded.height`
 func (db *Db) UpdatePoolPauseStatus(poolID uint64, pause bool, height int64) error {
 	stmt := `UPDATE shield_pool SET pause = $1, height = $2 WHERE pool_id = %3`
 
-	_, err := db.Sql.Exec(stmt, pause, height, poolID)
+	_, err := db.SQL.Exec(stmt, pause, height, poolID)
 	if err != nil {
 		return fmt.Errorf("error while updating shield pool pause status: %s", err)
 	}
@@ -60,7 +60,7 @@ func (db *Db) UpdatePoolPauseStatus(poolID uint64, pause bool, height int64) err
 func (db *Db) UpdatePoolSponsor(poolID uint64, sponsor string, sponsorAddress string, height int64) error {
 	stmt := `UPDATE shield_pool SET sponsor = $1, sponsor_address = $2, height = $3 WHERE pool_id = %4`
 
-	_, err := db.Sql.Exec(stmt, sponsor, sponsorAddress, height, poolID)
+	_, err := db.SQL.Exec(stmt, sponsor, sponsorAddress, height, poolID)
 	if err != nil {
 		return fmt.Errorf("error while updating shield pool sponsor: %s", err)
 	}
@@ -72,7 +72,7 @@ func (db *Db) UpdatePoolSponsor(poolID uint64, sponsor string, sponsorAddress st
 func (db *Db) UpdateShieldProviderCollateral(address string, collateral int64, height int64) error {
 	stmt := `UPDATE shield_provider SET collateral = $1, height = $2 WHERE address = $3`
 
-	_, err := db.Sql.Exec(stmt, collateral, height, address)
+	_, err := db.SQL.Exec(stmt, collateral, height, address)
 	if err != nil {
 		return fmt.Errorf("error while updating shield provider collateral value: %s", err)
 	}
@@ -84,7 +84,7 @@ func (db *Db) UpdateShieldProviderCollateral(address string, collateral int64, h
 func (db *Db) WithdrawNativeRewards(address string, height int64) error {
 	stmt := `UPDATE shield_provider SET native_rewards = $1, height = $2 WHERE address = $3`
 
-	_, err := db.Sql.Exec(stmt, pq.Array(dbtypes.NewDbDecCoins(sdk.DecCoins{})), height, address)
+	_, err := db.SQL.Exec(stmt, pq.Array(dbtypes.NewDbDecCoins(sdk.DecCoins{})), height, address)
 	if err != nil {
 		return fmt.Errorf("error while withdrawing the native rewards: %s", err)
 	}
@@ -96,7 +96,7 @@ func (db *Db) WithdrawNativeRewards(address string, height int64) error {
 func (db *Db) WithdrawForeignRewards(address string, height int64) error {
 	stmt := `UPDATE shield_provider SET foreign_rewards = $1, height = $2 WHERE address = $3`
 
-	_, err := db.Sql.Exec(stmt, pq.Array(dbtypes.NewDbDecCoins(sdk.DecCoins{})), height, address)
+	_, err := db.SQL.Exec(stmt, pq.Array(dbtypes.NewDbDecCoins(sdk.DecCoins{})), height, address)
 	if err != nil {
 		return fmt.Errorf("error while withdrawing the foreign rewards: %s", err)
 	}
@@ -108,7 +108,7 @@ func (db *Db) WithdrawForeignRewards(address string, height int64) error {
 func (db *Db) UpdateShieldProviderDelegation(address string, delegation int64, height int64) error {
 	stmt := `UPDATE shield_provider SET delegation_bonded = $1, height = $2 WHERE address = $3`
 
-	_, err := db.Sql.Exec(stmt, delegation, height, address)
+	_, err := db.SQL.Exec(stmt, delegation, height, address)
 	if err != nil {
 		return fmt.Errorf("error while updating shield provider delegation value: %s", err)
 	}
@@ -152,7 +152,7 @@ func (db *Db) SaveShieldPurchase(shield *types.ShieldPurchase) error {
 INSERT INTO shield_purchase (pool_id, purchaser, shield, description, height)
 VALUES ($1, $2, $3, $4, $5)`
 
-	_, err := db.Sql.Exec(stmt,
+	_, err := db.SQL.Exec(stmt,
 		shield.PoolID,
 		shield.FromAddress,
 		shield.Shield.String(),
@@ -182,7 +182,7 @@ ON CONFLICT (one_row_id) DO UPDATE
         height = excluded.height
 WHERE shield_pool_params.height <= excluded.height`
 
-	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
+	_, err = db.SQL.Exec(stmt, string(paramsBz), params.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing shield pool params: %s", err)
 	}
@@ -205,7 +205,7 @@ ON CONFLICT (one_row_id) DO UPDATE
         height = excluded.height
 WHERE shield_claim_proposal_params.height <= excluded.height`
 
-	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
+	_, err = db.SQL.Exec(stmt, string(paramsBz), params.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing shield claim proposal params: %s", err)
 	}
@@ -229,7 +229,7 @@ ON CONFLICT (address) DO UPDATE
     height = excluded.height
 WHERE shield_provider.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt,
+	_, err := db.SQL.Exec(stmt,
 		provider.Address,
 		provider.Collateral,
 		provider.DelegationBonded,
@@ -253,7 +253,7 @@ func (db *Db) SaveShieldWithdraw(withdraw *types.ShieldWithdraw) error {
 INSERT INTO shield_withdraws (address, amount, completion_time, height)
 VALUES ($1, $2, $3, $4)`
 
-	_, err := db.Sql.Exec(stmt,
+	_, err := db.SQL.Exec(stmt,
 		withdraw.Address,
 		withdraw.Amount,
 		withdraw.CompletionTime,
@@ -285,7 +285,7 @@ ON CONFLICT (one_row_id) DO UPDATE
     height = excluded.height
 WHERE shield_status.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt,
+	_, err := db.SQL.Exec(stmt,
 		status.GobalStakingPool.Int64(),
 		pq.Array(dbtypes.NewDbDecCoins(status.CurrentNativeServiceFees)),
 		pq.Array(dbtypes.NewDbDecCoins(status.CurrentForeignServiceFees)),

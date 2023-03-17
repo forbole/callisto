@@ -3,8 +3,8 @@ package types
 import (
 	"time"
 
-	shieldtypes "github.com/certikfoundation/shentu/v2/x/shield/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	shieldtypes "github.com/shentufoundation/shentu/v2/x/shield/types"
 )
 
 // ShieldPool represents a pool of the shield module at a given height

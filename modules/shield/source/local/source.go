@@ -3,10 +3,10 @@ package local
 import (
 	"fmt"
 
-	shieldtypes "github.com/certikfoundation/shentu/v2/x/shield/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	shieldtypes "github.com/shentufoundation/shentu/v2/x/shield/types"
 
-	"github.com/forbole/juno/v3/node/local"
+	"github.com/forbole/juno/v4/node/local"
 
 	"github.com/forbole/bdjuno/v3/modules/shield/source"
 )

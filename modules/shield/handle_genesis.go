@@ -8,7 +8,7 @@ import (
 
 	tmtypes "github.com/tendermint/tendermint/types"
 
-	shieldtypes "github.com/certikfoundation/shentu/v2/x/shield/types"
+	shieldtypes "github.com/shentufoundation/shentu/v2/x/shield/types"
 
 	"github.com/rs/zerolog/log"
 )

@@ -8,8 +8,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	shieldtypes "github.com/certikfoundation/shentu/v2/x/shield/types"
 	dbtypes "github.com/forbole/bdjuno/v3/database/types"
+	shieldtypes "github.com/shentufoundation/shentu/v2/x/shield/types"
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_ShieldPool() {

@@ -12,9 +12,9 @@ import (
 
 	"github.com/forbole/bdjuno/v3/types"
 
-	certikgovtypes "github.com/certikfoundation/shentu/v2/x/gov/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	certikgovtypes "github.com/shentufoundation/shentu/v2/x/gov/types"
 
 	dbtypes "github.com/forbole/bdjuno/v3/database/types"
 )

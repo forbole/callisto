@@ -18,8 +18,8 @@ import (
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 
-	certikgovtypes "github.com/certikfoundation/shentu/v2/x/gov/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	certikgovtypes "github.com/shentufoundation/shentu/v2/x/gov/types"
 )
 
 func (m *Module) UpdateProposal(height int64, blockTime time.Time, id uint64) error {

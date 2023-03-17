@@ -3,10 +3,10 @@ package local
 import (
 	"fmt"
 
-	certikgovtypes "github.com/certikfoundation/shentu/v2/x/gov/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	"github.com/forbole/juno/v3/node/local"
+	"github.com/forbole/juno/v4/node/local"
+	certikgovtypes "github.com/shentufoundation/shentu/v2/x/gov/types"
 
 	govsource "github.com/forbole/bdjuno/v3/modules/gov/source"
 )
