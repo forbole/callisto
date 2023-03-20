@@ -2,6 +2,7 @@ package modules
 
 import (
 	"github.com/forbole/bdjuno/v4/modules/actions"
+	"github.com/forbole/bdjuno/v4/modules/did"
 	"github.com/forbole/bdjuno/v4/modules/types"
 
 	"github.com/forbole/juno/v4/modules/pruning"
@@ -79,6 +80,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	bankModule := bank.NewModule(r.parser, sources.BankSource, cdc, db)
 	consensusModule := consensus.NewModule(db)
 	dailyRefetchModule := dailyrefetch.NewModule(ctx.Proxy, db)
+	didModule := did.NewModule(r.parser, cdc, db)
 	distrModule := distribution.NewModule(sources.DistrSource, cdc, db)
 	feegrantModule := feegrant.NewModule(cdc, db)
 	mintModule := mint.NewModule(sources.MintSource, cdc, db)
@@ -98,6 +100,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		bankModule,
 		consensusModule,
 		dailyRefetchModule,
+		didModule,
 		distrModule,
 		feegrantModule,
 		govModule,
