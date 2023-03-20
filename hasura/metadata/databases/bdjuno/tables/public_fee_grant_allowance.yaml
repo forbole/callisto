@@ -10,12 +10,12 @@ object_relationships:
     foreign_key_constraint_on: granter_address
 select_permissions:
 - permission:
-    allow_aggregations: true
+    allow_aggregations: false
     columns:
-    - id
     - grantee_address
     - granter_address
     - allowance
     - height
     filter: {}
+    limit: 100
   role: anonymous
