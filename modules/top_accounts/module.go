@@ -10,9 +10,9 @@ import (
 )
 
 var (
-	_ modules.Module        = &Module{}
-	_ modules.MessageModule = &Module{}
-	// _ modules.PeriodicOperationsModule = &Module{}
+	_ modules.Module                   = &Module{}
+	_ modules.MessageModule            = &Module{}
+	_ modules.PeriodicOperationsModule = &Module{}
 )
 
 // Module represent x/gov module
@@ -20,6 +20,7 @@ type Module struct {
 	cdc           codec.Codec
 	db            *database.Db
 	messageParser junomessages.MessageAddressesParser
+	authModule    AuthModule
 	bankModule    BankModule
 	distrModule   DistrModule
 	stakingModule StakingModule
@@ -27,6 +28,7 @@ type Module struct {
 
 // NewModule returns a new Module instance
 func NewModule(
+	authModule AuthModule,
 	bankModule BankModule,
 	distrModule DistrModule,
 	stakingModule StakingModule,
@@ -36,6 +38,7 @@ func NewModule(
 ) *Module {
 	return &Module{
 		cdc:           cdc,
+		authModule:    authModule,
 		bankModule:    bankModule,
 		distrModule:   distrModule,
 		messageParser: messageParser,

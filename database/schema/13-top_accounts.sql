@@ -9,3 +9,12 @@ CREATE TABLE top_accounts
     sum             BIGINT NOT NULL DEFAULT 0
 );
 CREATE INDEX top_accounts_sum_index ON top_accounts (sum);
+
+CREATE TABLE top_accounts_params
+(
+    one_row_id      BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
+    total_accounts  BIGINT  NOT NULL,
+    height          BIGINT  NOT NULL,
+    CHECK (one_row_id)
+);
+CREATE INDEX top_accounts_params_height_index ON top_accounts_params (height);

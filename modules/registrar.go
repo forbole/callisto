@@ -86,6 +86,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	stakingModule := staking.NewModule(sources.StakingSource, cdc, db)
 	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakingModule, cdc, db)
 	upgradeModule := upgrade.NewModule(db, stakingModule)
+	topAccountsModule := topaccounts.NewModule(sources.AuthSource, bankModule, distrModule, stakingModule, r.parser, cdc, db)
 
 	return []jmodules.Module{
 		messages.NewModule(r.parser, cdc, ctx.Database),
@@ -105,10 +106,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		pricefeed.NewModule(ctx.JunoConfig, cdc, db),
 		slashingModule,
 		stakingModule,
-		topaccounts.NewModule(bankModule,
-			distrModule,
-			stakingModule,
-			r.parser, cdc, db),
+		topAccountsModule,
 		upgradeModule,
 	}
 }
