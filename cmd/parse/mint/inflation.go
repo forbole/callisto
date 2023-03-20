@@ -7,9 +7,9 @@ import (
 	"github.com/forbole/juno/v4/types/config"
 	"github.com/spf13/cobra"
 
-	"github.com/forbole/bdjuno/v3/database"
-	"github.com/forbole/bdjuno/v3/modules/mint"
-	modulestypes "github.com/forbole/bdjuno/v3/modules/types"
+	"github.com/forbole/bdjuno/v4/database"
+	"github.com/forbole/bdjuno/v4/modules/mint"
+	modulestypes "github.com/forbole/bdjuno/v4/modules/types"
 )
 
 // inflationCmd returns the Cobra command allowing to refresh x/mint inflation
