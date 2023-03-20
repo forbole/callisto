@@ -6,18 +6,18 @@ import (
 
 	"github.com/forbole/bdjuno/v3/modules/actions"
 
-	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
+	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
 
 	"gopkg.in/yaml.v3"
 
-	junov3 "github.com/forbole/juno/v3/cmd/migrate/v3"
-	"github.com/forbole/juno/v3/types/config"
+	junov4 "github.com/forbole/juno/v4/cmd/migrate/v4"
+	"github.com/forbole/juno/v4/types/config"
 )
 
 // RunMigration runs the migrations from v2 to v3
 func RunMigration(parseConfig *parsecmdtypes.Config) error {
 	// Run Juno migration
-	err := junov3.RunMigration(parseConfig)
+	err := junov4.RunMigration(parseConfig)
 	if err != nil {
 		return err
 	}
