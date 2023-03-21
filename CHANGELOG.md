@@ -1,6 +1,10 @@
 ## Unreleased
 ### Changes
 
+#### [cheqd]
+- ([\#545](https://github.com/forbole/bdjuno/pull/545)) Added `x/did` and `x/resource` module handlers to store data in db
+
+
 #### [cheqd] Top Accounts Module
 - ([\#510](https://github.com/forbole/bdjuno/pull/510)) Implemented `top_accounts` module to store chain native token's balance for ranking 
 - ([\#511](https://github.com/forbole/bdjuno/pull/511)) Implemented parse cmd for `top_accounts` module 

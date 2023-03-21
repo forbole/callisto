@@ -52,3 +52,21 @@ ON CONFLICT (address) DO UPDATE SET sum = excluded.sum`
 	return err
 
 }
+
+// SaveTotalAccounts allows to store total accounts params inside the database
+func (db *Db) SaveTotalAccounts(totalAccounts int64, height int64) error {
+	stmt := `
+INSERT INTO top_accounts_params (total_accounts, height) 
+VALUES ($1, $2)
+ON CONFLICT (one_row_id) DO UPDATE 
+    SET total_accounts = excluded.total_accounts,
+        height = excluded.height
+WHERE top_accounts_params.height <= excluded.height`
+
+	_, err := db.SQL.Exec(stmt, totalAccounts, height)
+	if err != nil {
+		return fmt.Errorf("error while storing top accounts params: %s", err)
+	}
+
+	return nil
+}

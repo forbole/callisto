@@ -9,8 +9,8 @@ import (
 	"github.com/forbole/juno/v4/node/remote"
 
 	bankkeeper "github.com/forbole/bdjuno/v4/modules/bank/source"
-	"github.com/forbole/bdjuno/v4/types"
 	pricefeed "github.com/forbole/bdjuno/v4/modules/pricefeed"
+	"github.com/forbole/bdjuno/v4/types"
 )
 
 var (

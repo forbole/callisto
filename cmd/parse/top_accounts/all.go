@@ -54,7 +54,7 @@ func allCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			bankModule := bank.NewModule(nil, sources.BankSource, parseCtx.EncodingConfig.Codec, db)
 			distriModule := distribution.NewModule(sources.DistrSource, parseCtx.EncodingConfig.Codec, db)
 			stakingModule := staking.NewModule(sources.StakingSource, parseCtx.EncodingConfig.Codec, db)
-			topaccountsModule := topaccounts.NewModule(bankModule, distriModule, stakingModule, nil, parseCtx.EncodingConfig.Codec, db)
+			topaccountsModule := topaccounts.NewModule(sources.AuthSource, bankModule, distriModule, stakingModule, nil, parseCtx.EncodingConfig.Codec, db)
 
 			// Get workers
 			exportQueue := NewQueue(5)

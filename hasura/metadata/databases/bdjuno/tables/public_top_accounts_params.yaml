@@ -1,0 +1,12 @@
+table:
+  name: top_accounts_params
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: false
+    columns:
+    - total_accounts
+    - height
+    filter: {}
+    limit: 1
+  role: anonymous

@@ -1,0 +1,19 @@
+table:
+  name: resource
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: false
+    columns:
+    - id
+    - collection_id
+    - data
+    - name
+    - version
+    - resource_type
+    - also_known_as
+    - from_address
+    - height
+    filter: {}
+    limit: 1
+  role: anonymous

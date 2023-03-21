@@ -16,8 +16,8 @@ import (
 	parsemint "github.com/forbole/bdjuno/v4/cmd/parse/mint"
 	parsepricefeed "github.com/forbole/bdjuno/v4/cmd/parse/pricefeed"
 	parsestaking "github.com/forbole/bdjuno/v4/cmd/parse/staking"
-	parsetransaction "github.com/forbole/juno/v4/cmd/parse/transactions"
 	parsetopaccounts "github.com/forbole/bdjuno/v4/cmd/parse/top_accounts"
+	parsetransaction "github.com/forbole/juno/v4/cmd/parse/transactions"
 )
 
 // NewParseCmd returns the Cobra command allowing to parse some chain data without having to re-sync the whole database

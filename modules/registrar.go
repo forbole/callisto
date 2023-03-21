@@ -2,6 +2,8 @@ package modules
 
 import (
 	"github.com/forbole/bdjuno/v4/modules/actions"
+	"github.com/forbole/bdjuno/v4/modules/did"
+	"github.com/forbole/bdjuno/v4/modules/resource"
 	"github.com/forbole/bdjuno/v4/modules/types"
 
 	"github.com/forbole/juno/v4/modules/pruning"
@@ -79,13 +81,16 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	bankModule := bank.NewModule(r.parser, sources.BankSource, cdc, db)
 	consensusModule := consensus.NewModule(db)
 	dailyRefetchModule := dailyrefetch.NewModule(ctx.Proxy, db)
+	didModule := did.NewModule(r.parser, cdc, db)
 	distrModule := distribution.NewModule(sources.DistrSource, cdc, db)
 	feegrantModule := feegrant.NewModule(cdc, db)
 	mintModule := mint.NewModule(sources.MintSource, cdc, db)
+	resourceModule := resource.NewModule(r.parser, cdc, db)
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
 	stakingModule := staking.NewModule(sources.StakingSource, cdc, db)
 	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakingModule, cdc, db)
 	upgradeModule := upgrade.NewModule(db, stakingModule)
+	topAccountsModule := topaccounts.NewModule(sources.AuthSource, bankModule, distrModule, stakingModule, r.parser, cdc, db)
 
 	return []jmodules.Module{
 		messages.NewModule(r.parser, cdc, ctx.Database),
@@ -97,18 +102,17 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		bankModule,
 		consensusModule,
 		dailyRefetchModule,
+		didModule,
 		distrModule,
 		feegrantModule,
 		govModule,
 		mintModule,
 		modules.NewModule(ctx.JunoConfig.Chain, db),
 		pricefeed.NewModule(ctx.JunoConfig, cdc, db),
+		resourceModule,
 		slashingModule,
 		stakingModule,
-		topaccounts.NewModule(bankModule,
-			distrModule,
-			stakingModule,
-			r.parser, cdc, db),
+		topAccountsModule,
 		upgradeModule,
 	}
 }
