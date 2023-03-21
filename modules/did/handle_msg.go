@@ -15,10 +15,10 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 
 	switch cosmosMsg := msg.(type) {
 	case *didtypes.MsgCreateDidDoc:
-		return m.handleMsgCreateDidDoc(tx.Height, cosmosMsg)
+		return m.handleMsgCreateDidDoc(tx.Height, cosmosMsg, tx.FeePayer().String())
 
 	case *didtypes.MsgUpdateDidDoc:
-		return m.handleMsgUpdateDidDoc(tx.Height, cosmosMsg)
+		return m.handleMsgUpdateDidDoc(tx.Height, cosmosMsg, tx.FeePayer().String())
 
 	case *didtypes.MsgDeactivateDidDoc:
 		return m.handleMsgDeactivateDidDoc(tx.Height, cosmosMsg)
@@ -27,21 +27,20 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	return nil
 }
 
-func (m *Module) handleMsgCreateDidDoc(height int64, msg *didtypes.MsgCreateDidDoc) error {
-	// payerAddress := tx.FeePayer()
+func (m *Module) handleMsgCreateDidDoc(height int64, msg *didtypes.MsgCreateDidDoc, feePayer string) error {
 	return m.db.SaveDidDoc(types.NewDidDoc(msg.Payload.Id, msg.Payload.Context,
 		msg.Payload.Controller, msg.Payload.VerificationMethod, msg.Payload.Authentication,
 		msg.Payload.AssertionMethod, msg.Payload.CapabilityInvocation,
 		msg.Payload.CapabilityDelegation, msg.Payload.KeyAgreement,
-		msg.Payload.Service, msg.Payload.AlsoKnownAs, msg.Payload.VersionId, height))
+		msg.Payload.Service, msg.Payload.AlsoKnownAs, msg.Payload.VersionId, feePayer, height))
 }
 
-func (m *Module) handleMsgUpdateDidDoc(height int64, msg *didtypes.MsgUpdateDidDoc) error {
+func (m *Module) handleMsgUpdateDidDoc(height int64, msg *didtypes.MsgUpdateDidDoc, feePayer string) error {
 	return m.db.SaveDidDoc(types.NewDidDoc(msg.Payload.Id, msg.Payload.Context,
 		msg.Payload.Controller, msg.Payload.VerificationMethod, msg.Payload.Authentication,
 		msg.Payload.AssertionMethod, msg.Payload.CapabilityInvocation,
 		msg.Payload.CapabilityDelegation, msg.Payload.KeyAgreement,
-		msg.Payload.Service, msg.Payload.AlsoKnownAs, msg.Payload.VersionId, height))
+		msg.Payload.Service, msg.Payload.AlsoKnownAs, msg.Payload.VersionId, feePayer, height))
 
 }
 

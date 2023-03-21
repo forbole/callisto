@@ -12,6 +12,7 @@ CREATE TABLE did_doc
     service                JSONB,
     also_known_as          TEXT[],
     version_id             TEXT,
+    from_address           TEXT,
     height                 BIGINT  NOT NULL
 );
 CREATE INDEX did_doc_id_index ON did_doc (id);

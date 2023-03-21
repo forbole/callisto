@@ -13,6 +13,7 @@ type Resource struct {
 	Version      string
 	ResourceType string
 	AlsoKnownAs  []*resourcetypes.AlternativeUri
+	FromAddress  string
 	Height       int64
 }
 
@@ -24,6 +25,7 @@ func NewResource(id string,
 	version string,
 	resourceType string,
 	alsoKnownAs []*resourcetypes.AlternativeUri,
+	fromAddress string,
 	height int64) *Resource {
 	return &Resource{
 		ID:           id,
@@ -33,6 +35,7 @@ func NewResource(id string,
 		Version:      version,
 		ResourceType: resourceType,
 		AlsoKnownAs:  alsoKnownAs,
+		FromAddress:  fromAddress,
 		Height:       height,
 	}
 }

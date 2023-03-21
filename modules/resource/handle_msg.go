@@ -15,14 +15,14 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 
 	switch cosmosMsg := msg.(type) {
 	case *resourcetypes.MsgCreateResource:
-		return m.handleMsgCreateResource(tx.Height, cosmosMsg)
+		return m.handleMsgCreateResource(tx.Height, cosmosMsg, tx.FeePayer().String())
 	}
 
 	return nil
 }
 
-func (m *Module) handleMsgCreateResource(height int64, msg *resourcetypes.MsgCreateResource) error {
+func (m *Module) handleMsgCreateResource(height int64, msg *resourcetypes.MsgCreateResource, feePayer string) error {
 	return m.db.SaveResource(types.NewResource(msg.Payload.Id, msg.Payload.CollectionId,
 		msg.Payload.Data, msg.Payload.Name, msg.Payload.Version,
-		msg.Payload.ResourceType, msg.Payload.AlsoKnownAs, height))
+		msg.Payload.ResourceType, msg.Payload.AlsoKnownAs, feePayer, height))
 }

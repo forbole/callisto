@@ -7,6 +7,7 @@ CREATE TABLE resource
     version         TEXT,
     resource_type   TEXT,
     also_known_as   JSONB,
+    from_address    TEXT,
     height          BIGINT  NOT NULL
 );
 CREATE INDEX resource_id_index ON resource (id);
