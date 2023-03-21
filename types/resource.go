@@ -7,7 +7,7 @@ import (
 // Resource represents the x/resource
 type Resource struct {
 	ID           string
-	CollectionId string
+	CollectionID string
 	Data         []byte
 	Name         string
 	Version      string
@@ -19,7 +19,7 @@ type Resource struct {
 
 // NewResource allows to build a new Resource instance
 func NewResource(id string,
-	collectionId string,
+	collectionID string,
 	data []byte,
 	name string,
 	version string,
@@ -29,7 +29,7 @@ func NewResource(id string,
 	height int64) *Resource {
 	return &Resource{
 		ID:           id,
-		CollectionId: collectionId,
+		CollectionID: collectionID,
 		Data:         data,
 		Name:         name,
 		Version:      version,

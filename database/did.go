@@ -43,7 +43,7 @@ WHERE did_doc.height <= excluded.height`
 
 	_, err = db.SQL.Exec(stmt, didDoc.ID, pq.StringArray(didDoc.Context), pq.StringArray(didDoc.Controller), string(verMethodBz),
 		pq.StringArray(didDoc.Authentication), pq.StringArray(didDoc.AssertionMethod), pq.StringArray(didDoc.CapabilityInvocation), pq.StringArray(didDoc.CapabilityDelegation),
-		pq.StringArray(didDoc.KeyAgreement), string(serviceBz), pq.StringArray(didDoc.AlsoKnownAs), didDoc.VersionId, didDoc.FromAddress, didDoc.Height)
+		pq.StringArray(didDoc.KeyAgreement), string(serviceBz), pq.StringArray(didDoc.AlsoKnownAs), didDoc.VersionID, didDoc.FromAddress, didDoc.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing did doc: %s", err)
 	}

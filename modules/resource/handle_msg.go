@@ -16,9 +16,10 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	switch cosmosMsg := msg.(type) {
 	case *resourcetypes.MsgCreateResource:
 		return m.handleMsgCreateResource(tx.Height, cosmosMsg, tx.FeePayer().String())
+	default:
+		return nil
 	}
 
-	return nil
 }
 
 func (m *Module) handleMsgCreateResource(height int64, msg *resourcetypes.MsgCreateResource, feePayer string) error {

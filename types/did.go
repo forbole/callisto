@@ -17,7 +17,7 @@ type DidDoc struct {
 	KeyAgreement         []string
 	Service              []*didtypes.Service
 	AlsoKnownAs          []string
-	VersionId            string
+	VersionID            string
 	FromAddress          string
 	Height               int64
 }
@@ -34,7 +34,7 @@ func NewDidDoc(id string,
 	keyAgreement []string,
 	service []*didtypes.Service,
 	alsoKnownAs []string,
-	versionId string,
+	versionID string,
 	fromAddress string,
 	height int64) *DidDoc {
 	return &DidDoc{
@@ -49,7 +49,7 @@ func NewDidDoc(id string,
 		KeyAgreement:         keyAgreement,
 		Service:              service,
 		AlsoKnownAs:          alsoKnownAs,
-		VersionId:            versionId,
+		VersionID:            versionID,
 		FromAddress:          fromAddress,
 		Height:               height,
 	}

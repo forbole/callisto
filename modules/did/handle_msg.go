@@ -21,7 +21,7 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return m.handleMsgUpdateDidDoc(tx.Height, cosmosMsg, tx.FeePayer().String())
 
 	case *didtypes.MsgDeactivateDidDoc:
-		return m.handleMsgDeactivateDidDoc(tx.Height, cosmosMsg)
+		return m.handleMsgDeactivateDidDoc(cosmosMsg)
 	}
 
 	return nil
@@ -44,6 +44,6 @@ func (m *Module) handleMsgUpdateDidDoc(height int64, msg *didtypes.MsgUpdateDidD
 
 }
 
-func (m *Module) handleMsgDeactivateDidDoc(height int64, msg *didtypes.MsgDeactivateDidDoc) error {
+func (m *Module) handleMsgDeactivateDidDoc(msg *didtypes.MsgDeactivateDidDoc) error {
 	return m.db.DeleteDidDoc(msg.Payload.Id, msg.Payload.VersionId)
 }

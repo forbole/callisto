@@ -34,7 +34,7 @@ ON CONFLICT (id) DO UPDATE
         height = excluded.height
 WHERE resource.height <= excluded.height`
 
-	_, err = db.SQL.Exec(stmt, resource.ID, resource.CollectionId, string(dataBz),
+	_, err = db.SQL.Exec(stmt, resource.ID, resource.CollectionID, string(dataBz),
 		resource.Name, resource.Version, resource.ResourceType, string(alsoKnownAsBz),
 		resource.FromAddress, resource.Height)
 	if err != nil {
