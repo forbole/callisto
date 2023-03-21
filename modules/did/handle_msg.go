@@ -2,7 +2,6 @@ package did
 
 import (
 	didtypes "github.com/cheqd/cheqd-node/x/did/types"
-	resourcetypes "github.com/cheqd/cheqd-node/x/resource/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/bdjuno/v4/types"
 	juno "github.com/forbole/juno/v4/types"
@@ -22,11 +21,7 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return m.handleMsgUpdateDidDoc(tx.Height, cosmosMsg)
 
 	case *didtypes.MsgDeactivateDidDoc:
-		return m.handleMsgDeactivateDidDoc()
-
-	case *resourcetypes.MsgCreateResource:
-		return m.handleMsgCreateResource()
-
+		return m.handleMsgDeactivateDidDoc(tx.Height, cosmosMsg)
 	}
 
 	return nil
@@ -50,10 +45,6 @@ func (m *Module) handleMsgUpdateDidDoc(height int64, msg *didtypes.MsgUpdateDidD
 
 }
 
-func (m *Module) handleMsgDeactivateDidDoc() error {
-	return nil
-}
-
-func (m *Module) handleMsgCreateResource() error {
-	return nil
+func (m *Module) handleMsgDeactivateDidDoc(height int64, msg *didtypes.MsgDeactivateDidDoc) error {
+	return m.db.DeleteDidDoc(msg.Payload.Id, msg.Payload.VersionId)
 }

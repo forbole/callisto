@@ -49,3 +49,14 @@ WHERE did_doc.height <= excluded.height`
 
 	return nil
 }
+
+// DeleteDidDoc removes did doc data from the database
+func (db *Db) DeleteDidDoc(id, versionID string) error {
+	stmt := `DELETE FROM did_doc WHERE id = $1 AND version_id = $2`
+	_, err := db.SQL.Exec(stmt, id, versionID)
+
+	if err != nil {
+		return fmt.Errorf("error while deleting did doc: %s", err)
+	}
+	return nil
+}
