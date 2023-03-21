@@ -1,0 +1,24 @@
+table:
+  name: did_doc
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: false
+    columns:
+    - id
+    - context
+    - controller
+    - verification_method
+    - authentication
+    - assertion_method
+    - capability_invocation
+    - capability_delegation
+    - key_agreement
+    - service
+    - also_known_as
+    - version_id
+    - from_address
+    - height
+    filter: {}
+    limit: 1
+  role: anonymous
