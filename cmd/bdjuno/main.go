@@ -11,14 +11,12 @@ import (
 	migratecmd "github.com/forbole/bdjuno/v4/cmd/migrate"
 	parsecmd "github.com/forbole/bdjuno/v4/cmd/parse"
 
-	"github.com/forbole/bdjuno/v4/types/config"
-
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules"
-
-	gaiaapp "github.com/cosmos/gaia/v7/app"
+	"github.com/forbole/bdjuno/v4/types/config"
 
 	bandapp "github.com/bandprotocol/chain/v2/app"
+	gaiaapp "github.com/cosmos/gaia/v7/app"
 )
 
 func main() {
