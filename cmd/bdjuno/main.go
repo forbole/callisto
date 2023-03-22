@@ -8,13 +8,14 @@ import (
 	startcmd "github.com/forbole/juno/v4/cmd/start"
 	"github.com/forbole/juno/v4/modules/messages"
 
-	migratecmd "github.com/forbole/bdjuno/v3/cmd/migrate"
-	parsecmd "github.com/forbole/bdjuno/v3/cmd/parse"
+	migratecmd "github.com/forbole/bdjuno/v4/cmd/migrate"
+	parsecmd "github.com/forbole/bdjuno/v4/cmd/parse"
 
-	"github.com/forbole/bdjuno/v3/types/config"
+	"github.com/forbole/bdjuno/v4/types/config"
 
-	"github.com/forbole/bdjuno/v3/database"
-	"github.com/forbole/bdjuno/v3/modules"
+	"github.com/cosmos/cosmos-sdk/simapp"
+	"github.com/forbole/bdjuno/v4/database"
+	"github.com/forbole/bdjuno/v4/modules"
 
 	persistenceapp "github.com/persistenceOne/persistenceCore/v7/app"
 )
@@ -55,6 +56,7 @@ func main() {
 // This should be edited by custom implementations if needed.
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
+		simapp.ModuleBasics,
 		persistenceapp.ModuleBasics,
 	}
 }

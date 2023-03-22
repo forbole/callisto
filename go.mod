@@ -1,12 +1,12 @@
-module github.com/forbole/bdjuno/v3
+module github.com/forbole/bdjuno/v4
 
-go 1.18
+go 1.19
 
 require (
 	github.com/CosmWasm/wasmd v0.30.0
 	github.com/cosmos/cosmos-sdk v0.45.14
 	github.com/forbole/juno/v4 v4.1.1-0.20230221021913-841842bdefed
-	github.com/go-co-op/gocron v1.18.0
+	github.com/go-co-op/gocron v1.19.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.7
@@ -16,9 +16,9 @@ require (
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
 	github.com/rs/zerolog v1.29.0
 	github.com/spf13/cobra v1.6.1
-	github.com/stretchr/testify v1.8.1
+	github.com/stretchr/testify v1.8.2
 	github.com/tendermint/tendermint v0.34.26
-	google.golang.org/grpc v1.52.3
+	google.golang.org/grpc v1.53.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -40,7 +40,7 @@ require (
 	github.com/btcsuite/btcd v0.22.2 // indirect
 	github.com/btcsuite/btcd/btcec/v2 v2.3.2 // indirect
 	github.com/cespare/xxhash v1.1.0 // indirect
-	github.com/cespare/xxhash/v2 v2.1.2 // indirect
+	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/cockroachdb/errors v1.9.1 // indirect
 	github.com/cockroachdb/logtags v0.0.0-20230118201751-21c54148d20b // indirect
 	github.com/cockroachdb/pebble v0.0.0-20220817183557-09c6e030a677 // indirect
@@ -54,7 +54,6 @@ require (
 	github.com/cosmos/gogoproto v1.4.3 // indirect
 	github.com/cosmos/gorocksdb v1.2.0 // indirect
 	github.com/cosmos/iavl v0.19.5 // indirect
-	github.com/cosmos/ibc-go/v3 v3.4.0 // indirect
 	github.com/cosmos/ibc-go/v4 v4.3.0 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.12.2 // indirect
 	github.com/creachadair/taskgroup v0.3.2 // indirect
