@@ -11,10 +11,10 @@ import (
 	migratecmd "github.com/forbole/bdjuno/v4/cmd/migrate"
 	parsecmd "github.com/forbole/bdjuno/v4/cmd/parse"
 
-	"github.com/forbole/bdjuno/v4/types/config"
-
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules"
+	"github.com/forbole/bdjuno/v4/types/config"
 
 	crescentapp "github.com/crescent-network/crescent/v4/app"
 )
@@ -55,6 +55,7 @@ func main() {
 // This should be edited by custom implementations if needed.
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
+		simapp.ModuleBasics,
 		crescentapp.ModuleBasics,
 	}
 }
