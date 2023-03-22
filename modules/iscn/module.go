@@ -1,10 +1,10 @@
 package iscn
 
 import (
-	"github.com/forbole/juno/v3/modules"
+	"github.com/forbole/juno/v4/modules"
 
-	"github.com/forbole/bdjuno/v3/database"
-	iscnsource "github.com/forbole/bdjuno/v3/modules/iscn/source"
+	"github.com/forbole/bdjuno/v4/database"
+	iscnsource "github.com/forbole/bdjuno/v4/modules/iscn/source"
 )
 
 var (

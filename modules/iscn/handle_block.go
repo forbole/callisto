@@ -3,12 +3,12 @@ package iscn
 import (
 	"fmt"
 
-	juno "github.com/forbole/juno/v3/types"
+	juno "github.com/forbole/juno/v4/types"
 
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 )
 
 // HandleBlock implements modules.BlockModule

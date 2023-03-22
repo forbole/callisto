@@ -4,24 +4,25 @@ import (
 	"encoding/hex"
 	"fmt"
 	"strconv"
+	"time"
 
-	modulestypes "github.com/forbole/bdjuno/v3/modules/types"
+	modulestypes "github.com/forbole/bdjuno/v4/modules/types"
 	"github.com/rs/zerolog/log"
 
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
-	"github.com/forbole/juno/v3/types/config"
+	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
+	"github.com/forbole/juno/v4/types/config"
 	"github.com/spf13/cobra"
 
-	"github.com/forbole/juno/v3/parser"
+	"github.com/forbole/juno/v4/parser"
 
-	"github.com/forbole/bdjuno/v3/database"
-	"github.com/forbole/bdjuno/v3/modules/distribution"
-	"github.com/forbole/bdjuno/v3/modules/gov"
-	"github.com/forbole/bdjuno/v3/modules/mint"
-	"github.com/forbole/bdjuno/v3/modules/slashing"
-	"github.com/forbole/bdjuno/v3/modules/staking"
-	"github.com/forbole/bdjuno/v3/utils"
+	"github.com/forbole/bdjuno/v4/database"
+	"github.com/forbole/bdjuno/v4/modules/distribution"
+	"github.com/forbole/bdjuno/v4/modules/gov"
+	"github.com/forbole/bdjuno/v4/modules/mint"
+	"github.com/forbole/bdjuno/v4/modules/slashing"
+	"github.com/forbole/bdjuno/v4/modules/staking"
+	"github.com/forbole/bdjuno/v4/utils"
 )
 
 // proposalCmd returns the Cobra command allowing to fix all things related to a proposal
@@ -52,7 +53,7 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			distrModule := distribution.NewModule(sources.DistrSource, parseCtx.EncodingConfig.Marshaler, db)
 			mintModule := mint.NewModule(sources.MintSource, parseCtx.EncodingConfig.Marshaler, db)
 			slashingModule := slashing.NewModule(sources.SlashingSource, parseCtx.EncodingConfig.Marshaler, db)
-			stakingModule := staking.NewModule(sources.StakingSource, slashingModule, parseCtx.EncodingConfig.Marshaler, db)
+			stakingModule := staking.NewModule(sources.StakingSource, parseCtx.EncodingConfig.Marshaler, db)
 
 			// Build the gov module
 			govModule := gov.NewModule(sources.GovSource, nil, distrModule, mintModule, slashingModule, stakingModule, parseCtx.EncodingConfig.Marshaler, db)
@@ -78,7 +79,7 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				return fmt.Errorf("error while getting chain latest block height: %s", err)
 			}
 
-			err = govModule.UpdateProposal(height, proposalID)
+			err = govModule.UpdateProposal(height, time.Now(), proposalID)
 			if err != nil {
 				return err
 			}

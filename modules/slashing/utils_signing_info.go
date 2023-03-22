@@ -5,8 +5,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/forbole/bdjuno/v3/modules/utils"
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/modules/utils"
+	"github.com/forbole/bdjuno/v4/types"
 )
 
 func (m *Module) getSigningInfos(height int64) ([]types.ValidatorSigningInfo, error) {

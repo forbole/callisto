@@ -1,10 +1,10 @@
 package iscn
 
 import (
-	juno "github.com/forbole/juno/v3/types"
+	juno "github.com/forbole/juno/v4/types"
 	iscntypes "github.com/likecoin/likecoin-chain/v3/x/iscn/types"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 )
 
 // storeIscnRecordFromMessage handles storing new iscn record inside the database
