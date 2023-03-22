@@ -2,10 +2,12 @@ package database
 
 import (
 	"fmt"
+	"log"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/modules/utils"
+	"github.com/forbole/bdjuno/v4/types"
 
-	dbtypes "github.com/forbole/bdjuno/v3/database/types"
+	dbtypes "github.com/forbole/bdjuno/v4/database/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/bech32"
@@ -70,14 +72,14 @@ VALUES `
 
 	selfDelegationAccQuery = selfDelegationAccQuery[:len(selfDelegationAccQuery)-1] // Remove trailing ","
 	selfDelegationAccQuery += " ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(selfDelegationAccQuery, selfDelegationParam...)
+	_, err := db.SQL.Exec(selfDelegationAccQuery, selfDelegationParam...)
 	if err != nil {
 		return fmt.Errorf("error while storing accounts: %s", err)
 	}
 
 	validatorQuery = validatorQuery[:len(validatorQuery)-1] // Remove trailing ","
 	validatorQuery += " ON CONFLICT DO NOTHING"
-	_, err = db.Sql.Exec(validatorQuery, validatorParams...)
+	_, err = db.SQL.Exec(validatorQuery, validatorParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing valdiators: %s", err)
 	}
@@ -92,7 +94,7 @@ ON CONFLICT (consensus_address) DO UPDATE
 		max_rate = excluded.max_rate,
 		height = excluded.height
 WHERE validator_info.height <= excluded.height`
-	_, err = db.Sql.Exec(validatorInfoQuery, validatorInfoParams...)
+	_, err = db.SQL.Exec(validatorInfoQuery, validatorInfoParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing validator infos: %s", err)
 	}
@@ -261,7 +263,7 @@ ON CONFLICT (validator_address) DO UPDATE
         height = excluded.height
 WHERE validator_description.height <= excluded.height`
 
-	_, err = db.Sql.Exec(stmt,
+	_, err = db.SQL.Exec(stmt,
 		dbtypes.ToNullString(consAddr.String()),
 		dbtypes.ToNullString(des.Moniker),
 		dbtypes.ToNullString(des.Identity),
@@ -294,8 +296,15 @@ func (db *Db) getValidatorDescription(address sdk.ConsAddress) (*types.Validator
 	}
 
 	row := result[0]
+
+	// For likecoin dual prefix
+	opAddr, err := utils.ConvertAddressPrefix("likevaloper", row.ValAddress)
+	if err != nil {
+		log.Fatalf("error while converting to likevaloper prefix: %s", err)
+	}
+
 	description := types.NewValidatorDescription(
-		row.ValAddress,
+		opAddr,
 		stakingtypes.NewDescription(
 			dbtypes.ToString(row.Moniker),
 			dbtypes.ToString(row.Identity),
@@ -354,7 +363,7 @@ ON CONFLICT (validator_address) DO UPDATE
         min_self_delegation = excluded.min_self_delegation,
         height = excluded.height
 WHERE validator_commission.height <= excluded.height`
-	_, err = db.Sql.Exec(stmt, consAddr.String(), commission, minSelfDelegation, data.Height)
+	_, err = db.SQL.Exec(stmt, consAddr.String(), commission, minSelfDelegation, data.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing validator commission: %s", err)
 	}
@@ -402,7 +411,7 @@ ON CONFLICT (validator_address) DO UPDATE
 		height = excluded.height
 WHERE validator_voting_power.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt, params...)
+	_, err := db.SQL.Exec(stmt, params...)
 	if err != nil {
 		return fmt.Errorf("error while storing validators voting power: %s", err)
 	}
@@ -421,7 +430,7 @@ func (db *Db) SaveValidatorsStatuses(statuses []types.ValidatorStatus) error {
 	validatorStmt := `INSERT INTO validator (consensus_address, consensus_pubkey) VALUES`
 	var valParams []interface{}
 
-	statusStmt := `INSERT INTO validator_status (validator_address, status, jailed, tombstoned, height) VALUES `
+	statusStmt := `INSERT INTO validator_status (validator_address, status, jailed, height) VALUES `
 	var statusParams []interface{}
 
 	for i, status := range statuses {
@@ -429,14 +438,14 @@ func (db *Db) SaveValidatorsStatuses(statuses []types.ValidatorStatus) error {
 		validatorStmt += fmt.Sprintf("($%d, $%d),", vi+1, vi+2)
 		valParams = append(valParams, status.ConsensusAddress, status.ConsensusPubKey)
 
-		si := i * 5
-		statusStmt += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", si+1, si+2, si+3, si+4, si+5)
-		statusParams = append(statusParams, status.ConsensusAddress, status.Status, status.Jailed, status.Tombstoned, status.Height)
+		si := i * 4
+		statusStmt += fmt.Sprintf("($%d,$%d,$%d,$%d),", si+1, si+2, si+3, si+4)
+		statusParams = append(statusParams, status.ConsensusAddress, status.Status, status.Jailed, status.Height)
 	}
 
 	validatorStmt = validatorStmt[:len(validatorStmt)-1]
 	validatorStmt += "ON CONFLICT DO NOTHING"
-	_, err := db.Sql.Exec(validatorStmt, valParams...)
+	_, err := db.SQL.Exec(validatorStmt, valParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing validators: %s", err)
 	}
@@ -446,10 +455,9 @@ func (db *Db) SaveValidatorsStatuses(statuses []types.ValidatorStatus) error {
 ON CONFLICT (validator_address) DO UPDATE 
 	SET status = excluded.status,
 	    jailed = excluded.jailed,
-	    tombstoned = excluded.tombstoned,
 	    height = excluded.height
 WHERE validator_status.height <= excluded.height`
-	_, err = db.Sql.Exec(statusStmt, statusParams...)
+	_, err = db.SQL.Exec(statusStmt, statusParams...)
 	if err != nil {
 		return fmt.Errorf("error while stroring validators statuses: %s", err)
 	}
@@ -465,7 +473,7 @@ INSERT INTO double_sign_vote
 VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT DO NOTHING RETURNING id`
 
 	var id int64
-	err := db.Sql.QueryRow(stmt,
+	err := db.SQL.QueryRow(stmt,
 		vote.Type, vote.Height, vote.Round, vote.BlockID, vote.ValidatorAddress, vote.ValidatorIndex, vote.Signature,
 	).Scan(&id)
 	return id, err
@@ -486,7 +494,7 @@ func (db *Db) SaveDoubleSignEvidence(evidence types.DoubleSignEvidence) error {
 	stmt := `
 INSERT INTO double_sign_evidence (height, vote_a_id, vote_b_id) 
 VALUES ($1, $2, $3) ON CONFLICT DO NOTHING`
-	_, err = db.Sql.Exec(stmt, evidence.Height, voteA, voteB)
+	_, err = db.SQL.Exec(stmt, evidence.Height, voteA, voteB)
 	if err != nil {
 		return fmt.Errorf("error while storing double sign evidence: %s", err)
 	}

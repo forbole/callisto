@@ -23,6 +23,7 @@
 - "!include public_proposal_validator_status_snapshot.yaml"
 - "!include public_proposal_vote.yaml"
 - "!include public_slashing_params.yaml"
+- "!include public_software_upgrade_plan.yaml"
 - "!include public_staking_params.yaml"
 - "!include public_staking_pool.yaml"
 - "!include public_supply.yaml"

@@ -3,11 +3,11 @@ package remote
 import (
 	"fmt"
 
-	"github.com/forbole/juno/v3/node/remote"
-	iscntypes "github.com/likecoin/likechain/x/iscn/types"
+	"github.com/forbole/juno/v4/node/remote"
+	iscntypes "github.com/likecoin/likecoin-chain/v3/x/iscn/types"
 
-	iscnsource "github.com/forbole/bdjuno/v3/modules/iscn/source"
-	"github.com/forbole/bdjuno/v3/utils"
+	iscnsource "github.com/forbole/bdjuno/v4/modules/iscn/source"
+	"github.com/forbole/bdjuno/v4/utils"
 )
 
 var (

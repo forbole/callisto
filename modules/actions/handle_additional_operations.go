@@ -6,8 +6,8 @@ import (
 	"sync"
 	"syscall"
 
-	"github.com/forbole/bdjuno/v3/modules/actions/handlers"
-	actionstypes "github.com/forbole/bdjuno/v3/modules/actions/types"
+	"github.com/forbole/bdjuno/v4/modules/actions/handlers"
+	actionstypes "github.com/forbole/bdjuno/v4/modules/actions/types"
 )
 
 var (
@@ -46,7 +46,7 @@ func (m *Module) RunAdditionalOperations() error {
 
 	// Start the worker
 	waitGroup.Add(1)
-	go worker.Start(m.cfg.Port)
+	go worker.Start(m.cfg.Host, m.cfg.Port)
 
 	// Block main process (signal capture will call WaitGroup's Done)
 	waitGroup.Wait()

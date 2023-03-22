@@ -3,7 +3,7 @@ package database
 import (
 	"encoding/json"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 )
 
 func (db *Db) SaveIscnRecord(records types.IscnRecord) error {
@@ -22,7 +22,7 @@ func (db *Db) SaveIscnRecord(records types.IscnRecord) error {
 			height = excluded.height
 	WHERE iscn_record.height <= excluded.height`
 
-	_, err = db.Sql.Exec(stmt, records.Owner, records.IscnID, records.LatestVersion, records.Ipld, string(iscnData), records.Height)
+	_, err = db.SQL.Exec(stmt, records.Owner, records.IscnID, records.LatestVersion, records.Ipld, string(iscnData), records.Height)
 	if err != nil {
 		return err
 	}
@@ -40,7 +40,7 @@ func (db *Db) UpdateIscnRecord(records types.IscnRecord) error {
 	VALUES ($1, $2, $3, $4, $5)
 	WHERE iscn_id = $6`
 
-	_, err = db.Sql.Exec(stmt, records.Owner, records.LatestVersion, records.Ipld, string(iscnData), records.Height, records.IscnID)
+	_, err = db.SQL.Exec(stmt, records.Owner, records.LatestVersion, records.Ipld, string(iscnData), records.Height, records.IscnID)
 	if err != nil {
 		return err
 	}
@@ -51,7 +51,7 @@ func (db *Db) UpdateIscnRecordOwnership(records types.IscnChangeOwnership) error
 
 	stmt := `UPDATE iscn_record SET owner_address = $1 where iscn_id = $2`
 
-	_, err := db.Sql.Exec(stmt, records.NewOwner, records.IscnID)
+	_, err := db.SQL.Exec(stmt, records.NewOwner, records.IscnID)
 	if err != nil {
 		return err
 	}
@@ -72,6 +72,6 @@ func (db *Db) SaveIscnParams(params types.IscnParams) error {
 		SET params = excluded.params,
 			height = excluded.height
 	WHERE iscn_params.height <= excluded.height`
-	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
+	_, err = db.SQL.Exec(stmt, string(paramsBz), params.Height)
 	return err
 }
