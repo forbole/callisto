@@ -32,9 +32,6 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	case *shieldtypes.MsgWithdrawRewards:
 		return m.HandleMsgWithdrawRewards(tx, cosmosMsg)
 
-	case *shieldtypes.MsgWithdrawForeignRewards:
-		return m.HandleMsgWithdrawForeignRewards(tx, cosmosMsg)
-
 	case *shieldtypes.MsgDepositCollateral:
 		return m.HandleMsgDepositCollateral(tx, cosmosMsg)
 
@@ -113,13 +110,9 @@ func (m *Module) HandleMsgResumePool(tx *juno.Tx, msg *shieldtypes.MsgResumePool
 
 // HandleMsgWithdrawRewards allows to properly handle a MsgWithdrawRewards
 func (m *Module) HandleMsgWithdrawRewards(tx *juno.Tx, msg *shieldtypes.MsgWithdrawRewards) error {
-	return m.db.WithdrawNativeRewards(msg.From, tx.Height)
+	return m.db.WithdrawRewards(msg.From, tx.Height)
 }
 
-// HandleMsgWithdrawForeignRewards allows to properly handle a MsgWithdrawForeignRewards
-func (m *Module) HandleMsgWithdrawForeignRewards(tx *juno.Tx, msg *shieldtypes.MsgWithdrawForeignRewards) error {
-	return m.db.WithdrawForeignRewards(msg.From, tx.Height)
-}
 
 // HandleMsgDepositCollateral allows to properly handle a MsgDepositCollateral
 func (m *Module) HandleMsgDepositCollateral(tx *juno.Tx, msg *shieldtypes.MsgDepositCollateral) error {
