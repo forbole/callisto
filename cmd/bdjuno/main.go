@@ -13,11 +13,10 @@ import (
 
 	"github.com/forbole/bdjuno/v4/types/config"
 
-	"github.com/forbole/bdjuno/v4/database"
-	"github.com/forbole/bdjuno/v4/modules"
-
 	agoricapp "github.com/Agoric/agoric-sdk/golang/cosmos/app"
 	gaiaapp "github.com/cosmos/gaia/v7/app"
+	"github.com/forbole/bdjuno/v4/database"
+	"github.com/forbole/bdjuno/v4/modules"
 )
 
 func main() {
