@@ -113,7 +113,6 @@ func (m *Module) HandleMsgWithdrawRewards(tx *juno.Tx, msg *shieldtypes.MsgWithd
 	return m.db.WithdrawRewards(msg.From, tx.Height)
 }
 
-
 // HandleMsgDepositCollateral allows to properly handle a MsgDepositCollateral
 func (m *Module) HandleMsgDepositCollateral(tx *juno.Tx, msg *shieldtypes.MsgDepositCollateral) error {
 	collateral, err := m.db.GetShieldProviderCollateral(msg.From)
