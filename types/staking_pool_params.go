@@ -1,20 +1,40 @@
 package types
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkmath "cosmossdk.io/math"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
 // Pool contains the data of the staking pool at the given height
 type Pool struct {
-	BondedTokens    sdk.Int
-	NotBondedTokens sdk.Int
-	Height          int64
+	BondedTokens          sdkmath.Int
+	NotBondedTokens       sdkmath.Int
+	UnbondingTokens       sdkmath.Int
+	StakedNotBondedTokens sdkmath.Int
+	Height                int64
 }
 
 // NewPool allows to build a new Pool instance
-func NewPool(bondedTokens, notBondedTokens sdk.Int, height int64) *Pool {
+func NewPool(bondedTokens, notBondedTokens, unbondingTokens, stakedNotBondedTokens sdkmath.Int, height int64) *Pool {
 	return &Pool{
+		BondedTokens:          bondedTokens,
+		NotBondedTokens:       notBondedTokens,
+		UnbondingTokens:       unbondingTokens,
+		StakedNotBondedTokens: stakedNotBondedTokens,
+		Height:                height,
+	}
+}
+
+// PoolSnapshot contains the data of the staking pool snapshot at the given height
+type PoolSnapshot struct {
+	BondedTokens    sdkmath.Int
+	NotBondedTokens sdkmath.Int
+	Height          int64
+}
+
+// NewPoolSnapshot allows to build a new PoolSnapshot instance
+func NewPoolSnapshot(bondedTokens, notBondedTokens sdkmath.Int, height int64) *PoolSnapshot {
+	return &PoolSnapshot{
 		BondedTokens:    bondedTokens,
 		NotBondedTokens: notBondedTokens,
 		Height:          height,

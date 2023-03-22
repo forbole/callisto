@@ -1,0 +1,15 @@
+table:
+  name: evmos_inflation_data
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - one_row_id
+    - circulating_supply
+    - inflation_rate
+    - inflation_period
+    - skipped_epochs
+    - height
+    filter: {}
+  role: anonymous

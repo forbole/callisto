@@ -2,22 +2,22 @@ package main
 
 import (
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/forbole/juno/v3/cmd"
-	initcmd "github.com/forbole/juno/v3/cmd/init"
-	parsetypes "github.com/forbole/juno/v3/cmd/parse/types"
-	startcmd "github.com/forbole/juno/v3/cmd/start"
-	"github.com/forbole/juno/v3/modules/messages"
+	"github.com/forbole/juno/v4/cmd"
+	initcmd "github.com/forbole/juno/v4/cmd/init"
+	parsetypes "github.com/forbole/juno/v4/cmd/parse/types"
+	startcmd "github.com/forbole/juno/v4/cmd/start"
+	"github.com/forbole/juno/v4/modules/messages"
 
-	migratecmd "github.com/forbole/bdjuno/v3/cmd/migrate"
-	parsecmd "github.com/forbole/bdjuno/v3/cmd/parse"
+	migratecmd "github.com/forbole/bdjuno/v4/cmd/migrate"
+	parsecmd "github.com/forbole/bdjuno/v4/cmd/parse"
 
-	"github.com/forbole/bdjuno/v3/types/config"
+	"github.com/forbole/bdjuno/v4/types/config"
 
-	"github.com/forbole/bdjuno/v3/database"
-	"github.com/forbole/bdjuno/v3/modules"
+	"github.com/forbole/bdjuno/v4/database"
+	"github.com/forbole/bdjuno/v4/modules"
 
-	gaiaapp "github.com/cosmos/gaia/v7/app"
-	evmosapp "github.com/tharsis/evmos/v5/app"
+	"github.com/cosmos/cosmos-sdk/simapp"
+	evmosapp "github.com/evmos/evmos/v11/app"
 )
 
 func main() {
@@ -56,7 +56,7 @@ func main() {
 // This should be edited by custom implementations if needed.
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
-		gaiaapp.ModuleBasics,
+		simapp.ModuleBasics,
 		evmosapp.ModuleBasics,
 	}
 }

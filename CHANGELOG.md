@@ -1,3 +1,40 @@
+## Unreleased
+### Changes
+
+#### Evmos Gov Module
+- ([\#519](https://github.com/forbole/bdjuno/pull/519)) Upgrade evmos version to `v10.0.0`, update proposals parsing to correctly parse `v1` gov module proposals details
+
+#### CI
+- ([\#508](https://github.com/forbole/bdjuno/pull/508)) Upgrade workflow golangci version to v1.50.1
+
+#### Parse Command
+- ([\#492](https://github.com/forbole/bdjuno/pull/492)) Add parse command for periodic tasks: `x/bank` total supply, `x/distribution` community pool, `x/mint` inflation, `pricefeed` token price and price history, `x/staking` staking pool
+
+#### Upgrade Module
+- ([\#467](https://github.com/forbole/bdjuno/pull/467)) Store software upgrade plan and refresh data at upgrade height
+
+#### Staking Module
+- ([\#443](https://github.com/forbole/bdjuno/pull/443)) Remove tombstone status from staking module(already stored in slashing module)
+- ([\#455](https://github.com/forbole/bdjuno/pull/455)) Added `unbonding_tokens` and `staked_not_bonded_tokens` values to staking pool table
+- ([\#536](https://github.com/forbole/bdjuno/pull/536) Fix `PoolSnapshot` tokens type from  `sdk.Int` to `sdkmath.Int`
+
+#### Gov Module
+- ([\#461](https://github.com/forbole/bdjuno/pull/461)) Parse `x/gov` genesis with `genesisDoc.InitialHeight` instead of the hard-coded height 1
+- ([\#465](https://github.com/forbole/bdjuno/pull/465)) Get open proposal ids in deposit or voting period by block time instead of current time
+- ([\#489](https://github.com/forbole/bdjuno/pull/489)) Remove block height foreign key from proposal_vote and proposal_deposit tables and add column timestamp
+- ([\#499](https://github.com/forbole/bdjuno/pull/499)) Check if proposal has passed voting end time before marking it invalid
+- ([\#523](https://github.com/forbole/bdjuno/pull/523)) Update proposal snapshots handling on block
+
+#### Daily refetch
+- ([\#454](https://github.com/forbole/bdjuno/pull/454)) Added `daily refetch` module to refetch missing blocks every day
+
+#### Hasura
+- ([\#473](https://github.com/forbole/bdjuno/pull/473)) Improved Hasura permissions
+- ([\#491](https://github.com/forbole/bdjuno/pull/491)) Add host address to Hasura actions
+
+### Dependencies
+- ([\#462](https://github.com/forbole/bdjuno/pull/462)) Updated Juno to `v3.4.0`
+
 ## Version v3.2.0
 ### Changes
 #### Mint module
@@ -6,6 +43,9 @@
 #### Gov module
 - ([\#401](https://github.com/forbole/bdjuno/pull/401)) Update the proposal status to the latest in `bdjuno parse gov proposal [id]` command
 - ([\#430](https://github.com/forbole/bdjuno/pull/430)) Update the proposals that have invalid status but can still be in voting or deposit periods 
+
+### Inflation module
+- ([\#438](https://github.com/forbole/bdjuno/pull/438)) Implement `evmos` `x/inflation` module
 
 ### Dependencies
 - ([\#440](https://github.com/forbole/bdjuno/pull/440)) Updated Juno to `v3.3.0`

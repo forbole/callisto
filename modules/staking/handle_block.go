@@ -4,10 +4,10 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	juno "github.com/forbole/juno/v3/types"
+	juno "github.com/forbole/juno/v4/types"
 
 	"github.com/rs/zerolog/log"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
@@ -32,9 +32,6 @@ func (m *Module) HandleBlock(
 
 	// Updated the double sign evidences
 	go m.updateDoubleSignEvidence(block.Block.Height, block.Block.Evidence.Evidence)
-
-	// Update the staking pool
-	go m.updateStakingPool(block.Block.Height)
 
 	return nil
 }
@@ -121,25 +118,5 @@ func (m *Module) updateDoubleSignEvidence(height int64, evidenceList tmtypes.Evi
 			return
 		}
 
-	}
-}
-
-// updateStakingPool reads from the LCD the current staking pool and stores its value inside the database
-func (m *Module) updateStakingPool(height int64) {
-	log.Debug().Str("module", "staking").Int64("height", height).
-		Msg("updating staking pool")
-
-	pool, err := m.GetStakingPool(height)
-	if err != nil {
-		log.Error().Str("module", "staking").Err(err).Int64("height", height).
-			Msg("error while getting staking pool")
-		return
-	}
-
-	err = m.db.SaveStakingPool(pool)
-	if err != nil {
-		log.Error().Str("module", "staking").Err(err).Int64("height", height).
-			Msg("error while saving staking pool")
-		return
 	}
 }

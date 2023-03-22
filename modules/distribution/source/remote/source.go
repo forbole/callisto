@@ -3,9 +3,9 @@ package remote
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	"github.com/forbole/juno/v3/node/remote"
+	"github.com/forbole/juno/v4/node/remote"
 
-	distrsource "github.com/forbole/bdjuno/v3/modules/distribution/source"
+	distrsource "github.com/forbole/bdjuno/v4/modules/distribution/source"
 )
 
 var (
