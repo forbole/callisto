@@ -6,9 +6,9 @@ import (
 	shieldtypes "github.com/certikfoundation/shentu/v2/x/shield/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/forbole/juno/v3/node/local"
+	"github.com/forbole/juno/v4/node/local"
 
-	"github.com/forbole/bdjuno/v3/modules/shield/source"
+	"github.com/forbole/bdjuno/v4/modules/shield/source"
 )
 
 var (

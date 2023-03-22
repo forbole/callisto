@@ -11,9 +11,9 @@ import (
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	"github.com/gogo/protobuf/proto"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 
-	dbtypes "github.com/forbole/bdjuno/v3/database/types"
+	dbtypes "github.com/forbole/bdjuno/v4/database/types"
 
 	"github.com/lib/pq"
 )
@@ -45,7 +45,7 @@ ON CONFLICT (one_row_id) DO UPDATE
 		tally_params = excluded.tally_params,
 		height = excluded.height
 WHERE gov_params.height <= excluded.height`
-	_, err = db.Sql.Exec(stmt, string(depositParamsBz), string(votingParamsBz), string(tallyingParams), params.Height)
+	_, err = db.SQL.Exec(stmt, string(depositParamsBz), string(votingParamsBz), string(tallyingParams), params.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing gov params: %s", err)
 	}
@@ -158,7 +158,7 @@ INSERT INTO proposal(
 	// Store the proposals
 	proposalsQuery = proposalsQuery[:len(proposalsQuery)-1] // Remove trailing ","
 	proposalsQuery += " ON CONFLICT DO NOTHING"
-	_, err = db.Sql.Exec(proposalsQuery, proposalsParams...)
+	_, err = db.SQL.Exec(proposalsQuery, proposalsParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing proposals: %s", err)
 	}
@@ -233,7 +233,7 @@ func (db *Db) GetOpenProposalsIds(blockTime time.Time) ([]uint64, error) {
 // UpdateProposal updates a proposal stored inside the database
 func (db *Db) UpdateProposal(update types.ProposalUpdate) error {
 	query := `UPDATE proposal SET status = $1, voting_start_time = $2, voting_end_time = $3 where id = $4`
-	_, err := db.Sql.Exec(query,
+	_, err := db.SQL.Exec(query,
 		update.Status,
 		update.VotingStartTime,
 		update.VotingEndTime,
@@ -272,7 +272,7 @@ ON CONFLICT ON CONSTRAINT unique_deposit DO UPDATE
 		timestamp = excluded.timestamp,
 		height = excluded.height
 WHERE proposal_deposit.height <= excluded.height`
-	_, err := db.Sql.Exec(query, param...)
+	_, err := db.SQL.Exec(query, param...)
 	if err != nil {
 		return fmt.Errorf("error while storing deposits: %s", err)
 	}
@@ -299,7 +299,7 @@ WHERE proposal_vote.height <= excluded.height`
 		return fmt.Errorf("error while storing voter account: %s", err)
 	}
 
-	_, err = db.Sql.Exec(query, vote.ProposalID, vote.Voter, vote.Option.String(), vote.Timestamp, vote.Height)
+	_, err = db.SQL.Exec(query, vote.ProposalID, vote.Voter, vote.Option.String(), vote.Timestamp, vote.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing vote: %s", err)
 	}
@@ -337,7 +337,7 @@ ON CONFLICT ON CONSTRAINT unique_tally_result DO UPDATE
 	    no_with_veto = excluded.no_with_veto,
 	    height = excluded.height
 WHERE proposal_tally_result.height <= excluded.height`
-	_, err := db.Sql.Exec(query, param...)
+	_, err := db.SQL.Exec(query, param...)
 	if err != nil {
 		return fmt.Errorf("error while storing tally result: %s", err)
 	}
@@ -359,7 +359,7 @@ ON CONFLICT ON CONSTRAINT unique_staking_pool_snapshot DO UPDATE SET
 	height = excluded.height
 WHERE proposal_staking_pool_snapshot.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt,
+	_, err := db.SQL.Exec(stmt,
 		snapshot.ProposalID, snapshot.Pool.BondedTokens.String(), snapshot.Pool.NotBondedTokens.String(), snapshot.Pool.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing proposal staking pool snapshot: %s", err)
@@ -398,7 +398,7 @@ ON CONFLICT ON CONSTRAINT unique_validator_status_snapshot DO UPDATE
 		jailed = excluded.jailed,
 		height = excluded.height
 WHERE proposal_validator_status_snapshot.height <= excluded.height`
-	_, err := db.Sql.Exec(stmt, args...)
+	_, err := db.SQL.Exec(stmt, args...)
 	if err != nil {
 		return fmt.Errorf("error while storing proposal validator statuses snapshot: %s", err)
 	}
@@ -419,7 +419,7 @@ ON CONFLICT (proposal_id) DO UPDATE SET
 	height = excluded.height 
 WHERE software_upgrade_plan.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt,
+	_, err := db.SQL.Exec(stmt,
 		proposalID, plan.Name, plan.Height, plan.Info, height)
 	if err != nil {
 		return fmt.Errorf("error while storing software upgrade plan: %s", err)
@@ -432,7 +432,7 @@ WHERE software_upgrade_plan.height <= excluded.height`
 func (db *Db) DeleteSoftwareUpgradePlan(proposalID uint64) error {
 	stmt := `DELETE FROM software_upgrade_plan WHERE proposal_id = $1`
 
-	_, err := db.Sql.Exec(stmt, proposalID)
+	_, err := db.SQL.Exec(stmt, proposalID)
 	if err != nil {
 		return fmt.Errorf("error while deleting software upgrade plan: %s", err)
 	}
@@ -445,7 +445,7 @@ func (db *Db) CheckSoftwareUpgradePlan(upgradeHeight int64) (bool, error) {
 	var exist bool
 
 	stmt := `SELECT EXISTS (SELECT 1 FROM software_upgrade_plan WHERE upgrade_height=$1)`
-	err := db.Sql.QueryRow(stmt, upgradeHeight).Scan(&exist)
+	err := db.SQL.QueryRow(stmt, upgradeHeight).Scan(&exist)
 	if err != nil {
 		return exist, fmt.Errorf("error while checking software upgrade plan existence: %s", err)
 	}
@@ -457,7 +457,7 @@ func (db *Db) CheckSoftwareUpgradePlan(upgradeHeight int64) (bool, error) {
 func (db *Db) TruncateSoftwareUpgradePlan(height int64) error {
 	stmt := `DELETE FROM software_upgrade_plan WHERE upgrade_height <= $1`
 
-	_, err := db.Sql.Exec(stmt, height)
+	_, err := db.SQL.Exec(stmt, height)
 	if err != nil {
 		return fmt.Errorf("error while deleting software upgrade plan: %s", err)
 	}
