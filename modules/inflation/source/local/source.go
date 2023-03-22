@@ -7,7 +7,7 @@ import (
 	inflationtypes "github.com/evmos/evmos/v11/x/inflation/types"
 	"github.com/forbole/juno/v4/node/local"
 
-	inflationsource "github.com/forbole/bdjuno/v3/modules/inflation/source"
+	inflationsource "github.com/forbole/bdjuno/v4/modules/inflation/source"
 )
 
 var (

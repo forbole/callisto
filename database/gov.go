@@ -6,16 +6,13 @@ import (
 	"time"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	"github.com/gogo/protobuf/proto"
 
-	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-
-	"github.com/forbole/bdjuno/v3/types"
-
-	dbtypes "github.com/forbole/bdjuno/v3/database/types"
-
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
+	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+	dbtypes "github.com/forbole/bdjuno/v4/database/types"
+	"github.com/forbole/bdjuno/v4/types"
 	"github.com/lib/pq"
 )
 
@@ -247,7 +244,7 @@ func (db *Db) GetProposal(id uint64) (types.Proposal, error) {
 func (db *Db) GetOpenProposalsIds(blockTime time.Time) ([]uint64, error) {
 	var ids []uint64
 	stmt := `SELECT id FROM proposal WHERE status = $1 OR status = $2`
-	err := db.Sqlx.Select(&ids, stmt, govtypes.StatusDepositPeriod.String(), govtypes.StatusVotingPeriod.String())
+	err := db.Sqlx.Select(&ids, stmt, govtypesv1.StatusDepositPeriod.String(), govtypesv1.StatusVotingPeriod.String())
 	if err != nil {
 		return ids, err
 	}

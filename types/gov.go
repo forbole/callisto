@@ -4,10 +4,8 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
+	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
-
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 )
 
 const (
@@ -21,7 +19,7 @@ type DepositParams struct {
 }
 
 // NewDepositParam allows to build a new DepositParams
-func NewDepositParam(d *govtypes.DepositParams) DepositParams {
+func NewDepositParam(d *govtypesv1.DepositParams) DepositParams {
 	return DepositParams{
 		MinDeposit:       d.MinDeposit,
 		MaxDepositPeriod: d.MaxDepositPeriod.Nanoseconds(),
@@ -42,7 +40,7 @@ type VotingParams struct {
 }
 
 // NewVotingParams allows to build a new VotingParams instance
-func NewVotingParams(v *govtypes.VotingParams) VotingParams {
+func NewVotingParams(v *govtypesv1.VotingParams) VotingParams {
 	return VotingParams{
 		VotingPeriod: v.VotingPeriod.Nanoseconds(),
 	}
@@ -86,7 +84,7 @@ type GenesisTallyParams struct {
 }
 
 // NewTallyParams allows to build a new TallyParams instance
-func NewTallyParams(t *govtypes.TallyParams) TallyParams {
+func NewTallyParams(t *govtypesv1.TallyParams) TallyParams {
 	return TallyParams{
 		Quorum:        t.Quorum,
 		Threshold:     t.Threshold,
@@ -234,7 +232,7 @@ func NewDeposit(
 type Vote struct {
 	ProposalID uint64
 	Voter      string
-	Option     govtypes.VoteOption
+	Option     govtypesv1.VoteOption
 	Timestamp  time.Time
 	Height     int64
 }
@@ -243,7 +241,7 @@ type Vote struct {
 func NewVote(
 	proposalID uint64,
 	voter string,
-	option govtypes.VoteOption,
+	option govtypesv1.VoteOption,
 	timestamp time.Time,
 	height int64,
 ) Vote {

@@ -1,4 +1,4 @@
-module github.com/forbole/bdjuno/v3
+module github.com/forbole/bdjuno/v4
 
 go 1.18
 
@@ -8,7 +8,7 @@ require (
 	github.com/evmos/ethermint v0.21.0
 	github.com/evmos/evmos/v11 v11.0.2
 	github.com/forbole/juno/v4 v4.1.1-0.20230307073421-0da0bd4e053c
-	github.com/go-co-op/gocron v1.16.1
+	github.com/go-co-op/gocron v1.18.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.7

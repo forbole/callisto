@@ -4,8 +4,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/forbole/juno/v4/modules"
 
-	"github.com/forbole/bdjuno/v3/database"
-	inflationsource "github.com/forbole/bdjuno/v3/modules/inflation/source"
+	"github.com/forbole/bdjuno/v4/database"
+	inflationsource "github.com/forbole/bdjuno/v4/modules/inflation/source"
 )
 
 var (

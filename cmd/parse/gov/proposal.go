@@ -6,10 +6,10 @@ import (
 	"strconv"
 	"time"
 
-	modulestypes "github.com/forbole/bdjuno/v3/modules/types"
+	modulestypes "github.com/forbole/bdjuno/v4/modules/types"
 	"github.com/rs/zerolog/log"
 
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
 	"github.com/forbole/juno/v4/types/config"
 	"github.com/spf13/cobra"
@@ -17,15 +17,15 @@ import (
 	"github.com/forbole/juno/v4/parser"
 
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
-	"github.com/forbole/bdjuno/v3/database"
-	"github.com/forbole/bdjuno/v3/modules/distribution"
-	"github.com/forbole/bdjuno/v3/modules/gov"
-	"github.com/forbole/bdjuno/v3/modules/inflation"
-	"github.com/forbole/bdjuno/v3/modules/mint"
-	"github.com/forbole/bdjuno/v3/modules/slashing"
-	"github.com/forbole/bdjuno/v3/modules/staking"
+	"github.com/forbole/bdjuno/v4/database"
+	"github.com/forbole/bdjuno/v4/modules/distribution"
+	"github.com/forbole/bdjuno/v4/modules/gov"
+	"github.com/forbole/bdjuno/v4/modules/inflation"
+	"github.com/forbole/bdjuno/v4/modules/mint"
+	"github.com/forbole/bdjuno/v4/modules/slashing"
+	"github.com/forbole/bdjuno/v4/modules/staking"
 
-	"github.com/forbole/bdjuno/v3/utils"
+	"github.com/forbole/bdjuno/v4/utils"
 )
 
 // proposalCmd returns the Cobra command allowing to fix all things related to a proposal
@@ -150,7 +150,7 @@ func refreshProposalDeposits(parseCtx *parser.Context, proposalID uint64, govMod
 
 		// Handle the MsgDeposit messages
 		for index, msg := range junoTx.GetMsgs() {
-			if _, ok := msg.(*govtypes.MsgDeposit); !ok {
+			if _, ok := msg.(*govtypesv1.MsgDeposit); !ok {
 				continue
 			}
 
@@ -182,7 +182,7 @@ func refreshProposalVotes(parseCtx *parser.Context, proposalID uint64, govModule
 
 		// Handle the MsgVote messages
 		for index, msg := range junoTx.GetMsgs() {
-			if _, ok := msg.(*govtypes.MsgVote); !ok {
+			if _, ok := msg.(*govtypesv1.MsgVote); !ok {
 				continue
 			}
 
