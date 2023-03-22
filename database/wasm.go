@@ -3,8 +3,8 @@ package database
 import (
 	"fmt"
 
-	dbtypes "github.com/forbole/bdjuno/v3/database/types"
-	"github.com/forbole/bdjuno/v3/types"
+	dbtypes "github.com/forbole/bdjuno/v4/database/types"
+	"github.com/forbole/bdjuno/v4/types"
 )
 
 // SaveWasmParams allows to store the wasm params
@@ -21,7 +21,7 @@ WHERE wasm_params.height <= excluded.height
 	accessConfig := dbtypes.NewDbAccessConfig(params.CodeUploadAccess)
 	cfgValue, _ := accessConfig.Value()
 
-	_, err := db.Sql.Exec(stmt,
+	_, err := db.SQL.Exec(stmt,
 		cfgValue, params.InstantiateDefaultPermission, params.MaxWasmCodeSize, params.Height,
 	)
 	if err != nil {

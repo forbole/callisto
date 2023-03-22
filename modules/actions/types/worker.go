@@ -3,11 +3,11 @@ package types
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"time"
 
-	"github.com/forbole/bdjuno/v3/modules/actions/logging"
+	"github.com/forbole/bdjuno/v4/modules/actions/logging"
 
 	"github.com/rs/zerolog/log"
 )
@@ -36,7 +36,7 @@ func (w *ActionsWorker) RegisterHandler(path string, handler ActionHandler) {
 		writer.Header().Set("Content-Type", "application/json")
 
 		// Read the body
-		reqBody, err := ioutil.ReadAll(request.Body)
+		reqBody, err := io.ReadAll(request.Body)
 		if err != nil {
 			http.Error(writer, "invalid payload", http.StatusBadRequest)
 			return
