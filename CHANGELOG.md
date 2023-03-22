@@ -31,6 +31,7 @@
 ### Dependencies
 - ([\#462](https://github.com/forbole/bdjuno/pull/462)) Updated Juno to `v3.4.0`
 - ([\#540](https://github.com/forbole/bdjuno/pull/540)) Updated Desmos `v4.7.0` and Juno to `v4.1.0`
+- ([\#542](https://github.com/forbole/bdjuno/pull/542)) Updated Juno to `v4.1.0`,  BDJuno to `v4` and Golang version to `1.19`
 
 
 ## Version v3.2.0
