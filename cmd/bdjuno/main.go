@@ -11,10 +11,12 @@ import (
 	startcmd "github.com/forbole/juno/v4/cmd/start"
 	"github.com/forbole/juno/v4/modules/messages"
 
-	parsecmd "github.com/forbole/bdjuno/v3/cmd/parse"
-	"github.com/forbole/bdjuno/v3/database"
-	"github.com/forbole/bdjuno/v3/modules"
-	"github.com/forbole/bdjuno/v3/types/config"
+	parsecmd "github.com/forbole/bdjuno/v4/cmd/parse"
+
+	"github.com/forbole/bdjuno/v4/types/config"
+
+	"github.com/forbole/bdjuno/v4/database"
+	"github.com/forbole/bdjuno/v4/modules"
 )
 
 func main() {

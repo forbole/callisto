@@ -7,7 +7,7 @@ import (
 	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
 	"github.com/forbole/juno/v4/node/local"
 
-	profilessource "github.com/forbole/bdjuno/v3/modules/profiles/source"
+	profilessource "github.com/forbole/bdjuno/v4/modules/profiles/source"
 )
 
 var (
