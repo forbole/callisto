@@ -13,9 +13,9 @@ import (
 
 	"github.com/forbole/bdjuno/v4/types/config"
 
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules"
-	"github.com/cosmos/cosmos-sdk/simapp"
 
 	gaiaapp "github.com/cosmos/gaia/v9/app"
 )
