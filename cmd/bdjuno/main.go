@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/forbole/juno/v4/cmd"
 	initcmd "github.com/forbole/juno/v4/cmd/init"
@@ -55,6 +56,7 @@ func main() {
 // This should be edited by custom implementations if needed.
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
+		simapp.ModuleBasics,
 		provenanceapp.ModuleBasics,
 	}
 }
