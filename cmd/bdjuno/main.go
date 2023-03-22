@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/forbole/juno/v4/cmd"
 	initcmd "github.com/forbole/juno/v4/cmd/init"
@@ -11,10 +12,9 @@ import (
 	migratecmd "github.com/forbole/bdjuno/v4/cmd/migrate"
 	parsecmd "github.com/forbole/bdjuno/v4/cmd/parse"
 
-	"github.com/forbole/bdjuno/v4/types/config"
-
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules"
+	"github.com/forbole/bdjuno/v4/types/config"
 
 	cmdxapp "github.com/comdex-official/comdex/v8/app"
 )
@@ -55,6 +55,7 @@ func main() {
 // This should be edited by custom implementations if needed.
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
+		simapp.ModuleBasics,
 		cmdxapp.ModuleBasics,
 	}
 }
