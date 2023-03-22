@@ -25,6 +25,22 @@ func NewPool(bondedTokens, notBondedTokens, unbondingTokens, stakedNotBondedToke
 	}
 }
 
+// PoolSnapshot contains the data of the staking pool snapshot at the given height
+type PoolSnapshot struct {
+	BondedTokens    sdkmath.Int
+	NotBondedTokens sdkmath.Int
+	Height          int64
+}
+
+// NewPoolSnapshot allows to build a new PoolSnapshot instance
+func NewPoolSnapshot(bondedTokens, notBondedTokens sdkmath.Int, height int64) *PoolSnapshot {
+	return &PoolSnapshot{
+		BondedTokens:    bondedTokens,
+		NotBondedTokens: notBondedTokens,
+		Height:          height,
+	}
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // StakingParams represents the parameters of the x/staking module
