@@ -7,7 +7,7 @@ require (
 	github.com/akash-network/provider v0.2.1
 	github.com/cosmos/cosmos-sdk v0.45.9
 	github.com/forbole/juno/v4 v4.1.1-0.20230217054409-653dfbc79024
-	github.com/go-co-op/gocron v1.18.0
+	github.com/go-co-op/gocron v1.19.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.7
@@ -16,7 +16,7 @@ require (
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
 	github.com/rs/zerolog v1.29.0
 	github.com/spf13/cobra v1.6.1
-	github.com/stretchr/testify v1.8.1
+	github.com/stretchr/testify v1.8.2
 	github.com/tendermint/tendermint v0.34.22
 	google.golang.org/grpc v1.50.0
 	gopkg.in/yaml.v3 v3.0.1
@@ -147,7 +147,7 @@ require (
 	golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4 // indirect
 	golang.org/x/net v0.0.0-20220812174116-3211cb980234 // indirect
 	golang.org/x/oauth2 v0.0.0-20220411215720-9780585627b5 // indirect
-	golang.org/x/sync v0.0.0-20220819030929-7fc1605a5dde // indirect
+	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.0.0-20220818161305-2296e01440c6 // indirect
 	golang.org/x/term v0.0.0-20220722155259-a9ba230a4035 // indirect
 	golang.org/x/text v0.3.7 // indirect
