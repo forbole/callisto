@@ -3,12 +3,12 @@ package database_test
 import (
 	tmtypes "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	dbtypes "github.com/forbole/bdjuno/v3/database/types"
+	dbtypes "github.com/forbole/bdjuno/v4/database/types"
 )
 
 func newDecPts(value int64, prec int64) *sdk.Dec {

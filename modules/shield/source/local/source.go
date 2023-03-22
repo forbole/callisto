@@ -8,7 +8,7 @@ import (
 
 	"github.com/forbole/juno/v4/node/local"
 
-	"github.com/forbole/bdjuno/v3/modules/shield/source"
+	"github.com/forbole/bdjuno/v4/modules/shield/source"
 )
 
 var (

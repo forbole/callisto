@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 	juno "github.com/forbole/juno/v4/types"
 	shieldtypes "github.com/shentufoundation/shentu/v2/x/shield/types"
 )

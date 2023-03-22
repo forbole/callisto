@@ -11,9 +11,9 @@ import (
 	"github.com/gogo/protobuf/proto"
 	certikgovtypes "github.com/shentufoundation/shentu/v2/x/gov/types"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 
-	dbtypes "github.com/forbole/bdjuno/v3/database/types"
+	dbtypes "github.com/forbole/bdjuno/v4/database/types"
 
 	"github.com/lib/pq"
 )
