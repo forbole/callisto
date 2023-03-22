@@ -9,18 +9,18 @@ import (
 	startcmd "github.com/forbole/juno/v4/cmd/start"
 	"github.com/forbole/juno/v4/modules/messages"
 
-	migratecmd "github.com/forbole/bdjuno/v3/cmd/migrate"
-	parsecmd "github.com/forbole/bdjuno/v3/cmd/parse"
+	migratecmd "github.com/forbole/bdjuno/v4/cmd/migrate"
+	parsecmd "github.com/forbole/bdjuno/v4/cmd/parse"
 
-	"github.com/forbole/bdjuno/v3/types/config"
+	"github.com/forbole/bdjuno/v4/types/config"
 
-	"github.com/forbole/bdjuno/v3/database"
-	"github.com/forbole/bdjuno/v3/modules"
+	"github.com/forbole/bdjuno/v4/database"
+	"github.com/forbole/bdjuno/v4/modules"
 
+	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	gammtypes "github.com/osmosis-labs/osmosis/v14/x/gamm/pool-models/balancer"
-
 	osmosisapp "github.com/osmosis-labs/osmosis/v14/app"
+	gammtypes "github.com/osmosis-labs/osmosis/v14/x/gamm/pool-models/balancer"
 )
 
 func main() {
@@ -59,6 +59,7 @@ func main() {
 // This should be edited by custom implementations if needed.
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
+		simapp.ModuleBasics,
 		osmosisapp.ModuleBasics,
 	}
 }

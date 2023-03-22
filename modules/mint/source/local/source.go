@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	mintsource "github.com/forbole/bdjuno/v3/modules/mint/source"
+	mintsource "github.com/forbole/bdjuno/v4/modules/mint/source"
 	"github.com/forbole/juno/v4/node/local"
 	minttypes "github.com/osmosis-labs/osmosis/v14/x/mint/types"
 )
