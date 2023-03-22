@@ -6,9 +6,9 @@ import (
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
-	"github.com/forbole/juno/v3/node/remote"
+	"github.com/forbole/juno/v4/node/remote"
 
-	wasmsource "github.com/forbole/bdjuno/v3/modules/wasm/source"
+	wasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source"
 )
 
 var (

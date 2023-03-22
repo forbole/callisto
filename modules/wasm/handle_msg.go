@@ -8,8 +8,8 @@ import (
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/forbole/bdjuno/v3/types"
-	juno "github.com/forbole/juno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
+	juno "github.com/forbole/juno/v4/types"
 )
 
 // HandleMsg implements modules.MessageModule

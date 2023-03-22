@@ -3,14 +3,14 @@ package wasm
 import (
 	"fmt"
 
-	modulestypes "github.com/forbole/bdjuno/v3/modules/types"
-	"github.com/forbole/bdjuno/v3/modules/wasm"
+	modulestypes "github.com/forbole/bdjuno/v4/modules/types"
+	"github.com/forbole/bdjuno/v4/modules/wasm"
 
-	parsecmdtypes "github.com/forbole/juno/v3/cmd/parse/types"
-	"github.com/forbole/juno/v3/types/config"
+	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
+	"github.com/forbole/juno/v4/types/config"
 	"github.com/spf13/cobra"
 
-	"github.com/forbole/bdjuno/v3/database"
+	"github.com/forbole/bdjuno/v4/database"
 )
 
 // contractsCmd returns a Cobra command that allows to fix the contracts info
