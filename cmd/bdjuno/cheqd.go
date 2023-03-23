@@ -23,6 +23,9 @@ func CheqdAddressesParser(_ codec.Codec, cosmosMsg sdk.Msg) ([]string, error) {
 	case *resources.MsgCreateResource:
 		return []string{msg.GetPayload().GetId()}, nil
 
+	case *didtypes.MsgDeactivateDidDoc:
+		return []string{msg.GetPayload().GetId()}, nil
+
 	default:
 		return nil, messages.MessageNotSupported(cosmosMsg)
 	}
