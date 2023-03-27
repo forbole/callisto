@@ -1,7 +1,7 @@
 package mint
 
 import (
-	"github.com/forbole/bdjuno/v3/modules/utils"
+	"github.com/forbole/bdjuno/v4/modules/utils"
 
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
