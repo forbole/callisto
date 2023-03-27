@@ -16,6 +16,8 @@ import (
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules"
 	regenapp "github.com/regen-network/regen-ledger/v5/app"
+	"github.com/cosmos/cosmos-sdk/simapp"
+
 )
 
 func main() {
@@ -54,6 +56,7 @@ func main() {
 // This should be edited by custom implementations if needed.
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
+		simapp.ModuleBasics,
 		regenapp.ModuleBasics,
 	}
 }
