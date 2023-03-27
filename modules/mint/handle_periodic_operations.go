@@ -1,7 +1,13 @@
 package mint
 
 import (
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+
 	"github.com/forbole/bdjuno/v4/modules/utils"
+	"github.com/forbole/bdjuno/v4/types"
 
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
@@ -34,11 +40,33 @@ func (m *Module) UpdateInflation() error {
 		return err
 	}
 
-	// Get the inflation
-	inflation, err := m.source.GetInflation(height)
+	inflation, err := queryLatestInflation()
 	if err != nil {
 		return err
 	}
 
 	return m.db.SaveInflation(inflation, height)
+
+}
+
+// queryLatestInflation queries cheqd latest inflation value
+func queryLatestInflation() (string, error) {
+	resp, err := http.Get("https://api.cheqd.net/cosmos/mint/v1beta1/inflation")
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	bz, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("error while reading inflation response body: %s", err)
+	}
+
+	var inflation types.InflationCheqd
+	err = json.Unmarshal(bz, &inflation)
+	if err != nil {
+		return "", fmt.Errorf("error while unmarshaling inflation response body: %s", err)
+	}
+
+	return inflation.Inflation, nil
 }

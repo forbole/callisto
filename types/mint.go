@@ -15,3 +15,7 @@ func NewMintParams(params minttypes.Params, height int64) *MintParams {
 		Height: height,
 	}
 }
+
+type InflationCheqd struct {
+	Inflation string `json:"inflation"`
+}
