@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 	wormholetypes "github.com/wormhole-foundation/wormchain/x/wormhole/types"
 )
 

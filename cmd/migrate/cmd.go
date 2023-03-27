@@ -7,7 +7,7 @@ import (
 	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
 	"github.com/spf13/cobra"
 
-	v3 "github.com/forbole/bdjuno/v3/cmd/migrate/v3"
+	v3 "github.com/forbole/bdjuno/v4/cmd/migrate/v3"
 )
 
 type Migrator func(parseCfg *parsecmdtypes.Config) error

@@ -4,7 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/forbole/juno/v4/node/remote"
 
-	wormholesource "github.com/forbole/bdjuno/v3/modules/wormhole/source"
+	wormholesource "github.com/forbole/bdjuno/v4/modules/wormhole/source"
 	wormholetypes "github.com/wormhole-foundation/wormchain/x/wormhole/types"
 )
 
