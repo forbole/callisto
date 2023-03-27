@@ -13,6 +13,7 @@ import (
 
 	"github.com/forbole/bdjuno/v4/types/config"
 
+	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules"
 )
@@ -52,7 +53,9 @@ func main() {
 // support custom messages.
 // This should be edited by custom implementations if needed.
 func getBasicManagers() []module.BasicManager {
-	return []module.BasicManager{}
+	return []module.BasicManager{
+		simapp.ModuleBasics,
+	}
 }
 
 // getAddressesParser returns the messages parser that should be used to get the users involved in
