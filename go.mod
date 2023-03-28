@@ -6,7 +6,6 @@ require (
 	github.com/CosmWasm/wasmd v0.26.0
 	github.com/cosmos/cosmos-sdk v0.45.10
 	github.com/cosmos/gaia/v6 v6.0.4
-	// github.com/forbole/juno/v3 v3.4.1-0.20220916105321-27e7a3ace72d
 	github.com/forbole/juno/v4 v4.1.1-0.20230316083514-b5dafcf6c508
 	github.com/go-co-op/gocron v1.19.0
 	github.com/gogo/protobuf v1.3.3
@@ -141,5 +140,4 @@ replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.1.7-0.20210622111912-ef00f8ac3d76
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-// github.com/tendermint/tendermint => github.com/MonikaCat/tendermint v0.34.20-0.20220510093325-405517310d66
 )
