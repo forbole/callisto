@@ -1,6 +1,9 @@
 ## Unreleased
 ### Changes
 
+#### Shentu
+- ([\#549](https://github.com/forbole/bdjuno/pull/549)) Upgrade shentu to `v2.6.0`
+
 #### CI
 - ([\#508](https://github.com/forbole/bdjuno/pull/508)) Upgrade workflow golangci version to v1.50.1
 
