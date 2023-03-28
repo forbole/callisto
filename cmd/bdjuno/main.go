@@ -19,8 +19,8 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	osmosisapp "github.com/osmosis-labs/osmosis/v14/app"
-	gammtypes "github.com/osmosis-labs/osmosis/v14/x/gamm/pool-models/balancer"
+	osmosisapp "github.com/osmosis-labs/osmosis/v15/app"
+	gammtypes "github.com/osmosis-labs/osmosis/v15/x/gamm/pool-models/balancer"
 )
 
 func main() {

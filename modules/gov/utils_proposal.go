@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	minttypes "github.com/osmosis-labs/osmosis/v14/x/mint/types"
+	minttypes "github.com/osmosis-labs/osmosis/v15/x/mint/types"
 
 	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"

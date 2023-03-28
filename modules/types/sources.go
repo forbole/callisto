@@ -13,13 +13,13 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	minttypes "github.com/osmosis-labs/osmosis/v14/x/mint/types"
+	minttypes "github.com/osmosis-labs/osmosis/v15/x/mint/types"
 
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/juno/v4/node/local"
-	mintkeeper "github.com/osmosis-labs/osmosis/v14/x/mint/keeper"
+	mintkeeper "github.com/osmosis-labs/osmosis/v15/x/mint/keeper"
 
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
@@ -41,7 +41,7 @@ import (
 	localstakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/remote"
 	nodeconfig "github.com/forbole/juno/v4/node/config"
-	osmosisapp "github.com/osmosis-labs/osmosis/v14/app"
+	osmosisapp "github.com/osmosis-labs/osmosis/v15/app"
 )
 
 type Sources struct {

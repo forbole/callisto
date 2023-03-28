@@ -1,6 +1,6 @@
 package types
 
-import minttypes "github.com/osmosis-labs/osmosis/v14/x/mint/types"
+import minttypes "github.com/osmosis-labs/osmosis/v15/x/mint/types"
 
 // MintParams represents the x/mint parameters
 type MintParams struct {
