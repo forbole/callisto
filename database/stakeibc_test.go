@@ -3,7 +3,7 @@ package database_test
 import (
 	"encoding/json"
 
-	stakeibctypes "github.com/Stride-Labs/stride/v6/x/stakeibc/types"
+	stakeibctypes "github.com/Stride-Labs/stride/v7/x/stakeibc/types"
 
 	"github.com/forbole/bdjuno/v4/types"
 

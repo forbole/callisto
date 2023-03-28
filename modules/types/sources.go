@@ -10,12 +10,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/forbole/juno/v4/node/remote"
 
-	minttypes "github.com/Stride-Labs/stride/v6/x/mint/types"
+	minttypes "github.com/Stride-Labs/stride/v7/x/mint/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
-	// minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -23,9 +22,9 @@ import (
 
 	nodeconfig "github.com/forbole/juno/v4/node/config"
 
-	strideapp "github.com/Stride-Labs/stride/v6/app"
-	mintkeeper "github.com/Stride-Labs/stride/v6/x/mint/keeper"
-	stakeibctypes "github.com/Stride-Labs/stride/v6/x/stakeibc/types"
+	strideapp "github.com/Stride-Labs/stride/v7/app"
+	mintkeeper "github.com/Stride-Labs/stride/v7/x/mint/keeper"
+	stakeibctypes "github.com/Stride-Labs/stride/v7/x/stakeibc/types"
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v4/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"
