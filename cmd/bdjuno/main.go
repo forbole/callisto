@@ -17,7 +17,7 @@ import (
 	"github.com/forbole/bdjuno/v4/modules"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
-	persistenceapp "github.com/persistenceOne/persistenceCore/v6/app"
+	persistenceapp "github.com/persistenceOne/persistenceCore/v7/app"
 )
 
 func main() {
