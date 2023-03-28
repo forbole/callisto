@@ -2,8 +2,10 @@ package modules
 
 import (
 	"github.com/forbole/bdjuno/v3/modules/actions"
+	"github.com/forbole/bdjuno/v3/modules/gov"
 	"github.com/forbole/bdjuno/v3/modules/stakeibc"
 	"github.com/forbole/bdjuno/v3/modules/types"
+	"github.com/forbole/bdjuno/v3/modules/upgrade"
 
 	"github.com/forbole/juno/v4/modules/pruning"
 	"github.com/forbole/juno/v4/modules/telemetry"
@@ -83,8 +85,8 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
 	stakeIBCModule := stakeibc.NewModule(sources.StakeIBCSource, cdc, db)
 	stakingModule := staking.NewModule(sources.StakingSource, cdc, db)
-	// govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakeIBCModule, stakingModule, cdc, db)
-	// upgradeModule := upgrade.NewModule(db, stakingModule)
+	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakeIBCModule, stakingModule, cdc, db)
+	upgradeModule := upgrade.NewModule(db, stakingModule)
 
 	return []jmodules.Module{
 		messages.NewModule(r.parser, cdc, ctx.Database),
@@ -98,13 +100,13 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		dailyRefetchModule,
 		distrModule,
 		feegrantModule,
-		// govModule,
+		govModule,
 		mintModule,
 		modules.NewModule(ctx.JunoConfig.Chain, db),
 		pricefeed.NewModule(ctx.JunoConfig, cdc, db),
 		slashingModule,
 		stakeIBCModule,
 		stakingModule,
-		// upgradeModule,
+		upgradeModule,
 	}
 }
