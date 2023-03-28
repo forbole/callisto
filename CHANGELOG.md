@@ -1,6 +1,9 @@
 ## Unreleased
 ### Changes
 
+#### Stride
+- ([\#548](https://github.com/forbole/bdjuno/pull/548)) Upgrade stride to `v7.0.0`
+
 #### CI
 - ([\#508](https://github.com/forbole/bdjuno/pull/508)) Upgrade workflow golangci version to v1.50.1
 
