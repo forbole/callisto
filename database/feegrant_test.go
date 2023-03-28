@@ -4,8 +4,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
 
-	dbtypes "github.com/forbole/bdjuno/v3/database/types"
-	"github.com/forbole/bdjuno/v3/types"
+	dbtypes "github.com/forbole/bdjuno/v4/database/types"
+	"github.com/forbole/bdjuno/v4/types"
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveFeeGrantAllowance() {
@@ -66,7 +66,7 @@ func (suite *DbTestSuite) TestBigDipperDb_RemoveFeeGrantAllowance() {
 
 	// verify the data
 	var count int
-	err = suite.database.Sql.QueryRow(`SELECT COUNT(*) FROM fee_grant_allowance`).Scan(&count)
+	err = suite.database.SQL.QueryRow(`SELECT COUNT(*) FROM fee_grant_allowance`).Scan(&count)
 	suite.Require().NoError(err)
 	suite.Require().Equal(0, count)
 }

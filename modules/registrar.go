@@ -1,14 +1,13 @@
 package modules
 
 import (
-	"github.com/forbole/bdjuno/v3/modules/actions"
-	"github.com/forbole/bdjuno/v3/modules/stakeibc"
-	"github.com/forbole/bdjuno/v3/modules/types"
-
+	"github.com/forbole/bdjuno/v4/modules/actions"
+	"github.com/forbole/bdjuno/v4/modules/stakeibc"
+	"github.com/forbole/bdjuno/v4/modules/types"
 	"github.com/forbole/juno/v4/modules/pruning"
 	"github.com/forbole/juno/v4/modules/telemetry"
 
-	"github.com/forbole/bdjuno/v3/modules/slashing"
+	"github.com/forbole/bdjuno/v4/modules/slashing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -16,20 +15,22 @@ import (
 	"github.com/forbole/juno/v4/modules/messages"
 	"github.com/forbole/juno/v4/modules/registrar"
 
-	"github.com/forbole/bdjuno/v3/utils"
+	"github.com/forbole/bdjuno/v4/utils"
 
-	"github.com/forbole/bdjuno/v3/database"
-	"github.com/forbole/bdjuno/v3/modules/auth"
-	"github.com/forbole/bdjuno/v3/modules/bank"
-	"github.com/forbole/bdjuno/v3/modules/consensus"
-	"github.com/forbole/bdjuno/v3/modules/distribution"
-	"github.com/forbole/bdjuno/v3/modules/feegrant"
+	"github.com/forbole/bdjuno/v4/database"
+	"github.com/forbole/bdjuno/v4/modules/auth"
+	"github.com/forbole/bdjuno/v4/modules/bank"
+	"github.com/forbole/bdjuno/v4/modules/consensus"
+	"github.com/forbole/bdjuno/v4/modules/distribution"
+	"github.com/forbole/bdjuno/v4/modules/feegrant"
 
-	dailyrefetch "github.com/forbole/bdjuno/v3/modules/daily_refetch"
-	"github.com/forbole/bdjuno/v3/modules/mint"
-	"github.com/forbole/bdjuno/v3/modules/modules"
-	"github.com/forbole/bdjuno/v3/modules/pricefeed"
-	"github.com/forbole/bdjuno/v3/modules/staking"
+	dailyrefetch "github.com/forbole/bdjuno/v4/modules/daily_refetch"
+	"github.com/forbole/bdjuno/v4/modules/gov"
+	"github.com/forbole/bdjuno/v4/modules/mint"
+	"github.com/forbole/bdjuno/v4/modules/modules"
+	"github.com/forbole/bdjuno/v4/modules/pricefeed"
+	"github.com/forbole/bdjuno/v4/modules/staking"
+	"github.com/forbole/bdjuno/v4/modules/upgrade"
 )
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
@@ -83,8 +84,8 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
 	stakeIBCModule := stakeibc.NewModule(sources.StakeIBCSource, cdc, db)
 	stakingModule := staking.NewModule(sources.StakingSource, cdc, db)
-	// govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakeIBCModule, stakingModule, cdc, db)
-	// upgradeModule := upgrade.NewModule(db, stakingModule)
+	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakeIBCModule, stakingModule, cdc, db)
+	upgradeModule := upgrade.NewModule(db, stakingModule)
 
 	return []jmodules.Module{
 		messages.NewModule(r.parser, cdc, ctx.Database),
@@ -98,13 +99,13 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		dailyRefetchModule,
 		distrModule,
 		feegrantModule,
-		// govModule,
+		govModule,
 		mintModule,
 		modules.NewModule(ctx.JunoConfig.Chain, db),
 		pricefeed.NewModule(ctx.JunoConfig, cdc, db),
 		slashingModule,
 		stakeIBCModule,
 		stakingModule,
-		// upgradeModule,
+		upgradeModule,
 	}
 }

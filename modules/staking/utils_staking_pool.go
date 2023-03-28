@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 )
 
 func (m *Module) GetStakingPool(height int64) (*types.Pool, error) {
@@ -40,6 +40,15 @@ func (m *Module) GetStakingPool(height int64) (*types.Pool, error) {
 	stakedNotBondedTokens := pool.NotBondedTokens.Sub(unbondingTokens)
 
 	return types.NewPool(pool.BondedTokens, pool.NotBondedTokens, unbondingTokens, stakedNotBondedTokens, height), nil
+}
+
+func (m *Module) GetStakingPoolSnapshot(height int64) (*types.PoolSnapshot, error) {
+	pool, err := m.source.GetPool(height)
+	if err != nil {
+		return nil, fmt.Errorf("error while getting staking pool snapshot: %s", err)
+	}
+
+	return types.NewPoolSnapshot(pool.BondedTokens, pool.NotBondedTokens, height), nil
 }
 
 func (m *Module) getTotalUnbondingDelegationsFromValidator(height int64, valOperatorAddress string) []stakingtypes.UnbondingDelegation {

@@ -8,15 +8,15 @@ import (
 	startcmd "github.com/forbole/juno/v4/cmd/start"
 	"github.com/forbole/juno/v4/modules/messages"
 
-	migratecmd "github.com/forbole/bdjuno/v3/cmd/migrate"
-	parsecmd "github.com/forbole/bdjuno/v3/cmd/parse"
+	migratecmd "github.com/forbole/bdjuno/v4/cmd/migrate"
+	parsecmd "github.com/forbole/bdjuno/v4/cmd/parse"
 
-	"github.com/forbole/bdjuno/v3/types/config"
+	"github.com/forbole/bdjuno/v4/types/config"
 
-	"github.com/forbole/bdjuno/v3/database"
-	"github.com/forbole/bdjuno/v3/modules"
-
-	strideapp "github.com/Stride-Labs/stride/v6/app"
+	strideapp "github.com/Stride-Labs/stride/v7/app"
+	"github.com/cosmos/cosmos-sdk/simapp"
+	"github.com/forbole/bdjuno/v4/database"
+	"github.com/forbole/bdjuno/v4/modules"
 )
 
 func main() {
@@ -55,6 +55,7 @@ func main() {
 // This should be edited by custom implementations if needed.
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
+		simapp.ModuleBasics,
 		strideapp.ModuleBasics,
 	}
 }

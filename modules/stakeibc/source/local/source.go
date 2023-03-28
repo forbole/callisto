@@ -3,11 +3,11 @@ package local
 import (
 	"fmt"
 
-	stakeibctypes "github.com/Stride-Labs/stride/v6/x/stakeibc/types"
+	stakeibctypes "github.com/Stride-Labs/stride/v7/x/stakeibc/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/juno/v4/node/local"
 
-	stakeibcsource "github.com/forbole/bdjuno/v3/modules/stakeibc/source"
+	stakeibcsource "github.com/forbole/bdjuno/v4/modules/stakeibc/source"
 )
 
 var (
