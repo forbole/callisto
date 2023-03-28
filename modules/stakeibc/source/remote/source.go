@@ -4,7 +4,7 @@ import (
 	stakeibctypes "github.com/Stride-Labs/stride/v6/x/stakeibc/types"
 	"github.com/forbole/juno/v4/node/remote"
 
-	stakeibcsource "github.com/forbole/bdjuno/v3/modules/stakeibc/source"
+	stakeibcsource "github.com/forbole/bdjuno/v4/modules/stakeibc/source"
 )
 
 var (

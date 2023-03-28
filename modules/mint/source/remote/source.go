@@ -4,7 +4,7 @@ import (
 	minttypes "github.com/Stride-Labs/stride/v6/x/mint/types"
 	"github.com/forbole/juno/v4/node/remote"
 
-	mintsource "github.com/forbole/bdjuno/v3/modules/mint/source"
+	mintsource "github.com/forbole/bdjuno/v4/modules/mint/source"
 )
 
 var (

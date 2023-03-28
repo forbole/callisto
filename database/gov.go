@@ -6,14 +6,16 @@ import (
 	"time"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	"github.com/gogo/protobuf/proto"
 
-	"github.com/forbole/bdjuno/v3/types"
+	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
-	dbtypes "github.com/forbole/bdjuno/v3/database/types"
+	"github.com/forbole/bdjuno/v4/types"
 
+	dbtypes "github.com/forbole/bdjuno/v4/database/types"
+
+	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/lib/pq"
 )
 
@@ -47,6 +49,41 @@ WHERE gov_params.height <= excluded.height`
 	_, err = db.SQL.Exec(stmt, string(depositParamsBz), string(votingParamsBz), string(tallyingParams), params.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing gov params: %s", err)
+	}
+
+	return nil
+}
+
+// SaveGenesisGovParams saves the genesis x/gov parameters inside the database
+func (db *Db) SaveGenesisGovParams(params *types.GenesisGovParams) error {
+
+	depositParamsBz, err := json.Marshal(&params.DepositParams)
+	if err != nil {
+		return fmt.Errorf("error while marshaling genesis deposit params: %s", err)
+	}
+
+	votingParamsBz, err := json.Marshal(&params.VotingParams)
+	if err != nil {
+		return fmt.Errorf("error while marshaling genesis voting params: %s", err)
+	}
+
+	tallyingParams, err := json.Marshal(&params.TallyParams)
+	if err != nil {
+		return fmt.Errorf("error while marshaling genesis tally params: %s", err)
+	}
+
+	stmt := `
+INSERT INTO gov_params(deposit_params, voting_params, tally_params, height)
+VALUES ($1, $2, $3, $4)
+ON CONFLICT (one_row_id) DO UPDATE
+	SET deposit_params = excluded.deposit_params,
+  		voting_params = excluded.voting_params,
+		tally_params = excluded.tally_params,
+		height = excluded.height
+WHERE gov_params.height <= excluded.height`
+	_, err = db.SQL.Exec(stmt, string(depositParamsBz), string(votingParamsBz), string(tallyingParams), params.Height)
+	if err != nil {
+		return fmt.Errorf("error while storing genesis gov params: %s", err)
 	}
 
 	return nil
@@ -166,15 +203,15 @@ INSERT INTO proposal(
 }
 
 // GetProposal returns the proposal with the given id, or nil if not found
-func (db *Db) GetProposal(id uint64) (*types.Proposal, error) {
+func (db *Db) GetProposal(id uint64) (types.Proposal, error) {
 	var rows []*dbtypes.ProposalRow
 	err := db.Sqlx.Select(&rows, `SELECT * FROM proposal WHERE id = $1`, id)
 	if err != nil {
-		return nil, err
+		return types.Proposal{}, err
 	}
 
 	if len(rows) == 0 {
-		return nil, nil
+		return types.Proposal{}, nil
 	}
 
 	row := rows[0]
@@ -182,13 +219,13 @@ func (db *Db) GetProposal(id uint64) (*types.Proposal, error) {
 	var contentAny codectypes.Any
 	err = db.EncodingConfig.Codec.UnmarshalJSON([]byte(row.Content), &contentAny)
 	if err != nil {
-		return nil, err
+		return types.Proposal{}, err
 	}
 
-	var content govtypes.Content
+	var content govtypesv1beta1.Content
 	err = db.EncodingConfig.Codec.UnpackAny(&contentAny, &content)
 	if err != nil {
-		return nil, err
+		return types.Proposal{}, err
 	}
 
 	proposal := types.NewProposal(
@@ -203,14 +240,14 @@ func (db *Db) GetProposal(id uint64) (*types.Proposal, error) {
 		row.VotingEndTime,
 		row.Proposer,
 	)
-	return &proposal, nil
+	return proposal, nil
 }
 
 // GetOpenProposalsIds returns all the ids of the proposals that are in deposit or voting period at the given block time
 func (db *Db) GetOpenProposalsIds(blockTime time.Time) ([]uint64, error) {
 	var ids []uint64
 	stmt := `SELECT id FROM proposal WHERE status = $1 OR status = $2`
-	err := db.Sqlx.Select(&ids, stmt, govtypes.StatusDepositPeriod.String(), govtypes.StatusVotingPeriod.String())
+	err := db.Sqlx.Select(&ids, stmt, govtypesv1.StatusDepositPeriod.String(), govtypesv1.StatusVotingPeriod.String())
 	if err != nil {
 		return ids, err
 	}
@@ -250,7 +287,7 @@ func (db *Db) SaveDeposits(deposits []types.Deposit) error {
 
 	query := `INSERT INTO proposal_deposit (proposal_id, depositor_address, amount, timestamp, height) VALUES `
 	var param []interface{}
-
+	var accounts []types.Account
 	for i, deposit := range deposits {
 		vi := i * 5
 		query += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5)
@@ -260,7 +297,15 @@ func (db *Db) SaveDeposits(deposits []types.Deposit) error {
 			deposit.Timestamp,
 			deposit.Height,
 		)
+		accounts = append(accounts, types.NewAccount(deposit.Depositor))
 	}
+
+	// Store the depositor account
+	err := db.SaveAccounts(accounts)
+	if err != nil {
+		return fmt.Errorf("error while storing depositor account: %s", err)
+	}
+
 	query = query[:len(query)-1] // Remove trailing ","
 	query += `
 ON CONFLICT ON CONSTRAINT unique_deposit DO UPDATE
@@ -268,7 +313,7 @@ ON CONFLICT ON CONSTRAINT unique_deposit DO UPDATE
 		timestamp = excluded.timestamp,
 		height = excluded.height
 WHERE proposal_deposit.height <= excluded.height`
-	_, err := db.SQL.Exec(query, param...)
+	_, err = db.SQL.Exec(query, param...)
 	if err != nil {
 		return fmt.Errorf("error while storing deposits: %s", err)
 	}

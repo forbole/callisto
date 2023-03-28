@@ -1,8 +1,9 @@
-module github.com/forbole/bdjuno/v3
+module github.com/forbole/bdjuno/v4
 
-go 1.18
+go 1.19
 
 require (
+	cosmossdk.io/math v1.0.0-beta.3
 	github.com/Stride-Labs/stride/v6 v6.0.0
 	github.com/cosmos/cosmos-sdk v0.46.7
 	github.com/forbole/juno/v4 v4.1.1-0.20230307030848-efaece3bff02
@@ -15,9 +16,9 @@ require (
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
 	github.com/rs/zerolog v1.29.0
 	github.com/spf13/cobra v1.6.1
-	github.com/stretchr/testify v1.8.1
+	github.com/stretchr/testify v1.8.2
 	github.com/tendermint/tendermint v0.34.24
-	google.golang.org/grpc v1.51.0
+	google.golang.org/grpc v1.54.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -28,7 +29,6 @@ require (
 	cloud.google.com/go/iam v0.7.0 // indirect
 	cloud.google.com/go/storage v1.27.0 // indirect
 	cosmossdk.io/errors v1.0.0-beta.7 // indirect
-	cosmossdk.io/math v1.0.0-beta.3 // indirect
 	filippo.io/edwards25519 v1.0.0-rc.1 // indirect
 	github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 // indirect
 	github.com/99designs/keyring v1.2.1 // indirect

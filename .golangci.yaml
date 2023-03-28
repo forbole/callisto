@@ -51,6 +51,10 @@ issues:
     - text: "ST1016:"
       linters:
         - stylecheck
+    # Disable until Msg-based gov proposals are fully implemented
+    - text: "SA1019:"
+      linters:
+        - staticcheck
   max-issues-per-linter: 10000
   max-same-issues: 10000
 
