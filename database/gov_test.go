@@ -333,7 +333,7 @@ func (suite *DbTestSuite) TestBigDipperDb_GetOpenProposalsIds() {
 	timeBeforeDepositEnd := invalidProposal.DepositEndTime.Add(-1 * time.Hour)
 	ids, err := suite.database.GetOpenProposalsIds(timeBeforeDepositEnd)
 	suite.Require().NoError(err)
-	suite.Require().Equal([]uint64{1, 2, 6}, ids)
+	suite.Require().Equal([]uint64{1, 2, 3, 6}, ids)
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_UpdateProposal() {
