@@ -15,8 +15,7 @@ select_permissions:
     columns:
     - pool_id
     - shield
-    - native_service_fees
-    - foreign_service_fees
+    - service_fees
     - sponsor
     - sponsor_address
     - description

@@ -2,8 +2,7 @@ CREATE TABLE shield_pool
 (
     pool_id                 INT             NOT NULL PRIMARY KEY,
     shield                  TEXT            NOT NULL,
-    native_service_fees     COIN[]          NOT NULL,
-    foreign_service_fees    COIN[]          NOT NULL,
+    service_fees            COIN[]          NOT NULL,
     sponsor                 TEXT            NOT NULL,
     sponsor_address         TEXT            NOT NULL,
     description             TEXT            NOT NULL,
@@ -28,8 +27,7 @@ CREATE TABLE shield_provider
     address             TEXT            NOT NULL PRIMARY KEY REFERENCES account (address),
     collateral          BIGINT          NOT NULL,
     delegation_bonded   BIGINT          NOT NULL,
-    native_rewards      COIN[]          NOT NULL,
-    foreign_rewards     COIN[]          NOT NULL,
+    rewards             COIN[]          NOT NULL,
     total_locked        BIGINT          NOT NULL,
     withdrawing         BIGINT          NOT NULL,
     height              BIGINT          NOT NULL
@@ -49,10 +47,8 @@ CREATE TABLE shield_status
 (
     one_row_id                      BOOLEAN     NOT NULL DEFAULT TRUE PRIMARY KEY,
     global_staking_pool             BIGINT      NOT NULL,
-    current_native_service_fees     COIN[]      NOT NULL,
-    current_foreign_service_fees    COIN[]      NOT NULL,
-    remaining_native_service_fees   COIN[]      NOT NULL,
-    remaining_foreign_service_fees  COIN[]      NOT NULL,
+    current_service_fees            COIN[]      NOT NULL,
+    remaining_service_fees          COIN[]      NOT NULL,
     total_collateral                BIGINT      NOT NULL,
     total_shield                    BIGINT      NOT NULL,
     total_withdrawing               BIGINT      NOT NULL,

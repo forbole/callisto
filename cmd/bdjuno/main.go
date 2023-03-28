@@ -16,8 +16,8 @@ import (
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules"
 
-	certikapp "github.com/certikfoundation/shentu/v2/app"
-	gaiaapp "github.com/cosmos/gaia/v6/app"
+	gaiaapp "github.com/cosmos/gaia/v7/app"
+	certikapp "github.com/shentufoundation/shentu/v2/app"
 )
 
 func main() {

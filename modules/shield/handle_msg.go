@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strconv"
 
-	shieldtypes "github.com/certikfoundation/shentu/v2/x/shield/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/bdjuno/v4/types"
 	juno "github.com/forbole/juno/v4/types"
+	shieldtypes "github.com/shentufoundation/shentu/v2/x/shield/types"
 )
 
 // HandleMsg implements modules.MessageModule
@@ -31,9 +31,6 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 
 	case *shieldtypes.MsgWithdrawRewards:
 		return m.HandleMsgWithdrawRewards(tx, cosmosMsg)
-
-	case *shieldtypes.MsgWithdrawForeignRewards:
-		return m.HandleMsgWithdrawForeignRewards(tx, cosmosMsg)
 
 	case *shieldtypes.MsgDepositCollateral:
 		return m.HandleMsgDepositCollateral(tx, cosmosMsg)
@@ -80,7 +77,7 @@ func (m *Module) HandleMsgCreatePool(index int, tx *juno.Tx, msg *shieldtypes.Ms
 	}
 
 	pool := types.NewShieldPool(
-		poolID, msg.Shield[0].Amount, msg.Deposit.Native, msg.Deposit.Foreign, msg.Sponsor,
+		poolID, msg.Shield[0].Amount, msg.Deposit, msg.Sponsor,
 		msg.SponsorAddr, msg.Description, msg.ShieldLimit, false, tx.Height,
 	)
 
@@ -92,7 +89,7 @@ func (m *Module) HandleMsgUpdatePool(tx *juno.Tx, msg *shieldtypes.MsgUpdatePool
 
 	// Sponsor, sponsor address, and pool pause status will not be updated with ON CONFLICT statement
 	pool := types.NewShieldPool(
-		msg.PoolId, msg.Shield[0].Amount, msg.ServiceFees.Native, msg.ServiceFees.Foreign, "",
+		msg.PoolId, msg.Shield[0].Amount, msg.ServiceFees, "",
 		"", msg.Description, msg.ShieldLimit, false, tx.Height,
 	)
 
@@ -113,12 +110,7 @@ func (m *Module) HandleMsgResumePool(tx *juno.Tx, msg *shieldtypes.MsgResumePool
 
 // HandleMsgWithdrawRewards allows to properly handle a MsgWithdrawRewards
 func (m *Module) HandleMsgWithdrawRewards(tx *juno.Tx, msg *shieldtypes.MsgWithdrawRewards) error {
-	return m.db.WithdrawNativeRewards(msg.From, tx.Height)
-}
-
-// HandleMsgWithdrawForeignRewards allows to properly handle a MsgWithdrawForeignRewards
-func (m *Module) HandleMsgWithdrawForeignRewards(tx *juno.Tx, msg *shieldtypes.MsgWithdrawForeignRewards) error {
-	return m.db.WithdrawForeignRewards(msg.From, tx.Height)
+	return m.db.WithdrawRewards(msg.From, tx.Height)
 }
 
 // HandleMsgDepositCollateral allows to properly handle a MsgDepositCollateral

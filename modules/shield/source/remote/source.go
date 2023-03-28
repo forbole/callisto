@@ -3,8 +3,8 @@ package remote
 import (
 	"github.com/forbole/juno/v4/node/remote"
 
-	shieldtypes "github.com/certikfoundation/shentu/v2/x/shield/types"
 	shieldsource "github.com/forbole/bdjuno/v4/modules/shield/source"
+	shieldtypes "github.com/shentufoundation/shentu/v2/x/shield/types"
 )
 
 var (

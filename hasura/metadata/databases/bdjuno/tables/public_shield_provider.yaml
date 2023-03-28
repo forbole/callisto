@@ -12,8 +12,7 @@ select_permissions:
     - address
     - collateral
     - delegation_bonded
-    - native_rewards
-    - foreign_rewards
+    - rewards
     - total_locked
     - withdrawing
     - height

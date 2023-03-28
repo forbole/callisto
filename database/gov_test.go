@@ -12,9 +12,9 @@ import (
 
 	"github.com/forbole/bdjuno/v4/types"
 
-	certikgovtypes "github.com/certikfoundation/shentu/v2/x/gov/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	certikgovtypes "github.com/shentufoundation/shentu/v2/x/gov/types"
 
 	dbtypes "github.com/forbole/bdjuno/v4/database/types"
 )
@@ -333,7 +333,7 @@ func (suite *DbTestSuite) TestBigDipperDb_GetOpenProposalsIds() {
 	timeBeforeDepositEnd := invalidProposal.DepositEndTime.Add(-1 * time.Hour)
 	ids, err := suite.database.GetOpenProposalsIds(timeBeforeDepositEnd)
 	suite.Require().NoError(err)
-	suite.Require().Equal([]uint64{1, 2, 6}, ids)
+	suite.Require().Equal([]uint64{1, 2, 3, 6}, ids)
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_UpdateProposal() {

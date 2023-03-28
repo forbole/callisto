@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"time"
 
-	certikgovtypes "github.com/certikfoundation/shentu/v2/x/gov/types"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	"github.com/gogo/protobuf/proto"
+	certikgovtypes "github.com/shentufoundation/shentu/v2/x/gov/types"
 
 	"github.com/forbole/bdjuno/v4/types"
 

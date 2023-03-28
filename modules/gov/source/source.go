@@ -1,8 +1,8 @@
 package source
 
 import (
-	certikgovtypes "github.com/certikfoundation/shentu/v2/x/gov/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	certikgovtypes "github.com/shentufoundation/shentu/v2/x/gov/types"
 )
 
 type Source interface {

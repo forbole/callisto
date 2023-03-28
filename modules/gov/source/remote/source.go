@@ -1,9 +1,9 @@
 package remote
 
 import (
-	certikgovtypes "github.com/certikfoundation/shentu/v2/x/gov/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/forbole/juno/v4/node/remote"
+	certikgovtypes "github.com/shentufoundation/shentu/v2/x/gov/types"
 
 	govsource "github.com/forbole/bdjuno/v4/modules/gov/source"
 )
