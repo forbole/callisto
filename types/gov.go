@@ -3,11 +3,10 @@ package types
 import (
 	"time"
 
+	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
-
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 )
 
 const (
@@ -310,7 +309,7 @@ func NewProposalStakingPoolSnapshot(proposalID uint64, pool *PoolSnapshot) Propo
 type ProposalValidatorStatusSnapshot struct {
 	ProposalID           uint64
 	ValidatorConsAddress string
-	ValidatorVotingPower int64
+	ValidatorVotingPower sdkmath.Int
 	ValidatorStatus      int
 	ValidatorJailed      bool
 	Height               int64
@@ -320,7 +319,7 @@ type ProposalValidatorStatusSnapshot struct {
 func NewProposalValidatorStatusSnapshot(
 	proposalID uint64,
 	validatorConsAddr string,
-	validatorVotingPower int64,
+	validatorVotingPower sdkmath.Int,
 	validatorStatus int,
 	validatorJailed bool,
 	height int64,

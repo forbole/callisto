@@ -127,12 +127,12 @@ func NewValidatorCommission(
 // ValidatorVotingPower represents the voting power of a validator at a specific block height
 type ValidatorVotingPower struct {
 	ConsensusAddress string
-	VotingPower      int64
+	VotingPower      sdkmath.Int
 	Height           int64
 }
 
 // NewValidatorVotingPower creates a new ValidatorVotingPower
-func NewValidatorVotingPower(address string, votingPower int64, height int64) ValidatorVotingPower {
+func NewValidatorVotingPower(address string, votingPower sdkmath.Int, height int64) ValidatorVotingPower {
 	return ValidatorVotingPower{
 		ConsensusAddress: address,
 		VotingPower:      votingPower,
