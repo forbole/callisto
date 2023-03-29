@@ -425,7 +425,7 @@ VALUES `
 
 		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d),", si+1, si+2, si+3, si+4, si+5, si+6)
 		args = append(args,
-			snapshot.ProposalID, snapshot.ValidatorConsAddress, snapshot.ValidatorVotingPower,
+			snapshot.ProposalID, snapshot.ValidatorConsAddress, snapshot.ValidatorVotingPower.String(),
 			snapshot.ValidatorStatus, snapshot.ValidatorJailed, snapshot.Height)
 	}
 

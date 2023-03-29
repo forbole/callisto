@@ -23,7 +23,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1, "no duplicated inflation rows should be inserted")
 
-	expected := dbtypes.NewInflationRow(100.50, 100)
+	expected := dbtypes.NewInflationRow(0.01, 100)
 	suite.Require().True(expected.Equal(rows[0]))
 
 	// ---------------------------------------------------------------------------------------------------------------
@@ -38,7 +38,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1, "no duplicated inflation rows should be inserted")
 
-	expected = dbtypes.NewInflationRow(100.50, 100)
+	expected = dbtypes.NewInflationRow(0.01, 100)
 	suite.Require().True(expected.Equal(rows[0]), "data should not change with lower height")
 
 	// ---------------------------------------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1, "no duplicated inflation rows should be inserted")
 
-	expected = dbtypes.NewInflationRow(300.00, 100)
+	expected = dbtypes.NewInflationRow(0.03, 100)
 	suite.Require().True(expected.Equal(rows[0]), "data should change with same height")
 
 	// ---------------------------------------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1, "no duplicated inflation rows should be inserted")
 
-	expected = dbtypes.NewInflationRow(400.00, 110)
+	expected = dbtypes.NewInflationRow(0.04, 110)
 	suite.Require().True(expected.Equal(rows[0]), "data should change with higher height")
 }
 
