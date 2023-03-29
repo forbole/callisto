@@ -3,6 +3,13 @@
 
 #### [cheqd]
 - ([\#545](https://github.com/forbole/bdjuno/pull/545)) Added `x/did` and `x/resource` module handlers to store data in db
+- ([\#550](https://github.com/forbole/bdjuno/pull/550)) Updated validators VP handlers, `voting_power` column type to TEXT, updated VotingPower type to `sdkmath.Int` for ValidatorVotingPower and ProposalValidatorStatusSnapshot struct
+
+pdated VotingPower type to sdkmath.Int for ValidatorVotingPower, `voting_power` column type to TEXT 
+
+Updated validators VP handlers, `voting_power` column type to TEXT inside `validator_voting_power` and `proposal_validator_status_snapshot` table and VotingPower type to sdkmath.Int for ValidatorVotingPower type
+
+
 
 
 #### [cheqd] Top Accounts Module
