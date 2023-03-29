@@ -5,7 +5,7 @@ import (
 	"os"
 
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	cmdxapp "github.com/comdex-official/comdex/v8/app"
+	cmdxapp "github.com/MonCatCat/comdex/v9/app"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/tendermint/tendermint/libs/log"

@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/CosmWasm/wasmd v0.30.0
-	github.com/comdex-official/comdex/v8 v8.1.1
+	github.com/MonCatCat/comdex/v9 v9.1.1-0.20230329034112-f0091ea20442
 	github.com/cosmos/cosmos-sdk v0.45.12
 	github.com/forbole/juno/v4 v4.1.1-0.20230221021913-841842bdefed
 	github.com/go-co-op/gocron v1.19.0
@@ -116,9 +116,10 @@ require (
 	github.com/spf13/viper v1.14.0 // indirect
 	github.com/subosito/gotenv v1.4.1 // indirect
 	github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7 // indirect
+	github.com/tendermint/btcd v0.1.1 // indirect
+	github.com/tendermint/crypto v0.0.0-20191022145703-50d29ede1e15 // indirect
 	github.com/tendermint/go-amino v0.16.0 // indirect
 	github.com/tendermint/tm-db v0.6.7 // indirect
-	github.com/tidwall/btree v1.5.0 // indirect
 	github.com/zondax/hid v0.9.1 // indirect
 	github.com/zondax/ledger-go v0.14.1 // indirect
 	go.etcd.io/bbolt v1.3.6 // indirect
@@ -137,8 +138,8 @@ require (
 )
 
 replace (
-	github.com/comdex-official/comdex/v8 => github.com/forbole/comdex/v8 v8.1.1
 	github.com/confio/ics23/go => github.com/cosmos/cosmos-sdk/ics23/go v0.8.0
+	github.com/cosmos/cosmos-sdk => github.com/comdex-official/cosmos-sdk v0.45.9-comdex.3
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	github.com/tendermint/tendermint => github.com/informalsystems/tendermint v0.34.24
 )

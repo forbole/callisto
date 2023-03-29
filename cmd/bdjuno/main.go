@@ -16,7 +16,7 @@ import (
 	"github.com/forbole/bdjuno/v4/modules"
 	"github.com/forbole/bdjuno/v4/types/config"
 
-	cmdxapp "github.com/comdex-official/comdex/v8/app"
+	cmdxapp "github.com/MonCatCat/comdex/v9/app"
 )
 
 func main() {
