@@ -28,16 +28,19 @@ func (m *Module) updateProviderInventoryStatus(address string, hostURI string, h
 		return
 	}
 
-	// Calculate inventory sum of each state
-	active, pending, available := m.calculateInventorySum(status)
+	if status.Cluster != nil {
+		// Calculate inventory sum of each state
+		active, pending, available := m.calculateInventorySum(status)
 
-	err = m.db.SaveProviderInventoryStatus(types.NewProviderInventoryStatus(
-		address, true, status, active, pending, available, height,
-	))
-	if err != nil {
-		log.Error().Str("module", "provider").
-			Msgf("error while storing provider inventory status: %s", err)
+		err = m.db.SaveProviderInventoryStatus(types.NewProviderInventoryStatus(
+			address, true, status, active, pending, available, height,
+		))
+		if err != nil {
+			log.Error().Str("module", "provider").
+				Msgf("error while storing provider inventory status: %s", err)
+		}
 	}
+
 }
 
 // getProviderInventoryStatus allows to get provider inventory status by rest client with insecure TLS config

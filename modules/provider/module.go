@@ -11,7 +11,7 @@ var (
 	_ modules.Module        = &Module{}
 	_ modules.GenesisModule = &Module{}
 	_ modules.MessageModule = &Module{}
-	// _ modules.PeriodicOperationsModule = &Module{}
+	_ modules.PeriodicOperationsModule = &Module{}
 )
 
 // Module represents the x/provider module
