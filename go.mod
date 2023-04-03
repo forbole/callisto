@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	cosmossdk.io/math v1.0.0-beta.3
-	github.com/cheqd/cheqd-node v1.3.0
+	github.com/cheqd/cheqd-node v1.4.0
 	github.com/cosmos/cosmos-sdk v0.46.10
 	github.com/forbole/juno/v4 v4.1.1-0.20230321084013-8b9686163062 // custom version with cheqd message handler
 	github.com/go-co-op/gocron v1.19.0
