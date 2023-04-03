@@ -4,17 +4,15 @@ import (
 	"fmt"
 	"time"
 
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	"github.com/gogo/protobuf/proto"
-
+	sdkmath "cosmossdk.io/math"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-
-	"github.com/forbole/bdjuno/v4/types"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+	"github.com/forbole/bdjuno/v4/types"
+	"github.com/gogo/protobuf/proto"
 
 	dbtypes "github.com/forbole/bdjuno/v4/database/types"
 )
@@ -640,7 +638,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 		types.NewProposalValidatorStatusSnapshot(
 			1,
 			validator1.GetConsAddr(),
-			100,
+			sdkmath.NewInt(100),
 			int(stakingtypes.Bonded),
 			false,
 			10,
@@ -648,7 +646,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 		types.NewProposalValidatorStatusSnapshot(
 			1,
 			validator2.GetConsAddr(),
-			100,
+			sdkmath.NewInt(100),
 			int(stakingtypes.Unbonding),
 			true,
 			10,
@@ -666,7 +664,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 			1,
 			1,
 			validator1.GetConsAddr(),
-			100,
+			"100",
 			3,
 			false,
 			10,
@@ -675,7 +673,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 			2,
 			1,
 			validator2.GetConsAddr(),
-			100,
+			"100",
 			2,
 			true,
 			10,
@@ -689,7 +687,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 		types.NewProposalValidatorStatusSnapshot(
 			1,
 			validator1.GetConsAddr(),
-			10,
+			sdkmath.NewInt(10),
 			int(stakingtypes.Bonded),
 			true,
 			9,
@@ -697,7 +695,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 		types.NewProposalValidatorStatusSnapshot(
 			1,
 			validator2.GetConsAddr(),
-			700,
+			sdkmath.NewInt(700),
 			int(stakingtypes.Unbonding),
 			true,
 			9,
@@ -715,7 +713,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 			1,
 			1,
 			validator1.GetConsAddr(),
-			100,
+			"100",
 			3,
 			false,
 			10,
@@ -724,7 +722,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 			2,
 			1,
 			validator2.GetConsAddr(),
-			100,
+			"100",
 			2,
 			true,
 			10,
@@ -738,7 +736,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 		types.NewProposalValidatorStatusSnapshot(
 			1,
 			validator1.GetConsAddr(),
-			10,
+			sdkmath.NewInt(10),
 			int(stakingtypes.Bonded),
 			true,
 			10,
@@ -746,7 +744,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 		types.NewProposalValidatorStatusSnapshot(
 			1,
 			validator2.GetConsAddr(),
-			700,
+			sdkmath.NewInt(700),
 			int(stakingtypes.Unbonding),
 			true,
 			10,
@@ -764,7 +762,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 			1,
 			1,
 			validator1.GetConsAddr(),
-			10,
+			"10",
 			3,
 			true,
 			10,
@@ -773,7 +771,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 			2,
 			1,
 			validator2.GetConsAddr(),
-			700,
+			"700",
 			2,
 			true,
 			10,
@@ -787,7 +785,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 		types.NewProposalValidatorStatusSnapshot(
 			1,
 			validator1.GetConsAddr(),
-			100000,
+			sdkmath.NewInt(100000),
 			int(stakingtypes.Unspecified),
 			false,
 			11,
@@ -795,7 +793,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 		types.NewProposalValidatorStatusSnapshot(
 			1,
 			validator2.GetConsAddr(),
-			700000,
+			sdkmath.NewInt(700000),
 			int(stakingtypes.Unbonded),
 			false,
 			11,
@@ -813,7 +811,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 			1,
 			1,
 			validator1.GetConsAddr(),
-			100000,
+			"100000",
 			0,
 			false,
 			11,
@@ -822,7 +820,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 			2,
 			1,
 			validator2.GetConsAddr(),
-			700000,
+			"700000",
 			1,
 			false,
 			11,

@@ -213,12 +213,12 @@ func (v ValidatorCommissionRow) Equal(w ValidatorCommissionRow) bool {
 // ValidatorVotingPowerRow represents a single row of the validator_voting_power database table
 type ValidatorVotingPowerRow struct {
 	ValidatorAddress string `db:"validator_address"`
-	VotingPower      int64  `db:"voting_power"`
+	VotingPower      string `db:"voting_power"`
 	Height           int64  `db:"height"`
 }
 
 // NewValidatorVotingPowerRow allows to easily build a new ValidatorVotingPowerRow instance
-func NewValidatorVotingPowerRow(address string, votingPower int64, height int64) ValidatorVotingPowerRow {
+func NewValidatorVotingPowerRow(address string, votingPower string, height int64) ValidatorVotingPowerRow {
 	return ValidatorVotingPowerRow{
 		ValidatorAddress: address,
 		VotingPower:      votingPower,
