@@ -7,7 +7,7 @@ require (
 	github.com/cheqd/cheqd-node v1.3.0
 	github.com/cosmos/cosmos-sdk v0.46.10
 	github.com/forbole/juno/v4 v4.1.1-0.20230321084013-8b9686163062 // custom version with cheqd message handler
-	github.com/go-co-op/gocron v1.18.0
+	github.com/go-co-op/gocron v1.19.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.7
@@ -176,11 +176,24 @@ require (
 )
 
 replace (
+	// Keyring replacement from Cosmos SDK v0.46.10
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
+	// cosmos-sdk state sync allow fast forward to latest height version
 	github.com/cosmos/cosmos-sdk => github.com/cheqd/cosmos-sdk v0.46.10-state-sync
+
 	github.com/cosmos/cosmos-sdk/x/mint/types => github.com/cheqd/cosmos-sdk/x/mint/types v0.46.10-state-sync
+
+	// iavl allow pruning of uneven heights
 	github.com/cosmos/iavl => github.com/cheqd/iavl v0.19.5-cheqd
+
+	// Fix upstream GHSA-h395-qcrw-5vmq vulnerability.
+	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
+
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
+
+	// From Cosmos SDK v0.46.8 upstream
 	github.com/jhump/protoreflect => github.com/jhump/protoreflect v1.9.0
+
+	// use informal system fork of tendermint
 	github.com/tendermint/tendermint => github.com/informalsystems/tendermint v0.34.26
 )
