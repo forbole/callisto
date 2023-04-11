@@ -41,16 +41,17 @@ func (m *Module) handleMsgWithdraw(tx *juno.Tx, index int, msg *types.MsgWithdra
 
 	// TODO dev only fix for enormous coins amount
 	oldBalance := wallet[0].Balance
-	var ok bool
+	var hasNeg bool
 	// sub coins from wallet balance
 	// wallet[0].Balance = wallet[0].Balance.Sub(coins) //
 
-	wallet[0].Balance, ok = wallet[0].Balance.SafeSub(coins)
-	if !ok {
+	wallet[0].Balance, hasNeg = wallet[0].Balance.SafeSub(coins)
+	// If the balance is negative [wallet amount - withdraw amount = is negative], wallet amount remains the same.
+	if hasNeg {
 		wallet[0].Balance = oldBalance
 	}
 
-	if err := m.walletsRepo.UpdateWallets(wallet...); err != nil {
+	if err = m.walletsRepo.UpdateWallets(wallet...); err != nil {
 		return err
 	}
 
@@ -62,11 +63,11 @@ func (m *Module) handleMsgWithdraw(tx *juno.Tx, index int, msg *types.MsgWithdra
 		asset[0].InCirculation -= msg.Amount
 	} // remove
 
-	if err := m.assetRepo.UpdateAssets(asset...); err != nil {
+	if err = m.assetRepo.UpdateAssets(asset...); err != nil {
 		return err
 	}
 
-	if err := m.bankingRepo.SaveWithdraws(withdraw); err != nil {
+	if err = m.bankingRepo.SaveWithdraws(withdraw); err != nil {
 		return err
 	}
 
