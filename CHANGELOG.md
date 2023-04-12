@@ -17,6 +17,7 @@ Updated validators VP handlers, `voting_power` column type to TEXT inside `valid
 - ([\#511](https://github.com/forbole/bdjuno/pull/511)) Implemented parse cmd for `top_accounts` module 
 - ([\#520](https://github.com/forbole/bdjuno/pull/520)) Upgraded `cheqd-node` to `v1.2.2` and proposals parsing to correctly parse `v0.46.x` gov proposals
 - ([\#547](https://github.com/forbole/bdjuno/pull/547)) Upgraded `cheqd-node` to `v1.3.0` and added MsgDeactivateDidDoc handling
+- ([\#552](https://github.com/forbole/bdjuno/pull/552)) Upgraded `cheqd-node` to `v1.4.0`
 
 #### CI
 - ([\#508](https://github.com/forbole/bdjuno/pull/508)) Upgrade workflow golangci version to v1.50.1
