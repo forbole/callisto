@@ -6,9 +6,11 @@ CREATE TABLE top_accounts
     redelegation    BIGINT DEFAULT 0,
     unbonding       BIGINT DEFAULT 0,
     reward          BIGINT DEFAULT 0,
-    sum             BIGINT NOT NULL DEFAULT 0
+    sum             BIGINT NOT NULL DEFAULT 0,
+    height          BIGINT NOT NULL
 );
 CREATE INDEX top_accounts_sum_index ON top_accounts (sum);
+CREATE INDEX top_accounts_height_index ON top_accounts (height);
 
 CREATE TABLE top_accounts_params
 (

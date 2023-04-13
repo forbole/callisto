@@ -11,19 +11,20 @@ func (db *Db) SaveTopAccountsBalance(column string, bals []types.NativeTokenAmou
 		return nil
 	}
 
-	stmt := fmt.Sprintf("INSERT INTO top_accounts (address, %s) VALUES ", column)
+	stmt := fmt.Sprintf("INSERT INTO top_accounts (address, %s, height) VALUES ", column)
 
 	var params []interface{}
 
 	for i, bal := range bals {
-		bi := i * 2
-		stmt += fmt.Sprintf("($%d, $%d),", bi+1, bi+2)
+		bi := i * 3
+		stmt += fmt.Sprintf("($%d, $%d, $%d),", bi+1, bi+2, bi+3)
 
-		params = append(params, bal.Address, bal.Balance.String())
+		params = append(params, bal.Address, bal.Balance.String(), bal.Height)
 	}
 
 	stmt = stmt[:len(stmt)-1]
-	stmt += fmt.Sprintf("ON CONFLICT (address) DO UPDATE SET %s = excluded.%s ", column, column)
+	stmt += fmt.Sprintf("ON CONFLICT (address) DO UPDATE SET %s = excluded.%s,height = excluded.height WHERE top_accounts.height <= excluded.height", column, column)
+
 
 	_, err := db.SQL.Exec(stmt, params...)
 	return err
@@ -44,11 +45,14 @@ as sum FROM top_accounts WHERE address = $1
 	return rows[0], nil
 }
 
-func (db *Db) UpdateTopAccountsSum(address, sum string) error {
-	stmt := `INSERT INTO top_accounts (address, sum) VALUES ($1, $2) 
-ON CONFLICT (address) DO UPDATE SET sum = excluded.sum`
+func (db *Db) UpdateTopAccountsSum(address, sum string, height int64) error {
+	stmt := `INSERT INTO top_accounts (address, sum, height) VALUES ($1, $2, $3) 
+ON CONFLICT (address) DO UPDATE SET 
+	sum = excluded.sum, 
+	height = excluded.height  
+WHERE top_accounts.height <= excluded.height`
 
-	_, err := db.SQL.Exec(stmt, address, sum)
+	_, err := db.SQL.Exec(stmt, address, sum, height)
 	return err
 
 }
