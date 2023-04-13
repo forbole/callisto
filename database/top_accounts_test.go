@@ -31,11 +31,11 @@ func (suite *DbTestSuite) TestSaveTopAccountsBalance() {
 	err = suite.database.SaveTopAccountsBalance("reward", []types.NativeTokenAmount{amount})
 	suite.Require().NoError(err)
 
-	err = suite.database.UpdateTopAccountsSum("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs", "500")
+	err = suite.database.UpdateTopAccountsSum("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs", "500", 100)
 	suite.Require().NoError(err)
 
 	// Verify data
-	expected := dbtypes.NewTopAccountsRow("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs", 100, 100, 100, 100, 100, 500)
+	expected := dbtypes.NewTopAccountsRow("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs", 100, 100, 100, 100, 100, 500, 100)
 
 	var rows []dbtypes.TopAccountsRow
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM top_accounts`)
@@ -47,7 +47,7 @@ func (suite *DbTestSuite) TestSaveTopAccountsBalance() {
 	newAmount := types.NewNativeTokenAmount(
 		"cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs",
 		sdk.NewInt(200),
-		10,
+		200,
 	)
 
 	err = suite.database.SaveTopAccountsBalance("available", []types.NativeTokenAmount{newAmount})
@@ -65,11 +65,11 @@ func (suite *DbTestSuite) TestSaveTopAccountsBalance() {
 	err = suite.database.SaveTopAccountsBalance("reward", []types.NativeTokenAmount{newAmount})
 	suite.Require().NoError(err)
 
-	err = suite.database.UpdateTopAccountsSum("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs", "1000")
+	err = suite.database.UpdateTopAccountsSum("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs", "1000", 300)
 	suite.Require().NoError(err)
 
 	// Verify data
-	expected = dbtypes.NewTopAccountsRow("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs", 200, 200, 200, 200, 200, 1000)
+	expected = dbtypes.NewTopAccountsRow("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs", 200, 200, 200, 200, 200, 1000, 300)
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM top_accounts`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
@@ -120,7 +120,7 @@ func (suite *DbTestSuite) TestUpdateTopAccountsSum() {
 
 	// Store top accounts sum
 	amount := "100"
-	err := suite.database.UpdateTopAccountsSum("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs", amount)
+	err := suite.database.UpdateTopAccountsSum("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs", amount, 500)
 	suite.Require().NoError(err)
 
 	// Verify data
@@ -132,7 +132,7 @@ func (suite *DbTestSuite) TestUpdateTopAccountsSum() {
 
 	// Store different amount
 	amount = "200"
-	err = suite.database.UpdateTopAccountsSum("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs", amount)
+	err = suite.database.UpdateTopAccountsSum("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs", amount, 500)
 	suite.Require().NoError(err)
 
 	// Verify data
