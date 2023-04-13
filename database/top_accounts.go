@@ -25,7 +25,6 @@ func (db *Db) SaveTopAccountsBalance(column string, bals []types.NativeTokenAmou
 	stmt = stmt[:len(stmt)-1]
 	stmt += fmt.Sprintf("ON CONFLICT (address) DO UPDATE SET %s = excluded.%s,height = excluded.height WHERE top_accounts.height <= excluded.height", column, column)
 
-
 	_, err := db.SQL.Exec(stmt, params...)
 	return err
 
