@@ -16,6 +16,7 @@ select_permissions:
     - unbonding
     - reward
     - sum
+    - height
     filter: {}
     limit: 100
   role: anonymous

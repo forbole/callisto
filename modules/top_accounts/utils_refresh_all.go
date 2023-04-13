@@ -28,7 +28,7 @@ func (m *Module) RefreshAll(address string) error {
 		return fmt.Errorf("error while refreshing rewards of account %s, error: %s", address, err)
 	}
 
-	err = m.refreshTopAccountsSum([]string{address})
+	err = m.refreshTopAccountsSum([]string{address}, 0)
 	if err != nil {
 		return fmt.Errorf("error while refreshing top accounts sum %s, error: %s", address, err)
 	}
