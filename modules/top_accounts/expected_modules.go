@@ -8,11 +8,11 @@ type BankModule interface {
 }
 
 type DistrModule interface {
-	RefreshDelegatorRewards(height int64, delegators []string) error
+	RefreshDelegatorRewards(delegators []string, height int64) error
 }
 
 type StakingModule interface {
-	RefreshDelegations(height int64, delegatorAddr string) error
-	RefreshRedelegations(height int64, delegatorAddr string) error
-	RefreshUnbondings(height int64, delegatorAddr string) error
+	RefreshDelegations(delegatorAddr string, height int64) error
+	RefreshRedelegations(delegatorAddr string, height int64) error
+	RefreshUnbondings(delegatorAddr string, height int64) error
 }

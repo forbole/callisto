@@ -72,7 +72,7 @@ func (m *Module) RefreshRewards() error {
 	}
 
 	// Refresh rewards
-	err = m.distrModule.RefreshDelegatorRewards(height, delegators)
+	err = m.distrModule.RefreshDelegatorRewards(delegators, height)
 	if err != nil {
 		return fmt.Errorf("error while refreshing delegators rewards: %s", err)
 	}

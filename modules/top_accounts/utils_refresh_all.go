@@ -14,22 +14,22 @@ func (m *Module) RefreshAll(address string) error {
 		return fmt.Errorf("error while refreshing balance of account %s, error: %s", address, err)
 	}
 
-	err = m.stakingModule.RefreshDelegations(height, address)
+	err = m.stakingModule.RefreshDelegations(address, height)
 	if err != nil {
 		return fmt.Errorf("error while refreshing delegations of account %s, error: %s", address, err)
 	}
 
-	err = m.stakingModule.RefreshRedelegations(height, address)
+	err = m.stakingModule.RefreshRedelegations(address, height)
 	if err != nil {
 		return fmt.Errorf("error while refreshing redelegations of account %s, error: %s", address, err)
 	}
 
-	err = m.stakingModule.RefreshUnbondings(height, address)
+	err = m.stakingModule.RefreshUnbondings(address, height)
 	if err != nil {
 		return fmt.Errorf("error while refreshing unbonding delegations of account %s, error: %s", address, err)
 	}
 
-	err = m.distrModule.RefreshDelegatorRewards(height, []string{address})
+	err = m.distrModule.RefreshDelegatorRewards([]string{address}, height)
 	if err != nil {
 		return fmt.Errorf("error while refreshing rewards of account %s, error: %s", address, err)
 	}

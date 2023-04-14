@@ -22,9 +22,9 @@ func (m *Module) refreshTopAccountsSum(addresses []string, height int64) error {
 	return nil
 }
 
-func (m *Module) refreshDelegations(height int64, delegator string) func() {
+func (m *Module) refreshDelegations(delegator string, height int64) func() {
 	return func() {
-		err := m.stakingModule.RefreshDelegations(height, delegator)
+		err := m.stakingModule.RefreshDelegations(delegator, height)
 		if err != nil {
 			log.Error().Str("module", "top_accounts").Err(err).
 				Str("operation", "refresh delegations").Msg("error while refreshing delegations")
@@ -34,7 +34,7 @@ func (m *Module) refreshDelegations(height int64, delegator string) func() {
 
 func (m *Module) refreshRedelegations(tx *juno.Tx, delegatorAddr string) func() {
 	return func() {
-		err := m.stakingModule.RefreshRedelegations(tx.Height, delegatorAddr)
+		err := m.stakingModule.RefreshRedelegations(delegatorAddr, tx.Height)
 		if err != nil {
 			log.Error().Str("module", "top_accounts").Err(err).
 				Str("operation", "refresh redelegations").Msg("error while refreshing redelegations")
@@ -42,9 +42,9 @@ func (m *Module) refreshRedelegations(tx *juno.Tx, delegatorAddr string) func() 
 	}
 }
 
-func (m *Module) refreshUnbondings(height int64, delegatorAddr string) func() {
+func (m *Module) refreshUnbondings(delegatorAddr string, height int64) func() {
 	return func() {
-		err := m.stakingModule.RefreshUnbondings(height, delegatorAddr)
+		err := m.stakingModule.RefreshUnbondings(delegatorAddr, height)
 		if err != nil {
 			log.Error().Str("module", "top_accounts").Err(err).
 				Str("operation", "refresh unbondings").Msg("error while refreshing unbonding delegations")
@@ -52,7 +52,7 @@ func (m *Module) refreshUnbondings(height int64, delegatorAddr string) func() {
 	}
 }
 
-func (m *Module) refreshBalance(height int64, address string) func() {
+func (m *Module) refreshBalance(address string, height int64) func() {
 	return func() {
 		err := m.bankModule.UpdateBalances([]string{address}, height)
 		if err != nil {

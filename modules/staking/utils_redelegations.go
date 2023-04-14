@@ -10,7 +10,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func (m *Module) RefreshRedelegations(height int64, delegatorAddr string) error {
+func (m *Module) RefreshRedelegations(delegatorAddr string, height int64) error {
 	log.Debug().
 		Str("module", "staking").
 		Int64("height", height).Msg("updating redelegations")
