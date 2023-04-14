@@ -90,7 +90,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	stakingModule := staking.NewModule(sources.StakingSource, cdc, db)
 	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakingModule, cdc, db)
 	upgradeModule := upgrade.NewModule(db, stakingModule)
-	topAccountsModule := topaccounts.NewModule(sources.AuthSource, bankModule, distrModule, stakingModule, r.parser, cdc, ctx.Proxy, db)
+	topAccountsModule := topaccounts.NewModule(authModule, sources.AuthSource, bankModule, distrModule, stakingModule, r.parser, cdc, ctx.Proxy, db)
 
 	return []jmodules.Module{
 		messages.NewModule(r.parser, cdc, ctx.Database),
