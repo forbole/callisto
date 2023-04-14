@@ -11,6 +11,7 @@
 - ([\#547](https://github.com/forbole/bdjuno/pull/547)) Upgraded `cheqd-node` to `v1.3.0` and added MsgDeactivateDidDoc handling
 - ([\#552](https://github.com/forbole/bdjuno/pull/552)) Upgraded `cheqd-node` to `v1.4.0`
 - ([\#555](https://github.com/forbole/bdjuno/pull/555)) Added `height` column to top accounts table
+- ([\#560](https://github.com/forbole/bdjuno/pull/560)) Stored latest block height instead of height `0` when updating top accounts
 
 
 #### CI
