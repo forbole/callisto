@@ -20,6 +20,12 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	}
 
 	if _, err := scheduler.Every(1).Day().At("00:00").Do(func() {
+		utils.WatchMethod(m.RefreshAvailableBalance)
+	}); err != nil {
+		return fmt.Errorf("error while setting up top accounts periodic operation: %s", err)
+	}
+
+	if _, err := scheduler.Every(1).Day().At("00:00").Do(func() {
 		utils.WatchMethod(m.RefreshRewards)
 	}); err != nil {
 		return fmt.Errorf("error while setting up top accounts periodic operation: %s", err)
@@ -38,7 +44,7 @@ func (m *Module) RefreshTotalAccounts() error {
 		return fmt.Errorf("error while getting latest block height: %s", err)
 	}
 
-	totalAccountsNumber, err := m.authModule.GetTotalNumberOfAccounts(height)
+	totalAccountsNumber, err := m.authSource.GetTotalNumberOfAccounts(height)
 	if err != nil {
 		return fmt.Errorf("error while getting total number of accounts: %s", err)
 	}
@@ -46,6 +52,50 @@ func (m *Module) RefreshTotalAccounts() error {
 	err = m.db.SaveTotalAccounts(int64(totalAccountsNumber), height)
 	if err != nil {
 		return fmt.Errorf("error while storing total number of accounts: %s", err)
+	}
+
+	return nil
+}
+
+// RefreshAvailableBalance refreshes latest available balance in db
+func (m *Module) RefreshAvailableBalance() error {
+	log.Trace().Str("module", "top accounts").Str("operation", "refresh available balance").
+		Msg("refreshing available balance")
+
+	height, err := m.db.GetLastBlockHeight()
+	if err != nil {
+		return fmt.Errorf("error while getting latest block height: %s", err)
+	}
+
+	accounts, err := m.authModule.GetAllBaseAccounts(height)
+	if err != nil {
+		return fmt.Errorf("error while getting base accounts: %s", err)
+	}
+
+	if len(accounts) == 0 {
+		return nil
+	}
+
+	// Store accounts
+	err = m.db.SaveAccounts(accounts)
+	if err != nil {
+		return err
+	}
+
+	// Parse addresses to []string
+	var addresses []string
+	for _, a := range accounts {
+		addresses = append(addresses, a.Address)
+	}
+
+	err = m.bankModule.UpdateBalances(addresses, height)
+	if err != nil {
+		return fmt.Errorf("error while refreshing top accounts balances, error: %s", err)
+	}
+
+	err = m.refreshTopAccountsSum(addresses, height)
+	if err != nil {
+		return fmt.Errorf("error while refreshing top accounts sum value: %s", err)
 	}
 
 	return nil
@@ -72,7 +122,7 @@ func (m *Module) RefreshRewards() error {
 	}
 
 	// Refresh rewards
-	err = m.distrModule.RefreshDelegatorRewards(height, delegators)
+	err = m.distrModule.RefreshDelegatorRewards(delegators, height)
 	if err != nil {
 		return fmt.Errorf("error while refreshing delegators rewards: %s", err)
 	}

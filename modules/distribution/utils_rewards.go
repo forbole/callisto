@@ -9,7 +9,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func (m *Module) RefreshDelegatorRewards(height int64, delegators []string) error {
+func (m *Module) RefreshDelegatorRewards(delegators []string, height int64) error {
 	log.Debug().
 		Str("module", "distribution").
 		Int64("height", height).Msg("updating rewards")

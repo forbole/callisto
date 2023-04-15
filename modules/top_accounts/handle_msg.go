@@ -39,7 +39,7 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	switch cosmosMsg := msg.(type) {
 
 	case *stakingtypes.MsgDelegate:
-		return m.handleMsgDelegate(tx.Height, cosmosMsg.DelegatorAddress)
+		return m.handleMsgDelegate(cosmosMsg.DelegatorAddress, tx.Height)
 
 	case *stakingtypes.MsgBeginRedelegate:
 		return m.handleMsgBeginRedelegate(tx, index, cosmosMsg.DelegatorAddress)
@@ -49,15 +49,15 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 
 	// Handle x/distribution delegator rewards
 	case *distritypes.MsgWithdrawDelegatorReward:
-		return m.handleMsgWithdrawDelegatorReward(tx.Height, cosmosMsg.DelegatorAddress)
+		return m.handleMsgWithdrawDelegatorReward(cosmosMsg.DelegatorAddress, tx.Height)
 
 	}
 
 	return nil
 }
 
-func (m *Module) handleMsgDelegate(height int64, delAddr string) error {
-	err := m.stakingModule.RefreshDelegations(height, delAddr)
+func (m *Module) handleMsgDelegate(delAddr string, height int64) error {
+	err := m.stakingModule.RefreshDelegations(delAddr, height)
 	if err != nil {
 		return fmt.Errorf("error while refreshing delegations while handling MsgDelegate: %s", err)
 	}
@@ -73,7 +73,7 @@ func (m *Module) handleMsgDelegate(height int64, delAddr string) error {
 func (m *Module) handleMsgBeginRedelegate(
 	tx *juno.Tx, index int, delAddr string) error {
 
-	err := m.stakingModule.RefreshRedelegations(tx.Height, delAddr)
+	err := m.stakingModule.RefreshRedelegations(delAddr, tx.Height)
 	if err != nil {
 		return fmt.Errorf("error while refreshing redelegations while handling MsgBeginRedelegate: %s", err)
 	}
@@ -99,7 +99,7 @@ func (m *Module) handleMsgBeginRedelegate(
 	}
 
 	// When the time expires, refresh the delegations & redelegations
-	time.AfterFunc(time.Until(completionTime), m.refreshDelegations(tx.Height, delAddr))
+	time.AfterFunc(time.Until(completionTime), m.refreshDelegations(delAddr, tx.Height))
 	time.AfterFunc(time.Until(completionTime), m.refreshRedelegations(tx, delAddr))
 
 	return nil
@@ -107,7 +107,7 @@ func (m *Module) handleMsgBeginRedelegate(
 
 // handleMsgUndelegate handles a MsgUndelegate storing the data inside the database
 func (m *Module) handleMsgUndelegate(tx *juno.Tx, index int, delAddr string) error {
-	err := m.stakingModule.RefreshUnbondings(tx.Height, delAddr)
+	err := m.stakingModule.RefreshUnbondings(delAddr, tx.Height)
 	if err != nil {
 		return fmt.Errorf("error while refreshing undelegations while handling MsgUndelegate: %s", err)
 	}
@@ -133,15 +133,15 @@ func (m *Module) handleMsgUndelegate(tx *juno.Tx, index int, delAddr string) err
 	}
 
 	// When the time expires, refresh the delegations & unbondings & available balance
-	time.AfterFunc(time.Until(completionTime), m.refreshDelegations(tx.Height, delAddr))
-	time.AfterFunc(time.Until(completionTime), m.refreshUnbondings(tx.Height, delAddr))
-	time.AfterFunc(time.Until(completionTime), m.refreshBalance(tx.Height, delAddr))
+	time.AfterFunc(time.Until(completionTime), m.refreshDelegations(delAddr, tx.Height))
+	time.AfterFunc(time.Until(completionTime), m.refreshUnbondings(delAddr, tx.Height))
+	time.AfterFunc(time.Until(completionTime), m.refreshBalance(delAddr, tx.Height))
 
 	return nil
 }
 
-func (m *Module) handleMsgWithdrawDelegatorReward(height int64, delAddr string) error {
-	err := m.distrModule.RefreshDelegatorRewards(height, []string{delAddr})
+func (m *Module) handleMsgWithdrawDelegatorReward(delAddr string, height int64) error {
+	err := m.distrModule.RefreshDelegatorRewards([]string{delAddr}, height)
 	if err != nil {
 		return fmt.Errorf("error while refreshing delegator rewards: %s", err)
 	}

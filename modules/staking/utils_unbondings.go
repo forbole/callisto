@@ -9,7 +9,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func (m *Module) RefreshUnbondings(height int64, delegatorAddr string) error {
+func (m *Module) RefreshUnbondings(delegatorAddr string, height int64) error {
 	log.Debug().
 		Str("module", "staking").
 		Int64("height", height).Msg("updating unbonding delegations")

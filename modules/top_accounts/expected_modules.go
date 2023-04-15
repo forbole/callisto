@@ -1,18 +1,27 @@
 package top_accounts
 
+import (
+	"github.com/forbole/bdjuno/v4/types"
+)
+
 type AuthModule interface {
+	GetAllBaseAccounts(height int64) ([]types.Account, error)
+}
+
+type AuthSource interface {
 	GetTotalNumberOfAccounts(height int64) (uint64, error)
 }
+
 type BankModule interface {
 	UpdateBalances(addresses []string, height int64) error
 }
 
 type DistrModule interface {
-	RefreshDelegatorRewards(height int64, delegators []string) error
+	RefreshDelegatorRewards(delegators []string, height int64) error
 }
 
 type StakingModule interface {
-	RefreshDelegations(height int64, delegatorAddr string) error
-	RefreshRedelegations(height int64, delegatorAddr string) error
-	RefreshUnbondings(height int64, delegatorAddr string) error
+	RefreshDelegations(delegatorAddr string, height int64) error
+	RefreshRedelegations(delegatorAddr string, height int64) error
+	RefreshUnbondings(delegatorAddr string, height int64) error
 }

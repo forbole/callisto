@@ -54,7 +54,7 @@ func allCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			bankModule := bank.NewModule(nil, sources.BankSource, parseCtx.EncodingConfig.Codec, db)
 			distriModule := distribution.NewModule(sources.DistrSource, parseCtx.EncodingConfig.Codec, db)
 			stakingModule := staking.NewModule(sources.StakingSource, parseCtx.EncodingConfig.Codec, db)
-			topaccountsModule := topaccounts.NewModule(sources.AuthSource, bankModule, distriModule, stakingModule, nil, parseCtx.EncodingConfig.Codec, db)
+			topaccountsModule := topaccounts.NewModule(authModule, sources.AuthSource, bankModule, distriModule, stakingModule, nil, parseCtx.EncodingConfig.Codec, parseCtx.Node, db)
 
 			// Get workers
 			exportQueue := NewQueue(5)
@@ -66,8 +66,14 @@ func allCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 
 			waitGroup.Add(1)
 
+			// Query the latest chain height
+			height, err := parseCtx.Node.LatestHeight()
+			if err != nil {
+				return fmt.Errorf("error while getting chain latest block height: %s", err)
+			}
+
 			// Get all base accounts, height set to 0 for querying the latest data on chain
-			accounts, err := authModule.GetAllBaseAccounts(0)
+			accounts, err := authModule.GetAllBaseAccounts(height)
 			if err != nil {
 				return fmt.Errorf("error while getting base accounts: %s", err)
 			}
