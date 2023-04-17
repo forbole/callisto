@@ -3,7 +3,7 @@ package staking
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	liquidstakingtypes "github.com/crescent-network/crescent/v4/x/liquidstaking/types"
+	liquidstakingtypes "github.com/crescent-network/crescent/v5/x/liquidstaking/types"
 	"github.com/forbole/bdjuno/v4/types"
 )
 

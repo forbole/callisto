@@ -16,7 +16,7 @@ import (
 	"github.com/forbole/bdjuno/v4/modules"
 	"github.com/forbole/bdjuno/v4/types/config"
 
-	crescentapp "github.com/crescent-network/crescent/v4/app"
+	crescentapp "github.com/crescent-network/crescent/v5/app"
 )
 
 func main() {

@@ -10,7 +10,7 @@ import (
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
 
-	creminttypes "github.com/crescent-network/crescent/v4/x/mint/types"
+	creminttypes "github.com/crescent-network/crescent/v5/x/mint/types"
 )
 
 // RegisterPeriodicOperations implements modules.PeriodicOperationsModule

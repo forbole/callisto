@@ -182,10 +182,10 @@ github.com/cpuguy83/go-md2man/v2 v2.0.2/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46t
 github.com/creachadair/taskgroup v0.3.2 h1:zlfutDS+5XG40AOxcHDSThxKzns8Tnr9jnr6VqkYlkM=
 github.com/creachadair/taskgroup v0.3.2/go.mod h1:wieWwecHVzsidg2CsUnFinW1faVN4+kq+TDlRJQ0Wbk=
 github.com/creack/pty v1.1.7/go.mod h1:lj5s0c3V2DBrqTV7llrYr5NG6My20zk30Fl46Y7DoTY=
-github.com/crescent-network/cosmos-sdk v1.1.4-sdk-0.45.10 h1:JBdGVt8oGb15r/hi9xmTGwcUnJdf0mjzvAHTN6ykFRI=
-github.com/crescent-network/cosmos-sdk v1.1.4-sdk-0.45.10/go.mod h1:CbfWNs4PuxxsvRD/snQuSBDwIhtsD7rIDTVQyYMKTa0=
-github.com/crescent-network/crescent/v4 v4.0.0 h1:4eoLgf1B2A/vXUnkfhqbL1K+2/P/WPI7F7IVEOl0XaU=
-github.com/crescent-network/crescent/v4 v4.0.0/go.mod h1:OOcTO13Ay5UAqLJuqmqbsiW58cqQeI5z2gg5XNOu5HM=
+github.com/crescent-network/cosmos-sdk v1.2.0-sdk-0.45.10 h1:nl/ZwPvXJCxUdYlUEe+PVUNb3ifVvaqJw5XVXnNbwIM=
+github.com/crescent-network/cosmos-sdk v1.2.0-sdk-0.45.10/go.mod h1:CbfWNs4PuxxsvRD/snQuSBDwIhtsD7rIDTVQyYMKTa0=
+github.com/crescent-network/crescent/v5 v5.0.0-rc2 h1:1DAlNz+EBTmRvhETkDjYM+XP6BDTXC/r2XL6KUXgEZo=
+github.com/crescent-network/crescent/v5 v5.0.0-rc2/go.mod h1:zzLj6S78ca8vQBty2Sog/R583Bgy9zGI4wxrMuBxlYA=
 github.com/crescent-network/ibc-go/v3 v3.4.0-crescent-v4-2 h1:ibh/OH30EtvlORD8gUoOz30+7Wl4NTbt/kL6IjDPwTU=
 github.com/crescent-network/ibc-go/v3 v3.4.0-crescent-v4-2/go.mod h1:nI//NgRwnCGKFEkMn62rSW8/fQ1KprbUKFfxp5AbSZk=
 github.com/danieljoos/wincred v1.1.2 h1:QLdCxFs1/Yl4zduvBdcHB8goaYk9RARS2SgLLRuAyr0=
@@ -833,8 +833,9 @@ github.com/yuin/goldmark v1.1.25/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9de
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.1.32/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
-github.com/zondax/hid v0.9.0 h1:eiT3P6vNxAEVxXMw66eZUAAnU2zD33JBkfG/EnfAKl8=
 github.com/zondax/hid v0.9.0/go.mod h1:l5wttcP0jwtdLjqjMMWFVEE7d1zO0jvSPA9OPZxWpEM=
+github.com/zondax/hid v0.9.1 h1:gQe66rtmyZ8VeGFcOpbuH3r7erYtNEAezCAYu8LdkJo=
+github.com/zondax/hid v0.9.1/go.mod h1:l5wttcP0jwtdLjqjMMWFVEE7d1zO0jvSPA9OPZxWpEM=
 go.etcd.io/bbolt v1.3.3/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
 go.etcd.io/bbolt v1.3.6 h1:/ecaJf0sk1l4l6V4awd65v2C3ILy7MSj+s/x1ADCIMU=
 go.etcd.io/bbolt v1.3.6/go.mod h1:qXsaaIqmgQH0T+OPdb99Bf+PKfBBQVAdyD6TY9G8XM4=
