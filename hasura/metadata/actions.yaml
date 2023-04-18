@@ -235,6 +235,24 @@ actions:
       name: Content-Type
   permissions:
   - role: anonymous
+    
+##### LPFarm Reward  #####
+- name: action_lpfarm_reward
+  definition:
+    kind: synchronous
+    handler: "{{ACTION_BASE_URL}}/lpfarm_reward"
+    output_type: "[ActionLPFarmReward]"
+    arguments:
+    - name: address
+      type: String!
+    - name: height
+      type: Int
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
 
 ############### CUSTOM TYPES ###############
 custom_types:
@@ -289,3 +307,10 @@ custom_types:
     fields:
     - name: coins
       type: [ActionCoin]
+
+  - name: ActionLPFarmReward
+    fields:
+    - name: coins
+      type: [ActionCoin]
+    - name: farmer_address
+      type: String!
