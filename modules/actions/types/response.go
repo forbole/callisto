@@ -98,3 +98,10 @@ type RedelegationEntry struct {
 	CompletionTime time.Time `json:"completion_time"`
 	Balance        sdk.Int   `json:"balance"`
 }
+
+// ========================= LPFarm Reward Response =========================
+
+type LPFarmReward struct {
+	Coins         []Coin `json:"coins"`
+	FarmerAddress string `json:"farmer_address"`
+}
