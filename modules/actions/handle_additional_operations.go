@@ -41,6 +41,9 @@ func (m *Module) RunAdditionalOperations() error {
 	worker.RegisterHandler("/validator_redelegations_from", handlers.ValidatorRedelegationsFromHandler)
 	worker.RegisterHandler("/validator_unbonding_delegations", handlers.ValidatorUnbondingDelegationsHandler)
 
+	// -- LP Farmer --
+	worker.RegisterHandler("/lpfarm_reward", handlers.LPFarmRewardHandler)
+
 	// Listen for and trap any OS signal to gracefully shutdown and exit
 	m.trapSignal()
 

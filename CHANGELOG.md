@@ -1,6 +1,9 @@
 ## Unreleased
 ### Changes
 
+#### LPFarm Module
+- ([\#565](https://github.com/forbole/bdjuno/pull/565)) Update crescent to `v5.0.0` and add hasura actions to query harvested amounts for an address
+
 #### CI
 - ([\#508](https://github.com/forbole/bdjuno/pull/508)) Upgrade workflow golangci version to v1.50.1
 

@@ -16,14 +16,16 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	liquidstakingkeeper "github.com/crescent-network/crescent/v4/x/liquidstaking/keeper"
-	liquidstakingtypes "github.com/crescent-network/crescent/v4/x/liquidstaking/types"
-	creminttypes "github.com/crescent-network/crescent/v4/x/mint/types"
+	liquidstakingkeeper "github.com/crescent-network/crescent/v5/x/liquidstaking/keeper"
+	liquidstakingtypes "github.com/crescent-network/crescent/v5/x/liquidstaking/types"
+	lpfarmkeeper "github.com/crescent-network/crescent/v5/x/lpfarm/keeper"
+	lpfarmtypes "github.com/crescent-network/crescent/v5/x/lpfarm/types"
+	creminttypes "github.com/crescent-network/crescent/v5/x/mint/types"
 	"github.com/forbole/juno/v4/node/local"
 
 	nodeconfig "github.com/forbole/juno/v4/node/config"
 
-	crescentapp "github.com/crescent-network/crescent/v4/app"
+	crescentapp "github.com/crescent-network/crescent/v5/app"
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v4/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"
@@ -36,6 +38,9 @@ import (
 	liquidstakingsource "github.com/forbole/bdjuno/v4/modules/liquidstaking/source"
 	localliquidstakingsource "github.com/forbole/bdjuno/v4/modules/liquidstaking/source/local"
 	remotesliquidstakingsource "github.com/forbole/bdjuno/v4/modules/liquidstaking/source/remote"
+	lpfarmsource "github.com/forbole/bdjuno/v4/modules/lpfarm/source"
+	locallpfarmsource "github.com/forbole/bdjuno/v4/modules/lpfarm/source/local"
+	remotelpfarmsource "github.com/forbole/bdjuno/v4/modules/lpfarm/source/remote"
 	mintsource "github.com/forbole/bdjuno/v4/modules/mint/source"
 	localmintsource "github.com/forbole/bdjuno/v4/modules/mint/source/local"
 	remotemintsource "github.com/forbole/bdjuno/v4/modules/mint/source/remote"
@@ -52,6 +57,7 @@ type Sources struct {
 	DistrSource         distrsource.Source
 	GovSource           govsource.Source
 	LiquidStakingSource liquidstakingsource.Source
+	LPFarmSource        lpfarmsource.Source
 	MintSource          mintsource.Source
 	SlashingSource      slashingsource.Source
 	StakingSource       stakingsource.Source
@@ -88,6 +94,7 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		DistrSource:         localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
 		GovSource:           localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
 		LiquidStakingSource: localliquidstakingsource.NewSource(source, liquidstakingkeeper.Querier{Keeper: crescentApp.LiquidStakingKeeper}),
+		LPFarmSource:        locallpfarmsource.NewSource(source, lpfarmkeeper.Querier{Keeper: crescentApp.LPFarmKeeper}),
 		MintSource:          localmintsource.NewSource(source, creminttypes.QueryServer(crescentApp.MintKeeper)),
 		SlashingSource:      localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
 		StakingSource:       localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
@@ -128,6 +135,7 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		DistrSource:         remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
 		GovSource:           remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
 		LiquidStakingSource: remotesliquidstakingsource.NewSource(source, liquidstakingtypes.NewQueryClient(source.GrpcConn)),
+		LPFarmSource:        remotelpfarmsource.NewSource(source, lpfarmtypes.NewQueryClient(source.GrpcConn)),
 		MintSource:          remotemintsource.NewSource(source, creminttypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource:      remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:       remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),

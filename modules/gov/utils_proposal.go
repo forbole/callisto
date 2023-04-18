@@ -9,7 +9,7 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	creminttypes "github.com/crescent-network/crescent/v4/x/mint/types"
+	creminttypes "github.com/crescent-network/crescent/v5/x/mint/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"google.golang.org/grpc/codes"

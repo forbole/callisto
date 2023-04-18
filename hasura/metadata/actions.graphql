@@ -72,6 +72,11 @@ type Query {
         limit: Int
         count_total: Boolean
     ): ActionUnbondingDelegationResponse
+
+    action_lpfarm_reward(
+        address: String!
+        height: Int
+    ): [ActionLPFarmReward]
 }
 
 type ActionBalance {
@@ -104,6 +109,11 @@ type ActionUnbondingDelegationResponse {
 
 type ActionValidatorCommissionAmount {
     coins: [ActionCoin]
+}
+
+type ActionLPFarmReward {
+  coins: [ActionCoin]
+  farmer_address: String!
 }
 
 scalar ActionCoin

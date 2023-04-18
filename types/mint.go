@@ -1,6 +1,6 @@
 package types
 
-import creminttypes "github.com/crescent-network/crescent/v4/x/mint/types"
+import creminttypes "github.com/crescent-network/crescent/v5/x/mint/types"
 
 // MintParams represents the x/mint parameters
 type MintParams struct {
