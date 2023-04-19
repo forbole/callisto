@@ -47,6 +47,11 @@ type Query {
         height: Int
     ): ActionBalance
 
+    action_superfluid_delegation(
+        address: String!
+        height: Int
+    ): [ActionSuperfluidDelegationResponse]
+
     action_validator_commission_amount(
         address: String!
     ): ActionValidatorCommissionAmount
@@ -100,6 +105,13 @@ type ActionRedelegationResponse {
 type ActionUnbondingDelegationResponse {
     unbonding_delegations: [ActionUnbondingDelegation]
     pagination: ActionPagination
+}
+
+type ActionSuperfluidDelegationResponse {
+    delegator_address: String!
+    validator_address: String!
+    delegation_amount: ActionCoin
+    equivalent_staked_amount: ActionCoin
 }
 
 type ActionValidatorCommissionAmount {

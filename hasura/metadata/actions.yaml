@@ -155,6 +155,23 @@ actions:
   permissions:
   - role: anonymous
 
+- name: action_superfluid_delegation
+  definition:
+    kind: synchronous
+    handler: "{{ACTION_BASE_URL}}/superfluid_delegation"
+    output_type: ActionSuperfluidDelegationResponse
+    arguments:
+    - name: address
+      type: String!
+    - name: height
+      type: Int
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
 ##### Staking / Validator #####
 - name: action_validator_commission_amount
   definition:
@@ -284,6 +301,17 @@ custom_types:
       type: [ActionUnbondingDelegation]
     - name: pagination
       type: ActionPagination
+
+  - name: ActionSuperfluidDelegationResponse
+    fields:
+    - name: delegator_address
+      type: String!
+    - name: validator_address
+      type: String!
+    - name: delegation_amount
+      type: ActionCoin
+    - name: equivalent_staked_amount
+      type: ActionCoin
   
   - name: ActionValidatorCommissionAmount
     fields:
