@@ -1,6 +1,7 @@
 package remote
 
 import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	superfluidtypes "github.com/osmosis-labs/osmosis/v15/x/superfluid/types"
 
 	"github.com/forbole/juno/v4/node/remote"
@@ -37,4 +38,17 @@ func (s Source) GetSuperfluidDelegationsByDelegator(address string, height int64
 	}
 
 	return res.SuperfluidDelegationRecords, nil
+}
+
+// GetTotalSuperfluidDelegationsByDelegator implements superfluidsource.Source
+func (s Source) GetTotalSuperfluidDelegationsByDelegator(address string, height int64) (sdk.Coins, error) {
+	res, err := s.superfluidClient.SuperfluidDelegationsByDelegator(
+		remote.GetHeightRequestContext(s.Ctx, height),
+		&superfluidtypes.SuperfluidDelegationsByDelegatorRequest{DelegatorAddress: address},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return res.TotalDelegatedCoins, nil
 }

@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	superfluidtypes "github.com/osmosis-labs/osmosis/v15/x/superfluid/types"
 	"github.com/forbole/juno/v4/node/local"
+	superfluidtypes "github.com/osmosis-labs/osmosis/v15/x/superfluid/types"
 
 	superfluidsource "github.com/forbole/bdjuno/v4/modules/superfluid/source"
 )
@@ -29,12 +29,12 @@ func NewSource(source *local.Source, keeper superfluidtypes.QueryServer) *Source
 
 // GetSuperfluidDelegationsByDelegator implements superfluidsource.Source
 func (s Source) GetSuperfluidDelegationsByDelegator(address string, height int64) ([]superfluidtypes.SuperfluidDelegationRecord, error) {
-		ctx, err := s.LoadHeight(height)
+	ctx, err := s.LoadHeight(height)
 	if err != nil {
 		return nil, fmt.Errorf("error while loading height: %s", err)
 	}
 	res, err := s.q.SuperfluidDelegationsByDelegator(
-				sdk.WrapSDKContext(ctx),
+		sdk.WrapSDKContext(ctx),
 		&superfluidtypes.SuperfluidDelegationsByDelegatorRequest{DelegatorAddress: address},
 	)
 	if err != nil {
@@ -42,4 +42,21 @@ func (s Source) GetSuperfluidDelegationsByDelegator(address string, height int64
 	}
 
 	return res.SuperfluidDelegationRecords, nil
+}
+
+// GetTotalSuperfluidDelegationsByDelegator implements superfluidsource.Source
+func (s Source) GetTotalSuperfluidDelegationsByDelegator(address string, height int64) (sdk.Coins, error) {
+	ctx, err := s.LoadHeight(height)
+	if err != nil {
+		return nil, fmt.Errorf("error while loading height: %s", err)
+	}
+	res, err := s.q.SuperfluidDelegationsByDelegator(
+		sdk.WrapSDKContext(ctx),
+		&superfluidtypes.SuperfluidDelegationsByDelegatorRequest{DelegatorAddress: address},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return res.TotalDelegatedCoins, nil
 }
