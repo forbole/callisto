@@ -35,7 +35,8 @@ func (m *Module) RunAdditionalOperations() error {
 	worker.RegisterHandler("/unbonding_delegation", handlers.UnbondingDelegationsHandler)
 	worker.RegisterHandler("/unbonding_delegation_total", handlers.UnbondingDelegationsTotal)
 	worker.RegisterHandler("/redelegation", handlers.RedelegationHandler)
-	worker.RegisterHandler("/superfluid_delegation", handlers.SuperfluidDelegationsHandler)
+	worker.RegisterHandler("/superfluid_delegation", handlers.SuperfluidDelegationHandler)
+	worker.RegisterHandler("/superfluid_delegation_total", handlers.TotalSuperfluidDelegationAmountHandler)
 
 	// -- Staking Validator --
 	worker.RegisterHandler("/validator_delegations", handlers.ValidatorDelegation)
