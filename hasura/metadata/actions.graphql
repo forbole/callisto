@@ -52,6 +52,11 @@ type Query {
         height: Int
     ): [ActionSuperfluidDelegationResponse]
 
+    action_superfluid_delegation_total(
+        address: String!
+        height: Int
+    ): ActionBalance
+
     action_validator_commission_amount(
         address: String!
     ): ActionValidatorCommissionAmount

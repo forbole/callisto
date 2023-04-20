@@ -171,6 +171,23 @@ actions:
       name: Content-Type
   permissions:
   - role: anonymous
+    
+- name: action_superfluid_delegation_total
+  definition:
+    kind: synchronous
+    handler: "{{ACTION_BASE_URL}}/superfluid_delegation_total"
+    output_type: ActionBalance
+    arguments:
+    - name: address
+      type: String!
+    - name: height
+      type: Int
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
 
 ##### Staking / Validator #####
 - name: action_validator_commission_amount
