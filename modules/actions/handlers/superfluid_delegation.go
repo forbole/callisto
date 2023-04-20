@@ -8,10 +8,10 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func SuperfluidDelegationsHandler(ctx *types.Context, payload *types.Payload) (interface{}, error) {
+func SuperfluidDelegationHandler(ctx *types.Context, payload *types.Payload) (interface{}, error) {
 	log.Debug().Str("address", payload.GetAddress()).
 		Int64("height", payload.Input.Height).
-		Msg("executing superfluid delegations action")
+		Msg("executing superfluid delegation action")
 
 	height, err := ctx.GetHeight(payload)
 	if err != nil {
@@ -20,7 +20,7 @@ func SuperfluidDelegationsHandler(ctx *types.Context, payload *types.Payload) (i
 
 	delegations, err := ctx.Sources.SuperfluidSource.GetSuperfluidDelegationsByDelegator(payload.GetAddress(), height)
 	if err != nil {
-		return nil, fmt.Errorf("error while getting account superfluid delegations: %s", err)
+		return nil, fmt.Errorf("error while getting superfluid delegation: %s", err)
 	}
 
 	return delegations, nil
