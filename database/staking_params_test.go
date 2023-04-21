@@ -19,6 +19,7 @@ func (suite *DbTestSuite) TestSaveStakingParams() {
 		10000,
 		"uatom",
 		sdk.NewDecWithPrec(8, 1),
+		sdk.NewInt(1),
 	)
 	err := suite.database.SaveStakingParams(types.NewStakingParams(stakingParams, 10))
 	suite.Require().NoError(err)
@@ -43,6 +44,7 @@ func (suite *DbTestSuite) TestGetStakingParams() {
 		10000,
 		"uatom",
 		sdk.NewDecWithPrec(8, 1),
+		sdk.NewInt(1),
 	)
 
 	paramsBz, err := json.Marshal(&stakingParams)

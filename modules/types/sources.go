@@ -83,7 +83,7 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 	)
 
 	sources := &Sources{
-		BankSource:       localbanksource.NewSource(source, bankkeeper.Querier{*app.BankKeeper}),
+		BankSource:       localbanksource.NewSource(source, bankkeeper.Querier{BaseKeeper: *app.BankKeeper}),
 		DistrSource:      localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
 		GovSource:        localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
 		MintSource:       localmintsource.NewSource(source, mintkeeper.Querier{Keeper: *app.MintKeeper}),
