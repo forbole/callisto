@@ -40,17 +40,23 @@ import (
 	stakingsource "github.com/forbole/bdjuno/v4/modules/staking/source"
 	localstakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/remote"
+	superfluidsource "github.com/forbole/bdjuno/v4/modules/superfluid/source"
+	localsuperfluidsource "github.com/forbole/bdjuno/v4/modules/superfluid/source/local"
+	remotesuperfluidsource "github.com/forbole/bdjuno/v4/modules/superfluid/source/remote"
 	nodeconfig "github.com/forbole/juno/v4/node/config"
 	osmosisapp "github.com/osmosis-labs/osmosis/v15/app"
+	superfluidkeeper "github.com/osmosis-labs/osmosis/v15/x/superfluid/keeper"
+	superfluidtypes "github.com/osmosis-labs/osmosis/v15/x/superfluid/types"
 )
 
 type Sources struct {
-	BankSource     banksource.Source
-	DistrSource    distrsource.Source
-	GovSource      govsource.Source
-	MintSource     mintsource.Source
-	SlashingSource slashingsource.Source
-	StakingSource  stakingsource.Source
+	BankSource       banksource.Source
+	DistrSource      distrsource.Source
+	GovSource        govsource.Source
+	MintSource       mintsource.Source
+	SlashingSource   slashingsource.Source
+	StakingSource    stakingsource.Source
+	SuperfluidSource superfluidsource.Source
 }
 
 func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -77,12 +83,13 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 	)
 
 	sources := &Sources{
-		BankSource:     localbanksource.NewSource(source, bankkeeper.Querier{*app.BankKeeper}),
-		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
-		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
-		MintSource:     localmintsource.NewSource(source, mintkeeper.Querier{Keeper: *app.MintKeeper}),
-		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
-		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: *app.StakingKeeper}),
+		BankSource:       localbanksource.NewSource(source, bankkeeper.Querier{BaseKeeper: *app.BankKeeper}),
+		DistrSource:      localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
+		GovSource:        localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
+		MintSource:       localmintsource.NewSource(source, mintkeeper.Querier{Keeper: *app.MintKeeper}),
+		SlashingSource:   localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
+		StakingSource:    localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: *app.StakingKeeper}),
+		SuperfluidSource: localsuperfluidsource.NewSource(source, superfluidkeeper.Querier{Keeper: *app.SuperfluidKeeper}),
 	}
 
 	// Mount and initialize the stores
@@ -116,11 +123,12 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 	}
 
 	return &Sources{
-		BankSource:     remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
-		DistrSource:    remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
-		GovSource:      remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
-		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
-		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
-		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
+		BankSource:       remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
+		DistrSource:      remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
+		GovSource:        remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
+		MintSource:       remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
+		SlashingSource:   remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
+		StakingSource:    remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
+		SuperfluidSource: remotesuperfluidsource.NewSource(source, superfluidtypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }

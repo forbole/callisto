@@ -19,9 +19,9 @@ import (
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveGovParams() {
-	votingParams := govtypes.NewVotingParams(time.Second * 10)
-	tallyParams := govtypes.NewTallyParams(sdk.NewDec(10), sdk.NewDec(10), sdk.NewDec(10))
-	depositParams := govtypes.NewDepositParams(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(10))), time.Minute*5)
+	votingParams := govtypes.NewVotingParams(time.Second*10, time.Second*10, []govtypes.ProposalVotingPeriod{})
+	tallyParams := govtypes.NewTallyParams(sdk.NewDec(10), sdk.NewDec(10), sdk.NewDec(10), sdk.NewDec(10))
+	depositParams := govtypes.NewDepositParams(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(10))), time.Minute*5, sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(10))))
 	original := types.NewGovParams(types.NewVotingParams(votingParams), types.NewDepositParam(depositParams), types.NewTallyParams(tallyParams), 10)
 
 	err := suite.database.SaveGovParams(original)
@@ -33,7 +33,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveGovParams() {
 
 	// ----------------------------------------------------------------------------------------------------------------
 	// Try updating with a lower height
-	depositParams = govtypes.NewDepositParams(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(1000))), time.Minute*5)
+	depositParams = govtypes.NewDepositParams(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(1000))), time.Minute*5, sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(10))))
 	updated := types.NewGovParams(types.NewVotingParams(votingParams), types.NewDepositParam(depositParams), types.NewTallyParams(tallyParams), 9)
 
 	err = suite.database.SaveGovParams(updated)
@@ -56,8 +56,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveGovParams() {
 
 	// ----------------------------------------------------------------------------------------------------------------
 	// Try updating with a higher height
-	tallyParams = govtypes.NewTallyParams(sdk.NewDec(100), sdk.NewDec(100), sdk.NewDec(100))
-	depositParams = govtypes.NewDepositParams(sdk.NewCoins(sdk.NewCoin("udesmos", sdk.NewInt(10000))), time.Minute*5)
+	tallyParams = govtypes.NewTallyParams(sdk.NewDec(100), sdk.NewDec(100), sdk.NewDec(100), sdk.NewDec(100))
+	depositParams = govtypes.NewDepositParams(sdk.NewCoins(sdk.NewCoin("udesmos", sdk.NewInt(10000))), time.Minute*5, sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(10))))
 	updated = types.NewGovParams(types.NewVotingParams(votingParams), types.NewDepositParam(depositParams), types.NewTallyParams(tallyParams), 11)
 
 	err = suite.database.SaveGovParams(updated)
