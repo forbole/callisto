@@ -3,8 +3,52 @@ package database
 import (
 	"fmt"
 
+	dbutils "github.com/forbole/bdjuno/v4/database/utils"
 	"github.com/forbole/bdjuno/v4/types"
 )
+
+// SaveTopAccounts saves top accounts inside the database
+func (db *Db) SaveTopAccounts(accounts []types.TopAccount, height int64) error {
+	paramsNumber := 4
+	slices := dbutils.SplitTopAccounts(accounts, paramsNumber)
+
+	for _, accounts := range slices {
+		if len(accounts) == 0 {
+			continue
+		}
+
+		err := db.saveTopAccounts(accounts, height)
+		if err != nil {
+			return fmt.Errorf("error while storing top accounts: %s", err)
+		}
+	}
+
+	return nil
+}
+
+func (db *Db) saveTopAccounts(accounts []types.TopAccount, height int64) error {
+	if len(accounts) == 0 {
+		return nil
+	}
+
+	stmt := `INSERT INTO top_accounts (address, type, height) VALUES `
+	var params []interface{}
+
+	for i, account := range accounts {
+		ai := i * 3
+		stmt += fmt.Sprintf("($%d, $%d, $%d),", ai+1, ai+2, ai+3)
+		params = append(params, account.Address, account.AccountType[1:], height)
+	}
+
+	stmt = stmt[:len(stmt)-1]
+	stmt += " ON CONFLICT DO NOTHING"
+	_, err := db.SQL.Exec(stmt, params...)
+	if err != nil {
+		return fmt.Errorf("error while storing top accounts in db: %s", err)
+	}
+
+	return nil
+}
 
 func (db *Db) SaveTopAccountsBalance(column string, bals []types.NativeTokenAmount) error {
 	if len(bals) == 0 {
