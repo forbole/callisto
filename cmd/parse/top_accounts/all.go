@@ -72,36 +72,10 @@ func allCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				return fmt.Errorf("error while getting chain latest block height: %s", err)
 			}
 
-			// Get all accounts from the node
-			anyAccounts, err := sources.AuthSource.GetAllAnyAccounts(height)
-			if err != nil {
-				return fmt.Errorf("error while getting any accounts: %s", err)
-			}
-
-			// Unpack all accounts into types.Account type
-			accounts, err := authModule.UnpackAnyAccounts(anyAccounts)
+			// Store all addresses in database
+			accounts, err := authModule.RefreshTopAccountsList(height)
 			if err != nil {
 				return fmt.Errorf("error while unpacking accounts: %s", err)
-			}
-
-			log.Debug().Int("total", len(accounts)).Msg("saving accounts...")
-			// Store accounts
-			err = db.SaveAccounts(accounts)
-			if err != nil {
-				return err
-			}
-
-			// Unpack all accounts into types.TopAccount type
-			accountsWithTypes, err := authModule.UnpackAnyAccountsWithTypes(anyAccounts)
-			if err != nil {
-				return fmt.Errorf("error while unpacking top accounts with types: %s", err)
-			}
-
-			log.Debug().Int("total", len(accounts)).Msg("saving top accounts addresses...")
-			// Store all top accounts addresses with account type
-			err = db.SaveTopAccounts(accountsWithTypes, height)
-			if err != nil {
-				return fmt.Errorf("error while storing top accounts with types: %s", err)
 			}
 
 			for i, w := range workers {

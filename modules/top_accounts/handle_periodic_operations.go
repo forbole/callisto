@@ -151,34 +151,11 @@ func (m *Module) RefreshTopAccountsList() error {
 		return fmt.Errorf("error while getting latest block height: %s", err)
 	}
 
-	// Get all accounts from the node
-	anyAccounts, err := m.authSource.GetAllAnyAccounts(height)
-	if err != nil {
-		return fmt.Errorf("error while getting any accounts: %s", err)
-	}
-
 	// Unpack all accounts into types.Account type
-	unpackAccounts, err := m.authModule.UnpackAnyAccounts(anyAccounts)
+	_, err = m.authModule.RefreshTopAccountsList(height)
 	if err != nil {
 		return fmt.Errorf("error while unpacking accounts: %s", err)
 	}
 
-	// Refresh accounts
-	err = m.db.SaveAccounts(unpackAccounts)
-	if err != nil {
-		return err
-	}
-
-	// Unpack all accounts into types.TopAccount type
-	accountsWithTypes, err := m.authModule.UnpackAnyAccountsWithTypes(anyAccounts)
-	if err != nil {
-		return fmt.Errorf("error while unpacking top accounts with types: %s", err)
-	}
-
-	// Refresh all top accounts addresses with account type
-	err = m.db.SaveTopAccounts(accountsWithTypes, height)
-	if err != nil {
-		return fmt.Errorf("error while storing top accounts with types: %s", err)
-	}
 	return nil
 }
