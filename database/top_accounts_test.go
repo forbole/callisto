@@ -1,6 +1,8 @@
 package database_test
 
 import (
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	dbtypes "github.com/forbole/bdjuno/v4/database/types"
 	"github.com/forbole/bdjuno/v4/types"
@@ -13,10 +15,18 @@ func (suite *DbTestSuite) TestSaveTopAccountsBalance() {
 	amount := types.NewNativeTokenAmount(
 		"cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs",
 		sdk.NewInt(100),
-		10,
+		100,
 	)
+	
+	account := types.NewAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
+	err := suite.database.SaveAccounts([]types.Account{account})
+	suite.Require().NoError(err)
 
-	err := suite.database.SaveTopAccountsBalance("available", []types.NativeTokenAmount{amount})
+	topAccount := types.NewTopAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs", "/cosmos.auth.v1beta1.BaseAccount")
+	err = suite.database.SaveTopAccounts([]types.TopAccount{topAccount}, 100)
+	suite.Require().NoError(err)
+
+	err = suite.database.SaveTopAccountsBalance("available", []types.NativeTokenAmount{amount})
 	suite.Require().NoError(err)
 
 	err = suite.database.SaveTopAccountsBalance("delegation", []types.NativeTokenAmount{amount})
@@ -47,8 +57,11 @@ func (suite *DbTestSuite) TestSaveTopAccountsBalance() {
 	newAmount := types.NewNativeTokenAmount(
 		"cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs",
 		sdk.NewInt(200),
-		200,
+		300,
 	)
+
+	err = suite.database.SaveTopAccounts([]types.TopAccount{topAccount}, 200)
+	suite.Require().NoError(err)
 
 	err = suite.database.SaveTopAccountsBalance("available", []types.NativeTokenAmount{newAmount})
 	suite.Require().NoError(err)
