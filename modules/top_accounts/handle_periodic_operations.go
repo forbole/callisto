@@ -154,7 +154,7 @@ func (m *Module) RefreshTopAccountsList() error {
 	// Unpack all accounts into types.Account type
 	_, err = m.authModule.RefreshTopAccountsList(height)
 	if err != nil {
-		return fmt.Errorf("error while unpacking accounts: %s", err)
+		return fmt.Errorf("error while refreshing top accounts list: %s", err)
 	}
 
 	return nil
