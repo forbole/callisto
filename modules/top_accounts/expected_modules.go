@@ -6,6 +6,7 @@ import (
 
 type AuthModule interface {
 	GetAllBaseAccounts(height int64) ([]types.Account, error)
+	RefreshTopAccountsList(height int64) ([]types.Account, error)
 }
 
 type AuthSource interface {

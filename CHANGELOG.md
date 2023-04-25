@@ -4,6 +4,7 @@
 #### [cheqd]
 - ([\#545](https://github.com/forbole/bdjuno/pull/545)) Added `x/did` and `x/resource` module handlers to store data in db
 - ([\#550](https://github.com/forbole/bdjuno/pull/550)) Updated validators VP handlers, `voting_power` column type to TEXT, updated VotingPower type to `sdkmath.Int` for ValidatorVotingPower and ProposalValidatorStatusSnapshot struct
+
 #### [cheqd] Top Accounts Module
 - ([\#510](https://github.com/forbole/bdjuno/pull/510)) Implemented `top_accounts` module to store chain native token's balance for ranking 
 - ([\#511](https://github.com/forbole/bdjuno/pull/511)) Implemented parse cmd for `top_accounts` module 
@@ -12,7 +13,7 @@
 - ([\#552](https://github.com/forbole/bdjuno/pull/552)) Upgraded `cheqd-node` to `v1.4.0`
 - ([\#555](https://github.com/forbole/bdjuno/pull/555)) Added `height` column to top accounts table
 - ([\#560](https://github.com/forbole/bdjuno/pull/560)) Stored latest block height instead of height `0` when updating top accounts and added RefreshAvailableBalance to periodic ops
-
+- ([\#570](https://github.com/forbole/bdjuno/pull/570)) Added `type` column to top accounts table, stored account type with top accounts module and added RefreshTopAccountsList to periodic ops
 
 #### CI
 - ([\#508](https://github.com/forbole/bdjuno/pull/508)) Upgrade workflow golangci version to v1.50.1

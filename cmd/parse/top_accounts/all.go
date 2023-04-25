@@ -72,17 +72,10 @@ func allCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				return fmt.Errorf("error while getting chain latest block height: %s", err)
 			}
 
-			// Get all base accounts, height set to 0 for querying the latest data on chain
-			accounts, err := authModule.GetAllBaseAccounts(height)
+			// Store all addresses in database
+			accounts, err := authModule.RefreshTopAccountsList(height)
 			if err != nil {
-				return fmt.Errorf("error while getting base accounts: %s", err)
-			}
-
-			log.Debug().Int("total", len(accounts)).Msg("saving accounts...")
-			// Store accounts
-			err = db.SaveAccounts(accounts)
-			if err != nil {
-				return err
+				return fmt.Errorf("error while unpacking accounts: %s", err)
 			}
 
 			for i, w := range workers {

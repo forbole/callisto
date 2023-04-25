@@ -10,6 +10,7 @@ select_permissions:
     allow_aggregations: false
     columns:
     - address
+    - type
     - available
     - delegation
     - redelegation

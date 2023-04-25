@@ -13,10 +13,18 @@ func (suite *DbTestSuite) TestSaveTopAccountsBalance() {
 	amount := types.NewNativeTokenAmount(
 		"cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs",
 		sdk.NewInt(100),
-		10,
+		100,
 	)
 
-	err := suite.database.SaveTopAccountsBalance("available", []types.NativeTokenAmount{amount})
+	account := types.NewAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
+	err := suite.database.SaveAccounts([]types.Account{account})
+	suite.Require().NoError(err)
+
+	topAccount := types.NewTopAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs", "/cosmos.auth.v1beta1.BaseAccount")
+	err = suite.database.SaveTopAccounts([]types.TopAccount{topAccount}, 100)
+	suite.Require().NoError(err)
+
+	err = suite.database.SaveTopAccountsBalance("available", []types.NativeTokenAmount{amount})
 	suite.Require().NoError(err)
 
 	err = suite.database.SaveTopAccountsBalance("delegation", []types.NativeTokenAmount{amount})
@@ -35,7 +43,7 @@ func (suite *DbTestSuite) TestSaveTopAccountsBalance() {
 	suite.Require().NoError(err)
 
 	// Verify data
-	expected := dbtypes.NewTopAccountsRow("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs", 100, 100, 100, 100, 100, 500, 100)
+	expected := dbtypes.NewTopAccountsRow("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs", "cosmos.auth.v1beta1.BaseAccount", 100, 100, 100, 100, 100, 500, 100)
 
 	var rows []dbtypes.TopAccountsRow
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM top_accounts`)
@@ -47,8 +55,11 @@ func (suite *DbTestSuite) TestSaveTopAccountsBalance() {
 	newAmount := types.NewNativeTokenAmount(
 		"cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs",
 		sdk.NewInt(200),
-		200,
+		300,
 	)
+
+	err = suite.database.SaveTopAccounts([]types.TopAccount{topAccount}, 200)
+	suite.Require().NoError(err)
 
 	err = suite.database.SaveTopAccountsBalance("available", []types.NativeTokenAmount{newAmount})
 	suite.Require().NoError(err)
@@ -69,7 +80,7 @@ func (suite *DbTestSuite) TestSaveTopAccountsBalance() {
 	suite.Require().NoError(err)
 
 	// Verify data
-	expected = dbtypes.NewTopAccountsRow("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs", 200, 200, 200, 200, 200, 1000, 300)
+	expected = dbtypes.NewTopAccountsRow("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs", "cosmos.auth.v1beta1.BaseAccount", 200, 200, 200, 200, 200, 1000, 300)
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM top_accounts`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)

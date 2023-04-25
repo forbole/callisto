@@ -16,19 +16,25 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	if _, err := scheduler.Every(1).Day().At("00:00").Do(func() {
 		utils.WatchMethod(m.RefreshTotalAccounts)
 	}); err != nil {
-		return fmt.Errorf("error while setting up total top accounts periodic operation: %s", err)
+		return fmt.Errorf("error while setting up refresh total top accounts periodic operation: %s", err)
+	}
+
+	if _, err := scheduler.Every(1).Day().At("00:00").Do(func() {
+		utils.WatchMethod(m.RefreshTopAccountsList)
+	}); err != nil {
+		return fmt.Errorf("error while setting up refresh top accounts list periodic operation: %s", err)
 	}
 
 	if _, err := scheduler.Every(1).Day().At("00:00").Do(func() {
 		utils.WatchMethod(m.RefreshAvailableBalance)
 	}); err != nil {
-		return fmt.Errorf("error while setting up top accounts periodic operation: %s", err)
+		return fmt.Errorf("error while setting up refresh top accounts avail balance periodic operation: %s", err)
 	}
 
 	if _, err := scheduler.Every(1).Day().At("00:00").Do(func() {
 		utils.WatchMethod(m.RefreshRewards)
 	}); err != nil {
-		return fmt.Errorf("error while setting up top accounts periodic operation: %s", err)
+		return fmt.Errorf("error while setting up refresh top accounts rewards periodic operation: %s", err)
 	}
 
 	return nil
@@ -130,6 +136,25 @@ func (m *Module) RefreshRewards() error {
 	err = m.refreshTopAccountsSum(delegators, height)
 	if err != nil {
 		return fmt.Errorf("error while refreshing top accounts sum value: %s", err)
+	}
+
+	return nil
+}
+
+// RefreshTopAccountsList refreshes top accounts list in db
+func (m *Module) RefreshTopAccountsList() error {
+	log.Trace().Str("module", "top accounts").Str("operation", "refresh top accounts list").
+		Msg("refreshing top accounts list")
+
+	height, err := m.db.GetLastBlockHeight()
+	if err != nil {
+		return fmt.Errorf("error while getting latest block height: %s", err)
+	}
+
+	// Unpack all accounts into types.Account type
+	_, err = m.authModule.RefreshTopAccountsList(height)
+	if err != nil {
+		return fmt.Errorf("error while refreshing top accounts list: %s", err)
 	}
 
 	return nil
