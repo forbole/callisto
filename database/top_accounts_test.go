@@ -35,7 +35,7 @@ func (suite *DbTestSuite) TestSaveTopAccountsBalance() {
 	suite.Require().NoError(err)
 
 	// Verify data
-	expected := dbtypes.NewTopAccountsRow("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs", 100, 100, 100, 100, 100, 500, 100)
+	expected := dbtypes.NewTopAccountsRow("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs", "cosmos.auth.v1beta1.BaseAccount", 100, 100, 100, 100, 100, 500, 100)
 
 	var rows []dbtypes.TopAccountsRow
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM top_accounts`)
@@ -69,7 +69,7 @@ func (suite *DbTestSuite) TestSaveTopAccountsBalance() {
 	suite.Require().NoError(err)
 
 	// Verify data
-	expected = dbtypes.NewTopAccountsRow("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs", 200, 200, 200, 200, 200, 1000, 300)
+	expected = dbtypes.NewTopAccountsRow("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs", "cosmos.auth.v1beta1.BaseAccount", 200, 200, 200, 200, 200, 1000, 300)
 	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM top_accounts`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)

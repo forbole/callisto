@@ -2,6 +2,7 @@ package types
 
 type TopAccountsRow struct {
 	Address      string `db:"address"`
+	Type         string `db:"type"`
 	Available    int64  `db:"available"`
 	Delegation   int64  `db:"delegation"`
 	Redelegation int64  `db:"redelegation"`
@@ -12,10 +13,11 @@ type TopAccountsRow struct {
 }
 
 func NewTopAccountsRow(
-	address string, available, delegation, redelegation, unbonding, reward, sum, height int64,
+	address, accountType string, available, delegation, redelegation, unbonding, reward, sum, height int64,
 ) TopAccountsRow {
 	return TopAccountsRow{
 		Address:      address,
+		Type:         accountType,
 		Available:    available,
 		Delegation:   delegation,
 		Redelegation: redelegation,
@@ -29,6 +31,7 @@ func NewTopAccountsRow(
 // Equals return true if one TopAccountsRow representing the same row as the original one
 func (a TopAccountsRow) Equals(b TopAccountsRow) bool {
 	return a.Address == b.Address &&
+		a.Type == b.Type &&
 		a.Available == b.Available &&
 		a.Delegation == b.Delegation &&
 		a.Redelegation == b.Redelegation &&
