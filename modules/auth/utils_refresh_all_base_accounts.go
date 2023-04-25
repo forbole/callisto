@@ -13,7 +13,7 @@ func (m *Module) GetAllBaseAccounts(height int64) ([]types.Account, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error while getting any accounts: %s", err)
 	}
-	unpacked, err := m.unpackAnyAccounts(anyAccounts)
+	unpacked, err := m.UnpackAnyAccounts(anyAccounts)
 	if err != nil {
 		return nil, err
 	}
@@ -22,7 +22,7 @@ func (m *Module) GetAllBaseAccounts(height int64) ([]types.Account, error) {
 
 }
 
-func (m *Module) unpackAnyAccounts(anyAccounts []*codectypes.Any) ([]types.Account, error) {
+func (m *Module) UnpackAnyAccounts(anyAccounts []*codectypes.Any) ([]types.Account, error) {
 	accounts := []types.Account{}
 	for _, account := range anyAccounts {
 		var accountI authtypes.AccountI
@@ -32,6 +32,22 @@ func (m *Module) unpackAnyAccounts(anyAccounts []*codectypes.Any) ([]types.Accou
 		}
 
 		accounts = append(accounts, types.NewAccount(accountI.GetAddress().String()))
+	}
+
+	return accounts, nil
+
+}
+
+func (m *Module) UnpackAnyAccountsWithTypes(anyAccounts []*codectypes.Any) ([]types.TopAccount, error) {
+	accounts := []types.TopAccount{}
+	for _, account := range anyAccounts {
+		var accountI authtypes.AccountI
+		err := m.cdc.UnpackAny(account, &accountI)
+		if err != nil {
+			return nil, fmt.Errorf("error while unpacking any account: %s", err)
+		}
+
+		accounts = append(accounts, types.NewTopAccount(accountI.GetAddress().String(), account.TypeUrl))
 	}
 
 	return accounts, nil

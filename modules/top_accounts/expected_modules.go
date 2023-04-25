@@ -2,10 +2,14 @@ package top_accounts
 
 import (
 	"github.com/forbole/bdjuno/v4/types"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+
 )
 
 type AuthModule interface {
 	GetAllBaseAccounts(height int64) ([]types.Account, error)
+	UnpackAnyAccounts(anyAccounts []*codectypes.Any) ([]types.Account, error)
+	UnpackAnyAccountsWithTypes(anyAccounts []*codectypes.Any) ([]types.TopAccount, error) 
 }
 
 type AuthSource interface {
