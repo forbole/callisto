@@ -16,19 +16,25 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	if _, err := scheduler.Every(1).Day().At("00:00").Do(func() {
 		utils.WatchMethod(m.RefreshTotalAccounts)
 	}); err != nil {
-		return fmt.Errorf("error while setting up total top accounts periodic operation: %s", err)
+		return fmt.Errorf("error while setting up refresh total top accounts periodic operation: %s", err)
+	}
+
+	if _, err := scheduler.Every(1).Day().At("00:00").Do(func() {
+		utils.WatchMethod(m.RefreshTopAccountsList)
+	}); err != nil {
+		return fmt.Errorf("error while setting up refresh top accounts list periodic operation: %s", err)
 	}
 
 	if _, err := scheduler.Every(1).Day().At("00:00").Do(func() {
 		utils.WatchMethod(m.RefreshAvailableBalance)
 	}); err != nil {
-		return fmt.Errorf("error while setting up top accounts periodic operation: %s", err)
+		return fmt.Errorf("error while setting up refresh top accounts avail balance periodic operation: %s", err)
 	}
 
 	if _, err := scheduler.Every(1).Day().At("00:00").Do(func() {
 		utils.WatchMethod(m.RefreshRewards)
 	}); err != nil {
-		return fmt.Errorf("error while setting up top accounts periodic operation: %s", err)
+		return fmt.Errorf("error while setting up refresh top accounts rewards periodic operation: %s", err)
 	}
 
 	return nil
@@ -132,5 +138,47 @@ func (m *Module) RefreshRewards() error {
 		return fmt.Errorf("error while refreshing top accounts sum value: %s", err)
 	}
 
+	return nil
+}
+
+// RefreshTopAccountsList refreshes top accounts list in db
+func (m *Module) RefreshTopAccountsList() error {
+	log.Trace().Str("module", "top accounts").Str("operation", "refresh top accounts list").
+		Msg("refreshing top accounts list")
+
+	height, err := m.db.GetLastBlockHeight()
+	if err != nil {
+		return fmt.Errorf("error while getting latest block height: %s", err)
+	}
+
+	// Get all accounts from the node
+	anyAccounts, err := m.authSource.GetAllAnyAccounts(height)
+	if err != nil {
+		return fmt.Errorf("error while getting any accounts: %s", err)
+	}
+
+	// Unpack all accounts into types.Account type
+	unpackAccounts, err := m.authModule.UnpackAnyAccounts(anyAccounts)
+	if err != nil {
+		return fmt.Errorf("error while unpacking accounts: %s", err)
+	}
+
+	// Refresh accounts
+	err = m.db.SaveAccounts(unpackAccounts)
+	if err != nil {
+		return err
+	}
+
+	// Unpack all accounts into types.TopAccount type
+	accountsWithTypes, err := m.authModule.UnpackAnyAccountsWithTypes(anyAccounts)
+	if err != nil {
+		return fmt.Errorf("error while unpacking top accounts with types: %s", err)
+	}
+
+	// Refresh all top accounts addresses with account type
+	err = m.db.SaveTopAccounts(accountsWithTypes, height)
+	if err != nil {
+		return fmt.Errorf("error while storing top accounts with types: %s", err)
+	}
 	return nil
 }

@@ -13,6 +13,7 @@ type AuthModule interface {
 
 type AuthSource interface {
 	GetTotalNumberOfAccounts(height int64) (uint64, error)
+	GetAllAnyAccounts(height int64) ([]*codectypes.Any, error)
 }
 
 type BankModule interface {
