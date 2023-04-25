@@ -1,8 +1,6 @@
 package database_test
 
 import (
-	"fmt"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	dbtypes "github.com/forbole/bdjuno/v4/database/types"
 	"github.com/forbole/bdjuno/v4/types"
@@ -17,7 +15,7 @@ func (suite *DbTestSuite) TestSaveTopAccountsBalance() {
 		sdk.NewInt(100),
 		100,
 	)
-	
+
 	account := types.NewAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	err := suite.database.SaveAccounts([]types.Account{account})
 	suite.Require().NoError(err)
