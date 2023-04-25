@@ -12,6 +12,8 @@ CREATE TABLE top_accounts
 );
 CREATE INDEX top_accounts_sum_index ON top_accounts (sum);
 CREATE INDEX top_accounts_height_index ON top_accounts (height);
+CREATE INDEX top_accounts_type_index ON top_accounts (type);
+
 
 CREATE TABLE top_accounts_params
 (
