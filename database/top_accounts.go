@@ -37,7 +37,7 @@ func (db *Db) saveTopAccounts(accounts []types.TopAccount, height int64) error {
 	for i, account := range accounts {
 		ai := i * 3
 		stmt += fmt.Sprintf("($%d, $%d, $%d),", ai+1, ai+2, ai+3)
-		params = append(params, account.Address, account.AccountType[1:], height)
+		params = append(params, account.Address, account.Type[1:], height)
 	}
 
 	stmt = stmt[:len(stmt)-1]
