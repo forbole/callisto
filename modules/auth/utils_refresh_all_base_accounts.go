@@ -46,14 +46,14 @@ func (m *Module) RefreshTopAccountsList(height int64) ([]types.Account, error) {
 	// Unpack all accounts into types.TopAccount type
 	accountsWithTypes, err := m.unpackAnyAccountsWithTypes(anyAccounts)
 	if err != nil {
-		return nil, fmt.Errorf("error while unpacking top accounts with types: %s", err)
+		return nil, fmt.Errorf("error while unpacking top accounts with account types: %s", err)
 	}
 
 	log.Debug().Int("total", len(accounts)).Msg("saving top accounts addresses...")
 	// Store all top accounts addresses with account type
 	err = m.db.SaveTopAccounts(accountsWithTypes, height)
 	if err != nil {
-		return nil, fmt.Errorf("error while storing top accounts with types: %s", err)
+		return nil, fmt.Errorf("error while storing top accounts with account types: %s", err)
 	}
 
 	return accounts, nil
