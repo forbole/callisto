@@ -7,8 +7,7 @@ import (
 
 type AuthModule interface {
 	GetAllBaseAccounts(height int64) ([]types.Account, error)
-	UnpackAnyAccounts(anyAccounts []*codectypes.Any) ([]types.Account, error)
-	UnpackAnyAccountsWithTypes(anyAccounts []*codectypes.Any) ([]types.TopAccount, error)
+	RefreshTopAccountsList(height int64) ([]types.Account, error)
 }
 
 type AuthSource interface {
