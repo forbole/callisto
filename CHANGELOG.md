@@ -13,7 +13,7 @@
 - ([\#552](https://github.com/forbole/bdjuno/pull/552)) Upgraded `cheqd-node` to `v1.4.0`
 - ([\#555](https://github.com/forbole/bdjuno/pull/555)) Added `height` column to top accounts table
 - ([\#560](https://github.com/forbole/bdjuno/pull/560)) Stored latest block height instead of height `0` when updating top accounts and added RefreshAvailableBalance to periodic ops
-- ([\#555](https://github.com/forbole/bdjuno/pull/555)) Added `type` column to top accounts table, stored account type with top accounts module and added RefreshTopAccountsList to periodic ops
+- ([\#570](https://github.com/forbole/bdjuno/pull/570)) Added `type` column to top accounts table, stored account type with top accounts module and added RefreshTopAccountsList to periodic ops
 
 #### CI
 - ([\#508](https://github.com/forbole/bdjuno/pull/508)) Upgrade workflow golangci version to v1.50.1
