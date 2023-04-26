@@ -8,7 +8,7 @@ require (
 	github.com/go-co-op/gocron v1.23.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
-	github.com/lib/pq v1.10.8
+	github.com/lib/pq v1.10.9
 	github.com/pelletier/go-toml v1.9.5
 	github.com/prometheus/client_golang v1.15.0
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
