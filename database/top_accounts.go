@@ -41,7 +41,8 @@ func (db *Db) saveTopAccounts(accounts []types.TopAccount, height int64) error {
 	}
 
 	stmt = stmt[:len(stmt)-1]
-	stmt += " ON CONFLICT DO NOTHING"
+	stmt += " ON CONFLICT (address) DO UPDATE SET type = excluded.type, height = excluded.height WHERE top_accounts.height <= excluded.height"
+
 	_, err := db.SQL.Exec(stmt, params...)
 	if err != nil {
 		return fmt.Errorf("error while storing top accounts in db: %s", err)
