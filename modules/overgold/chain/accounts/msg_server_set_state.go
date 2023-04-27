@@ -2,12 +2,12 @@ package accounts
 
 import (
 	"git.ooo.ua/vipcoin/chain/x/accounts/types"
-	assets "git.ooo.ua/vipcoin/chain/x/assets/types"
 	wallets "git.ooo.ua/vipcoin/chain/x/wallets/types"
 	"git.ooo.ua/vipcoin/lib/filter"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 	juno "github.com/forbole/juno/v2/types"
+
+	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 )
 
 // handleMsgSetState allows to properly handle a handleMsgSetState
@@ -24,7 +24,7 @@ func (m *Module) handleMsgSetState(tx *juno.Tx, index int, msg *types.MsgSetStat
 
 	switch msg.State {
 	case types.ACCOUNT_STATE_BLOCKED, types.ACCOUNT_STATE_ACTIVE:
-		assetArr, err := m.assetRepo.GetAssets(filter.NewFilter().SetArgument(dbtypes.FieldName, assets.AssetVCG))
+		assetArr, err := m.assetRepo.GetAssets(filter.NewFilter().SetArgument(dbtypes.FieldName, "ovg"))
 		switch {
 		case err != nil:
 			return err
@@ -69,7 +69,7 @@ func (m *Module) handleMsgSetState(tx *juno.Tx, index int, msg *types.MsgSetStat
 				}
 			}
 
-			coins := wallet.Balance.AmountOf(assets.AssetVCG)
+			coins := wallet.Balance.AmountOf("ovg")
 			totalAmount = totalAmount.Add(coins)
 		}
 
