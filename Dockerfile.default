@@ -1,5 +1,5 @@
-FROM golang:1.18-alpine AS builder
-RUN apk update && apk add --no-cache make git
+FROM golang:1.20-alpine AS builder
+RUN apk update && apk add --no-cache make git gcc build-base
 WORKDIR /go/src/github.com/forbole/bdjuno
 COPY . ./
 RUN go mod download
