@@ -13,10 +13,10 @@ import (
 
 	"github.com/forbole/bdjuno/v4/types/config"
 
+	celestiaapp "github.com/celestiaorg/celestia-app/app"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules"
-	celestiaapp "github.com/celestiaorg/celestia-app/app"
 )
 
 func main() {

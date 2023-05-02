@@ -6,7 +6,7 @@ require (
 	cosmossdk.io/math v1.0.0-beta.3
 	github.com/celestiaorg/celestia-app v0.12.2
 	github.com/cosmos/cosmos-sdk v0.46.7
-	github.com/forbole/juno/v4 v4.1.1-0.20230428030826-65bc2c0784bd // branch cosmos/v0.46.x-celestia 
+	github.com/forbole/juno/v4 v4.1.1-0.20230428030826-65bc2c0784bd // branch cosmos/v0.46.x-celestia
 	github.com/go-co-op/gocron v1.23.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
