@@ -358,8 +358,8 @@ github.com/felixge/httpsnoop v1.0.1/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSw
 github.com/felixge/httpsnoop v1.0.2 h1:+nS9g82KMXccJ/wp0zyRW9ZBHFETmMGtkk+2CTTrW4o=
 github.com/felixge/httpsnoop v1.0.2/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
 github.com/fjl/memsize v0.0.0-20190710130421-bcb5799ab5e5 h1:FtmdgXiUlNeRsoNMFlKLDt+S+6hbjVMEW6RGQ7aUf7c=
-github.com/forbole/juno/v4 v4.1.1-0.20230503082103-227d068df70d h1:uY7wIhB5kHuHgDO/SHYiLKD53K4z25HddEZ0Xn/yVq4=
-github.com/forbole/juno/v4 v4.1.1-0.20230503082103-227d068df70d/go.mod h1:ybagBMD+85UJHViJKD5urm6usca5OgpsTXg5GW45R9U=
+github.com/forbole/juno/v4 v4.1.1-0.20230503093602-557aa8d187e0 h1:DolFhVYPrrhY7tUiPN9xQhyUqbLKQR+hHs6GZvTrVAc=
+github.com/forbole/juno/v4 v4.1.1-0.20230503093602-557aa8d187e0/go.mod h1:ybagBMD+85UJHViJKD5urm6usca5OgpsTXg5GW45R9U=
 github.com/fortytw2/leaktest v1.3.0 h1:u8491cBMTQ8ft8aeV+adlcytMZylmA5nnwwkRZjI8vw=
 github.com/frankban/quicktest v1.14.3 h1:FJKSZTDHjyhriyC81FLQ0LY93eSai0ZyR/ZIkd3ZUKE=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
