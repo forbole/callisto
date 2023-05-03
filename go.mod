@@ -22,6 +22,7 @@ require (
 	github.com/tendermint/tendermint v0.34.27
 	google.golang.org/grpc v1.54.0
 	gopkg.in/yaml.v3 v3.0.1
+	github.com/cometbft/cometbft v0.34.27
 )
 
 require (
@@ -191,5 +192,5 @@ require (
 replace (
 	github.com/cosmos/cosmos-sdk => github.com/cosmos/cosmos-sdk v0.46.11-rc.0
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-	github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.34.27
+	// github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.34.27
 )
