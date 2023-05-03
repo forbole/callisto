@@ -7,9 +7,7 @@ require (
 	github.com/MonCatCat/humans v0.1.1-0.20230502023504-2d4ab2dae624
 	github.com/cometbft/cometbft v0.37.1
 	github.com/cosmos/cosmos-sdk v0.46.11
-	github.com/forbole/juno/v4 v4.1.1-0.20230503082103-227d068df70d
-	// v4.1.1-0.20230502061706-34136895a3bb
-	// v4.1.1-0.20230502054300-8a5b461fa3aa
+	github.com/forbole/juno/v4 v4.1.1-0.20230503093602-557aa8d187e0
 	github.com/go-co-op/gocron v1.18.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
