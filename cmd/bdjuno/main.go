@@ -16,7 +16,7 @@ import (
 
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules"
-	humansaiapp "github.com/humansdotai/humans/app"
+	humansaiapp "github.com/MonCatCat/humans/app"
 )
 
 func main() {
