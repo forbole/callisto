@@ -24,8 +24,8 @@ parsing:
     workers: 10
     listen_new_blocks: true
     parse_old_blocks: true
-    parse_genesis: false
-    start_height: 1
+    parse_genesis: true
+    start_height: 4988247
     genesis_file_path: ./volume/genesis.json
 database:
     name: juno
