@@ -5,6 +5,7 @@ import (
 	"github.com/forbole/juno/v4/modules"
 
 	"github.com/forbole/bdjuno/v4/database"
+	consumersource "github.com/forbole/bdjuno/v4/modules/ccv/consumer/source"
 )
 
 var (
@@ -14,15 +15,17 @@ var (
 
 // Module represent database/ccv/consumer module
 type Module struct {
-	cdc codec.Codec
-	db  *database.Db
+	cdc    codec.Codec
+	db     *database.Db
+	source consumersource.Source
 }
 
 // NewModule returns a new Module instance
-func NewModule(cdc codec.Codec, db *database.Db) *Module {
+func NewModule(source consumersource.Source, cdc codec.Codec, db *database.Db) *Module {
 	return &Module{
-		cdc: cdc,
-		db:  db,
+		source: source,
+		cdc:    cdc,
+		db:     db,
 	}
 }
 

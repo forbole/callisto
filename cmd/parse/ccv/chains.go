@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/forbole/bdjuno/v4/database"
-	provider "github.com/forbole/bdjuno/v4/modules/ccv/provider"
+	consumer "github.com/forbole/bdjuno/v4/modules/ccv/consumer"
 	modulestypes "github.com/forbole/bdjuno/v4/modules/types"
 	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
 	"github.com/forbole/juno/v4/types/config"
@@ -31,7 +31,7 @@ func consumerChainsCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			db := database.Cast(parseCtx.Database)
 
 			// Build the ccv provider module
-			ccvProviderModule := provider.NewModule(sources.CcvProviderSource, parseCtx.EncodingConfig.Marshaler, db)
+			ccvProviderModule := consumer.NewModule(sources.CcvConsumerSource, parseCtx.EncodingConfig.Marshaler, db)
 
 			// Get latest height
 			height, err := parseCtx.Node.LatestHeight()

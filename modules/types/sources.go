@@ -14,10 +14,10 @@ import (
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	ccvprovidertypes "github.com/cosmos/interchain-security/x/ccv/provider/types"
+	ccvconsumertypes "github.com/cosmos/interchain-security/x/ccv/consumer/types"
+	ccvconsumersource "github.com/forbole/bdjuno/v4/modules/ccv/consumer/source"
+	remoteccvconsumersource "github.com/forbole/bdjuno/v4/modules/ccv/consumer/source/remote"
 	remotewasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source/remote"
-	ccvprovidersource "github.com/forbole/bdjuno/v4/modules/ccv/provider/source"
-	remoteccvprovidersource "github.com/forbole/bdjuno/v4/modules/ccv/provider/source/remote"
 	"github.com/forbole/juno/v4/node/local"
 
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
@@ -38,7 +38,7 @@ import (
 
 type Sources struct {
 	BankSource        banksource.Source
-	CcvProviderSource ccvprovidersource.Source
+	CcvConsumerSource ccvconsumersource.Source
 	DistrSource       distrsource.Source
 	GovSource         govsource.Source
 	MintSource        mintsource.Source
@@ -112,7 +112,7 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 
 	return &Sources{
 		BankSource:        remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
-		CcvProviderSource: remoteccvprovidersource.NewSource(source, ccvprovidertypes.NewQueryClient(source.GrpcConn)),
+		CcvConsumerSource: remoteccvconsumersource.NewSource(source, ccvconsumertypes.NewQueryClient(source.GrpcConn)),
 		DistrSource:       remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
 		GovSource:         remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
 		MintSource:        remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
