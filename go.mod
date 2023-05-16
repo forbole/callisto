@@ -9,7 +9,7 @@ require (
 	github.com/go-co-op/gocron v1.17.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
-	github.com/lavanet/lava 355a1d31b36dd2a43cbf9b6a3cda718526a3bdd0
+	github.com/lavanet/lava v0.11.3-0.20230516144139-355a1d31b36d
 	github.com/lib/pq v1.10.7
 	github.com/pelletier/go-toml v1.9.5
 	github.com/prometheus/client_golang v1.15.1
@@ -17,12 +17,10 @@ require (
 	github.com/rs/zerolog v1.28.0
 	github.com/spf13/cobra v1.6.0
 	github.com/stretchr/testify v1.8.1
-	github.com/tendermint/tendermint v0.34.19
+	github.com/tendermint/tendermint v0.34.23
 	google.golang.org/grpc v1.53.0
 	gopkg.in/yaml.v3 v3.0.1
 )
-
-require github.com/creachadair/taskgroup v0.3.2 // indirect
 
 require (
 	filippo.io/edwards25519 v1.0.0-beta.2 // indirect
