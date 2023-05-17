@@ -28,7 +28,7 @@ func NewSource(source *remote.Source, govClient govtypes.QueryClient) *Source {
 // Proposal implements govsource.Source
 func (s Source) Proposal(height int64, id uint64) (govtypes.Proposal, error) {
 	res, err := s.govClient.Proposal(
-		remote.GetHeightRequestContext(s.Ctx, height),
+		s.Ctx,
 		&govtypes.QueryProposalRequest{ProposalId: id},
 	)
 	if err != nil {
