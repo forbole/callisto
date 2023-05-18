@@ -13,6 +13,7 @@ import (
 
 	"github.com/forbole/bdjuno/v4/types/config"
 
+	coreumapp "github.com/CoreumFoundation/coreum/app"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules"
@@ -55,6 +56,7 @@ func main() {
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
 		simapp.ModuleBasics,
+		coreumapp.ModuleBasics,
 	}
 }
 
