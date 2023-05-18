@@ -30,9 +30,6 @@ func (suite *DbTestSuite) TestSaveTopAccountsBalance() {
 	err = suite.database.SaveTopAccountsBalance("delegation", []types.NativeTokenAmount{amount})
 	suite.Require().NoError(err)
 
-	err = suite.database.SaveTopAccountsBalance("redelegation", []types.NativeTokenAmount{amount})
-	suite.Require().NoError(err)
-
 	err = suite.database.SaveTopAccountsBalance("unbonding", []types.NativeTokenAmount{amount})
 	suite.Require().NoError(err)
 
@@ -67,9 +64,6 @@ func (suite *DbTestSuite) TestSaveTopAccountsBalance() {
 	err = suite.database.SaveTopAccountsBalance("delegation", []types.NativeTokenAmount{newAmount})
 	suite.Require().NoError(err)
 
-	err = suite.database.SaveTopAccountsBalance("redelegation", []types.NativeTokenAmount{newAmount})
-	suite.Require().NoError(err)
-
 	err = suite.database.SaveTopAccountsBalance("unbonding", []types.NativeTokenAmount{newAmount})
 	suite.Require().NoError(err)
 
@@ -102,9 +96,6 @@ func (suite *DbTestSuite) TestGetAccountBalanceSum() {
 	suite.Require().NoError(err)
 
 	err = suite.database.SaveTopAccountsBalance("delegation", []types.NativeTokenAmount{amount})
-	suite.Require().NoError(err)
-
-	err = suite.database.SaveTopAccountsBalance("redelegation", []types.NativeTokenAmount{amount})
 	suite.Require().NoError(err)
 
 	err = suite.database.SaveTopAccountsBalance("unbonding", []types.NativeTokenAmount{amount})

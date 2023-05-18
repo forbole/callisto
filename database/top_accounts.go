@@ -77,7 +77,7 @@ func (db *Db) SaveTopAccountsBalance(column string, bals []types.NativeTokenAmou
 
 func (db *Db) GetAccountBalanceSum(address string) (string, error) {
 	stmt := `SELECT 
-COALESCE(available,0) + COALESCE(delegation,0) + COALESCE(redelegation,0) + COALESCE(unbonding,0) + COALESCE(reward,0) 
+COALESCE(available,0) + COALESCE(delegation,0) + COALESCE(unbonding,0) + COALESCE(reward,0) 
 as sum FROM top_accounts WHERE address = $1 
 `
 	var rows []string
