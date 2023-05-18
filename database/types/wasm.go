@@ -1,80 +1,38 @@
 package types
 
 import (
-	"database/sql/driver"
-	"fmt"
 	"time"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+	"github.com/forbole/bdjuno/v4/types"
 )
-
-// DbAccessConfig represents the information stored inside the database about a single access_config
-type DbAccessConfig struct {
-	Permission int    `db:"permission"`
-	Address    string `db:"address"`
-}
-
-// NewDbAccessConfig builds a DbAccessConfig starting from an CosmWasm type AccessConfig
-func NewDbAccessConfig(accessCfg *wasmtypes.AccessConfig) DbAccessConfig {
-	return DbAccessConfig{
-		Permission: int(accessCfg.Permission),
-		Address:    accessCfg.Address,
-	}
-}
-
-// Value implements driver.Valuer
-func (cfg *DbAccessConfig) Value() (driver.Value, error) {
-	if cfg != nil {
-		return fmt.Sprintf("(%d,%s)", cfg.Permission, cfg.Address), nil
-	}
-
-	return fmt.Sprintf("(%d,%s)", wasmtypes.AccessTypeUnspecified, ""), nil
-}
-
-// Equal tells whether a and b represent the same access_config
-func (cfg *DbAccessConfig) Equal(b *DbAccessConfig) bool {
-	return cfg.Address == b.Address && cfg.Permission == b.Permission
-}
 
 // ===================== Params =====================
 
-// WasmParams represents the CosmWasm code in x/wasm module
-type WasmParams struct {
-	CodeUploadAccess             *DbAccessConfig `db:"code_upload_access"`
-	InstantiateDefaultPermission int32           `db:"instantiate_default_permission"`
-	MaxWasmCodeSize              uint64          `db:"max_wasm_code_size"`
-	Height                       int64           `db:"height"`
-}
-
-// NewWasmParams allows to build a new x/wasm params instance
-func NewWasmParams(
-	codeUploadAccess *DbAccessConfig, instantiateDefaultPermission int32, maxWasmCodeSize uint64, height int64,
-) WasmParams {
-	return WasmParams{
-		CodeUploadAccess:             codeUploadAccess,
-		InstantiateDefaultPermission: instantiateDefaultPermission,
-		MaxWasmCodeSize:              maxWasmCodeSize,
-		Height:                       height,
-	}
+// WasmParamsRow represents a single row inside the wasm_params table
+type WasmParamsRow struct {
+	OneRowID bool   `db:"one_row_id"`
+	Params   string `db:"params"`
+	Height   int64  `db:"height"`
 }
 
 // ===================== Code =====================
 
 // WasmCodeRow represents a single row inside the "wasm_code" table
 type WasmCodeRow struct {
-	Sender                string          `db:"sender"`
-	WasmByteCode          string          `db:"wasm_byte_code"`
-	InstantiatePermission *DbAccessConfig `db:"instantiate_permission"`
-	CodeID                int64           `db:"code_id"`
-	Height                int64           `db:"height"`
+	Sender                string `db:"sender"`
+	WasmByteCode          string `db:"byte_code"`
+	InstantiatePermission string `db:"instantiate_permission"`
+	CodeID                uint64 `db:"code_id"`
+	Height                int64  `db:"height"`
 }
 
 // NewWasmCodeRow allows to easily create a new NewWasmCodeRow
 func NewWasmCodeRow(
 	sender string,
 	wasmByteCode string,
-	instantiatePermission *DbAccessConfig,
-	codeID int64,
+	instantiatePermission string,
+	codeID uint64,
 	height int64,
 ) WasmCodeRow {
 	return WasmCodeRow{
@@ -86,15 +44,6 @@ func NewWasmCodeRow(
 	}
 }
 
-// Equals return true if one WasmCodeRow representing the same row as the original one
-func (a WasmCodeRow) Equals(b WasmCodeRow) bool {
-	return a.Sender == b.Sender &&
-		a.WasmByteCode == b.WasmByteCode &&
-		a.InstantiatePermission.Equal(b.InstantiatePermission) &&
-		a.CodeID == b.CodeID &&
-		a.Height == b.Height
-}
-
 // ===================== Contract =====================
 
 // WasmContractRow represents a single row inside the "wasm_contract" table
@@ -102,7 +51,7 @@ type WasmContractRow struct {
 	Sender                string    `db:"sender"`
 	Creator               string    `db:"creator"`
 	Admin                 string    `db:"admin"`
-	CodeID                int64     `db:"code_id"`
+	CodeID                uint64    `db:"code_id"`
 	Label                 string    `db:"label"`
 	RawContractMessage    string    `db:"raw_contract_message"`
 	Funds                 *DbCoins  `db:"funds"`
@@ -118,9 +67,9 @@ type WasmContractRow struct {
 func NewWasmContractRow(
 	sender string,
 	admin string,
-	codeID int64,
+	codeID uint64,
 	label string,
-	rawContractMessage string,
+	rawMsg wasmtypes.RawContractMessage,
 	funds *DbCoins,
 	contractAddress string,
 	data string,
@@ -129,12 +78,14 @@ func NewWasmContractRow(
 	contractInfoExtension string,
 	height int64,
 ) WasmContractRow {
+	rawContractMsg := types.ConvertRawContractMessage(rawMsg)
+
 	return WasmContractRow{
 		Sender:                sender,
 		Admin:                 admin,
 		CodeID:                codeID,
 		Label:                 label,
-		RawContractMessage:    rawContractMessage,
+		RawContractMessage:    string(rawContractMsg),
 		Funds:                 funds,
 		ContractAddress:       contractAddress,
 		Data:                  data,
@@ -153,10 +104,10 @@ func (a WasmContractRow) Equals(b WasmContractRow) bool {
 		a.CodeID == b.CodeID &&
 		a.Label == b.Label &&
 		a.RawContractMessage == b.RawContractMessage &&
-		a.Funds.Equal(a.Funds) &&
+		a.Funds.Equal(b.Funds) &&
 		a.ContractAddress == b.ContractAddress &&
 		a.Data == b.Data &&
-		a.InstantiatedAt == b.InstantiatedAt &&
+		a.InstantiatedAt.Equal(b.InstantiatedAt) &&
 		a.ContractInfoExtension == b.ContractInfoExtension &&
 		a.Height == b.Height
 }
@@ -178,15 +129,17 @@ type WasmExecuteContractRow struct {
 func NewWasmExecuteContractRow(
 	sender string,
 	contractAddress string,
-	rawContractMessage string,
+	rawMsg wasmtypes.RawContractMessage,
 	funds *DbCoins,
 	data string,
 	executedAt time.Time,
 	height int64,
 ) WasmExecuteContractRow {
+	rawContractMsg := types.ConvertRawContractMessage(rawMsg)
+
 	return WasmExecuteContractRow{
 		Sender:             sender,
-		RawContractMessage: rawContractMessage,
+		RawContractMessage: string(rawContractMsg),
 		Funds:              funds,
 		ContractAddress:    contractAddress,
 		Data:               data,
@@ -200,8 +153,8 @@ func (a WasmExecuteContractRow) Equals(b WasmExecuteContractRow) bool {
 	return a.Sender == b.Sender &&
 		a.ContractAddress == b.ContractAddress &&
 		a.RawContractMessage == b.RawContractMessage &&
-		a.Funds.Equal(a.Funds) &&
+		a.Funds.Equal(b.Funds) &&
 		a.Data == b.Data &&
-		a.ExecutedAt == b.ExecutedAt &&
+		a.ExecutedAt.Equal(b.ExecutedAt) &&
 		a.Height == b.Height
 }

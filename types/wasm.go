@@ -11,19 +11,17 @@ import (
 
 // WasmParams represents the CosmWasm code in x/wasm module
 type WasmParams struct {
-	CodeUploadAccess             *wasmtypes.AccessConfig
-	InstantiateDefaultPermission int32
-	Height                       int64
+	Params wasmtypes.Params
+	Height int64
 }
 
 // NewWasmParams allows to build a new x/wasm params instance
 func NewWasmParams(
-	codeUploadAccess *wasmtypes.AccessConfig, instantiateDefaultPermission int32, height int64,
+	params wasmtypes.Params, height int64,
 ) WasmParams {
 	return WasmParams{
-		CodeUploadAccess:             codeUploadAccess,
-		InstantiateDefaultPermission: instantiateDefaultPermission,
-		Height:                       height,
+		Params: params,
+		Height: height,
 	}
 }
 
@@ -38,12 +36,12 @@ type WasmCode struct {
 
 // NewWasmCode allows to build a new x/wasm code instance
 func NewWasmCode(
-	sender string, wasmByteCode []byte, initPermission *wasmtypes.AccessConfig, codeID uint64, height int64,
+	sender string, wasmByteCode []byte, iPermission *wasmtypes.AccessConfig, codeID uint64, height int64,
 ) WasmCode {
 	return WasmCode{
 		Sender:                sender,
 		WasmByteCode:          wasmByteCode,
-		InstantiatePermission: initPermission,
+		InstantiatePermission: iPermission,
 		CodeID:                codeID,
 		Height:                height,
 	}
@@ -71,22 +69,19 @@ func NewWasmContract(
 	sender string, admin string, codeID uint64, label string, rawMsg wasmtypes.RawContractMessage, funds sdk.Coins, contractAddress string, data string,
 	instantiatedAt time.Time, creator string, contractInfoExtension string, states []wasmtypes.Model, height int64,
 ) WasmContract {
-	rawContractMsg, _ := rawMsg.MarshalJSON()
-	contractStateInfo := ConvertContractStates(states)
-
 	return WasmContract{
 		Sender:                sender,
 		Admin:                 admin,
 		CodeID:                codeID,
 		Label:                 label,
-		RawContractMsg:        rawContractMsg,
+		RawContractMsg:        ConvertRawContractMessage(rawMsg),
 		Funds:                 funds,
 		ContractAddress:       contractAddress,
 		Data:                  data,
 		InstantiatedAt:        instantiatedAt,
 		Creator:               creator,
 		ContractInfoExtension: contractInfoExtension,
-		ContractStates:        contractStateInfo,
+		ContractStates:        ConvertContractStates(states),
 		Height:                height,
 	}
 }
@@ -137,15 +132,23 @@ func NewWasmExecuteContract(
 	sender string, contractAddress string, rawMsg wasmtypes.RawContractMessage,
 	funds sdk.Coins, data string, executedAt time.Time, height int64,
 ) WasmExecuteContract {
-	rawContractMsg, _ := rawMsg.MarshalJSON()
 
 	return WasmExecuteContract{
 		Sender:          sender,
 		ContractAddress: contractAddress,
-		RawContractMsg:  rawContractMsg,
+		RawContractMsg:  ConvertRawContractMessage(rawMsg),
 		Funds:           funds,
 		Data:            data,
 		ExecutedAt:      executedAt,
 		Height:          height,
 	}
+}
+
+func ConvertRawContractMessage(rawMsg wasmtypes.RawContractMessage) []byte {
+	rawContractMsg, _ := rawMsg.MarshalJSON()
+	if len(rawMsg) == 0 {
+		rawContractMsg, _ = json.Marshal("")
+	}
+
+	return rawContractMsg
 }

@@ -1,8 +1,10 @@
 package database
 
 import (
+	"encoding/json"
 	"fmt"
 
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	dbtypes "github.com/forbole/bdjuno/v4/database/types"
 	dbutils "github.com/forbole/bdjuno/v4/database/utils"
 	"github.com/forbole/bdjuno/v4/types"
@@ -11,20 +13,21 @@ import (
 
 // SaveWasmParams allows to store the wasm params
 func (db *Db) SaveWasmParams(params types.WasmParams) error {
+	paramsBz, err := json.Marshal(&params.Params)
+	if err != nil {
+		return fmt.Errorf("error while marshaling wasm params: %s", err)
+	}
+
 	stmt := `
-INSERT INTO wasm_params(code_upload_access, instantiate_default_permission, height) 
-VALUES ($1, $2, $3) 
+INSERT INTO wasm_params(params, height) 
+VALUES ($1, $2) 
 ON CONFLICT (one_row_id) DO UPDATE 
-	SET code_upload_access = excluded.code_upload_access, 
-		instantiate_default_permission = excluded.instantiate_default_permission
+	SET params = excluded.params 
 WHERE wasm_params.height <= excluded.height
 `
-	accessConfig := dbtypes.NewDbAccessConfig(params.CodeUploadAccess)
-	cfgValue, _ := accessConfig.Value()
 
-	_, err := db.SQL.Exec(stmt,
-		cfgValue, params.InstantiateDefaultPermission, params.Height,
-	)
+	_, err = db.SQL.Exec(stmt, string(paramsBz), params.Height)
+
 	if err != nil {
 		return fmt.Errorf("error while saving wasm params: %s", err)
 	}
@@ -43,19 +46,27 @@ func (db *Db) SaveWasmCodes(wasmCodes []types.WasmCode) error {
 INSERT INTO wasm_code(sender, byte_code, instantiate_permission, code_id, height) 
 VALUES `
 
+	if len(wasmCodes) == 0 {
+		return fmt.Errorf("wasm codes list is empty")
+	}
+
 	var args []interface{}
+	var accounts = make([]types.Account, len(wasmCodes))
 	for i, code := range wasmCodes {
 		ii := i * 5
 
-		var accessConfig dbtypes.DbAccessConfig
+		var permissionBz []byte
+		var err error
 		if code.InstantiatePermission != nil {
-			accessConfig = dbtypes.NewDbAccessConfig(code.InstantiatePermission)
+			permissionBz, err = json.Marshal(code.InstantiatePermission)
+			if err != nil {
+				return fmt.Errorf("error while marshaling wasm instantiate permission: %s", err)
+			}
 		}
 
-		cfgValue, _ := accessConfig.Value()
-
 		stmt += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d),", ii+1, ii+2, ii+3, ii+4, ii+5)
-		args = append(args, code.Sender, code.WasmByteCode, cfgValue, code.CodeID, code.Height)
+		args = append(args, code.Sender, code.WasmByteCode, string(permissionBz), code.CodeID, code.Height)
+		accounts[i] = types.NewAccount(code.Sender)
 	}
 
 	stmt = stmt[:len(stmt)-1] // Remove trailing ","
@@ -68,7 +79,12 @@ VALUES `
 			height = excluded.height
 	WHERE wasm_code.height <= excluded.height`
 
-	_, err := db.SQL.Exec(stmt, args...)
+	err := db.SaveAccounts(accounts)
+	if err != nil {
+		return fmt.Errorf("error while saving accounts: %s", err)
+	}
+
+	_, err = db.SQL.Exec(stmt, args...)
 	if err != nil {
 		return fmt.Errorf("error while saving wasm code: %s", err)
 	}
@@ -104,15 +120,28 @@ data, instantiated_at, contract_info_extension, contract_states, height)
 VALUES `
 
 	var args []interface{}
+	var accounts = make([]types.Account, len(wasmContracts))
 	for i, contract := range wasmContracts {
 		ii := i * paramsNumber
 		stmt += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d),",
 			ii+1, ii+2, ii+3, ii+4, ii+5, ii+6, ii+7, ii+8, ii+9, ii+10, ii+11, ii+12, ii+13)
 		args = append(args,
-			contract.Sender, contract.Creator, contract.Admin, contract.CodeID, contract.Label, string(contract.RawContractMsg),
-			pq.Array(dbtypes.NewDbCoins(contract.Funds)), contract.ContractAddress, contract.Data,
-			contract.InstantiatedAt, contract.ContractInfoExtension, string(contract.ContractStates), contract.Height,
+			contract.Sender,
+			contract.Creator,
+			contract.Admin,
+			contract.CodeID,
+			contract.Label,
+			string(contract.RawContractMsg),
+			pq.Array(dbtypes.NewDbCoins(contract.Funds)),
+			contract.ContractAddress,
+			contract.Data,
+			contract.InstantiatedAt,
+			contract.ContractInfoExtension,
+			string(contract.ContractStates),
+			contract.Height,
 		)
+
+		accounts[i] = types.NewAccount(contract.Creator)
 	}
 
 	stmt = stmt[:len(stmt)-1] // Remove trailing ","
@@ -132,7 +161,12 @@ VALUES `
 			height = excluded.height
 	WHERE wasm_contract.height <= excluded.height`
 
-	_, err := db.SQL.Exec(stmt, args...)
+	err := db.SaveAccounts(accounts)
+	if err != nil {
+		return fmt.Errorf("error while saving accounts: %s", err)
+	}
+
+	_, err = db.SQL.Exec(stmt, args...)
 	if err != nil {
 		return fmt.Errorf("error while saving wasm contracts: %s", err)
 	}
@@ -193,15 +227,19 @@ VALUES `
 }
 
 func (db *Db) UpdateContractWithMsgMigrateContract(
-	sender string, contractAddress string, codeID uint64, rawContractMsg []byte, data string,
+	sender string, contractAddress string, codeID uint64, rawContractMsg wasmtypes.RawContractMessage, data string,
 ) error {
-
 	stmt := `UPDATE wasm_contract SET 
 sender = $1, code_id = $2, raw_contract_message = $3, data = $4 
 WHERE contract_address = $5 `
 
+	converted := types.ConvertRawContractMessage(rawContractMsg)
+
 	_, err := db.SQL.Exec(stmt,
-		sender, codeID, string(rawContractMsg), data,
+		sender,
+		codeID,
+		string(converted),
+		data,
 		contractAddress,
 	)
 	if err != nil {
@@ -214,7 +252,7 @@ WHERE contract_address = $5 `
 func (db *Db) UpdateContractAdmin(sender string, contractAddress string, newAdmin string) error {
 
 	stmt := `UPDATE wasm_contract SET 
-sender = $1, admin = $2 WHERE contract_address = $2 `
+sender = $1, admin = $2 WHERE contract_address = $3 `
 
 	_, err := db.SQL.Exec(stmt, sender, newAdmin, contractAddress)
 	if err != nil {
