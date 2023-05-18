@@ -35,14 +35,11 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return fmt.Errorf("error while refreshing top accounts sum while refreshing balance: %s", err)
 	}
 
-	// Handle x/staking delegations, redelegations, and unbondings
+	// Handle x/staking delegations and unbondings
 	switch cosmosMsg := msg.(type) {
 
 	case *stakingtypes.MsgDelegate:
 		return m.handleMsgDelegate(cosmosMsg.DelegatorAddress, tx.Height)
-
-	case *stakingtypes.MsgBeginRedelegate:
-		return m.handleMsgBeginRedelegate(tx, index, cosmosMsg.DelegatorAddress)
 
 	case *stakingtypes.MsgUndelegate:
 		return m.handleMsgUndelegate(tx, index, cosmosMsg.DelegatorAddress)
@@ -66,41 +63,6 @@ func (m *Module) handleMsgDelegate(delAddr string, height int64) error {
 	if err != nil {
 		return fmt.Errorf("error while refreshing top accounts sum while handling MsgDelegate: %s", err)
 	}
-
-	return nil
-}
-
-func (m *Module) handleMsgBeginRedelegate(
-	tx *juno.Tx, index int, delAddr string) error {
-
-	err := m.stakingModule.RefreshRedelegations(delAddr, tx.Height)
-	if err != nil {
-		return fmt.Errorf("error while refreshing redelegations while handling MsgBeginRedelegate: %s", err)
-	}
-
-	err = m.refreshTopAccountsSum([]string{delAddr}, tx.Height)
-	if err != nil {
-		return fmt.Errorf("error while refreshing top accounts sum while handling MsgBeginRedelegate: %s", err)
-	}
-
-	event, err := tx.FindEventByType(index, stakingtypes.EventTypeRedelegate)
-	if err != nil {
-		return err
-	}
-
-	completionTimeStr, err := tx.FindAttributeByKey(event, stakingtypes.AttributeKeyCompletionTime)
-	if err != nil {
-		return err
-	}
-
-	completionTime, err := time.Parse(time.RFC3339, completionTimeStr)
-	if err != nil {
-		return err
-	}
-
-	// When the time expires, refresh the delegations & redelegations
-	time.AfterFunc(time.Until(completionTime), m.refreshDelegations(delAddr, tx.Height))
-	time.AfterFunc(time.Until(completionTime), m.refreshRedelegations(tx, delAddr))
 
 	return nil
 }

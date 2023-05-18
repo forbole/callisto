@@ -3,7 +3,6 @@ package top_accounts
 import (
 	"fmt"
 
-	juno "github.com/forbole/juno/v4/types"
 	"github.com/rs/zerolog/log"
 )
 
@@ -28,16 +27,6 @@ func (m *Module) refreshDelegations(delegator string, height int64) func() {
 		if err != nil {
 			log.Error().Str("module", "top_accounts").Err(err).
 				Str("operation", "refresh delegations").Msg("error while refreshing delegations")
-		}
-	}
-}
-
-func (m *Module) refreshRedelegations(tx *juno.Tx, delegatorAddr string) func() {
-	return func() {
-		err := m.stakingModule.RefreshRedelegations(delegatorAddr, tx.Height)
-		if err != nil {
-			log.Error().Str("module", "top_accounts").Err(err).
-				Str("operation", "refresh redelegations").Msg("error while refreshing redelegations")
 		}
 	}
 }

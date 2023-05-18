@@ -23,6 +23,5 @@ type DistrModule interface {
 
 type StakingModule interface {
 	RefreshDelegations(delegatorAddr string, height int64) error
-	RefreshRedelegations(delegatorAddr string, height int64) error
 	RefreshUnbondings(delegatorAddr string, height int64) error
 }

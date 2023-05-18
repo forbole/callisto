@@ -4,7 +4,6 @@ CREATE TABLE top_accounts
     type            TEXT,
     available       BIGINT DEFAULT 0,
     delegation      BIGINT DEFAULT 0,
-    redelegation    BIGINT DEFAULT 0,
     unbonding       BIGINT DEFAULT 0,
     reward          BIGINT DEFAULT 0,
     sum             BIGINT NOT NULL DEFAULT 0,

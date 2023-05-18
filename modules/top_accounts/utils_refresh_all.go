@@ -19,11 +19,6 @@ func (m *Module) RefreshAll(address string) error {
 		return fmt.Errorf("error while refreshing delegations of account %s, error: %s", address, err)
 	}
 
-	err = m.stakingModule.RefreshRedelegations(address, height)
-	if err != nil {
-		return fmt.Errorf("error while refreshing redelegations of account %s, error: %s", address, err)
-	}
-
 	err = m.stakingModule.RefreshUnbondings(address, height)
 	if err != nil {
 		return fmt.Errorf("error while refreshing unbonding delegations of account %s, error: %s", address, err)

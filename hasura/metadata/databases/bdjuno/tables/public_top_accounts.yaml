@@ -13,7 +13,6 @@ select_permissions:
     - type
     - available
     - delegation
-    - redelegation
     - unbonding
     - reward
     - sum
