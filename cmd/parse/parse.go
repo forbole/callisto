@@ -6,8 +6,6 @@ import (
 	parseccv "github.com/forbole/bdjuno/v4/cmd/parse/ccv"
 	parsedistribution "github.com/forbole/bdjuno/v4/cmd/parse/distribution"
 	parsefeegrant "github.com/forbole/bdjuno/v4/cmd/parse/feegrant"
-	parsegov "github.com/forbole/bdjuno/v4/cmd/parse/gov"
-	parsemint "github.com/forbole/bdjuno/v4/cmd/parse/mint"
 	parsepricefeed "github.com/forbole/bdjuno/v4/cmd/parse/pricefeed"
 	parseblocks "github.com/forbole/juno/v4/cmd/parse/blocks"
 	parsegenesis "github.com/forbole/juno/v4/cmd/parse/genesis"
@@ -32,8 +30,6 @@ func NewParseCmd(parseCfg *parse.Config) *cobra.Command {
 		parsedistribution.NewDistributionCmd(parseCfg),
 		parsefeegrant.NewFeegrantCmd(parseCfg),
 		parsegenesis.NewGenesisCmd(parseCfg),
-		parsegov.NewGovCmd(parseCfg),
-		parsemint.NewMintCmd(parseCfg),
 		parsepricefeed.NewPricefeedCmd(parseCfg),
 		parsetransaction.NewTransactionsCmd(parseCfg),
 	)
