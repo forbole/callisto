@@ -7,20 +7,21 @@ require (
 	github.com/cometbft/cometbft v0.37.1
 	github.com/cosmos/cosmos-sdk v0.45.15
 	github.com/cosmos/ibc-go/v4 v4.3.0
-	github.com/cosmos/interchain-security v1.2.0-multiden-rc0
-	github.com/forbole/juno/v4 v4.1.1-0.20230509034400-a009aa49d325 //custom branch cosmos/v0.45.x-neutron
+	github.com/cosmos/interchain-security v1.2.1
+	github.com/forbole/juno/v4 v4.1.1-0.20230512091918-759e3cb610f3
 	github.com/go-co-op/gocron v1.19.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.7
 	github.com/neutron-org/neutron v1.0.1-rc0
 	github.com/pelletier/go-toml v1.9.5
-	github.com/prometheus/client_golang v1.14.0
+	github.com/prometheus/client_golang v1.14.0 // indirect
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
 	github.com/rs/zerolog v1.29.0
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.2
 	github.com/tendermint/tendermint v0.34.27
+	github.com/tendermint/tm-db v0.6.7 // indirect
 	google.golang.org/grpc v1.53.0
 	gopkg.in/yaml.v3 v3.0.1
 )
@@ -140,7 +141,6 @@ require (
 	github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7 // indirect
 	github.com/tecbot/gorocksdb v0.0.0-20191217155057-f0fad39f321c // indirect
 	github.com/tendermint/go-amino v0.16.0 // indirect
-	github.com/tendermint/tm-db v0.6.7 // indirect
 	github.com/tidwall/btree v1.5.0 // indirect
 	github.com/zondax/hid v0.9.1 // indirect
 	github.com/zondax/ledger-go v0.14.1 // indirect
