@@ -9,9 +9,6 @@ import (
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
-	ccvconsumertypes "github.com/cosmos/interchain-security/x/ccv/consumer/types"
-	ccvconsumersource "github.com/forbole/bdjuno/v4/modules/ccv/consumer/source"
-	remoteccvconsumersource "github.com/forbole/bdjuno/v4/modules/ccv/consumer/source/remote"
 	remotewasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source/remote"
 	"github.com/forbole/juno/v4/node/local"
 
@@ -24,10 +21,9 @@ import (
 )
 
 type Sources struct {
-	BankSource        banksource.Source
-	CcvConsumerSource ccvconsumersource.Source
-	SlashingSource    slashingsource.Source
-	WasmSource        wasmsource.Source
+	BankSource     banksource.Source
+	SlashingSource slashingsource.Source
+	WasmSource     wasmsource.Source
 }
 
 func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -48,9 +44,8 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 	}
 
 	return &Sources{
-		BankSource:        remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
-		CcvConsumerSource: remoteccvconsumersource.NewSource(source, ccvconsumertypes.NewQueryClient(source.GrpcConn)),
-		SlashingSource:    remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
-		WasmSource:        remotewasmsource.NewSource(source, wasmtypes.NewQueryClient(source.GrpcConn)),
+		BankSource:     remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
+		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
+		WasmSource:     remotewasmsource.NewSource(source, wasmtypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }

@@ -70,7 +70,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	authModule := auth.NewModule(r.parser, cdc, db)
 	bankModule := bank.NewModule(r.parser, sources.BankSource, cdc, db)
 	consensusModule := consensus.NewModule(db)
-	ccvConsumerModule := ccvconsumer.NewModule(sources.CcvConsumerSource, cdc, db)
+	ccvConsumerModule := ccvconsumer.NewModule(cdc, db)
 	dailyRefetchModule := dailyrefetch.NewModule(ctx.Proxy, db)
 	feegrantModule := feegrant.NewModule(cdc, db)
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)

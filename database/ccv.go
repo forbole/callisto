@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	dbtypes "github.com/forbole/bdjuno/v4/database/types"
 	"github.com/forbole/bdjuno/v4/types"
 )
 
@@ -172,6 +173,51 @@ ON CONFLICT DO NOTHING`
 
 	if err != nil {
 		return fmt.Errorf("error while storing ccv provider chain info: %s", err)
+	}
+
+	return nil
+}
+
+// GetValidatorsConsensusAddress returns all validators consensus address stored inside the database.
+func (db *Db) GetValidatorsConsensusAddress() ([]dbtypes.ValidatorAddressRow, error) {
+	stmt := `SELECT consensus_address FROM validator`
+
+	var rows []dbtypes.ValidatorAddressRow
+	err := db.Sqlx.Select(&rows, stmt)
+	if err != nil {
+		return nil, err
+	}
+
+	return rows, nil
+}
+
+// StoreCCvValidators stores ccv validators operators address inside the database
+// To create relationship between provider and consumer chain
+func (db *Db) StoreCCvValidators(ccvValidators []types.CCVValidator) error {
+	if len(ccvValidators) == 0 {
+		return nil
+	}
+
+	stmt := `
+INSERT INTO ccv_validator (consumer_consensus_address, provider_consensus_address) 
+VALUES `
+
+	var ccvValidatorsList []interface{}
+	for i, ccvValidator := range ccvValidators {
+		vi := i * 2
+		stmt += fmt.Sprintf("($%d,$%d),", vi+1, vi+2)
+
+		ccvValidatorsList = append(ccvValidatorsList,
+			ccvValidator.ConsumerConsensusAddress,
+			ccvValidator.ProviderConsensusAddress,
+		)
+	}
+
+	// Store the ccv validators 
+	stmt = stmt[:len(stmt)-1] // Remove trailing ","
+	_, err := db.SQL.Exec(stmt, ccvValidatorsList...)
+	if err != nil {
+		return fmt.Errorf("error while storing ccv validators info: %s", err)
 	}
 
 	return nil
