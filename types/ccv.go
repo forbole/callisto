@@ -103,3 +103,17 @@ func NewCcvProviderChain(valsetUpdateID uint64, consumerStates []ccvprovidertype
 		Height:                    height,
 	}
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+
+type CCVValidator struct {
+	ConsumerConsensusAddress string
+	ProviderConsensusAddress string
+}
+
+func NewCCVValidator(consumerConsensusAddress, providerConsensusAddress string) CCVValidator {
+	return CCVValidator{
+		ConsumerConsensusAddress: consumerConsensusAddress,
+		ProviderConsensusAddress: providerConsensusAddress,
+	}
+}
