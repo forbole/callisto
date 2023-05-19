@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/forbole/bdjuno/v4/modules/actions"
-
 	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
 
 	"gopkg.in/yaml.v3"
@@ -51,15 +49,6 @@ func migrateConfig() (Config, error) {
 	cfg, err := GetConfig()
 	if err != nil {
 		return Config{}, fmt.Errorf("error while reading v2 config: %s", err)
-	}
-
-	// Enable the actions module if not enabled
-	if !cfg.Chain.IsModuleEnabled(actions.ModuleName) {
-		cfg.Chain.Modules = append(cfg.Chain.Modules, actions.ModuleName)
-	}
-
-	if cfg.Actions == nil {
-		cfg.Actions = actions.NewConfig("127.0.0.1", 3000, nil)
 	}
 
 	return cfg, nil
