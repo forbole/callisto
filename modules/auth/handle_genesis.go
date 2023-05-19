@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	tmtypes "github.com/tendermint/tendermint/types"
+	tmtypes "github.com/cometbft/cometbft/types"
 
 	"github.com/rs/zerolog/log"
 )
