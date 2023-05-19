@@ -1,0 +1,13 @@
+table:
+  name: ccv_validator
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: false
+    columns:
+    - consumer_consensus_address
+    - provider_consensus_address
+    - height
+    filter: {}
+    limit: 100
+  role: anonymous

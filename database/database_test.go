@@ -15,14 +15,13 @@ import (
 	junodb "github.com/forbole/juno/v4/database"
 
 	"github.com/forbole/bdjuno/v4/database"
-	"github.com/forbole/bdjuno/v4/types"
 
 	juno "github.com/forbole/juno/v4/types"
 
+	tmversion "github.com/cometbft/cometbft/proto/tendermint/version"
+	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
+	tmtypes "github.com/cometbft/cometbft/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	tmversion "github.com/tendermint/tendermint/proto/tendermint/version"
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
-	tmtypes "github.com/tendermint/tendermint/types"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/stretchr/testify/suite"
@@ -87,13 +86,8 @@ func (suite *DbTestSuite) SetupTest() {
 
 // getBlock builds, stores and returns a block for the provided height
 func (suite *DbTestSuite) getBlock(height int64) *juno.Block {
-	validator := suite.getValidator(
-		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
-		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
-		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
-	)
 
-	addr, err := sdk.ConsAddressFromBech32(validator.GetConsAddr())
+	addr, err := sdk.ConsAddressFromBech32("cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl")
 	suite.Require().NoError(err)
 
 	tmBlock := &tmctypes.ResultBlock{
@@ -130,29 +124,6 @@ func (suite *DbTestSuite) getBlock(height int64) *juno.Block {
 	err = suite.database.SaveBlock(block)
 	suite.Require().NoError(err)
 	return block
-}
-
-// getValidator stores inside the database a validator having the given
-// consensus address, validator address and validator public key
-func (suite *DbTestSuite) getValidator(consAddr, valAddr, pubkey string) types.Validator {
-	selfDelegation := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
-
-	maxRate := sdk.NewDec(10)
-	maxChangeRate := sdk.NewDec(20)
-
-	validator := types.NewValidator(
-		consAddr,
-		valAddr,
-		pubkey,
-		selfDelegation.String(),
-		&maxChangeRate,
-		&maxRate,
-		1,
-	)
-	err := suite.database.SaveValidatorData(validator)
-	suite.Require().NoError(err)
-
-	return validator
 }
 
 // getAccount saves inside the database an account having the given address

@@ -13,21 +13,13 @@ import (
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_ValidatorSigningInfo() {
-	validator1 := suite.getValidator(
-		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
-		"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
-		"cosmosvalconspub1zcjduepq7mft6gfls57a0a42d7uhx656cckhfvtrlmw744jv4q0mvlv0dypskehfk8",
-	)
-	validator2 := suite.getValidator(
-		"cosmosvalcons1rtst6se0nfgjy362v33jt5d05crgdyhfvvvvay",
-		"cosmosvaloper1jlr62guqwrwkdt4m3y00zh2rrsamhjf9num5xr",
-		"cosmosvalconspub1zcjduepq5e8w7t7k9pwfewgrwy8vn6cghk0x49chx64vt0054yl4wwsmjgrqfackxm",
-	)
+	validator1 := "cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl"
+	validator2 := "cosmosvalcons1rtst6se0nfgjy362v33jt5d05crgdyhfvvvvay"
 
 	// Save the data
 	infos := []types.ValidatorSigningInfo{
 		types.NewValidatorSigningInfo(
-			validator1.GetConsAddr(),
+			validator1,
 			10,
 			10,
 			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
@@ -36,7 +28,7 @@ func (suite *DbTestSuite) TestBigDipperDb_ValidatorSigningInfo() {
 			10,
 		),
 		types.NewValidatorSigningInfo(
-			validator2.GetConsAddr(),
+			validator2,
 			10,
 			10,
 			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
@@ -51,7 +43,7 @@ func (suite *DbTestSuite) TestBigDipperDb_ValidatorSigningInfo() {
 	// Verify the data
 	expected := []dbtypes.ValidatorSigningInfoRow{
 		dbtypes.NewValidatorSigningInfoRow(
-			validator1.GetConsAddr(),
+			validator1,
 			10,
 			10,
 			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
@@ -60,7 +52,7 @@ func (suite *DbTestSuite) TestBigDipperDb_ValidatorSigningInfo() {
 			10,
 		),
 		dbtypes.NewValidatorSigningInfoRow(
-			validator2.GetConsAddr(),
+			validator2,
 			10,
 			10,
 			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
@@ -83,7 +75,7 @@ func (suite *DbTestSuite) TestBigDipperDb_ValidatorSigningInfo() {
 	// Update the data
 	infos = []types.ValidatorSigningInfo{
 		types.NewValidatorSigningInfo(
-			validator1.GetConsAddr(),
+			validator1,
 			100,
 			10000,
 			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
@@ -92,7 +84,7 @@ func (suite *DbTestSuite) TestBigDipperDb_ValidatorSigningInfo() {
 			9,
 		),
 		types.NewValidatorSigningInfo(
-			validator2.GetConsAddr(),
+			validator2,
 			10,
 			10,
 			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
@@ -107,7 +99,7 @@ func (suite *DbTestSuite) TestBigDipperDb_ValidatorSigningInfo() {
 	// Verify the data
 	expected = []dbtypes.ValidatorSigningInfoRow{
 		dbtypes.NewValidatorSigningInfoRow(
-			validator1.GetConsAddr(),
+			validator1,
 			10,
 			10,
 			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),
@@ -116,7 +108,7 @@ func (suite *DbTestSuite) TestBigDipperDb_ValidatorSigningInfo() {
 			10,
 		),
 		dbtypes.NewValidatorSigningInfoRow(
-			validator2.GetConsAddr(),
+			validator2,
 			10,
 			10,
 			time.Date(2020, 10, 10, 15, 00, 00, 000, time.UTC),

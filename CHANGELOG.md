@@ -4,6 +4,9 @@
 #### CI
 - ([\#508](https://github.com/forbole/bdjuno/pull/508)) Upgrade workflow golangci version to v1.50.1
 
+#### CCV Consumer Module
+- ([\#583](https://github.com/forbole/bdjuno/pull/583)) Added ccv validators handlers, set periodic ops for `x/ccv` consumer module to update ccv validators every day, added `parse ccv validators` cmd to update ccv validators info in database
+
 #### Parse Command
 - ([\#492](https://github.com/forbole/bdjuno/pull/492)) Add parse command for periodic tasks: `x/bank` total supply, `x/distribution` community pool, `x/mint` inflation, `pricefeed` token price and price history, `x/staking` staking pool
 

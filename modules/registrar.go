@@ -1,7 +1,6 @@
 package modules
 
 import (
-	"github.com/forbole/bdjuno/v4/modules/actions"
 	"github.com/forbole/bdjuno/v4/modules/types"
 
 	"github.com/forbole/juno/v4/modules/pruning"
@@ -11,26 +10,21 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/forbole/bdjuno/v4/utils"
 	jmodules "github.com/forbole/juno/v4/modules"
 	"github.com/forbole/juno/v4/modules/messages"
 	"github.com/forbole/juno/v4/modules/registrar"
 
-	"github.com/forbole/bdjuno/v4/utils"
-
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules/auth"
 	"github.com/forbole/bdjuno/v4/modules/bank"
+	ccvconsumer "github.com/forbole/bdjuno/v4/modules/ccv/consumer"
 	"github.com/forbole/bdjuno/v4/modules/consensus"
-	"github.com/forbole/bdjuno/v4/modules/distribution"
-	"github.com/forbole/bdjuno/v4/modules/feegrant"
-
 	dailyrefetch "github.com/forbole/bdjuno/v4/modules/daily_refetch"
-	"github.com/forbole/bdjuno/v4/modules/gov"
-	"github.com/forbole/bdjuno/v4/modules/mint"
+	"github.com/forbole/bdjuno/v4/modules/feegrant"
 	"github.com/forbole/bdjuno/v4/modules/modules"
 	"github.com/forbole/bdjuno/v4/modules/pricefeed"
-	"github.com/forbole/bdjuno/v4/modules/staking"
-	"github.com/forbole/bdjuno/v4/modules/upgrade"
+	"github.com/forbole/bdjuno/v4/modules/wasm"
 )
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
@@ -73,37 +67,28 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		panic(err)
 	}
 
-	actionsModule := actions.NewModule(ctx.JunoConfig, ctx.EncodingConfig)
 	authModule := auth.NewModule(r.parser, cdc, db)
 	bankModule := bank.NewModule(r.parser, sources.BankSource, cdc, db)
 	consensusModule := consensus.NewModule(db)
+	ccvConsumerModule := ccvconsumer.NewModule(cdc, db)
 	dailyRefetchModule := dailyrefetch.NewModule(ctx.Proxy, db)
-	distrModule := distribution.NewModule(sources.DistrSource, cdc, db)
 	feegrantModule := feegrant.NewModule(cdc, db)
-	mintModule := mint.NewModule(sources.MintSource, cdc, db)
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
-	stakingModule := staking.NewModule(sources.StakingSource, cdc, db)
-	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakingModule, cdc, db)
-	upgradeModule := upgrade.NewModule(db, stakingModule)
+	wasmModule := wasm.NewModule(sources.WasmSource, cdc, db)
 
 	return []jmodules.Module{
 		messages.NewModule(r.parser, cdc, ctx.Database),
 		telemetry.NewModule(ctx.JunoConfig),
 		pruning.NewModule(ctx.JunoConfig, db, ctx.Logger),
-
-		actionsModule,
 		authModule,
 		bankModule,
 		consensusModule,
+		ccvConsumerModule,
 		dailyRefetchModule,
-		distrModule,
 		feegrantModule,
-		govModule,
-		mintModule,
 		modules.NewModule(ctx.JunoConfig.Chain, db),
 		pricefeed.NewModule(ctx.JunoConfig, cdc, db),
 		slashingModule,
-		stakingModule,
-		upgradeModule,
+		wasmModule,
 	}
 }
