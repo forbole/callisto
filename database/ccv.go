@@ -216,6 +216,7 @@ VALUES `
 
 	// Store the ccv validators
 	stmt = stmt[:len(stmt)-1] // Remove trailing ","
+	stmt += " ON CONFLICT DO NOTHING"
 	_, err := db.SQL.Exec(stmt, ccvValidatorsList...)
 	if err != nil {
 		return fmt.Errorf("error while storing ccv validators info: %s", err)
