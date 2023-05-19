@@ -199,21 +199,22 @@ func (db *Db) StoreCCvValidators(ccvValidators []types.CCVValidator) error {
 	}
 
 	stmt := `
-INSERT INTO ccv_validator (consumer_consensus_address, provider_consensus_address) 
+INSERT INTO ccv_validator (consumer_consensus_address, provider_consensus_address, height) 
 VALUES `
 
 	var ccvValidatorsList []interface{}
 	for i, ccvValidator := range ccvValidators {
-		vi := i * 2
-		stmt += fmt.Sprintf("($%d,$%d),", vi+1, vi+2)
+		vi := i * 3
+		stmt += fmt.Sprintf("($%d,$%d,$%d),", vi+1, vi+2, vi+3)
 
 		ccvValidatorsList = append(ccvValidatorsList,
 			ccvValidator.ConsumerConsensusAddress,
 			ccvValidator.ProviderConsensusAddress,
+			ccvValidator.Height,
 		)
 	}
 
-	// Store the ccv validators 
+	// Store the ccv validators
 	stmt = stmt[:len(stmt)-1] // Remove trailing ","
 	_, err := db.SQL.Exec(stmt, ccvValidatorsList...)
 	if err != nil {

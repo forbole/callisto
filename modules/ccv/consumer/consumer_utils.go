@@ -24,7 +24,7 @@ func (m *Module) UpdateCcvValidators(height int64) error {
 	for _, index := range validatorsDB {
 		_, providerBytes, _ := bech32.DecodeAndConvert(index.ConsensusAddress)
 		providerConsensusAddress, _ := sdk.Bech32ifyAddressBytes("cosmosvalcons", providerBytes)
-		ccvValidators = append(ccvValidators, types.NewCCVValidator(index.ConsensusAddress, providerConsensusAddress))
+		ccvValidators = append(ccvValidators, types.NewCCVValidator(index.ConsensusAddress, providerConsensusAddress, height))
 	}
 
 	return m.db.StoreCCvValidators(ccvValidators)
