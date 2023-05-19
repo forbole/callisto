@@ -17,7 +17,7 @@ type DistrModule interface {
 
 type MintModule interface {
 	UpdateParams(height int64) error
-	UpdateInflation() error
+	// UpdateInflation() error
 }
 
 type SlashingModule interface {
