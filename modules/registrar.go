@@ -24,11 +24,8 @@ import (
 	dailyrefetch "github.com/forbole/bdjuno/v4/modules/daily_refetch"
 	"github.com/forbole/bdjuno/v4/modules/distribution"
 	"github.com/forbole/bdjuno/v4/modules/feegrant"
-	"github.com/forbole/bdjuno/v4/modules/gov"
-	"github.com/forbole/bdjuno/v4/modules/mint"
 	"github.com/forbole/bdjuno/v4/modules/modules"
 	"github.com/forbole/bdjuno/v4/modules/pricefeed"
-	"github.com/forbole/bdjuno/v4/modules/staking"
 	"github.com/forbole/bdjuno/v4/modules/upgrade"
 	"github.com/forbole/bdjuno/v4/modules/wasm"
 )
@@ -81,11 +78,9 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	dailyRefetchModule := dailyrefetch.NewModule(ctx.Proxy, db)
 	distrModule := distribution.NewModule(sources.DistrSource, cdc, db)
 	feegrantModule := feegrant.NewModule(cdc, db)
-	mintModule := mint.NewModule(sources.MintSource, cdc, db)
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
-	stakingModule := staking.NewModule(sources.StakingSource, cdc, db)
-	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakingModule, cdc, db)
 	upgradeModule := upgrade.NewModule(db, stakingModule)
+	// upgradeModule := upgrade.NewModule(db, stakingModule)
 	wasmModule := wasm.NewModule(sources.WasmSource, cdc, db)
 
 	return []jmodules.Module{
@@ -101,12 +96,9 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		dailyRefetchModule,
 		distrModule,
 		feegrantModule,
-		govModule,
-		mintModule,
 		modules.NewModule(ctx.JunoConfig.Chain, db),
 		pricefeed.NewModule(ctx.JunoConfig, cdc, db),
 		slashingModule,
-		stakingModule,
 		upgradeModule,
 		wasmModule,
 	}
