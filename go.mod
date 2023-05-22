@@ -7,7 +7,7 @@ require (
 	github.com/cometbft/cometbft v0.37.1
 	github.com/cosmos/cosmos-sdk v0.45.15
 	github.com/cosmos/ibc-go/v4 v4.3.0
-	github.com/cosmos/interchain-security v1.2.1
+	github.com/cosmos/interchain-security v1.2.0-multiden-rc0
 	github.com/forbole/juno/v4 v4.1.1-0.20230512091918-759e3cb610f3
 	github.com/go-co-op/gocron v1.27.1
 	github.com/gogo/protobuf v1.3.3

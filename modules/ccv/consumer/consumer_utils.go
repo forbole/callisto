@@ -1,7 +1,6 @@
 package consumer
 
 import (
-	// "encoding/hex"
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
