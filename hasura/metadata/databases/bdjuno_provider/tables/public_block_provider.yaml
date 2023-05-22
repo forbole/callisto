@@ -1,0 +1,64 @@
+table:
+  name: block
+  schema: public
+object_relationships:
+- name: validator
+  using:
+    foreign_key_constraint_on: proposer_address
+array_relationships:
+- name: pre_commits
+  using:
+    manual_configuration:
+      column_mapping:
+        height: height
+      insertion_order: null
+      remote_table:
+        name: pre_commit
+        schema: public
+- name: transactions
+  using:
+    foreign_key_constraint_on:
+      column: height
+      table:
+        name: transaction
+        schema: public
+- name: validator_voting_powers
+  using:
+    manual_configuration:
+      column_mapping:
+        height: height
+      insertion_order: null
+      remote_table:
+        name: validator_voting_power
+        schema: public
+- name: proposal_deposits
+  using:
+    manual_configuration:
+      column_mapping:
+        height: height
+      insertion_order: null
+      remote_table:
+        name: proposal_deposit
+        schema: public
+- name: proposal_votes
+  using:
+    manual_configuration:
+      column_mapping:
+        height: height
+      insertion_order: null
+      remote_table:
+        name: proposal_vote
+        schema: public
+select_permissions:
+- permission:
+    allow_aggregations: false
+    columns:
+    - num_txs
+    - height
+    - total_gas
+    - hash
+    - proposer_address
+    - timestamp
+    filter: {}
+    limit: 100
+  role: anonymous
