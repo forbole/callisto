@@ -1,0 +1,57 @@
+table:
+  name: account
+  schema: public
+object_relationships:
+- name: vesting_account
+  using:
+    manual_configuration:
+      column_mapping:
+        address: address
+      insertion_order: null
+      remote_table:
+        name: vesting_account
+        schema: public
+array_relationships:
+- name: proposal_deposits
+  using:
+    foreign_key_constraint_on:
+      column: depositor_address
+      table:
+        name: proposal_deposit
+        schema: public
+- name: proposal_votes
+  using:
+    foreign_key_constraint_on:
+      column: voter_address
+      table:
+        name: proposal_vote
+        schema: public
+- name: proposals
+  using:
+    foreign_key_constraint_on:
+      column: proposer_address
+      table:
+        name: proposal
+        schema: public
+- name: validator_infos
+  using:
+    foreign_key_constraint_on:
+      column: self_delegate_address
+      table:
+        name: validator_info
+        schema: public
+- name: vesting_accounts
+  using:
+    foreign_key_constraint_on:
+      column: address
+      table:
+        name: vesting_account
+        schema: public
+select_permissions:
+- permission:
+    allow_aggregations: false
+    columns:
+    - address
+    filter: {}
+    limit: 100
+  role: anonymous

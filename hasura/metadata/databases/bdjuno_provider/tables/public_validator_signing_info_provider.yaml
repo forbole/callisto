@@ -1,0 +1,17 @@
+table:
+  name: validator_signing_info
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: false
+    columns:
+    - validator_address
+    - start_height
+    - index_offset
+    - jailed_until
+    - tombstoned
+    - missed_blocks_counter
+    - height
+    filter: {}
+    limit: 100
+  role: anonymous

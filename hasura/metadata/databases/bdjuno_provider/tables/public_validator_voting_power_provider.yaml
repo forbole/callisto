@@ -1,0 +1,20 @@
+table:
+  name: validator_voting_power
+  schema: public
+object_relationships:
+- name: block
+  using:
+    foreign_key_constraint_on: height
+- name: validator
+  using:
+    foreign_key_constraint_on: validator_address
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - validator_address
+    - voting_power
+    - height
+    filter: {}
+    limit: 100
+  role: anonymous
