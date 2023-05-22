@@ -29,6 +29,57 @@ package local
 // 	}
 // }
 
+// // GetCodesInfos implements wasmsource.Source
+// func (s Source) GetCodesInfos(height int64) ([]wasmtypes.CodeInfoResponse, error) {
+// 	ctx, err := s.LoadHeight(height)
+// 	if err != nil {
+// 		return nil, fmt.Errorf("error while loading height: %s", err)
+// 	}
+
+// 	var codeInfosRes []wasmtypes.CodeInfoResponse
+// 	var nextKey []byte
+// 	var stop = false
+// 	for !stop {
+// 		res, err := s.q.Codes(
+// 			sdk.WrapSDKContext(ctx),
+// 			&wasmtypes.QueryCodesRequest{
+// 				Pagination: &query.PageRequest{
+// 					Key:   nextKey,
+// 					Limit: 100, // Query 100 codes at time
+// 				},
+// 			},
+// 		)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+
+// 		nextKey = res.Pagination.NextKey
+// 		stop = len(res.Pagination.NextKey) == 0
+// 		codeInfosRes = append(codeInfosRes, res.CodeInfos...)
+// 	}
+
+// 	return codeInfosRes, nil
+// }
+
+// // GetCodeBinary implements wasmsource.Source
+// func (s Source) GetCodeBinary(codeID uint64, height int64) ([]byte, error) {
+// 	ctx, err := s.LoadHeight(height)
+// 	if err != nil {
+// 		return nil, fmt.Errorf("error while loading height: %s", err)
+// 	}
+// 	res, err := s.q.Code(
+// 		sdk.WrapSDKContext(ctx),
+// 		&wasmtypes.QueryCodeRequest{
+// 			CodeId: codeID,
+// 		},
+// 	)
+// 	if err != nil {
+// 		return nil, fmt.Errorf("error while getting contract code binary: %s", err)
+// 	}
+
+// 	return res.Data, nil
+// }
+
 // // GetContractInfo implements wasmsource.Source
 // func (s Source) GetContractInfo(height int64, contractAddr string) (*wasmtypes.QueryContractInfoResponse, error) {
 // 	ctx, err := s.LoadHeight(height)
