@@ -20,8 +20,6 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/juno/v4/node/local"
 
-	nodeconfig "github.com/forbole/juno/v4/node/config"
-
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v4/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"
@@ -40,6 +38,9 @@ import (
 	stakingsource "github.com/forbole/bdjuno/v4/modules/staking/source"
 	localstakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/remote"
+	nodeconfig "github.com/forbole/juno/v4/node/config"
+	gitopiaapp "github.com/gitopia/gitopia/v2/app"
+	gitopiaappparams "github.com/gitopia/gitopia/v2/app/params"
 )
 
 type Sources struct {
@@ -69,9 +70,9 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		return nil, err
 	}
 
-	app := simapp.NewSimApp(
+	app := gitopiaapp.NewGitopiaApp(
 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
-		cfg.Home, 0, simapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
+		cfg.Home, 0, gitopiaappparams.MakeEncodingConfig(), simapp.EmptyAppOptions{},
 	)
 
 	sources := &Sources{
