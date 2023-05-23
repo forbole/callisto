@@ -30,8 +30,8 @@
       naming_convention: "hasura-default"
       root_fields:
         namespace: "provider"
-        prefix: "provider"
+        prefix: "provider_"
       type_names:
-        prefix: "provider"
+        prefix: "provider_"
   tables: "!include bdjuno_provider/tables/tables.yaml"
   functions: "!include bdjuno_provider/functions/functions.yaml"
