@@ -1,11 +1,9 @@
 package banking
 
 import (
-	"fmt"
 	"strings"
 
 	"git.ooo.ua/vipcoin/chain/x/banking/types"
-	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	juno "github.com/forbole/juno/v2/types"
@@ -47,11 +45,13 @@ func (m *Module) handleMsgSystemTransfer(tx *juno.Tx, index int, msg *types.MsgS
 	oldBalanceWalletFrom := walletFrom[0].Balance
 	walletFrom[0].Balance, hasNeg = walletFrom[0].Balance.SafeSub(sdk.NewCoins(coin))
 	if hasNeg {
-		return errs.Internal{Cause: fmt.Sprintf(
-			"failed to transfer %s coins from wallet %s to wallet %s: insufficient funds. "+
-				"The balance of wallet %s is %s coins.[TX_HASH: %s]",
-			coin.String(), msg.WalletFrom, msg.WalletTo, msg.WalletFrom, oldBalanceWalletFrom.String(), tx.TxHash),
-		}
+		walletFrom[0].Balance = oldBalanceWalletFrom
+
+		//return errs.Internal{Cause: fmt.Sprintf(
+		//	"failed to transfer %s coins from wallet %s to wallet %s: insufficient funds. "+
+		//		"The balance of wallet %s is %s coins.[TX_HASH: %s]",
+		//	coin.String(), msg.WalletFrom, msg.WalletTo, msg.WalletFrom, oldBalanceWalletFrom.String(), tx.TxHash),
+		//}
 	}
 
 	if err = m.walletsRepo.UpdateWallets(walletFrom...); err != nil {
