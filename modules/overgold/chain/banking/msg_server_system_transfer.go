@@ -40,30 +40,17 @@ func (m *Module) handleMsgSystemTransfer(tx *juno.Tx, index int, msg *types.MsgS
 
 	coin := sdk.NewCoin(msg.Asset, sdk.NewIntFromUint64(msg.Amount))
 
-	var hasNeg bool
-
-	oldBalanceWalletFrom := walletFrom[0].Balance
-	walletFrom[0].Balance, hasNeg = walletFrom[0].Balance.SafeSub(sdk.NewCoins(coin))
-	if hasNeg {
-		walletFrom[0].Balance = oldBalanceWalletFrom
-
-		//return errs.Internal{Cause: fmt.Sprintf(
-		//	"failed to transfer %s coins from wallet %s to wallet %s: insufficient funds. "+
-		//		"The balance of wallet %s is %s coins.[TX_HASH: %s]",
-		//	coin.String(), msg.WalletFrom, msg.WalletTo, msg.WalletFrom, oldBalanceWalletFrom.String(), tx.TxHash),
-		//}
-	}
-
-	if err = m.walletsRepo.UpdateWallets(walletFrom...); err != nil {
+	walletFrom[0].Balance = walletFrom[0].Balance.Sub(sdk.NewCoins(coin))
+	if err := m.walletsRepo.UpdateWallets(walletFrom...); err != nil {
 		return err
 	}
 
 	walletTo[0].Balance = walletTo[0].Balance.Add(coin)
-	if err = m.walletsRepo.UpdateWallets(walletTo...); err != nil {
+	if err := m.walletsRepo.UpdateWallets(walletTo...); err != nil {
 		return err
 	}
 
-	if err = m.bankingRepo.SaveSystemTransfers(transfer); err != nil {
+	if err := m.bankingRepo.SaveSystemTransfers(transfer); err != nil {
 		return err
 	}
 

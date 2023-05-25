@@ -61,7 +61,7 @@ func (m *Module) saveProposals(slice govtypes.Proposals) error {
 			proposal.DepositEndTime,
 			proposal.VotingStartTime,
 			proposal.VotingEndTime,
-			"ovg19wappvgs0ghj50qdgagfl42yldaehk3xldapgv",
+			"",
 		)
 
 		tallyResults[index] = types.NewTallyResult(
