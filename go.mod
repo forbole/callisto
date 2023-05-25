@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	cosmossdk.io/math v1.0.0-rc.0
-	github.com/MonCatCat/humans v0.2.3-0.20230523033406-578f4a6dd2e2 // branch bdjuno-v0.2.2
+	github.com/MonCatCat/humans v1.0.1-0.20230525075000-24685564a008 // branch bdjuno-v1.0.0
 	github.com/cometbft/cometbft v0.37.1
 	github.com/cosmos/cosmos-sdk v0.46.11
 	github.com/forbole/juno/v4 v4.1.1-0.20230503093602-557aa8d187e0

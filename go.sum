@@ -200,8 +200,8 @@ github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym
 github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d h1:nalkkPQcITbvhmL4+C4cKA87NW0tfm3Kl9VXRoPywFg=
 github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d/go.mod h1:URdX5+vg25ts3aCh8H5IFZybJYKWhJHYMTnf+ULtoC4=
 github.com/DataDog/datadog-go v3.2.0+incompatible/go.mod h1:LButxg5PwREeZtORoXG3tL4fMGNddJ+vMq1mwgfaqoQ=
-github.com/MonCatCat/humans v0.2.3-0.20230523033406-578f4a6dd2e2 h1:7s9RIaIMZEN+ViFVPVG8LKZZhAFxIXU3LjJtURiiwd0=
-github.com/MonCatCat/humans v0.2.3-0.20230523033406-578f4a6dd2e2/go.mod h1:O7IbvSSS1DUWrIqIFarEGE+1yfOMm+ORkx4NrJVAink=
+github.com/MonCatCat/humans v1.0.1-0.20230525075000-24685564a008 h1:CIRwvmX5/gqmYN2zQ08RUbjjpyacTIONMcn4a31cZOc=
+github.com/MonCatCat/humans v1.0.1-0.20230525075000-24685564a008/go.mod h1:O7IbvSSS1DUWrIqIFarEGE+1yfOMm+ORkx4NrJVAink=
 github.com/OneOfOne/xxhash v1.2.2 h1:KMrpdQIwFcEqXDklaen+P1axHaj9BSKzvpUUfnHldSE=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6 h1:fLjPD/aNc3UIOA6tDi6QXUemppXK3P9BI7mr2hd6gx8=
