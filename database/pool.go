@@ -52,19 +52,19 @@ VALUES `
 			pool.StartKey,
 			pool.CurrentKey,
 			pool.CurrentSummary,
-			pool.CurrentIndex,
-			pool.TotalBundles,
-			pool.UploadInterval,
-			pool.OperatingCost,
-			pool.MinDelegation,
-			pool.MaxBundleSize,
+			fmt.Sprint(pool.CurrentIndex),
+			fmt.Sprint(pool.TotalBundles),
+			fmt.Sprint(pool.UploadInterval),
+			fmt.Sprint(pool.OperatingCost),
+			fmt.Sprint(pool.MinDelegation),
+			fmt.Sprint(pool.MaxBundleSize),
 			pool.Disabled,
 			string(fundersBz),
-			pool.TotalFunds,
+			fmt.Sprint(pool.TotalFunds),
 			string(protocolBz),
 			string(upgradePlanBz),
-			pool.CurrentStorageProviderId,
-			pool.CurrentCompressionId,
+			fmt.Sprint(pool.CurrentStorageProviderId),
+			fmt.Sprint(pool.CurrentCompressionId),
 			pool.Height,
 		)
 	}
@@ -91,7 +91,7 @@ ON CONFLICT (id) DO UPDATE
 		protocol = excluded.protocol,
 		upgrade_plan = excluded.upgrade_plan,
 		current_storage_provider_id = excluded.current_storage_provider_id,
-		current_compression_id = current_compression_id.tombstoned,
+		current_compression_id = excluded.current_compression_id,
 		height = excluded.height
 WHERE pool.height <= excluded.height`
 
