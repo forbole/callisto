@@ -116,11 +116,11 @@ func (m *Module) handleParamChangeProposal(height int64, paramChangeProposal *pr
 				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", minttypes.ModuleName, err)
 			}
 
-			// // Update the inflation
-			// err = m.mintModule.UpdateInflation()
-			// if err != nil {
-			// 	return fmt.Errorf("error while updating inflation with ParamChangeProposal: %s", err)
-			// }
+			// Update the inflation
+			err = m.mintModule.UpdateInflation()
+			if err != nil {
+				return fmt.Errorf("error while updating inflation with ParamChangeProposal: %s", err)
+			}
 		case slashingtypes.ModuleName:
 			err = m.slashingModule.UpdateParams(height)
 			if err != nil {
