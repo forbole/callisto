@@ -4,18 +4,16 @@ import (
 	parse "github.com/forbole/juno/v4/cmd/parse/types"
 	"github.com/spf13/cobra"
 
-	parseblocks "github.com/forbole/juno/v4/cmd/parse/blocks"
-
-	parsegenesis "github.com/forbole/juno/v4/cmd/parse/genesis"
-
 	parseauth "github.com/forbole/bdjuno/v4/cmd/parse/auth"
 	parsebank "github.com/forbole/bdjuno/v4/cmd/parse/bank"
 	parsedistribution "github.com/forbole/bdjuno/v4/cmd/parse/distribution"
 	parsefeegrant "github.com/forbole/bdjuno/v4/cmd/parse/feegrant"
 	parsegov "github.com/forbole/bdjuno/v4/cmd/parse/gov"
-	// parsemint "github.com/forbole/bdjuno/v4/cmd/parse/mint"
+	parsemint "github.com/forbole/bdjuno/v4/cmd/parse/mint"
 	parsepricefeed "github.com/forbole/bdjuno/v4/cmd/parse/pricefeed"
 	parsestaking "github.com/forbole/bdjuno/v4/cmd/parse/staking"
+	parseblocks "github.com/forbole/juno/v4/cmd/parse/blocks"
+	parsegenesis "github.com/forbole/juno/v4/cmd/parse/genesis"
 	parsetransaction "github.com/forbole/juno/v4/cmd/parse/transactions"
 )
 
@@ -35,7 +33,7 @@ func NewParseCmd(parseCfg *parse.Config) *cobra.Command {
 		parsefeegrant.NewFeegrantCmd(parseCfg),
 		parsegenesis.NewGenesisCmd(parseCfg),
 		parsegov.NewGovCmd(parseCfg),
-		// parsemint.NewMintCmd(parseCfg),
+		parsemint.NewMintCmd(parseCfg),
 		parsepricefeed.NewPricefeedCmd(parseCfg),
 		parsestaking.NewStakingCmd(parseCfg),
 		parsetransaction.NewTransactionsCmd(parseCfg),
