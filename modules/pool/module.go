@@ -9,9 +9,10 @@ import (
 )
 
 var (
-	_ modules.Module        = &Module{}
-	_ modules.GenesisModule = &Module{}
-	_ modules.MessageModule = &Module{}
+	_ modules.Module                   = &Module{}
+	_ modules.GenesisModule            = &Module{}
+	_ modules.MessageModule            = &Module{}
+	_ modules.PeriodicOperationsModule = &Module{}
 )
 
 // Module represent database/pool module
