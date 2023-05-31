@@ -25,13 +25,28 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	var pools []types.PoolList
 	for _, pool := range genState.PoolList {
 		pools = append(pools, types.NewPoolList(
-			pool.Id, pool.Name, pool.Runtime, pool.Logo, pool.Config,
-			pool.StartKey, pool.CurrentKey, pool.CurrentSummary, pool.CurrentIndex,
-			pool.TotalBundles, pool.UploadInterval, pool.OperatingCost,
-			pool.MinDelegation, pool.MaxBundleSize, pool.Disabled,
-			pool.Funders, pool.TotalFunds, pool.Protocol,
-			pool.UpgradePlan, pool.CurrentStorageProviderId,
-			pool.CurrentCompressionId, doc.InitialHeight,
+			pool.Id,
+			pool.Name,
+			pool.Runtime,
+			pool.Logo,
+			pool.Config,
+			pool.StartKey,
+			pool.CurrentKey,
+			pool.CurrentSummary,
+			pool.CurrentIndex,
+			pool.TotalBundles,
+			pool.UploadInterval,
+			pool.OperatingCost,
+			pool.MinDelegation,
+			pool.MaxBundleSize,
+			pool.Disabled,
+			pool.Funders,
+			pool.TotalFunds,
+			pool.Protocol,
+			pool.UpgradePlan,
+			pool.CurrentStorageProviderId,
+			pool.CurrentCompressionId,
+			doc.InitialHeight,
 		))
 	}
 
