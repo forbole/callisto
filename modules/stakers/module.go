@@ -11,6 +11,7 @@ import (
 var (
 	_ modules.Module        = &Module{}
 	_ modules.GenesisModule = &Module{}
+	_ modules.BlockModule   = &Module{}
 	_ modules.MessageModule = &Module{}
 )
 

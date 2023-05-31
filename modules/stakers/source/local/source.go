@@ -3,8 +3,10 @@ package local
 // import (
 // 	"fmt"
 
-// 	sdk "github.com/cosmos/cosmos-sdk/types"
+// 	stakersquerytypes "github.com/KYVENetwork/chain/x/query/types"
 // 	stakerstypes "github.com/KYVENetwork/chain/x/stakers/types"
+// 	sdk "github.com/cosmos/cosmos-sdk/types"
+// 	"github.com/cosmos/cosmos-sdk/types/query"
 // 	"github.com/forbole/juno/v4/node/local"
 
 // 	stakerssource "github.com/forbole/bdjuno/v4/modules/stakers/source"
@@ -17,14 +19,16 @@ package local
 // // Source implements stakerssource.Source using a local node
 // type Source struct {
 // 	*local.Source
-// 	querier stakerstypes.QueryServer
+// 	querier        stakerstypes.QueryServer
+// 	stakersQuerier stakersquerytypes.QueryStakersClient
 // }
 
 // // NewSource returns a new Source instace
-// func NewSource(source *local.Source, querier stakerstypes.QueryServer) *Source {
+// func NewSource(source *local.Source, querier stakerstypes.QueryServer, stakersQuerier stakersquerytypes.QueryStakersClient) *Source {
 // 	return &Source{
 // 		Source:  source,
 // 		querier: querier,
+//		stakersQuerier: stakersQuerier,
 // 	}
 // }
 
@@ -41,4 +45,36 @@ package local
 // 	}
 
 // 	return res.Params, nil
+// }
+
+// // Stakers implements stakerssource.Source
+// func (s Source) Stakers(height int64) ([]stakersquerytypes.FullStaker, error) {
+// 	ctx, err := s.LoadHeight(height)
+// 	if err != nil {
+// 		return nil, fmt.Errorf("error while loading height: %s", err)
+// 	}
+
+// 	var stakers []stakersquerytypes.FullStaker
+// 	var nextKey []byte
+// 	var stop = false
+// 	for !stop {
+// 		res, err := s.stakersQuerier.Stakers(
+// 			sdk.WrapSDKContext(ctx),
+// 			&stakersquerytypes.QueryStakersRequest{
+// 				Pagination: &query.PageRequest{
+// 					Key:   nextKey,
+// 					Limit: 100, // Query 100 stakers at time
+// 				},
+// 			},
+// 		)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+
+// 		nextKey = res.Pagination.NextKey
+// 		stop = len(res.Pagination.NextKey) == 0
+// 		stakers = append(stakers, res.Stakers...)
+// 	}
+
+// 	return stakers, nil
 // }
