@@ -32,6 +32,8 @@
 - ([\#462](https://github.com/forbole/bdjuno/pull/462)) Updated Juno to `v3.4.0`
 - ([\#542](https://github.com/forbole/bdjuno/pull/542)) Updated Juno to `v4.1.0`,  BDJuno to `v4` and Golang version to `1.19`
 
+#### Mint module
+- ([\#589](https://github.com/forbole/bdjuno/pull/589)) Update inflation query to call API endpoint
 
 ## Version v3.2.0
 ### Changes
