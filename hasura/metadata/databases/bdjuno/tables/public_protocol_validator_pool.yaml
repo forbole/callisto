@@ -2,6 +2,9 @@ table:
   name: protocol_validator_pool
   schema: public
 object_relationships:
+- name: stakers_pool
+  using:
+    foreign_key_constraint_on: 'pool'
 - name: protocol_validator
   using:
     manual_configuration:

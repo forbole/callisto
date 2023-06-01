@@ -1,6 +1,14 @@
 table:
   name: pool
   schema: public
+array_relationships:
+- name: protocol_validator_pools
+  using:
+    foreign_key_constraint_on:
+      column: pool
+      table:
+        name: protocol_validator_pool
+        schema: public
 select_permissions:
 - permission:
     allow_aggregations: false
