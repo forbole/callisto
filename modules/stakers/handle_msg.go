@@ -18,6 +18,11 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	switch cosmosMsg := msg.(type) {
 	case *stakerstypes.MsgUpdateParams:
 		return m.handleMsgUpdateParams(tx, cosmosMsg)
+	case *stakerstypes.MsgUpdateCommission:
+		return m.handleMsgUpdateCommission(tx)
+	case *stakerstypes.MsgUpdateMetadata:
+		return m.handleMsgUpdateMetadata(tx)
+
 	}
 
 	return nil
@@ -32,4 +37,26 @@ func (m *Module) handleMsgUpdateParams(tx *juno.Tx, msg *stakerstypes.MsgUpdateP
 
 	return m.db.SaveStakersParams(
 		types.NewStakersParams(params, tx.Height))
+}
+
+// handleMsgUpdateCommission allows to properly handle a MsgUpdateCommission
+func (m *Module) handleMsgUpdateCommission(tx *juno.Tx) error {
+	// refresh commission for all protocol validators
+	err := m.UpdateProtocolValidatorsCommission(tx.Height)
+	if err != nil {
+		return fmt.Errorf("error while updating protocol validators commission: %s", err)
+	}
+
+	return nil
+}
+
+// handleMsgUpdateMetadata allows to properly handle a MsgUpdateMetadata
+func (m *Module) handleMsgUpdateMetadata(tx *juno.Tx) error {
+	// refresh description for all protocol validators
+	err := m.UpdateProtocolValidatorsDescription(tx.Height)
+	if err != nil {
+		return fmt.Errorf("error while updating protocol validators description: %s", err)
+	}
+
+	return nil
 }
