@@ -13,7 +13,7 @@
 #### Staking Module
 - ([\#443](https://github.com/forbole/bdjuno/pull/443)) Remove tombstone status from staking module(already stored in slashing module)
 - ([\#455](https://github.com/forbole/bdjuno/pull/455)) Added `unbonding_tokens` and `staked_not_bonded_tokens` values to staking pool table
-- ([\#536](https://github.com/forbole/bdjuno/pull/536) Fix `PoolSnapshot` tokens type from  `sdk.Int` to `sdkmath.Int`
+- ([\#536](https://github.com/forbole/bdjuno/pull/536)) Fix `PoolSnapshot` tokens type from  `sdk.Int` to `sdkmath.Int`
 
 #### Gov Module
 - ([\#461](https://github.com/forbole/bdjuno/pull/461)) Parse `x/gov` genesis with `genesisDoc.InitialHeight` instead of the hard-coded height 1
@@ -21,6 +21,9 @@
 - ([\#489](https://github.com/forbole/bdjuno/pull/489)) Remove block height foreign key from proposal_vote and proposal_deposit tables and add column timestamp
 - ([\#499](https://github.com/forbole/bdjuno/pull/499)) Check if proposal has passed voting end time before marking it invalid
 - ([\#523](https://github.com/forbole/bdjuno/pull/523)) Update proposal snapshots handling on block
+
+#### Mint module
+- ([\#590](https://github.com/forbole/bdjuno/pull/590)) Update inflation query to call API endpoint
 
 #### Daily refetch
 - ([\#454](https://github.com/forbole/bdjuno/pull/454)) Added `daily refetch` module to refetch missing blocks every day
