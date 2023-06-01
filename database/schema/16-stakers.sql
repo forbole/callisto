@@ -20,7 +20,7 @@ CREATE TABLE protocol_validator_commission
 (
     address                     TEXT    NOT NULL REFERENCES protocol_validator (address) PRIMARY KEY,
     commission                  TEXT    NOT NULL,
-    pending_commission_change   TEXT    NOT NULL DEFAULT '{}'::JSONB,
+    pending_commission_change   JSONB   NOT NULL DEFAULT '{}'::JSONB,
     self_delegation             BIGINT  NOT NULL,
     height                      BIGINT  NOT NULL
 );
