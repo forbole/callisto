@@ -44,7 +44,7 @@ VALUES `
 		}
 
 		args = append(args,
-			pool.Id,
+			pool.ID,
 			pool.Name,
 			pool.Runtime,
 			pool.Logo,
@@ -63,8 +63,8 @@ VALUES `
 			fmt.Sprint(pool.TotalFunds),
 			string(protocolBz),
 			string(upgradePlanBz),
-			fmt.Sprint(pool.CurrentStorageProviderId),
-			fmt.Sprint(pool.CurrentCompressionId),
+			fmt.Sprint(pool.CurrentStorageProviderID),
+			fmt.Sprint(pool.CurrentCompressionID),
 			pool.Height,
 		)
 	}

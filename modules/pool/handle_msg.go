@@ -14,16 +14,17 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return nil
 	}
 
-	switch cosmosMsg := msg.(type) {
+	switch msg.(type) {
 	case *pooltypes.MsgCreatePool:
-		return m.handleUpdatePools(tx, cosmosMsg)
+		return m.handleUpdatePools(tx)
+	default:
+		return nil
 	}
 
-	return nil
 }
 
 // handleUpdatePools allows to properly handle a MsgCreatePool
-func (m *Module) handleUpdatePools(tx *juno.Tx, msg *pooltypes.MsgCreatePool) error {
+func (m *Module) handleUpdatePools(tx *juno.Tx) error {
 	// refresh info for all pools
 	err := m.UpdatePools(tx.Height)
 	if err != nil {

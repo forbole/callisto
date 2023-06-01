@@ -48,7 +48,7 @@ INSERT INTO protocol_validator (address, height) VALUES `
 
 		protocolValidatorQuery += fmt.Sprintf("($%d,$%d),", pv+1, pv+2)
 		protocolValidatorParams = append(protocolValidatorParams,
-			string(validator.Address), validator.Height)
+			validator.Address, validator.Height)
 
 	}
 

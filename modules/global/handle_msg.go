@@ -15,16 +15,17 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return nil
 	}
 
-	switch cosmosMsg := msg.(type) {
+	switch msg.(type) {
 	case *globaltypes.MsgUpdateParams:
-		return m.handleMsgUpdateParams(tx, cosmosMsg)
+		return m.handleMsgUpdateParams(tx)
+	default:
+		return nil
 	}
 
-	return nil
 }
 
 // handleMsgUpdateParams allows to properly handle a MsgUpdateParams
-func (m *Module) handleMsgUpdateParams(tx *juno.Tx, msg *globaltypes.MsgUpdateParams) error {
+func (m *Module) handleMsgUpdateParams(tx *juno.Tx) error {
 	params, err := m.source.Params(tx.Height)
 	if err != nil {
 		return fmt.Errorf("error while getting global params: %s", err)

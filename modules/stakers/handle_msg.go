@@ -15,9 +15,9 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return nil
 	}
 
-	switch cosmosMsg := msg.(type) {
+	switch msg.(type) {
 	case *stakerstypes.MsgUpdateParams:
-		return m.handleMsgUpdateParams(tx, cosmosMsg)
+		return m.handleMsgUpdateParams(tx)
 	case *stakerstypes.MsgUpdateCommission:
 		return m.handleMsgUpdateCommission(tx)
 	case *stakerstypes.MsgUpdateMetadata:
@@ -29,7 +29,7 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 }
 
 // handleMsgUpdateParams allows to properly handle a MsgUpdateParams
-func (m *Module) handleMsgUpdateParams(tx *juno.Tx, msg *stakerstypes.MsgUpdateParams) error {
+func (m *Module) handleMsgUpdateParams(tx *juno.Tx) error {
 	params, err := m.source.Params(tx.Height)
 	if err != nil {
 		return fmt.Errorf("error while getting stakers params: %s", err)

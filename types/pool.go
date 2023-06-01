@@ -6,7 +6,7 @@ import (
 
 // PoolList represents the x/pool list
 type PoolList struct {
-	Id                       uint64
+	ID                       uint64
 	Name                     string
 	Runtime                  string
 	Logo                     string
@@ -25,8 +25,8 @@ type PoolList struct {
 	TotalFunds               uint64
 	Protocol                 *pooltypes.Protocol
 	UpgradePlan              *pooltypes.UpgradePlan
-	CurrentStorageProviderId uint32
-	CurrentCompressionId     uint32
+	CurrentStorageProviderID uint32
+	CurrentCompressionID     uint32
 	Height                   int64
 }
 
@@ -51,11 +51,11 @@ func NewPoolList(
 	totalFunds uint64,
 	protocol *pooltypes.Protocol,
 	upgradePlan *pooltypes.UpgradePlan,
-	currentStorageProviderId uint32,
-	currentCompressionId uint32,
+	currentStorageProviderID uint32,
+	currentCompressionID uint32,
 	height int64) PoolList {
 	return PoolList{
-		Id:                       id,
+		ID:                       id,
 		Name:                     name,
 		Runtime:                  runtime,
 		Logo:                     logo,
@@ -74,8 +74,8 @@ func NewPoolList(
 		TotalFunds:               totalFunds,
 		Protocol:                 protocol,
 		UpgradePlan:              upgradePlan,
-		CurrentStorageProviderId: currentStorageProviderId,
-		CurrentCompressionId:     currentCompressionId,
+		CurrentStorageProviderID: currentStorageProviderID,
+		CurrentCompressionID:     currentCompressionID,
 		Height:                   height,
 	}
 }
