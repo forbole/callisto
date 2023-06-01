@@ -1,0 +1,57 @@
+table:
+  name: protocol_validator
+  schema: public
+object_relationships:
+- name: account
+  using:
+    manual_configuration:
+      column_mapping:
+        address: address
+      insertion_order: null
+      remote_table:
+        name: account
+        schema: public
+- name: protocol_validator_commission
+  using:
+    manual_configuration:
+      column_mapping:
+        address: address
+      insertion_order: null
+      remote_table:
+        name: protocol_validator_commission
+        schema: public
+- name: protocol_validator_delegation
+  using:
+    manual_configuration:
+      column_mapping:
+        address: address
+      insertion_order: null
+      remote_table:
+        name: protocol_validator_delegation
+        schema: public
+- name: protocol_validator_description
+  using:
+    manual_configuration:
+      column_mapping:
+        address: address
+      insertion_order: null
+      remote_table:
+        name: protocol_validator_description
+        schema: public
+array_relationships:
+- name: protocol_validator_pool
+  using:
+    foreign_key_constraint_on:
+      column: address
+      table:
+        name: protocol_validator_pool
+        schema: public
+select_permissions:
+- permission:
+    allow_aggregations: false
+    columns:
+    - address
+    - height
+    filter: {}
+    limit: 1
+  role: anonymous

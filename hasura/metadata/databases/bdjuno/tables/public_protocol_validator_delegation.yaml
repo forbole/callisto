@@ -1,0 +1,25 @@
+table:
+  name: protocol_validator_delegation
+  schema: public
+object_relationships:
+- name: protocol_validator
+  using:
+    manual_configuration:
+      column_mapping:
+        address: address
+      insertion_order: null
+      remote_table:
+        name: protocol_validator
+        schema: public
+select_permissions:
+- permission:
+    allow_aggregations: false
+    columns:
+    - address
+    - self_delegation
+    - total_delegation
+    - delegator_count
+    - height
+    filter: {}
+    limit: 1
+  role: anonymous
