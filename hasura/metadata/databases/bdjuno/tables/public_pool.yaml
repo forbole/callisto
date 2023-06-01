@@ -1,0 +1,32 @@
+table:
+  name: pool
+  schema: public
+select_permissions:
+- permission:
+    allow_aggregations: false
+    columns:
+    - id
+    - name
+    - runtime
+    - logo
+    - config
+    - start_key
+    - current_key
+    - current_summary
+    - current_index
+    - total_bundles
+    - upload_interval
+    - operating_cost
+    - min_delegation
+    - max_bundle_size
+    - disabled
+    - funders
+    - total_funds
+    - protocol
+    - upgrade_plan
+    - current_storage_provider_id
+    - current_compression_id
+    - height
+    filter: {}
+    limit: 1
+  role: anonymous

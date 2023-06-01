@@ -1,0 +1,28 @@
+table:
+  name: protocol_validator_description
+  schema: public
+object_relationships:
+- name: protocol_validator
+  using:
+    manual_configuration:
+      column_mapping:
+        address: address
+      insertion_order: null
+      remote_table:
+        name: protocol_validator
+        schema: public
+select_permissions:
+- permission:
+    allow_aggregations: false
+    columns:
+    - address
+    - moniker
+    - identity
+    - avatar_url
+    - website
+    - security_contact
+    - details
+    - height
+    filter: {}
+    limit: 1
+  role: anonymous
