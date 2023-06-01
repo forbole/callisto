@@ -17,6 +17,7 @@ import (
 	// parsemint "github.com/forbole/bdjuno/v4/cmd/parse/mint"
 	parsepool "github.com/forbole/bdjuno/v4/cmd/parse/pool"
 	parsepricefeed "github.com/forbole/bdjuno/v4/cmd/parse/pricefeed"
+	parsestakers "github.com/forbole/bdjuno/v4/cmd/parse/stakers"
 	parsestaking "github.com/forbole/bdjuno/v4/cmd/parse/staking"
 	parsetransaction "github.com/forbole/juno/v4/cmd/parse/transactions"
 )
@@ -41,6 +42,7 @@ func NewParseCmd(parseCfg *parse.Config) *cobra.Command {
 		parsepool.NewPoolCmd(parseCfg),
 		parsepricefeed.NewPricefeedCmd(parseCfg),
 		parsestaking.NewStakingCmd(parseCfg),
+		parsestakers.NewStakersCmd(parseCfg),
 		parsetransaction.NewTransactionsCmd(parseCfg),
 	)
 
