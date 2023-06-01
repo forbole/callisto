@@ -2,6 +2,10 @@ package modules
 
 import (
 	"github.com/forbole/bdjuno/v4/modules/actions"
+	"github.com/forbole/bdjuno/v4/modules/bundles"
+	"github.com/forbole/bdjuno/v4/modules/global"
+	"github.com/forbole/bdjuno/v4/modules/pool"
+	"github.com/forbole/bdjuno/v4/modules/stakers"
 	"github.com/forbole/bdjuno/v4/modules/types"
 
 	"github.com/forbole/juno/v4/modules/pruning"
@@ -76,14 +80,18 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	actionsModule := actions.NewModule(ctx.JunoConfig, ctx.EncodingConfig)
 	authModule := auth.NewModule(r.parser, cdc, db)
 	bankModule := bank.NewModule(r.parser, sources.BankSource, cdc, db)
+	bundlesModule := bundles.NewModule(sources.BundlesSource, cdc, db)
 	consensusModule := consensus.NewModule(db)
 	dailyRefetchModule := dailyrefetch.NewModule(ctx.Proxy, db)
 	distrModule := distribution.NewModule(sources.DistrSource, cdc, db)
 	feegrantModule := feegrant.NewModule(cdc, db)
+	globalModule := global.NewModule(sources.GlobalSource, cdc, db)
 	mintModule := mint.NewModule(sources.MintSource, cdc, db)
+	poolModule := pool.NewModule(sources.PoolSource, cdc, db)
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
 	stakingModule := staking.NewModule(sources.StakingSource, cdc, db)
 	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakingModule, cdc, db)
+	stakersModule := stakers.NewModule(sources.StakersSource, cdc, db)
 	upgradeModule := upgrade.NewModule(db, stakingModule)
 
 	return []jmodules.Module{
@@ -94,16 +102,20 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		actionsModule,
 		authModule,
 		bankModule,
+		bundlesModule,
 		consensusModule,
 		dailyRefetchModule,
 		distrModule,
 		feegrantModule,
+		globalModule,
 		govModule,
 		mintModule,
 		modules.NewModule(ctx.JunoConfig.Chain, db),
+		poolModule,
 		pricefeed.NewModule(ctx.JunoConfig, cdc, db),
 		slashingModule,
 		stakingModule,
+		stakersModule,
 		upgradeModule,
 	}
 }
