@@ -3,11 +3,11 @@ package consensus
 import (
 	"fmt"
 
-	"github.com/forbole/juno/v4/types"
+	"github.com/forbole/juno/v5/types"
 
 	"github.com/rs/zerolog/log"
 
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 )
 
 // HandleBlock implements modules.Module
