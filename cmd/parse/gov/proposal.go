@@ -20,9 +20,9 @@ import (
 	"github.com/forbole/bdjuno/v4/modules/staking"
 
 	"github.com/forbole/bdjuno/v4/utils"
-	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
-	"github.com/forbole/juno/v4/parser"
-	"github.com/forbole/juno/v4/types/config"
+	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
+	"github.com/forbole/juno/v5/parser"
+	"github.com/forbole/juno/v5/types/config"
 	"github.com/spf13/cobra"
 )
 
@@ -51,13 +51,13 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			db := database.Cast(parseCtx.Database)
 
 			// Build expected modules of gov modules for handleParamChangeProposal
-			distrModule := distribution.NewModule(sources.DistrSource, parseCtx.EncodingConfig.Marshaler, db)
-			mintModule := mint.NewModule(sources.MintSource, parseCtx.EncodingConfig.Marshaler, db)
-			slashingModule := slashing.NewModule(sources.SlashingSource, parseCtx.EncodingConfig.Marshaler, db)
-			stakingModule := staking.NewModule(sources.StakingSource, parseCtx.EncodingConfig.Marshaler, db)
-			profilesModule := profiles.NewModule(sources.ProfilesSource, parseCtx.EncodingConfig.Marshaler, db)
+			distrModule := distribution.NewModule(sources.DistrSource, parseCtx.EncodingConfig.Codec, db)
+			mintModule := mint.NewModule(sources.MintSource, parseCtx.EncodingConfig.Codec, db)
+			slashingModule := slashing.NewModule(sources.SlashingSource, parseCtx.EncodingConfig.Codec, db)
+			stakingModule := staking.NewModule(sources.StakingSource, parseCtx.EncodingConfig.Codec, db)
+			profilesModule := profiles.NewModule(sources.ProfilesSource, parseCtx.EncodingConfig.Codec, db)
 			// Build the gov module
-			govModule := gov.NewModule(sources.GovSource, nil, distrModule, mintModule, profilesModule, slashingModule, stakingModule, parseCtx.EncodingConfig.Marshaler, db)
+			govModule := gov.NewModule(sources.GovSource, nil, distrModule, mintModule, profilesModule, slashingModule, stakingModule, parseCtx.EncodingConfig.Codec, db)
 
 			err = refreshProposalDetails(parseCtx, proposalID, govModule)
 			if err != nil {

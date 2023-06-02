@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
-	"github.com/forbole/juno/v4/node/local"
+	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
+	"github.com/forbole/juno/v5/node/local"
 
 	profilessource "github.com/forbole/bdjuno/v4/modules/profiles/source"
 )
