@@ -5,16 +5,17 @@ import (
 	"strings"
 	"time"
 
+	codec "github.com/cosmos/cosmos-sdk/codec"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
+	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
 
 	"google.golang.org/grpc/codes"
 
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 
 	"github.com/forbole/bdjuno/v4/types"
 
@@ -289,7 +290,8 @@ func (m *Module) handlePassedProposal(proposal govtypesv1beta1.Proposal, height 
 
 	// Unpack proposal
 	var content govtypesv1beta1.Content
-	err := m.db.EncodingConfig.Codec.UnpackAny(proposal.Content, &content)
+	var protoCodec codec.ProtoCodec
+	err := protoCodec.UnpackAny(proposal.Content, &content)
 	if err != nil {
 		return fmt.Errorf("error while handling ParamChangeProposal: %s", err)
 	}

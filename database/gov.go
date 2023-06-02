@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	"github.com/gogo/protobuf/proto"
@@ -163,8 +164,9 @@ INSERT INTO proposal(
 		if err != nil {
 			return fmt.Errorf("error while wrapping proposal proto content: %s", err)
 		}
-
-		contentBz, err := db.EncodingConfig.Codec.MarshalJSON(anyContent)
+		
+		var protoCodec codec.ProtoCodec
+		contentBz, err := protoCodec.MarshalJSON(anyContent)
 		if err != nil {
 			return fmt.Errorf("error while marshaling proposal content: %s", err)
 		}
@@ -217,13 +219,14 @@ func (db *Db) GetProposal(id uint64) (types.Proposal, error) {
 	row := rows[0]
 
 	var contentAny codectypes.Any
-	err = db.EncodingConfig.Codec.UnmarshalJSON([]byte(row.Content), &contentAny)
+	var protoCodec codec.ProtoCodec
+	err = protoCodec.UnmarshalJSON([]byte(row.Content), &contentAny)
 	if err != nil {
 		return types.Proposal{}, err
 	}
 
 	var content govtypesv1beta1.Content
-	err = db.EncodingConfig.Codec.UnpackAny(&contentAny, &content)
+	err = protoCodec.UnpackAny(&contentAny, &content)
 	if err != nil {
 		return types.Proposal{}, err
 	}
