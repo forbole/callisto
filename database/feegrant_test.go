@@ -1,6 +1,8 @@
 package database_test
 
 import (
+	codec "github.com/cosmos/cosmos-sdk/codec"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
 
@@ -37,7 +39,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveFeeGrantAllowance() {
 	suite.Require().Equal(rows[0].Height, int64(121622))
 
 	var stored feegranttypes.FeeAllowanceI
-	err = suite.database.EncodingConfig.Codec.UnmarshalInterfaceJSON([]byte(rows[0].Allowance), &stored)
+	var protoCodec codec.ProtoCodec
+	err = protoCodec.UnmarshalInterfaceJSON([]byte(rows[0].Allowance), &stored)
 	suite.Require().NoError(err)
 	suite.Require().Equal(allowance, stored)
 }

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	codec "github.com/cosmos/cosmos-sdk/codec"
+
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	"github.com/gogo/protobuf/proto"
@@ -20,9 +22,11 @@ import (
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveGovParams() {
-	votingParams := govtypesv1.NewVotingParams(time.Second * 10)
-	tallyParams := govtypesv1.NewTallyParams(sdk.NewDec(10), sdk.NewDec(10), sdk.NewDec(10))
-	depositParams := govtypesv1.NewDepositParams(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(10))), time.Minute*5)
+	votingPeriod := time.Duration(int64(300000))
+	maxDepositPeriod := time.Duration(int64(300000000000))
+	votingParams := govtypesv1.NewVotingParams(&votingPeriod)
+	tallyParams := govtypesv1.NewTallyParams("10", "10", "10")
+	depositParams := govtypesv1.NewDepositParams(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(10))), &maxDepositPeriod)
 	original := types.NewGovParams(types.NewVotingParams(&votingParams), types.NewDepositParam(&depositParams), types.NewTallyParams(&tallyParams), 10)
 
 	err := suite.database.SaveGovParams(original)
@@ -34,7 +38,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveGovParams() {
 
 	// ----------------------------------------------------------------------------------------------------------------
 	// Try updating with a lower height
-	depositParams = govtypesv1.NewDepositParams(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(1000))), time.Minute*5)
+	depositParams = govtypesv1.NewDepositParams(sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(1000))), &maxDepositPeriod)
 	updated := types.NewGovParams(types.NewVotingParams(&votingParams), types.NewDepositParam(&depositParams), types.NewTallyParams(&tallyParams), 9)
 
 	err = suite.database.SaveGovParams(updated)
@@ -57,8 +61,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveGovParams() {
 
 	// ----------------------------------------------------------------------------------------------------------------
 	// Try updating with a higher height
-	tallyParams = govtypesv1.NewTallyParams(sdk.NewDec(100), sdk.NewDec(100), sdk.NewDec(100))
-	depositParams = govtypesv1.NewDepositParams(sdk.NewCoins(sdk.NewCoin("udesmos", sdk.NewInt(10000))), time.Minute*5)
+	tallyParams = govtypesv1.NewTallyParams("100", "100", "100")
+	depositParams = govtypesv1.NewDepositParams(sdk.NewCoins(sdk.NewCoin("udesmos", sdk.NewInt(10000))), &maxDepositPeriod)
 	updated = types.NewGovParams(types.NewVotingParams(&votingParams), types.NewDepositParam(&depositParams), types.NewTallyParams(&tallyParams), 11)
 
 	err = suite.database.SaveGovParams(updated)
@@ -105,7 +109,9 @@ func (suite *DbTestSuite) encodeProposalContent(content govtypesv1beta1.Content)
 	anyContent, err := codectypes.NewAnyWithValue(protoContent)
 	suite.Require().NoError(err)
 
-	contentBz, err := suite.database.EncodingConfig.Codec.MarshalJSON(anyContent)
+	var protoCodec codec.ProtoCodec
+	contentBz, err := protoCodec.MarshalJSON(anyContent)
+
 	suite.Require().NoError(err)
 
 	return string(contentBz)
