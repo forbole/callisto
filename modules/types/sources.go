@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cosmos/cosmos-sdk/simapp"
-	"github.com/tendermint/tendermint/libs/log"
+	"github.com/cometbft/cometbft/libs/log"
 
-	"github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/forbole/juno/v4/node/remote"
+	"cosmossdk.io/simapp"
+	"cosmossdk.io/simapp/params"
+
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+	"github.com/forbole/juno/v5/node/remote"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -18,18 +20,19 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/forbole/juno/v4/node/local"
+	"github.com/forbole/juno/v5/node/local"
 
-	nodeconfig "github.com/forbole/juno/v4/node/config"
+	nodeconfig "github.com/forbole/juno/v5/node/config"
 
-	desmosapp "github.com/desmos-labs/desmos/v4/app"
-	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
+	desmosapp "github.com/desmos-labs/desmos/v5/app"
+	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
 
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v4/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"
 	distrsource "github.com/forbole/bdjuno/v4/modules/distribution/source"
-	localdistrsource "github.com/forbole/bdjuno/v4/modules/distribution/source/local"
+
+	// localdistrsource "github.com/forbole/bdjuno/v4/modules/distribution/source/local"
 	remotedistrsource "github.com/forbole/bdjuno/v4/modules/distribution/source/remote"
 	govsource "github.com/forbole/bdjuno/v4/modules/gov/source"
 	localgovsource "github.com/forbole/bdjuno/v4/modules/gov/source/local"
@@ -77,23 +80,23 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 	}
 
 	desmosApp := desmosapp.NewDesmosApp(
-		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
-		cfg.Home, 0, desmosapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
+		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, nil,
+		[]wasmtypes.ProposalType{}, nil,
 	)
 
 	app := simapp.NewSimApp(
-		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
-		cfg.Home, 0, simapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
+		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, nil,
+		nil,
 	)
 
 	sources := &Sources{
-		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
-		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
-		GovSource:      localgovsource.NewSource(source, govtypesv1.QueryServer(app.GovKeeper), nil),
-		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
-		ProfilesSource: localprofilessource.NewSource(source, profilestypes.QueryServer(desmosApp.ProfileKeeper)),
-		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
-		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
+		BankSource: localbanksource.NewSource(source, banktypes.QueryServer(desmosApp.BankKeeper)),
+		// DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(desmosApp.DistrKeeper)),
+		GovSource:      localgovsource.NewSource(source, govtypesv1.QueryServer(desmosApp.GovKeeper), nil),
+		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(desmosApp.MintKeeper)),
+		ProfilesSource: localprofilessource.NewSource(source, profilestypes.QueryServer(desmosApp.ProfilesKeeper)),
+		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(desmosApp.SlashingKeeper)),
+		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: desmosApp.StakingKeeper}),
 	}
 
 	// Mount and initialize the stores
