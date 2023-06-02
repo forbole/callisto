@@ -164,7 +164,7 @@ INSERT INTO proposal(
 		if err != nil {
 			return fmt.Errorf("error while wrapping proposal proto content: %s", err)
 		}
-		
+
 		var protoCodec codec.ProtoCodec
 		contentBz, err := protoCodec.MarshalJSON(anyContent)
 		if err != nil {
