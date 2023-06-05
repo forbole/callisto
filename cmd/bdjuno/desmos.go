@@ -3,14 +3,14 @@ package main
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	poststypes "github.com/desmos-labs/desmos/v4/x/posts/types"
-	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
-	reactionstypes "github.com/desmos-labs/desmos/v4/x/reactions/types"
-	relationshiptypes "github.com/desmos-labs/desmos/v4/x/relationships/types"
-	reportstypes "github.com/desmos-labs/desmos/v4/x/reports/types"
-	subspacestypes "github.com/desmos-labs/desmos/v4/x/subspaces/types"
+	poststypes "github.com/desmos-labs/desmos/v5/x/posts/types"
+	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
+	reactionstypes "github.com/desmos-labs/desmos/v5/x/reactions/types"
+	relationshiptypes "github.com/desmos-labs/desmos/v5/x/relationships/types"
+	reportstypes "github.com/desmos-labs/desmos/v5/x/reports/types"
+	subspacestypes "github.com/desmos-labs/desmos/v5/x/subspaces/types"
 
-	junomessages "github.com/forbole/juno/v4/modules/messages"
+	junomessages "github.com/forbole/juno/v5/modules/messages"
 )
 
 // desmosMessageAddressesParser represents a parser able to get the addresses of the involved

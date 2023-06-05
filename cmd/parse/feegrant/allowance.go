@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"sort"
 
-	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
-	"github.com/forbole/juno/v4/types/config"
+	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
+	"github.com/forbole/juno/v5/types/config"
 
 	"github.com/forbole/bdjuno/v4/modules/feegrant"
 	"github.com/forbole/bdjuno/v4/utils"
@@ -15,7 +15,7 @@ import (
 
 	"github.com/forbole/bdjuno/v4/database"
 
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
 	"github.com/rs/zerolog/log"
@@ -36,7 +36,7 @@ func allowanceCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			db := database.Cast(parseCtx.Database)
 
 			// Build feegrant module
-			feegrantModule := feegrant.NewModule(parseCtx.EncodingConfig.Marshaler, db)
+			feegrantModule := feegrant.NewModule(parseCtx.EncodingConfig.Codec, db)
 
 			// Get the accounts
 			// Collect all the transactions
