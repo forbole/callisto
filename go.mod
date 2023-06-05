@@ -9,7 +9,7 @@ require (
 	github.com/cometbft/cometbft v0.37.1
 	github.com/cosmos/cosmos-sdk v0.47.2
 	github.com/desmos-labs/desmos/v5 v5.0.1
-	github.com/forbole/juno/v5 v5.0.0
+	github.com/forbole/juno/v5 v5.0.1-0.20230605040847-30e4e4de094f
 	github.com/go-co-op/gocron v1.28.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/golangci/golangci-lint v1.52.2
@@ -98,7 +98,7 @@ require (
 	github.com/dgraph-io/badger/v2 v2.2007.4 // indirect
 	github.com/dgraph-io/ristretto v0.1.1 // indirect
 	github.com/dgryski/go-farm v0.0.0-20200201041132-a6ae2369ad13 // indirect
-	github.com/docker/distribution v2.8.1+incompatible // indirect
+	github.com/docker/distribution v2.8.2+incompatible // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/dvsekhvalnov/jose2go v1.5.0 // indirect
 	github.com/esimonov/ifshort v1.0.4 // indirect
@@ -313,17 +313,12 @@ require (
 )
 
 replace (
-	cosmossdk.io/tools/rosetta => cosmossdk.io/tools/rosetta v0.2.1
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
 	github.com/CosmWasm/wasmd => github.com/desmos-labs/wasmd v0.40.0-rc.1-desmos
-	github.com/coinbase/rosetta-sdk-go/types => github.com/coinbase/rosetta-sdk-go/types v1.0.0
 	github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.47.2-desmos
-	github.com/cosmos/rosetta-sdk-go => github.com/cosmos/rosetta-sdk-go v0.10.0
-
+	github.com/cosmos/ledger-cosmos-go => github.com/desmos-labs/ledger-desmos-go v0.12.1-desmos
+	github.com/dgrijalva/jwt-go => github.com/golang-jwt/jwt/v4 v4.4.2
+	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.8.1
 	github.com/gogo/protobuf => github.com/gogo/protobuf v1.3.2
-
-	github.com/gravity-devs/liquidity => github.com/forbole/liquidity v1.5.1-bdjuno
-
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
-
 )
