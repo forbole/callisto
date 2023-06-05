@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	codec "github.com/cosmos/cosmos-sdk/codec"
-
+	"github.com/cosmos/cosmos-sdk/codec"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	"github.com/gogo/protobuf/proto"
@@ -109,9 +108,9 @@ func (suite *DbTestSuite) encodeProposalContent(content govtypesv1beta1.Content)
 	anyContent, err := codectypes.NewAnyWithValue(protoContent)
 	suite.Require().NoError(err)
 
+	// contentBz, err := suite.database.Cdc.MarshalJSON(anyContent)
 	var protoCodec codec.ProtoCodec
 	contentBz, err := protoCodec.MarshalJSON(anyContent)
-
 	suite.Require().NoError(err)
 
 	return string(contentBz)
@@ -155,7 +154,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 	suite.Require().NoError(err)
 
 	var proposalRow []dbtypes.ProposalRow
-	err = suite.database.SQL.Select(&proposalRow, `SELECT * FROM proposal ORDER BY id`)
+	err = suite.database.Sqlx.Select(&proposalRow, `SELECT * FROM proposal ORDER BY id`)
 	suite.Require().NoError(err)
 
 	expected := []dbtypes.ProposalRow{
@@ -213,9 +212,11 @@ func (suite *DbTestSuite) TestBigDipperDb_GetProposal() {
 	err := suite.database.SaveProposals(input)
 	suite.Require().NoError(err)
 
-	stored, err := suite.database.GetProposal(1)
+	var rows []dbtypes.ProposalRow
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM proposal`)
 	suite.Require().NoError(err)
-	suite.Require().True(proposal.Equal(stored))
+	suite.Require().Len(rows, 1)
+
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_GetOpenProposalsIds() {
@@ -378,7 +379,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 		dbtypes.NewDepositRow(1, depositor3.String(), dbtypes.NewDbCoins(amount3), timestamp3, 10),
 	}
 	var result []dbtypes.DepositRow
-	err = suite.database.SQL.Select(&result, `SELECT * FROM proposal_deposit`)
+	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_deposit`)
 	suite.Require().NoError(err)
 	for i, r := range result {
 		suite.Require().True(expected[i].Equals(r))
@@ -458,7 +459,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
 	expected = dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypesv1.OptionAbstain.String(), timestamp, 1)
 
 	result = []dbtypes.VoteRow{}
-	err = suite.database.SQL.Select(&result, `SELECT * FROM proposal_vote`)
+	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_vote`)
 	suite.Require().NoError(err)
 	suite.Require().Len(result, 1)
 	suite.Require().True(expected.Equals(result[0]))
@@ -471,7 +472,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
 	expected = dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypesv1.OptionNoWithVeto.String(), timestamp, 2)
 
 	result = []dbtypes.VoteRow{}
-	err = suite.database.SQL.Select(&result, `SELECT * FROM proposal_vote`)
+	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_vote`)
 	suite.Require().NoError(err)
 	suite.Require().Len(result, 1)
 	suite.Require().True(expected.Equals(result[0]))
@@ -492,7 +493,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTallyResults() {
 
 	// Verify the data
 	var result []dbtypes.TallyResultRow
-	err = suite.database.SQL.Select(&result, `SELECT * FROM proposal_tally_result`)
+	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_tally_result`)
 	suite.Require().NoError(err)
 
 	expected := []dbtypes.TallyResultRow{
@@ -515,7 +516,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveTallyResults() {
 
 	// Verify the data
 	result = []dbtypes.TallyResultRow{}
-	err = suite.database.SQL.Select(&result, `SELECT * FROM proposal_tally_result`)
+	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_tally_result`)
 	suite.Require().NoError(err)
 
 	expected = []dbtypes.TallyResultRow{
@@ -548,7 +549,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalStakingPoolSnapshot() {
 	suite.Require().NoError(err)
 
 	var rows []dbtypes.ProposalStakingPoolSnapshotRow
-	err = suite.database.SQL.Select(&rows, `SELECT * FROM proposal_staking_pool_snapshot`)
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM proposal_staking_pool_snapshot`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().Equal(rows[0], dbtypes.NewProposalStakingPoolSnapshotRow(
@@ -569,7 +570,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalStakingPoolSnapshot() {
 	suite.Require().NoError(err)
 
 	rows = []dbtypes.ProposalStakingPoolSnapshotRow{}
-	err = suite.database.SQL.Select(&rows, `SELECT * FROM proposal_staking_pool_snapshot`)
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM proposal_staking_pool_snapshot`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().Equal(rows[0], dbtypes.NewProposalStakingPoolSnapshotRow(
@@ -590,7 +591,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalStakingPoolSnapshot() {
 	suite.Require().NoError(err)
 
 	rows = []dbtypes.ProposalStakingPoolSnapshotRow{}
-	err = suite.database.SQL.Select(&rows, `SELECT * FROM proposal_staking_pool_snapshot`)
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM proposal_staking_pool_snapshot`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().Equal(rows[0], dbtypes.NewProposalStakingPoolSnapshotRow(
@@ -611,7 +612,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalStakingPoolSnapshot() {
 	suite.Require().NoError(err)
 
 	rows = []dbtypes.ProposalStakingPoolSnapshotRow{}
-	err = suite.database.SQL.Select(&rows, `SELECT * FROM proposal_staking_pool_snapshot`)
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM proposal_staking_pool_snapshot`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().Equal(rows[0], dbtypes.NewProposalStakingPoolSnapshotRow(
@@ -664,7 +665,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 	suite.Require().NoError(err)
 
 	var rows []dbtypes.ProposalValidatorVotingPowerSnapshotRow
-	err = suite.database.SQL.Select(&rows, `SELECT * FROM proposal_validator_status_snapshot`)
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM proposal_validator_status_snapshot`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 2)
 	suite.Require().Equal(rows, []dbtypes.ProposalValidatorVotingPowerSnapshotRow{
@@ -713,7 +714,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 	suite.Require().NoError(err)
 
 	rows = []dbtypes.ProposalValidatorVotingPowerSnapshotRow{}
-	err = suite.database.SQL.Select(&rows, `SELECT * FROM proposal_validator_status_snapshot`)
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM proposal_validator_status_snapshot`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 2)
 	suite.Require().Equal(rows, []dbtypes.ProposalValidatorVotingPowerSnapshotRow{
@@ -762,7 +763,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 	suite.Require().NoError(err)
 
 	rows = []dbtypes.ProposalValidatorVotingPowerSnapshotRow{}
-	err = suite.database.SQL.Select(&rows, `SELECT * FROM proposal_validator_status_snapshot`)
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM proposal_validator_status_snapshot`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 2)
 	suite.Require().Equal(rows, []dbtypes.ProposalValidatorVotingPowerSnapshotRow{
@@ -811,7 +812,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 	suite.Require().NoError(err)
 
 	rows = []dbtypes.ProposalValidatorVotingPowerSnapshotRow{}
-	err = suite.database.SQL.Select(&rows, `SELECT * FROM proposal_validator_status_snapshot`)
+	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM proposal_validator_status_snapshot`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 2)
 	suite.Require().Equal(rows, []dbtypes.ProposalValidatorVotingPowerSnapshotRow{

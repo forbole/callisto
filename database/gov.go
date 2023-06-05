@@ -10,13 +10,10 @@ import (
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	"github.com/gogo/protobuf/proto"
 
-	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-
-	"github.com/forbole/bdjuno/v4/types"
-
-	dbtypes "github.com/forbole/bdjuno/v4/database/types"
-
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
+	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+	dbtypes "github.com/forbole/bdjuno/v4/database/types"
+	"github.com/forbole/bdjuno/v4/types"
 	"github.com/lib/pq"
 )
 
@@ -93,7 +90,7 @@ WHERE gov_params.height <= excluded.height`
 // GetGovParams returns the most recent governance parameters
 func (db *Db) GetGovParams() (*types.GovParams, error) {
 	var rows []dbtypes.GovParamsRow
-	err := db.SQL.Select(&rows, `SELECT * FROM gov_params`)
+	err := db.Sqlx.Select(&rows, `SELECT * FROM gov_params`)
 	if err != nil {
 		return nil, err
 	}
@@ -219,14 +216,13 @@ func (db *Db) GetProposal(id uint64) (types.Proposal, error) {
 	row := rows[0]
 
 	var contentAny codectypes.Any
-	var protoCodec codec.ProtoCodec
-	err = protoCodec.UnmarshalJSON([]byte(row.Content), &contentAny)
+	err = db.Cdc.UnmarshalJSON([]byte(row.Content), &contentAny)
 	if err != nil {
 		return types.Proposal{}, err
 	}
 
 	var content govtypesv1beta1.Content
-	err = protoCodec.UnpackAny(&contentAny, &content)
+	err = db.Cdc.UnpackAny(&contentAny, &content)
 	if err != nil {
 		return types.Proposal{}, err
 	}
