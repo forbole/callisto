@@ -5,6 +5,7 @@ import (
 	"github.com/forbole/juno/v5/node/remote"
 
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
+
 	govsource "github.com/forbole/bdjuno/v4/modules/gov/source"
 )
 
