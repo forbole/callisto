@@ -7,7 +7,7 @@ require (
 	cosmossdk.io/simapp v0.0.0-20230224204036-a6adb0821462
 	github.com/cometbft/cometbft v0.37.1
 	github.com/cosmos/cosmos-sdk v0.47.2
-	github.com/cosmos/gogoproto v1.4.8
+	github.com/cosmos/gogoproto v1.4.10
 	github.com/forbole/juno/v5 v5.1.0
 	github.com/go-co-op/gocron v1.28.2
 	github.com/jmoiron/sqlx v1.3.5
