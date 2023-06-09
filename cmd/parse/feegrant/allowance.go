@@ -37,7 +37,7 @@ func allowanceCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			db := database.Cast(parseCtx.Database)
 
 			// Build feegrant module
-			feegrantModule := feegrant.NewModule(parseCtx.EncodingConfig.Marshaler, db)
+			feegrantModule := feegrant.NewModule(parseCtx.EncodingConfig.Codec, db)
 
 			// Get the accounts
 			// Collect all the transactions

@@ -3,6 +3,7 @@ module github.com/forbole/bdjuno/v4
 go 1.19
 
 require (
+	cosmossdk.io/math v1.0.0
 	cosmossdk.io/simapp v0.0.0-20230224204036-a6adb0821462
 	github.com/cosmos/cosmos-sdk v0.47.2
 	github.com/forbole/juno/v5 v5.0.1-0.20230605040847-30e4e4de094f
@@ -31,7 +32,6 @@ require (
 	cosmossdk.io/core v0.5.1 // indirect
 	cosmossdk.io/depinject v1.0.0-alpha.3 // indirect
 	cosmossdk.io/errors v1.0.0-beta.7 // indirect
-	cosmossdk.io/math v1.0.0 // indirect
 	cosmossdk.io/tools/rosetta v0.2.1 // indirect
 	filippo.io/edwards25519 v1.0.0 // indirect
 	github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 // indirect

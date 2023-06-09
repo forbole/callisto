@@ -65,7 +65,7 @@ func NewRegistrar(parser messages.MessageAddressesParser) *Registrar {
 
 // BuildModules implements modules.Registrar
 func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
-	cdc := ctx.EncodingConfig.Marshaler
+	cdc := ctx.EncodingConfig.Codec
 	db := database.Cast(ctx.Database)
 
 	sources, err := types.BuildSources(ctx.JunoConfig.Node, ctx.EncodingConfig)
