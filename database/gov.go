@@ -5,17 +5,15 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
-	"github.com/cosmos/gogoproto/proto"
-
-	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-
-	"github.com/forbole/bdjuno/v4/types"
-
-	dbtypes "github.com/forbole/bdjuno/v4/database/types"
+	"github.com/gogo/protobuf/proto"
 
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
+	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+	dbtypes "github.com/forbole/bdjuno/v4/database/types"
+	"github.com/forbole/bdjuno/v4/types"
 	"github.com/lib/pq"
 )
 
@@ -164,7 +162,8 @@ INSERT INTO proposal(
 			return fmt.Errorf("error while wrapping proposal proto content: %s", err)
 		}
 
-		contentBz, err := db.EncodingConfig.Codec.MarshalJSON(anyContent)
+		var protoCodec codec.ProtoCodec
+		contentBz, err := protoCodec.MarshalJSON(anyContent)
 		if err != nil {
 			return fmt.Errorf("error while marshaling proposal content: %s", err)
 		}
@@ -205,7 +204,7 @@ INSERT INTO proposal(
 // GetProposal returns the proposal with the given id, or nil if not found
 func (db *Db) GetProposal(id uint64) (types.Proposal, error) {
 	var rows []*dbtypes.ProposalRow
-	err := db.Sqlx.Select(&rows, `SELECT * FROM proposal WHERE id = $1`, id)
+	err := db.SQL.Select(&rows, `SELECT * FROM proposal WHERE id = $1`, id)
 	if err != nil {
 		return types.Proposal{}, err
 	}
@@ -217,13 +216,13 @@ func (db *Db) GetProposal(id uint64) (types.Proposal, error) {
 	row := rows[0]
 
 	var contentAny codectypes.Any
-	err = db.EncodingConfig.Codec.UnmarshalJSON([]byte(row.Content), &contentAny)
+	err = db.Cdc.UnmarshalJSON([]byte(row.Content), &contentAny)
 	if err != nil {
 		return types.Proposal{}, err
 	}
 
 	var content govtypesv1beta1.Content
-	err = db.EncodingConfig.Codec.UnpackAny(&contentAny, &content)
+	err = db.Cdc.UnpackAny(&contentAny, &content)
 	if err != nil {
 		return types.Proposal{}, err
 	}

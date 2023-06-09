@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	codec "github.com/cosmos/cosmos-sdk/codec"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
@@ -282,7 +283,8 @@ func (m *Module) handlePassedProposal(proposal govtypesv1beta1.Proposal, height 
 
 	// Unpack proposal
 	var content govtypesv1beta1.Content
-	err := m.db.EncodingConfig.Codec.UnpackAny(proposal.Content, &content)
+	var protoCodec codec.ProtoCodec
+	err := protoCodec.UnpackAny(proposal.Content, &content)
 	if err != nil {
 		return fmt.Errorf("error while handling ParamChangeProposal: %s", err)
 	}
