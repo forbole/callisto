@@ -6,7 +6,7 @@ import (
 
 	tmtypes "github.com/cometbft/cometbft/types"
 
-	"github.com/forbole/bdjuno/v4/types"
+	"github.com/forbole/bdjuno/v5/types"
 
 	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"

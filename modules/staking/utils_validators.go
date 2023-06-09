@@ -6,8 +6,8 @@ import (
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 	juno "github.com/forbole/juno/v5/types"
 
-	"github.com/forbole/bdjuno/v4/modules/staking/keybase"
-	"github.com/forbole/bdjuno/v4/types"
+	"github.com/forbole/bdjuno/v5/modules/staking/keybase"
+	"github.com/forbole/bdjuno/v5/types"
 
 	"github.com/rs/zerolog/log"
 

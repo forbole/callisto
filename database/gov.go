@@ -12,8 +12,8 @@ import (
 
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	dbtypes "github.com/forbole/bdjuno/v4/database/types"
-	"github.com/forbole/bdjuno/v4/types"
+	dbtypes "github.com/forbole/bdjuno/v5/database/types"
+	"github.com/forbole/bdjuno/v5/types"
 	"github.com/lib/pq"
 )
 

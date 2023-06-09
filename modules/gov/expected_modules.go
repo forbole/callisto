@@ -4,7 +4,7 @@ import (
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	"github.com/forbole/bdjuno/v4/types"
+	"github.com/forbole/bdjuno/v5/types"
 )
 
 type AuthModule interface {

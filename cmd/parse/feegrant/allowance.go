@@ -7,12 +7,12 @@ import (
 	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
 	"github.com/forbole/juno/v5/types/config"
 
-	"github.com/forbole/bdjuno/v4/modules/feegrant"
-	"github.com/forbole/bdjuno/v4/utils"
+	"github.com/forbole/bdjuno/v5/modules/feegrant"
+	"github.com/forbole/bdjuno/v5/utils"
 
 	"github.com/spf13/cobra"
 
-	"github.com/forbole/bdjuno/v4/database"
+	"github.com/forbole/bdjuno/v5/database"
 
 	"sort"
 

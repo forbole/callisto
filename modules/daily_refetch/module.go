@@ -3,7 +3,7 @@ package daily_refetch
 import (
 	"github.com/forbole/juno/v5/node"
 
-	bdjunodb "github.com/forbole/bdjuno/v4/database"
+	bdjunodb "github.com/forbole/bdjuno/v5/database"
 
 	"github.com/forbole/juno/v5/modules"
 )

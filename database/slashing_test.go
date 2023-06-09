@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/forbole/bdjuno/v4/types"
+	"github.com/forbole/bdjuno/v5/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 
-	dbtypes "github.com/forbole/bdjuno/v4/database/types"
+	dbtypes "github.com/forbole/bdjuno/v5/database/types"
 )
 
 func (suite *DbTestSuite) TestBigDipperDb_ValidatorSigningInfo() {
