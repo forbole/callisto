@@ -3,7 +3,7 @@ module github.com/forbole/bdjuno/v4
 go 1.19
 
 require (
-	cosmossdk.io/math v1.0.0-beta.3
+	cosmossdk.io/math v1.0.1
 	github.com/cosmos/cosmos-sdk v0.46.7
 	github.com/forbole/juno/v4 v4.0.0-20230207053719-d0f32f8970c3
 	github.com/go-co-op/gocron v1.28.2
@@ -142,7 +142,7 @@ require (
 	go.opencensus.io v0.24.0 // indirect
 	go.uber.org/atomic v1.10.0 // indirect
 	golang.org/x/crypto v0.2.0 // indirect
-	golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e // indirect
+	golang.org/x/exp v0.0.0-20221205204356-47842c84f3db // indirect
 	golang.org/x/net v0.8.0 // indirect
 	golang.org/x/oauth2 v0.6.0 // indirect
 	golang.org/x/sys v0.6.0 // indirect
