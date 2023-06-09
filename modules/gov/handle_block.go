@@ -6,7 +6,7 @@ import (
 
 	juno "github.com/forbole/juno/v5/types"
 
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 
 	"github.com/rs/zerolog/log"
 )

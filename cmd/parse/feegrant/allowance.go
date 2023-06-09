@@ -16,7 +16,7 @@ import (
 
 	"sort"
 
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
 	"github.com/rs/zerolog/log"

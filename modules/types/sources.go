@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"cosmossdk.io/simapp"
-	"github.com/tendermint/tendermint/libs/log"
+	"github.com/cometbft/cometbft/libs/log"
 
 	"cosmossdk.io/simapp/params"
 	"github.com/forbole/juno/v5/node/remote"

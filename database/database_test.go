@@ -19,10 +19,10 @@ import (
 
 	juno "github.com/forbole/juno/v5/types"
 
+	tmversion "github.com/cometbft/cometbft/proto/tendermint/version"
+	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
+	tmtypes "github.com/cometbft/cometbft/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	tmversion "github.com/tendermint/tendermint/proto/tendermint/version"
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
-	tmtypes "github.com/tendermint/tendermint/types"
 
 	simappparams "cosmossdk.io/simapp/params"
 	"github.com/stretchr/testify/suite"
