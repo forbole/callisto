@@ -9,7 +9,7 @@ require (
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.8
-	github.com/osmosis-labs/osmosis/v15 v15.0.0
+	github.com/osmosis-labs/osmosis/v15 v15.1.2
 	github.com/pelletier/go-toml v1.9.5
 	github.com/prometheus/client_golang v1.15.0
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
@@ -44,7 +44,7 @@ require (
 	github.com/cosmos/gogoproto v1.4.6 // indirect
 	github.com/cosmos/gorocksdb v1.2.0 // indirect
 	github.com/cosmos/iavl v0.19.4 // indirect
-	github.com/cosmos/ibc-go/v4 v4.3.0 // indirect
+	github.com/cosmos/ibc-go/v4 v4.3.1 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.12.2 // indirect
 	github.com/creachadair/taskgroup v0.3.2 // indirect
 	github.com/danieljoos/wincred v1.1.2 // indirect
@@ -136,7 +136,7 @@ require (
 	golang.org/x/exp v0.0.0-20230131160201-f062dba9d201 // indirect
 	golang.org/x/net v0.8.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
-	golang.org/x/sys v0.6.0 // indirect
+	golang.org/x/sys v0.7.0 // indirect
 	golang.org/x/term v0.6.0 // indirect
 	golang.org/x/text v0.8.0 // indirect
 	google.golang.org/genproto v0.0.0-20230110181048-76db0878b65f // indirect
@@ -148,9 +148,10 @@ require (
 
 replace (
 	github.com/CosmWasm/wasmd => github.com/osmosis-labs/wasmd v0.30.0-osmo-v15
+	github.com/CosmWasm/wasmvm => github.com/CosmWasm/wasmvm v1.1.2
 	github.com/confio/ics23/go => github.com/cosmos/cosmos-sdk/ics23/go v0.8.0
-	github.com/cosmos/cosmos-sdk => github.com/osmosis-labs/cosmos-sdk v0.45.1-0.20230325222027-43c58d9061e3
-	github.com/cosmos/iavl v0.19.5 => github.com/cosmos/iavl v0.19.4
+	github.com/cosmos/cosmos-sdk => github.com/osmosis-labs/cosmos-sdk v0.45.1-0.20230508231321-931007612436
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	github.com/tendermint/tendermint => github.com/informalsystems/tendermint v0.34.24
+// google.golang.org/grpc => google.golang.org/grpc v1.33.2
 )
