@@ -68,6 +68,7 @@ select_permissions:
     - proposer_address
     - status
     - content
+    - metadata
     filter: {}
     limit: 100
   role: anonymous
