@@ -3,8 +3,8 @@ package types
 import (
 	"time"
 
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
@@ -127,36 +127,33 @@ func NewGenesisGovParams(votingParams VotingParams, depositParams DepositParams,
 
 // Proposal represents a single governance proposal
 type Proposal struct {
-	ProposalRoute   string
-	ProposalType    string
 	ProposalID      uint64
-	Content         govtypesv1beta1.Content
+	Messages        []*codectypes.Any
+	Metadata        string
 	Status          string
-	SubmitTime      time.Time
-	DepositEndTime  time.Time
-	VotingStartTime time.Time
-	VotingEndTime   time.Time
+	SubmitTime      *time.Time
+	DepositEndTime  *time.Time
+	VotingStartTime *time.Time
+	VotingEndTime   *time.Time
 	Proposer        string
 }
 
 // NewProposal return a new Proposal instance
 func NewProposal(
 	proposalID uint64,
-	proposalRoute string,
-	proposalType string,
-	content govtypesv1beta1.Content,
+	messages []*codectypes.Any,
+	metadata string,
 	status string,
-	submitTime time.Time,
-	depositEndTime time.Time,
-	votingStartTime time.Time,
-	votingEndTime time.Time,
+	submitTime *time.Time,
+	depositEndTime *time.Time,
+	votingStartTime *time.Time,
+	votingEndTime *time.Time,
 	proposer string,
 ) Proposal {
 	return Proposal{
-		Content:         content,
-		ProposalRoute:   proposalRoute,
-		ProposalType:    proposalType,
 		ProposalID:      proposalID,
+		Messages:        messages,
+		Metadata:        metadata,
 		Status:          status,
 		SubmitTime:      submitTime,
 		DepositEndTime:  depositEndTime,
@@ -168,15 +165,14 @@ func NewProposal(
 
 // Equal tells whether p and other contain the same data
 func (p Proposal) Equal(other Proposal) bool {
-	return p.ProposalRoute == other.ProposalRoute &&
-		p.ProposalType == other.ProposalType &&
-		p.ProposalID == other.ProposalID &&
-		p.Content.String() == other.Content.String() &&
+	return p.ProposalID == other.ProposalID &&
+		p.Metadata == other.Metadata &&
+		p.Messages[0] == other.Messages[0] &&
 		p.Status == other.Status &&
-		p.SubmitTime.Equal(other.SubmitTime) &&
-		p.DepositEndTime.Equal(other.DepositEndTime) &&
-		p.VotingStartTime.Equal(other.VotingStartTime) &&
-		p.VotingEndTime.Equal(other.VotingEndTime) &&
+		p.SubmitTime == other.SubmitTime &&
+		p.DepositEndTime == other.DepositEndTime &&
+		p.VotingStartTime == other.VotingStartTime &&
+		p.VotingEndTime == other.VotingEndTime &&
 		p.Proposer == other.Proposer
 }
 
