@@ -2,6 +2,8 @@ package types
 
 import (
 	"time"
+
+	"github.com/lib/pq"
 )
 
 // GovParamsRow represents a single row of the "gov_params" table
@@ -17,18 +19,19 @@ type GovParamsRow struct {
 
 // ProposalRow represents a single row inside the proposal table
 type ProposalRow struct {
-	Title           string    `db:"title"`
-	Description     string    `db:"description"`
-	Content         string    `db:"content"`
-	ProposalRoute   string    `db:"proposal_route"`
-	ProposalType    string    `db:"proposal_type"`
-	ProposalID      uint64    `db:"id"`
-	SubmitTime      time.Time `db:"submit_time"`
-	DepositEndTime  time.Time `db:"deposit_end_time"`
-	VotingStartTime time.Time `db:"voting_start_time"`
-	VotingEndTime   time.Time `db:"voting_end_time"`
-	Proposer        string    `db:"proposer_address"`
-	Status          string    `db:"status"`
+	Title           string         `db:"title"`
+	Description     string         `db:"description"`
+	Content         pq.StringArray `db:"content"`
+	Metadata        string         `db:"metadata"`
+	ProposalRoute   string         `db:"proposal_route"`
+	ProposalType    string         `db:"proposal_type"`
+	ProposalID      uint64         `db:"id"`
+	SubmitTime      time.Time      `db:"submit_time"`
+	DepositEndTime  time.Time      `db:"deposit_end_time"`
+	VotingStartTime time.Time      `db:"voting_start_time"`
+	VotingEndTime   time.Time      `db:"voting_end_time"`
+	Proposer        string         `db:"proposer_address"`
+	Status          string         `db:"status"`
 }
 
 // NewProposalRow allows to easily create a new ProposalRow
@@ -38,7 +41,8 @@ func NewProposalRow(
 	proposalType string,
 	title string,
 	description string,
-	content string,
+	content pq.StringArray,
+	metadata string,
 	submitTime time.Time,
 	depositEndTime time.Time,
 	votingStartTime time.Time,
@@ -50,6 +54,7 @@ func NewProposalRow(
 		Title:           title,
 		Description:     description,
 		Content:         content,
+		Metadata:        metadata,
 		ProposalRoute:   proposalRoute,
 		ProposalType:    proposalType,
 		ProposalID:      proposalID,
@@ -69,6 +74,7 @@ func (w ProposalRow) Equals(v ProposalRow) bool {
 		w.ProposalRoute == v.ProposalRoute &&
 		w.ProposalType == v.ProposalType &&
 		w.ProposalID == v.ProposalID &&
+		w.Metadata == v.Metadata &&
 		w.SubmitTime.Equal(v.SubmitTime) &&
 		w.DepositEndTime.Equal(v.DepositEndTime) &&
 		w.VotingStartTime.Equal(v.VotingStartTime) &&
