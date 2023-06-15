@@ -131,11 +131,12 @@ func NewProposal(
 func (p Proposal) Equal(other Proposal) bool {
 	return p.ProposalID == other.ProposalID &&
 		p.Metadata == other.Metadata &&
+		p.Messages[0].Equal(other.Messages[0]) &&
 		p.Status == other.Status &&
-		p.SubmitTime == other.SubmitTime &&
-		p.DepositEndTime == other.DepositEndTime &&
-		p.VotingStartTime == other.VotingStartTime &&
-		p.VotingEndTime == other.VotingEndTime &&
+		p.SubmitTime.Equal(*other.SubmitTime) &&
+		p.DepositEndTime.Equal(*other.DepositEndTime) &&
+		p.VotingStartTime.Equal(*other.VotingStartTime) &&
+		p.VotingEndTime.Equal(*other.VotingEndTime) &&
 		p.Proposer == other.Proposer
 }
 
