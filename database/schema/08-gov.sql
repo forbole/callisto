@@ -44,6 +44,7 @@ CREATE TABLE proposal_vote
     proposal_id   INTEGER NOT NULL REFERENCES proposal (id),
     voter_address TEXT    NOT NULL REFERENCES account (address),
     option        TEXT    NOT NULL,
+    weight        TEXT    NOT NULL,
     timestamp     TIMESTAMP,
     height        BIGINT  NOT NULL,
     CONSTRAINT unique_vote UNIQUE (proposal_id, voter_address)

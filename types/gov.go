@@ -194,6 +194,7 @@ type Vote struct {
 	ProposalID uint64
 	Voter      string
 	Option     govtypesv1.VoteOption
+	Weight     string
 	Timestamp  time.Time
 	Height     int64
 }
@@ -203,6 +204,7 @@ func NewVote(
 	proposalID uint64,
 	voter string,
 	option govtypesv1.VoteOption,
+	weight string,
 	timestamp time.Time,
 	height int64,
 ) Vote {
@@ -210,6 +212,7 @@ func NewVote(
 		ProposalID: proposalID,
 		Voter:      voter,
 		Option:     option,
+		Weight:     weight,
 		Timestamp:  timestamp,
 		Height:     height,
 	}
