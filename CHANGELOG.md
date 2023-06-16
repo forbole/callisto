@@ -24,6 +24,8 @@
 - ([\#489](https://github.com/forbole/bdjuno/pull/489)) Remove block height foreign key from proposal_vote and proposal_deposit tables and add column timestamp
 - ([\#499](https://github.com/forbole/bdjuno/pull/499)) Check if proposal has passed voting end time before marking it invalid
 - ([\#523](https://github.com/forbole/bdjuno/pull/523)) Update proposal snapshots handling on block
+- ([\#601](https://github.com/forbole/bdjuno/pull/601)) [kyve] Update proposal handlers to v1 
+
 
 #### Mint module
 - ([\#590](https://github.com/forbole/bdjuno/pull/590)) Update inflation query to call API endpoint
