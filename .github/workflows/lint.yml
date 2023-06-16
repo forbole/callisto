@@ -21,7 +21,7 @@ jobs:
             .go
             .mod
             .sum
-      - uses: golangci/golangci-lint-action@v3.5.0
+      - uses: golangci/golangci-lint-action@v3.6.0
         with:
           version: v1.51.1
           args: --timeout 10m
