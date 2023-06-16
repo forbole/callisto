@@ -18,9 +18,8 @@ import (
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 
-	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
-
 	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
+	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 )
 
 func (m *Module) UpdateProposal(height int64, blockTime time.Time, id uint64) error {
@@ -89,8 +88,8 @@ func (m *Module) updateDeletedProposalStatus(id uint64) error {
 		types.NewProposalUpdate(
 			stored.ProposalID,
 			types.ProposalStatusInvalid,
-			stored.VotingStartTime,
-			stored.VotingEndTime,
+			*stored.VotingStartTime,
+			*stored.VotingEndTime,
 		),
 	)
 }
@@ -137,32 +136,32 @@ func (m *Module) handleParamChangeProposal(height int64, paramChangeProposal *pr
 }
 
 // updateProposalStatus updates the given proposal status
-func (m *Module) updateProposalStatus(proposal govtypesv1beta1.Proposal) error {
+func (m *Module) updateProposalStatus(proposal *govtypesv1.Proposal) error {
 	return m.db.UpdateProposal(
 		types.NewProposalUpdate(
-			proposal.ProposalId,
+			proposal.GetId(),
 			proposal.Status.String(),
-			proposal.VotingStartTime,
-			proposal.VotingEndTime,
+			*proposal.VotingStartTime,
+			*proposal.VotingEndTime,
 		),
 	)
 }
 
 // updateProposalTallyResult updates the tally result associated with the given proposal
-func (m *Module) updateProposalTallyResult(proposal govtypesv1beta1.Proposal) error {
+func (m *Module) updateProposalTallyResult(proposal *govtypesv1.Proposal) error {
 	height, err := m.db.GetLastBlockHeight()
 	if err != nil {
 		return err
 	}
 
-	result, err := m.source.TallyResult(height, proposal.ProposalId)
+	result, err := m.source.TallyResult(height, proposal.GetId())
 	if err != nil {
 		return fmt.Errorf("error while getting tally result: %s", err)
 	}
 
 	return m.db.SaveTallyResults([]types.TallyResult{
 		types.NewTallyResult(
-			proposal.ProposalId,
+			proposal.GetId(),
 			result.YesCount,
 			result.AbstainCount,
 			result.NoCount,
@@ -173,22 +172,25 @@ func (m *Module) updateProposalTallyResult(proposal govtypesv1beta1.Proposal) er
 }
 
 // updateAccounts updates any account that might be involved in the proposal (eg. fund community recipient)
-func (m *Module) updateAccounts(proposal govtypesv1beta1.Proposal) error {
-	content, ok := proposal.Content.GetCachedValue().(*distrtypes.CommunityPoolSpendProposal)
-	if ok {
-		height, err := m.db.GetLastBlockHeight()
-		if err != nil {
-			return fmt.Errorf("error while getting last block height: %s", err)
+func (m *Module) updateAccounts(proposal *govtypesv1.Proposal) error {
+	for _, msg := range proposal.Messages {
+		cached := msg.GetCachedValue()
+		msg, ok := cached.(*distrtypes.CommunityPoolSpendProposal)
+		if ok {
+			height, err := m.db.GetLastBlockHeight()
+			if err != nil {
+				return fmt.Errorf("error while getting last block height: %s", err)
+			}
+
+			addresses := []string{msg.Recipient}
+
+			err = m.authModule.RefreshAccounts(height, addresses)
+			if err != nil {
+				return err
+			}
+
+			return nil
 		}
-
-		addresses := []string{content.Recipient}
-
-		err = m.authModule.RefreshAccounts(height, addresses)
-		if err != nil {
-			return err
-		}
-
-		return nil
 	}
 	return nil
 }
@@ -274,38 +276,35 @@ func findStatus(consAddr string, statuses []types.ValidatorStatus) (types.Valida
 	return types.ValidatorStatus{}, fmt.Errorf("cannot find status for validator with consensus address %s", consAddr)
 }
 
-func (m *Module) handlePassedProposal(proposal govtypesv1beta1.Proposal, height int64) error {
-	if proposal.Status != govtypesv1beta1.StatusPassed {
+func (m *Module) handlePassedProposal(proposal *govtypesv1.Proposal, height int64) error {
+	if proposal.Status != govtypesv1.StatusPassed {
 		// If proposal status is not passed, do nothing
 		return nil
 	}
 
-	// Unpack proposal
-	var content govtypesv1beta1.Content
-	err := m.db.EncodingConfig.Codec.UnpackAny(proposal.Content, &content)
-	if err != nil {
-		return fmt.Errorf("error while handling ParamChangeProposal: %s", err)
+	for _, msg := range proposal.Messages {
+		cached := msg.GetCachedValue()
+		switch p := cached.(type) {
+		case *proposaltypes.ParameterChangeProposal:
+			// Update params if ParameterChangeProposal passed
+			err := m.handleParamChangeProposal(height, p)
+			if err != nil {
+				return fmt.Errorf("error while updating params from ParamChangeProposal: %s", err)
+			}
+		case *upgradetypes.MsgSoftwareUpgrade:
+			// Store software upgrade plan if proposal with MsgSoftwareUpgrade has passed
+			err := m.db.SaveSoftwareUpgradePlan(proposal.GetId(), p.Plan, height)
+			if err != nil {
+				return fmt.Errorf("error while storing software upgrade plan: %s", err)
+			}
+		case *upgradetypes.MsgCancelUpgrade:
+			// Delete software upgrade plan if proposal with MsgCancelUpgrade has passed
+			err := m.db.DeleteSoftwareUpgradePlan(proposal.GetId())
+			if err != nil {
+				return fmt.Errorf("error while deleting software upgrade plan: %s", err)
+			}
+		}
 	}
 
-	switch p := content.(type) {
-	case *proposaltypes.ParameterChangeProposal:
-		// Update params while ParameterChangeProposal passed
-		err = m.handleParamChangeProposal(height, p)
-		if err != nil {
-			return fmt.Errorf("error while updating params from ParamChangeProposal: %s", err)
-		}
-	case *upgradetypes.SoftwareUpgradeProposal:
-		// Store software upgrade plan while SoftwareUpgradeProposal passed
-		err = m.db.SaveSoftwareUpgradePlan(proposal.ProposalId, p.Plan, height)
-		if err != nil {
-			return fmt.Errorf("error while storing software upgrade plan: %s", err)
-		}
-	case *upgradetypes.CancelSoftwareUpgradeProposal:
-		// Delete software upgrade plan while CancelSoftwareUpgradeProposal passed
-		err = m.db.DeleteSoftwareUpgradePlan(proposal.ProposalId)
-		if err != nil {
-			return fmt.Errorf("error while deleting software upgrade plan: %s", err)
-		}
-	}
 	return nil
 }

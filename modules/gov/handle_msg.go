@@ -12,7 +12,6 @@ import (
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 
 	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
-	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	juno "github.com/forbole/juno/v4/types"
 )
 
@@ -23,7 +22,7 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	}
 
 	switch cosmosMsg := msg.(type) {
-	case *govtypesv1beta1.MsgSubmitProposal:
+	case *govtypesv1.MsgSubmitProposal:
 		return m.handleMsgSubmitProposal(tx, index, cosmosMsg)
 
 	case *govtypesv1.MsgDeposit:
@@ -31,13 +30,16 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 
 	case *govtypesv1.MsgVote:
 		return m.handleMsgVote(tx, cosmosMsg)
+
+	case *govtypesv1.MsgVoteWeighted:
+		return m.handleMsgVoteWeighted(tx, cosmosMsg)
 	}
 
 	return nil
 }
 
 // handleMsgSubmitProposal allows to properly handle a handleMsgSubmitProposal
-func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1beta1.MsgSubmitProposal) error {
+func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1.MsgSubmitProposal) error {
 	// Get the proposal id
 	event, err := tx.FindEventByType(index, gov.EventTypeSubmitProposal)
 	if err != nil {
@@ -62,10 +64,9 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1
 
 	// Store the proposal
 	proposalObj := types.NewProposal(
-		proposal.ProposalId,
-		msg.GetContent().ProposalRoute(),
-		msg.GetContent().ProposalType(),
-		msg.GetContent(),
+		proposal.GetId(),
+		msg.Messages,
+		msg.Metadata,
 		proposal.Status.String(),
 		proposal.SubmitTime,
 		proposal.DepositEndTime,
@@ -85,7 +86,7 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1
 	}
 
 	// Store the deposit
-	deposit := types.NewDeposit(proposal.ProposalId, msg.Proposer, msg.InitialDeposit, txTimestamp, tx.Height)
+	deposit := types.NewDeposit(proposal.GetId(), msg.Proposer, msg.InitialDeposit, txTimestamp, tx.Height)
 	return m.db.SaveDeposits([]types.Deposit{deposit})
 }
 
@@ -112,7 +113,26 @@ func (m *Module) handleMsgVote(tx *juno.Tx, msg *govtypesv1.MsgVote) error {
 		return fmt.Errorf("error while parsing time: %s", err)
 	}
 
-	vote := types.NewVote(msg.ProposalId, msg.Voter, msg.Option, txTimestamp, tx.Height)
+	// set vote weight to "1.000000000000000000" for all MsgVote messages
+	vote := types.NewVote(msg.ProposalId, msg.Voter, msg.Option, "1.000000000000000000", txTimestamp, tx.Height)
 
 	return m.db.SaveVote(vote)
+}
+
+// handleMsgVoteWeighted allows to properly handle MsgVoteWeighted
+func (m *Module) handleMsgVoteWeighted(tx *juno.Tx, msg *govtypesv1.MsgVoteWeighted) error {
+	txTimestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
+	if err != nil {
+		return fmt.Errorf("error while parsing time: %s", err)
+	}
+
+	for _, voteOption := range msg.Options {
+		vote := types.NewVote(msg.ProposalId, msg.Voter, voteOption.Option, voteOption.Weight, txTimestamp, tx.Height)
+		err = m.db.SaveVote(vote)
+		if err != nil {
+			return fmt.Errorf("error while saving weighted vote for proposal id %d: %s", msg.ProposalId, err)
+		}
+	}
+
+	return nil
 }

@@ -7,15 +7,10 @@ import (
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
-	"github.com/gogo/protobuf/proto"
-
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-
-	"github.com/forbole/bdjuno/v4/types"
-
 	dbtypes "github.com/forbole/bdjuno/v4/database/types"
-
-	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
+	"github.com/forbole/bdjuno/v4/types"
+	"github.com/gogo/protobuf/proto"
 	"github.com/lib/pq"
 )
 
@@ -139,8 +134,8 @@ func (db *Db) SaveProposals(proposals []types.Proposal) error {
 
 	proposalsQuery := `
 INSERT INTO proposal(
-	id, title, description, content, proposer_address, proposal_route, proposal_type, status,
-    submit_time, deposit_end_time, voting_start_time, voting_end_time
+	id, title, description, content, metadata, proposer_address, proposal_route, proposal_type,
+     status, submit_time, deposit_end_time, voting_start_time, voting_end_time
 ) VALUES`
 	var proposalsParams []interface{}
 
@@ -149,34 +144,62 @@ INSERT INTO proposal(
 		accounts = append(accounts, types.NewAccount(proposal.Proposer))
 
 		// Prepare the proposal query
-		vi := i * 12
-		proposalsQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
-			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11, vi+12)
+		vi := i * 13
+		proposalsQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
+			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11, vi+12, vi+13)
 
-		// Encode the content properly
-		protoContent, ok := proposal.Content.(proto.Message)
-		if !ok {
-			return fmt.Errorf("invalid proposal content types: %T", proposal.Content)
-		}
+		var msgs []string
+		var proposalTitle, proposalDescription, proposalRoute, proposalType string
+		for _, message := range proposal.Messages {
+			cached := message.GetCachedValue()
+			msg, ok := cached.(*govtypesv1.MsgExecLegacyContent)
+			if ok {
+				content, err := govtypesv1.LegacyContentFromMessage(msg)
+				if err != nil {
+					return fmt.Errorf("error while extracting legacy Content interface from a MsgExecLegacyContent: %s", err)
 
-		anyContent, err := codectypes.NewAnyWithValue(protoContent)
-		if err != nil {
-			return fmt.Errorf("error while wrapping proposal proto content: %s", err)
-		}
+				}
+				proposalTitle = content.GetTitle()
+				proposalDescription = content.GetDescription()
+				proposalRoute = content.ProposalRoute()
+				proposalType = content.ProposalType()
 
-		contentBz, err := db.EncodingConfig.Codec.MarshalJSON(anyContent)
-		if err != nil {
-			return fmt.Errorf("error while marshaling proposal content: %s", err)
+				protoContent, ok := content.(proto.Message)
+				if !ok {
+					return fmt.Errorf("invalid proposal content types: %T", content)
+				}
+
+				anyContent, err := codectypes.NewAnyWithValue(protoContent)
+				if err != nil {
+					return fmt.Errorf("error while wrapping proposal proto content: %s", err)
+				}
+
+				contentBz, err := db.EncodingConfig.Codec.MarshalJSON(anyContent)
+				if err != nil {
+					return fmt.Errorf("error while marshaling proposal content: %s", err)
+				}
+				msgs = append(msgs, string(contentBz))
+
+			} else {
+				contentBz, err := db.EncodingConfig.Codec.MarshalJSON(message)
+				if err != nil {
+					return fmt.Errorf("error while marshaling proposal messages: %s", err)
+				}
+				msgs = append(msgs, string(contentBz))
+
+			}
+
 		}
 
 		proposalsParams = append(proposalsParams,
 			proposal.ProposalID,
-			proposal.Content.GetTitle(),
-			proposal.Content.GetDescription(),
-			string(contentBz),
+			proposalTitle,
+			proposalDescription,
+			pq.StringArray(msgs),
+			proposal.Metadata,
 			proposal.Proposer,
-			proposal.ProposalRoute,
-			proposal.ProposalType,
+			proposalRoute,
+			proposalType,
 			proposal.Status,
 			proposal.SubmitTime,
 			proposal.DepositEndTime,
@@ -216,28 +239,26 @@ func (db *Db) GetProposal(id uint64) (types.Proposal, error) {
 
 	row := rows[0]
 
-	var contentAny codectypes.Any
-	err = db.EncodingConfig.Codec.UnmarshalJSON([]byte(row.Content), &contentAny)
-	if err != nil {
-		return types.Proposal{}, err
-	}
+	var msgArray []*codectypes.Any
+	for _, msg := range row.Content {
+		var contentAny codectypes.Any
+		err = db.EncodingConfig.Codec.UnmarshalJSON([]byte(msg), &contentAny)
+		if err != nil {
+			return types.Proposal{}, err
+		}
 
-	var content govtypesv1beta1.Content
-	err = db.EncodingConfig.Codec.UnpackAny(&contentAny, &content)
-	if err != nil {
-		return types.Proposal{}, err
+		msgArray = append(msgArray, &contentAny)
 	}
 
 	proposal := types.NewProposal(
 		row.ProposalID,
-		row.ProposalRoute,
-		row.ProposalType,
-		content,
+		msgArray,
+		row.Metadata,
 		row.Status,
-		row.SubmitTime,
-		row.DepositEndTime,
-		row.VotingStartTime,
-		row.VotingEndTime,
+		&row.SubmitTime,
+		&row.DepositEndTime,
+		&row.VotingStartTime,
+		&row.VotingEndTime,
 		row.Proposer,
 	)
 	return proposal, nil
@@ -326,10 +347,11 @@ WHERE proposal_deposit.height <= excluded.height`
 // SaveVote allows to save for the given height and the message vote
 func (db *Db) SaveVote(vote types.Vote) error {
 	query := `
-INSERT INTO proposal_vote (proposal_id, voter_address, option, timestamp, height)
-VALUES ($1, $2, $3, $4, $5)
+INSERT INTO proposal_vote (proposal_id, voter_address, option, weight, timestamp, height)
+VALUES ($1, $2, $3, $4, $5, $6)
 ON CONFLICT ON CONSTRAINT unique_vote DO UPDATE
 	SET option = excluded.option,
+		weight = excluded.weight,
 		timestamp = excluded.timestamp,
 		height = excluded.height
 WHERE proposal_vote.height <= excluded.height`
@@ -340,7 +362,7 @@ WHERE proposal_vote.height <= excluded.height`
 		return fmt.Errorf("error while storing voter account: %s", err)
 	}
 
-	_, err = db.SQL.Exec(query, vote.ProposalID, vote.Voter, vote.Option.String(), vote.Timestamp, vote.Height)
+	_, err = db.SQL.Exec(query, vote.ProposalID, vote.Voter, vote.Option.String(), vote.Weight, vote.Timestamp, vote.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing vote: %s", err)
 	}

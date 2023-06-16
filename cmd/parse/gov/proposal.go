@@ -10,7 +10,6 @@ import (
 	"github.com/rs/zerolog/log"
 
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
-	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules/distribution"
 	"github.com/forbole/bdjuno/v4/modules/gov"
@@ -114,7 +113,7 @@ func refreshProposalDetails(parseCtx *parser.Context, proposalID uint64, govModu
 
 	// Handle the MsgSubmitProposal messages
 	for index, msg := range tx.GetMsgs() {
-		if _, ok := msg.(*govtypesv1beta1.MsgSubmitProposal); !ok {
+		if _, ok := msg.(*govtypesv1.MsgSubmitProposal); !ok {
 			continue
 		}
 

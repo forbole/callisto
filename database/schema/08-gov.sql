@@ -13,7 +13,8 @@ CREATE TABLE proposal
     id                INTEGER   NOT NULL PRIMARY KEY,
     title             TEXT      NOT NULL,
     description       TEXT      NOT NULL,
-    content           JSONB     NOT NULL,
+    content           JSONB[]   NOT NULL,
+    metadata          TEXT      NOT NULL,
     proposal_route    TEXT      NOT NULL,
     proposal_type     TEXT      NOT NULL,
     submit_time       TIMESTAMP NOT NULL,
@@ -43,6 +44,7 @@ CREATE TABLE proposal_vote
     proposal_id   INTEGER NOT NULL REFERENCES proposal (id),
     voter_address TEXT    NOT NULL REFERENCES account (address),
     option        TEXT    NOT NULL,
+    weight        TEXT    NOT NULL,
     timestamp     TIMESTAMP,
     height        BIGINT  NOT NULL,
     CONSTRAINT unique_vote UNIQUE (proposal_id, voter_address)

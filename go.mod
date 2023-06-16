@@ -7,7 +7,7 @@ require (
 	github.com/KYVENetwork/chain v1.2.0
 	github.com/cometbft/cometbft v0.37.1
 	github.com/cosmos/cosmos-sdk v0.46.12
-	github.com/forbole/juno/v4 v4.1.1-0.20230503092859-feb5db300af3 // branch v0.46.x-humansai
+	github.com/forbole/juno/v4 v4.1.1-0.20230616052311-c2c72a5062c9 // branch v0.46.x-kyve
 	github.com/go-co-op/gocron v1.27.1
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
