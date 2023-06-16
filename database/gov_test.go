@@ -6,7 +6,6 @@ import (
 
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	"github.com/gogo/protobuf/proto"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
@@ -76,39 +75,30 @@ func (suite *DbTestSuite) getProposalRow(id int) types.Proposal {
 
 	title := fmt.Sprintf("title%d", id)
 	description := fmt.Sprintf("description%d", id)
-	proposalRoute := fmt.Sprintf("proposalRoute%d", id)
-	proposalType := fmt.Sprintf("proposalType%d", id)
+	proposalContent := govtypesv1beta1.NewTextProposal(title, description)
+	submitTime := time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC)
+	depositEndTime := time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC)
+	votingStartTime := time.Date(2020, 1, 1, 02, 00, 00, 000, time.UTC)
+	votingEndTime := time.Date(2020, 1, 1, 03, 00, 00, 000, time.UTC)
+	proposalLegacyContent, err := govtypesv1.NewLegacyContent(proposalContent, "")
+	suite.Require().NoError(err)
 
 	proposal := types.NewProposal(
 		uint64(id),
-		proposalRoute,
-		proposalType,
-		govtypesv1beta1.NewTextProposal(title, description),
+		[]*codectypes.Any{proposalLegacyContent.Content},
+		"",
 		govtypesv1.StatusPassed.String(),
-		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 1, 02, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 1, 03, 00, 00, 000, time.UTC),
+		&submitTime,
+		&depositEndTime,
+		&votingStartTime,
+		&votingEndTime,
 		proposer.String(),
 	)
 
-	err := suite.database.SaveProposals([]types.Proposal{proposal})
+	err = suite.database.SaveProposals([]types.Proposal{proposal})
 	suite.Require().NoError(err)
 
 	return proposal
-}
-
-func (suite *DbTestSuite) encodeProposalContent(content govtypesv1beta1.Content) string {
-	protoContent, ok := content.(proto.Message)
-	suite.Require().True(ok)
-
-	anyContent, err := codectypes.NewAnyWithValue(protoContent)
-	suite.Require().NoError(err)
-
-	contentBz, err := suite.database.EncodingConfig.Codec.MarshalJSON(anyContent)
-	suite.Require().NoError(err)
-
-	return string(contentBz)
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
@@ -118,34 +108,48 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 	content1 := govtypesv1beta1.NewTextProposal("title", "description")
 	content2 := govtypesv1beta1.NewTextProposal("title1", "description1")
 
+	submitTime := time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC)
+	depositEndTime := time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC)
+	votingStartTime := time.Date(2020, 1, 1, 02, 00, 00, 000, time.UTC)
+	votingEndTime := time.Date(2020, 1, 1, 03, 00, 00, 000, time.UTC)
+
+	submitTime2 := time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC)
+	depositEndTime2 := time.Date(2020, 1, 2, 01, 00, 00, 000, time.UTC)
+	votingStartTime2 := time.Date(2020, 1, 2, 02, 00, 00, 000, time.UTC)
+	votingEndTime2 := time.Date(2020, 1, 2, 03, 00, 00, 000, time.UTC)
+
+	proposalLegacyContent, err := govtypesv1.NewLegacyContent(content1, "")
+	suite.Require().NoError(err)
+
+	proposalLegacyContent2, err := govtypesv1.NewLegacyContent(content2, "")
+	suite.Require().NoError(err)
+
 	input := []types.Proposal{
 		types.NewProposal(
 			1,
-			"proposalRoute",
-			"proposalType",
-			content1,
+			[]*codectypes.Any{proposalLegacyContent.Content},
+			"",
 			govtypesv1.StatusDepositPeriod.String(),
-			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 1, 02, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 1, 03, 00, 00, 000, time.UTC),
+			&submitTime,
+			&depositEndTime,
+			&votingStartTime,
+			&votingEndTime,
 			proposer1.String(),
 		),
 		types.NewProposal(
 			2,
-			"proposalRoute1",
-			"proposalType1",
-			content2,
+			[]*codectypes.Any{proposalLegacyContent2.Content},
+			"",
 			govtypesv1.StatusPassed.String(),
-			time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 2, 01, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 2, 02, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 2, 03, 00, 00, 000, time.UTC),
+			&submitTime2,
+			&depositEndTime2,
+			&votingStartTime2,
+			&votingEndTime2,
 			proposer2.String(),
 		),
 	}
 
-	err := suite.database.SaveProposals(input)
+	err = suite.database.SaveProposals(input)
 	suite.Require().NoError(err)
 
 	var proposalRow []dbtypes.ProposalRow
@@ -155,11 +159,12 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 	expected := []dbtypes.ProposalRow{
 		dbtypes.NewProposalRow(
 			1,
-			"proposalRoute",
-			"proposalType",
-			"title",
-			"description",
-			suite.encodeProposalContent(content1),
+			"",
+			"",
+			"",
+			"",
+			[]string{`{"@type": "/cosmos.gov.v1beta1.TextProposal", "title": "title", "description": "description"}`},
+			"",
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 			time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC),
 			time.Date(2020, 1, 1, 02, 00, 00, 000, time.UTC),
@@ -169,11 +174,12 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 		),
 		dbtypes.NewProposalRow(
 			2,
-			"proposalRoute1",
-			"proposalType1",
-			"title1",
-			"description1",
-			suite.encodeProposalContent(content2),
+			"",
+			"",
+			"",
+			"",
+			[]string{`{"@type": "/cosmos.gov.v1beta1.TextProposal", "title": "title", "description": "description"}`},
+			"",
 			time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 			time.Date(2020, 1, 2, 01, 00, 00, 000, time.UTC),
 			time.Date(2020, 1, 2, 02, 00, 00, 000, time.UTC),
@@ -188,23 +194,31 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_GetProposal() {
-	content := govtypesv1beta1.NewTextProposal("title", "description")
+	content := govtypesv1beta1.NewTextProposal("title1", "description1")
 	proposer := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
+
+	submitTime := time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC)
+	depositEndTime := time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC)
+	votingStartTime := time.Date(2020, 1, 1, 02, 00, 00, 000, time.UTC)
+	votingEndTime := time.Date(2020, 1, 1, 03, 00, 00, 000, time.UTC)
+
+	proposalLegacyContent, err := govtypesv1.NewLegacyContent(content, "")
+	suite.Require().NoError(err)
+
 	proposal := types.NewProposal(
 		1,
-		"proposalRoute",
-		"proposalType",
-		content,
+		[]*codectypes.Any{proposalLegacyContent.Content},
+		"",
 		govtypesv1.StatusDepositPeriod.String(),
-		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 1, 02, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 1, 03, 00, 00, 000, time.UTC),
+		&submitTime,
+		&depositEndTime,
+		&votingStartTime,
+		&votingEndTime,
 		proposer.String(),
 	)
 	input := []types.Proposal{proposal}
 
-	err := suite.database.SaveProposals(input)
+	err = suite.database.SaveProposals(input)
 	suite.Require().NoError(err)
 
 	stored, err := suite.database.GetProposal(1)
@@ -219,72 +233,83 @@ func (suite *DbTestSuite) TestBigDipperDb_GetOpenProposalsIds() {
 	content1 := govtypesv1beta1.NewTextProposal("title", "description")
 	content2 := govtypesv1beta1.NewTextProposal("title1", "description1")
 
+	submitTime := time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC)
+	depositEndTime := time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC)
+	votingStartTime := time.Date(2020, 1, 1, 02, 00, 00, 000, time.UTC)
+	votingEndTime := time.Date(2020, 1, 1, 03, 00, 00, 000, time.UTC)
+
+	submitTime2 := time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC)
+	depositEndTime2 := time.Date(2020, 1, 2, 01, 00, 00, 000, time.UTC)
+	votingStartTime2 := time.Date(2020, 1, 2, 02, 00, 00, 000, time.UTC)
+	votingEndTime2 := time.Date(2020, 1, 2, 03, 00, 00, 000, time.UTC)
+
+	proposalLegacyContent, err := govtypesv1.NewLegacyContent(content1, "")
+	suite.Require().NoError(err)
+
+	proposalLegacyContent2, err := govtypesv1.NewLegacyContent(content2, "")
+	suite.Require().NoError(err)
+
 	invalidProposal := types.NewProposal(
 		6,
-		"proposalRoute1",
-		"proposalType1",
-		content2,
+		[]*codectypes.Any{proposalLegacyContent2.Content},
+		"",
 		types.ProposalStatusInvalid,
-		time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 2, 01, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 2, 02, 00, 00, 000, time.UTC),
-		time.Date(2020, 1, 2, 03, 00, 00, 000, time.UTC),
+		&submitTime2,
+		&depositEndTime2,
+		&votingStartTime2,
+		&votingEndTime2,
 		proposer2.String(),
 	)
 
 	input := []types.Proposal{
 		types.NewProposal(
 			1,
-			"proposalRoute",
-			"proposalType",
-			content1,
+			[]*codectypes.Any{proposalLegacyContent.Content},
+			"",
 			govtypesv1.StatusVotingPeriod.String(),
-			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 1, 02, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 1, 03, 00, 00, 000, time.UTC),
+			&submitTime,
+			&depositEndTime,
+			&votingStartTime,
+			&votingEndTime,
 			proposer1.String(),
 		),
 		types.NewProposal(
 			2,
-			"proposalRoute",
-			"proposalType",
-			content1,
+			[]*codectypes.Any{proposalLegacyContent.Content},
+			"",
 			govtypesv1.StatusDepositPeriod.String(),
-			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 1, 02, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 1, 03, 00, 00, 000, time.UTC),
+			&submitTime,
+			&depositEndTime,
+			&votingStartTime,
+			&votingEndTime,
 			proposer1.String(),
 		),
 		types.NewProposal(
 			3,
-			"proposalRoute1",
-			"proposalType1",
-			content2,
+			[]*codectypes.Any{proposalLegacyContent2.Content},
+			"",
 			govtypesv1.StatusPassed.String(),
-			time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 2, 01, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 2, 02, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 2, 03, 00, 00, 000, time.UTC),
+			&submitTime2,
+			&depositEndTime2,
+			&votingStartTime2,
+			&votingEndTime2,
 			proposer2.String(),
 		),
 		types.NewProposal(
 			5,
-			"proposalRoute1",
-			"proposalType1",
-			content2,
+			[]*codectypes.Any{proposalLegacyContent2.Content},
+			"",
 			govtypesv1.StatusRejected.String(),
-			time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 2, 01, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 2, 02, 00, 00, 000, time.UTC),
-			time.Date(2020, 1, 2, 03, 00, 00, 000, time.UTC),
+			&submitTime2,
+			&depositEndTime2,
+			&votingStartTime2,
+			&votingEndTime2,
 			proposer2.String(),
 		),
 		invalidProposal,
 	}
 
-	err := suite.database.SaveProposals(input)
+	err = suite.database.SaveProposals(input)
 	suite.Require().NoError(err)
 
 	timeBeforeDepositEnd := invalidProposal.DepositEndTime.Add(-1 * time.Hour)
@@ -311,28 +336,44 @@ func (suite *DbTestSuite) TestBigDipperDb_UpdateProposal() {
 	err = suite.database.UpdateProposal(update)
 	suite.Require().NoError(err)
 
-	expected := dbtypes.NewProposalRow(
+	expected := types.NewProposal(
 		proposal.ProposalID,
-		proposal.ProposalRoute,
-		proposal.ProposalType,
-		proposal.Content.GetTitle(),
-		proposal.Content.GetDescription(),
-		suite.encodeProposalContent(proposal.Content),
+		proposal.Messages,
+		proposal.Metadata,
+		govtypesv1.StatusPassed.String(),
 		proposal.SubmitTime,
 		proposal.DepositEndTime,
-		timestamp1,
-		timestamp2,
+		&timestamp1,
+		&timestamp2,
 		proposer.String(),
-		govtypesv1.StatusPassed.String(),
 	)
 
-	var result []dbtypes.ProposalRow
+	var result []*dbtypes.ProposalRow
 	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal`)
 	suite.Require().NoError(err)
 	suite.Require().Len(result, 1)
-	for _, r := range result {
-		suite.Require().True(expected.Equals(r))
+
+	var msgArray []*codectypes.Any
+	for _, msg := range result[0].Content {
+		var contentAny codectypes.Any
+		err = suite.database.EncodingConfig.Codec.UnmarshalJSON([]byte(msg), &contentAny)
+		suite.Require().NoError(err)
+		msgArray = append(msgArray, &contentAny)
 	}
+
+	proposalResult := types.NewProposal(
+		result[0].ProposalID,
+		msgArray,
+		result[0].Metadata,
+		result[0].Status,
+		&result[0].SubmitTime,
+		&result[0].DepositEndTime,
+		&result[0].VotingStartTime,
+		&result[0].VotingEndTime,
+		result[0].Proposer,
+	)
+	suite.Require().True(expected.Equal(proposalResult))
+
 }
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -421,20 +462,23 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
 
 	timestamp := time.Date(2020, 1, 1, 15, 00, 00, 000, time.UTC)
 
-	vote := types.NewVote(1, voter.String(), govtypesv1.OptionYes, timestamp, 1)
+	vote := types.NewVote(1, voter.String(), govtypesv1.OptionYes, "1.000000000000000000", timestamp, 1)
 	err := suite.database.SaveVote(vote)
 	suite.Require().NoError(err)
 
-	expected := dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypesv1.OptionYes.String(), timestamp, 1)
+	expected := dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypesv1.OptionYes.String(), "1.000000000000000000", timestamp, 1)
 
 	var result []dbtypes.VoteRow
 	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_vote`)
+	fmt.Printf("\n expected %v \n", expected)
+	fmt.Printf("\n result %v \n", result[0])
+
 	suite.Require().NoError(err)
 	suite.Require().Len(result, 1)
 	suite.Require().True(expected.Equals(result[0]))
 
 	// Update with lower height should not change option
-	vote = types.NewVote(1, voter.String(), govtypesv1.OptionNo, timestamp, 0)
+	vote = types.NewVote(1, voter.String(), govtypesv1.OptionNo, "1.000000000000000000", timestamp, 0)
 	err = suite.database.SaveVote(vote)
 	suite.Require().NoError(err)
 
@@ -445,11 +489,11 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
 	suite.Require().True(expected.Equals(result[0]))
 
 	// Update with same height should change option
-	vote = types.NewVote(1, voter.String(), govtypesv1.OptionAbstain, timestamp, 1)
+	vote = types.NewVote(1, voter.String(), govtypesv1.OptionAbstain, "1.000000000000000000", timestamp, 1)
 	err = suite.database.SaveVote(vote)
 	suite.Require().NoError(err)
 
-	expected = dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypesv1.OptionAbstain.String(), timestamp, 1)
+	expected = dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypesv1.OptionAbstain.String(), "1.000000000000000000", timestamp, 1)
 
 	result = []dbtypes.VoteRow{}
 	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_vote`)
@@ -458,11 +502,11 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
 	suite.Require().True(expected.Equals(result[0]))
 
 	// Update with higher height should change option
-	vote = types.NewVote(1, voter.String(), govtypesv1.OptionNoWithVeto, timestamp, 2)
+	vote = types.NewVote(1, voter.String(), govtypesv1.OptionNoWithVeto, "1.000000000000000000", timestamp, 2)
 	err = suite.database.SaveVote(vote)
 	suite.Require().NoError(err)
 
-	expected = dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypesv1.OptionNoWithVeto.String(), timestamp, 2)
+	expected = dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypesv1.OptionNoWithVeto.String(), "1.000000000000000000", timestamp, 2)
 
 	result = []dbtypes.VoteRow{}
 	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_vote`)
