@@ -101,6 +101,23 @@ WHERE (cardinality(types) = 0 OR type = ANY (types))
 ORDER BY height DESC LIMIT "limit" OFFSET "offset"
 $$ LANGUAGE sql STABLE;
 
+
+CREATE OR REPLACE FUNCTION messages_by_single_address(
+    address text, 
+    types text[], 
+    "limit" integer DEFAULT 100,
+    "offset" integer DEFAULT 0)
+    RETURNS SETOF message
+    LANGUAGE sql
+    STABLE
+AS $function$
+SELECT * FROM message
+WHERE (cardinality(types) = 0 OR type = ANY (types))
+  AND string_to_array(address,',') && involved_accounts_addresses
+ORDER BY height DESC LIMIT "limit" OFFSET "offset"
+$function$;
+
+
 CREATE TABLE pruning
 (
     last_pruned_height BIGINT NOT NULL
