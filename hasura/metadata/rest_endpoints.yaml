@@ -1,1 +1,9 @@
-[]
+- comment: Get all transactions for single account
+  definition:
+    query:
+      collection_name: allowed-queries
+      query_name: GetMessagesBySingleAddress
+  methods:
+    - GET
+  name: GetMessagesBySingleAddress
+  url: transactions/address/:address
