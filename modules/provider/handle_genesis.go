@@ -7,8 +7,8 @@ import (
 	"github.com/forbole/bdjuno/v4/types"
 	"github.com/rs/zerolog/log"
 
-	providertypes "github.com/akash-network/node/x/provider/types/v1beta2"
-	tmtypes "github.com/tendermint/tendermint/types"
+	providertypes "github.com/akash-network/akash-api/go/node/provider/v1beta3"
+	tmtypes "github.com/cometbft/cometbft/types"
 )
 
 // HandleGenesis implements modules.GenesisModule

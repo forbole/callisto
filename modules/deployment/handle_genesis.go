@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 
-	tmtypes "github.com/tendermint/tendermint/types"
+	tmtypes "github.com/cometbft/cometbft/types"
 
 	"github.com/forbole/bdjuno/v4/types"
 
-	deploymenttypes "github.com/akash-network/node/x/deployment/types/v1beta2"
+	deploymenttypes "github.com/akash-network/akash-api/go/node/deployment/v1beta3"
 	"github.com/rs/zerolog/log"
 )
 
