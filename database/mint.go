@@ -6,7 +6,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 )
 
 // SaveInflation allows to store the inflation for the given block height as well as timestamp
@@ -19,7 +19,7 @@ ON CONFLICT (one_row_id) DO UPDATE
         height = excluded.height 
 WHERE inflation.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt, inflation.String(), height)
+	_, err := db.SQL.Exec(stmt, inflation.String(), height)
 	if err != nil {
 		return fmt.Errorf("error while storing inflation: %s", err)
 	}
@@ -42,7 +42,7 @@ ON CONFLICT (one_row_id) DO UPDATE
         height = excluded.height
 WHERE mint_params.height <= excluded.height`
 
-	_, err = db.Sql.Exec(stmt, string(paramsBz), params.Height)
+	_, err = db.SQL.Exec(stmt, string(paramsBz), params.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing mint params: %s", err)
 	}

@@ -23,9 +23,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Setup Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
-          go-version: 1.17
+          go-version: 1.19
       - name: Test & Create coverage report
         run: make install test-unit stop-docker-test
       - name: Upload cove coverage

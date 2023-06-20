@@ -11,6 +11,13 @@ object_relationships:
       remote_table:
         name: vesting_account
         schema: public
+- name: akash_provider_address
+  using:
+    foreign_key_constraint_on:
+      column: owner_address
+      table:
+        name: akash_provider
+        schema: public
 array_relationships:
 - name: proposal_deposits
   using:

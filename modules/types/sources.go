@@ -8,8 +8,9 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/forbole/juno/v3/node/remote"
+	"github.com/forbole/juno/v4/node/remote"
 
+	markettypes "github.com/akash-network/node/x/market/types/v1beta2"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
@@ -17,35 +18,51 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/forbole/juno/v3/node/local"
+	"github.com/forbole/juno/v4/node/local"
 
-	nodeconfig "github.com/forbole/juno/v3/node/config"
+	nodeconfig "github.com/forbole/juno/v4/node/config"
 
-	banksource "github.com/forbole/bdjuno/v3/modules/bank/source"
-	localbanksource "github.com/forbole/bdjuno/v3/modules/bank/source/local"
-	remotebanksource "github.com/forbole/bdjuno/v3/modules/bank/source/remote"
-	distrsource "github.com/forbole/bdjuno/v3/modules/distribution/source"
-	localdistrsource "github.com/forbole/bdjuno/v3/modules/distribution/source/local"
-	remotedistrsource "github.com/forbole/bdjuno/v3/modules/distribution/source/remote"
-	govsource "github.com/forbole/bdjuno/v3/modules/gov/source"
-	localgovsource "github.com/forbole/bdjuno/v3/modules/gov/source/local"
-	remotegovsource "github.com/forbole/bdjuno/v3/modules/gov/source/remote"
-	mintsource "github.com/forbole/bdjuno/v3/modules/mint/source"
-	localmintsource "github.com/forbole/bdjuno/v3/modules/mint/source/local"
-	remotemintsource "github.com/forbole/bdjuno/v3/modules/mint/source/remote"
-	slashingsource "github.com/forbole/bdjuno/v3/modules/slashing/source"
-	localslashingsource "github.com/forbole/bdjuno/v3/modules/slashing/source/local"
-	remoteslashingsource "github.com/forbole/bdjuno/v3/modules/slashing/source/remote"
-	stakingsource "github.com/forbole/bdjuno/v3/modules/staking/source"
-	localstakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/local"
-	remotestakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/remote"
+	providertypes "github.com/akash-network/node/x/provider/types/v1beta2"
+	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
+	localbanksource "github.com/forbole/bdjuno/v4/modules/bank/source/local"
+	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"
+	distrsource "github.com/forbole/bdjuno/v4/modules/distribution/source"
+	localdistrsource "github.com/forbole/bdjuno/v4/modules/distribution/source/local"
+	remotedistrsource "github.com/forbole/bdjuno/v4/modules/distribution/source/remote"
+	govsource "github.com/forbole/bdjuno/v4/modules/gov/source"
+	localgovsource "github.com/forbole/bdjuno/v4/modules/gov/source/local"
+	remotegovsource "github.com/forbole/bdjuno/v4/modules/gov/source/remote"
+	marketsource "github.com/forbole/bdjuno/v4/modules/market/source"
+	localmarketsource "github.com/forbole/bdjuno/v4/modules/market/source/local"
+	remotemarketsource "github.com/forbole/bdjuno/v4/modules/market/source/remote"
+	mintsource "github.com/forbole/bdjuno/v4/modules/mint/source"
+	localmintsource "github.com/forbole/bdjuno/v4/modules/mint/source/local"
+	remotemintsource "github.com/forbole/bdjuno/v4/modules/mint/source/remote"
+	providersource "github.com/forbole/bdjuno/v4/modules/provider/source"
+	localprovidersource "github.com/forbole/bdjuno/v4/modules/provider/source/local"
+	remoteprovidersource "github.com/forbole/bdjuno/v4/modules/provider/source/remote"
+	slashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source"
+	localslashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source/local"
+	remoteslashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source/remote"
+	stakingsource "github.com/forbole/bdjuno/v4/modules/staking/source"
+	localstakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/local"
+	remotestakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/remote"
+
+	escrowKeeper "github.com/akash-network/node/x/escrow/keeper"
+	akashmarket "github.com/akash-network/node/x/market"
+	akashprovider "github.com/akash-network/node/x/provider"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	akashapp "github.com/akash-network/node/app"
 )
 
 type Sources struct {
 	BankSource     banksource.Source
 	DistrSource    distrsource.Source
 	GovSource      govsource.Source
+	MarketSource   marketsource.Source
 	MintSource     mintsource.Source
+	ProviderSource providersource.Source
 	SlashingSource slashingsource.Source
 	StakingSource  stakingsource.Source
 }
@@ -73,11 +90,20 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		cfg.Home, 0, simapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
 	)
 
+	// For MarketSource & ProviderSource
+	akashapp := akashapp.NewApp(
+		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, 0, map[int64]bool{},
+		cfg.Home, simapp.EmptyAppOptions{},
+	)
+	escrowKeeper := escrowKeeper.NewKeeper(encodingConfig.Marshaler, sdk.NewKVStoreKey(akashprovider.StoreKey), app.BankKeeper)
+
 	sources := &Sources{
 		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
 		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
 		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
+		MarketSource:   localmarketsource.NewSource(source, akashmarket.NewKeeper(encodingConfig.Marshaler, sdk.NewKVStoreKey(akashprovider.StoreKey), akashapp.GetSubspace(markettypes.ModuleName), escrowKeeper).NewQuerier()),
 		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
+		ProviderSource: localprovidersource.NewSource(source, akashprovider.NewKeeper(encodingConfig.Marshaler, sdk.NewKVStoreKey(akashprovider.StoreKey)).NewQuerier()),
 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
 		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
 	}
@@ -116,7 +142,9 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		BankSource:     remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
 		DistrSource:    remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
 		GovSource:      remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
+		MarketSource:   remotemarketsource.NewSource(source, markettypes.NewQueryClient(source.GrpcConn)),
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
+		ProviderSource: remoteprovidersource.NewSource(source, providertypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
 	}, nil

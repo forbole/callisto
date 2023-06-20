@@ -1,4 +1,17 @@
 ## Unreleased
+
+### Akash
+#### custom modules
+- ([\#439](https://github.com/forbole/bdjuno/pull/439)) Implement akash custom modules:
+  - `x/deployment`: store params from genesis
+  - `x/market`: store params from genesis
+  - `x/provider`: store providers data
+- ([\#453](https://github.com/forbole/bdjuno/pull/453))
+  - `x/market`: store active leases
+- ([\#457](https://github.com/forbole/bdjuno/pull/457))
+  - `x/provider`: store provider inventory status
+
+
 ### Changes
 
 #### CI
@@ -30,6 +43,8 @@
 
 ### Dependencies
 - ([\#462](https://github.com/forbole/bdjuno/pull/462)) Updated Juno to `v3.4.0`
+- ([\#542](https://github.com/forbole/bdjuno/pull/542)) Updated Juno to `v4.1.0`,  BDJuno to `v4` and Golang version to `1.19`
+
 
 ## Version v3.2.0
 ### Changes
