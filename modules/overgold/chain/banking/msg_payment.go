@@ -152,10 +152,12 @@ func (m *Module) paymentWithFee(
 		coinFeeVoid      = sdk.NewCoin(asset.Name, sdk.NewIntFromUint64(feeVoid))
 	)
 
-	// subtract coins from sender wallet balance
-	walletFrom.Balance = walletFrom.Balance.Sub(sdk.NewCoins(coin))
-	if err := m.walletsRepo.UpdateWallets(&walletFrom); err != nil {
-		return err
+	balanceFrom := walletFrom.Balance.AmountOf(asset.Name).Uint64()
+	if balanceFrom >= coin.Amount.Uint64() {
+		walletFrom.Balance = walletFrom.Balance.Sub(sdk.NewCoins(coin))
+		if err := m.walletsRepo.UpdateWallets(&walletFrom); err != nil {
+			return err
+		}
 	}
 
 	// add coins to receiver wallet balance
