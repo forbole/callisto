@@ -1,0 +1,256 @@
+swagger: '2.0'
+info:
+  description: Osmosis API Document
+  version: 1.0.6
+  title: Osmosis API Document
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+host: api-mainnet-osmosis.forbole.com
+basePath: /
+tags:
+  - name: transaction
+    description: ''
+    externalDocs:
+      description: Find out more
+      url: http://swagger.io
+schemes:
+  - https
+paths:
+  /transactions/address/{address}:
+    get:
+      tags:
+        - Transaction
+      summary: Get transactions by address
+      description: Returns list of transactions for given address
+      operationId: getTransaction
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - name: address
+          in: path
+          description: Address
+          required: true
+          type: string
+        - name: limit
+          in: query
+          description: ''
+          required: false
+          type: integer
+          format: int64
+        - name: offset
+          in: query
+          description: ''
+          required: false
+          type: integer
+          format: int64
+        - name: apikey
+          in: query
+          description: ''
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  ApiResponse:
+    type: object
+    properties:
+      transaction:
+        $ref: '#/definitions/Transaction'
+  Error:
+    type: object
+    properties:
+      path:
+        type: string
+        example: string
+      error:
+        type: string
+        example: string
+      code:
+        type: string
+        example: string
+  Amount:
+    type: object
+    properties:
+      denom:
+        type: string
+        example: string
+      amount:
+        type: string
+        example: string
+  Fee:
+    type: object
+    properties:
+      payer:
+        type: string
+        example: string
+      amount:
+        type: array
+        items:
+          $ref: '#/definitions/FeeAmount'
+      granter:
+        type: string
+        example: string
+      gas_limit:
+        type: string
+        example: string
+  FeeAmount:
+    type: object
+    properties:
+      denom:
+        type: string
+        example: string
+      amount:
+        type: string
+        example: string
+  Logs:
+    type: object
+    properties:
+      events:
+        type: array
+        items:
+          $ref: '#/definitions/LogsEvents'
+      msg_index:
+        type: integer
+        format: int64
+        example: 0
+  LogsEvents:
+    type: object
+    properties:
+      type:
+        type: string
+        example: string
+      attributes:
+        type: array
+        items:
+          $ref: '#/definitions/LogsEventsAttributes'
+  LogsEventsAttributes:
+    type: object
+    properties:
+      key:
+        type: object
+        example: string
+      value:
+        type: object
+        example: string
+  Messages:
+    type: object
+    properties:
+      '@type':
+        type: string
+        example: /cosmos.bank.v1beta1.MsgSend
+      amount:
+        type: array
+        items:
+          $ref: '#/definitions/Amount'
+      to_address:
+        type: string
+        example: string
+      from_address:
+        type: string
+        example: string
+  Signatures:
+    type: object
+    example: string
+  SignerInfos:
+    type: object
+    properties:
+      sequence:
+        type: string
+        example: string
+      mode_info:
+        type: object
+        properties:
+          single:
+            type: object
+            properties:
+              mode:
+                type: string
+                example: SIGN_MODE_UNSPECIFIED
+      public_key:
+        type: object
+        properties:
+          key:
+            type: string
+            example: string
+          '@type':
+            type: string
+            example: string
+  Transaction:
+    type: object
+    properties:
+      height:
+        type: integer
+        format: int64
+        example: 1
+      hash:
+        type: string
+        example: string
+      success:
+        type: boolean
+        example: true
+      messages:
+        type: array
+        items:
+          $ref: '#/definitions/Messages'
+      memo:
+        type: string
+        example: string
+      fee:
+        type: array
+        items:
+          $ref: '#/definitions/Fee'
+      gas_used:
+        type: integer
+        format: int64
+        example: 0
+      gas_wanted:
+        type: integer
+        format: int64
+        example: 0
+      signatures:
+        type: array
+        items:
+          $ref: '#/definitions/Signatures'
+      signer_infos:
+        type: array
+        items:
+          $ref: '#/definitions/SignerInfos'
+      raw_log:
+        type: string
+        example: string
+      logs:
+        type: array
+        items:
+          $ref: '#/definitions/Logs'
+      block:
+        type: object
+        properties:
+          height:
+            type: integer
+            format: int64
+            example: 1
+          timestamp:
+            type: string
+            example: string
+          __typename:
+            type: string
+            example: string
+      __typename:
+        type: string
+        example: string
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
