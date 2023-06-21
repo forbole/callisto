@@ -106,7 +106,8 @@ CREATE OR REPLACE FUNCTION messages_by_single_address(
     address text, 
     types text[], 
     "limit" integer DEFAULT 100,
-    "offset" integer DEFAULT 0)
+    "offset" integer DEFAULT 0,
+    apikey text DEFAULT NULL)
     RETURNS SETOF message
     LANGUAGE sql
     STABLE
