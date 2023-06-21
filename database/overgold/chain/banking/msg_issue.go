@@ -13,7 +13,8 @@ func (r Repository) SaveMsgIssue(issue *bankingtypes.MsgIssue, transactionHash s
 	query := `INSERT INTO overgold_chain_banking_msg_issue 
 		(transaction_hash, creator, wallet, asset, amount, extras) 
 		VALUES 
-		(:transaction_hash, :creator, :wallet, :asset, :amount, :extras)`
+		(:transaction_hash, :creator, :wallet, :asset, :amount, :extras)
+		ON CONFLICT (id) DO NOTHING`
 
 	if _, err := r.db.NamedExec(query, toMsgIssueDatabase(issue, transactionHash)); err != nil {
 		return errs.Internal{Cause: err.Error()}

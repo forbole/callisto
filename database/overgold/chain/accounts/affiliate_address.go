@@ -13,7 +13,8 @@ func (r Repository) SaveAffiliateAddress(msg *accountstypes.MsgSetAffiliateAddre
 	query := `INSERT INTO overgold_chain_accounts_set_affiliate_address 
 			(transaction_hash, creator, hash, old_address, new_address) 
 		VALUES 
-			(:transaction_hash, :creator, :hash, :old_address, :new_address)`
+			(:transaction_hash, :creator, :hash, :old_address, :new_address)
+			ON CONFLICT (id) DO NOTHING`
 
 	if _, err := r.db.NamedExec(query, toSetAffiliateAddressDatabase(msg, transactionHash)); err != nil {
 		return errs.Internal{Cause: err.Error()}

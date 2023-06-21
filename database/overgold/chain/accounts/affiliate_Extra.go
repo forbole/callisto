@@ -13,7 +13,8 @@ func (r Repository) SaveAffiliateExtra(msg *accountstypes.MsgSetAffiliateExtra, 
 	query := `INSERT INTO overgold_chain_accounts_set_affiliate_extra 
 			(transaction_hash, creator, account_hash, affiliation_hash, extras) 
 		VALUES 
-			(:transaction_hash, :creator, :account_hash, :affiliation_hash, :extras)`
+			(:transaction_hash, :creator, :account_hash, :affiliation_hash, :extras)
+			ON CONFLICT (id) DO NOTHING`
 
 	if _, err := r.db.NamedExec(query, toSetAffiliateExtraDatabase(msg, transactionHash)); err != nil {
 		return errs.Internal{Cause: err.Error()}

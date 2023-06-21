@@ -27,12 +27,14 @@ func (r Repository) SaveIssues(issues ...*bankingtypes.Issue) error {
 	queryBaseTransfer := `INSERT INTO overgold_chain_banking_base_transfers 
        ("id", "asset", "amount", "kind", "extras", "timestamp", "tx_hash") 
      VALUES 
-       (:id, :asset, :amount, :kind, :extras, :timestamp, :tx_hash)`
+       (:id, :asset, :amount, :kind, :extras, :timestamp, :tx_hash)
+       ON CONFLICT (id) DO NOTHING`
 
 	queryIssue := `INSERT INTO overgold_chain_banking_issue
 			("id", "wallet")
 			VALUES
-			(:id, :wallet)`
+			(:id, :wallet)
+			ON CONFLICT (id) DO NOTHING`
 
 	for _, issue := range issues {
 		issueDB := toIssueDatabase(issue)
