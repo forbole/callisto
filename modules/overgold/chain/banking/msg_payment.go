@@ -70,10 +70,13 @@ func (m *Module) payment(
 ) error {
 	coin := sdk.NewCoin(payment.BaseTransfer.Asset, sdk.NewIntFromUint64(payment.Amount))
 
-	// subtract coins from sender wallet balance
-	walletFrom.Balance = walletFrom.Balance.Sub(sdk.NewCoins(coin))
-	if err := m.walletsRepo.UpdateWallets(&walletFrom); err != nil {
-		return err
+	balanceFrom := walletFrom.Balance.AmountOf(payment.Asset).Uint64()
+	if balanceFrom >= coin.Amount.Uint64() {
+		// subtract coins from sender wallet balance
+		walletFrom.Balance = walletFrom.Balance.Sub(sdk.NewCoins(coin))
+		if err := m.walletsRepo.UpdateWallets(&walletFrom); err != nil {
+			return err
+		}
 	}
 
 	// add coins to receiver wallet balance

@@ -13,7 +13,8 @@ func (r Repository) SaveAccountMigrate(msg *accountstypes.MsgAccountMigrate, tra
 	query := `INSERT INTO overgold_chain_accounts_account_migrate 
 			(transaction_hash, creator, address, hash, public_key) 
 		VALUES 
-			(:transaction_hash, :creator, :address, :hash, :public_key)`
+			(:transaction_hash, :creator, :address, :hash, :public_key)
+			ON CONFLICT (id) DO NOTHING`
 
 	if _, err := r.db.NamedExec(query, toAccountMigrateDatabase(msg, transactionHash)); err != nil {
 		return errs.Internal{Cause: err.Error()}

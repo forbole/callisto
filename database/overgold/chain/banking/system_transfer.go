@@ -28,7 +28,7 @@ func (r Repository) SaveSystemTransfers(transfers ...*bankingtypes.SystemTransfe
        ("id", "asset", "amount", "kind", "extras", "timestamp", "tx_hash") 
      VALUES 
        (:id, :asset, :amount, :kind, :extras, :timestamp, :tx_hash)
-       ON CONFLICT (id) DO NOTHING `
+       ON CONFLICT (id) DO NOTHING`
 
 	querySystemTransfer := `INSERT INTO overgold_chain_banking_system_transfer
 			("id", "wallet_from", "wallet_to")

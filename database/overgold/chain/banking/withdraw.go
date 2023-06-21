@@ -27,12 +27,14 @@ func (r Repository) SaveWithdraws(withdraws ...*bankingtypes.Withdraw) error {
 	queryBaseTransfer := `INSERT INTO overgold_chain_banking_base_transfers 
        ("id", "asset", "amount", "kind", "extras", "timestamp", "tx_hash") 
      VALUES 
-       (:id, :asset, :amount, :kind, :extras, :timestamp, :tx_hash)`
+       (:id, :asset, :amount, :kind, :extras, :timestamp, :tx_hash)
+       ON CONFLICT (id) DO NOTHING`
 
 	queryWithdraw := `INSERT INTO overgold_chain_banking_withdraw
 			("id", "wallet")
 			VALUES
-			(:id, :wallet)`
+			(:id, :wallet)
+			ON CONFLICT (id) DO NOTHING`
 
 	for _, withdraw := range withdraws {
 		withdrawDB := toWithdrawDatabase(withdraw)

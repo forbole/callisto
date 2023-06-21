@@ -13,7 +13,8 @@ func (r Repository) SaveState(msg *accountstypes.MsgSetState, transactionHash st
 	query := `INSERT INTO overgold_chain_accounts_set_state 
 			(transaction_hash, creator, hash, state, reason) 
 			VALUES 
-			(:transaction_hash, :creator, :hash, :state, :reason)`
+			(:transaction_hash, :creator, :hash, :state, :reason)
+			ON CONFLICT (id) DO NOTHING`
 
 	if _, err := r.db.NamedExec(query, toSetStateDatabase(msg, transactionHash)); err != nil {
 		return errs.Internal{Cause: err.Error()}

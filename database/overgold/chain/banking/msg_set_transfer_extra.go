@@ -13,7 +13,8 @@ func (r Repository) SaveMsgSetTransferExtra(extras *bankingtypes.MsgSetTransferE
 	query := `INSERT INTO overgold_chain_banking_set_transfer_extra 
 		(transaction_hash, creator, id, extras) 
 		VALUES 
-		(:transaction_hash, :creator, :id, :extras)`
+		(:transaction_hash, :creator, :id, :extras)
+		ON CONFLICT (msg_id) DO NOTHING`
 
 	if _, err := r.db.NamedExec(query, toMsgSetTransferExtraDatabase(extras, transactionHash)); err != nil {
 		return errs.Internal{Cause: err.Error()}
