@@ -31,7 +31,7 @@ func (suite *DbTestSuite) TestSaveAccount() {
 
 	// Accounts row
 	var accountRows []dbtypes.AccountRow
-	err = suite.database.Sqlx.Select(&accountRows, `SELECT * FROM account`)
+	err = suite.database.SQL.Select(&accountRows, `SELECT * FROM account`)
 	suite.Require().NoError(err)
 	suite.Require().Len(accountRows, 1, "account table should contain only one row")
 

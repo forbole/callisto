@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 
-	tmtypes "github.com/tendermint/tendermint/types"
+	tmtypes "github.com/cometbft/cometbft/types"
 
 	"github.com/forbole/bdjuno/v4/types"
 
-	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
+	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
 	"github.com/rs/zerolog/log"
 )
 

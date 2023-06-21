@@ -14,7 +14,7 @@ func (db *Db) GetLastBlock() (*dbtypes.BlockRow, error) {
 	stmt := `SELECT * FROM block ORDER BY height DESC LIMIT 1`
 
 	var blocks []dbtypes.BlockRow
-	if err := db.Sqlx.Select(&blocks, stmt); err != nil {
+	if err := db.SQL.Select(&blocks, stmt); err != nil {
 		return nil, err
 	}
 
@@ -48,7 +48,7 @@ func (db *Db) getBlockHeightTime(pastTime time.Time) (dbtypes.BlockRow, error) {
 	stmt := `SELECT * FROM block WHERE block.timestamp <= $1 ORDER BY block.timestamp DESC LIMIT 1;`
 
 	var val []dbtypes.BlockRow
-	if err := db.Sqlx.Select(&val, stmt, pastTime); err != nil {
+	if err := db.SQL.Select(&val, stmt, pastTime); err != nil {
 		return dbtypes.BlockRow{}, err
 	}
 
@@ -92,7 +92,7 @@ ON CONFLICT (one_row_id) DO UPDATE
         height = excluded.height
 WHERE average_block_time_per_minute.height <= excluded.height`
 
-	_, err := db.Sqlx.Exec(stmt, averageTime, height)
+	_, err := db.SQL.Exec(stmt, averageTime, height)
 	if err != nil {
 		return fmt.Errorf("error while storing average block time per minute: %s", err)
 	}
@@ -110,7 +110,7 @@ ON CONFLICT (one_row_id) DO UPDATE
         height = excluded.height
 WHERE average_block_time_per_hour.height <= excluded.height`
 
-	_, err := db.Sqlx.Exec(stmt, averageTime, height)
+	_, err := db.SQL.Exec(stmt, averageTime, height)
 	if err != nil {
 		return fmt.Errorf("error while storing average block time per hour: %s", err)
 	}
@@ -128,7 +128,7 @@ ON CONFLICT (one_row_id) DO UPDATE
         height = excluded.height
 WHERE average_block_time_per_day.height <= excluded.height`
 
-	_, err := db.Sqlx.Exec(stmt, averageTime, height)
+	_, err := db.SQL.Exec(stmt, averageTime, height)
 	if err != nil {
 		return fmt.Errorf("error while storing average block time per day: %s", err)
 	}
@@ -146,7 +146,7 @@ ON CONFLICT (one_row_id) DO UPDATE
         height = excluded.height
 WHERE average_block_time_from_genesis.height <= excluded.height`
 
-	_, err := db.Sqlx.Exec(stmt, averageTime, height)
+	_, err := db.SQL.Exec(stmt, averageTime, height)
 	if err != nil {
 		return fmt.Errorf("error while storing average block time since genesis: %s", err)
 	}
@@ -165,7 +165,7 @@ VALUES ($1, $2, $3) ON CONFLICT (one_row_id) DO UPDATE
         initial_height = excluded.initial_height,
         chain_id = excluded.chain_id`
 
-	_, err := db.Sqlx.Exec(stmt, genesis.Time, genesis.ChainID, genesis.InitialHeight)
+	_, err := db.SQL.Exec(stmt, genesis.Time, genesis.ChainID, genesis.InitialHeight)
 	if err != nil {
 		return fmt.Errorf("error while storing genesis: %s", err)
 	}
@@ -176,7 +176,7 @@ VALUES ($1, $2, $3) ON CONFLICT (one_row_id) DO UPDATE
 // GetGenesis returns the genesis information stored inside the database
 func (db *Db) GetGenesis() (*types.Genesis, error) {
 	var rows []*dbtypes.GenesisRow
-	err := db.Sqlx.Select(&rows, `SELECT * FROM genesis;`)
+	err := db.SQL.Select(&rows, `SELECT * FROM genesis;`)
 	if err != nil {
 		return nil, err
 	}

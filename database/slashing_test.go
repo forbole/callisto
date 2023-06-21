@@ -71,7 +71,7 @@ func (suite *DbTestSuite) TestBigDipperDb_ValidatorSigningInfo() {
 	}
 
 	var rows []dbtypes.ValidatorSigningInfoRow
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM validator_signing_info`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM validator_signing_info`)
 	suite.Require().NoError(err)
 
 	for i, row := range rows {
@@ -127,7 +127,7 @@ func (suite *DbTestSuite) TestBigDipperDb_ValidatorSigningInfo() {
 	}
 
 	rows = []dbtypes.ValidatorSigningInfoRow{}
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM validator_signing_info`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM validator_signing_info`)
 	suite.Require().NoError(err)
 
 	for i, row := range rows {
@@ -150,7 +150,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSlashingParams() {
 
 	// Verify data
 	var rows []dbtypes.SlashingParamsRow
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM slashing_params`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM slashing_params`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 
@@ -173,7 +173,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSlashingParams() {
 	suite.Require().NoError(err)
 
 	rows = []dbtypes.SlashingParamsRow{}
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM slashing_params`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM slashing_params`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 
@@ -193,7 +193,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSlashingParams() {
 	suite.Require().NoError(err)
 
 	rows = []dbtypes.SlashingParamsRow{}
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM slashing_params`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM slashing_params`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 
@@ -213,7 +213,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveSlashingParams() {
 	suite.Require().NoError(err)
 
 	rows = []dbtypes.SlashingParamsRow{}
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM slashing_params`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM slashing_params`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 

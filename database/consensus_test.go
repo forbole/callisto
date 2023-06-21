@@ -1,7 +1,7 @@
 package database_test
 
 import (
-	time "time"
+	"time"
 
 	dbtypes "github.com/forbole/bdjuno/v4/database/types"
 	"github.com/forbole/bdjuno/v4/types"
@@ -81,7 +81,7 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimePerMin() {
 
 	// Verify the data
 	var rows []dbtypes.AverageTimeRow
-	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM average_block_time_per_minute")
+	err = suite.database.SQL.Select(&rows, "SELECT * FROM average_block_time_per_minute")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().True(rows[0].Equal(original))
@@ -94,7 +94,7 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimePerMin() {
 
 	// Verify the data
 	rows = []dbtypes.AverageTimeRow{}
-	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM average_block_time_per_minute")
+	err = suite.database.SQL.Select(&rows, "SELECT * FROM average_block_time_per_minute")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().True(rows[0].Equal(original), "updating with a lower height should not change the data")
@@ -109,7 +109,7 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimePerMin() {
 	expected := dbtypes.NewAverageTimeRow(10, 10)
 
 	rows = []dbtypes.AverageTimeRow{}
-	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM average_block_time_per_minute")
+	err = suite.database.SQL.Select(&rows, "SELECT * FROM average_block_time_per_minute")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().True(rows[0].Equal(expected), "updating with same height should change the data")
@@ -124,7 +124,7 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimePerMin() {
 	expected = dbtypes.NewAverageTimeRow(20, 15)
 
 	rows = []dbtypes.AverageTimeRow{}
-	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM average_block_time_per_minute")
+	err = suite.database.SQL.Select(&rows, "SELECT * FROM average_block_time_per_minute")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().True(rows[0].Equal(expected), "updating with higher height should change the data")
@@ -139,7 +139,7 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimePerHour() {
 
 	// Verify the data
 	var rows []dbtypes.AverageTimeRow
-	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM average_block_time_per_hour")
+	err = suite.database.SQL.Select(&rows, "SELECT * FROM average_block_time_per_hour")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().True(rows[0].Equal(original))
@@ -152,7 +152,7 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimePerHour() {
 
 	// Verify the data
 	rows = []dbtypes.AverageTimeRow{}
-	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM average_block_time_per_hour")
+	err = suite.database.SQL.Select(&rows, "SELECT * FROM average_block_time_per_hour")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().True(rows[0].Equal(original), "updating with a lower height should not change the data")
@@ -167,7 +167,7 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimePerHour() {
 	expected := dbtypes.NewAverageTimeRow(10, 10)
 
 	rows = []dbtypes.AverageTimeRow{}
-	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM average_block_time_per_hour")
+	err = suite.database.SQL.Select(&rows, "SELECT * FROM average_block_time_per_hour")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().True(rows[0].Equal(expected), "updating with same height should change the data")
@@ -182,7 +182,7 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimePerHour() {
 	expected = dbtypes.NewAverageTimeRow(20, 15)
 
 	rows = []dbtypes.AverageTimeRow{}
-	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM average_block_time_per_hour")
+	err = suite.database.SQL.Select(&rows, "SELECT * FROM average_block_time_per_hour")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().True(rows[0].Equal(expected), "updating with higher height should change the data")
@@ -197,7 +197,7 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimePerDay() {
 
 	// Verify the data
 	var rows []dbtypes.AverageTimeRow
-	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM average_block_time_per_day")
+	err = suite.database.SQL.Select(&rows, "SELECT * FROM average_block_time_per_day")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().True(rows[0].Equal(original))
@@ -210,7 +210,7 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimePerDay() {
 
 	// Verify the data
 	rows = []dbtypes.AverageTimeRow{}
-	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM average_block_time_per_day")
+	err = suite.database.SQL.Select(&rows, "SELECT * FROM average_block_time_per_day")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().True(rows[0].Equal(original), "updating with a lower height should not change the data")
@@ -225,7 +225,7 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimePerDay() {
 	expected := dbtypes.NewAverageTimeRow(10, 10)
 
 	rows = []dbtypes.AverageTimeRow{}
-	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM average_block_time_per_day")
+	err = suite.database.SQL.Select(&rows, "SELECT * FROM average_block_time_per_day")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().True(rows[0].Equal(expected), "updating with same height should change the data")
@@ -240,7 +240,7 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimePerDay() {
 	expected = dbtypes.NewAverageTimeRow(20, 15)
 
 	rows = []dbtypes.AverageTimeRow{}
-	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM average_block_time_per_day")
+	err = suite.database.SQL.Select(&rows, "SELECT * FROM average_block_time_per_day")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().True(rows[0].Equal(expected), "updating with higher height should change the data")
@@ -255,7 +255,7 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimeGenesis() {
 
 	// Verify the data
 	var rows []dbtypes.AverageTimeRow
-	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM average_block_time_from_genesis")
+	err = suite.database.SQL.Select(&rows, "SELECT * FROM average_block_time_from_genesis")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().True(rows[0].Equal(original))
@@ -268,7 +268,7 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimeGenesis() {
 
 	// Verify the data
 	rows = []dbtypes.AverageTimeRow{}
-	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM average_block_time_from_genesis")
+	err = suite.database.SQL.Select(&rows, "SELECT * FROM average_block_time_from_genesis")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().True(rows[0].Equal(original), "updating with a lower height should not change the data")
@@ -283,7 +283,7 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimeGenesis() {
 	expected := dbtypes.NewAverageTimeRow(10, 10)
 
 	rows = []dbtypes.AverageTimeRow{}
-	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM average_block_time_from_genesis")
+	err = suite.database.SQL.Select(&rows, "SELECT * FROM average_block_time_from_genesis")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().True(rows[0].Equal(expected), "updating with same height should change the data")
@@ -298,7 +298,7 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveAverageBlockTimeGenesis() {
 	expected = dbtypes.NewAverageTimeRow(20, 15)
 
 	rows = []dbtypes.AverageTimeRow{}
-	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM average_block_time_from_genesis")
+	err = suite.database.SQL.Select(&rows, "SELECT * FROM average_block_time_from_genesis")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 	suite.Require().True(rows[0].Equal(expected), "updating with higher height should change the data")
@@ -320,7 +320,7 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveGenesisData() {
 	))
 
 	var rows []*dbtypes.GenesisRow
-	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM genesis")
+	err = suite.database.SQL.Select(&rows, "SELECT * FROM genesis")
 	suite.Require().Len(rows, 1)
 	suite.Require().True(rows[0].Equal(dbtypes.NewGenesisRow(
 		"testnet-2",
@@ -330,7 +330,7 @@ func (suite *DbTestSuite) TestSaveConsensus_SaveGenesisData() {
 }
 
 func (suite *DbTestSuite) TestSaveConsensus_GetGenesis() {
-	_, err := suite.database.Sqlx.Exec(
+	_, err := suite.database.SQL.Exec(
 		`INSERT INTO genesis(chain_id, time, initial_height) VALUES ($1, $2, $3)`,
 		"testnet-1",
 		time.Date(2020, 1, 1, 15, 00, 00, 000, time.UTC),

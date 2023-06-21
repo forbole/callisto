@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	profilestypes "github.com/desmos-labs/desmos/v4/x/profiles/types"
+	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
 
 	dbtypes "github.com/forbole/bdjuno/v4/database/types"
 	"github.com/forbole/bdjuno/v4/types"
@@ -21,7 +21,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProfilesParams() {
 	suite.Require().NoError(err)
 
 	var rows []dbtypes.ProfilesParamsRow
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM profiles_params`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM profiles_params`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 

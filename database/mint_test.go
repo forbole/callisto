@@ -19,7 +19,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 
 	// Verify the data
 	var rows []dbtypes.InflationRow
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM inflation`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM inflation`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1, "no duplicated inflation rows should be inserted")
 
@@ -34,7 +34,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 
 	// Verify the data
 	rows = []dbtypes.InflationRow{}
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM inflation`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM inflation`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1, "no duplicated inflation rows should be inserted")
 
@@ -49,7 +49,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 
 	// Verify the data
 	rows = []dbtypes.InflationRow{}
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM inflation`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM inflation`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1, "no duplicated inflation rows should be inserted")
 
@@ -64,7 +64,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 
 	// Verify the data
 	rows = []dbtypes.InflationRow{}
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM inflation`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM inflation`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1, "no duplicated inflation rows should be inserted")
 
@@ -85,7 +85,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveMintParams() {
 	suite.Require().NoError(err)
 
 	var rows []dbtypes.MintParamsRow
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM mint_params`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM mint_params`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, 1)
 

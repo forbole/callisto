@@ -15,7 +15,7 @@ func (db *Db) GetTokensPriceID() ([]string, error) {
 	query := `SELECT * FROM token_unit`
 
 	var dbUnits []dbtypes.TokenUnitRow
-	err := db.Sqlx.Select(&dbUnits, query)
+	err := db.SQL.Select(&dbUnits, query)
 	if err != nil {
 		return nil, err
 	}

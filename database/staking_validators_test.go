@@ -1,7 +1,7 @@
 package database_test
 
 import (
-	tmtypes "github.com/tendermint/tendermint/proto/tendermint/types"
+	tmtypes "github.com/cometbft/cometbft/proto/tendermint/types"
 
 	"github.com/forbole/bdjuno/v4/types"
 
@@ -47,7 +47,7 @@ func (suite *DbTestSuite) TestSaveValidator() {
 
 	// Verify the data
 	var valRows []dbtypes.ValidatorRow
-	err = suite.database.Sqlx.Select(&valRows, `SELECT * FROM validator`)
+	err = suite.database.SQL.Select(&valRows, `SELECT * FROM validator`)
 	suite.Require().Len(valRows, 1)
 	suite.Require().True(valRows[0].Equal(dbtypes.NewValidatorRow(
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
@@ -55,7 +55,7 @@ func (suite *DbTestSuite) TestSaveValidator() {
 	)))
 
 	var valInfoRows []dbtypes.ValidatorInfoRow
-	err = suite.database.Sqlx.Select(&valInfoRows, `SELECT * FROM validator_info`)
+	err = suite.database.SQL.Select(&valInfoRows, `SELECT * FROM validator_info`)
 	suite.Require().Len(valInfoRows, 1)
 	suite.Require().True(valInfoRows[0].Equal(dbtypes.NewValidatorInfoRow(
 		"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
@@ -116,12 +116,12 @@ func (suite *DbTestSuite) TestSaveValidators() {
 	}
 
 	var validatorRows []dbtypes.ValidatorRow
-	err = suite.database.Sqlx.Select(&validatorRows, `SELECT * FROM validator`)
+	err = suite.database.SQL.Select(&validatorRows, `SELECT * FROM validator`)
 	suite.Require().NoError(err)
 	suite.Require().Len(validatorRows, 2)
 
 	var validatorInfoRows []dbtypes.ValidatorInfoRow
-	err = suite.database.Sqlx.Select(&validatorInfoRows, `SELECT * FROM validator_info`)
+	err = suite.database.SQL.Select(&validatorInfoRows, `SELECT * FROM validator_info`)
 	suite.Require().NoError(err)
 	suite.Require().Len(validatorInfoRows, 2)
 
@@ -181,12 +181,12 @@ func (suite *DbTestSuite) TestSaveValidators() {
 	}
 
 	validatorRows = []dbtypes.ValidatorRow{}
-	err = suite.database.Sqlx.Select(&validatorRows, `SELECT * FROM validator`)
+	err = suite.database.SQL.Select(&validatorRows, `SELECT * FROM validator`)
 	suite.Require().NoError(err)
 	suite.Require().Len(validatorRows, 2)
 
 	validatorInfoRows = []dbtypes.ValidatorInfoRow{}
-	err = suite.database.Sqlx.Select(&validatorInfoRows, `SELECT * FROM validator_info`)
+	err = suite.database.SQL.Select(&validatorInfoRows, `SELECT * FROM validator_info`)
 	suite.Require().NoError(err)
 	suite.Require().Len(validatorInfoRows, 2)
 
@@ -331,7 +331,7 @@ func (suite *DbTestSuite) TestSaveValidatorDescription() {
 	}
 
 	var rows []dbtypes.ValidatorDescriptionRow
-	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM validator_description")
+	err = suite.database.SQL.Select(&rows, "SELECT * FROM validator_description")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, len(expected))
 
@@ -353,7 +353,7 @@ func (suite *DbTestSuite) TestSaveValidatorDescription() {
 
 	// Verify the data
 	rows = []dbtypes.ValidatorDescriptionRow{}
-	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM validator_description")
+	err = suite.database.SQL.Select(&rows, "SELECT * FROM validator_description")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, len(expected))
 
@@ -388,7 +388,7 @@ func (suite *DbTestSuite) TestSaveValidatorDescription() {
 	}
 
 	rows = []dbtypes.ValidatorDescriptionRow{}
-	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM validator_description")
+	err = suite.database.SQL.Select(&rows, "SELECT * FROM validator_description")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, len(expected))
 
@@ -423,7 +423,7 @@ func (suite *DbTestSuite) TestSaveValidatorDescription() {
 	}
 
 	rows = []dbtypes.ValidatorDescriptionRow{}
-	err = suite.database.Sqlx.Select(&rows, "SELECT * FROM validator_description")
+	err = suite.database.SQL.Select(&rows, "SELECT * FROM validator_description")
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, len(expected))
 
@@ -461,7 +461,7 @@ func (suite *DbTestSuite) TestSaveValidatorCommission() {
 	}
 
 	var rows []dbtypes.ValidatorCommissionRow
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM validator_commission`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM validator_commission`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, len(expected))
 
@@ -482,7 +482,7 @@ func (suite *DbTestSuite) TestSaveValidatorCommission() {
 
 	// Verify the data
 	rows = []dbtypes.ValidatorCommissionRow{}
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM validator_commission`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM validator_commission`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, len(expected))
 
@@ -512,7 +512,7 @@ func (suite *DbTestSuite) TestSaveValidatorCommission() {
 	}
 
 	rows = []dbtypes.ValidatorCommissionRow{}
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM validator_commission`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM validator_commission`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, len(expected))
 
@@ -542,7 +542,7 @@ func (suite *DbTestSuite) TestSaveValidatorCommission() {
 	}
 
 	rows = []dbtypes.ValidatorCommissionRow{}
-	err = suite.database.Sqlx.Select(&rows, `SELECT * FROM validator_commission`)
+	err = suite.database.SQL.Select(&rows, `SELECT * FROM validator_commission`)
 	suite.Require().NoError(err)
 	suite.Require().Len(rows, len(expected))
 
@@ -583,7 +583,7 @@ func (suite *DbTestSuite) TestSaveValidatorsVotingPowers() {
 	}
 
 	var result []dbtypes.ValidatorVotingPowerRow
-	err = suite.database.Sqlx.Select(&result, "SELECT * FROM validator_voting_power")
+	err = suite.database.SQL.Select(&result, "SELECT * FROM validator_voting_power")
 	suite.Require().NoError(err)
 
 	for index, row := range result {
@@ -604,7 +604,7 @@ func (suite *DbTestSuite) TestSaveValidatorsVotingPowers() {
 	}
 
 	result = []dbtypes.ValidatorVotingPowerRow{}
-	err = suite.database.Sqlx.Select(&result, "SELECT * FROM validator_voting_power")
+	err = suite.database.SQL.Select(&result, "SELECT * FROM validator_voting_power")
 	suite.Require().NoError(err)
 
 	for index, row := range result {
@@ -647,7 +647,7 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 
 	// Verify the data
 	var stored []dbtypes.ValidatorStatusRow
-	err = suite.database.Sqlx.Select(&stored, "SELECT * FROM validator_status")
+	err = suite.database.SQL.Select(&stored, "SELECT * FROM validator_status")
 	suite.Require().NoError(err)
 
 	expected := []dbtypes.ValidatorStatusRow{
@@ -690,7 +690,7 @@ func (suite *DbTestSuite) TestSaveValidatorStatus() {
 
 	// Verify the data
 	stored = []dbtypes.ValidatorStatusRow{}
-	err = suite.database.Sqlx.Select(&stored, "SELECT * FROM validator_status")
+	err = suite.database.SQL.Select(&stored, "SELECT * FROM validator_status")
 	suite.Require().NoError(err)
 
 	expected = []dbtypes.ValidatorStatusRow{
@@ -750,7 +750,7 @@ func (suite *DbTestSuite) TestSaveDoubleVoteEvidence() {
 
 	// Verify insertion
 	var evidenceRows []dbtypes.DoubleSignEvidenceRow
-	err = suite.database.Sqlx.Select(&evidenceRows, "SELECT * FROM double_sign_evidence")
+	err = suite.database.SQL.Select(&evidenceRows, "SELECT * FROM double_sign_evidence")
 	suite.Require().NoError(err)
 	suite.Require().Len(evidenceRows, 1)
 	suite.Require().Equal(dbtypes.NewDoubleSignEvidenceRow(10, 1, 2), evidenceRows[0])
@@ -779,7 +779,7 @@ func (suite *DbTestSuite) TestSaveDoubleVoteEvidence() {
 	}
 
 	var votesRows []dbtypes.DoubleSignVoteRow
-	err = suite.database.Sqlx.Select(&votesRows, "SELECT * FROM double_sign_vote")
+	err = suite.database.SQL.Select(&votesRows, "SELECT * FROM double_sign_vote")
 	suite.Require().NoError(err)
 
 	suite.Require().Len(votesRows, len(expectVotes))

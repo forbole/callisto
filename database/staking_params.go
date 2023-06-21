@@ -37,7 +37,7 @@ WHERE staking_params.height <= excluded.height`
 func (db *Db) GetStakingParams() (*types.StakingParams, error) {
 	var rows []dbtypes.StakingParamsRow
 	stmt := `SELECT * FROM staking_params LIMIT 1`
-	err := db.Sqlx.Select(&rows, stmt)
+	err := db.SQL.Select(&rows, stmt)
 	if err != nil {
 		return nil, err
 	}

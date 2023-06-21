@@ -90,7 +90,7 @@ WHERE validator_info.height <= excluded.height`
 func (db *Db) GetValidatorConsensusAddress(address string) (sdk.ConsAddress, error) {
 	var result []string
 	stmt := `SELECT consensus_address FROM validator_info WHERE operator_address = $1`
-	err := db.Sqlx.Select(&result, stmt, address)
+	err := db.SQL.Select(&result, stmt, address)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +106,7 @@ func (db *Db) GetValidatorConsensusAddress(address string) (sdk.ConsAddress, err
 func (db *Db) GetValidatorOperatorAddress(consAddr string) (sdk.ValAddress, error) {
 	var result []string
 	stmt := `SELECT operator_address FROM validator_info WHERE consensus_address = $1`
-	err := db.Sqlx.Select(&result, stmt, consAddr)
+	err := db.SQL.Select(&result, stmt, consAddr)
 	if err != nil {
 		return nil, err
 	}
@@ -133,7 +133,7 @@ SELECT validator.consensus_address,
 FROM validator INNER JOIN validator_info ON validator.consensus_address=validator_info.consensus_address 
 WHERE validator_info.operator_address = $1`
 
-	err := db.Sqlx.Select(&result, stmt, valAddress)
+	err := db.SQL.Select(&result, stmt, valAddress)
 	if err != nil {
 		return nil, err
 	}
@@ -162,7 +162,7 @@ INNER JOIN validator_info
 ORDER BY validator.consensus_address`
 
 	var rows []dbtypes.ValidatorData
-	err := db.Sqlx.Select(&rows, sqlStmt)
+	err := db.SQL.Select(&rows, sqlStmt)
 	if err != nil {
 		return nil, err
 	}
@@ -189,7 +189,7 @@ SELECT validator.consensus_address,
 FROM validator INNER JOIN validator_info ON validator.consensus_address=validator_info.consensus_address 
 WHERE validator_info.self_delegate_address = $1`
 
-	err := db.Sqlx.Select(&result, stmt, address)
+	err := db.SQL.Select(&result, stmt, address)
 	if err != nil {
 		return nil, err
 	}
@@ -270,7 +270,7 @@ func (db *Db) getValidatorDescription(address sdk.ConsAddress) (*types.Validator
 	var result []dbtypes.ValidatorDescriptionRow
 	stmt := `SELECT * FROM validator_description WHERE validator_description.validator_address = $1`
 
-	err := db.Sqlx.Select(&result, stmt, address.String())
+	err := db.SQL.Select(&result, stmt, address.String())
 	if err != nil {
 		return nil, false
 	}
@@ -353,7 +353,7 @@ WHERE validator_commission.height <= excluded.height`
 func (db *Db) getValidatorCommission(address sdk.ConsAddress) (*dbtypes.ValidatorCommissionRow, bool) {
 	var rows []dbtypes.ValidatorCommissionRow
 	stmt := `SELECT * FROM validator_commission WHERE validator_address = $1`
-	err := db.Sqlx.Select(&rows, stmt, address.String())
+	err := db.SQL.Select(&rows, stmt, address.String())
 	if err != nil || len(rows) == 0 {
 		return nil, false
 	}
