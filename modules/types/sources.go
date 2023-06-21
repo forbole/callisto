@@ -6,7 +6,6 @@ import (
 
 	"github.com/cometbft/cometbft/libs/log"
 
-	"cosmossdk.io/simapp"
 	"cosmossdk.io/simapp/params"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
@@ -78,25 +77,19 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		return nil, err
 	}
 
-	desmosApp := desmosapp.NewDesmosApp(
+	app := desmosapp.NewDesmosApp(
 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, nil,
 		[]wasmtypes.ProposalType{}, nil,
 	)
 
-	app := simapp.NewSimApp(
-		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, nil,
-		nil,
-	)
-
-
 	sources := &Sources{
-		BankSource: localbanksource.NewSource(source, banktypes.QueryServer(desmosApp.BankKeeper)),
+		BankSource: localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
 		// DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(desmosApp.DistrKeeper)),
-		GovSource:      localgovsource.NewSource(source, govtypesv1.QueryServer(desmosApp.GovKeeper), nil),
-		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(desmosApp.MintKeeper)),
-		ProfilesSource: localprofilessource.NewSource(source, profilestypes.QueryServer(desmosApp.ProfilesKeeper)),
-		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(desmosApp.SlashingKeeper)),
-		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: desmosApp.StakingKeeper}),
+		GovSource:      localgovsource.NewSource(source, govtypesv1.QueryServer(app.GovKeeper), nil),
+		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
+		ProfilesSource: localprofilessource.NewSource(source, profilestypes.QueryServer(app.ProfilesKeeper)),
+		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
+		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
 	}
 
 	// Mount and initialize the stores
