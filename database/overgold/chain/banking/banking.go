@@ -47,7 +47,8 @@ func (r Repository) SaveBaseTransfers(transfers ...*bankingtypes.BaseTransfer) e
 	query := `INSERT INTO overgold_chain_banking_base_transfers 
        ("id", "asset", "amount", "kind", "extras", "timestamp", "tx_hash") 
      VALUES 
-       (:id, :asset, :amount, :kind, :extras, :timestamp, :tx_hash)`
+       (:id, :asset, :amount, :kind, :extras, :timestamp, :tx_hash)
+       ON CONFLICT (id) DO NOTHING`
 
 	for _, transfer := range transfers {
 		if _, err := tx.NamedExec(query, toTransferDatabase(transfer)); err != nil {

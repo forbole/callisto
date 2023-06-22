@@ -13,7 +13,8 @@ func (r Repository) SaveMsgPayments(payments *bankingtypes.MsgPayment, transacti
 	query := `INSERT INTO overgold_chain_banking_msg_payment 
 		(transaction_hash, creator, wallet_from, wallet_to, asset, amount, extras) 
 		VALUES 
-		(:transaction_hash, :creator, :wallet_from, :wallet_to, :asset, :amount, :extras)`
+		(:transaction_hash, :creator, :wallet_from, :wallet_to, :asset, :amount, :extras)
+		ON CONFLICT (id) DO NOTHING`
 
 	if _, err := r.db.NamedExec(query, toMsgPaymentDatabase(payments, transactionHash)); err != nil {
 		return errs.Internal{Cause: err.Error()}

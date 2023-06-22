@@ -27,12 +27,14 @@ func (r Repository) SavePayments(payments ...*bankingtypes.Payment) error {
 	queryBaseTransfer := `INSERT INTO overgold_chain_banking_base_transfers 
        ("id", "asset", "amount", "kind", "extras", "timestamp", "tx_hash") 
      VALUES 
-       (:id,:asset, :amount, :kind, :extras, :timestamp, :tx_hash)`
+       (:id,:asset, :amount, :kind, :extras, :timestamp, :tx_hash)
+       ON CONFLICT (id) DO NOTHING`
 
 	queryPayment := `INSERT INTO overgold_chain_banking_payment
 			("id", "wallet_from", "wallet_to", "fee")
 			VALUES
-			(:id, :wallet_from, :wallet_to, :fee)`
+			(:id, :wallet_from, :wallet_to, :fee)
+			ON CONFLICT (id) DO NOTHING`
 
 	for _, payment := range payments {
 		paymentDB := toPaymentDatabase(payment)
