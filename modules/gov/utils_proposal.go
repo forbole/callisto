@@ -5,11 +5,11 @@ import (
 	"strings"
 	"time"
 
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+	minttypes "github.com/public-awesome/stargaze/v10/x/mint/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"google.golang.org/grpc/codes"
@@ -116,11 +116,11 @@ func (m *Module) handleParamChangeProposal(height int64, paramChangeProposal *pr
 				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", minttypes.ModuleName, err)
 			}
 
-			// Update the inflation
-			err = m.mintModule.UpdateInflation()
-			if err != nil {
-				return fmt.Errorf("error while updating inflation with ParamChangeProposal: %s", err)
-			}
+			// // Update the inflation
+			// err = m.mintModule.UpdateInflation()
+			// if err != nil {
+			// 	return fmt.Errorf("error while updating inflation with ParamChangeProposal: %s", err)
+			// }
 		case slashingtypes.ModuleName:
 			err = m.slashingModule.UpdateParams(height)
 			if err != nil {

@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	"github.com/forbole/juno/v4/node/local"
+	minttypes "github.com/public-awesome/stargaze/v10/x/mint/types"
 
 	mintsource "github.com/forbole/bdjuno/v4/modules/mint/source"
 )
