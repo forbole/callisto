@@ -16,6 +16,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules"
+	stargazeapp "github.com/public-awesome/stargaze/v10/app"
 )
 
 func main() {
@@ -55,6 +56,7 @@ func main() {
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
 		simapp.ModuleBasics,
+		stargazeapp.ModuleBasics,
 	}
 }
 
