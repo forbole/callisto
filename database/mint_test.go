@@ -2,6 +2,7 @@ package database_test
 
 import (
 	"encoding/json"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	minttypes "github.com/public-awesome/stargaze/v10/x/mint/types"
@@ -75,11 +76,10 @@ import (
 func (suite *DbTestSuite) TestBigDipperDb_SaveMintParams() {
 	mintParams := minttypes.NewParams(
 		"udaric",
-		sdk.NewDecWithPrec(4, 1),
+		time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 		sdk.NewDecWithPrec(8, 1),
 		sdk.NewDecWithPrec(4, 1),
-		sdk.NewDecWithPrec(8, 1),
-		5006000,
+		uint64(5006000),
 	)
 	err := suite.database.SaveMintParams(types.NewMintParams(mintParams, 10))
 	suite.Require().NoError(err)
