@@ -14,6 +14,7 @@ import (
 	"github.com/forbole/bdjuno/v5/types/config"
 
 	"cosmossdk.io/simapp"
+
 	"github.com/forbole/bdjuno/v5/database"
 	"github.com/forbole/bdjuno/v5/modules"
 )

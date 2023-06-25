@@ -7,6 +7,7 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	dbtypes "github.com/forbole/bdjuno/v5/database/types"
 	"github.com/forbole/bdjuno/v5/types"
 )

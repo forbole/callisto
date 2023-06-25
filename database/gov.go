@@ -12,9 +12,10 @@ import (
 
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+	"github.com/lib/pq"
+
 	dbtypes "github.com/forbole/bdjuno/v5/database/types"
 	"github.com/forbole/bdjuno/v5/types"
-	"github.com/lib/pq"
 )
 
 // SaveGovParams saves the given x/gov parameters inside the database
