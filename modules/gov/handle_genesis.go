@@ -9,7 +9,7 @@ import (
 	"github.com/forbole/bdjuno/v4/types"
 
 	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
-	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
+	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/rs/zerolog/log"
 )
 
@@ -18,7 +18,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	log.Debug().Str("module", "gov").Msg("parsing genesis")
 
 	// Read the genesis state
-	var genStatev1beta1 govtypesv1beta1.GenesisState
+	var genStatev1beta1 govtypesv1.GenesisState
 	err := m.cdc.UnmarshalJSON(appState[gov.ModuleName], &genStatev1beta1)
 	if err != nil {
 		return fmt.Errorf("error while reading gov genesis data: %s", err)
@@ -45,7 +45,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 }
 
 // saveGenesisProposals save proposals from genesis file
-func (m *Module) saveGenesisProposals(slice govtypesv1beta1.Proposals, genDoc *tmtypes.GenesisDoc) error {
+func (m *Module) saveGenesisProposals(slice govtypesv1.Proposals, genDoc *tmtypes.GenesisDoc) error {
 	proposals := make([]types.Proposal, len(slice))
 	tallyResults := make([]types.TallyResult, len(slice))
 	deposits := make([]types.Deposit, len(slice))
@@ -60,8 +60,8 @@ func (m *Module) saveGenesisProposals(slice govtypesv1beta1.Proposals, genDoc *t
 			proposal.Status.String(),
 			proposal.SubmitTime,
 			proposal.DepositEndTime,
-			proposal.VotingStartTime,
-			proposal.VotingEndTime,
+			&proposal.VotingStartTime,
+			&proposal.VotingEndTime,
 			"",
 		)
 
