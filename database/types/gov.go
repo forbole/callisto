@@ -1,6 +1,7 @@
 package types
 
 import (
+	"database/sql"
 	"time"
 )
 
@@ -17,18 +18,18 @@ type GovParamsRow struct {
 
 // ProposalRow represents a single row inside the proposal table
 type ProposalRow struct {
-	Title           string    `db:"title"`
-	Description     string    `db:"description"`
-	Content         string    `db:"content"`
-	ProposalRoute   string    `db:"proposal_route"`
-	ProposalType    string    `db:"proposal_type"`
-	ProposalID      uint64    `db:"id"`
-	SubmitTime      time.Time `db:"submit_time"`
-	DepositEndTime  time.Time `db:"deposit_end_time"`
-	VotingStartTime time.Time `db:"voting_start_time"`
-	VotingEndTime   time.Time `db:"voting_end_time"`
-	Proposer        string    `db:"proposer_address"`
-	Status          string    `db:"status"`
+	Title           string       `db:"title"`
+	Description     string       `db:"description"`
+	Content         string       `db:"content"`
+	ProposalRoute   string       `db:"proposal_route"`
+	ProposalType    string       `db:"proposal_type"`
+	ProposalID      uint64       `db:"id"`
+	SubmitTime      time.Time    `db:"submit_time"`
+	DepositEndTime  time.Time    `db:"deposit_end_time"`
+	VotingStartTime sql.NullTime `db:"voting_start_time"`
+	VotingEndTime   sql.NullTime `db:"voting_end_time"`
+	Proposer        string       `db:"proposer_address"`
+	Status          string       `db:"status"`
 }
 
 // NewProposalRow allows to easily create a new ProposalRow
@@ -41,8 +42,8 @@ func NewProposalRow(
 	content string,
 	submitTime time.Time,
 	depositEndTime time.Time,
-	votingStartTime time.Time,
-	votingEndTime time.Time,
+	votingStartTime *time.Time,
+	votingEndTime *time.Time,
 	proposer string,
 	status string,
 ) ProposalRow {
@@ -55,8 +56,8 @@ func NewProposalRow(
 		ProposalID:      proposalID,
 		SubmitTime:      submitTime,
 		DepositEndTime:  depositEndTime,
-		VotingStartTime: votingStartTime,
-		VotingEndTime:   votingEndTime,
+		VotingStartTime: TimeToNullTime(votingStartTime),
+		VotingEndTime:   TimeToNullTime(votingEndTime),
 		Proposer:        proposer,
 		Status:          status,
 	}
@@ -71,8 +72,8 @@ func (w ProposalRow) Equals(v ProposalRow) bool {
 		w.ProposalID == v.ProposalID &&
 		w.SubmitTime.Equal(v.SubmitTime) &&
 		w.DepositEndTime.Equal(v.DepositEndTime) &&
-		w.VotingStartTime.Equal(v.VotingStartTime) &&
-		w.VotingEndTime.Equal(v.VotingEndTime) &&
+		AreNullTimesEqual(w.VotingStartTime, v.VotingStartTime) &&
+		AreNullTimesEqual(w.VotingEndTime, v.VotingEndTime) &&
 		w.Proposer == v.Proposer &&
 		w.Status == v.Status
 }

@@ -236,8 +236,8 @@ func (db *Db) GetProposal(id uint64) (types.Proposal, error) {
 		row.Status,
 		row.SubmitTime,
 		row.DepositEndTime,
-		row.VotingStartTime,
-		row.VotingEndTime,
+		dbtypes.NullTimeToTime(row.VotingStartTime),
+		dbtypes.NullTimeToTime(row.VotingEndTime),
 		row.Proposer,
 	)
 	return proposal, nil

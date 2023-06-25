@@ -8,6 +8,8 @@ import (
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+
+	"github.com/forbole/bdjuno/v5/modules/utils"
 )
 
 const (
@@ -134,8 +136,8 @@ type Proposal struct {
 	Status          string
 	SubmitTime      time.Time
 	DepositEndTime  time.Time
-	VotingStartTime time.Time
-	VotingEndTime   time.Time
+	VotingStartTime *time.Time
+	VotingEndTime   *time.Time
 	Proposer        string
 }
 
@@ -148,8 +150,8 @@ func NewProposal(
 	status string,
 	submitTime time.Time,
 	depositEndTime time.Time,
-	votingStartTime time.Time,
-	votingEndTime time.Time,
+	votingStartTime *time.Time,
+	votingEndTime *time.Time,
 	proposer string,
 ) Proposal {
 	return Proposal{
@@ -175,8 +177,8 @@ func (p Proposal) Equal(other Proposal) bool {
 		p.Status == other.Status &&
 		p.SubmitTime.Equal(other.SubmitTime) &&
 		p.DepositEndTime.Equal(other.DepositEndTime) &&
-		p.VotingStartTime.Equal(other.VotingStartTime) &&
-		p.VotingEndTime.Equal(other.VotingEndTime) &&
+		utils.AreTimesEqual(p.VotingStartTime, other.VotingStartTime) &&
+		utils.AreTimesEqual(p.VotingEndTime, other.VotingEndTime) &&
 		p.Proposer == other.Proposer
 }
 
@@ -184,14 +186,12 @@ func (p Proposal) Equal(other Proposal) bool {
 type ProposalUpdate struct {
 	ProposalID      uint64
 	Status          string
-	VotingStartTime time.Time
-	VotingEndTime   time.Time
+	VotingStartTime *time.Time
+	VotingEndTime   *time.Time
 }
 
 // NewProposalUpdate allows to build a new ProposalUpdate instance
-func NewProposalUpdate(
-	proposalID uint64, status string, votingStartTime, votingEndTime time.Time,
-) ProposalUpdate {
+func NewProposalUpdate(proposalID uint64, status string, votingStartTime, votingEndTime *time.Time) ProposalUpdate {
 	return ProposalUpdate{
 		ProposalID:      proposalID,
 		Status:          status,
