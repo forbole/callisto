@@ -73,8 +73,8 @@ func (s Source) TallyResult(height int64, proposalID uint64) (*govtypesv1.TallyR
 	return res.Tally, nil
 }
 
-// Params implements govsource.Source
-func (s Source) Params(height int64) (*govtypesv1.Params, error) {
+// DepositParams implements govsource.Source
+func (s Source) DepositParams(height int64) (*govtypesv1.DepositParams, error) {
 	ctx, err := s.LoadHeight(height)
 	if err != nil {
 		return nil, fmt.Errorf("error while loading height: %s", err)
@@ -85,5 +85,35 @@ func (s Source) Params(height int64) (*govtypesv1.Params, error) {
 		return nil, err
 	}
 
-	return res.Params, nil
+	return res.DepositParams, nil
+}
+
+// VotingParams implements govsource.Source
+func (s Source) VotingParams(height int64) (*govtypesv1.VotingParams, error) {
+	ctx, err := s.LoadHeight(height)
+	if err != nil {
+		return nil, fmt.Errorf("error while loading height: %s", err)
+	}
+
+	res, err := s.queryClient.Params(sdk.WrapSDKContext(ctx), &govtypesv1.QueryParamsRequest{ParamsType: govtypesv1.ParamVoting})
+	if err != nil {
+		return nil, err
+	}
+
+	return res.VotingParams, nil
+}
+
+// TallyParams implements govsource.Source
+func (s Source) TallyParams(height int64) (*govtypesv1.TallyParams, error) {
+	ctx, err := s.LoadHeight(height)
+	if err != nil {
+		return nil, fmt.Errorf("error while loading height: %s", err)
+	}
+
+	res, err := s.queryClient.Params(sdk.WrapSDKContext(ctx), &govtypesv1.QueryParamsRequest{ParamsType: govtypesv1.ParamTallying})
+	if err != nil {
+		return nil, err
+	}
+
+	return res.TallyParams, nil
 }

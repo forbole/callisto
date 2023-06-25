@@ -4,7 +4,7 @@ import (
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	"github.com/forbole/juno/v5/node/remote"
 
-	govsource "github.com/forbole/bdjuno/v4/modules/gov/source"
+	govsource "github.com/forbole/bdjuno/v5/modules/gov/source"
 )
 
 var (
@@ -64,8 +64,8 @@ func (s Source) TallyResult(height int64, proposalID uint64) (*govtypesv1.TallyR
 	return res.Tally, nil
 }
 
-// Params implements govsource.Source
-func (s Source) Params(height int64) (*govtypesv1.Params, error) {
+// DepositParams implements govsource.Source
+func (s Source) DepositParams(height int64) (*govtypesv1.DepositParams, error) {
 	res, err := s.queryClient.Params(
 		remote.GetHeightRequestContext(s.Ctx, height),
 		&govtypesv1.QueryParamsRequest{ParamsType: govtypesv1.ParamDeposit},
@@ -74,5 +74,31 @@ func (s Source) Params(height int64) (*govtypesv1.Params, error) {
 		return nil, err
 	}
 
-	return res.Params, nil
+	return res.DepositParams, nil
+}
+
+// VotingParams implements govsource.Source
+func (s Source) VotingParams(height int64) (*govtypesv1.VotingParams, error) {
+	res, err := s.queryClient.Params(
+		remote.GetHeightRequestContext(s.Ctx, height),
+		&govtypesv1.QueryParamsRequest{ParamsType: govtypesv1.ParamVoting},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return res.VotingParams, nil
+}
+
+// TallyParams implements govsource.Source
+func (s Source) TallyParams(height int64) (*govtypesv1.TallyParams, error) {
+	res, err := s.queryClient.Params(
+		remote.GetHeightRequestContext(s.Ctx, height),
+		&govtypesv1.QueryParamsRequest{ParamsType: govtypesv1.ParamTallying},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return res.TallyParams, nil
 }

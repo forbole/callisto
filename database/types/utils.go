@@ -63,5 +63,13 @@ func NullTimeToTime(t sql.NullTime) *time.Time {
 }
 
 func AreNullTimesEqual(first sql.NullTime, second sql.NullTime) bool {
-	return first.Valid == second.Valid && first.Time.Equal(second.Time)
+	if !first.Valid && !second.Valid {
+		return true
+	}
+
+	if !first.Valid || !second.Valid {
+		return false
+	}
+
+	return first.Time.Equal(second.Time)
 }
