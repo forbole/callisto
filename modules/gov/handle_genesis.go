@@ -9,7 +9,7 @@ import (
 	"github.com/forbole/bdjuno/v4/types"
 
 	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
-	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/rs/zerolog/log"
 )
 
@@ -31,7 +31,12 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	}
 
 	// Save the params
-	err = m.db.SaveGovParams(types.NewGovParams(genStatev1beta1.Params, doc.InitialHeight))
+	err = m.db.SaveGenesisGovParams(types.NewGenesisGovParams(
+		types.NewGenesisVotingParams(&genStatev1beta1.VotingParams),
+		types.NewGenesisDepositParam(&genStatev1beta1.DepositParams),
+		types.NewGenesisTallyParams(&genStatev1beta1.TallyParams),
+		doc.InitialHeight,
+	))
 	if err != nil {
 		return fmt.Errorf("error while storing genesis governance params: %s", err)
 	}
@@ -48,30 +53,29 @@ func (m *Module) saveGenesisProposals(slice govtypesv1.Proposals, genDoc *tmtype
 	for index, proposal := range slice {
 		// Since it's not possible to get the proposer, set it to nil
 		proposals[index] = types.NewProposal(
-			proposal.Id,
-			proposal.Title,
-			proposal.Summary,
-			proposal.Metadata,
-			proposal.Messages,
+			proposal.ProposalId,
+			proposal.ProposalRoute(),
+			proposal.ProposalType(),
+			proposal.GetContent(),
 			proposal.Status.String(),
-			*proposal.SubmitTime,
-			*proposal.DepositEndTime,
-			proposal.VotingStartTime,
-			proposal.VotingEndTime,
+			proposal.SubmitTime,
+			proposal.DepositEndTime,
+			&proposal.VotingStartTime,
+			&proposal.VotingEndTime,
 			"",
 		)
 
 		tallyResults[index] = types.NewTallyResult(
-			proposal.Id,
-			proposal.FinalTallyResult.YesCount,
-			proposal.FinalTallyResult.AbstainCount,
-			proposal.FinalTallyResult.NoCount,
-			proposal.FinalTallyResult.NoWithVetoCount,
+			proposal.ProposalId,
+			proposal.FinalTallyResult.Yes.String(),
+			proposal.FinalTallyResult.Abstain.String(),
+			proposal.FinalTallyResult.No.String(),
+			proposal.FinalTallyResult.NoWithVeto.String(),
 			genDoc.InitialHeight,
 		)
 
 		deposits[index] = types.NewDeposit(
-			proposal.Id,
+			proposal.ProposalId,
 			"",
 			proposal.TotalDeposit,
 			genDoc.GenesisTime,

@@ -5,9 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/x/authz"
-
-	"github.com/forbole/bdjuno/v4/types"
+	"github.com/forbole/bdjuno/v5/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
@@ -15,11 +13,6 @@ import (
 	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
 	juno "github.com/forbole/juno/v5/types"
 )
-
-// HandleMsgExec implements modules.AuthzMessageModule
-func (m *Module) HandleMsgExec(index int, _ *authz.MsgExec, _ int, executedMsg sdk.Msg, tx *juno.Tx) error {
-	return m.HandleMsg(index, executedMsg, tx)
-}
 
 // HandleMsg implements modules.MessageModule
 func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
@@ -68,10 +61,9 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1
 	// Store the proposal
 	proposalObj := types.NewProposal(
 		proposal.Id,
-		proposal.Title,
-		proposal.Summary,
-		proposal.Metadata,
-		msg.Messages,
+		msg.GetContent().ProposalRoute(),
+		msg.GetContent().ProposalType(),
+		msg.GetContent(),
 		proposal.Status.String(),
 		*proposal.SubmitTime,
 		*proposal.DepositEndTime,
