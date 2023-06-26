@@ -61,9 +61,10 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1
 	// Store the proposal
 	proposalObj := types.NewProposal(
 		proposal.Id,
-		msg.GetContent().ProposalRoute(),
-		msg.GetContent().ProposalType(),
-		msg.GetContent(),
+		proposal.Title,
+		proposal.Summary,
+		proposal.Metadata,
+		msg.Messages,
 		proposal.Status.String(),
 		*proposal.SubmitTime,
 		*proposal.DepositEndTime,

@@ -7,11 +7,9 @@ import (
 
 // GovParamsRow represents a single row of the "gov_params" table
 type GovParamsRow struct {
-	OneRowID      bool   `db:"one_row_id"`
-	DepositParams string `db:"deposit_params"`
-	VotingParams  string `db:"voting_params"`
-	TallyParams   string `db:"tally_params"`
-	Height        int64  `db:"height"`
+	OneRowID bool   `db:"one_row_id"`
+	Params   string `db:"params"`
+	Height   int64  `db:"height"`
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -20,9 +18,8 @@ type GovParamsRow struct {
 type ProposalRow struct {
 	Title           string       `db:"title"`
 	Description     string       `db:"description"`
+	Metadata        string       `db:"metadata"`
 	Content         string       `db:"content"`
-	ProposalRoute   string       `db:"proposal_route"`
-	ProposalType    string       `db:"proposal_type"`
 	ProposalID      uint64       `db:"id"`
 	SubmitTime      time.Time    `db:"submit_time"`
 	DepositEndTime  time.Time    `db:"deposit_end_time"`
@@ -35,10 +32,9 @@ type ProposalRow struct {
 // NewProposalRow allows to easily create a new ProposalRow
 func NewProposalRow(
 	proposalID uint64,
-	proposalRoute string,
-	proposalType string,
 	title string,
 	description string,
+	metadata string,
 	content string,
 	submitTime time.Time,
 	depositEndTime time.Time,
@@ -48,18 +44,17 @@ func NewProposalRow(
 	status string,
 ) ProposalRow {
 	return ProposalRow{
+		ProposalID:      proposalID,
 		Title:           title,
 		Description:     description,
+		Metadata:        metadata,
 		Content:         content,
-		ProposalRoute:   proposalRoute,
-		ProposalType:    proposalType,
-		ProposalID:      proposalID,
+		Status:          status,
 		SubmitTime:      submitTime,
 		DepositEndTime:  depositEndTime,
 		VotingStartTime: TimeToNullTime(votingStartTime),
 		VotingEndTime:   TimeToNullTime(votingEndTime),
 		Proposer:        proposer,
-		Status:          status,
 	}
 }
 
@@ -67,8 +62,8 @@ func NewProposalRow(
 func (w ProposalRow) Equals(v ProposalRow) bool {
 	return w.Title == v.Title &&
 		w.Description == v.Description &&
-		w.ProposalRoute == v.ProposalRoute &&
-		w.ProposalType == v.ProposalType &&
+		w.Metadata == v.Metadata &&
+		w.Content == v.Content &&
 		w.ProposalID == v.ProposalID &&
 		w.SubmitTime.Equal(v.SubmitTime) &&
 		w.DepositEndTime.Equal(v.DepositEndTime) &&

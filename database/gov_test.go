@@ -309,7 +309,7 @@ func (suite *DbTestSuite) TestBigDipperDb_UpdateProposal() {
 	timestamp2 := time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC)
 
 	update := types.NewProposalUpdate(
-		proposal.ProposalID,
+		proposal.ID,
 		govtypesv1.StatusPassed.String(),
 		timestamp1,
 		timestamp2,
@@ -319,7 +319,7 @@ func (suite *DbTestSuite) TestBigDipperDb_UpdateProposal() {
 	suite.Require().NoError(err)
 
 	expected := dbtypes.NewProposalRow(
-		proposal.ProposalID,
+		proposal.ID,
 		proposal.ProposalRoute,
 		proposal.ProposalType,
 		proposal.Content.GetTitle(),
@@ -365,9 +365,9 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 	timestamp3 := time.Date(2020, 1, 1, 17, 00, 00, 000, time.UTC)
 
 	deposit := []types.Deposit{
-		types.NewDeposit(proposal.ProposalID, depositor.String(), amount, timestamp1, 10),
-		types.NewDeposit(proposal.ProposalID, depositor2.String(), amount2, timestamp2, 10),
-		types.NewDeposit(proposal.ProposalID, depositor3.String(), amount3, timestamp3, 10),
+		types.NewDeposit(proposal.ID, depositor.String(), amount, timestamp1, 10),
+		types.NewDeposit(proposal.ID, depositor2.String(), amount2, timestamp2, 10),
+		types.NewDeposit(proposal.ID, depositor3.String(), amount3, timestamp3, 10),
 	}
 
 	err := suite.database.SaveDeposits(deposit)
@@ -393,9 +393,9 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 	amount3 = sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(30)))
 
 	deposit = []types.Deposit{
-		types.NewDeposit(proposal.ProposalID, depositor.String(), amount, timestamp1, 9),
-		types.NewDeposit(proposal.ProposalID, depositor2.String(), amount2, timestamp2, 10),
-		types.NewDeposit(proposal.ProposalID, depositor3.String(), amount3, timestamp3, 11),
+		types.NewDeposit(proposal.ID, depositor.String(), amount, timestamp1, 9),
+		types.NewDeposit(proposal.ID, depositor2.String(), amount2, timestamp2, 10),
+		types.NewDeposit(proposal.ID, depositor3.String(), amount3, timestamp3, 11),
 	}
 
 	err = suite.database.SaveDeposits(deposit)
@@ -432,7 +432,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
 	err := suite.database.SaveVote(vote)
 	suite.Require().NoError(err)
 
-	expected := dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypesv1.OptionYes.String(), timestamp, 1)
+	expected := dbtypes.NewVoteRow(int64(proposal.ID), voter.String(), govtypesv1.OptionYes.String(), timestamp, 1)
 
 	var result []dbtypes.VoteRow
 	err = suite.database.SQL.Select(&result, `SELECT * FROM proposal_vote`)
@@ -456,7 +456,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
 	err = suite.database.SaveVote(vote)
 	suite.Require().NoError(err)
 
-	expected = dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypesv1.OptionAbstain.String(), timestamp, 1)
+	expected = dbtypes.NewVoteRow(int64(proposal.ID), voter.String(), govtypesv1.OptionAbstain.String(), timestamp, 1)
 
 	result = []dbtypes.VoteRow{}
 	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_vote`)
@@ -469,7 +469,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
 	err = suite.database.SaveVote(vote)
 	suite.Require().NoError(err)
 
-	expected = dbtypes.NewVoteRow(int64(proposal.ProposalID), voter.String(), govtypesv1.OptionNoWithVeto.String(), timestamp, 2)
+	expected = dbtypes.NewVoteRow(int64(proposal.ID), voter.String(), govtypesv1.OptionNoWithVeto.String(), timestamp, 2)
 
 	result = []dbtypes.VoteRow{}
 	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_vote`)
