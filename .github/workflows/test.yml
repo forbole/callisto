@@ -30,10 +30,10 @@ jobs:
         uses: technote-space/get-diff-action@v6.1.2
         id: git_diff
         with:
-          PATTERNS: |
-            **/**.go
-            go.mod
-            go.sum
+          SUFFIX_FILTER: |
+            .go
+            .mod
+            .sum
 
       - name: Build 🔨
         if: "env.GIT_DIFF != ''"
