@@ -64,8 +64,8 @@ func (s Source) TallyResult(height int64, proposalID uint64) (*govtypesv1.TallyR
 	return res.Tally, nil
 }
 
-// DepositParams implements govsource.Source
-func (s Source) DepositParams(height int64) (*govtypesv1.DepositParams, error) {
+// Params implements govsource.Source
+func (s Source) Params(height int64) (*govtypesv1.Params, error) {
 	res, err := s.queryClient.Params(
 		remote.GetHeightRequestContext(s.Ctx, height),
 		&govtypesv1.QueryParamsRequest{ParamsType: govtypesv1.ParamDeposit},
@@ -74,31 +74,5 @@ func (s Source) DepositParams(height int64) (*govtypesv1.DepositParams, error) {
 		return nil, err
 	}
 
-	return res.DepositParams, nil
-}
-
-// VotingParams implements govsource.Source
-func (s Source) VotingParams(height int64) (*govtypesv1.VotingParams, error) {
-	res, err := s.queryClient.Params(
-		remote.GetHeightRequestContext(s.Ctx, height),
-		&govtypesv1.QueryParamsRequest{ParamsType: govtypesv1.ParamVoting},
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	return res.VotingParams, nil
-}
-
-// TallyParams implements govsource.Source
-func (s Source) TallyParams(height int64) (*govtypesv1.TallyParams, error) {
-	res, err := s.queryClient.Params(
-		remote.GetHeightRequestContext(s.Ctx, height),
-		&govtypesv1.QueryParamsRequest{ParamsType: govtypesv1.ParamTallying},
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	return res.TallyParams, nil
+	return res.Params, nil
 }

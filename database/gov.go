@@ -20,7 +20,7 @@ import (
 func (db *Db) SaveGovParams(params *types.GovParams) error {
 	paramsBz, err := json.Marshal(&params.Params)
 	if err != nil {
-		return fmt.Errorf("error while marshalling gov params: %s", err)
+		return fmt.Errorf("error while marshaling deposit params: %s", err)
 	}
 
 	stmt := `
@@ -83,16 +83,16 @@ INSERT INTO proposal(
 		accounts = append(accounts, types.NewAccount(proposal.Proposer))
 
 		// Prepare the proposal query
-		vi := i * 11
-		proposalsQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
-			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11)
+		vi := i * 12
+		proposalsQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
+			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11, vi+12)
 
 		var jsonMessages []string
 		var protoCodec codec.ProtoCodec
 		for _, msg := range proposal.Messages {
 			contentBz, err := protoCodec.MarshalJSON(msg)
 			if err != nil {
-				return fmt.Errorf("error while marshalling proposal msg: %s", err)
+				return fmt.Errorf("error while marshaling proposal content: %s", err)
 			}
 			jsonMessages = append(jsonMessages, string(contentBz))
 		}
