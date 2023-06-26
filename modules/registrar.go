@@ -1,13 +1,13 @@
 package modules
 
 import (
-	"github.com/forbole/bdjuno/v5/modules/actions"
-	"github.com/forbole/bdjuno/v5/modules/types"
+	"github.com/forbole/bdjuno/v4/modules/actions"
+	"github.com/forbole/bdjuno/v4/modules/types"
 
 	"github.com/forbole/juno/v5/modules/pruning"
 	"github.com/forbole/juno/v5/modules/telemetry"
 
-	"github.com/forbole/bdjuno/v5/modules/slashing"
+	"github.com/forbole/bdjuno/v4/modules/slashing"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -15,22 +15,22 @@ import (
 	"github.com/forbole/juno/v5/modules/messages"
 	"github.com/forbole/juno/v5/modules/registrar"
 
-	"github.com/forbole/bdjuno/v5/utils"
+	"github.com/forbole/bdjuno/v4/utils"
 
-	"github.com/forbole/bdjuno/v5/database"
-	"github.com/forbole/bdjuno/v5/modules/auth"
-	"github.com/forbole/bdjuno/v5/modules/bank"
-	"github.com/forbole/bdjuno/v5/modules/consensus"
-	"github.com/forbole/bdjuno/v5/modules/distribution"
-	"github.com/forbole/bdjuno/v5/modules/feegrant"
+	"github.com/forbole/bdjuno/v4/database"
+	"github.com/forbole/bdjuno/v4/modules/auth"
+	"github.com/forbole/bdjuno/v4/modules/bank"
+	"github.com/forbole/bdjuno/v4/modules/consensus"
+	"github.com/forbole/bdjuno/v4/modules/distribution"
+	"github.com/forbole/bdjuno/v4/modules/feegrant"
 
-	dailyrefetch "github.com/forbole/bdjuno/v5/modules/daily_refetch"
-	"github.com/forbole/bdjuno/v5/modules/gov"
-	"github.com/forbole/bdjuno/v5/modules/mint"
-	"github.com/forbole/bdjuno/v5/modules/modules"
-	"github.com/forbole/bdjuno/v5/modules/pricefeed"
-	"github.com/forbole/bdjuno/v5/modules/staking"
-	"github.com/forbole/bdjuno/v5/modules/upgrade"
+	dailyrefetch "github.com/forbole/bdjuno/v4/modules/daily_refetch"
+	"github.com/forbole/bdjuno/v4/modules/gov"
+	"github.com/forbole/bdjuno/v4/modules/mint"
+	"github.com/forbole/bdjuno/v4/modules/modules"
+	"github.com/forbole/bdjuno/v4/modules/pricefeed"
+	"github.com/forbole/bdjuno/v4/modules/staking"
+	"github.com/forbole/bdjuno/v4/modules/upgrade"
 )
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses

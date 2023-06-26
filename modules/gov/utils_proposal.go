@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	codec "github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
@@ -15,7 +15,7 @@ import (
 
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 
-	"github.com/forbole/bdjuno/v5/types"
+	"github.com/forbole/bdjuno/v4/types"
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 

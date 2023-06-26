@@ -8,7 +8,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	modulestypes "github.com/forbole/bdjuno/v5/modules/types"
+	modulestypes "github.com/forbole/bdjuno/v4/modules/types"
 
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
@@ -17,13 +17,13 @@ import (
 	"github.com/forbole/juno/v5/types/config"
 	"github.com/spf13/cobra"
 
-	"github.com/forbole/bdjuno/v5/database"
-	"github.com/forbole/bdjuno/v5/modules/distribution"
-	"github.com/forbole/bdjuno/v5/modules/gov"
-	"github.com/forbole/bdjuno/v5/modules/mint"
-	"github.com/forbole/bdjuno/v5/modules/slashing"
-	"github.com/forbole/bdjuno/v5/modules/staking"
-	"github.com/forbole/bdjuno/v5/utils"
+	"github.com/forbole/bdjuno/v4/database"
+	"github.com/forbole/bdjuno/v4/modules/distribution"
+	"github.com/forbole/bdjuno/v4/modules/gov"
+	"github.com/forbole/bdjuno/v4/modules/mint"
+	"github.com/forbole/bdjuno/v4/modules/slashing"
+	"github.com/forbole/bdjuno/v4/modules/staking"
+	"github.com/forbole/bdjuno/v4/utils"
 )
 
 // proposalCmd returns the Cobra command allowing to fix all things related to a proposal

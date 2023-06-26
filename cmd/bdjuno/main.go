@@ -8,15 +8,15 @@ import (
 	startcmd "github.com/forbole/juno/v5/cmd/start"
 	"github.com/forbole/juno/v5/modules/messages"
 
-	migratecmd "github.com/forbole/bdjuno/v5/cmd/migrate"
-	parsecmd "github.com/forbole/bdjuno/v5/cmd/parse"
+	migratecmd "github.com/forbole/bdjuno/v4/cmd/migrate"
+	parsecmd "github.com/forbole/bdjuno/v4/cmd/parse"
 
-	"github.com/forbole/bdjuno/v5/types/config"
+	"github.com/forbole/bdjuno/v4/types/config"
 
 	"cosmossdk.io/simapp"
 
-	"github.com/forbole/bdjuno/v5/database"
-	"github.com/forbole/bdjuno/v5/modules"
+	"github.com/forbole/bdjuno/v4/database"
+	"github.com/forbole/bdjuno/v4/modules"
 )
 
 func main() {

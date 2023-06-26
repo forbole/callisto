@@ -2,11 +2,10 @@ package gov
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
-	"strconv"
-
-	"github.com/forbole/bdjuno/v5/types"
+	"github.com/forbole/bdjuno/v4/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
