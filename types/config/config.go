@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 
-	"github.com/forbole/bdjuno/v5/modules/actions"
+	"github.com/forbole/bdjuno/v4/modules/actions"
 )
 
 // Config represents the BDJuno configuration

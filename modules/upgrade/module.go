@@ -1,7 +1,7 @@
 package upgrade
 
 import (
-	"github.com/forbole/bdjuno/v5/database"
+	"github.com/forbole/bdjuno/v4/database"
 
 	"github.com/forbole/juno/v5/modules"
 )

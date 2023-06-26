@@ -1,4 +1,4 @@
-module github.com/forbole/bdjuno/v5
+module github.com/forbole/bdjuno/v4
 
 go 1.20
 
