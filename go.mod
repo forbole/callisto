@@ -303,3 +303,7 @@ require (
 	pgregory.net/rapid v0.5.5 // indirect
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
+
+// This is to avoid warnings while running the binary
+// See here: https://github.com/desmos-labs/desmos/pull/1131#discussion_r1194090419
+replace github.com/cosmos/gogoproto => github.com/cosmos/gogoproto v1.4.8
