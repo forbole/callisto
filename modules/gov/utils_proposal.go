@@ -18,7 +18,7 @@ import (
 
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 
-	"github.com/forbole/bdjuno/v5/types"
+	"github.com/forbole/bdjuno/v4/types"
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 
