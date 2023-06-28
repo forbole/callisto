@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	minttypes "github.com/Stride-Labs/stride/v7/x/mint/types"
-	stakeibctypes "github.com/Stride-Labs/stride/v7/x/stakeibc/types"
+	minttypes "github.com/Stride-Labs/stride/v11/x/mint/types"
+	stakeibctypes "github.com/Stride-Labs/stride/v11/x/stakeibc/types"
 	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -282,7 +282,7 @@ func (m *Module) handlePassedProposal(proposal govtypesv1beta1.Proposal, height 
 
 	// Unpack proposal
 	var content govtypesv1beta1.Content
-	err := m.db.EncodingConfig.Codec.UnpackAny(proposal.Content, &content)
+	err := m.db.Cdc.UnpackAny(proposal.Content, &content)
 	if err != nil {
 		return fmt.Errorf("error while handling ParamChangeProposal: %s", err)
 	}

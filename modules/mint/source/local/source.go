@@ -3,9 +3,9 @@ package local
 import (
 	"fmt"
 
-	minttypes "github.com/Stride-Labs/stride/v7/x/mint/types"
+	minttypes "github.com/Stride-Labs/stride/v11/x/mint/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/forbole/juno/v4/node/local"
+	"github.com/forbole/juno/v5/node/local"
 
 	mintsource "github.com/forbole/bdjuno/v4/modules/mint/source"
 )

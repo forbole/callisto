@@ -9,22 +9,23 @@ import (
 	"testing"
 	"time"
 
-	dbconfig "github.com/forbole/juno/v4/database/config"
-	"github.com/forbole/juno/v4/logging"
+	dbconfig "github.com/forbole/juno/v5/database/config"
+	"github.com/forbole/juno/v5/logging"
 
-	junodb "github.com/forbole/juno/v4/database"
+	junodb "github.com/forbole/juno/v5/database"
 
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/types"
 
-	juno "github.com/forbole/juno/v4/types"
+	juno "github.com/forbole/juno/v5/types"
 
 	tmversion "github.com/cometbft/cometbft/proto/tendermint/version"
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 	tmtypes "github.com/cometbft/cometbft/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/cosmos/cosmos-sdk/simapp"
+	"cosmossdk.io/simapp/params"
+
 	"github.com/stretchr/testify/suite"
 
 	_ "github.com/proullon/ramsql/driver"
@@ -42,7 +43,7 @@ type DbTestSuite struct {
 
 func (suite *DbTestSuite) SetupTest() {
 	// Create the codec
-	codec := simapp.MakeTestEncodingConfig()
+	codec := params.MakeTestEncodingConfig()
 
 	// Build the database
 	dbCfg := dbconfig.NewDatabaseConfig(

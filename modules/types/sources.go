@@ -4,27 +4,23 @@ import (
 	"fmt"
 	"os"
 
+	simappparams "cosmossdk.io/simapp/params"
+	minttypes "github.com/Stride-Labs/stride/v11/x/mint/types"
 	"github.com/cometbft/cometbft/libs/log"
-	"github.com/cosmos/cosmos-sdk/simapp"
+	"github.com/forbole/juno/v5/node/remote"
 
-	"github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/forbole/juno/v4/node/remote"
-
-	minttypes "github.com/Stride-Labs/stride/v7/x/mint/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	distributionkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/forbole/juno/v4/node/local"
 
-	nodeconfig "github.com/forbole/juno/v4/node/config"
-
-	strideapp "github.com/Stride-Labs/stride/v7/app"
-	mintkeeper "github.com/Stride-Labs/stride/v7/x/mint/keeper"
-	stakeibctypes "github.com/Stride-Labs/stride/v7/x/stakeibc/types"
+	strideapp "github.com/Stride-Labs/stride/v11/app"
+	mintkeeper "github.com/Stride-Labs/stride/v11/x/mint/keeper"
+	stakeibctypes "github.com/Stride-Labs/stride/v11/x/stakeibc/types"
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v4/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"
@@ -46,6 +42,8 @@ import (
 	stakingsource "github.com/forbole/bdjuno/v4/modules/staking/source"
 	localstakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/remote"
+	nodeconfig "github.com/forbole/juno/v5/node/config"
+	"github.com/forbole/juno/v5/node/local"
 )
 
 type Sources struct {
@@ -58,7 +56,7 @@ type Sources struct {
 	StakingSource  stakingsource.Source
 }
 
-func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
+func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *simappparams.EncodingConfig) (*Sources, error) {
 	switch cfg := nodeCfg.Details.(type) {
 	case *remote.Details:
 		return buildRemoteSources(cfg)
@@ -70,7 +68,7 @@ func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConf
 	}
 }
 
-func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig) (*Sources, error) {
+func buildLocalSources(cfg *local.Details, encodingConfig *simappparams.EncodingConfig) (*Sources, error) {
 	source, err := local.NewSource(cfg.Home, encodingConfig)
 	if err != nil {
 		return nil, err
@@ -78,17 +76,17 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 
 	app := strideapp.NewStrideApp(
 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
-		cfg.Home, 0, strideapp.MakeEncodingConfig(), simapp.EmptyAppOptions{},
+		cfg.Home, 0, strideapp.MakeEncodingConfig(), nil,
 	)
 
 	sources := &Sources{
 		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
-		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
+		DistrSource:    localdistrsource.NewSource(source, distributionkeeper.Querier{Keeper: app.DistrKeeper}),
 		GovSource:      localgovsource.NewSource(source, govtypesv1.QueryServer(app.GovKeeper), nil),
 		MintSource:     localmintsource.NewSource(source, mintkeeper.Querier{Keeper: app.MintKeeper}),
 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
 		StakeIBCSource: localstakeibcsource.NewSource(source, stakeibctypes.QueryServer(app.StakeibcKeeper)),
-		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
+		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: &app.StakingKeeper}),
 	}
 
 	// Mount and initialize the stores
