@@ -1,8 +1,12 @@
 ## Unreleased
-### Changes
+- ([\#610](https://github.com/forbole/bdjuno/pull/610)) Add support for gov `v1` proposals
 
-#### CI
-- ([\#508](https://github.com/forbole/bdjuno/pull/508)) Upgrade workflow golangci version to v1.50.1
+
+## Version v4.0.0
+## Notes
+This version is thought to be used with Cosmos SDK `v0.47.x`.
+
+### Changes
 
 #### Parse Command
 - ([\#492](https://github.com/forbole/bdjuno/pull/492)) Add parse command for periodic tasks: `x/bank` total supply, `x/distribution` community pool, `x/mint` inflation, `pricefeed` token price and price history, `x/staking` staking pool
@@ -34,6 +38,7 @@
 - ([\#540](https://github.com/forbole/bdjuno/pull/540)) Updated Desmos `v4.7.0` and Juno to `v4.1.0`
 - ([\#542](https://github.com/forbole/bdjuno/pull/542)) Updated Juno to `v4.1.0`,  BDJuno to `v4` and Golang version to `1.19`
 - ([\#594](https://github.com/forbole/bdjuno/pull/594)) Updated Juno version to `v5.0.0` and desmos to `v.5.0.1`
+- ([\#542](https://github.com/forbole/bdjuno/pull/542)) Updated Juno to `v5.1.0`
 
 
 ## Version v3.2.0

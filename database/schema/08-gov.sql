@@ -1,10 +1,8 @@
 CREATE TABLE gov_params
 (
-    one_row_id     BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
-    deposit_params JSONB   NOT NULL,
-    voting_params  JSONB   NOT NULL,
-    tally_params   JSONB   NOT NULL,
-    height         BIGINT  NOT NULL,
+    one_row_id BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
+    params     JSONB   NOT NULL,
+    height     BIGINT  NOT NULL,
     CHECK (one_row_id)
 );
 
@@ -13,9 +11,8 @@ CREATE TABLE proposal
     id                INTEGER   NOT NULL PRIMARY KEY,
     title             TEXT      NOT NULL,
     description       TEXT      NOT NULL,
-    content           JSONB     NOT NULL,
-    proposal_route    TEXT      NOT NULL,
-    proposal_type     TEXT      NOT NULL,
+    metadata          TEXT      NOT NULL,
+    content           JSONB     NOT NULL DEFAULT '[]'::JSONB,
     submit_time       TIMESTAMP NOT NULL,
     deposit_end_time  TIMESTAMP,
     voting_start_time TIMESTAMP,
@@ -28,7 +25,7 @@ CREATE INDEX proposal_proposer_address_index ON proposal (proposer_address);
 CREATE TABLE proposal_deposit
 (
     proposal_id       INTEGER NOT NULL REFERENCES proposal (id),
-    depositor_address TEXT             REFERENCES account (address),
+    depositor_address TEXT REFERENCES account (address),
     amount            COIN[],
     timestamp         TIMESTAMP,
     height            BIGINT  NOT NULL,
@@ -54,10 +51,10 @@ CREATE INDEX proposal_vote_height_index ON proposal_vote (height);
 CREATE TABLE proposal_tally_result
 (
     proposal_id  INTEGER REFERENCES proposal (id) PRIMARY KEY,
-    yes          TEXT NOT NULL,
-    abstain      TEXT NOT NULL,
-    no           TEXT NOT NULL,
-    no_with_veto TEXT NOT NULL,
+    yes          TEXT   NOT NULL,
+    abstain      TEXT   NOT NULL,
+    no           TEXT   NOT NULL,
+    no_with_veto TEXT   NOT NULL,
     height       BIGINT NOT NULL,
     CONSTRAINT unique_tally_result UNIQUE (proposal_id)
 );

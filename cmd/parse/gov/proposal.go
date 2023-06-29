@@ -11,7 +11,10 @@ import (
 	modulestypes "github.com/forbole/bdjuno/v4/modules/types"
 
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
-	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
+	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
+	"github.com/forbole/juno/v5/parser"
+	"github.com/forbole/juno/v5/types/config"
+	"github.com/spf13/cobra"
 
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules/distribution"
@@ -20,12 +23,6 @@ import (
 	"github.com/forbole/bdjuno/v4/modules/profiles"
 	"github.com/forbole/bdjuno/v4/modules/slashing"
 	"github.com/forbole/bdjuno/v4/modules/staking"
-
-	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
-	"github.com/forbole/juno/v5/parser"
-	"github.com/forbole/juno/v5/types/config"
-	"github.com/spf13/cobra"
-
 	"github.com/forbole/bdjuno/v4/utils"
 )
 
@@ -119,7 +116,7 @@ func refreshProposalDetails(parseCtx *parser.Context, proposalID uint64, govModu
 
 	// Handle the MsgSubmitProposal messages
 	for index, msg := range tx.GetMsgs() {
-		if _, ok := msg.(*govtypesv1beta1.MsgSubmitProposal); !ok {
+		if _, ok := msg.(*govtypesv1.MsgSubmitProposal); !ok {
 			continue
 		}
 
