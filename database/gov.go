@@ -134,7 +134,7 @@ func (db *Db) SaveProposals(proposals []types.Proposal) error {
 
 	proposalsQuery := `
 INSERT INTO proposal(
-	id, title, description, content, metadata, proposer_address, proposal_route, proposal_type,
+	id, title, description, content, metadata, proposer_address,
      status, submit_time, deposit_end_time, voting_start_time, voting_end_time
 ) VALUES`
 	var proposalsParams []interface{}
@@ -144,12 +144,12 @@ INSERT INTO proposal(
 		accounts = append(accounts, types.NewAccount(proposal.Proposer))
 
 		// Prepare the proposal query
-		vi := i * 13
-		proposalsQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
-			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11, vi+12, vi+13)
+		vi := i * 11
+		proposalsQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
+			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11)
 
 		var msgs []string
-		var proposalTitle, proposalDescription, proposalRoute, proposalType string
+		var proposalTitle, proposalDescription string
 		for _, message := range proposal.Messages {
 			cached := message.GetCachedValue()
 			msg, ok := cached.(*govtypesv1.MsgExecLegacyContent)
@@ -161,8 +161,6 @@ INSERT INTO proposal(
 				}
 				proposalTitle = content.GetTitle()
 				proposalDescription = content.GetDescription()
-				proposalRoute = content.ProposalRoute()
-				proposalType = content.ProposalType()
 
 				protoContent, ok := content.(proto.Message)
 				if !ok {
@@ -198,8 +196,6 @@ INSERT INTO proposal(
 			pq.StringArray(msgs),
 			proposal.Metadata,
 			proposal.Proposer,
-			proposalRoute,
-			proposalType,
 			proposal.Status,
 			proposal.SubmitTime,
 			proposal.DepositEndTime,

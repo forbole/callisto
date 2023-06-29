@@ -23,8 +23,6 @@ type ProposalRow struct {
 	Description     string         `db:"description"`
 	Content         pq.StringArray `db:"content"`
 	Metadata        string         `db:"metadata"`
-	ProposalRoute   string         `db:"proposal_route"`
-	ProposalType    string         `db:"proposal_type"`
 	ProposalID      uint64         `db:"id"`
 	SubmitTime      time.Time      `db:"submit_time"`
 	DepositEndTime  time.Time      `db:"deposit_end_time"`
@@ -37,8 +35,6 @@ type ProposalRow struct {
 // NewProposalRow allows to easily create a new ProposalRow
 func NewProposalRow(
 	proposalID uint64,
-	proposalRoute string,
-	proposalType string,
 	title string,
 	description string,
 	content pq.StringArray,
@@ -55,8 +51,6 @@ func NewProposalRow(
 		Description:     description,
 		Content:         content,
 		Metadata:        metadata,
-		ProposalRoute:   proposalRoute,
-		ProposalType:    proposalType,
 		ProposalID:      proposalID,
 		SubmitTime:      submitTime,
 		DepositEndTime:  depositEndTime,
@@ -71,8 +65,6 @@ func NewProposalRow(
 func (w ProposalRow) Equals(v ProposalRow) bool {
 	return w.Title == v.Title &&
 		w.Description == v.Description &&
-		w.ProposalRoute == v.ProposalRoute &&
-		w.ProposalType == v.ProposalType &&
 		w.ProposalID == v.ProposalID &&
 		w.Metadata == v.Metadata &&
 		w.SubmitTime.Equal(v.SubmitTime) &&

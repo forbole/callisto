@@ -58,8 +58,6 @@ select_permissions:
     columns:
     - title
     - description
-    - proposal_route
-    - proposal_type
     - id
     - submit_time
     - deposit_end_time
