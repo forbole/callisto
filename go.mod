@@ -4,12 +4,12 @@ go 1.20
 
 require (
 	cosmossdk.io/math v1.0.1
-	cosmossdk.io/simapp v0.0.0-20230224204036-a6adb0821462
+	cosmossdk.io/simapp v0.0.0-20230602123434-616841b9704d
 	github.com/CosmWasm/wasmd v0.40.0-rc.1
 	github.com/cometbft/cometbft v0.37.2
 	github.com/cosmos/cosmos-sdk v0.47.3
 	github.com/cosmos/gogoproto v1.4.10
-	github.com/desmos-labs/desmos/v5 v5.1.0
+	github.com/desmos-labs/desmos/v5 v5.2.0
 	github.com/forbole/juno/v5 v5.2.0
 	github.com/go-co-op/gocron v1.28.3
 	github.com/golangci/golangci-lint v1.52.2
@@ -37,6 +37,7 @@ require (
 	cosmossdk.io/core v0.5.1 // indirect
 	cosmossdk.io/depinject v1.0.0-alpha.3 // indirect
 	cosmossdk.io/errors v1.0.0-beta.7 // indirect
+	cosmossdk.io/log v1.1.0 // indirect
 	cosmossdk.io/tools/rosetta v0.2.1 // indirect
 	filippo.io/edwards25519 v1.0.0 // indirect
 	github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 // indirect
@@ -83,8 +84,8 @@ require (
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
 	github.com/cosmos/gogogateway v1.2.0 // indirect
 	github.com/cosmos/iavl v0.20.0 // indirect
-	github.com/cosmos/ibc-go/v7 v7.0.1 // indirect
-	github.com/cosmos/ics23/go v0.9.1-0.20221207100636-b1abd8678aab // indirect
+	github.com/cosmos/ibc-go/v7 v7.2.0 // indirect
+	github.com/cosmos/ics23/go v0.10.0 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.12.2 // indirect
 	github.com/cosmos/rosetta-sdk-go v0.10.0 // indirect
 	github.com/creachadair/taskgroup v0.4.2 // indirect
@@ -316,9 +317,10 @@ require (
 )
 
 replace (
+	cosmossdk.io/api => cosmossdk.io/api v0.3.1
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
 	github.com/CosmWasm/wasmd => github.com/desmos-labs/wasmd v0.40.0-rc.1-desmos
-	github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.47.2-desmos
+	github.com/cosmos/cosmos-sdk => github.com/desmos-labs/cosmos-sdk v0.47.3-desmos
 
 	// This is to avoid warnings while running the binary
 	// See here: https://github.com/desmos-labs/desmos/pull/1131#discussion_r1194090419
