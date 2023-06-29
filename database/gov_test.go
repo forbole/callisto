@@ -4,11 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	"github.com/cosmos/gogoproto/proto"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
@@ -18,7 +16,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
-	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
 	dbtypes "github.com/forbole/bdjuno/v4/database/types"
 )
@@ -123,21 +120,6 @@ func (suite *DbTestSuite) getProposalRow(id int) types.Proposal {
 	suite.Require().NoError(err)
 
 	return proposal
-}
-
-func (suite *DbTestSuite) encodeProposalContent(content govtypesv1beta1.Content) string {
-	protoContent, ok := content.(proto.Message)
-	suite.Require().True(ok)
-
-	anyContent, err := codectypes.NewAnyWithValue(protoContent)
-	suite.Require().NoError(err)
-
-	// contentBz, err := suite.database.Cdc.MarshalJSON(anyContent)
-	var protoCodec codec.ProtoCodec
-	contentBz, err := protoCodec.MarshalJSON(anyContent)
-	suite.Require().NoError(err)
-
-	return string(contentBz)
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
