@@ -4,6 +4,9 @@ name: Tests
 on:
   pull_request:
   push:
+    branches:
+      - chains/*
+      - cosmos/*
 
 jobs:
   Cleanup-runs:

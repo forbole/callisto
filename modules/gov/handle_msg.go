@@ -11,7 +11,6 @@ import (
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 
 	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
-	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	juno "github.com/forbole/juno/v5/types"
 )
 
@@ -22,7 +21,7 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	}
 
 	switch cosmosMsg := msg.(type) {
-	case *govtypesv1beta1.MsgSubmitProposal:
+	case *govtypesv1.MsgSubmitProposal:
 		return m.handleMsgSubmitProposal(tx, index, cosmosMsg)
 
 	case *govtypesv1.MsgDeposit:
@@ -36,7 +35,7 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 }
 
 // handleMsgSubmitProposal allows to properly handle a handleMsgSubmitProposal
-func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1beta1.MsgSubmitProposal) error {
+func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1.MsgSubmitProposal) error {
 	// Get the proposal id
 	event, err := tx.FindEventByType(index, gov.EventTypeSubmitProposal)
 	if err != nil {
@@ -61,13 +60,14 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1
 
 	// Store the proposal
 	proposalObj := types.NewProposal(
-		proposal.ProposalId,
-		msg.GetContent().ProposalRoute(),
-		msg.GetContent().ProposalType(),
-		msg.GetContent(),
+		proposal.Id,
+		proposal.Title,
+		proposal.Summary,
+		proposal.Metadata,
+		msg.Messages,
 		proposal.Status.String(),
-		proposal.SubmitTime,
-		proposal.DepositEndTime,
+		*proposal.SubmitTime,
+		*proposal.DepositEndTime,
 		proposal.VotingStartTime,
 		proposal.VotingEndTime,
 		msg.Proposer,
@@ -84,7 +84,7 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1
 	}
 
 	// Store the deposit
-	deposit := types.NewDeposit(proposal.ProposalId, msg.Proposer, msg.InitialDeposit, txTimestamp, tx.Height)
+	deposit := types.NewDeposit(proposal.Id, msg.Proposer, msg.InitialDeposit, txTimestamp, tx.Height)
 	return m.db.SaveDeposits([]types.Deposit{deposit})
 }
 
