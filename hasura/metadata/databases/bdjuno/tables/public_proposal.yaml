@@ -58,8 +58,6 @@ select_permissions:
     columns:
     - title
     - description
-    - proposal_route
-    - proposal_type
     - id
     - submit_time
     - deposit_end_time
@@ -67,6 +65,7 @@ select_permissions:
     - voting_end_time
     - proposer_address
     - status
+    - metadata
     - content
     filter: {}
     limit: 100
