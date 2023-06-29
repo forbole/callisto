@@ -15,7 +15,7 @@ func (m *Module) UpdateParams(height int64) error {
 
 	params, err := m.source.Params(height)
 	if err != nil {
-		return fmt.Errorf("error while getting gov deposit params: %s", err)
+		return fmt.Errorf("error while getting gov params: %s", err)
 	}
 
 	return m.db.SaveGovParams(types.NewGovParams(params, height))

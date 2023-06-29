@@ -20,7 +20,7 @@ import (
 func (db *Db) SaveGovParams(params *types.GovParams) error {
 	paramsBz, err := json.Marshal(&params.Params)
 	if err != nil {
-		return fmt.Errorf("error while marshaling deposit params: %s", err)
+		return fmt.Errorf("error while marshalling gov params: %s", err)
 	}
 
 	stmt := `
@@ -92,7 +92,7 @@ INSERT INTO proposal(
 		for _, msg := range proposal.Messages {
 			contentBz, err := protoCodec.MarshalJSON(msg)
 			if err != nil {
-				return fmt.Errorf("error while marshaling proposal content: %s", err)
+				return fmt.Errorf("error while marshalling proposal msg: %s", err)
 			}
 			jsonMessages = append(jsonMessages, string(contentBz))
 		}
