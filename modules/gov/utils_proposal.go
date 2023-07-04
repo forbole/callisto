@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
+	minttypes "github.com/jackalLabs/canine-chain/v3/x/jklmint/types"
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"

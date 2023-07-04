@@ -3,8 +3,8 @@ package database_test
 import (
 	"encoding/json"
 
+	minttypes "github.com/jackalLabs/canine-chain/v3/x/jklmint/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 
 	"github.com/forbole/bdjuno/v4/types"
 
