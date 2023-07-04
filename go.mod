@@ -3,10 +3,9 @@ module github.com/forbole/bdjuno/v4
 go 1.19
 
 require (
+	github.com/cometbft/cometbft v0.37.2
 	github.com/cosmos/cosmos-sdk v0.45.17
 	github.com/forbole/juno/v4 v4.2.1-0.20230704040123-a274ebda943e
-	// v4.2.1-0.20230704034906-7b9add7b360a
-	// v4.2.1-0.20230704033814-2aa8d968649e
 	github.com/go-co-op/gocron v1.28.2
 	github.com/gogo/protobuf v1.3.3
 	github.com/jackalLabs/canine-chain/v3 v3.0.0-rc.1
@@ -18,7 +17,7 @@ require (
 	github.com/rs/zerolog v1.29.1
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4
-	github.com/tendermint/tendermint v0.34.27
+	github.com/tendermint/tendermint v0.34.27 // indirect
 	google.golang.org/grpc v1.55.0
 	gopkg.in/yaml.v3 v3.0.1
 )
@@ -46,7 +45,6 @@ require (
 	github.com/cockroachdb/pebble v0.0.0-20230209160836-829675f94811 // indirect
 	github.com/cockroachdb/redact v1.1.3 // indirect
 	github.com/coinbase/rosetta-sdk-go v0.7.9 // indirect
-	github.com/cometbft/cometbft v0.37.2 // indirect
 	github.com/cometbft/cometbft-db v0.8.0 // indirect
 	github.com/confio/ics23/go v0.9.0 // indirect
 	github.com/cosmos/btcutil v1.0.4 // indirect
@@ -159,34 +157,12 @@ require (
 	nhooyr.io/websocket v1.8.6 // indirect
 )
 
-// replace (
-// 	github.com/99designs/keyring => github.com/cosmos/keyring v1.1.7-0.20210622111912-ef00f8ac3d76
-// 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
-// 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-// )
-
 replace (
-	// use cosmos keyring
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
-
-	// dragonberry ics23 patch
 	github.com/confio/ics23/go => github.com/cosmos/cosmos-sdk/ics23/go v0.8.0
-
-	// using jackal labs free post proof ante handler - better way to do this in the future.
 	github.com/cosmos/cosmos-sdk => github.com/JackalLabs/cosmos-sdk-new v0.45.17-0.20230621230708-909a2d048774
-	//github.com/cosmos/cosmos-sdk => ../cosmos-sdk
-
-	// Fix upstream GHSA-h395-qcrw-5vmq vulnerability.
-	// TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.8.1
-
-	// use cosmos-flavored protobufs
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-
 	github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.34.27
-
 	github.com/wealdtech/go-merkletree => github.com/TheMarstonConnell/go-merkletree v0.0.0-20230124030923-93fb10e701d7
-// github.com/tendermint/tm-db => github.com/cometbft/cometbft-db v0.8.0
-// use grpc compatible with cosmos-flavored protobufs
-// google.golang.org/grpc => google.golang.org/grpc v1.33.2
 )
