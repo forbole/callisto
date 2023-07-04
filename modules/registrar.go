@@ -2,6 +2,7 @@ package modules
 
 import (
 	"github.com/forbole/bdjuno/v4/modules/types"
+	"github.com/forbole/bdjuno/v4/modules/actions"
 
 	"github.com/forbole/juno/v4/modules/pruning"
 	"github.com/forbole/juno/v4/modules/telemetry"
@@ -67,6 +68,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		panic(err)
 	}
 
+	actionsModule := actions.NewModule(ctx.JunoConfig, ctx.EncodingConfig)
 	authModule := auth.NewModule(r.parser, cdc, db)
 	bankModule := bank.NewModule(r.parser, sources.BankSource, cdc, db)
 	consensusModule := consensus.NewModule(db)
@@ -77,6 +79,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	wasmModule := wasm.NewModule(sources.WasmSource, cdc, db)
 
 	return []jmodules.Module{
+		actionsModule,
 		messages.NewModule(r.parser, cdc, ctx.Database),
 		telemetry.NewModule(ctx.JunoConfig),
 		pruning.NewModule(ctx.JunoConfig, db, ctx.Logger),

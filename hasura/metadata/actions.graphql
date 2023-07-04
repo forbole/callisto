@@ -1,0 +1,14 @@
+type Query {
+    action_account_balance(
+        address: String!
+        height: Int
+    ): ActionBalance
+}
+
+type ActionBalance {
+    coins: [ActionCoin]
+}
+
+
+scalar ActionCoin
+

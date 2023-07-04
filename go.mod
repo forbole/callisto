@@ -15,7 +15,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/neutron-org/neutron v1.0.1-rc0
 	github.com/pelletier/go-toml v1.9.5
-	github.com/prometheus/client_golang v1.15.1 // indirect
+	github.com/prometheus/client_golang v1.15.1
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
 	github.com/rs/zerolog v1.29.1
 	github.com/spf13/cobra v1.7.0
