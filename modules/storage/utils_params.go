@@ -21,3 +21,17 @@ func (m *Module) UpdateParams(height int64) error {
 	return m.db.SaveStorageParams(types.NewStorageParams(params, height))
 
 }
+
+// UpdateProviders gets the updated providers list and stores it inside the database
+func (m *Module) UpdateProviders(height int64) error {
+	log.Debug().Str("module", "storage").Int64("height", height).
+		Msg("updating providers")
+
+	providers, err := m.source.Providers(height)
+	if err != nil {
+		return fmt.Errorf("error while getting providers list: %s", err)
+	}
+
+	return m.db.SaveStorageProviders(providers, height)
+
+}

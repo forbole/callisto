@@ -42,3 +42,18 @@ package local
 
 // 	return res.Params, nil
 // }
+
+// // Providers implements storagesource.Source
+// func (s Source) Providers(height int64) ([]storagetypes.Providers, error) {
+// 	ctx, err := s.LoadHeight(height)
+// 	if err != nil {
+// 		return []storagetypes.Providers{}, fmt.Errorf("error while loading height: %s", err)
+// 	}
+
+// 	res, err := s.querier.ProvidersAll(sdk.WrapSDKContext(ctx), &storagetypes.QueryAllProvidersRequest{})
+// 	if err != nil {
+// 		return []storagetypes.Providers{}, nil
+// 	}
+
+// 	return res.Providers, nil
+// }

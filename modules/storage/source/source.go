@@ -6,4 +6,5 @@ import (
 
 type Source interface {
 	Params(height int64) (storagetypes.Params, error)
+	Providers(height int64) ([]storagetypes.Providers, error)
 }

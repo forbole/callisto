@@ -34,3 +34,13 @@ func (s Source) Params(height int64) (storagetypes.Params, error) {
 
 	return res.Params, nil
 }
+
+// Providers implements storagesource.Source
+func (s Source) Providers(height int64) ([]storagetypes.Providers, error) {
+	res, err := s.querier.ProvidersAll(remote.GetHeightRequestContext(s.Ctx, height), &storagetypes.QueryAllProvidersRequest{})
+	if err != nil {
+		return []storagetypes.Providers{}, nil
+	}
+
+	return res.Providers, nil
+}

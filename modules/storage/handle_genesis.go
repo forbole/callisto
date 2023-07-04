@@ -29,5 +29,11 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 		return fmt.Errorf("error while storing genesis storage params: %s", err)
 	}
 
+	// Save the providers list
+	err = m.db.SaveStorageProviders(genState.ProvidersList, doc.InitialHeight)
+	if err != nil {
+		return fmt.Errorf("error while storing genesis storage params: %s", err)
+	}
+
 	return nil
 }
