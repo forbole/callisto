@@ -3,8 +3,8 @@ package database_test
 import (
 	"encoding/json"
 
-	minttypes "github.com/jackalLabs/canine-chain/v3/x/jklmint/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	minttypes "github.com/jackalLabs/canine-chain/v3/x/jklmint/types"
 
 	"github.com/forbole/bdjuno/v4/types"
 
@@ -75,11 +75,6 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 func (suite *DbTestSuite) TestBigDipperDb_SaveMintParams() {
 	mintParams := minttypes.NewParams(
 		"udaric",
-		sdk.NewDecWithPrec(4, 1),
-		sdk.NewDecWithPrec(8, 1),
-		sdk.NewDecWithPrec(4, 1),
-		sdk.NewDecWithPrec(8, 1),
-		5006000,
 	)
 	err := suite.database.SaveMintParams(types.NewMintParams(mintParams, 10))
 	suite.Require().NoError(err)
