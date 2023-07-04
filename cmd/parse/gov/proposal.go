@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/forbole/bdjuno/v4/modules/storage"
 	modulestypes "github.com/forbole/bdjuno/v4/modules/types"
 	"github.com/rs/zerolog/log"
 
@@ -54,9 +55,10 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			mintModule := mint.NewModule(sources.MintSource, parseCtx.EncodingConfig.Marshaler, db)
 			slashingModule := slashing.NewModule(sources.SlashingSource, parseCtx.EncodingConfig.Marshaler, db)
 			stakingModule := staking.NewModule(sources.StakingSource, parseCtx.EncodingConfig.Marshaler, db)
+			storageModule := storage.NewModule(sources.StorageSource, parseCtx.EncodingConfig.Marshaler, db)
 
 			// Build the gov module
-			govModule := gov.NewModule(sources.GovSource, nil, distrModule, mintModule, slashingModule, stakingModule, parseCtx.EncodingConfig.Marshaler, db)
+			govModule := gov.NewModule(sources.GovSource, nil, distrModule, mintModule, slashingModule, stakingModule, storageModule, parseCtx.EncodingConfig.Marshaler, db)
 
 			err = refreshProposalDetails(parseCtx, proposalID, govModule)
 			if err != nil {

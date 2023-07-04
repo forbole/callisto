@@ -9,10 +9,10 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	minttypes "github.com/jackalLabs/canine-chain/v3/x/jklmint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/juno/v4/node/local"
+	minttypes "github.com/jackalLabs/canine-chain/v3/x/jklmint/types"
 
 	nodeconfig "github.com/forbole/juno/v4/node/config"
 
@@ -28,6 +28,9 @@ import (
 	remoteslashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source/remote"
 	stakingsource "github.com/forbole/bdjuno/v4/modules/staking/source"
 	remotestakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/remote"
+	storagesource "github.com/forbole/bdjuno/v4/modules/storage/source"
+	remotestoragesource "github.com/forbole/bdjuno/v4/modules/storage/source/remote"
+	storagetypes "github.com/jackalLabs/canine-chain/v3/x/storage/types"
 )
 
 type Sources struct {
@@ -37,6 +40,7 @@ type Sources struct {
 	MintSource     mintsource.Source
 	SlashingSource slashingsource.Source
 	StakingSource  stakingsource.Source
+	StorageSource  storagesource.Source
 }
 
 func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -69,6 +73,8 @@ func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConf
 // 		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
 // 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
 // 		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
+// 		StorageSource:  localstoragesource.NewSource(source, storagetypes.QueryServer(app.MintKeeper)),
+
 // 	}
 
 // 	// Mount and initialize the stores
@@ -108,5 +114,6 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
+		StorageSource:  remotestoragesource.NewSource(source, storagetypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }

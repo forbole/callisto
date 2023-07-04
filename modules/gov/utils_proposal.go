@@ -6,6 +6,8 @@ import (
 	"time"
 
 	minttypes "github.com/jackalLabs/canine-chain/v3/x/jklmint/types"
+	storagetypes "github.com/jackalLabs/canine-chain/v3/x/storage/types"
+
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
@@ -120,6 +122,11 @@ func (m *Module) handleParamChangeProposal(height int64, paramChangeProposal *pr
 			err = m.mintModule.UpdateInflation()
 			if err != nil {
 				return fmt.Errorf("error while updating inflation with ParamChangeProposal: %s", err)
+			}
+		case storagetypes.ModuleName:
+			err = m.storageModule.UpdateParams(height)
+			if err != nil {
+				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", storagetypes.ModuleName, err)
 			}
 		case slashingtypes.ModuleName:
 			err = m.slashingModule.UpdateParams(height)

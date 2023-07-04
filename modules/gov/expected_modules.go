@@ -24,6 +24,10 @@ type SlashingModule interface {
 	UpdateParams(height int64) error
 }
 
+type StorageModule interface {
+	UpdateParams(height int64) error
+}
+
 type StakingModule interface {
 	GetStakingPool(height int64) (*types.Pool, error)
 	GetStakingPoolSnapshot(height int64) (*types.PoolSnapshot, error)

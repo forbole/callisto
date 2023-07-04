@@ -5,6 +5,7 @@ import (
 	"github.com/forbole/juno/v4/modules"
 
 	"github.com/forbole/bdjuno/v4/database"
+	storagesource "github.com/forbole/bdjuno/v4/modules/storage/source"
 )
 
 var (
@@ -14,17 +15,19 @@ var (
 
 // Module represent database/storage module
 type Module struct {
-	cdc codec.Codec
-	db  *database.Db
+	cdc    codec.Codec
+	db     *database.Db
+	source storagesource.Source
 }
 
 // NewModule returns a new Module instance
 func NewModule(
-	// source storagesource.Source,
+	source storagesource.Source,
 	cdc codec.Codec, db *database.Db) *Module {
 	return &Module{
-		cdc: cdc,
-		db:  db,
+		cdc:    cdc,
+		db:     db,
+		source: source,
 	}
 }
 
