@@ -8,6 +8,8 @@ import (
 	"github.com/forbole/juno/v2/modules"
 	jmodules "github.com/forbole/juno/v2/modules"
 
+	"github.com/forbole/juno/v2/node"
+
 	"github.com/forbole/bdjuno/v2/database"
 	"github.com/forbole/bdjuno/v2/database/overgold/chain/last_block"
 	"github.com/forbole/bdjuno/v2/modules/overgold/chain/accounts"
@@ -37,6 +39,7 @@ type module struct {
 	lastBlockRepo   last_block.Repository
 	logger          logging.Logger
 	overgoldModules []overgoldModule
+	node            node.Node
 
 	schedulerRun bool
 	mutex        sync.RWMutex
@@ -45,6 +48,7 @@ type module struct {
 func NewModule(
 	cdc codec.Marshaler,
 	db *database.Db,
+	node node.Node,
 	logger logging.Logger,
 
 	OvergoldAccountsSource overgoldAccountsSource.Source,
@@ -56,6 +60,7 @@ func NewModule(
 		cdc:           cdc,
 		db:            db,
 		lastBlockRepo: *last_block.NewRepository(db.Sqlx),
+		node:          node,
 		logger:        logger,
 		overgoldModules: []overgoldModule{
 			accounts.NewModule(OvergoldAccountsSource, cdc, db),
