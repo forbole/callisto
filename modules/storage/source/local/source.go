@@ -57,3 +57,18 @@ package local
 
 // 	return res.Providers, nil
 // }
+
+// // Strays implements storagesource.Source
+// func (s Source) Strays(height int64) ([]storagetypes.Strays, error) {
+// 	ctx, err := s.LoadHeight(height)
+// 	if err != nil {
+// 		return []storagetypes.Strays{}, fmt.Errorf("error while loading height: %s", err)
+// 	}
+
+// 	res, err := s.querier.StraysAll(sdk.WrapSDKContext(ctx), &storagetypes.QueryAllStraysRequest{})
+// 	if err != nil {
+// 		return []storagetypes.Strays{}, nil
+// 	}
+
+// 	return res.Strays, nil
+// }

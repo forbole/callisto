@@ -7,4 +7,5 @@ import (
 type Source interface {
 	Params(height int64) (storagetypes.Params, error)
 	Providers(height int64) ([]storagetypes.Providers, error)
+	Strays(height int64) ([]storagetypes.Strays, error)
 }

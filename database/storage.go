@@ -33,7 +33,7 @@ WHERE storage_params.height <= excluded.height`
 	return nil
 }
 
-// SaveStorageProviders allows the bulk saving of a list of validators.
+// SaveStorageProviders allows the bulk saving of a list of storage providers.
 func (db *Db) SaveStorageProviders(providers []storagetypes.Providers, height int64) error {
 	if len(providers) == 0 {
 		return nil

@@ -44,3 +44,13 @@ func (s Source) Providers(height int64) ([]storagetypes.Providers, error) {
 
 	return res.Providers, nil
 }
+
+// Strays implements storagesource.Source
+func (s Source) Strays(height int64) ([]storagetypes.Strays, error) {
+	res, err := s.querier.StraysAll(remote.GetHeightRequestContext(s.Ctx, height), &storagetypes.QueryAllStraysRequest{})
+	if err != nil {
+		return []storagetypes.Strays{}, nil
+	}
+
+	return res.Strays, nil
+}
