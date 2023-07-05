@@ -1,7 +1,13 @@
 package mint
 
 import (
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+
 	"github.com/forbole/bdjuno/v4/modules/utils"
+	minttypes "github.com/jackalLabs/canine-chain/v3/x/jklmint/types"
 
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
@@ -35,10 +41,23 @@ func (m *Module) UpdateInflation() error {
 	}
 
 	// Get the inflation
-	inflation, err := m.source.GetInflation(height)
+	resp, err := http.Get("https://api.jackal.forbole.com/cosmos/mint/v1beta1/inflation")
 	if err != nil {
-		return err
+		return fmt.Errorf("error while querying API for inflation value: %s", err)
 	}
 
-	return m.db.SaveInflation(inflation, height)
+	defer resp.Body.Close()
+
+	bz, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("error while reading response body: %s", err)
+	}
+
+	var inf minttypes.QueryInflationResponse
+	err = json.Unmarshal(bz, &inf)
+	if err != nil {
+		return fmt.Errorf("error while unmarshaling response body: %s", err)
+	}
+
+	return m.db.SaveInflation(inf.Inflation, height)
 }
