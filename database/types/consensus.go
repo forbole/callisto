@@ -3,8 +3,10 @@ package types
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"time"
 
+	"git.ooo.ua/vipcoin/lib/errs"
 	"github.com/lib/pq"
 )
 
@@ -105,4 +107,17 @@ type TransactionRow struct {
 	GasUsed     int64           `db:"gas_used"`
 	RawLog      string          `db:"raw_log"`
 	Logs        json.RawMessage `db:"logs"`
+}
+
+// CheckTxNumCount checks if the number of transactions is greater than 0
+func (b BlockRow) CheckTxNumCount(txs int64) error {
+	if b.TxNum != txs {
+		return &errs.Conflict{
+			Cause: fmt.Errorf("mismatch txs in block: height - %d, expected tx num - %d, exist - %d ",
+				b.Height,
+				b.TxNum,
+				txs).Error()}
+	}
+
+	return nil
 }

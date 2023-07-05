@@ -15,6 +15,7 @@ import (
 	dbtypes "github.com/forbole/bdjuno/v2/database/types"
 )
 
+// scheduler runs the scheduler
 func (m *module) scheduler() {
 	for {
 		lastBlock, err := m.lastBlockRepo.Get()
@@ -43,14 +44,18 @@ func (m *module) scheduler() {
 	}
 }
 
+// parseBlock parse block
 func (m *module) parseBlock(lastBlock uint64) error {
 	block, err := m.db.GetBlock(filter.NewFilter().SetArgument(dbtypes.FieldHeight, lastBlock))
 	if err != nil {
-		if errors.As(err, &errs.NotFound{}) {
-			return err
+		if !errors.As(err, &errs.NotFound{}) {
+			return errs.Internal{Cause: err.Error()}
 		}
 
-		return errs.Internal{Cause: err.Error()}
+		if block, _, err = m.parseMissingBlocksAndTransactions(int64(lastBlock)); err != nil {
+			m.logger.Error("Fail parseMissingBlocksAndTransactions", "module", "overgold", "error", err)
+			return errs.Internal{Cause: "Fail parseMissingBlocksAndTransactions, error: " + err.Error()}
+		}
 	}
 
 	m.logger.Debug("parse block", "height", block.Height)
@@ -62,6 +67,7 @@ func (m *module) parseBlock(lastBlock uint64) error {
 	return m.parseTx(block)
 }
 
+// parseTx parse txs from block
 func (m *module) parseTx(block dbtypes.BlockRow) error {
 	txs, err := m.db.GetTransactions(
 		filter.NewFilter().
@@ -76,12 +82,15 @@ func (m *module) parseTx(block dbtypes.BlockRow) error {
 		return errs.Internal{Cause: err.Error()}
 	}
 
-	if block.TxNum != int64(len(txs)) {
-		return &errs.Conflict{
-			Cause: fmt.Errorf("mismatch txs in block: height - %d, expected tx num - %d, exist - %d ",
-				block.Height,
-				block.TxNum,
-				int64(len(txs))).Error()}
+	if err := block.CheckTxNumCount(int64(len(txs))); err != nil {
+		if _, txs, err = m.parseMissingBlocksAndTransactions(block.Height); err != nil {
+			m.logger.Error("Fail parseMissingBlocksAndTransactions", "module", "overgold", "error", err)
+			return errs.Internal{Cause: "Fail parseMissingBlocksAndTransactions, error: " + err.Error()}
+		}
+
+		if err = block.CheckTxNumCount(int64(len(txs))); err != nil {
+			return err
+		}
 	}
 
 	for _, tx := range txs {
