@@ -7,6 +7,8 @@ import (
 	confilcttypes "github.com/lavanet/lava/x/conflict/types"
 
 	pairingtypes "github.com/lavanet/lava/x/pairing/types"
+	projecttypes "github.com/lavanet/lava/x/projects/types"
+	subscriptiontypes "github.com/lavanet/lava/x/subscription/types"
 )
 
 // lavaMessageAddressesParser represents a parser able to get the addresses of the involved
@@ -20,13 +22,23 @@ func lavaMessageAddressesParser(_ codec.Codec, cosmosMsg sdk.Msg) ([]string, err
 
 	case *pairingtypes.MsgRelayPayment:
 		return []string{msg.Creator}, nil
-	case *pairingtypes.MsgStakeClient:
-		return []string{msg.Creator}, nil
 	case *pairingtypes.MsgStakeProvider:
 		return []string{msg.Creator}, nil
 	case *pairingtypes.MsgUnstakeProvider:
 		return []string{msg.Creator}, nil
-	case *pairingtypes.MsgUnstakeClient:
+	case *pairingtypes.MsgFreezeProvider:
+		return []string{msg.Creator}, nil
+	case *pairingtypes.MsgUnfreezeProvider:
+		return []string{msg.Creator}, nil
+
+	case *projecttypes.MsgAddKeys:
+		return []string{msg.Creator}, nil
+	case *projecttypes.MsgDelKeys:
+		return []string{msg.Creator}, nil
+
+	case *subscriptiontypes.MsgAddProject:
+		return []string{msg.Creator}, nil
+	case *subscriptiontypes.MsgDelProject:
 		return []string{msg.Creator}, nil
 
 	case *confilcttypes.MsgConflictVoteCommit:
