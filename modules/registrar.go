@@ -49,7 +49,7 @@ import (
 	localmintsource "github.com/forbole/bdjuno/v2/modules/mint/source/local"
 	remotemintsource "github.com/forbole/bdjuno/v2/modules/mint/source/remote"
 	"github.com/forbole/bdjuno/v2/modules/modules"
-	overgold "github.com/forbole/bdjuno/v2/modules/overgold"
+	"github.com/forbole/bdjuno/v2/modules/overgold"
 	overgoldAccountsSource "github.com/forbole/bdjuno/v2/modules/overgold/chain/accounts/source"
 	remoteOvergoldAccountsSource "github.com/forbole/bdjuno/v2/modules/overgold/chain/accounts/source/remote"
 	overgoldAssetsSource "github.com/forbole/bdjuno/v2/modules/overgold/chain/assets/source"
@@ -122,6 +122,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	overgoldModules := overgold.NewModule(
 		cdc,
 		db,
+		ctx.Proxy,
 		ctx.Logger,
 
 		sources.OvergoldAccountsSource,
