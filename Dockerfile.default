@@ -1,5 +1,5 @@
 FROM golang:1.18-alpine AS builder
-RUN apk update && apk add --no-cache make git
+RUN apk update && apk add --no-cache make git alpine-sdk
 WORKDIR /go/src/github.com/forbole/bdjuno
 COPY . ./
 RUN go mod download
@@ -8,4 +8,6 @@ RUN make build
 FROM alpine:latest
 WORKDIR /bdjuno
 COPY --from=builder /go/src/github.com/forbole/bdjuno/build/bdjuno /usr/bin/bdjuno
+COPY --from=builder /go/src/github.com/forbole/bdjuno/hasura /bdjuno/hasura
+COPY --from=builder /go/src/github.com/forbole/bdjuno/database/schema /bdjuno/schema
 CMD [ "bdjuno" ]
