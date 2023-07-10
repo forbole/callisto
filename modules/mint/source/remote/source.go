@@ -2,7 +2,7 @@ package remote
 
 import (
 	"github.com/forbole/juno/v4/node/remote"
-	minttypes "github.com/public-awesome/stargaze/v10/x/mint/types"
+	minttypes "github.com/public-awesome/stargaze/v11/x/mint/types"
 
 	mintsource "github.com/forbole/bdjuno/v4/modules/mint/source"
 )

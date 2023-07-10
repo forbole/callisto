@@ -12,7 +12,7 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/juno/v4/node/local"
-	minttypes "github.com/public-awesome/stargaze/v10/x/mint/types"
+	minttypes "github.com/public-awesome/stargaze/v11/x/mint/types"
 
 	nodeconfig "github.com/forbole/juno/v4/node/config"
 

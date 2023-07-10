@@ -12,7 +12,7 @@ require (
 	github.com/pelletier/go-toml v1.9.5
 	github.com/prometheus/client_golang v1.15.1
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
-	github.com/public-awesome/stargaze/v10 v10.0.1
+	github.com/public-awesome/stargaze/v11 v11.0.0
 	github.com/rs/zerolog v1.29.1
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4
@@ -28,7 +28,7 @@ require (
 	filippo.io/edwards25519 v1.0.0-rc.1 // indirect
 	github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 // indirect
 	github.com/99designs/keyring v1.2.1 // indirect
-	github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d // indirect
+	github.com/ChainSafe/go-schnorrkel v1.0.0 // indirect
 	github.com/CosmWasm/wasmd v0.31.0 // indirect
 	github.com/CosmWasm/wasmvm v1.2.4 // indirect
 	github.com/DataDog/zstd v1.5.0 // indirect
@@ -161,6 +161,5 @@ replace (
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.8.1
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	github.com/tendermint/spm => github.com/public-awesome/spm v0.1.9-stargaze.0.20230605133234-f3f31dccde23
-	github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.34.27
-	google.golang.org/grpc => google.golang.org/grpc v1.55.0
+	github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.34.29
 )

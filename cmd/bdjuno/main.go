@@ -16,7 +16,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules"
-	stargazeapp "github.com/public-awesome/stargaze/v10/app"
+	stargazeapp "github.com/public-awesome/stargaze/v11/app"
 )
 
 func main() {

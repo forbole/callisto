@@ -5,7 +5,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	minttypes "github.com/public-awesome/stargaze/v10/x/mint/types"
+	minttypes "github.com/public-awesome/stargaze/v11/x/mint/types"
 
 	"github.com/forbole/bdjuno/v4/types"
 

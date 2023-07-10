@@ -1,6 +1,6 @@
 package types
 
-import minttypes "github.com/public-awesome/stargaze/v10/x/mint/types"
+import minttypes "github.com/public-awesome/stargaze/v11/x/mint/types"
 
 // MintParams represents the x/mint parameters
 type MintParams struct {
