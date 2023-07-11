@@ -12,7 +12,7 @@ import (
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	"google.golang.org/grpc/codes"
 
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 
 	"github.com/forbole/bdjuno/v4/types"
 
@@ -22,7 +22,7 @@ import (
 
 	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
 
-	inflationtypes "github.com/evmos/evmos/v11/x/inflation/types"
+	inflationtypes "github.com/evmos/evmos/v13/x/inflation/types"
 )
 
 func (m *Module) UpdateProposal(height int64, blockTime time.Time, id uint64) error {
