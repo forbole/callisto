@@ -5,7 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/juno/v4/node/local"
-	superfluidtypes "github.com/osmosis-labs/osmosis/v15/x/superfluid/types"
+	superfluidtypes "github.com/osmosis-labs/osmosis/v16/x/superfluid/types"
 
 	superfluidsource "github.com/forbole/bdjuno/v4/modules/superfluid/source"
 )

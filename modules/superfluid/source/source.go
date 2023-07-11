@@ -2,7 +2,7 @@ package source
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	superfluidtypes "github.com/osmosis-labs/osmosis/v15/x/superfluid/types"
+	superfluidtypes "github.com/osmosis-labs/osmosis/v16/x/superfluid/types"
 )
 
 type Source interface {

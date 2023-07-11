@@ -13,13 +13,13 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	minttypes "github.com/osmosis-labs/osmosis/v15/x/mint/types"
+	minttypes "github.com/osmosis-labs/osmosis/v16/x/mint/types"
 
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/juno/v4/node/local"
-	mintkeeper "github.com/osmosis-labs/osmosis/v15/x/mint/keeper"
+	mintkeeper "github.com/osmosis-labs/osmosis/v16/x/mint/keeper"
 
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
@@ -44,9 +44,9 @@ import (
 	localsuperfluidsource "github.com/forbole/bdjuno/v4/modules/superfluid/source/local"
 	remotesuperfluidsource "github.com/forbole/bdjuno/v4/modules/superfluid/source/remote"
 	nodeconfig "github.com/forbole/juno/v4/node/config"
-	osmosisapp "github.com/osmosis-labs/osmosis/v15/app"
-	superfluidkeeper "github.com/osmosis-labs/osmosis/v15/x/superfluid/keeper"
-	superfluidtypes "github.com/osmosis-labs/osmosis/v15/x/superfluid/types"
+	osmosisapp "github.com/osmosis-labs/osmosis/v16/app"
+	superfluidkeeper "github.com/osmosis-labs/osmosis/v16/x/superfluid/keeper"
+	superfluidtypes "github.com/osmosis-labs/osmosis/v16/x/superfluid/types"
 )
 
 type Sources struct {
@@ -79,7 +79,7 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 
 	app := osmosisapp.NewOsmosisApp(
 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
-		cfg.Home, 0, simapp.EmptyAppOptions{}, osmosisapp.GetWasmEnabledProposals(), osmosisapp.EmptyWasmOpts,
+		cfg.Home, 0, simapp.EmptyAppOptions{}, osmosisapp.EmptyWasmOpts,
 	)
 
 	sources := &Sources{
