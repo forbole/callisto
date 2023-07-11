@@ -6,8 +6,8 @@ import (
 	"io"
 	"net/http"
 
+	minttypes "github.com/MonikaCat/canine-chain/v2/x/jklmint/types"
 	"github.com/forbole/bdjuno/v4/modules/utils"
-	minttypes "github.com/jackalLabs/canine-chain/v3/x/jklmint/types"
 
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"

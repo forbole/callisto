@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	minttypes "github.com/jackalLabs/canine-chain/v3/x/jklmint/types"
-	storagetypes "github.com/jackalLabs/canine-chain/v3/x/storage/types"
+	minttypes "github.com/MonikaCat/canine-chain/v2/x/jklmint/types"
+	storagetypes "github.com/MonikaCat/canine-chain/v2/x/storage/types"
 
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"

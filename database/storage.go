@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	storagetypes "github.com/jackalLabs/canine-chain/v3/x/storage/types"
+	storagetypes "github.com/MonikaCat/canine-chain/v2/x/storage/types"
 	"github.com/lib/pq"
 
 	"github.com/forbole/bdjuno/v4/types"

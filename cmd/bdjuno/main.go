@@ -13,7 +13,7 @@ import (
 
 	"github.com/forbole/bdjuno/v4/types/config"
 
-	cainechainapp "github.com/jackalLabs/canine-chain/v3/app"
+	cainechainapp "github.com/MonikaCat/canine-chain/v2/app"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/forbole/bdjuno/v4/database"
