@@ -112,10 +112,14 @@ CREATE OR REPLACE FUNCTION messages_by_single_address(
     LANGUAGE sql
     STABLE
 AS $function$
-SELECT * FROM message
-WHERE (cardinality(types) = 0 OR type = ANY (types))
+SELECT * FROM (
+  SELECT DISTINCT ON (transaction_hash) *
+  FROM message 
+  WHERE (cardinality(types) = 0 OR type = ANY (types))
   AND string_to_array(address,',') && involved_accounts_addresses
-ORDER BY height DESC LIMIT "limit" OFFSET "offset"
+  ORDER BY transaction_hash DESC 
+) message
+ORDER BY height DESC LIMIT "limit" OFFSET "offset";
 $function$;
 
 
