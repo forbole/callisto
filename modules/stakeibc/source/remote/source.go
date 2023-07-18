@@ -1,7 +1,7 @@
 package remote
 
 import (
-	stakeibctypes "github.com/Stride-Labs/stride/v11/x/stakeibc/types"
+	stakeibctypes "github.com/Stride-Labs/stride/v12/x/stakeibc/types"
 	"github.com/forbole/juno/v5/node/remote"
 
 	stakeibcsource "github.com/forbole/bdjuno/v4/modules/stakeibc/source"

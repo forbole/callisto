@@ -5,12 +5,12 @@ go 1.19
 require (
 	cosmossdk.io/math v1.0.1
 	cosmossdk.io/simapp v0.0.0-20230602123434-616841b9704d
-	github.com/Stride-Labs/stride/v11 v11.0.0
+	github.com/Stride-Labs/stride/v12 v12.0.0
 	github.com/cometbft/cometbft v0.38.0-rc2
 	github.com/cosmos/cosmos-sdk v0.47.3
 	github.com/cosmos/gogoproto v1.4.10 // indirect
 	github.com/cosmos/ibc-go/v7 v7.2.0 // indirect
-	github.com/forbole/juno/v5 v5.2.1-0.20230707062442-68ca6e223271
+	github.com/forbole/juno/v5 v5.2.1-0.20230718082304-88faa0e1d7db
 	github.com/go-co-op/gocron v1.18.0
 	github.com/gogo/protobuf v1.3.2
 	github.com/jmoiron/sqlx v1.3.5
@@ -62,6 +62,7 @@ require (
 	github.com/cosmos/gogogateway v1.2.0 // indirect
 	github.com/cosmos/iavl v1.0.0-beta.2 // indirect
 	github.com/cosmos/ics23/go v0.10.0 // indirect
+	github.com/cosmos/interchain-security/v3 v3.1.0 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.13.0 // indirect
 	github.com/cosmos/rosetta-sdk-go v0.10.0 // indirect
 	github.com/creachadair/taskgroup v0.4.2 // indirect
@@ -76,13 +77,10 @@ require (
 	github.com/dvsekhvalnov/jose2go v1.5.0 // indirect
 	github.com/felixge/httpsnoop v1.0.2 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
-	github.com/gin-gonic/gin v1.8.1 // indirect
 	github.com/go-kit/kit v0.12.0 // indirect
 	github.com/go-kit/log v0.2.1 // indirect
 	github.com/go-logfmt/logfmt v0.6.0 // indirect
-	github.com/go-playground/validator/v10 v10.11.1 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
-	github.com/goccy/go-json v0.9.11 // indirect
 	github.com/godbus/dbus v0.0.0-20190726142602-4481cbc300e2 // indirect
 	github.com/gogo/googleapis v1.4.1 // indirect
 	github.com/golang/glog v1.1.0 // indirect
@@ -182,8 +180,10 @@ require (
 replace (
 	cosmossdk.io/api => cosmossdk.io/api v0.3.1
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
-	github.com/cometbft/cometbft => github.com/cometbft/cometbft v0.37.1
+	github.com/btcsuite/btcd => github.com/btcsuite/btcd v0.22.2
+	github.com/cometbft/cometbft => github.com/cometbft/cometbft v0.37.2
 	github.com/cosmos/iavl => github.com/cosmos/iavl v0.20.0
+	github.com/cosmos/interchain-security/v3 => github.com/Stride-Labs/interchain-security/v3 v3.1.1-0.20230713175550-227e13e60bac
 	github.com/spf13/cast => github.com/Stride-Labs/cast v0.0.3
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
 )

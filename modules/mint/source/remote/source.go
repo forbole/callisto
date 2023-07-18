@@ -1,7 +1,7 @@
 package remote
 
 import (
-	minttypes "github.com/Stride-Labs/stride/v11/x/mint/types"
+	minttypes "github.com/Stride-Labs/stride/v12/x/mint/types"
 	"github.com/forbole/juno/v5/node/remote"
 
 	mintsource "github.com/forbole/bdjuno/v4/modules/mint/source"
