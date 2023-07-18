@@ -1,0 +1,17 @@
+table:
+  name: ccv_validator
+  schema: public
+remote_relationships:
+  - definition:
+      to_source:
+        field_mapping:
+          provider_consensus_address: consensus_address
+        relationship_type: object
+        source: bdjuno_provider
+        table:
+          name: validator
+          schema: public
+    name: validator  
+select_permissions:
+- permission:
+    allow_aggregations: false

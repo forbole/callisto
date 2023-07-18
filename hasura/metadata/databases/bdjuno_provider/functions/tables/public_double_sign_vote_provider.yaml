@@ -1,0 +1,36 @@
+table:
+  name: double_sign_vote
+  schema: public
+object_relationships:
+- name: validator
+  using:
+    foreign_key_constraint_on: validator_address
+array_relationships:
+- name: doubleSignEvidencesByVoteBId
+  using:
+    foreign_key_constraint_on:
+      column: vote_b_id
+      table:
+        name: double_sign_evidence
+        schema: public
+- name: double_sign_evidences
+  using:
+    foreign_key_constraint_on:
+      column: vote_a_id
+      table:
+        name: double_sign_evidence
+        schema: public
+select_permissions:
+- permission:
+    allow_aggregations: false
+    columns:
+    - type
+    - height
+    - round
+    - block_id
+    - validator_address
+    - validator_index
+    - signature
+    filter: {}
+    limit: 100
+  role: anonymous

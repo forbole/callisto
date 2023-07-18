@@ -1,0 +1,18 @@
+table:
+  name: validator_commission
+  schema: public
+object_relationships:
+- name: validator
+  using:
+    foreign_key_constraint_on: validator_address
+select_permissions:
+- permission:
+    allow_aggregations: false
+    columns:
+    - validator_address
+    - commission
+    - min_self_delegation
+    - height
+    filter: {}
+    limit: 100
+  role: anonymous

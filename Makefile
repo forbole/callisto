@@ -60,7 +60,7 @@ stop-docker-test:
 
 start-docker-test: stop-docker-test
 	@echo "Starting Docker container..."
-	@docker run --name bdjuno-test-db -e POSTGRES_USER=bdjuno -e POSTGRES_PASSWORD=password -e POSTGRES_DB=bdjuno -d -p 6433:5432 postgres
+	@docker run --name bdjuno-test-db -e POSTGRES_USER=bdjuno -e POSTGRES_PASSWORD=password -e POSTGRES_DB=bdjuno -e PROVIDER_POSTGRES_USER=bdjuno_provider -e PROVIDER_POSTGRES_PASSWORD=providerpassword -e PROVIDER_POSTGRES_DB=bdjuno_provider -d -p 6433:5432 postgres
 .PHONY: start-docker-test
 
 test-unit: start-docker-test
