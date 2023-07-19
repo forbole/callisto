@@ -24,6 +24,7 @@ import (
 	"github.com/forbole/bdjuno/v4/modules/distribution"
 	"github.com/forbole/bdjuno/v4/modules/feegrant"
 
+	ccvconsumer "github.com/forbole/bdjuno/v4/modules/ccv/consumer"
 	dailyrefetch "github.com/forbole/bdjuno/v4/modules/daily_refetch"
 	"github.com/forbole/bdjuno/v4/modules/gov"
 	"github.com/forbole/bdjuno/v4/modules/mint"
@@ -31,7 +32,6 @@ import (
 	"github.com/forbole/bdjuno/v4/modules/pricefeed"
 	"github.com/forbole/bdjuno/v4/modules/staking"
 	"github.com/forbole/bdjuno/v4/modules/upgrade"
-	ccvconsumer "github.com/forbole/bdjuno/v4/modules/ccv/consumer"
 )
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses

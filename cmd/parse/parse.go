@@ -4,17 +4,16 @@ import (
 	parse "github.com/forbole/juno/v5/cmd/parse/types"
 	"github.com/spf13/cobra"
 
-	parseblocks "github.com/forbole/juno/v5/cmd/parse/blocks"
-parseccv "github.com/forbole/bdjuno/v4/cmd/parse/ccv"
-	parsegenesis "github.com/forbole/juno/v5/cmd/parse/genesis"
-
 	parseauth "github.com/forbole/bdjuno/v4/cmd/parse/auth"
 	parsebank "github.com/forbole/bdjuno/v4/cmd/parse/bank"
+	parseccv "github.com/forbole/bdjuno/v4/cmd/parse/ccv"
 	parsedistribution "github.com/forbole/bdjuno/v4/cmd/parse/distribution"
 	parsefeegrant "github.com/forbole/bdjuno/v4/cmd/parse/feegrant"
 	parsegov "github.com/forbole/bdjuno/v4/cmd/parse/gov"
 	parsepricefeed "github.com/forbole/bdjuno/v4/cmd/parse/pricefeed"
 	parsestaking "github.com/forbole/bdjuno/v4/cmd/parse/staking"
+	parseblocks "github.com/forbole/juno/v5/cmd/parse/blocks"
+	parsegenesis "github.com/forbole/juno/v5/cmd/parse/genesis"
 	parsetransaction "github.com/forbole/juno/v5/cmd/parse/transactions"
 )
 

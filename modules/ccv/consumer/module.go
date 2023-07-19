@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	_ modules.GenesisModule = &Module{}
+	_ modules.GenesisModule            = &Module{}
 	_ modules.PeriodicOperationsModule = &Module{}
 )
 
