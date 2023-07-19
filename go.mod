@@ -10,6 +10,7 @@ require (
 	github.com/cosmos/cosmos-sdk v0.47.3
 	github.com/cosmos/gogoproto v1.4.10 // indirect
 	github.com/cosmos/ibc-go/v7 v7.2.0
+	github.com/cosmos/interchain-security/v3 v3.1.0
 	github.com/forbole/juno/v5 v5.2.1-0.20230718082304-88faa0e1d7db
 	github.com/go-co-op/gocron v1.18.0
 	github.com/gogo/protobuf v1.3.2
@@ -25,8 +26,6 @@ require (
 	google.golang.org/grpc v1.56.1
 	gopkg.in/yaml.v3 v3.0.1
 )
-
-require github.com/cosmos/interchain-security/v3 v3.1.0
 
 require (
 	cloud.google.com/go v0.110.0 // indirect
