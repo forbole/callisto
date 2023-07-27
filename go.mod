@@ -8,7 +8,7 @@ require (
 	github.com/cosmos/cosmos-sdk v0.45.15
 	github.com/cosmos/ibc-go/v4 v4.3.0
 	github.com/cosmos/interchain-security v1.2.0-multiden-rc0
-	github.com/forbole/juno/v4 v4.1.1-0.20230727071736-2efa35ee779b
+	github.com/forbole/juno/v4 v4.1.1-0.20230727085800-9407c95e223f
 	github.com/go-co-op/gocron v1.27.1
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5

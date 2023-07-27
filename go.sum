@@ -1199,8 +1199,8 @@ github.com/flosch/pongo2 v0.0.0-20190707114632-bbf5a6c351f4/go.mod h1:T9YF2M40nI
 github.com/flosch/pongo2/v4 v4.0.2/go.mod h1:B5ObFANs/36VwxxlgKpdchIJHMvHB562PW+BWPhwZD8=
 github.com/flynn/go-shlex v0.0.0-20150515145356-3f9db97f8568/go.mod h1:xEzjJPgXI435gkrCt3MPfRiAkVrwSbHsst4LCFVfpJc=
 github.com/fogleman/gg v1.2.1-0.20190220221249-0403632d5b90/go.mod h1:R/bRT+9gY/C5z7JzPU0zXsXHKM4/ayA+zqcVNZzPa1k=
-github.com/forbole/juno/v4 v4.1.1-0.20230727071736-2efa35ee779b h1:zKhoJgQ5OoTmMtONQCEgZRzEqBtWjo7JklsddQFNFAw=
-github.com/forbole/juno/v4 v4.1.1-0.20230727071736-2efa35ee779b/go.mod h1:KO0ay0HjlGeyWLZCd+Anz8RekXD8+sVI56AFj/kJZYo=
+github.com/forbole/juno/v4 v4.1.1-0.20230727085800-9407c95e223f h1:K11aiNSv4hwjCkSNsClL10oUYq4Pz4fcydtZtrn3m94=
+github.com/forbole/juno/v4 v4.1.1-0.20230727085800-9407c95e223f/go.mod h1:KO0ay0HjlGeyWLZCd+Anz8RekXD8+sVI56AFj/kJZYo=
 github.com/form3tech-oss/jwt-go v3.2.2+incompatible/go.mod h1:pbq4aXjuKjdthFRnoDwaVPLA+WlJuPGy+QneDUgJi2k=
 github.com/form3tech-oss/jwt-go v3.2.3+incompatible/go.mod h1:pbq4aXjuKjdthFRnoDwaVPLA+WlJuPGy+QneDUgJi2k=
 github.com/fortytw2/leaktest v1.2.0/go.mod h1:jDsjWgpAGjm2CA7WthBh/CdZYEPF31XHquHwclZch5g=
