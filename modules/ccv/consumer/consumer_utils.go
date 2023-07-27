@@ -23,7 +23,23 @@ func (m *Module) UpdateCcvValidators(height int64) error {
 	for _, index := range validatorsDB {
 		_, providerBytes, _ := bech32.DecodeAndConvert(index.ConsensusAddress)
 		providerConsensusAddress, _ := sdk.Bech32ifyAddressBytes("cosmosvalcons", providerBytes)
-		ccvValidators = append(ccvValidators, types.NewCCVValidator(index.ConsensusAddress, providerConsensusAddress, height))
+		providerSelfDelegateAddress, _ := m.db.GetProviderSelfDelegateAddress(providerConsensusAddress)
+
+		if len(providerSelfDelegateAddress) > 0 {
+			_, bz, err := bech32.DecodeAndConvert(providerSelfDelegateAddress)
+			if err != nil {
+				fmt.Errorf("cannot decode %s address: %s", providerSelfDelegateAddress, err)
+			}
+
+			consumerSelfDelegateAddress, err := bech32.ConvertAndEncode("neutron", bz)
+			if err != nil {
+				fmt.Errorf("cannot decode neutron address: %s", err)
+			}
+
+			ccvValidators = append(ccvValidators, types.NewCCVValidator(index.ConsensusAddress, consumerSelfDelegateAddress, providerConsensusAddress, providerSelfDelegateAddress, height))
+		} else {
+			ccvValidators = append(ccvValidators, types.NewCCVValidator(index.ConsensusAddress, "", providerConsensusAddress, "", height))
+		}
 	}
 
 	return m.db.StoreCCvValidators(ccvValidators)

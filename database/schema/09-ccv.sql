@@ -1,9 +1,11 @@
 /* ---- CCV VALIDATOR ---- */
 CREATE TABLE ccv_validator
 (
-    consumer_consensus_address TEXT   NOT NULL PRIMARY KEY, /* Validator consensus address on consumer chain */
-    provider_consensus_address TEXT   NOT NULL UNIQUE, /* Validator consensus address on provider chain */
-    height                     BIGINT NOT NULL
+    consumer_consensus_address      TEXT   NOT NULL PRIMARY KEY, /* Validator consensus address on consumer chain */
+    consumer_self_delegate_address  TEXT, /* Validator self delegate address on consumer chain */
+    provider_consensus_address      TEXT   NOT NULL UNIQUE, /* Validator consensus address on provider chain */
+    provider_self_delegate_address  TEXT, /* Validator self delegate address on provider chain */
+    height                          BIGINT NOT NULL
 );
 
 /* ---- PARAMS ---- */

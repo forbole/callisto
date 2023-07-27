@@ -108,6 +108,23 @@ func (db *Db) GetValidatorsConsensusAddress() ([]dbtypes.ValidatorAddressRow, er
 	return rows, nil
 }
 
+// GetProviderSelfDelegateAddress implements database.Database
+func (db *Db) GetProviderSelfDelegateAddress(consensusAddress string) (string, error) {
+	stmt := `
+	SELECT self_delegate_address FROM validator_info where consensus_address = $1`
+
+	var selfDelegateAddress []string
+	if err := db.ProviderSQL.Select(&selfDelegateAddress, stmt, consensusAddress); err != nil {
+		return "", err
+	}
+
+	if len(selfDelegateAddress) == 0 {
+		return "", nil
+	}
+
+	return selfDelegateAddress[0], nil
+}
+
 // StoreCCvValidators stores ccv validators operators address inside the database
 // To create relationship between provider and consumer chain
 func (db *Db) StoreCCvValidators(ccvValidators []types.CCVValidator) error {
@@ -116,17 +133,20 @@ func (db *Db) StoreCCvValidators(ccvValidators []types.CCVValidator) error {
 	}
 
 	stmt := `
-INSERT INTO ccv_validator (consumer_consensus_address, provider_consensus_address, height) 
+INSERT INTO ccv_validator (consumer_consensus_address, consumer_self_delegate_address, 
+	provider_consensus_address, provider_self_delegate_address, height) 
 VALUES `
 
 	var ccvValidatorsList []interface{}
 	for i, ccvValidator := range ccvValidators {
-		vi := i * 3
-		stmt += fmt.Sprintf("($%d,$%d,$%d),", vi+1, vi+2, vi+3)
+		vi := i * 5
+		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d),", vi+1, vi+2, vi+3, vi+4, vi+5)
 
 		ccvValidatorsList = append(ccvValidatorsList,
 			ccvValidator.ConsumerConsensusAddress,
+			ccvValidator.ConsumerSelfDelegateAddress,
 			ccvValidator.ProviderConsensusAddress,
+			ccvValidator.ProviderSelfDelegateAddress,
 			ccvValidator.Height,
 		)
 	}
