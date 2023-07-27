@@ -17,7 +17,9 @@ select_permissions:
     allow_aggregations: false
     columns:
     - consumer_consensus_address
+    - consumer_self_delegate_address
     - provider_consensus_address
+    - provider_self_delegate_address
     - height
     filter: {}
     limit: 100
