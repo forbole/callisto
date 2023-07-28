@@ -53,17 +53,22 @@ func NewCcvConsumerChain(providerClientID, providerChannelID string, chainID str
 type CCVValidator struct {
 	ConsumerConsensusAddress    string
 	ConsumerSelfDelegateAddress string
+	ConsumerOperatorAddress     string
 	ProviderConsensusAddress    string
 	ProviderSelfDelegateAddress string
+	ProviderOperatorAddress     string
 	Height                      int64
 }
 
-func NewCCVValidator(consumerConsensusAddress, consumerSelfDelegateAddress, providerConsensusAddress, providerSelfDelegateAddress string, height int64) CCVValidator {
+func NewCCVValidator(consumerConsensusAddress, consumerSelfDelegateAddress, consumerOperatorAddress,
+	providerConsensusAddress, providerSelfDelegateAddress, providerOperatorAddress string, height int64) CCVValidator {
 	return CCVValidator{
 		ConsumerConsensusAddress:    consumerConsensusAddress,
 		ConsumerSelfDelegateAddress: consumerSelfDelegateAddress,
+		ConsumerOperatorAddress:     consumerOperatorAddress,
 		ProviderConsensusAddress:    providerConsensusAddress,
 		ProviderSelfDelegateAddress: providerSelfDelegateAddress,
+		ProviderOperatorAddress:     providerOperatorAddress,
 		Height:                      height,
 	}
 }

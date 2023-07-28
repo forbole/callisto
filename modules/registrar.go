@@ -1,8 +1,8 @@
 package modules
 
 import (
-	"github.com/forbole/bdjuno/v4/modules/types"
 	"github.com/forbole/bdjuno/v4/modules/actions"
+	"github.com/forbole/bdjuno/v4/modules/types"
 
 	"github.com/forbole/juno/v4/modules/pruning"
 	"github.com/forbole/juno/v4/modules/telemetry"
@@ -20,6 +20,7 @@ import (
 	"github.com/forbole/bdjuno/v4/modules/auth"
 	"github.com/forbole/bdjuno/v4/modules/bank"
 	ccvconsumer "github.com/forbole/bdjuno/v4/modules/ccv/consumer"
+	ccvprovider "github.com/forbole/bdjuno/v4/modules/ccv/provider"
 	"github.com/forbole/bdjuno/v4/modules/consensus"
 	dailyrefetch "github.com/forbole/bdjuno/v4/modules/daily_refetch"
 	"github.com/forbole/bdjuno/v4/modules/feegrant"
@@ -72,7 +73,8 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	authModule := auth.NewModule(r.parser, cdc, db)
 	bankModule := bank.NewModule(r.parser, sources.BankSource, cdc, db)
 	consensusModule := consensus.NewModule(db)
-	ccvConsumerModule := ccvconsumer.NewModule(cdc, db)
+	ccvConsumerModule := ccvconsumer.NewModule(sources.ProviderSource, cdc, db)
+	ccvProviderModule := ccvprovider.NewModule(sources.ProviderSource, cdc, db)
 	dailyRefetchModule := dailyrefetch.NewModule(ctx.Proxy, db)
 	feegrantModule := feegrant.NewModule(cdc, db)
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
@@ -87,6 +89,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		bankModule,
 		consensusModule,
 		ccvConsumerModule,
+		ccvProviderModule,
 		dailyRefetchModule,
 		feegrantModule,
 		modules.NewModule(ctx.JunoConfig.Chain, db),

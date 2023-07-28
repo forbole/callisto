@@ -15,15 +15,17 @@ var (
 
 // Module represent database/ccv/consumer module
 type Module struct {
-	cdc codec.Codec
-	db  *database.Db
+	cdc            codec.Codec
+	db             *database.Db
+	providerModule ProviderModule
 }
 
 // NewModule returns a new Module instance
-func NewModule(cdc codec.Codec, db *database.Db) *Module {
+func NewModule(providerModule ProviderModule, cdc codec.Codec, db *database.Db) *Module {
 	return &Module{
-		cdc: cdc,
-		db:  db,
+		providerModule: providerModule,
+		cdc:            cdc,
+		db:             db,
 	}
 }
 

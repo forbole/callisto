@@ -5,6 +5,7 @@ import (
 
 	"github.com/forbole/bdjuno/v4/database"
 	consumer "github.com/forbole/bdjuno/v4/modules/ccv/consumer"
+	modulestypes "github.com/forbole/bdjuno/v4/modules/types"
 	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
 	"github.com/forbole/juno/v4/types/config"
 	"github.com/spf13/cobra"
@@ -21,11 +22,16 @@ func ccvValidatorsCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				return err
 			}
 
+			sources, err := modulestypes.BuildSources(config.Cfg.Node, parseCtx.EncodingConfig)
+			if err != nil {
+				return err
+			}
+
 			// Get the database
 			db := database.Cast(parseCtx.Database)
 
 			// Build the ccv consumer module
-			ccvConsumerModule := consumer.NewModule(parseCtx.EncodingConfig.Marshaler, db)
+			ccvConsumerModule := consumer.NewModule(sources.ProviderSource, parseCtx.EncodingConfig.Marshaler, db)
 
 			// Get latest height
 			height, err := parseCtx.Node.LatestHeight()

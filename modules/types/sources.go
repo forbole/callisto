@@ -9,11 +9,14 @@ import (
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
+	providertypes "github.com/cosmos/interchain-security/x/ccv/provider/types"
 	remotewasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source/remote"
 	"github.com/forbole/juno/v4/node/local"
 
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
 	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"
+	providersource "github.com/forbole/bdjuno/v4/modules/ccv/provider/source"
+	remoteprovidersource "github.com/forbole/bdjuno/v4/modules/ccv/provider/source/remote"
 	slashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source"
 	remoteslashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source/remote"
 	wasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source"
@@ -22,6 +25,7 @@ import (
 
 type Sources struct {
 	BankSource     banksource.Source
+	ProviderSource providersource.Source
 	SlashingSource slashingsource.Source
 	WasmSource     wasmsource.Source
 }
@@ -43,8 +47,14 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		return nil, fmt.Errorf("error while creating remote source: %s", err)
 	}
 
+	providerSource, err := remote.NewSource(cfg.ProviderGRPC)
+	if err != nil {
+		return nil, fmt.Errorf("error while creating remote provider source: %s", err)
+	}
+
 	return &Sources{
 		BankSource:     remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
+		ProviderSource: remoteprovidersource.NewSource(providerSource, providertypes.NewQueryClient(providerSource.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		WasmSource:     remotewasmsource.NewSource(source, wasmtypes.NewQueryClient(source.GrpcConn)),
 	}, nil
