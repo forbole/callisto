@@ -1,0 +1,64 @@
+table:
+  name: message_transfer_ibc_relationship
+  schema: public
+object_relationships:
+- name: message_acknowledgement_ibc_relationship
+  using:
+    manual_configuration:
+      column_mapping:
+        destination_channel: destination_channel
+        destination_port: destination_port
+        receiver: receiver
+        sender: sender
+        sequence: sequence
+        source_channel: source_channel
+        source_port: source_port
+      insertion_order: null
+      remote_table:
+        name: message_acknowledgement_ibc_relationship
+        schema: public
+- name: transaction
+  using:
+    manual_configuration:
+      column_mapping:
+        partition_id: partition_id
+        transaction_hash: hash
+      insertion_order: null
+      remote_table:
+        name: transaction
+        schema: public
+remote_relationships:
+  - definition:
+      to_source:
+        field_mapping:
+          destination_channel: destination_channel
+          destination_port: destination_port
+          receiver: receiver
+          sender: sender
+          sequence: sequence
+          source_channel: source_channel
+          source_port: source_port
+        relationship_type: object
+        source: bdjuno_osmosis
+        table:
+          name: message_recv_packet_ibc_relationship
+          schema: public
+    name: message_recv_packet_ibc_relationship 
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - transaction_hash
+    - index
+    - packet_data
+    - sequence
+    - source_port
+    - source_channel
+    - destination_port
+    - destination_channel
+    - sender
+    - receiver
+    - height
+    filter: {}
+    limit: 100
+  role: anonymous

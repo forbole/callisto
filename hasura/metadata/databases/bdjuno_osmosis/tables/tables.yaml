@@ -1,0 +1,5 @@
+- "!include public_message_acknowledgement_ibc_relationship.yaml"
+- "!include public_message_recv_packet_ibc_relationship.yaml"
+- "!include public_msg_transfer_ibc_relationship.yaml"
+- "!include public_message.yaml"
+- "!include public_transaction.yaml"

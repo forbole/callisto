@@ -8,6 +8,7 @@ services:
     environment:
       ## this env var can be used to add the above postgres database to Hasura as a data source. this can be removed/updated based on your needs
       HASURA_GRAPHQL_DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      HASURA_GRAPHQL_BDJUNO_OSMOSIS_DATABASE_URL: postgres://${BDJUNO_OSMOSIS_POSTGRES_USER}:${BDJUNO_OSMOSIS_POSTGRES_PASSWORD}@postgres:5432/${BDJUNO_OSMOSIS_POSTGRES_DB}
       ## enable the console served by server
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
       ## enable debugging mode. It is recommended to disable this in production

@@ -13,12 +13,25 @@
       use_prepared_statements: true
   tables: "!include bdjuno/tables/tables.yaml"
   functions: "!include bdjuno/functions/functions.yaml"
-- name: djuno
+- name: bdjuno_osmosis
   kind: postgres
   configuration:
     connection_info:
       database_url:
-        from_env: HASURA_GRAPHQL_DJUNO_DATABASE_URL
+        from_env: HASURA_GRAPHQL_BDJUNO_OSMOSIS_DATABASE_URL
       isolation_level: read-committed
-      use_prepared_statements: false
-  tables: "!include djuno/tables/tables.yaml"
+      pool_settings:
+        connection_lifetime: 600
+        idle_timeout: 180
+        max_connections: 50
+        retries: 1
+      use_prepared_statements: true
+  customization:
+      naming_convention: "hasura-default"
+      root_fields:
+        namespace: "bdjuno_osmosis"
+        prefix: "bdjuno_osmosis_"
+      type_names:
+        prefix: "bdjuno_osmosis_"
+  tables: "!include bdjuno_osmosis/tables/tables.yaml"
+  functions: "!include bdjuno_osmosis/functions/functions.yaml"
