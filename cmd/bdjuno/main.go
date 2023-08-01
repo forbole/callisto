@@ -65,7 +65,5 @@ func getBasicManagers() []module.BasicManager {
 // a specific message.
 // This should be edited by custom implementations if needed.
 func getAddressesParser() messages.MessageAddressesParser {
-	return messages.JoinMessageParsers(
-		messages.CosmosMessageAddressesParser,
-	)
+	return messages.CosmosMessageAddressesParser
 }

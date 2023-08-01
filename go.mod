@@ -8,7 +8,7 @@ require (
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
 	github.com/cosmos/ibc-go/v4 v4.4.1
 	github.com/cosmos/interchain-security v1.1.0-multiden
-	github.com/forbole/juno/v4 v4.1.1-0.20230630063900-e6c014b0a398
+	github.com/forbole/juno/v4 v4.2.1-0.20230801054442-5eb2ae618a42
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
