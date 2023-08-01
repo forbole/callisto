@@ -10,7 +10,7 @@ require (
 	github.com/cosmos/cosmos-sdk v0.47.3
 	github.com/cosmos/gogoproto v1.4.10
 	github.com/desmos-labs/desmos/v5 v5.2.0
-	github.com/forbole/juno/v5 v5.2.1-0.20230725083604-b8532a51a881
+	github.com/forbole/juno/v5 v5.2.1-0.20230801043155-f88d9573c0a5
 	github.com/go-co-op/gocron v1.28.3
 	github.com/golangci/golangci-lint v1.52.2
 	github.com/jmoiron/sqlx v1.3.5
@@ -332,3 +332,5 @@ replace (
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
 
 )
+
+// postgresql://monika:monika123@host.docker.internal:5432/bdjuno-osmosis-2
