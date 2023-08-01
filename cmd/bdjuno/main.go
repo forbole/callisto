@@ -68,10 +68,8 @@ func getBasicManagers() []module.BasicManager {
 // a specific message.
 // This should be edited by custom implementations if needed.
 func getAddressesParser() messages.MessageAddressesParser {
-	return messages.JoinMessageParsers(
-		OsmoMessageAddressesParser,
-		messages.CosmosMessageAddressesParser,
-	)
+	return messages.CosmosMessageAddressesParser
+
 }
 
 // OsmoMessageAddressesParser returns the list of all the accounts involved in the given
