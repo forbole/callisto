@@ -23,6 +23,7 @@ remote_relationships:
           sequence: sequence
           source_channel: source_channel
           source_port: source_port
+          packet_data: packet_data
         relationship_type: object
         source: bdjuno_osmosis
         table:
@@ -39,6 +40,7 @@ remote_relationships:
           sequence: sequence
           source_channel: source_channel
           source_port: source_port
+          packet_data: packet_data
         relationship_type: object
         source: bdjuno_osmosis
         table:

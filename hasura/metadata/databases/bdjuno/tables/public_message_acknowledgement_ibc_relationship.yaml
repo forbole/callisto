@@ -13,6 +13,7 @@ object_relationships:
         sequence: sequence
         source_channel: source_channel
         source_port: source_port
+        packet_data: packet_data
       insertion_order: null
       remote_table:
         name: message_transfer_ibc_relationship
@@ -38,6 +39,7 @@ remote_relationships:
           sequence: sequence
           source_channel: source_channel
           source_port: source_port
+          packet_data: packet_data
         relationship_type: object
         source: bdjuno_osmosis
         table:
