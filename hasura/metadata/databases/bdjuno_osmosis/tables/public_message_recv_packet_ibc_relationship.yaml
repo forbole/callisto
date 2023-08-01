@@ -24,7 +24,7 @@ remote_relationships:
           source_channel: source_channel
           source_port: source_port
         relationship_type: object
-        source: bdjuno_osmosis
+        source: bdjuno
         table:
           name: message_acknowledgement_ibc_relationship
           schema: public
@@ -40,7 +40,7 @@ remote_relationships:
           source_channel: source_channel
           source_port: source_port
         relationship_type: object
-        source: bdjuno_osmosis
+        source: bdjuno
         table:
           name: message_transfer_ibc_relationship
           schema: public

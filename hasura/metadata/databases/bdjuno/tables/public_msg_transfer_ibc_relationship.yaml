@@ -43,7 +43,7 @@ remote_relationships:
         table:
           name: message_recv_packet_ibc_relationship
           schema: public
-    name: message_recv_packet_ibc_relationship 
+    name: message_recv_packet_ibc_relationship_osmosis
 select_permissions:
 - permission:
     allow_aggregations: true
