@@ -10,7 +10,7 @@ require (
 	github.com/cosmos/cosmos-sdk v0.47.3
 	github.com/cosmos/gogoproto v1.4.10 // indirect
 	github.com/cosmos/ibc-go/v7 v7.2.0 // indirect
-	github.com/forbole/juno/v5 v5.2.1-0.20230801073641-693af2bf2dbe
+	github.com/forbole/juno/v5 v5.2.1-0.20230802081126-d971b99a399b
 	github.com/go-co-op/gocron v1.18.0
 	github.com/gogo/protobuf v1.3.2
 	github.com/jmoiron/sqlx v1.3.5
