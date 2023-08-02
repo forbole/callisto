@@ -13,3 +13,69 @@
       use_prepared_statements: true
   tables: "!include bdjuno/tables/tables.yaml"
   functions: "!include bdjuno/functions/functions.yaml"
+- name: bdjuno_cosmos
+  kind: postgres
+  configuration:
+    connection_info:
+      database_url:
+        from_env: HASURA_GRAPHQL_BDJUNO_COSMOS_DATABASE_URL
+      isolation_level: read-committed
+      pool_settings:
+        connection_lifetime: 600
+        idle_timeout: 180
+        max_connections: 50
+        retries: 1
+      use_prepared_statements: true
+  customization:
+      naming_convention: "hasura-default"
+      root_fields:
+        namespace: "bdjuno_cosmos"
+        prefix: "bdjuno_cosmos_"
+      type_names:
+        prefix: "bdjuno_cosmos_"
+  tables: "!include bdjuno_cosmos/tables/tables.yaml"
+  functions: "!include bdjuno_cosmos/functions/functions.yaml"
+- name: bdjuno_desmos
+  kind: postgres
+  configuration:
+    connection_info:
+      database_url:
+        from_env: HASURA_GRAPHQL_BDJUNO_DESMOS_DATABASE_URL
+      isolation_level: read-committed
+      pool_settings:
+        connection_lifetime: 600
+        idle_timeout: 180
+        max_connections: 50
+        retries: 1
+      use_prepared_statements: true
+  customization:
+      naming_convention: "hasura-default"
+      root_fields:
+        namespace: "bdjuno_desmos"
+        prefix: "bdjuno_desmos_"
+      type_names:
+        prefix: "bdjuno_desmos_"
+  tables: "!include bdjuno_desmos/tables/tables.yaml"
+  functions: "!include bdjuno_desmos/functions/functions.yaml"
+- name: bdjuno_stride
+  kind: postgres
+  configuration:
+    connection_info:
+      database_url:
+        from_env: HASURA_GRAPHQL_BDJUNO_STRIDE_DATABASE_URL
+      isolation_level: read-committed
+      pool_settings:
+        connection_lifetime: 600
+        idle_timeout: 180
+        max_connections: 50
+        retries: 1
+      use_prepared_statements: true
+  customization:
+      naming_convention: "hasura-default"
+      root_fields:
+        namespace: "bdjuno_stride"
+        prefix: "bdjuno_stride_"
+      type_names:
+        prefix: "bdjuno_stride_"
+  tables: "!include bdjuno_stride/tables/tables.yaml"
+  functions: "!include bdjuno_stride/functions/functions.yaml"

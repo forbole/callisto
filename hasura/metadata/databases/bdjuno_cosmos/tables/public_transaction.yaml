@@ -1,0 +1,63 @@
+table:
+  name: transaction
+  schema: public
+array_relationships:
+- name: message_acknowledgement_ibc_relationships
+  using:
+    manual_configuration:
+      column_mapping:
+        hash: transaction_hash
+        partition_id: partition_id
+      insertion_order: null
+      remote_table:
+        name: message_acknowledgement_ibc_relationship
+        schema: public
+- name: message_recv_packet_ibc_relationships
+  using:
+    manual_configuration:
+      column_mapping:
+        hash: transaction_hash
+        partition_id: partition_id
+      insertion_order: null
+      remote_table:
+        name: message_recv_packet_ibc_relationship
+        schema: public
+- name: message_transfer_ibc_relationships
+  using:
+    manual_configuration:
+      column_mapping:
+        hash: transaction_hash
+        partition_id: partition_id
+      insertion_order: null
+      remote_table:
+        name: message_transfer_ibc_relationship
+        schema: public
+- name: messagesByPartitionIdTransactionHash
+  using:
+    manual_configuration:
+      column_mapping:
+        hash: transaction_hash
+        partition_id: partition_id
+      insertion_order: null
+      remote_table:
+        name: message
+        schema: public
+select_permissions:
+- permission:
+    allow_aggregations: false
+    columns:
+    - hash
+    - height
+    - success
+    - messages
+    - memo
+    - signatures
+    - signer_infos
+    - fee
+    - gas_wanted
+    - gas_used
+    - raw_log
+    - logs
+    filter: {}
+    limit: 100
+  role: anonymous
