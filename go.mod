@@ -10,7 +10,7 @@ require (
 	github.com/cosmos/cosmos-sdk v0.47.3
 	github.com/cosmos/gogoproto v1.4.10 // indirect
 	github.com/cosmos/ibc-go/v7 v7.2.0 // indirect
-	github.com/forbole/juno/v5 v5.2.1-0.20230707062442-68ca6e223271
+	github.com/forbole/juno/v5 v5.2.1-0.20230801073641-693af2bf2dbe
 	github.com/go-co-op/gocron v1.18.0
 	github.com/gogo/protobuf v1.3.2
 	github.com/jmoiron/sqlx v1.3.5
@@ -76,13 +76,10 @@ require (
 	github.com/dvsekhvalnov/jose2go v1.5.0 // indirect
 	github.com/felixge/httpsnoop v1.0.2 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
-	github.com/gin-gonic/gin v1.8.1 // indirect
 	github.com/go-kit/kit v0.12.0 // indirect
 	github.com/go-kit/log v0.2.1 // indirect
 	github.com/go-logfmt/logfmt v0.6.0 // indirect
-	github.com/go-playground/validator/v10 v10.11.1 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
-	github.com/goccy/go-json v0.9.11 // indirect
 	github.com/godbus/dbus v0.0.0-20190726142602-4481cbc300e2 // indirect
 	github.com/gogo/googleapis v1.4.1 // indirect
 	github.com/golang/glog v1.1.0 // indirect
