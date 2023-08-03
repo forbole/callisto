@@ -10,7 +10,7 @@ require (
 	github.com/cosmos/cosmos-sdk v0.47.3
 	github.com/cosmos/gogoproto v1.4.10
 	github.com/desmos-labs/desmos/v5 v5.2.0
-	github.com/forbole/juno/v5 v5.2.1-0.20230803085136-92c206e27b4f
+	github.com/forbole/juno/v5 v5.2.1-0.20230803100058-3960e4ea95a5
 	github.com/go-co-op/gocron v1.28.3
 	github.com/golangci/golangci-lint v1.52.2
 	github.com/jmoiron/sqlx v1.3.5
