@@ -84,6 +84,27 @@ CREATE INDEX message_transaction_hash_index ON message (transaction_hash);
 CREATE INDEX message_type_index ON message (type);
 CREATE INDEX message_involved_accounts_index ON message USING GIN(involved_accounts_addresses);
 
+CREATE TABLE message_ibc_relationship
+(
+    transaction_hash    TEXT   NOT NULL,
+    index               BIGINT NOT NULL,
+    type                TEXT   NOT NULL,
+    packet_data         TEXT   NOT NULL,
+    sequence            TEXT   NOT NULL,
+    source_port         TEXT   NOT NULL,
+    source_channel      TEXT   NOT NULL,
+    destination_port    TEXT   NOT NULL,
+    destination_channel TEXT   NOT NULL,
+    sender              TEXT   NOT NULL,
+    receiver            TEXT   NOT NULL,
+    partition_id        BIGINT NOT NULL DEFAULT 0,
+    height              BIGINT NOT NULL,
+    FOREIGN KEY (transaction_hash, partition_id) REFERENCES transaction (hash, partition_id),
+    CONSTRAINT unique_message_ibc_relationship_per_tx UNIQUE (transaction_hash, index, partition_id)
+)PARTITION BY LIST(partition_id);
+CREATE INDEX message_ibc_relationship_transaction_hash_index ON message_ibc_relationship (transaction_hash);
+CREATE INDEX message_ibc_relationship_type_index ON message_ibc_relationship (type);
+
 /**
  * This function is used to find all the utils that involve any of the given addresses and have
  * type that is one of the specified types.
