@@ -2,6 +2,15 @@ table:
   name: message
   schema: public
 object_relationships:
+- name: ibc_message
+  using:
+    manual_configuration:
+      remote_table:
+        schema: public
+        name: message
+      insertion_order:
+      column_mapping:
+        transaction_hash: transaction_hash
 - name: transaction
   using:
     manual_configuration:

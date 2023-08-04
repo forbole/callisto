@@ -1,47 +1,42 @@
 table:
-  name: transaction
+  name: message_ibc_relationship
   schema: public
 object_relationships:
-- name: block
-  using:
-    foreign_key_constraint_on: height
-array_relationships:
-- name: ibc_message
+- name: message
   using:
     manual_configuration:
       column_mapping:
-        hash: transaction_hash
         partition_id: partition_id
-      insertion_order: null
-      remote_table:
-        name: message_ibc_relationship
-        schema: public
-- name: messagesByTransactionHashPartitionId
-  using:
-    manual_configuration:
-      column_mapping:
-        hash: transaction_hash
-        partition_id: partition_id
+        transaction_hash: transaction_hash
       insertion_order: null
       remote_table:
         name: message
         schema: public
+- name: transaction
+  using:
+    manual_configuration:
+      column_mapping:
+        partition_id: partition_id
+        transaction_hash: hash
+      insertion_order: null
+      remote_table:
+        name: transaction
+        schema: public
 select_permissions:
 - permission:
-    allow_aggregations: false
+    allow_aggregations: true
     columns:
-    - hash
+    - transaction_hash
+    - index
+    - packet_data
+    - sequence
+    - source_port
+    - source_channel
+    - destination_port
+    - destination_channel
+    - sender
+    - receiver
     - height
-    - success
-    - messages
-    - memo
-    - signatures
-    - signer_infos
-    - fee
-    - gas_wanted
-    - gas_used
-    - raw_log
-    - logs
     filter: {}
     limit: 100
   role: anonymous

@@ -1,0 +1,111 @@
+table:
+  name: message_ibc_relationship
+  schema: public
+object_relationships:
+- name: message
+  using:
+    manual_configuration:
+      column_mapping:
+        partition_id: partition_id
+        transaction_hash: transaction_hash
+      insertion_order: null
+      remote_table:
+        name: message
+        schema: public
+- name: transaction
+  using:
+    manual_configuration:
+      column_mapping:
+        partition_id: partition_id
+        transaction_hash: hash
+      insertion_order: null
+      remote_table:
+        name: transaction
+        schema: public
+array_relationships:
+- name: ibc_message
+  using:
+    manual_configuration:
+      column_mapping:
+        destination_channel: destination_channel
+        destination_port: destination_port
+        packet_data: packet_data
+        receiver: receiver
+        sender: sender
+        sequence: sequence
+        source_channel: source_channel
+        source_port: source_port
+      insertion_order: null
+      remote_table:
+        name: message_ibc_relationship
+        schema: public
+remote_relationships:
+  - definition:
+      to_source:
+        field_mapping:
+          destination_channel: destination_channel
+          destination_port: destination_port
+          packet_data: packet_data
+          receiver: receiver
+          sender: sender
+          sequence: sequence
+          source_channel: source_channel
+          source_port: source_port
+        relationship_type: array
+        source: bdjuno_cosmos
+        table:
+          name: message_ibc_relationship
+          schema: public
+    name: ibc_message_cosmos
+  - definition:
+      to_source:
+        field_mapping:
+          destination_channel: destination_channel
+          destination_port: destination_port
+          packet_data: packet_data
+          receiver: receiver
+          sender: sender
+          sequence: sequence
+          source_channel: source_channel
+          source_port: source_port
+        relationship_type: array
+        source: bdjuno_desmos
+        table:
+          name: message_ibc_relationship
+          schema: public
+    name: ibc_message_desmos
+  - definition:
+      to_source:
+        field_mapping:
+          destination_channel: destination_channel
+          destination_port: destination_port
+          packet_data: packet_data
+          receiver: receiver
+          sender: sender
+          sequence: sequence
+          source_channel: source_channel
+          source_port: source_port
+        relationship_type: array
+        source: bdjuno_stride
+        table:
+          name: message_ibc_relationship
+          schema: public
+    name: ibc_message_relationship_stride 
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - transaction_hash
+    - index
+    - packet_data
+    - sequence
+    - source_port
+    - source_channel
+    - destination_port
+    - destination_channel
+    - sender
+    - receiver
+    - height
+    filter: {}
+    limit: 100
+  role: anonymous

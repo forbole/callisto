@@ -2,7 +2,7 @@ table:
   name: transaction
   schema: public
 array_relationships:
-- name: message_acknowledgement_ibc_relationships
+- name: ibc_message
   using:
     manual_configuration:
       column_mapping:
@@ -10,27 +10,7 @@ array_relationships:
         partition_id: partition_id
       insertion_order: null
       remote_table:
-        name: message_acknowledgement_ibc_relationship
-        schema: public
-- name: message_recv_packet_ibc_relationships
-  using:
-    manual_configuration:
-      column_mapping:
-        hash: transaction_hash
-        partition_id: partition_id
-      insertion_order: null
-      remote_table:
-        name: message_recv_packet_ibc_relationship
-        schema: public
-- name: message_transfer_ibc_relationships
-  using:
-    manual_configuration:
-      column_mapping:
-        hash: transaction_hash
-        partition_id: partition_id
-      insertion_order: null
-      remote_table:
-        name: message_transfer_ibc_relationship
+        name: message_ibc_relationship
         schema: public
 - name: messagesByPartitionIdTransactionHash
   using:
