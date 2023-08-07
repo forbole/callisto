@@ -90,7 +90,7 @@ remote_relationships:
         table:
           name: message_ibc_relationship
           schema: public
-    name: ibc_message_relationship_stride 
+    name: ibc_message_stride 
 select_permissions:
 - permission:
     allow_aggregations: true
