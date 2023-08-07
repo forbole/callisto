@@ -7,7 +7,7 @@ object_relationships:
     manual_configuration:
       remote_table:
         schema: public
-        name: message
+        name: message_ibc_relationship
       insertion_order:
       column_mapping:
         transaction_hash: transaction_hash
