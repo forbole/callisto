@@ -11,6 +11,8 @@ object_relationships:
       insertion_order:
       column_mapping:
         transaction_hash: transaction_hash
+        index: index
+        type: type
 - name: transaction
   using:
     manual_configuration:
