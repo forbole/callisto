@@ -73,38 +73,44 @@ func (m *Module) calculateInventorySum(status *provider.Status) (
 	*types.Resource, *types.Resource, *types.Resource,
 ) {
 	var cpu uint64 = 0
+	var gpu uint64 = 0
 	var memory uint64 = 0
 	var storage uint64 = 0
 
 	// Sum up active inventory
 	for _, active := range status.Cluster.Inventory.Active {
 		cpu += active.CPU
+		gpu += active.GPU
 		memory += active.Memory
 		storage += active.StorageEphemeral
 	}
-	activeInventorySum := types.NewProviderResouce(cpu, memory, storage)
+	activeInventorySum := types.NewProviderResouce(cpu, gpu, memory, storage)
 
 	// Sum up pending inventory
 	cpu = 0
+	gpu = 0
 	memory = 0
 	storage = 0
 	for _, pending := range status.Cluster.Inventory.Pending {
 		cpu += pending.CPU
+		gpu += pending.GPU
 		memory += pending.Memory
 		storage += pending.StorageEphemeral
 	}
-	pendingInventorySum := types.NewProviderResouce(cpu, memory, storage)
+	pendingInventorySum := types.NewProviderResouce(cpu, gpu, memory, storage)
 
 	// Sum up available inventory
 	cpu = 0
+	gpu = 0
 	memory = 0
 	storage = 0
 	for _, available := range status.Cluster.Inventory.Available.Nodes {
 		cpu += available.CPU
+		gpu += available.GPU
 		memory += available.Memory
 		storage += available.StorageEphemeral
 	}
-	availableInventorySum := types.NewProviderResouce(cpu, memory, storage)
+	availableInventorySum := types.NewProviderResouce(cpu, gpu, memory, storage)
 
 	return activeInventorySum, pendingInventorySum, availableInventorySum
 }

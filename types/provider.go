@@ -63,15 +63,17 @@ func NewProviderInventoryStatus(
 
 type Resource struct {
 	CPU              uint64
+	GPU              uint64
 	Memory           uint64
 	StorageEphemeral uint64
 }
 
 func NewProviderResouce(
-	cpu uint64, memory uint64, storageEphemeral uint64,
+	cpu, gpu, memory, storageEphemeral uint64,
 ) *Resource {
 	return &Resource{
 		CPU:              cpu,
+		GPU:              gpu,
 		Memory:           memory,
 		StorageEphemeral: storageEphemeral,
 	}

@@ -18,6 +18,7 @@ CREATE INDEX provider_address_index ON akash_provider (owner_address);
 CREATE TYPE AKASH_RESOURCE AS
 (
     cpu                 BIGINT,
+    gpu                 BIGINT,
     memory              BIGINT,
     storage_ephemeral   BIGINT
 );

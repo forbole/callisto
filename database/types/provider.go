@@ -64,6 +64,7 @@ func (info *DbProviderInfo) Value() (driver.Value, error) {
 // DbAkashResource represents the information stored inside the database about a single akash resource
 type DbAkashResource struct {
 	CPU              uint64
+	GPU              uint64
 	Memory           uint64
 	StorageEphemeral uint64
 }
@@ -72,6 +73,7 @@ type DbAkashResource struct {
 func NewDbAkashResource(resource *types.Resource) DbAkashResource {
 	return DbAkashResource{
 		CPU:              resource.CPU,
+		GPU:              resource.GPU,
 		Memory:           resource.Memory,
 		StorageEphemeral: resource.StorageEphemeral,
 	}
@@ -79,10 +81,10 @@ func NewDbAkashResource(resource *types.Resource) DbAkashResource {
 
 // Equal tells whether both object are the same
 func (resource DbAkashResource) Equal(b DbAkashResource) bool {
-	return resource.CPU == b.CPU && resource.Memory == b.Memory && resource.StorageEphemeral == b.StorageEphemeral
+	return resource.CPU == b.CPU && resource.GPU == b.GPU && resource.Memory == b.Memory && resource.StorageEphemeral == b.StorageEphemeral
 }
 
 // Value implements driver.Valuer
 func (resource *DbAkashResource) Value() (driver.Value, error) {
-	return fmt.Sprintf("(%v,%v,%v)", resource.CPU, resource.Memory, resource.StorageEphemeral), nil
+	return fmt.Sprintf("(%v,%v,%v,%v)", resource.CPU, resource.GPU, resource.Memory, resource.StorageEphemeral), nil
 }
