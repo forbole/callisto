@@ -13,7 +13,8 @@ func (r *Repository) SaveCreateWallet(msgWallet *walletstypes.MsgCreateWallet, t
 	query := `INSERT INTO overgold_chain_wallets_create_wallet 
 			(transaction_hash, creator, address, account_address, kind, state, extras) 
 		VALUES 
-			(:transaction_hash, :creator, :address, :account_address, :kind, :state, :extras)`
+			(:transaction_hash, :creator, :address, :account_address, :kind, :state, :extras)
+			ON CONFLICT (id) DO NOTHING`
 
 	if _, err := r.db.NamedExec(query, toCreateWalletDatabase(msgWallet, transactionHash)); err != nil {
 		return errs.Internal{Cause: err.Error()}

@@ -5,5 +5,5 @@ development:
 
 dev:
   dialect: postgres
-  datasource: host=10.10.1.79 port=5432 user=postgres dbname=juno password=postgres sslmode=disable
+  datasource: host=localhost port=5432 user=postgres dbname=juno password=postgres sslmode=disable
   dir: database/schema

@@ -40,9 +40,16 @@ func (m *Module) handleMsgSystemTransfer(tx *juno.Tx, index int, msg *types.MsgS
 
 	coin := sdk.NewCoin(msg.Asset, sdk.NewIntFromUint64(msg.Amount))
 
-	walletFrom[0].Balance = walletFrom[0].Balance.Sub(sdk.NewCoins(coin))
-	if err := m.walletsRepo.UpdateWallets(walletFrom...); err != nil {
-		return err
+	if walletFrom[0].Address == walletTo[0].Address {
+		return nil
+	}
+
+	balanceFrom := walletFrom[0].Balance.AmountOf(msg.Asset).Uint64()
+	if balanceFrom >= msg.Amount {
+		walletFrom[0].Balance = walletFrom[0].Balance.Sub(sdk.NewCoins(coin))
+		if err := m.walletsRepo.UpdateWallets(walletFrom...); err != nil {
+			return err
+		}
 	}
 
 	walletTo[0].Balance = walletTo[0].Balance.Add(coin)

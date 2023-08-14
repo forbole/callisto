@@ -13,7 +13,8 @@ func (r Repository) SaveCreateAccount(msg *accountstypes.MsgCreateAccount, trans
 	query := `INSERT INTO overgold_chain_accounts_create_account 
 			(transaction_hash, creator, hash, address, public_key, kinds, state, extras) 
 		VALUES 
-			(:transaction_hash, :creator, :hash, :address, :public_key, :kinds, :state, :extras)`
+			(:transaction_hash, :creator, :hash, :address, :public_key, :kinds, :state, :extras)
+			ON CONFLICT (id) DO NOTHING`
 
 	if _, err := r.db.NamedExec(query, toCreateAccountDatabase(msg, transactionHash)); err != nil {
 		return errs.Internal{Cause: err.Error()}

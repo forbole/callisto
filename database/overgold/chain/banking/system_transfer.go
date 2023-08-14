@@ -27,12 +27,14 @@ func (r Repository) SaveSystemTransfers(transfers ...*bankingtypes.SystemTransfe
 	queryBaseTransfer := `INSERT INTO overgold_chain_banking_base_transfers 
        ("id", "asset", "amount", "kind", "extras", "timestamp", "tx_hash") 
      VALUES 
-       (:id, :asset, :amount, :kind, :extras, :timestamp, :tx_hash)`
+       (:id, :asset, :amount, :kind, :extras, :timestamp, :tx_hash)
+       ON CONFLICT (id) DO NOTHING`
 
 	querySystemTransfer := `INSERT INTO overgold_chain_banking_system_transfer
 			("id", "wallet_from", "wallet_to")
 			VALUES
-			(:id, :wallet_from, :wallet_to)`
+			(:id, :wallet_from, :wallet_to)
+			ON CONFLICT (id) DO NOTHING`
 
 	for _, transfer := range transfers {
 		transferDB := toSystemTransferDatabase(transfer)
