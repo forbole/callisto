@@ -29,7 +29,7 @@ remote_relationships:
         table:
           name: message_acknowledgement_ibc_relationship
           schema: public
-    name: message_acknowledgement_ibc_relationship_cosmos
+    name: message_acknowledgement_ibc_relationship
   - definition:
       to_source:
         field_mapping:
@@ -46,7 +46,7 @@ remote_relationships:
         table:
           name: message_acknowledgement_ibc_relationship
           schema: public
-    name: message_acknowledgement_ibc_relationship_desmos
+    name: message_acknowledgement_ibc_relationship
   - definition:
       to_source:
         field_mapping:
@@ -63,7 +63,7 @@ remote_relationships:
         table:
           name: message_acknowledgement_ibc_relationship
           schema: public
-    name: message_acknowledgement_ibc_relationship_stride
+    name: message_acknowledgement_ibc_relationship
   - definition:
       to_source:
         field_mapping:
@@ -80,7 +80,7 @@ remote_relationships:
         table:
           name: message_transfer_ibc_relationship
           schema: public
-    name: message_transfer_ibc_relationship_cosmos
+    name: message_transfer_ibc_relationship
   - definition:
       to_source:
         field_mapping:
@@ -97,7 +97,7 @@ remote_relationships:
         table:
           name: message_transfer_ibc_relationship
           schema: public
-    name: message_transfer_ibc_relationship_desmos
+    name: message_transfer_ibc_relationship
   - definition:
       to_source:
         field_mapping:
@@ -114,7 +114,7 @@ remote_relationships:
         table:
           name: message_transfer_ibc_relationship
           schema: public
-    name: message_transfer_ibc_relationship_stride
+    name: message_transfer_ibc_relationship
 select_permissions:
 - permission:
     allow_aggregations: true
