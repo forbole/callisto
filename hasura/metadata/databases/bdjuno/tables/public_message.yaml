@@ -2,7 +2,7 @@ table:
   name: message
   schema: public
 object_relationships:
-- name: ibc_message
+- name: ibc_messages
   using:
     manual_configuration:
       remote_table:
