@@ -5,9 +5,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
-
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 )
 
 const (
@@ -199,6 +198,34 @@ func NewVote(
 	height int64,
 ) Vote {
 	return Vote{
+		ProposalID: proposalID,
+		Voter:      voter,
+		Option:     option,
+		Timestamp:  timestamp,
+		Height:     height,
+	}
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+// VoteV1beta1 contains the data of a single v1beta1 proposal vote
+type VoteV1beta1 struct {
+	ProposalID uint64
+	Voter      string
+	Option     govtypesv1beta1.VoteOption
+	Timestamp  time.Time
+	Height     int64
+}
+
+// NewVoteV1beta1 return a new VoteV1beta1 instance
+func NewVoteV1beta1(
+	proposalID uint64,
+	voter string,
+	option govtypesv1beta1.VoteOption,
+	timestamp time.Time,
+	height int64,
+) VoteV1beta1 {
+	return VoteV1beta1{
 		ProposalID: proposalID,
 		Voter:      voter,
 		Option:     option,

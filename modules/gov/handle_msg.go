@@ -2,9 +2,8 @@ package gov
 
 import (
 	"fmt"
-	"time"
-
 	"strconv"
+	"time"
 
 	"github.com/forbole/bdjuno/v4/types"
 
@@ -31,6 +30,9 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 
 	case *govtypesv1.MsgVote:
 		return m.handleMsgVote(tx, cosmosMsg)
+
+	case *govtypesv1beta1.MsgVote:
+		return m.handleMsgVoteV1beta1(tx, cosmosMsg)
 	}
 
 	return nil
@@ -115,4 +117,16 @@ func (m *Module) handleMsgVote(tx *juno.Tx, msg *govtypesv1.MsgVote) error {
 	vote := types.NewVote(msg.ProposalId, msg.Voter, msg.Option, txTimestamp, tx.Height)
 
 	return m.db.SaveVote(vote)
+}
+
+// handleMsgVoteV1beta1 allows to properly handle a govtypesv1beta1.MsgVote
+func (m *Module) handleMsgVoteV1beta1(tx *juno.Tx, msg *govtypesv1beta1.MsgVote) error {
+	txTimestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
+	if err != nil {
+		return fmt.Errorf("error while parsing time: %s", err)
+	}
+
+	vote := types.NewVoteV1beta1(msg.ProposalId, msg.Voter, msg.Option, txTimestamp, tx.Height)
+
+	return m.db.SaveVoteV1beta1(vote)
 }

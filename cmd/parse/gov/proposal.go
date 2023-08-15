@@ -177,9 +177,6 @@ func refreshProposalVotes(parseCtx *parser.Context, proposalID uint64, govModule
 
 		// Handle the MsgVote messages
 		for index, msg := range junoTx.GetMsgs() {
-			if _, ok := msg.(*govtypesv1.MsgVote); !ok {
-				continue
-			}
 
 			err = govModule.HandleMsg(index, msg, junoTx)
 			if err != nil {

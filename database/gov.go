@@ -373,6 +373,35 @@ WHERE proposal_vote.height <= excluded.height`
 	return nil
 }
 
+// --------------------------------------------------------------------------------------------------------------------
+
+// SaveVote allows to save for the given height and the message vote
+func (db *Db) SaveVoteV1beta1(vote types.VoteV1beta1) error {
+	query := `
+INSERT INTO proposal_vote (proposal_id, voter_address, option, timestamp, height) 
+VALUES ($1, $2, $3, $4, $5) 
+ON CONFLICT ON CONSTRAINT unique_vote DO UPDATE
+	SET option = excluded.option,
+		timestamp = excluded.timestamp,
+		height = excluded.height
+WHERE proposal_vote.height <= excluded.height`
+
+	// Store the voter account
+	err := db.SaveAccounts([]types.Account{types.NewAccount(vote.Voter)})
+	if err != nil {
+		return fmt.Errorf("error while storing voter account: %s", err)
+	}
+
+	_, err = db.SQL.Exec(query, vote.ProposalID, vote.Voter, vote.Option.String(), vote.Timestamp, vote.Height)
+	if err != nil {
+		return fmt.Errorf("error while storing vote: %s", err)
+	}
+
+	return nil
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 // SaveTallyResults allows to save for the given height the given total amount of coins
 func (db *Db) SaveTallyResults(tallys []types.TallyResult) error {
 	if len(tallys) == 0 {
