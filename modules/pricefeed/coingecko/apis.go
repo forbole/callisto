@@ -33,7 +33,9 @@ func ConvertCoingeckoPrices(prices []MarketTicker) []types.TokenPrice {
 	tokenPrices := make([]types.TokenPrice, len(prices))
 	for i, price := range prices {
 		tokenPrices[i] = types.NewTokenPrice(
-			price.Symbol,
+			// hardcode unitName to "core" as coingecko price.Symbol returns "coreum"
+			// and we can't use it to create correct token unit relationship mapping
+			"core",
 			price.CurrentPrice,
 			int64(math.Trunc(price.MarketCap)),
 			price.LastUpdated,
