@@ -5,11 +5,9 @@ import (
 	"os"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
-	"github.com/tendermint/tendermint/libs/log"
 
+	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/forbole/juno/v4/node/remote"
-
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
@@ -17,10 +15,12 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/forbole/juno/v4/node/local"
-
 	nodeconfig "github.com/forbole/juno/v4/node/config"
+	"github.com/forbole/juno/v4/node/local"
+	"github.com/forbole/juno/v4/node/remote"
+	tmlog "github.com/tendermint/tendermint/libs/log"
 
+	archwayapp "github.com/MonikaCat/archway/v2/app"
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v4/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"
@@ -68,9 +68,9 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		return nil, err
 	}
 
-	app := simapp.NewSimApp(
-		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
-		cfg.Home, 0, simapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
+	app := archwayapp.NewArchwayApp(
+		tmlog.NewTMLogger(tmlog.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
+		cfg.Home, 0, archwayapp.MakeEncodingConfig(), wasm.EnableAllProposals, simapp.EmptyAppOptions{}, nil,
 	)
 
 	sources := &Sources{
