@@ -24,6 +24,7 @@ import (
 	"github.com/forbole/bdjuno/v4/modules/distribution"
 	"github.com/forbole/bdjuno/v4/modules/feegrant"
 
+	ccvconsumer "github.com/forbole/bdjuno/v4/modules/ccv/consumer"
 	dailyrefetch "github.com/forbole/bdjuno/v4/modules/daily_refetch"
 	"github.com/forbole/bdjuno/v4/modules/gov"
 	"github.com/forbole/bdjuno/v4/modules/mint"
@@ -77,6 +78,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	authModule := auth.NewModule(r.parser, cdc, db)
 	bankModule := bank.NewModule(r.parser, sources.BankSource, cdc, db)
 	consensusModule := consensus.NewModule(db)
+	ccvConsumerModule := ccvconsumer.NewModule(cdc, db)
 	dailyRefetchModule := dailyrefetch.NewModule(ctx.Proxy, db)
 	distrModule := distribution.NewModule(sources.DistrSource, cdc, db)
 	feegrantModule := feegrant.NewModule(cdc, db)
@@ -96,6 +98,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		authModule,
 		bankModule,
 		consensusModule,
+		ccvConsumerModule,
 		dailyRefetchModule,
 		distrModule,
 		feegrantModule,

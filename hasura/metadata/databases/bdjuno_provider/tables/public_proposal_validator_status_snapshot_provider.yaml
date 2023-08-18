@@ -1,0 +1,23 @@
+table:
+  name: proposal_validator_status_snapshot
+  schema: public
+object_relationships:
+- name: proposal
+  using:
+    foreign_key_constraint_on: proposal_id
+- name: validator
+  using:
+    foreign_key_constraint_on: validator_address
+select_permissions:
+- permission:
+    allow_aggregations: false
+    columns:
+    - proposal_id
+    - validator_address
+    - voting_power
+    - status
+    - jailed
+    - height
+    filter: {}
+    limit: 100
+  role: anonymous

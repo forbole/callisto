@@ -1,0 +1,20 @@
+table:
+  name: double_sign_evidence
+  schema: public
+object_relationships:
+- name: doubleSignVoteByVoteAId
+  using:
+    foreign_key_constraint_on: vote_a_id
+- name: double_sign_vote
+  using:
+    foreign_key_constraint_on: vote_b_id
+select_permissions:
+- permission:
+    allow_aggregations: false
+    columns:
+    - height
+    - vote_a_id
+    - vote_b_id
+    filter: {}
+    limit: 100
+  role: anonymous

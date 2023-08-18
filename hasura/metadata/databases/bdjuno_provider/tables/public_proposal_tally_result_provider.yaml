@@ -1,0 +1,20 @@
+table:
+  name: proposal_tally_result
+  schema: public
+object_relationships:
+- name: proposal
+  using:
+    foreign_key_constraint_on: proposal_id
+select_permissions:
+- permission:
+    allow_aggregations: false
+    columns:
+    - proposal_id
+    - yes
+    - abstain
+    - no
+    - no_with_veto
+    - height
+    filter: {}
+    limit: 100
+  role: anonymous

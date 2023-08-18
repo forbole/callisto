@@ -1,0 +1,26 @@
+table:
+  name: transaction
+  schema: public
+object_relationships:
+- name: block
+  using:
+    foreign_key_constraint_on: height
+select_permissions:
+- permission:
+    allow_aggregations: false
+    columns:
+    - hash
+    - height
+    - success
+    - messages
+    - memo
+    - signatures
+    - signer_infos
+    - fee
+    - gas_wanted
+    - gas_used
+    - raw_log
+    - logs
+    filter: {}
+    limit: 100
+  role: anonymous

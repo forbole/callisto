@@ -1,0 +1,22 @@
+table:
+  name: validator_description
+  schema: public
+object_relationships:
+- name: validator
+  using:
+    foreign_key_constraint_on: validator_address
+select_permissions:
+- permission:
+    allow_aggregations: false
+    columns:
+    - validator_address
+    - moniker
+    - identity
+    - website
+    - security_contact
+    - details
+    - height
+    - avatar_url
+    filter: {}
+    limit: 100
+  role: anonymous

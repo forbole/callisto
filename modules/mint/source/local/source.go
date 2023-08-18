@@ -3,7 +3,7 @@ package local
 import (
 	"fmt"
 
-	minttypes "github.com/Stride-Labs/stride/v11/x/mint/types"
+	minttypes "github.com/Stride-Labs/stride/v12/x/mint/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/juno/v5/node/local"
 

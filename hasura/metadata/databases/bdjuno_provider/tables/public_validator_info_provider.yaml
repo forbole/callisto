@@ -1,0 +1,22 @@
+table:
+  name: validator_info
+  schema: public
+object_relationships:
+- name: account
+  using:
+    foreign_key_constraint_on: self_delegate_address
+- name: validator
+  using:
+    foreign_key_constraint_on: consensus_address
+select_permissions:
+- permission:
+    allow_aggregations: false
+    columns:
+    - consensus_address
+    - operator_address
+    - self_delegate_address
+    - max_change_rate
+    - max_rate
+    filter: {}
+    limit: 100
+  role: anonymous
