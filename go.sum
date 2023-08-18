@@ -821,8 +821,8 @@ github.com/gin-contrib/sse v0.1.0 h1:Y/yl/+YNO8GZSjAhjMsSuLt29uWRFHdHYUb5lYOV9qE
 github.com/gin-contrib/sse v0.1.0/go.mod h1:RHrZQHXnP2xjPF+u1gW/2HnVO7nvIa9PG3Gm+fLHvGI=
 github.com/gin-gonic/gin v1.6.3/go.mod h1:75u5sXoLsGZoRN5Sgbi1eraJ4GU3++wFwWzhwvtwp4M=
 github.com/gin-gonic/gin v1.8.1 h1:4+fr/el88TOO3ewCmQr8cx/CtZ/umlIRIs5M4NTNjf8=
-github.com/go-co-op/gocron v1.31.0 h1:8VaWk7ARDpsVYFP8SmjvHrBZQkcPQ7HyAzF7acG57yE=
-github.com/go-co-op/gocron v1.31.0/go.mod h1:39f6KNSGVOU1LO/ZOoZfcSxwlsJDQOKSu8erN0SH48Y=
+github.com/go-co-op/gocron v1.31.2 h1:tAUW64bxYc5QlzEy2t30TnHX2+uInNDajKXxWi4SACA=
+github.com/go-co-op/gocron v1.31.2/go.mod h1:39f6KNSGVOU1LO/ZOoZfcSxwlsJDQOKSu8erN0SH48Y=
 github.com/go-critic/go-critic v0.6.3/go.mod h1:c6b3ZP1MQ7o6lPR7Rv3lEf7pYQUmAcx8ABHgdZCQt/k=
 github.com/go-critic/go-critic v0.9.0 h1:Pmys9qvU3pSML/3GEQ2Xd9RZ/ip+aXHKILuxczKGV/U=
 github.com/go-critic/go-critic v0.9.0/go.mod h1:5P8tdXL7m/6qnyG6oRAlYLORvoXH0WDypYgAEmagT40=
