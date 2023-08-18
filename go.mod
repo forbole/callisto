@@ -14,6 +14,7 @@ require (
 	github.com/forbole/juno/v5 v5.2.1-0.20230718082304-88faa0e1d7db
 	github.com/go-co-op/gocron v1.18.0
 	github.com/gogo/protobuf v1.3.2
+	github.com/golangci/golangci-lint v1.52.2
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.7
 	github.com/pelletier/go-toml v1.9.5
@@ -25,7 +26,6 @@ require (
 	github.com/stretchr/testify v1.8.4
 	google.golang.org/grpc v1.56.1
 	gopkg.in/yaml.v3 v3.0.1
-	github.com/golangci/golangci-lint v1.52.2
 )
 
 require (
