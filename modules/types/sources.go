@@ -7,6 +7,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -39,6 +41,9 @@ import (
 	stakingsource "github.com/forbole/bdjuno/v4/modules/staking/source"
 	localstakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/remote"
+	wasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source"
+	localwasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source/local"
+	remotewasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source/remote"
 )
 
 type Sources struct {
@@ -48,6 +53,7 @@ type Sources struct {
 	MintSource     mintsource.Source
 	SlashingSource slashingsource.Source
 	StakingSource  stakingsource.Source
+	WasmSource     wasmsource.Source
 }
 
 func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -80,6 +86,7 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
 		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
+		WasmSource:     localwasmsource.NewSource(source, wasmkeeper.Querier(&app.WASMKeeper)),
 	}
 
 	// Mount and initialize the stores
@@ -119,5 +126,6 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
+		WasmSource:     remotewasmsource.NewSource(source, wasmtypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }
