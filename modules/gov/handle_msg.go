@@ -22,10 +22,8 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	switch cosmosMsg := msg.(type) {
 	case *govtypes.MsgSubmitProposal:
 		return m.handleMsgSubmitProposal(tx, index, cosmosMsg)
-
 	case *govtypes.MsgDeposit:
 		return m.handleMsgDeposit(tx, cosmosMsg)
-
 	case *govtypes.MsgVote:
 		return m.handleMsgVote(tx, cosmosMsg)
 	}
@@ -33,7 +31,7 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	return nil
 }
 
-// handleMsgSubmitProposal allows to properly handle a handleMsgSubmitProposal
+// handleMsgSubmitProposal allows to properly handle MsgSubmitProposal
 func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypes.MsgSubmitProposal) error {
 	// Get the proposal id
 	event, err := tx.FindEventByType(index, govtypes.EventTypeSubmitProposal)
@@ -62,7 +60,7 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypes.M
 		proposal.ProposalId,
 		proposal.ProposalRoute(),
 		proposal.ProposalType(),
-		proposal.GetContent(),
+		msg.GetContent(),
 		proposal.Status.String(),
 		proposal.SubmitTime,
 		proposal.DepositEndTime,
@@ -85,7 +83,7 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypes.M
 	return m.db.SaveDeposits([]types.Deposit{deposit})
 }
 
-// handleMsgDeposit allows to properly handle a handleMsgDeposit
+// handleMsgDeposit allows to properly handle a MsgDeposit
 func (m *Module) handleMsgDeposit(tx *juno.Tx, msg *govtypes.MsgDeposit) error {
 	deposit, err := m.source.ProposalDeposit(tx.Height, msg.ProposalId, msg.Depositor)
 	if err != nil {
@@ -102,7 +100,7 @@ func (m *Module) handleMsgDeposit(tx *juno.Tx, msg *govtypes.MsgDeposit) error {
 	})
 }
 
-// handleMsgVote allows to properly handle a handleMsgVote
+// handleMsgVote allows to properly handle a MsgVote
 func (m *Module) handleMsgVote(tx *juno.Tx, msg *govtypes.MsgVote) error {
 	txTimestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
 	if err != nil {
