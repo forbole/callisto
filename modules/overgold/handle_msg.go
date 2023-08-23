@@ -9,10 +9,10 @@ import (
 	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/forbole/juno/v2/modules"
-	"github.com/forbole/juno/v2/types"
+	"github.com/forbole/juno/v3/modules"
+	"github.com/forbole/juno/v3/types"
 
-	dbtypes "github.com/forbole/bdjuno/v2/database/types"
+	dbtypes "github.com/forbole/bdjuno/v3/database/types"
 )
 
 // scheduler runs the scheduler
@@ -52,6 +52,8 @@ func (m *module) parseBlock(lastBlock uint64) error {
 			return errs.Internal{Cause: err.Error()}
 		}
 
+		// TODO: Переделать отображение ошибок когда упремся в последние блоки блокчейна,
+		// TODO: иначе будет спать логами с ошибками
 		if block, _, err = m.parseMissingBlocksAndTransactions(int64(lastBlock)); err != nil {
 			m.logger.Error("Fail parseMissingBlocksAndTransactions", "module", "overgold", "error", err)
 			return errs.Internal{Cause: "Fail parseMissingBlocksAndTransactions, error: " + err.Error()}
@@ -76,6 +78,12 @@ func (m *module) parseTx(block dbtypes.BlockRow) error {
 	)
 	if err != nil {
 		if errors.As(err, &errs.NotFound{}) {
+			// TODO: Переделать отображение ошибок когда упремся в последние блоки блокчейна,
+			// TODO: иначе будет спать логами с ошибками
+			if block, _, err = m.parseMissingBlocksAndTransactions(block.Height); err != nil {
+				m.logger.Error("Fail parseMissingBlocksAndTransactions", "module", "overgold", "error", err)
+				return errs.Internal{Cause: "Fail parseMissingBlocksAndTransactions, error: " + err.Error()}
+			}
 			return err
 		}
 
@@ -83,6 +91,8 @@ func (m *module) parseTx(block dbtypes.BlockRow) error {
 	}
 
 	if err := block.CheckTxNumCount(int64(len(txs))); err != nil {
+		// TODO: Переделать отображение ошибок когда упремся в последние блоки блокчейна,
+		// TODO: иначе будет спать логами с ошибками
 		if _, txs, err = m.parseMissingBlocksAndTransactions(block.Height); err != nil {
 			m.logger.Error("Fail parseMissingBlocksAndTransactions", "module", "overgold", "error", err)
 			return errs.Internal{Cause: "Fail parseMissingBlocksAndTransactions, error: " + err.Error()}

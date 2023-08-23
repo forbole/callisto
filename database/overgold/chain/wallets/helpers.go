@@ -5,7 +5,7 @@ import (
 	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
 	cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/forbole/bdjuno/v2/database/types"
+	"github.com/forbole/bdjuno/v3/database/types"
 )
 
 // toExtrasDB - mapping func to database model
@@ -36,9 +36,8 @@ func toBalanceDB(balance cosmos_sdk_types.Coins) types.BalanceDB {
 // fromBalanceDB - mapping func from database model
 func fromBalanceDB(balance types.BalanceDB) cosmos_sdk_types.Coins {
 	result := make(cosmos_sdk_types.Coins, 0, len(balance.Balance))
-	for _, balance := range balance.Balance {
-		result = append(result, balance)
-	}
+
+	result = append(result, balance.Balance...)
 
 	return result
 }
@@ -79,6 +78,7 @@ func toCreateWalletDatabase(wallet *walletstypes.MsgCreateWallet, transactionHas
 		Kind:           int32(wallet.Kind),
 		State:          int32(wallet.State),
 		Extras:         toExtrasDB(wallet.Extras),
+		AddressPayFrom: wallet.AddressPayFrom,
 	}
 }
 
@@ -91,6 +91,7 @@ func toCreateWalletDomain(wallet types.DBCreateWallet) *walletstypes.MsgCreateWa
 		Kind:           walletstypes.WalletKind(wallet.Kind),
 		State:          walletstypes.WalletState(wallet.State),
 		Extras:         fromExtrasDB(wallet.Extras),
+		AddressPayFrom: wallet.AddressPayFrom,
 	}
 }
 
@@ -197,5 +198,22 @@ func toSetKindDomain(wallet types.DBSetWalletKind) *walletstypes.MsgSetWalletKin
 		Creator: wallet.Creator,
 		Address: wallet.Address,
 		Kind:    walletstypes.WalletKind(wallet.Kind),
+	}
+}
+
+// toSetCreateUserWalletPriceDatabase - mapping func to database model
+func toSetCreateUserWalletPriceDatabase(wallet *walletstypes.MsgSetCreateUserWalletPrice, transactionHash string) types.DBSetCreateUserWalletPrice {
+	return types.DBSetCreateUserWalletPrice{
+		Hash:    transactionHash,
+		Creator: wallet.Creator,
+		Amount:  wallet.Amount,
+	}
+}
+
+// toSetCreateUserWalletPriceDomain - mapping func to domain model
+func toSetCreateUserWalletPriceDomain(wallet types.DBSetCreateUserWalletPrice) *walletstypes.MsgSetCreateUserWalletPrice {
+	return &walletstypes.MsgSetCreateUserWalletPrice{
+		Creator: wallet.Creator,
+		Amount:  wallet.Amount,
 	}
 }

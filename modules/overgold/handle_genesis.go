@@ -3,7 +3,7 @@ package overgold
 import (
 	"encoding/json"
 
-	"github.com/forbole/juno/v2/modules"
+	"github.com/forbole/juno/v3/modules"
 	tmtypes "github.com/tendermint/tendermint/types"
 )
 

@@ -4,8 +4,6 @@ RUN apk add git
 
 WORKDIR /go/src/github.com/forbole/bdjuno
 COPY . ./
-RUN go mod download
-RUN make build
 
 # See https://github.com/CosmWasm/wasmvm/releases
 ADD https://github.com/CosmWasm/wasmvm/releases/download/v0.16.1/libwasmvm_muslc.a /lib/libwasmvm_muslc.a

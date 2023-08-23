@@ -14,8 +14,9 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 
-	accountsdb "github.com/forbole/bdjuno/v2/database/overgold/chain/accounts"
-	"github.com/forbole/bdjuno/v2/database/types"
+	"github.com/forbole/bdjuno/v3/database/types"
+
+	accountsdb "github.com/forbole/bdjuno/v3/database/overgold/chain/accounts"
 )
 
 func TestRepository_SaveAccountMigrate(t *testing.T) {

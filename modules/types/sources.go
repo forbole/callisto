@@ -4,6 +4,10 @@ import (
 	"fmt"
 	"os"
 
+	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
+	assetstypes "git.ooo.ua/vipcoin/chain/x/assets/types"
+	bankingtypes "git.ooo.ua/vipcoin/chain/x/banking/types"
+	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/tendermint/tendermint/libs/log"
 
@@ -33,12 +37,21 @@ import (
 	mintsource "github.com/forbole/bdjuno/v3/modules/mint/source"
 	localmintsource "github.com/forbole/bdjuno/v3/modules/mint/source/local"
 	remotemintsource "github.com/forbole/bdjuno/v3/modules/mint/source/remote"
+	remoteOvergoldAccountsSource "github.com/forbole/bdjuno/v3/modules/overgold/chain/accounts/source/remote"
+	remoteOvergoldAssetsSource "github.com/forbole/bdjuno/v3/modules/overgold/chain/assets/source/remote"
+	remoteOvergoldBankingSource "github.com/forbole/bdjuno/v3/modules/overgold/chain/banking/source/remote"
+	remoteOvergoldWalletsSource "github.com/forbole/bdjuno/v3/modules/overgold/chain/wallets/source/remote"
 	slashingsource "github.com/forbole/bdjuno/v3/modules/slashing/source"
 	localslashingsource "github.com/forbole/bdjuno/v3/modules/slashing/source/local"
 	remoteslashingsource "github.com/forbole/bdjuno/v3/modules/slashing/source/remote"
 	stakingsource "github.com/forbole/bdjuno/v3/modules/staking/source"
 	localstakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/remote"
+
+	overgoldAccountsSource "github.com/forbole/bdjuno/v3/modules/overgold/chain/accounts/source"
+	overgoldAssetsSource "github.com/forbole/bdjuno/v3/modules/overgold/chain/assets/source"
+	overgoldBankingSource "github.com/forbole/bdjuno/v3/modules/overgold/chain/banking/source"
+	overgoldWalletsSource "github.com/forbole/bdjuno/v3/modules/overgold/chain/wallets/source"
 )
 
 type Sources struct {
@@ -48,6 +61,12 @@ type Sources struct {
 	MintSource     mintsource.Source
 	SlashingSource slashingsource.Source
 	StakingSource  stakingsource.Source
+
+	// Custom OVG sources
+	OvergoldAccountsSource overgoldAccountsSource.Source
+	OvergoldWalletsSource  overgoldWalletsSource.Source
+	OvergoldBankingSource  overgoldBankingSource.Source
+	OvergoldAssetsSource   overgoldAssetsSource.Source
 }
 
 func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -119,5 +138,11 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
+
+		// Custom OVG sources
+		OvergoldAccountsSource: remoteOvergoldAccountsSource.NewSource(source, accountstypes.NewQueryClient(source.GrpcConn)),
+		OvergoldWalletsSource:  remoteOvergoldWalletsSource.NewSource(source, walletstypes.NewQueryClient(source.GrpcConn)),
+		OvergoldBankingSource:  remoteOvergoldBankingSource.NewSource(source, bankingtypes.NewQueryClient(source.GrpcConn)),
+		OvergoldAssetsSource:   remoteOvergoldAssetsSource.NewSource(source, assetstypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }

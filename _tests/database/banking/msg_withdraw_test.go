@@ -12,8 +12,8 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 
-	bankingdb "github.com/forbole/bdjuno/v2/database/overgold/chain/banking"
-	"github.com/forbole/bdjuno/v2/database/types"
+	bankingdb "github.com/forbole/bdjuno/v3/database/overgold/chain/banking"
+	"github.com/forbole/bdjuno/v3/database/types"
 )
 
 func TestRepository_SaveMsgWithdraw(t *testing.T) {
@@ -40,7 +40,7 @@ func TestRepository_SaveMsgWithdraw(t *testing.T) {
 					{
 						Creator: "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv2g",
 						Wallet:  "ovg1k2gx4u0hwk87ja3wyakne8cl5gytnz0uc27xm4",
-						Asset:   assets.AssetVCG,
+						Asset:   assets.AssetOVG,
 						Amount:  1_000_000,
 						Extras: []*extratypes.Extra{
 							{
@@ -56,7 +56,7 @@ func TestRepository_SaveMsgWithdraw(t *testing.T) {
 					{
 						Creator: "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv3g",
 						Wallet:  "ovg1k2gx4u0hwk87ja3wyakne8cl5gytnz0uc27xm5",
-						Asset:   assets.AssetVCG,
+						Asset:   assets.AssetOVG,
 						Amount:  1_000_400,
 						Extras: []*extratypes.Extra{
 							{
@@ -112,7 +112,7 @@ func TestRepository_GetMsgWithdraw(t *testing.T) {
 				{
 					Creator: "ovg1ljs7p2p9ae3en8knr3d3ke8srsfcj2zjvefv2g",
 					Wallet:  "ovg1k2gx4u0hwk87ja3wyakne8cl5gytnz0uc27xm4",
-					Asset:   assets.AssetVCG,
+					Asset:   assets.AssetOVG,
 					Amount:  1_000_000,
 					Extras: []*extratypes.Extra{
 						{

@@ -1,5 +1,11 @@
 package types
 
+// Defines table names
+const (
+	TableOvergoldChainWalletsSetCreateUserWalletPrice = "overgold_chain_wallets_set_create_user_wallet_price"
+	TableOvergoldChainWalletsCreateWallet             = "overgold_chain_wallets_create_wallet"
+)
+
 // Defines fields
 const (
 	FieldAccountAddress        = "account_address"
@@ -39,6 +45,7 @@ const (
 	FieldState                 = "state"
 	FieldTimestamp             = "timestamp"
 	FieldTxHash                = "tx_hash"
+	FieldTransactionHash       = "transaction_hash"
 	FieldWallet                = "wallet"
 	FieldWalletFrom            = "wallet_from"
 	FieldWalletTo              = "wallet_to"

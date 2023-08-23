@@ -12,9 +12,9 @@ import (
 	cosmos "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	cosmostx "github.com/cosmos/cosmos-sdk/types/tx"
-	txtypes "github.com/forbole/juno/v2/types"
+	txtypes "github.com/forbole/juno/v3/types"
 
-	"github.com/forbole/bdjuno/v2/database/types"
+	"github.com/forbole/bdjuno/v3/database/types"
 )
 
 // GetTransaction - get transaction from database

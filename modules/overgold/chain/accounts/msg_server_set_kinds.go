@@ -3,9 +3,9 @@ package accounts
 import (
 	"git.ooo.ua/vipcoin/chain/x/accounts/types"
 	"git.ooo.ua/vipcoin/lib/filter"
-	juno "github.com/forbole/juno/v2/types"
+	juno "github.com/forbole/juno/v3/types"
 
-	dbtypes "github.com/forbole/bdjuno/v2/database/types"
+	dbtypes "github.com/forbole/bdjuno/v3/database/types"
 )
 
 // handleMsgSetKinds allows to properly handle a handleMsgSetKinds

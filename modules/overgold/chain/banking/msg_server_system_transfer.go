@@ -6,9 +6,9 @@ import (
 	"git.ooo.ua/vipcoin/chain/x/banking/types"
 	"git.ooo.ua/vipcoin/lib/filter"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	juno "github.com/forbole/juno/v2/types"
+	juno "github.com/forbole/juno/v3/types"
 
-	dbtypes "github.com/forbole/bdjuno/v2/database/types"
+	dbtypes "github.com/forbole/bdjuno/v3/database/types"
 )
 
 // handleMsgSystemTransfer allows to properly handle a handleMsgSystemTransfer
@@ -41,7 +41,12 @@ func (m *Module) handleMsgSystemTransfer(tx *juno.Tx, index int, msg *types.MsgS
 	coin := sdk.NewCoin(msg.Asset, sdk.NewIntFromUint64(msg.Amount))
 
 	if walletFrom[0].Address == walletTo[0].Address {
-		return nil
+		// If transfer from and to the same wallet, then just update transfer
+		if err = m.bankingRepo.SaveSystemTransfers(transfer); err != nil {
+			return err
+		}
+
+		return m.bankingRepo.SaveMsgSystemTransfers(msg, tx.TxHash)
 	}
 
 	balanceFrom := walletFrom[0].Balance.AmountOf(msg.Asset).Uint64()
@@ -57,7 +62,7 @@ func (m *Module) handleMsgSystemTransfer(tx *juno.Tx, index int, msg *types.MsgS
 		return err
 	}
 
-	if err := m.bankingRepo.SaveSystemTransfers(transfer); err != nil {
+	if err = m.bankingRepo.SaveSystemTransfers(transfer); err != nil {
 		return err
 	}
 

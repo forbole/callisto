@@ -12,8 +12,8 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 
-	bankingdb "github.com/forbole/bdjuno/v2/database/overgold/chain/banking"
-	"github.com/forbole/bdjuno/v2/database/types"
+	bankingdb "github.com/forbole/bdjuno/v3/database/overgold/chain/banking"
+	"github.com/forbole/bdjuno/v3/database/types"
 )
 
 func TestRepository_SaveBaseTransfers(t *testing.T) {
@@ -39,7 +39,7 @@ func TestRepository_SaveBaseTransfers(t *testing.T) {
 				transfers: []*bankingtypes.BaseTransfer{
 					{
 						Id:     7,
-						Asset:  assets.AssetVCG,
+						Asset:  assets.AssetOVG,
 						Amount: 4005,
 						Kind:   bankingtypes.TRANSFER_KIND_ISSUE,
 						Extras: []*extratypes.Extra{
@@ -57,7 +57,7 @@ func TestRepository_SaveBaseTransfers(t *testing.T) {
 					},
 					{
 						Id:     8,
-						Asset:  assets.AssetVCG,
+						Asset:  assets.AssetOVG,
 						Amount: 4006,
 						Kind:   bankingtypes.TRANSFER_KIND_DEFERRED,
 						Extras: []*extratypes.Extra{
@@ -112,7 +112,7 @@ func TestRepository_UpdateBaseTransfers(t *testing.T) {
 				transfers: []*bankingtypes.BaseTransfer{
 					{
 						Id:     7,
-						Asset:  assets.AssetVCG,
+						Asset:  assets.AssetOVG,
 						Amount: 4005,
 						Kind:   bankingtypes.TRANSFER_KIND_ISSUE,
 						Extras: []*extratypes.Extra{
@@ -130,7 +130,7 @@ func TestRepository_UpdateBaseTransfers(t *testing.T) {
 					},
 					{
 						Id:     8,
-						Asset:  assets.AssetVCG,
+						Asset:  assets.AssetOVG,
 						Amount: 4006,
 						Kind:   bankingtypes.TRANSFER_KIND_DEFERRED,
 						Extras: []*extratypes.Extra{
@@ -188,7 +188,7 @@ func TestRepository_GetBaseTransfers(t *testing.T) {
 			want: []*bankingtypes.BaseTransfer{
 				{
 					Id:     7,
-					Asset:  assets.AssetVCG,
+					Asset:  assets.AssetOVG,
 					Amount: 4005,
 					Kind:   bankingtypes.TRANSFER_KIND_ISSUE,
 					Extras: []*extratypes.Extra{

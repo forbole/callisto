@@ -2,7 +2,7 @@ package accounts
 
 import (
 	"git.ooo.ua/vipcoin/chain/x/accounts/types"
-	juno "github.com/forbole/juno/v2/types"
+	juno "github.com/forbole/juno/v3/types"
 )
 
 // handleMsgCreateAccount allows to properly handle a handleMsgCreateAccount

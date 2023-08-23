@@ -5,7 +5,7 @@ import (
 	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
-	"github.com/forbole/bdjuno/v2/database/types"
+	"github.com/forbole/bdjuno/v3/database/types"
 )
 
 // SaveAffiliateExtra - saves the given affiliate extra inside the database

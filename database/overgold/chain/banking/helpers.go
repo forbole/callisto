@@ -6,7 +6,7 @@ import (
 	bankingtypes "git.ooo.ua/vipcoin/chain/x/banking/types"
 	extratypes "git.ooo.ua/vipcoin/chain/x/types"
 
-	"github.com/forbole/bdjuno/v2/database/types"
+	"github.com/forbole/bdjuno/v3/database/types"
 )
 
 const (

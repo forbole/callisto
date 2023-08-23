@@ -6,7 +6,7 @@ import (
 	"git.ooo.ua/vipcoin/lib/filter"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/forbole/juno/v2/database/postgresql"
+	"github.com/forbole/juno/v3/database/postgresql"
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 )

@@ -2,7 +2,7 @@ package config
 
 import (
 	"git.ooo.ua/vipcoin/lib/vault"
-	junoconf "github.com/forbole/juno/v2/types/config"
+	junoconf "github.com/forbole/juno/v3/types/config"
 	"github.com/spf13/cobra"
 )
 

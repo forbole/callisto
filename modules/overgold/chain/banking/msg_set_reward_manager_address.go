@@ -2,7 +2,7 @@ package banking
 
 import (
 	"git.ooo.ua/vipcoin/chain/x/banking/types"
-	juno "github.com/forbole/juno/v2/types"
+	juno "github.com/forbole/juno/v3/types"
 )
 
 // handleMsgSetRewardManagerAddress allows to properly handle a handleMsgSetRewardManagerAddress

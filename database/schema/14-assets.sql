@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS overgold_chain_assets_assets(
 
 CREATE TABLE IF NOT EXISTS overgold_chain_assets_set_extra(
     id                SERIAL UNIQUE PRIMARY KEY NOT NULL,
-    transaction_hash  TEXT NOT NULL REFERENCES transaction (hash),
+    transaction_hash  TEXT NOT NULL,
     creator           TEXT NOT NULL, -- set extra creator
     name              TEXT NOT NULL, -- set extra name
     extras            JSONB          -- set extra extras
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS overgold_chain_assets_set_extra(
 
 CREATE TABLE IF NOT EXISTS overgold_chain_assets_manage(
     id               SERIAL UNIQUE PRIMARY KEY NOT NULL,
-    transaction_hash TEXT NOT NULL REFERENCES transaction (hash),
+    transaction_hash TEXT NOT NULL,
     creator          TEXT NOT NULL, -- manage assets creator
     name             TEXT NOT NULL, -- manage assets extra name
     policies         INT[],         -- manage assets policies
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS overgold_chain_assets_manage(
 
 CREATE TABLE IF NOT EXISTS overgold_chain_assets_create(
     id                SERIAL UNIQUE PRIMARY KEY NOT NULL,
-    transaction_hash  TEXT NOT NULL REFERENCES transaction (hash),
+    transaction_hash  TEXT NOT NULL,
     creator           TEXT NOT NULL, -- create assets creator
     name              TEXT NOT NULL, -- create assets extra name
     issuer            TEXT NOT NULL, -- create assets issuer

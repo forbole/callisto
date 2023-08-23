@@ -12,7 +12,7 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 
-	assetsdb "github.com/forbole/bdjuno/v2/database/overgold/chain/assets"
+	assetsdb "github.com/forbole/bdjuno/v3/database/overgold/chain/assets"
 )
 
 func TestRepository_SaveAsset(t *testing.T) {
@@ -99,7 +99,7 @@ func TestRepository_GetAsset(t *testing.T) {
 			assets: []*assetstypes.Asset{
 				{
 					Issuer: "ovg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdy",
-					Name:   assetstypes.AssetVCG,
+					Name:   assetstypes.AssetOVG,
 					Policies: []assetstypes.AssetPolicy{
 						assetstypes.ASSET_POLICY_ISSUABLE,
 					},
@@ -162,7 +162,7 @@ func TestRepository_UpdateAsset(t *testing.T) {
 				assets: []*assetstypes.Asset{
 					{
 						Issuer: "ovg1qq995wzw6zgqjm8g2twsykl7xsj0apxmtuxfdz",
-						Name:   assetstypes.AssetVCG,
+						Name:   assetstypes.AssetOVG,
 						Policies: []assetstypes.AssetPolicy{
 							assetstypes.ASSET_POLICY_ISSUABLE,
 						},

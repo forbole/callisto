@@ -107,6 +107,7 @@ type TransactionRow struct {
 	GasUsed     int64           `db:"gas_used"`
 	RawLog      string          `db:"raw_log"`
 	Logs        json.RawMessage `db:"logs"`
+	PartitionID int64           `db:"partition_id"`
 }
 
 // CheckTxNumCount checks if the number of transactions is greater than 0

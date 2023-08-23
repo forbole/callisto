@@ -45,6 +45,7 @@ type (
 		Kind           int32   `db:"kind"`
 		State          int32   `db:"state"`
 		Extras         ExtraDB `db:"extras"`
+		AddressPayFrom string  `db:"address_pay_from"`
 	}
 
 	// DBCreateWalletWithBalance represents a single row inside the "overgold_chain_wallets_create_wallet_with_balance" table
@@ -79,15 +80,21 @@ type (
 	BalanceDB struct {
 		Balance types.Coins
 	}
+
+	DBSetCreateUserWalletPrice struct {
+		Hash    string `db:"transaction_hash"`
+		Creator string `db:"creator"`
+		Amount  uint64 `db:"amount"`
+	}
 )
 
-// Make the BalanceDB struct implement the driver.Valuer interface. This method
+// Value Make the BalanceDB struct implement the driver.Valuer interface. This method
 // simply returns the JSON-encoded representation of the struct.
 func (b BalanceDB) Value() (driver.Value, error) {
 	return json.Marshal(b.Balance)
 }
 
-// Make the BalanceDB struct implement the sql.Scanner interface. This method
+// Scan Make the BalanceDB struct implement the sql.Scanner interface. This method
 // simply decodes a JSON-encoded value into the struct fields.
 func (b *BalanceDB) Scan(value interface{}) error {
 	v, ok := value.([]byte)
@@ -97,3 +104,6 @@ func (b *BalanceDB) Scan(value interface{}) error {
 
 	return json.Unmarshal(v, &b.Balance)
 }
+
+// IsEmptyAddressPayFrom - check if AddressPayFrom is empty
+func (cw DBCreateWallet) IsEmptyAddressPayFrom() bool { return cw.AddressPayFrom == "" }

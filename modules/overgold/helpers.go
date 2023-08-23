@@ -4,14 +4,14 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/forbole/juno/v2/modules"
-	"github.com/forbole/juno/v2/types"
-	txtypes "github.com/forbole/juno/v2/types"
+	"github.com/forbole/juno/v3/modules"
+	"github.com/forbole/juno/v3/types"
+	txtypes "github.com/forbole/juno/v3/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 	tmtypes "github.com/tendermint/tendermint/types"
 
-	dbhelpers "github.com/forbole/bdjuno/v2/database/types"
-	dbtypes "github.com/forbole/bdjuno/v2/database/types"
+	dbhelpers "github.com/forbole/bdjuno/v3/database/types"
+	dbtypes "github.com/forbole/bdjuno/v3/database/types"
 )
 
 // parseMissingBlocksAndTransactions - parse missing blocks and transactions

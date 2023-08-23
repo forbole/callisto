@@ -4,8 +4,9 @@ import (
 	"git.ooo.ua/vipcoin/chain/x/accounts/types"
 	wallets "git.ooo.ua/vipcoin/chain/x/wallets/types"
 	"git.ooo.ua/vipcoin/lib/filter"
-	dbtypes "github.com/forbole/bdjuno/v2/database/types"
-	juno "github.com/forbole/juno/v2/types"
+	juno "github.com/forbole/juno/v3/types"
+
+	dbtypes "github.com/forbole/bdjuno/v3/database/types"
 )
 
 // handleMsgRegisterUser allows to properly handle a handleMsgRegisterUser

@@ -2,7 +2,7 @@ package assets
 
 import (
 	assetstypes "git.ooo.ua/vipcoin/chain/x/assets/types"
-	juno "github.com/forbole/juno/v2/types"
+	juno "github.com/forbole/juno/v3/types"
 )
 
 // handleMsgCreateAsset allows to properly handle a handleMsgCreateAsset

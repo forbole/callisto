@@ -3,7 +3,7 @@ package wallets
 import (
 	typeswallets "git.ooo.ua/vipcoin/chain/x/wallets/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/forbole/juno/v2/types"
+	"github.com/forbole/juno/v3/types"
 )
 
 // HandleMsg implements MessageModule
@@ -25,6 +25,8 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *types.Tx) error {
 		return m.MsgCreateWalletWithBalance(tx, index, walletMsg)
 	case *typeswallets.MsgSetWalletKind:
 		return m.handleMsgSetKind(tx, index, walletMsg)
+	case *typeswallets.MsgSetCreateUserWalletPrice:
+		return m.handleMsgSetCreateUserWalletPrice(tx, index, walletMsg)
 	default:
 		return nil
 	}

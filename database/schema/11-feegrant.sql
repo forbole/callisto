@@ -1,3 +1,4 @@
+-- +migrate Up
 CREATE TABLE fee_grant_allowance
 (
     id                 SERIAL      NOT NULL PRIMARY KEY,

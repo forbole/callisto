@@ -2,9 +2,9 @@ package remote
 
 import (
 	bankingtypes "git.ooo.ua/vipcoin/chain/x/banking/types"
-	"github.com/forbole/juno/v2/node/remote"
+	"github.com/forbole/juno/v3/node/remote"
 
-	"github.com/forbole/bdjuno/v2/modules/overgold/chain/banking/source"
+	"github.com/forbole/bdjuno/v3/modules/overgold/chain/banking/source"
 )
 
 var (

@@ -1,9 +1,9 @@
 package local
 
 import (
-	"github.com/forbole/juno/v2/node/local"
+	"github.com/forbole/juno/v3/node/local"
 
-	"github.com/forbole/bdjuno/v2/modules/overgold/chain/accounts/source"
+	"github.com/forbole/bdjuno/v3/modules/overgold/chain/accounts/source"
 
 	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
 )

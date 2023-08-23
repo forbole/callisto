@@ -10,8 +10,8 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 
-	walletsdb "github.com/forbole/bdjuno/v2/database/overgold/chain/wallets"
-	dbtypes "github.com/forbole/bdjuno/v2/database/types"
+	walletsdb "github.com/forbole/bdjuno/v3/database/overgold/chain/wallets"
+	dbtypes "github.com/forbole/bdjuno/v3/database/types"
 )
 
 func TestRepository_SaveMsgSetDefaultWallet(t *testing.T) {

@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS overgold_chain_banking_issue (
 
 CREATE TABLE IF NOT EXISTS overgold_chain_banking_msg_system_transfer (
     id                  SERIAL UNIQUE PRIMARY KEY NOT NULL,
-    transaction_hash    TEXT       NOT NULL REFERENCES transaction (hash),
+    transaction_hash    TEXT       NOT NULL,
     creator             TEXT       NOT NULL,                    -- banking creator
     wallet_from         TEXT       NOT NULL,                    -- banking wallet from
     wallet_to           TEXT       NOT NULL,                    -- banking wallet to
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS overgold_chain_banking_msg_system_transfer (
 
 CREATE TABLE IF NOT EXISTS overgold_chain_banking_system_msg_reward_transfer (
     id                  SERIAL UNIQUE PRIMARY KEY NOT NULL,
-    transaction_hash    TEXT NOT NULL REFERENCES transaction (hash),
+    transaction_hash    TEXT NOT NULL,
     creator             TEXT NOT NULL,                          -- banking creator
     wallet_from         TEXT NOT NULL,                          -- banking wallet from
     wallet_to           TEXT NOT NULL,                          -- banking wallet to
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS overgold_chain_banking_system_msg_reward_transfer (
 
 CREATE TABLE IF NOT EXISTS overgold_chain_banking_msg_payment (
     id                  SERIAL UNIQUE PRIMARY KEY NOT NULL,
-    transaction_hash    TEXT NOT NULL REFERENCES transaction (hash),
+    transaction_hash    TEXT NOT NULL,
     creator             TEXT NOT NULL,                          -- banking creator
     wallet_from         TEXT NOT NULL,                          -- banking wallet from
     wallet_to           TEXT NOT NULL,                          -- banking wallet to
@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS overgold_chain_banking_msg_payment (
 
 CREATE TABLE IF NOT EXISTS overgold_chain_banking_msg_withdraw (
     id                  SERIAL UNIQUE PRIMARY KEY NOT NULL,
-    transaction_hash    TEXT NOT NULL REFERENCES transaction (hash),
+    transaction_hash    TEXT NOT NULL,
     creator             TEXT NOT NULL,                          -- banking creator
     wallet              TEXT NOT NULL,                          -- banking wallet
     asset               TEXT NOT NULL,                          -- banking asset
@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS overgold_chain_banking_msg_withdraw (
 
 CREATE TABLE IF NOT EXISTS overgold_chain_banking_msg_issue (
     id                  SERIAL UNIQUE PRIMARY KEY NOT NULL,
-    transaction_hash    TEXT NOT NULL REFERENCES transaction (hash),
+    transaction_hash    TEXT NOT NULL,
     creator             TEXT NOT NULL,                          -- banking creator
     wallet              TEXT NOT NULL,                          -- banking wallet
     asset               TEXT NOT NULL,                          -- banking asset
@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS overgold_chain_banking_msg_issue (
 
 CREATE TABLE IF NOT EXISTS overgold_chain_banking_set_transfer_extra (
     msg_id              SERIAL UNIQUE PRIMARY KEY NOT NULL,
-    transaction_hash    TEXT NOT NULL REFERENCES transaction (hash),
+    transaction_hash    TEXT NOT NULL,
     creator             TEXT NOT NULL,                          -- banking creator
     id                  BIGINT,                                 -- banking id
     extras              JSONB                                   -- banking extras
@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS overgold_chain_banking_set_transfer_extra (
 
 CREATE TABLE IF NOT EXISTS overgold_chain_banking_set_reward_manager_address (
     id                  SERIAL UNIQUE PRIMARY KEY NOT NULL,
-    transaction_hash    TEXT NOT NULL REFERENCES transaction (hash),
+    transaction_hash    TEXT NOT NULL,
     creator             TEXT NOT NULL,                          -- banking creator
     address             TEXT NOT NULL                           -- banking address
 );

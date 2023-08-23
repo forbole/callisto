@@ -2,12 +2,12 @@ package wallets
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/forbole/juno/v2/modules"
+	"github.com/forbole/juno/v3/modules"
 
-	"github.com/forbole/bdjuno/v2/database"
-	"github.com/forbole/bdjuno/v2/database/overgold/chain/accounts"
-	"github.com/forbole/bdjuno/v2/database/overgold/chain/wallets"
-	"github.com/forbole/bdjuno/v2/modules/overgold/chain/wallets/source"
+	"github.com/forbole/bdjuno/v3/database"
+	"github.com/forbole/bdjuno/v3/database/overgold/chain/accounts"
+	"github.com/forbole/bdjuno/v3/database/overgold/chain/wallets"
+	"github.com/forbole/bdjuno/v3/modules/overgold/chain/wallets/source"
 )
 
 var (
@@ -19,7 +19,7 @@ var (
 
 // Module represents the x/wallets module
 type Module struct {
-	cdc          codec.Marshaler
+	cdc          codec.Codec
 	db           *database.Db
 	walletsRepo  wallets.Repository
 	accountsRepo accounts.Repository
@@ -27,7 +27,7 @@ type Module struct {
 }
 
 // NewModule returns a new Module instance
-func NewModule(keeper source.Source, cdc codec.Marshaler, db *database.Db) *Module {
+func NewModule(keeper source.Source, cdc codec.Codec, db *database.Db) *Module {
 	return &Module{
 		cdc:          cdc,
 		db:           db,

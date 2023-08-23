@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS overgold_chain_wallets_wallets (
 
 CREATE TABLE IF NOT EXISTS overgold_chain_wallets_set_wallet_kind (
     id                SERIAL UNIQUE PRIMARY KEY NOT NULL,
-    transaction_hash  TEXT    NOT NULL REFERENCES transaction (hash),
+    transaction_hash  TEXT    NOT NULL,
     creator           TEXT    NOT NULL,                           -- message creator
     address           TEXT    NOT NULL,                           -- target wallet address
     kind              INT                                         -- new kind for target wallet
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS overgold_chain_wallets_set_wallet_kind (
 
 CREATE TABLE IF NOT EXISTS overgold_chain_wallets_set_wallet_state (
     id               SERIAL UNIQUE PRIMARY KEY NOT NULL,
-    transaction_hash TEXT    NOT NULL REFERENCES transaction (hash),
+    transaction_hash TEXT    NOT NULL,
     creator          TEXT    NOT NULL,                           -- message creator
     address          TEXT    NOT NULL,                           -- target wallet address
     state            INT                                         -- new state for target wallet
@@ -30,18 +30,19 @@ CREATE TABLE IF NOT EXISTS overgold_chain_wallets_set_wallet_state (
 
 CREATE TABLE IF NOT EXISTS overgold_chain_wallets_create_wallet (
     id                  SERIAL UNIQUE PRIMARY KEY NOT NULL,
-    transaction_hash    TEXT    NOT NULL REFERENCES transaction (hash),
+    transaction_hash    TEXT    NOT NULL,
     creator             TEXT    NOT NULL,                   -- message creator
     address             TEXT    NOT NULL,                   -- target wallet address
     account_address     TEXT    NOT NULL,                   -- new account address for target wallet
     kind                INT,                                -- new kind for target wallet
     state               INT,                                -- new state for target wallet
-    extras              JSONB                               -- new extras for target wallet
+    extras              JSONB,                              -- new extras for target wallet
+    address_pay_from    TEXT                                -- address to pay from
 );
 
 CREATE TABLE IF NOT EXISTS overgold_chain_wallets_create_wallet_with_balance (
     id                  SERIAL UNIQUE PRIMARY KEY NOT NULL,
-    transaction_hash    TEXT        NOT NULL REFERENCES transaction (hash),
+    transaction_hash    TEXT        NOT NULL,
     creator             TEXT        NOT NULL,               -- message creator
     address             TEXT        NOT NULL,               -- target wallet address
     account_address     TEXT        NOT NULL,               -- new account address for target wallet
@@ -54,17 +55,25 @@ CREATE TABLE IF NOT EXISTS overgold_chain_wallets_create_wallet_with_balance (
 
 CREATE TABLE IF NOT EXISTS overgold_chain_wallets_set_default_wallet (
     id               SERIAL UNIQUE PRIMARY KEY NOT NULL,
-    transaction_hash TEXT        NOT NULL REFERENCES transaction (hash),
+    transaction_hash TEXT        NOT NULL,
     creator          TEXT        NOT NULL,                       -- message creator
     address          TEXT        NOT NULL                        -- target wallet address
 );
 
 CREATE TABLE IF NOT EXISTS overgold_chain_wallets_set_extra (
     id                SERIAL UNIQUE PRIMARY KEY NOT NULL,
-    transaction_hash  TEXT        NOT NULL REFERENCES transaction (hash),
+    transaction_hash  TEXT        NOT NULL,
     creator           TEXT        NOT NULL,                       -- message creator
     address           TEXT        NOT NULL,                       -- target wallet address
     extras            JSONB                                       -- new extras for target wallet
+);
+
+CREATE TABLE IF NOT EXISTS overgold_chain_wallets_set_create_user_wallet_price
+(
+    id               SERIAL UNIQUE PRIMARY KEY NOT NULL,
+    transaction_hash TEXT                      NOT NULL,
+    creator          TEXT                      NOT NULL, -- message creator
+    amount           BIGINT                              -- new account address for target wallet
 );
 
 -- +migrate Down
@@ -75,3 +84,4 @@ DROP TABLE IF EXISTS overgold_chain_wallets_create_wallet CASCADE;
 DROP TABLE IF EXISTS overgold_chain_wallets_create_wallet_with_balance CASCADE;
 DROP TABLE IF EXISTS overgold_chain_wallets_set_default_wallet CASCADE;
 DROP TABLE IF EXISTS overgold_chain_wallets_set_extra CASCADE;
+DROP TABLE IF EXISTS overgold_chain_wallets_set_create_user_wallet_price CASCADE;

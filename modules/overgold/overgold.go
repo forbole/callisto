@@ -4,22 +4,22 @@ import (
 	"sync"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/forbole/juno/v2/logging"
-	"github.com/forbole/juno/v2/modules"
-	jmodules "github.com/forbole/juno/v2/modules"
+	"github.com/forbole/juno/v3/logging"
+	"github.com/forbole/juno/v3/modules"
+	jmodules "github.com/forbole/juno/v3/modules"
 
-	"github.com/forbole/juno/v2/node"
+	"github.com/forbole/juno/v3/node"
 
-	"github.com/forbole/bdjuno/v2/database"
-	"github.com/forbole/bdjuno/v2/database/overgold/chain/last_block"
-	"github.com/forbole/bdjuno/v2/modules/overgold/chain/accounts"
-	overgoldAccountsSource "github.com/forbole/bdjuno/v2/modules/overgold/chain/accounts/source"
-	"github.com/forbole/bdjuno/v2/modules/overgold/chain/assets"
-	overgoldAssetsSource "github.com/forbole/bdjuno/v2/modules/overgold/chain/assets/source"
-	"github.com/forbole/bdjuno/v2/modules/overgold/chain/banking"
-	overgoldBankingSource "github.com/forbole/bdjuno/v2/modules/overgold/chain/banking/source"
-	"github.com/forbole/bdjuno/v2/modules/overgold/chain/wallets"
-	overgoldWalletsSource "github.com/forbole/bdjuno/v2/modules/overgold/chain/wallets/source"
+	"github.com/forbole/bdjuno/v3/database"
+	"github.com/forbole/bdjuno/v3/database/overgold/chain/last_block"
+	"github.com/forbole/bdjuno/v3/modules/overgold/chain/accounts"
+	overgoldAccountsSource "github.com/forbole/bdjuno/v3/modules/overgold/chain/accounts/source"
+	"github.com/forbole/bdjuno/v3/modules/overgold/chain/assets"
+	overgoldAssetsSource "github.com/forbole/bdjuno/v3/modules/overgold/chain/assets/source"
+	"github.com/forbole/bdjuno/v3/modules/overgold/chain/banking"
+	overgoldBankingSource "github.com/forbole/bdjuno/v3/modules/overgold/chain/banking/source"
+	"github.com/forbole/bdjuno/v3/modules/overgold/chain/wallets"
+	overgoldWalletsSource "github.com/forbole/bdjuno/v3/modules/overgold/chain/wallets/source"
 )
 
 var (
@@ -34,7 +34,7 @@ type overgoldModule interface {
 }
 
 type module struct {
-	cdc             codec.Marshaler
+	cdc             codec.Codec
 	db              *database.Db
 	lastBlockRepo   last_block.Repository
 	logger          logging.Logger
@@ -46,7 +46,7 @@ type module struct {
 }
 
 func NewModule(
-	cdc codec.Marshaler,
+	cdc codec.Codec,
 	db *database.Db,
 	node node.Node,
 	logger logging.Logger,

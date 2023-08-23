@@ -11,8 +11,8 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 
-	bankingdb "github.com/forbole/bdjuno/v2/database/overgold/chain/banking"
-	"github.com/forbole/bdjuno/v2/database/types"
+	bankingdb "github.com/forbole/bdjuno/v3/database/overgold/chain/banking"
+	"github.com/forbole/bdjuno/v3/database/types"
 )
 
 func TestRepository_SavePayments(t *testing.T) {

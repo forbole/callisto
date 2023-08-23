@@ -3,7 +3,7 @@ package assets
 import (
 	assetstypes "git.ooo.ua/vipcoin/chain/x/assets/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	juno "github.com/forbole/juno/v2/types"
+	juno "github.com/forbole/juno/v3/types"
 )
 
 // HandleMsg implements MessageModule

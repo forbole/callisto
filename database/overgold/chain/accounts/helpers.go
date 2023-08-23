@@ -10,7 +10,7 @@ import (
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/lib/pq"
 
-	"github.com/forbole/bdjuno/v2/database/types"
+	"github.com/forbole/bdjuno/v3/database/types"
 )
 
 const (
@@ -85,7 +85,7 @@ func fromExtrasDB(extras types.ExtraDB) []*extratypes.Extra {
 }
 
 // toAccountDatabase - mapping func to database model
-func toAccountDatabase(account *accountstypes.Account, cdc codec.Marshaler) (types.DBAccount, error) {
+func toAccountDatabase(account *accountstypes.Account, cdc codec.Codec) (types.DBAccount, error) {
 	var pubKey cryptotypes.PubKey
 	if err := cdc.UnpackAny(account.PublicKey, &pubKey); err != nil {
 		return types.DBAccount{}, err

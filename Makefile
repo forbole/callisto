@@ -59,30 +59,30 @@ install: go.sum
 run:
 ifeq ($(OS),Windows_NT)
 	@echo "running bdjuno for Windows..."
-	@go run cmd/bdjuno/main.go parse --home $(CONFIG)
+	@go run cmd/bdjuno/main.go start --home $(CONFIG)
 else
 	@echo "running bdjuno for Linux..."
-	@go run cmd/bdjuno/main.go parse --home $(CONFIG)
+	@go run cmd/bdjuno/main.go start --home $(CONFIG)
 endif
 .PHONY: run
 
 run-build: build
 ifeq ($(OS),Windows_NT)
 	@echo "running bdjuno for Windows..."
-	@./build/bdjuno.exe parse --home $(CONFIG)
+	@./build/bdjuno.exe start --home $(CONFIG)
 else
 	@echo "running bdjuno for Linux..."
-	@./build/bdjuno parse --home $(CONFIG)
+	@./build/bdjuno start --home $(CONFIG)
 endif
 .PHONY: run-build
 
 start:
 ifeq ($(OS),Windows_NT)
 	@echo "running bdjuno for Windows..."
-	@./build/bdjuno.exe parse --home $(CONFIG)
+	@./build/bdjuno.exe start --home $(CONFIG)
 else
 	@echo "running bdjuno for Linux..."
-	@./build/bdjuno parse --home $(CONFIG)
+	@./build/bdjuno start --home $(CONFIG)
 endif
 .PHONY: start
 

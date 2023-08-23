@@ -3,7 +3,7 @@ package accounts
 import (
 	"git.ooo.ua/vipcoin/chain/x/accounts/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	juno "github.com/forbole/juno/v2/types"
+	juno "github.com/forbole/juno/v3/types"
 )
 
 // HandleMsg implements MessageModule

@@ -10,19 +10,19 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/jmoiron/sqlx"
 
-	"github.com/forbole/bdjuno/v2/database/types"
+	"github.com/forbole/bdjuno/v3/database/types"
 )
 
 type (
-	// repository - defines a repository for accounts repository
+	// Repository - defines a repository for accounts repository
 	Repository struct {
 		db  *sqlx.DB
-		cdc codec.Marshaler
+		cdc codec.Codec
 	}
 )
 
 // NewRepository constructor.
-func NewRepository(db *sqlx.DB, cdc codec.Marshaler) *Repository {
+func NewRepository(db *sqlx.DB, cdc codec.Codec) *Repository {
 	return &Repository{
 		db:  db,
 		cdc: cdc,

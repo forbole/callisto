@@ -5,7 +5,7 @@ import (
 	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
-	"github.com/forbole/bdjuno/v2/database/types"
+	"github.com/forbole/bdjuno/v3/database/types"
 )
 
 // SaveSystemTransfers - method that create system transfers to the "overgold_chain_banking_msg_system_transfer" table
