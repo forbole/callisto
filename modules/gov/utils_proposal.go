@@ -14,7 +14,7 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
+	profilestypes "github.com/desmos-labs/desmos/v6/x/profiles/types"
 
 	"google.golang.org/grpc/codes"
 
