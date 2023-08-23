@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/cosmos/cosmos-sdk/types/module"
-	desmosapp "github.com/desmos-labs/desmos/v5/app"
+	desmosapp "github.com/desmos-labs/desmos/v6/app"
 	"github.com/forbole/juno/v5/cmd"
 	initcmd "github.com/forbole/juno/v5/cmd/init"
 	migratecmd "github.com/forbole/juno/v5/cmd/migrate"

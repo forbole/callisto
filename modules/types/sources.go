@@ -9,7 +9,6 @@ import (
 	"cosmossdk.io/simapp"
 	"cosmossdk.io/simapp/params"
 
-	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/forbole/juno/v5/node/remote"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -24,8 +23,8 @@ import (
 
 	nodeconfig "github.com/forbole/juno/v5/node/config"
 
-	desmosapp "github.com/desmos-labs/desmos/v5/app"
-	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
+	desmosapp "github.com/desmos-labs/desmos/v6/app"
+	profilestypes "github.com/desmos-labs/desmos/v6/x/profiles/types"
 
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v4/modules/bank/source/local"
@@ -81,7 +80,7 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 
 	desmosApp := desmosapp.NewDesmosApp(
 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, nil,
-		[]wasmtypes.ProposalType{}, nil,
+		nil,
 	)
 
 	app := simapp.NewSimApp(

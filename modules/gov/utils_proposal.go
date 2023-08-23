@@ -5,13 +5,13 @@ import (
 	"strings"
 	"time"
 
-	codec "github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/codec"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
+	profilestypes "github.com/desmos-labs/desmos/v6/x/profiles/types"
 
 	"google.golang.org/grpc/codes"
 

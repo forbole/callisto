@@ -3,7 +3,7 @@ package remote
 import (
 	"fmt"
 
-	profilestypes "github.com/desmos-labs/desmos/v5/x/profiles/types"
+	profilestypes "github.com/desmos-labs/desmos/v6/x/profiles/types"
 	"github.com/forbole/juno/v5/node/remote"
 
 	profilessource "github.com/forbole/bdjuno/v4/modules/profiles/source"
