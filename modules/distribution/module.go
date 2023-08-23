@@ -3,11 +3,11 @@ package distribution
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	distrsource "github.com/forbole/bdjuno/v2/modules/distribution/source"
+	distrsource "github.com/forbole/bdjuno/v3/modules/distribution/source"
 
-	"github.com/forbole/juno/v2/modules"
+	"github.com/forbole/juno/v3/modules"
 
-	"github.com/forbole/bdjuno/v2/database"
+	"github.com/forbole/bdjuno/v3/database"
 )
 
 var (
@@ -19,13 +19,13 @@ var (
 
 // Module represents the x/distr module
 type Module struct {
-	cdc    codec.Marshaler
+	cdc    codec.Codec
 	db     *database.Db
 	source distrsource.Source
 }
 
 // NewModule returns a new Module instance
-func NewModule(source distrsource.Source, cdc codec.Marshaler, db *database.Db) *Module {
+func NewModule(source distrsource.Source, cdc codec.Codec, db *database.Db) *Module {
 	return &Module{
 		cdc:    cdc,
 		db:     db,

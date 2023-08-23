@@ -2,10 +2,10 @@ package staking
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/forbole/juno/v2/modules"
+	"github.com/forbole/juno/v3/modules"
 
-	"github.com/forbole/bdjuno/v2/database"
-	stakingsource "github.com/forbole/bdjuno/v2/modules/staking/source"
+	"github.com/forbole/bdjuno/v3/database"
+	stakingsource "github.com/forbole/bdjuno/v3/modules/staking/source"
 )
 
 var (
@@ -17,7 +17,7 @@ var (
 
 // Module represents the x/staking module
 type Module struct {
-	cdc            codec.Marshaler
+	cdc            codec.Codec
 	db             *database.Db
 	source         stakingsource.Source
 	slashingModule SlashingModule
@@ -26,7 +26,7 @@ type Module struct {
 // NewModule returns a new Module instance
 func NewModule(
 	source stakingsource.Source, slashingModule SlashingModule,
-	cdc codec.Marshaler, db *database.Db,
+	cdc codec.Codec, db *database.Db,
 ) *Module {
 	return &Module{
 		cdc:            cdc,

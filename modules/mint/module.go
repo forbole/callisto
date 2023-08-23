@@ -2,10 +2,10 @@ package mint
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/forbole/juno/v2/modules"
+	"github.com/forbole/juno/v3/modules"
 
-	"github.com/forbole/bdjuno/v2/database"
-	mintsource "github.com/forbole/bdjuno/v2/modules/mint/source"
+	"github.com/forbole/bdjuno/v3/database"
+	mintsource "github.com/forbole/bdjuno/v3/modules/mint/source"
 )
 
 var (
@@ -16,13 +16,13 @@ var (
 
 // Module represent database/mint module
 type Module struct {
-	cdc    codec.Marshaler
+	cdc    codec.Codec
 	db     *database.Db
 	source mintsource.Source
 }
 
 // NewModule returns a new Module instance
-func NewModule(source mintsource.Source, cdc codec.Marshaler, db *database.Db) *Module {
+func NewModule(source mintsource.Source, cdc codec.Codec, db *database.Db) *Module {
 	return &Module{
 		cdc:    cdc,
 		db:     db,

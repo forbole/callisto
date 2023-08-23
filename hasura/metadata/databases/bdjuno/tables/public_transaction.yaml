@@ -2,207 +2,25 @@ table:
   name: transaction
   schema: public
 object_relationships:
-  - name: block
-    using:
-      foreign_key_constraint_on: height
-array_relationships:
-  - name: messagesByTransactionHash
-    using:
-      foreign_key_constraint_on:
-        column: transaction_hash
-        table:
-          name: message
-          schema: public
-  - name: overgold_chain_accounts_account_migrates
-    using:
-      foreign_key_constraint_on:
-        column: transaction_hash
-        table:
-          name: overgold_chain_accounts_account_migrate
-          schema: public
-  - name: overgold_chain_accounts_add_affiliates
-    using:
-      foreign_key_constraint_on:
-        column: transaction_hash
-        table:
-          name: overgold_chain_accounts_add_affiliate
-          schema: public
-  - name: overgold_chain_accounts_create_accounts
-    using:
-      foreign_key_constraint_on:
-        column: transaction_hash
-        table:
-          name: overgold_chain_accounts_create_account
-          schema: public
-  - name: overgold_chain_accounts_register_users
-    using:
-      foreign_key_constraint_on:
-        column: transaction_hash
-        table:
-          name: overgold_chain_accounts_register_user
-          schema: public
-  - name: overgold_chain_accounts_set_affiliate_addresses
-    using:
-      foreign_key_constraint_on:
-        column: transaction_hash
-        table:
-          name: overgold_chain_accounts_set_affiliate_address
-          schema: public
-  - name: overgold_chain_accounts_set_affiliate_extras
-    using:
-      foreign_key_constraint_on:
-        column: transaction_hash
-        table:
-          name: overgold_chain_accounts_set_affiliate_extra
-          schema: public
-  - name: overgold_chain_accounts_set_extras
-    using:
-      foreign_key_constraint_on:
-        column: transaction_hash
-        table:
-          name: overgold_chain_accounts_set_extra
-          schema: public
-  - name: overgold_chain_accounts_set_kinds
-    using:
-      foreign_key_constraint_on:
-        column: transaction_hash
-        table:
-          name: overgold_chain_accounts_set_kinds
-          schema: public
-  - name: overgold_chain_accounts_set_states
-    using:
-      foreign_key_constraint_on:
-        column: transaction_hash
-        table:
-          name: overgold_chain_accounts_set_state
-          schema: public
-  - name: overgold_chain_assets_creates
-    using:
-      foreign_key_constraint_on:
-        column: transaction_hash
-        table:
-          name: overgold_chain_assets_create
-          schema: public
-  - name: overgold_chain_assets_manages
-    using:
-      foreign_key_constraint_on:
-        column: transaction_hash
-        table:
-          name: overgold_chain_assets_manage
-          schema: public
-  - name: overgold_chain_assets_set_extras
-    using:
-      foreign_key_constraint_on:
-        column: transaction_hash
-        table:
-          name: overgold_chain_assets_set_extra
-          schema: public
-  - name: overgold_chain_banking_msg_issues
-    using:
-      foreign_key_constraint_on:
-        column: transaction_hash
-        table:
-          name: overgold_chain_banking_msg_issue
-          schema: public
-  - name: overgold_chain_banking_msg_payments
-    using:
-      foreign_key_constraint_on:
-        column: transaction_hash
-        table:
-          name: overgold_chain_banking_msg_payment
-          schema: public
-  - name: overgold_chain_banking_msg_system_transfers
-    using:
-      foreign_key_constraint_on:
-        column: transaction_hash
-        table:
-          name: overgold_chain_banking_msg_system_transfer
-          schema: public
-  - name: overgold_chain_banking_msg_withdraws
-    using:
-      foreign_key_constraint_on:
-        column: transaction_hash
-        table:
-          name: overgold_chain_banking_msg_withdraw
-          schema: public
-  - name: overgold_chain_banking_set_reward_manager_addresses
-    using:
-      foreign_key_constraint_on:
-        column: transaction_hash
-        table:
-          name: overgold_chain_banking_set_reward_manager_address
-          schema: public
-  - name: overgold_chain_banking_set_transfer_extras
-    using:
-      foreign_key_constraint_on:
-        column: transaction_hash
-        table:
-          name: overgold_chain_banking_set_transfer_extra
-          schema: public
-  - name: overgold_chain_banking_system_msg_reward_transfers
-    using:
-      foreign_key_constraint_on:
-        column: transaction_hash
-        table:
-          name: overgold_chain_banking_system_msg_reward_transfer
-          schema: public
-  - name: overgold_chain_wallets_create_wallet_with_balances
-    using:
-      foreign_key_constraint_on:
-        column: transaction_hash
-        table:
-          name: overgold_chain_wallets_create_wallet_with_balance
-          schema: public
-  - name: overgold_chain_wallets_create_wallets
-    using:
-      foreign_key_constraint_on:
-        column: transaction_hash
-        table:
-          name: overgold_chain_wallets_create_wallet
-          schema: public
-  - name: overgold_chain_wallets_set_default_wallets
-    using:
-      foreign_key_constraint_on:
-        column: transaction_hash
-        table:
-          name: overgold_chain_wallets_set_default_wallet
-          schema: public
-  - name: overgold_chain_wallets_set_extras
-    using:
-      foreign_key_constraint_on:
-        column: transaction_hash
-        table:
-          name: overgold_chain_wallets_set_extra
-          schema: public
-  - name: overgold_chain_wallets_set_wallet_kinds
-    using:
-      foreign_key_constraint_on:
-        column: transaction_hash
-        table:
-          name: overgold_chain_wallets_set_wallet_kind
-          schema: public
-  - name: overgold_chain_wallets_set_wallet_states
-    using:
-      foreign_key_constraint_on:
-        column: transaction_hash
-        table:
-          name: overgold_chain_wallets_set_wallet_state
-          schema: public
+- name: block
+  using:
+    foreign_key_constraint_on: height
 select_permissions:
-  - role: anonymous
-    permission:
-      columns:
-        - hash
-        - height
-        - success
-        - messages
-        - memo
-        - signatures
-        - signer_infos
-        - fee
-        - gas_wanted
-        - gas_used
-        - raw_log
-        - logs
-      filter: {}
-      allow_aggregations: true
+- permission:
+    allow_aggregations: true
+    columns:
+    - hash
+    - height
+    - success
+    - messages
+    - memo
+    - signatures
+    - signer_infos
+    - fee
+    - gas_wanted
+    - gas_used
+    - raw_log
+    - logs
+    - partition_id
+    filter: {}
+  role: anonymous

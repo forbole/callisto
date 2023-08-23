@@ -1,127 +1,291 @@
+############### ACTIONS ###############
 actions:
-  - name: action_account_balance
-    definition:
-      kind: ""
-      handler: https://bdjuno.overgold.com/account_balance
-      headers:
-        - name: Content-Type
-          value: application/json
-    permissions:
-      - role: anonymous
-  - name: action_delegation
-    definition:
-      kind: ""
-      handler: https://bdjuno.overgold.com/delegation
-      headers:
-        - name: Content-Type
-          value: application/json
-    permissions:
-      - role: anonymous
-  - name: action_delegation_reward
-    definition:
-      kind: ""
-      handler: https://bdjuno.overgold.com/delegation_reward
-      headers:
-        - name: Content-Type
-          value: application/json
-    permissions:
-      - role: anonymous
-  - name: action_delegation_total
-    definition:
-      kind: ""
-      handler: https://bdjuno.overgold.com/delegation_total
-      headers:
-        - name: Content-Type
-          value: application/json
-    permissions:
-      - role: anonymous
-  - name: action_delegator_withdraw_address
-    definition:
-      kind: ""
-      handler: https://bdjuno.overgold.com/delegator_withdraw_address
-      headers:
-        - name: Content-Type
-          value: application/json
-    permissions:
-      - role: anonymous
-  - name: action_redelegation
-    definition:
-      kind: ""
-      handler: https://bdjuno.overgold.com/redelegation
-      headers:
-        - name: Content-Type
-          value: application/json
-    permissions:
-      - role: anonymous
-  - name: action_unbonding_delegation
-    definition:
-      kind: ""
-      handler: https://bdjuno.overgold.com/unbonding_delegation
-      headers:
-        - name: Content-Type
-          value: application/json
-    permissions:
-      - role: anonymous
-  - name: action_unbonding_delegation_total
-    definition:
-      kind: ""
-      handler: https://bdjuno.overgold.com/unbonding_delegation_total
-      headers:
-        - name: Content-Type
-          value: application/json
-    permissions:
-      - role: anonymous
-  - name: action_validator_commission_amount
-    definition:
-      kind: ""
-      handler: https://bdjuno.overgold.com/validator_commission_amount
-      headers:
-        - name: Content-Type
-          value: application/json
-    permissions:
-      - role: anonymous
-  - name: action_validator_delegations
-    definition:
-      kind: ""
-      handler: https://bdjuno.overgold.com/validator_delegations
-      headers:
-        - name: Content-Type
-          value: application/json
-    permissions:
-      - role: anonymous
-  - name: action_validator_redelegations_from
-    definition:
-      kind: ""
-      handler: https://bdjuno.overgold.com/validator_redelegations_from
-      headers:
-        - name: Content-Type
-          value: application/json
-    permissions:
-      - role: anonymous
-  - name: action_validator_unbonding_delegations
-    definition:
-      kind: ""
-      handler: https://bdjuno.overgold.com/validator_unbonding_delegations
-      headers:
-        - name: Content-Type
-          value: application/json
-    permissions:
-      - role: anonymous
+
+##### Bank #####
+- name: action_account_balance
+  definition:
+    kind: synchronous
+    handler: "{{ACTION_BASE_URL}}/account_balance"
+    output_type: ActionBalance
+    arguments:
+    - name: address
+      type: String!
+    - name: height
+      type: Int
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+##### Staking / Delegatagor #####
+- name: action_delegation_reward
+  definition:
+    kind: synchronous
+    handler: "{{ACTION_BASE_URL}}/delegation_reward"
+    output_type: "[ActionDelegationReward]"
+    arguments:
+    - name: address
+      type: String!
+    - name: height
+      type: Int
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: action_delegator_withdraw_address
+  definition:
+    kind: synchronous
+    handler: "{{ACTION_BASE_URL}}/delegator_withdraw_address"
+    output_type: ActionAddress
+    arguments:
+    - name: address
+      type: String!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: action_delegation
+  definition:
+    kind: synchronous
+    handler: "{{ACTION_BASE_URL}}/delegation"
+    output_type: ActionDelegationResponse
+    arguments:
+    - name: address
+      type: String!
+    - name: height
+      type: Int
+    - name: offset
+      type: Int
+    - name: limit
+      type: Int
+    - name: count_total
+      type: Boolean!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: action_delegation_total
+  definition:
+    kind: synchronous
+    handler: "{{ACTION_BASE_URL}}/delegation_total"
+    output_type: ActionBalance
+    arguments:
+    - name: address
+      type: String!
+    - name: height
+      type: Int
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: action_redelegation
+  definition:
+    kind: synchronous
+    handler: "{{ACTION_BASE_URL}}/redelegation"
+    output_type: ActionRedelegationResponse
+    arguments:
+    - name: address
+      type: String!
+    - name: height
+      type: Int
+    - name: offset
+      type: Int
+    - name: limit
+      type: Int
+    - name: count_total
+      type: Boolean!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: action_unbonding_delegation
+  definition:
+    kind: synchronous
+    handler: "{{ACTION_BASE_URL}}/unbonding_delegation"
+    output_type: ActionUnbondingDelegationResponse
+    arguments:
+    - name: address
+      type: String!
+    - name: height
+      type: Int
+    - name: offset
+      type: Int
+    - name: limit
+      type: Int
+    - name: count_total
+      type: Boolean!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: action_unbonding_delegation_total
+  definition:
+    kind: synchronous
+    handler: "{{ACTION_BASE_URL}}/unbonding_delegation_total"
+    output_type: ActionBalance
+    arguments:
+    - name: address
+      type: String!
+    - name: height
+      type: Int
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+##### Staking / Validator #####
+- name: action_validator_commission_amount
+  definition:
+    kind: synchronous
+    handler: "{{ACTION_BASE_URL}}/validator_commission_amount"
+    output_type: "[ActionValidatorCommissionAmount]"
+    arguments:
+    - name: address
+      type: String!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: action_validator_delegations
+  definition:
+    kind: synchronous
+    handler: "{{ACTION_BASE_URL}}/validator_delegations"
+    output_type: ActionDelegationResponse
+    arguments:
+    - name: address
+      type: String!
+    - name: offset
+      type: Int
+    - name: limit
+      type: Int
+    - name: count_total
+      type: Boolean!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: action_validator_redelegations_from
+  definition:
+    kind: synchronous
+    handler: "{{ACTION_BASE_URL}}/validator_redelegations_from"
+    output_type: ActionRedelegationResponse
+    arguments:
+    - name: address
+      type: String!
+    - name: height
+      type: Int
+    - name: offset
+      type: Int
+    - name: limit
+      type: Int
+    - name: count_total
+      type: Boolean!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+- name: action_validator_unbonding_delegations
+  definition:
+    kind: synchronous
+    handler: "{{ACTION_BASE_URL}}/validator_unbonding_delegations"
+    output_type: ActionUnbondingDelegationResponse
+    arguments:
+    - name: address
+      type: String!
+    - name: offset
+      type: Int
+    - name: limit
+      type: Int
+    - name: count_total
+      type: Boolean!
+    type: query
+    headers:
+    - value: application/json
+      name: Content-Type
+  permissions:
+  - role: anonymous
+
+############### CUSTOM TYPES ###############
 custom_types:
-  enums: []
-  input_objects: []
-  objects:
-    - name: ActionBalance
-    - name: ActionDelegationReward
-    - name: ActionAddress
-    - name: ActionDelegationResponse
-    - name: ActionRedelegationResponse
-    - name: ActionUnbondingDelegationResponse
-    - name: ActionValidatorCommissionAmount
   scalars:
-    - name: ActionCoin
-    - name: ActionDelegation
-    - name: ActionEntry
-    - name: ActionPagination
-    - name: ActionRedelegation
-    - name: ActionUnbondingDelegation
+  - name: ActionCoin
+  - name: ActionDelegation
+  - name: ActionEntry
+  - name: ActionPagination
+  - name: ActionRedelegation
+  - name: ActionUnbondingDelegation
+
+  objects:
+  - name: ActionBalance
+    fields:
+    - name: coins
+      type: [ActionCoin]
+
+  - name: ActionDelegationReward
+    fields:
+    - name: coins
+      type: [ActionCoin]
+    - name: validator_address
+      type: String!
+
+  - name: ActionDelegationResponse
+    fields:
+    - name: delegations
+      type: [ActionDelegation]
+    - name: pagination
+      type: ActionPagination
+
+  - name: ActionAddress
+    fields: 
+    - name: address
+      type: String!
+
+  - name: ActionRedelegationResponse
+    fields:
+    - name: redelegations
+      type: [ActionRedelegation]
+    - name: pagination
+      type: ActionPagination
+
+  - name: ActionUnbondingDelegationResponse
+    fields:
+    - name: unbonding_delegations
+      type: [ActionUnbondingDelegation]
+    - name: pagination
+      type: ActionPagination
+  
+  - name: ActionValidatorCommissionAmount
+    fields:
+    - name: coins
+      type: [ActionCoin]

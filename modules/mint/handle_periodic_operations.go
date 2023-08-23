@@ -1,7 +1,7 @@
 package mint
 
 import (
-	"github.com/forbole/bdjuno/v2/modules/utils"
+	"github.com/forbole/bdjuno/v3/modules/utils"
 
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
@@ -13,7 +13,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 
 	// Setup a cron job to run every midnight
 	if _, err := scheduler.Every(1).Day().At("00:00").Do(func() {
-		utils.WatchMethod(m.updateInflation)
+		utils.WatchMethod(m.UpdateInflation)
 	}); err != nil {
 		return err
 	}
@@ -23,7 +23,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 
 // updateInflation fetches from the REST APIs the latest value for the
 // inflation, and saves it inside the database.
-func (m *Module) updateInflation() error {
+func (m *Module) UpdateInflation() error {
 	log.Debug().
 		Str("module", "mint").
 		Str("operation", "inflation").

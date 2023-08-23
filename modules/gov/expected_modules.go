@@ -4,7 +4,7 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
-	"github.com/forbole/bdjuno/v2/types"
+	"github.com/forbole/bdjuno/v3/types"
 )
 
 type AuthModule interface {
@@ -17,6 +17,7 @@ type DistrModule interface {
 
 type MintModule interface {
 	UpdateParams(height int64) error
+	UpdateInflation() error
 }
 
 type SlashingModule interface {

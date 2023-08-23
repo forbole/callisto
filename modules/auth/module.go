@@ -3,10 +3,10 @@ package auth
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/forbole/bdjuno/v2/database"
+	"github.com/forbole/bdjuno/v3/database"
 
-	"github.com/forbole/juno/v2/modules"
-	"github.com/forbole/juno/v2/modules/messages"
+	"github.com/forbole/juno/v3/modules"
+	"github.com/forbole/juno/v3/modules/messages"
 )
 
 var (
@@ -17,13 +17,13 @@ var (
 
 // Module represents the x/auth module
 type Module struct {
-	cdc            codec.Marshaler
+	cdc            codec.Codec
 	db             *database.Db
 	messagesParser messages.MessageAddressesParser
 }
 
 // NewModule builds a new Module instance
-func NewModule(messagesParser messages.MessageAddressesParser, cdc codec.Marshaler, db *database.Db) *Module {
+func NewModule(messagesParser messages.MessageAddressesParser, cdc codec.Codec, db *database.Db) *Module {
 	return &Module{
 		messagesParser: messagesParser,
 		cdc:            cdc,
