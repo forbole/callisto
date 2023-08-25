@@ -43,6 +43,13 @@ else
 endif
 .PHONY: docker-build
 
+
+## TODO: docker build for mac os
+#docker-build: go.sum
+#	@echo "building bdjuno binary..."
+#	@LEDGER_ENABLED=false CGO_ENABLED=1 GOOS=darwin GOARCH=arm64 go build -mod=readonly $(BUILD_FLAGS) -o build/bdjuno ./cmd/bdjuno
+#.PHONY: docker-build
+
 ###############################################################################
 ###                                 Install                                 ###
 ###############################################################################
