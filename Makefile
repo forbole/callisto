@@ -33,6 +33,16 @@ else
 endif
 .PHONY: build
 
+docker-build: go.sum
+ifeq ($(OS),Windows_NT)
+	@echo "building bdjuno binary..."
+	@go build -mod=readonly $(BUILD_FLAGS) -o build/bdjuno.exe ./cmd/bdjuno
+else
+	@echo "building bdjuno binary..."
+	@LEDGER_ENABLED=false CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build --tags muslc -mod=vendor $(BUILD_FLAGS) -o build/bdjuno ./cmd/bdjuno
+endif
+.PHONY: docker-build
+
 ###############################################################################
 ###                                 Install                                 ###
 ###############################################################################
