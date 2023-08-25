@@ -39,9 +39,9 @@ ifeq ($(OS),Windows_NT)
 	@go build -mod=readonly $(BUILD_FLAGS) -o build/bdjuno.exe ./cmd/bdjuno
 else
 	@echo "building bdjuno binary..."
-	@LEDGER_ENABLED=false CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build --tags muslc -mod=vendor $(BUILD_FLAGS) -o build/bdjuno ./cmd/bdjuno
+	@LEDGER_ENABLED=false CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -buildvcs=false --tags muslc -mod=vendor $(BUILD_FLAGS) -o build/bdjuno ./cmd/bdjuno
 endif
-.PHONY: docker-build
+.PHONY: build
 
 
 ## TODO: docker build for mac os

@@ -11,6 +11,7 @@ import (
 	"github.com/forbole/juno/v3/modules/messages"
 
 	migratecmd "github.com/forbole/bdjuno/v3/cmd/migrate"
+
 	parsecmd "github.com/forbole/bdjuno/v3/cmd/parse"
 
 	"github.com/forbole/bdjuno/v3/types/config"
@@ -42,7 +43,7 @@ func main() {
 	rootCmd.AddCommand(
 		cmd.VersionCmd(),
 		initcmd.NewInitCmd(cfg.GetInitConfig()),
-		vault.CheckVaultConfig(cfg.GetName(), parsecmd.NewParseCmd(cfg.GetParseConfig())),
+		vault.CheckVaultConfig(cfg.GetName(), startcmd.NewStartCmd(cfg.GetParseConfig())),
 		genesis.NewGenesisCmd(cfg.GetParseConfig()),
 		parsecmd.NewParseCmd(cfg.GetParseConfig()),
 		migratecmd.NewMigrateCmd(cfg.GetName(), cfg.GetParseConfig()),

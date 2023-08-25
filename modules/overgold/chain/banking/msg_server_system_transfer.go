@@ -41,12 +41,7 @@ func (m *Module) handleMsgSystemTransfer(tx *juno.Tx, index int, msg *types.MsgS
 	coin := sdk.NewCoin(msg.Asset, sdk.NewIntFromUint64(msg.Amount))
 
 	if walletFrom[0].Address == walletTo[0].Address {
-		// If transfer from and to the same wallet, then just update transfer
-		if err = m.bankingRepo.SaveSystemTransfers(transfer); err != nil {
-			return err
-		}
-
-		return m.bankingRepo.SaveMsgSystemTransfers(msg, tx.TxHash)
+		return nil
 	}
 
 	balanceFrom := walletFrom[0].Balance.AmountOf(msg.Asset).Uint64()
