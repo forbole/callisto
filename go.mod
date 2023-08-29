@@ -6,7 +6,7 @@ require (
 	cosmossdk.io/math v1.1.2
 	github.com/cosmos/cosmos-sdk v0.46.7
 	github.com/forbole/juno/v4 v4.0.0-20230207053719-d0f32f8970c3
-	github.com/go-co-op/gocron v1.32.1
+	github.com/go-co-op/gocron v1.33.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/golangci/golangci-lint v1.54.2
 	github.com/jmoiron/sqlx v1.3.5
@@ -128,7 +128,7 @@ require (
 	github.com/google/btree v1.0.1 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/google/orderedcode v0.0.1 // indirect
-	github.com/google/uuid v1.3.0 // indirect
+	github.com/google/uuid v1.3.1 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.2.3 // indirect
 	github.com/googleapis/gax-go/v2 v2.7.1 // indirect
 	github.com/gordonklaus/ineffassign v0.0.0-20230610083614-0e73809eb601 // indirect
