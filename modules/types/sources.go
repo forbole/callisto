@@ -4,9 +4,17 @@ import (
 	"fmt"
 	"os"
 
+	"cosmossdk.io/simapp/params"
+	"github.com/cometbft/cometbft/libs/log"
+
+	providertypes "github.com/cosmos/interchain-security/v3/x/ccv/provider/types"
+	"github.com/forbole/juno/v5/node/local"
+
+	providersource "github.com/forbole/bdjuno/v4/modules/ccv/provider/source"
+	remoteprovidersource "github.com/forbole/bdjuno/v4/modules/ccv/provider/source/remote"
+
 	simappparams "cosmossdk.io/simapp/params"
 	minttypes "github.com/Stride-Labs/stride/v12/x/mint/types"
-	"github.com/cometbft/cometbft/libs/log"
 	"github.com/forbole/juno/v5/node/remote"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -43,7 +51,6 @@ import (
 	localstakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/remote"
 	nodeconfig "github.com/forbole/juno/v5/node/config"
-	"github.com/forbole/juno/v5/node/local"
 )
 
 type Sources struct {
@@ -54,9 +61,10 @@ type Sources struct {
 	SlashingSource slashingsource.Source
 	StakeIBCSource stakeibcsource.Source
 	StakingSource  stakingsource.Source
+	ProviderSource providersource.Source
 }
 
-func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *simappparams.EncodingConfig) (*Sources, error) {
+func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
 	switch cfg := nodeCfg.Details.(type) {
 	case *remote.Details:
 		return buildRemoteSources(cfg)
@@ -119,6 +127,11 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		return nil, fmt.Errorf("error while creating remote source: %s", err)
 	}
 
+	providerSource, err := remote.NewSource(cfg.ProviderGRPC)
+	if err != nil {
+		return nil, fmt.Errorf("error while creating remote provider source: %s", err)
+	}
+
 	return &Sources{
 		BankSource:     remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
 		DistrSource:    remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
@@ -127,5 +140,6 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakeIBCSource: remotestakeibcsource.NewSource(source, stakeibctypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
+		ProviderSource: remoteprovidersource.NewSource(providerSource, providertypes.NewQueryClient(providerSource.GrpcConn)),
 	}, nil
 }

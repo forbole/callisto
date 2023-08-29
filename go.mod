@@ -11,7 +11,7 @@ require (
 	github.com/cosmos/gogoproto v1.4.10 // indirect
 	github.com/cosmos/ibc-go/v7 v7.2.0
 	github.com/cosmos/interchain-security/v3 v3.1.0
-	github.com/forbole/juno/v5 v5.2.1-0.20230718082304-88faa0e1d7db
+	github.com/forbole/juno/v5 v5.2.1-0.20230829050156-45b544318904
 	github.com/go-co-op/gocron v1.18.0
 	github.com/gogo/protobuf v1.3.2
 	github.com/golangci/golangci-lint v1.52.2

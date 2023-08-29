@@ -108,35 +108,65 @@ func (db *Db) GetValidatorsConsensusAddress() ([]dbtypes.ValidatorAddressRow, er
 	return rows, nil
 }
 
-// StoreCCvValidators stores ccv validators operators address inside the database
-// To create relationship between provider and consumer chain
-func (db *Db) StoreCCvValidators(ccvValidators []types.CCVValidator) error {
-	if len(ccvValidators) == 0 {
-		return nil
-	}
-
+// GetProviderSelfDelegateAddress implements database.Database
+func (db *Db) GetProviderSelfDelegateAddress(consensusAddress string) (string, error) {
 	stmt := `
-INSERT INTO ccv_validator (consumer_consensus_address, provider_consensus_address, height) 
-VALUES `
+	SELECT self_delegate_address FROM validator_info where consensus_address = $1`
 
-	var ccvValidatorsList []interface{}
-	for i, ccvValidator := range ccvValidators {
-		vi := i * 3
-		stmt += fmt.Sprintf("($%d,$%d,$%d),", vi+1, vi+2, vi+3)
-
-		ccvValidatorsList = append(ccvValidatorsList,
-			ccvValidator.ConsumerConsensusAddress,
-			ccvValidator.ProviderConsensusAddress,
-			ccvValidator.Height,
-		)
+	var selfDelegateAddress []string
+	if err := db.ProviderSQL.Select(&selfDelegateAddress, stmt, consensusAddress); err != nil {
+		return "", err
 	}
 
-	// Store the ccv validators
-	stmt = stmt[:len(stmt)-1] // Remove trailing ","
-	stmt += " ON CONFLICT DO NOTHING"
-	_, err := db.SQL.Exec(stmt, ccvValidatorsList...)
+	if len(selfDelegateAddress) == 0 {
+		return "", nil
+	}
+
+	return selfDelegateAddress[0], nil
+}
+
+// GetProviderLastBlockHeight implements database.Database
+func (db *Db) GetProviderLastBlockHeight() (int64, error) {
+	stmt := `SELECT height FROM block ORDER BY height DESC LIMIT 1`
+
+	var heights []int64
+	if err := db.ProviderSQL.Select(&heights, stmt); err != nil {
+		return 0, err
+	}
+
+	if len(heights) == 0 {
+		return 0, nil
+	}
+
+	return heights[0], nil
+}
+
+// StoreCCvValidator stores ccv validator addresses inside the database
+// To create relationship between provider and consumer chain
+func (db *Db) StoreCCvValidator(ccvValidator types.CCVValidator) error {
+	stmt := `
+INSERT INTO ccv_validator (consumer_consensus_address, consumer_self_delegate_address, consumer_operator_address,
+	provider_consensus_address, provider_self_delegate_address, provider_operator_address, height) 
+VALUES ($1, $2, $3, $4, $5, $6, $7)
+ON CONFLICT (consumer_consensus_address) DO UPDATE 
+    SET consumer_self_delegate_address = excluded.consumer_self_delegate_address, 
+		consumer_operator_address = excluded.consumer_operator_address,
+        provider_consensus_address = excluded.provider_consensus_address,
+		provider_self_delegate_address = excluded.provider_self_delegate_address,
+		provider_operator_address = excluded.provider_operator_address,
+		height = excluded.height
+WHERE ccv_validator.height <= excluded.height`
+
+	_, err := db.SQL.Exec(stmt, ccvValidator.ConsumerConsensusAddress,
+		ccvValidator.ConsumerSelfDelegateAddress,
+		ccvValidator.ConsumerOperatorAddress,
+		ccvValidator.ProviderConsensusAddress,
+		ccvValidator.ProviderSelfDelegateAddress,
+		ccvValidator.ProviderOperatorAddress,
+		ccvValidator.Height)
+
 	if err != nil {
-		return fmt.Errorf("error while storing ccv validators info: %s", err)
+		return fmt.Errorf("error while storing ccv validator: %s", err)
 	}
 
 	return nil

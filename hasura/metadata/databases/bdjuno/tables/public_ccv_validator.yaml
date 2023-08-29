@@ -15,3 +15,14 @@ remote_relationships:
 select_permissions:
 - permission:
     allow_aggregations: false
+    columns:
+    - consumer_consensus_address
+    - consumer_self_delegate_address
+    - consumer_operator_address
+    - provider_consensus_address
+    - provider_self_delegate_address
+    - provider_operator_address
+    - height
+    filter: {}
+    limit: 100
+  role: anonymous
