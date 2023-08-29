@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"cosmossdk.io/simapp/params"
 	"github.com/cometbft/cometbft/libs/log"
 
 	providertypes "github.com/cosmos/interchain-security/v3/x/ccv/provider/types"
@@ -64,7 +63,7 @@ type Sources struct {
 	ProviderSource providersource.Source
 }
 
-func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
+func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *simappparams.EncodingConfig) (*Sources, error) {
 	switch cfg := nodeCfg.Details.(type) {
 	case *remote.Details:
 		return buildRemoteSources(cfg)
