@@ -54,7 +54,7 @@ CREATE TABLE validator_commission
 (
     validator_address   TEXT    NOT NULL REFERENCES validator (consensus_address) PRIMARY KEY,
     commission          DECIMAL NOT NULL,
-    min_self_delegation BIGINT  NOT NULL,
+    min_self_delegation TEXT    NOT NULL,
     height              BIGINT  NOT NULL
 );
 CREATE INDEX validator_commission_height_index ON validator_commission (height);
