@@ -13,8 +13,7 @@ func (r Repository) SaveKinds(messages *walletstypes.MsgSetWalletKind, transacti
 	query := `INSERT INTO overgold_chain_wallets_set_wallet_kind 
 			(transaction_hash, creator, address, kind) 
 			VALUES 
-			(:transaction_hash, :creator, :address, :kind)
-			ON CONFLICT (id) DO NOTHING`
+			(:transaction_hash, :creator, :address, :kind)`
 
 	if _, err := r.db.NamedExec(query, toSetKindDatabase(messages, transactionHash)); err != nil {
 		return errs.Internal{Cause: err.Error()}
@@ -23,7 +22,7 @@ func (r Repository) SaveKinds(messages *walletstypes.MsgSetWalletKind, transacti
 	return nil
 }
 
-// DBSetWalletKind - get Kinds from the "overgold_chain_wallets_set_wallet_kind" table
+// GetKinds - get Kinds from the "overgold_chain_wallets_set_wallet_kind" table
 func (r Repository) GetKinds(filter filter.Filter) ([]*walletstypes.MsgSetWalletKind, error) {
 	query, args := filter.Build("overgold_chain_wallets_set_wallet_kind",
 		types.FieldCreator, types.FieldAddress, types.FieldKind)

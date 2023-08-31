@@ -3,10 +3,12 @@ package banking
 import (
 	"context"
 	"database/sql"
+	"errors"
 
 	bankingtypes "git.ooo.ua/vipcoin/chain/x/banking/types"
 	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
+	"github.com/lib/pq"
 
 	"github.com/forbole/bdjuno/v3/database/types"
 )
@@ -27,19 +29,23 @@ func (r Repository) SaveIssues(issues ...*bankingtypes.Issue) error {
 	queryBaseTransfer := `INSERT INTO overgold_chain_banking_base_transfers 
        ("id", "asset", "amount", "kind", "extras", "timestamp", "tx_hash") 
      VALUES 
-       (:id, :asset, :amount, :kind, :extras, :timestamp, :tx_hash)
-       ON CONFLICT (id) DO NOTHING`
+       (:id, :asset, :amount, :kind, :extras, :timestamp, :tx_hash)`
 
 	queryIssue := `INSERT INTO overgold_chain_banking_issue
 			("id", "wallet")
 			VALUES
-			(:id, :wallet)
-			ON CONFLICT (id) DO NOTHING`
+			(:id, :wallet)`
 
+	var pgErr *pq.Error
 	for _, issue := range issues {
 		issueDB := toIssueDatabase(issue)
 
 		if _, err := tx.NamedExec(queryBaseTransfer, issueDB); err != nil {
+			if errors.As(err, &pgErr) {
+				if pgErr.Code == "23505" {
+					return errs.AlreadyExists{}
+				}
+			}
 			return errs.Internal{Cause: err.Error()}
 		}
 

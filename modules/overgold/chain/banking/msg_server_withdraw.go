@@ -1,9 +1,11 @@
 package banking
 
 import (
+	"errors"
 	"strings"
 
 	"git.ooo.ua/vipcoin/chain/x/banking/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	juno "github.com/forbole/juno/v3/types"
@@ -37,6 +39,14 @@ func (m *Module) handleMsgWithdraw(tx *juno.Tx, index int, msg *types.MsgWithdra
 		return types.ErrInvalidAddressField
 	}
 
+	if err := m.bankingRepo.SaveWithdraws(withdraw); err != nil {
+		if errors.As(err, &errs.AlreadyExists{}) {
+			// Transfer already exists, it's ok
+			return nil
+		}
+		return err
+	}
+
 	coins := sdk.NewCoins(sdk.NewCoin(msg.Asset, sdk.NewIntFromUint64(msg.Amount)))
 
 	balanceFrom := wallet[0].Balance.AmountOf(msg.Asset).Uint64()
@@ -53,10 +63,6 @@ func (m *Module) handleMsgWithdraw(tx *juno.Tx, index int, msg *types.MsgWithdra
 	asset[0].InCirculation -= msg.Amount
 
 	if err := m.assetRepo.UpdateAssets(asset...); err != nil {
-		return err
-	}
-
-	if err := m.bankingRepo.SaveWithdraws(withdraw); err != nil {
 		return err
 	}
 

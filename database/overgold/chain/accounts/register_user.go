@@ -15,8 +15,7 @@ func (r Repository) SaveRegisterUser(msg *accountstypes.MsgRegisterUser, transac
 			holder_wallet_extras, ref_reward_wallet_extras, referrer_hash) 
 		VALUES 
 			(:transaction_hash, :creator, :address, :hash, :public_key, :holder_wallet, :ref_reward_wallet, 
-			:holder_wallet_extras, :ref_reward_wallet_extras, :referrer_hash)
-			ON CONFLICT (id) DO NOTHING`
+			:holder_wallet_extras, :ref_reward_wallet_extras, :referrer_hash)`
 
 	if _, err := r.db.NamedExec(query, toRegisterUserDatabase(msg, transactionHash)); err != nil {
 		return errs.Internal{Cause: err.Error()}

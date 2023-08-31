@@ -1,9 +1,11 @@
 package banking
 
 import (
+	"errors"
 	"strings"
 
 	"git.ooo.ua/vipcoin/chain/x/banking/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	juno "github.com/forbole/juno/v3/types"
@@ -37,6 +39,14 @@ func (m *Module) handleMsgIssue(tx *juno.Tx, index int, msg *types.MsgIssue) err
 		return types.ErrInvalidAddressField
 	}
 
+	if err := m.bankingRepo.SaveIssues(issue); err != nil {
+		if errors.As(err, &errs.AlreadyExists{}) {
+			// Transfer already exists, it's ok
+			return nil
+		}
+		return err
+	}
+
 	coin := sdk.NewCoin(asset[0].Name, sdk.NewIntFromUint64(msg.Amount))
 
 	// add coins to wallet balance
@@ -49,10 +59,6 @@ func (m *Module) handleMsgIssue(tx *juno.Tx, index int, msg *types.MsgIssue) err
 	asset[0].Issued += msg.Amount
 	asset[0].InCirculation += msg.Amount
 	if err := m.assetRepo.UpdateAssets(asset...); err != nil {
-		return err
-	}
-
-	if err := m.bankingRepo.SaveIssues(issue); err != nil {
 		return err
 	}
 

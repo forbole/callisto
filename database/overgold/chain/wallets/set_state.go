@@ -16,8 +16,7 @@ func (r Repository) SaveStates(messages *walletstypes.MsgSetWalletState, transac
 	query := `INSERT INTO overgold_chain_wallets_set_wallet_state 
 			(transaction_hash, creator, address, state) 
 			VALUES 
-			(:transaction_hash, :creator, :address, :state)
-			ON CONFLICT (id) DO NOTHING`
+			(:transaction_hash, :creator, :address, :state)`
 
 	if _, err := r.db.NamedExec(query, toSetWalletStateDatabase(messages, transactionHash)); err != nil {
 		return errs.Internal{Cause: err.Error()}

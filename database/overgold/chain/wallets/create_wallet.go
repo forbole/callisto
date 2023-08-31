@@ -11,10 +11,9 @@ import (
 // SaveCreateWallet saves the given wallets inside the database
 func (r *Repository) SaveCreateWallet(msgWallet *walletstypes.MsgCreateWallet, transactionHash string) error {
 	query := `INSERT INTO overgold_chain_wallets_create_wallet 
-			(transaction_hash, creator, address, account_address, kind, state, extras) 
+			(transaction_hash, creator, address, account_address, kind, state, extras, address_pay_from) 
 		VALUES 
-			(:transaction_hash, :creator, :address, :account_address, :kind, :state, :extras)
-			ON CONFLICT (id) DO NOTHING`
+			(:transaction_hash, :creator, :address, :account_address, :kind, :state, :extras, :address_pay_from)`
 
 	if _, err := r.db.NamedExec(query, toCreateWalletDatabase(msgWallet, transactionHash)); err != nil {
 		return errs.Internal{Cause: err.Error()}

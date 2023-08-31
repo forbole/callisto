@@ -1,12 +1,14 @@
 package banking
 
 import (
+	"errors"
 	"math"
 	"strings"
 
 	assets "git.ooo.ua/vipcoin/chain/x/assets/types"
 	banking "git.ooo.ua/vipcoin/chain/x/banking/types"
 	wallets "git.ooo.ua/vipcoin/chain/x/wallets/types"
+	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	juno "github.com/forbole/juno/v3/types"
@@ -68,6 +70,10 @@ func (m *Module) payment(
 	payment *banking.Payment,
 	walletFrom, walletTo wallets.Wallet,
 ) error {
+	if err := m.bankingRepo.SavePayments(payment); err != nil {
+		return err
+	}
+
 	coin := sdk.NewCoin(payment.BaseTransfer.Asset, sdk.NewIntFromUint64(payment.Amount))
 
 	balanceFrom := walletFrom.Balance.AmountOf(payment.Asset).Uint64()
@@ -81,11 +87,8 @@ func (m *Module) payment(
 
 	// add coins to receiver wallet balance
 	walletTo.Balance = walletTo.Balance.Add(coin)
-	if err := m.walletsRepo.UpdateWallets(&walletTo); err != nil {
-		return err
-	}
 
-	return m.bankingRepo.SavePayments(payment)
+	return m.walletsRepo.UpdateWallets(&walletTo)
 }
 
 // paymentWithFee - creates payment with fee
@@ -127,6 +130,22 @@ func (m *Module) paymentWithFee(
 		return err
 	case len(walletsVoid) != 1:
 		return wallets.ErrInvalidKindField
+	}
+
+	if err := m.bankingRepo.SaveSystemTransfers(systemReward); err != nil {
+		if errors.As(err, &errs.AlreadyExists{}) {
+			// Transfer already exists, it's ok
+			return nil
+		}
+		return err
+	}
+
+	if err := m.bankingRepo.SaveSystemTransfers(systemRefReward); err != nil {
+		if errors.As(err, &errs.AlreadyExists{}) {
+			// Transfer already exists, it's ok
+			return nil
+		}
+		return err
 	}
 
 	walletSystemReward := walletsSystemReward[0]
@@ -175,17 +194,9 @@ func (m *Module) paymentWithFee(
 		return err
 	}
 
-	if err := m.bankingRepo.SaveSystemTransfers(systemReward); err != nil {
-		return err
-	}
-
 	// add coins to referrer (if referrer is empty then it will be system ref reward wallet) wallet balance
 	walletRefReward.Balance = walletRefReward.Balance.Add(coinFeeRefReward)
 	if err := m.walletsRepo.UpdateWallets(walletRefReward); err != nil {
-		return err
-	}
-
-	if err := m.bankingRepo.SaveSystemTransfers(systemRefReward); err != nil {
 		return err
 	}
 

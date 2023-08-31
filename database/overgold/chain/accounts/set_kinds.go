@@ -13,8 +13,7 @@ func (r Repository) SaveKinds(msg *accountstypes.MsgSetKinds, transactionHash st
 	query := `INSERT INTO overgold_chain_accounts_set_kinds 
 			(transaction_hash, creator, hash, kinds) 
 			VALUES 
-			(:transaction_hash, :creator, :hash, :kinds)
-			ON CONFLICT (id) DO NOTHING`
+			(:transaction_hash, :creator, :hash, :kinds)`
 
 	if _, err := r.db.NamedExec(query, toSetKindsDatabase(msg, transactionHash)); err != nil {
 		return errs.Internal{Cause: err.Error()}

@@ -48,16 +48,11 @@ func (m *module) scheduler() {
 func (m *module) parseBlock(lastBlock uint64) error {
 	block, err := m.db.GetBlock(filter.NewFilter().SetArgument(dbtypes.FieldHeight, lastBlock))
 	if err != nil {
-		if !errors.As(err, &errs.NotFound{}) {
-			return errs.Internal{Cause: err.Error()}
+		if errors.As(err, &errs.NotFound{}) {
+			return err
 		}
 
-		// TODO: Переделать отображение ошибок когда упремся в последние блоки блокчейна,
-		// TODO: иначе будет спать логами с ошибками
-		if block, _, err = m.parseMissingBlocksAndTransactions(int64(lastBlock)); err != nil {
-			m.logger.Error("Fail parseMissingBlocksAndTransactions", "module", "overgold", "error", err)
-			return errs.Internal{Cause: "Fail parseMissingBlocksAndTransactions, error: " + err.Error()}
-		}
+		return errs.Internal{Cause: err.Error()}
 	}
 
 	m.logger.Debug("parse block", "height", block.Height)

@@ -45,8 +45,7 @@ func (r Repository) SaveWallets(wallets ...*walletstypes.Wallet) error {
 	query := `INSERT INTO overgold_chain_wallets_wallets 
        ("address", "account_address", "kind", "state", "balance", "extras", "default_status") 
      VALUES 
-       (:address, :account_address, :kind, :state, :balance, :extras, :default_status)
-       ON CONFLICT (address) DO NOTHING`
+       (:address, :account_address, :kind, :state, :balance, :extras, :default_status)`
 
 	for _, wallet := range wallets {
 		if _, err := tx.NamedExec(query, toWalletsDatabase(wallet)); err != nil {

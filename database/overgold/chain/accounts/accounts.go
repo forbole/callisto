@@ -46,8 +46,7 @@ func (r Repository) SaveAccounts(accounts ...*accountstypes.Account) error {
 	query := `INSERT INTO overgold_chain_accounts_accounts 
 			 ("address", "hash", "public_key", "kinds", "state", "extras", "wallets") 
 		 VALUES 
-			 (:address, :hash, :public_key, :kinds, :state, :extras, :wallets)
-			 ON CONFLICT (address) DO NOTHING`
+			 (:address, :hash, :public_key, :kinds, :state, :extras, :wallets)`
 
 	for _, acc := range accounts {
 		accountDB, err := toAccountDatabase(acc, r.cdc)

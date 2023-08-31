@@ -13,8 +13,7 @@ func (r Repository) SaveExtras(messages *walletstypes.MsgSetExtra, transactionHa
 	query := `INSERT INTO overgold_chain_wallets_set_extra 
 			(transaction_hash, creator, address, extras) 
 			VALUES 
-			(:transaction_hash, :creator, :address, :extras)
-			ON CONFLICT (id) DO NOTHING`
+			(:transaction_hash, :creator, :address, :extras)`
 
 	if _, err := r.db.NamedExec(query, toSetExtraDatabase(messages, transactionHash)); err != nil {
 		return errs.Internal{Cause: err.Error()}

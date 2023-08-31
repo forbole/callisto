@@ -13,8 +13,7 @@ func (r Repository) SaveMsgWithdraw(withdraws *bankingtypes.MsgWithdraw, transac
 	query := `INSERT INTO overgold_chain_banking_msg_withdraw 
 		(transaction_hash, creator, wallet, asset, amount, extras) 
 		VALUES 
-		(:transaction_hash, :creator, :wallet, :asset, :amount, :extras)
-		ON CONFLICT (id) DO NOTHING`
+		(:transaction_hash, :creator, :wallet, :asset, :amount, :extras)`
 
 	if _, err := r.db.NamedExec(query, toMsgWithdrawDatabase(withdraws, transactionHash)); err != nil {
 		return errs.Internal{Cause: err.Error()}
@@ -23,7 +22,7 @@ func (r Repository) SaveMsgWithdraw(withdraws *bankingtypes.MsgWithdraw, transac
 	return nil
 }
 
-// GetSystemTransfers - method that get withdraw from the "overgold_chain_banking_msg_withdraw" table
+// GetMsgWithdraw - method that get withdraw from the "overgold_chain_banking_msg_withdraw" table
 func (r Repository) GetMsgWithdraw(filter filter.Filter) ([]*bankingtypes.MsgWithdraw, error) {
 	query, args := filter.Build(
 		tableMsgWithdraw,
