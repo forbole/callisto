@@ -4,22 +4,20 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cometbft/cometbft/libs/log"
-
-	"cosmossdk.io/simapp"
 	"cosmossdk.io/simapp/params"
 
-	"github.com/forbole/juno/v5/node/remote"
+	"github.com/cometbft/cometbft/libs/log"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
-	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/juno/v5/node/local"
+	"github.com/forbole/juno/v5/node/remote"
 
 	nodeconfig "github.com/forbole/juno/v5/node/config"
 
@@ -31,7 +29,7 @@ import (
 	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"
 	distrsource "github.com/forbole/bdjuno/v4/modules/distribution/source"
 
-	// localdistrsource "github.com/forbole/bdjuno/v4/modules/distribution/source/local"
+	localdistrsource "github.com/forbole/bdjuno/v4/modules/distribution/source/local"
 	remotedistrsource "github.com/forbole/bdjuno/v4/modules/distribution/source/remote"
 	govsource "github.com/forbole/bdjuno/v4/modules/gov/source"
 	localgovsource "github.com/forbole/bdjuno/v4/modules/gov/source/local"
@@ -78,24 +76,19 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		return nil, err
 	}
 
-	desmosApp := desmosapp.NewDesmosApp(
-		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, nil,
-		nil,
-	)
-
-	app := simapp.NewSimApp(
+	app := desmosapp.NewDesmosApp(
 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, nil,
 		nil,
 	)
 
 	sources := &Sources{
-		BankSource: localbanksource.NewSource(source, banktypes.QueryServer(desmosApp.BankKeeper)),
-		// DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(desmosApp.DistrKeeper)),
-		GovSource:      localgovsource.NewSource(source, govtypesv1.QueryServer(desmosApp.GovKeeper), nil),
-		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(desmosApp.MintKeeper)),
-		ProfilesSource: localprofilessource.NewSource(source, profilestypes.QueryServer(desmosApp.ProfilesKeeper)),
-		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(desmosApp.SlashingKeeper)),
-		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: desmosApp.StakingKeeper}),
+		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
+		DistrSource:    localdistrsource.NewSource(source, distrkeeper.Querier{Keeper: app.DistrKeeper}),
+		GovSource:      localgovsource.NewSource(source, govtypesv1.QueryServer(app.GovKeeper)),
+		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
+		ProfilesSource: localprofilessource.NewSource(source, profilestypes.QueryServer(app.ProfilesKeeper)),
+		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
+		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
 	}
 
 	// Mount and initialize the stores
@@ -131,7 +124,7 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 	return &Sources{
 		BankSource:     remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
 		DistrSource:    remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
-		GovSource:      remotegovsource.NewSource(source, govtypesv1.NewQueryClient(source.GrpcConn), govtypesv1beta1.NewQueryClient(source.GrpcConn)),
+		GovSource:      remotegovsource.NewSource(source, govtypesv1.NewQueryClient(source.GrpcConn)),
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
 		ProfilesSource: remoteprofilessource.NewSource(source, profilestypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
