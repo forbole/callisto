@@ -41,6 +41,22 @@ func (db *Db) GetLastBlockHeight() (int64, error) {
 	return heights[0], nil
 }
 
+// GetLastBlockTimestamp returns the last block timestamp stored inside the database
+func (db *Db) GetLastBlockTimestamp() (time.Time, error) {
+	stmt := `SELECT timestamp FROM block ORDER BY height DESC LIMIT 1`
+
+	var blockTimestamp []time.Time
+	if err := db.Sqlx.Select(&blockTimestamp, stmt); err != nil {
+		return time.Time{}, err
+	}
+
+	if len(blockTimestamp) == 0 {
+		return time.Time{}, nil
+	}
+
+	return blockTimestamp[0], nil
+}
+
 // -------------------------------------------------------------------------------------------------------------------
 
 // getBlockHeightTime retrieves the block at the specific time
