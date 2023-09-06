@@ -8,7 +8,7 @@ require (
 	github.com/cometbft/cometbft v0.37.2
 	github.com/cosmos/cosmos-sdk v0.47.4
 	github.com/evmos/evmos/v14 v14.0.0-rc4
-	github.com/forbole/juno/v5 v5.2.0
+	github.com/forbole/juno/v5 v5.2.1-0.20230828165233-507db5ddc83d
 	github.com/go-co-op/gocron v1.33.1
 	github.com/gogo/protobuf v1.3.2
 	github.com/jmoiron/sqlx v1.3.5
