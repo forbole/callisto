@@ -236,3 +236,63 @@ func (m *Module) GetValidatorsVotingPowers(height int64, vals *tmctypes.ResultVa
 
 	return votingPowers, nil
 }
+
+// UpdateProposalValidatorStatusesSnapshots allows to update
+// active proposals validator status snapshots
+func (m *Module) UpdateProposalValidatorStatusesSnapshots() error {
+	log.Debug().Str("module", "staking").Msg("refreshing proposal validator status snapshots")
+
+	blockTime, err := m.db.GetLastBlockTimestamp()
+	if err != nil {
+		return err
+	}
+
+	ids, err := m.db.GetOpenProposalsIds(blockTime)
+	if err != nil {
+		return fmt.Errorf("error while getting open proposals ids: %s", err)
+	}
+
+	// Get the latest block height from db
+	height, err := m.db.GetLastBlockHeight()
+	if err != nil {
+		return fmt.Errorf("error while getting latest block height from db: %s", err)
+	}
+
+	for _, id := range ids {
+		err = m.updateProposalValidatorStatusSnapshot(height, id)
+		if err != nil {
+			return fmt.Errorf("error while updating proposal validator status snapshots: %s", err)
+		}
+	}
+
+	return nil
+}
+
+// updateProposalValidatorStatusesSnapshot updates the snapshots of the various validators for
+// the proposal having the given id
+func (m *Module) updateProposalValidatorStatusSnapshot(
+	height int64, proposalID uint64) error {
+	validators, _, err := m.GetValidatorsWithStatus(height, stakingtypes.Bonded.String())
+	if err != nil {
+		return fmt.Errorf("error while getting validators with bonded status: %s", err)
+	}
+
+	var snapshots = make([]types.ProposalValidatorStatusSnapshot, len(validators))
+	for index, validator := range validators {
+		consAddr, err := validator.GetConsAddr()
+		if err != nil {
+			return err
+		}
+
+		snapshots[index] = types.NewProposalValidatorStatusSnapshot(
+			proposalID,
+			consAddr.String(),
+			validator.Tokens.Int64(),
+			validator.Status,
+			validator.Jailed,
+			height,
+		)
+	}
+
+	return m.db.SaveProposalValidatorsStatusesSnapshots(snapshots)
+}

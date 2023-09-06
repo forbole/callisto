@@ -27,6 +27,18 @@ func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
 
 	case *stakingtypes.MsgEditValidator:
 		return m.handleEditValidator(tx.Height, cosmosMsg)
+
+	// update active proposals validator status snapshot
+	// when the VP is changed
+	case *stakingtypes.MsgDelegate:
+		return m.UpdateProposalValidatorStatusesSnapshots()
+
+	case *stakingtypes.MsgBeginRedelegate:
+		return m.UpdateProposalValidatorStatusesSnapshots()
+
+	case *stakingtypes.MsgUndelegate:
+		return m.UpdateProposalValidatorStatusesSnapshots()
+
 	}
 
 	return nil
