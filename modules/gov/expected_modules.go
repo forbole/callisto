@@ -1,8 +1,8 @@
 package gov
 
 import (
+	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"github.com/forbole/bdjuno/v4/types"
 )

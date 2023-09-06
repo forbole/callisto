@@ -17,7 +17,7 @@ import (
 	"github.com/forbole/bdjuno/v4/modules"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
-	evmosapp "github.com/evmos/evmos/v11/app"
+	evmosapp "github.com/evmos/evmos/v13/app"
 )
 
 func main() {

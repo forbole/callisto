@@ -9,9 +9,9 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	juno "github.com/forbole/juno/v4/types"
 
+	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
+	tmtypes "github.com/cometbft/cometbft/types"
 	"github.com/rs/zerolog/log"
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
-	tmtypes "github.com/tendermint/tendermint/types"
 )
 
 // HandleBlock implements BlockModule
