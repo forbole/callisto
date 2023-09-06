@@ -22,7 +22,7 @@ import (
 
 	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
 
-	inflationtypes "github.com/evmos/evmos/v13/x/inflation/types"
+	inflationtypes "github.com/evmos/evmos/v14/x/inflation/types"
 )
 
 func (m *Module) UpdateProposal(height int64, blockTime time.Time, id uint64) error {
@@ -287,7 +287,7 @@ func (m *Module) handlePassedProposal(proposal govtypesv1beta1.Proposal, height 
 
 	// Unpack proposal
 	var content govtypesv1beta1.Content
-	err := m.db.EncodingConfig.Codec.UnpackAny(proposal.Content, &content)
+	err := m.db.Cdc.UnpackAny(proposal.Content, &content)
 	if err != nil {
 		return fmt.Errorf("error while handling ParamChangeProposal: %s", err)
 	}

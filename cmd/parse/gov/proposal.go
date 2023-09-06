@@ -10,11 +10,11 @@ import (
 	"github.com/rs/zerolog/log"
 
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
-	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
-	"github.com/forbole/juno/v4/types/config"
+	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
+	"github.com/forbole/juno/v5/types/config"
 	"github.com/spf13/cobra"
 
-	"github.com/forbole/juno/v4/parser"
+	"github.com/forbole/juno/v5/parser"
 
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/forbole/bdjuno/v4/database"
