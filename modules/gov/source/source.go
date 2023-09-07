@@ -1,6 +1,6 @@
 package source
 
-import govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+import govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 
 type Source interface {
 	Proposal(height int64, id uint64) (govtypes.Proposal, error)

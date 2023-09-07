@@ -4,24 +4,23 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cosmos/cosmos-sdk/simapp"
-	"github.com/tendermint/tendermint/libs/log"
+	"github.com/cometbft/cometbft/libs/log"
+	"github.com/forbole/juno/v5/types/params"
 
-	"github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/forbole/juno/v4/node/remote"
+	"github.com/forbole/juno/v5/node/remote"
 
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/forbole/juno/v4/node/local"
-
-	nodeconfig "github.com/forbole/juno/v4/node/config"
+	nodeconfig "github.com/forbole/juno/v5/node/config"
+	"github.com/forbole/juno/v5/node/local"
 
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v4/modules/bank/source/local"
@@ -44,8 +43,7 @@ import (
 	wasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source"
 	localwasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source/local"
 	remotewasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source/remote"
-	persistenceapp "github.com/persistenceOne/persistenceCore/v7/app"
-	persistenceappparams "github.com/persistenceOne/persistenceCore/v7/app/params"
+	persistenceapp "github.com/persistenceOne/persistenceCore/v8/app"
 )
 
 type Sources struct {
@@ -58,7 +56,7 @@ type Sources struct {
 	WasmSource     wasmsource.Source
 }
 
-func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
+func BuildSources(nodeCfg nodeconfig.Config, encodingConfig params.EncodingConfig) (*Sources, error) {
 	switch cfg := nodeCfg.Details.(type) {
 	case *remote.Details:
 		return buildRemoteSources(cfg)
@@ -70,30 +68,25 @@ func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConf
 	}
 }
 
-func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig) (*Sources, error) {
+func buildLocalSources(cfg *local.Details, encodingConfig params.EncodingConfig) (*Sources, error) {
 	source, err := local.NewSource(cfg.Home, encodingConfig)
 	if err != nil {
 		return nil, err
 	}
 
-	persistenceApp := persistenceapp.NewApplication("", persistenceappparams.MakeEncodingConfig(), nil,
-		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, 0, map[int64]bool{},
-		cfg.Home, []wasmtypes.ProposalType{}, simapp.EmptyAppOptions{}, []wasmkeeper.Option{}, nil,
-	)
-
-	app := simapp.NewSimApp(
-		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
-		cfg.Home, 0, simapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
+	app := persistenceapp.NewApplication(
+		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true,
+		[]wasmtypes.ProposalType{}, nil, []wasmkeeper.Option{}, nil,
 	)
 
 	sources := &Sources{
-		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(persistenceApp.BankKeeper)),
-		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
-		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(persistenceApp.GovKeeper)),
-		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(persistenceApp.MintKeeper)),
-		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(persistenceApp.SlashingKeeper)),
-		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: *persistenceApp.StakingKeeper}),
-		WasmSource:     localwasmsource.NewSource(source, wasmkeeper.Querier(persistenceApp.WasmKeeper)),
+		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
+		DistrSource:    localdistrsource.NewSource(source, distrkeeper.Querier{Keeper: *app.DistributionKeeper}),
+		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
+		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
+		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
+		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
+		WasmSource:     localwasmsource.NewSource(source, wasmkeeper.Querier(app.WasmKeeper)),
 	}
 
 	// Mount and initialize the stores

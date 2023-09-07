@@ -6,7 +6,7 @@ import (
 	"github.com/forbole/bdjuno/v4/database"
 	wasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source"
 
-	"github.com/forbole/juno/v4/modules"
+	"github.com/forbole/juno/v5/modules"
 )
 
 var (
