@@ -2,14 +2,15 @@ package gov
 
 import (
 	"fmt"
-	"time"
-
 	"strconv"
+	"time"
 
 	"github.com/forbole/bdjuno/v4/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+
+	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
 	juno "github.com/forbole/juno/v5/types"
 )
 
@@ -20,13 +21,13 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	}
 
 	switch cosmosMsg := msg.(type) {
-	case *govtypes.MsgSubmitProposal:
+	case *govtypesv1.MsgSubmitProposal:
 		return m.handleMsgSubmitProposal(tx, index, cosmosMsg)
 
-	case *govtypes.MsgDeposit:
+	case *govtypesv1.MsgDeposit:
 		return m.handleMsgDeposit(tx, cosmosMsg)
 
-	case *govtypes.MsgVote:
+	case *govtypesv1.MsgVote:
 		return m.handleMsgVote(tx, cosmosMsg)
 	}
 
@@ -34,14 +35,14 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 }
 
 // handleMsgSubmitProposal allows to properly handle a handleMsgSubmitProposal
-func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypes.MsgSubmitProposal) error {
+func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1.MsgSubmitProposal) error {
 	// Get the proposal id
-	event, err := tx.FindEventByType(index, govtypes.EventTypeSubmitProposal)
+	event, err := tx.FindEventByType(index, gov.EventTypeSubmitProposal)
 	if err != nil {
 		return fmt.Errorf("error while searching for EventTypeSubmitProposal: %s", err)
 	}
 
-	id, err := tx.FindAttributeByKey(event, govtypes.AttributeKeyProposalID)
+	id, err := tx.FindAttributeByKey(event, gov.AttributeKeyProposalID)
 	if err != nil {
 		return fmt.Errorf("error while searching for AttributeKeyProposalID: %s", err)
 	}
@@ -59,17 +60,19 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypes.M
 
 	// Store the proposal
 	proposalObj := types.NewProposal(
-		proposal.ProposalId,
-		msg.GetContent().ProposalRoute(),
-		msg.GetContent().ProposalType(),
-		msg.GetContent(),
+		proposal.Id,
+		proposal.Title,
+		proposal.Summary,
+		proposal.Metadata,
+		msg.Messages,
 		proposal.Status.String(),
-		proposal.SubmitTime,
-		proposal.DepositEndTime,
+		*proposal.SubmitTime,
+		*proposal.DepositEndTime,
 		proposal.VotingStartTime,
 		proposal.VotingEndTime,
 		msg.Proposer,
 	)
+
 	err = m.db.SaveProposals([]types.Proposal{proposalObj})
 	if err != nil {
 		return err
@@ -81,17 +84,16 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypes.M
 	}
 
 	// Store the deposit
-	deposit := types.NewDeposit(proposal.ProposalId, msg.Proposer, msg.InitialDeposit, txTimestamp, tx.Height)
+	deposit := types.NewDeposit(proposal.Id, msg.Proposer, msg.InitialDeposit, txTimestamp, tx.Height)
 	return m.db.SaveDeposits([]types.Deposit{deposit})
 }
 
 // handleMsgDeposit allows to properly handle a handleMsgDeposit
-func (m *Module) handleMsgDeposit(tx *juno.Tx, msg *govtypes.MsgDeposit) error {
+func (m *Module) handleMsgDeposit(tx *juno.Tx, msg *govtypesv1.MsgDeposit) error {
 	deposit, err := m.source.ProposalDeposit(tx.Height, msg.ProposalId, msg.Depositor)
 	if err != nil {
 		return fmt.Errorf("error while getting proposal deposit: %s", err)
 	}
-
 	txTimestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
 	if err != nil {
 		return fmt.Errorf("error while parsing time: %s", err)
@@ -103,7 +105,7 @@ func (m *Module) handleMsgDeposit(tx *juno.Tx, msg *govtypes.MsgDeposit) error {
 }
 
 // handleMsgVote allows to properly handle a handleMsgVote
-func (m *Module) handleMsgVote(tx *juno.Tx, msg *govtypes.MsgVote) error {
+func (m *Module) handleMsgVote(tx *juno.Tx, msg *govtypesv1.MsgVote) error {
 	txTimestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
 	if err != nil {
 		return fmt.Errorf("error while parsing time: %s", err)

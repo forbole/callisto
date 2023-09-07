@@ -38,7 +38,7 @@ func vestingCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				return fmt.Errorf("error unmarshalling genesis doc: %s", err)
 			}
 
-			vestingAccounts, err := authutils.GetGenesisVestingAccounts(appState, parseCtx.EncodingConfig.Marshaler)
+			vestingAccounts, err := authutils.GetGenesisVestingAccounts(appState, parseCtx.EncodingConfig.Codec)
 			if err != nil {
 				return fmt.Errorf("error while gestting vesting accounts: %s", err)
 			}

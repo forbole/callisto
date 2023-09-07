@@ -33,7 +33,7 @@ func contractsCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			db := database.Cast(parseCtx.Database)
 
 			// Build the wasm module
-			wasmModule := wasm.NewModule(sources.WasmSource, parseCtx.EncodingConfig.Marshaler, db)
+			wasmModule := wasm.NewModule(sources.WasmSource, parseCtx.EncodingConfig.Codec, db)
 
 			// Get latest height
 			height, err := parseCtx.Node.LatestHeight()

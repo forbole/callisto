@@ -13,7 +13,6 @@ import (
 
 	"github.com/forbole/bdjuno/v4/types/config"
 
-	"github.com/forbole/juno/v5/types/params"
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules"
 
