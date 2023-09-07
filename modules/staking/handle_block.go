@@ -83,13 +83,14 @@ func (m *Module) updateDoubleSignEvidence(height int64, evidenceList tmtypes.Evi
 	log.Debug().Str("module", "staking").Int64("height", height).
 		Msg("updating double sign evidence")
 
+	var evidences []types.DoubleSignEvidence
 	for _, ev := range evidenceList {
 		dve, ok := ev.(*tmtypes.DuplicateVoteEvidence)
 		if !ok {
 			continue
 		}
 
-		evidence := types.NewDoubleSignEvidence(
+		evidences = append(evidences, types.NewDoubleSignEvidence(
 			height,
 			types.NewDoubleSignVote(
 				int(dve.VoteA.Type),
@@ -109,14 +110,15 @@ func (m *Module) updateDoubleSignEvidence(height int64, evidenceList tmtypes.Evi
 				dve.VoteB.ValidatorIndex,
 				hex.EncodeToString(dve.VoteB.Signature),
 			),
+		),
 		)
-
-		err := m.db.SaveDoubleSignEvidence(evidence)
-		if err != nil {
-			log.Error().Str("module", "staking").Err(err).Int64("height", height).
-				Msg("error while saving double sign evidence")
-			return
-		}
-
 	}
+
+	err := m.db.SaveDoubleSignEvidence(evidences)
+	if err != nil {
+		log.Error().Str("module", "staking").Err(err).Int64("height", height).
+			Msg("error while saving double sign evidence")
+		return
+	}
+
 }
