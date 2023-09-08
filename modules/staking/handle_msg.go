@@ -28,16 +28,17 @@ func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
 	case *stakingtypes.MsgEditValidator:
 		return m.handleEditValidator(tx.Height, cosmosMsg)
 
-	// update active proposals validator status snapshot
-	// when the VP is changed
+	// update validators statuses, voting power
+	// and proposals validators satatus snapshots
+	// when there is a voting power change
 	case *stakingtypes.MsgDelegate:
-		return m.UpdateProposalValidatorStatusesSnapshots()
+		return m.UpdateValidatorStatuses()
 
 	case *stakingtypes.MsgBeginRedelegate:
-		return m.UpdateProposalValidatorStatusesSnapshots()
+		return m.UpdateValidatorStatuses()
 
 	case *stakingtypes.MsgUndelegate:
-		return m.UpdateProposalValidatorStatusesSnapshots()
+		return m.UpdateValidatorStatuses()
 
 	}
 
