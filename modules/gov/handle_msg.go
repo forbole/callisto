@@ -3,11 +3,13 @@ package gov
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/x/authz"
 
 	"github.com/forbole/bdjuno/v4/types"
+	"google.golang.org/grpc/codes"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
@@ -62,7 +64,20 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1
 	// Get the proposal
 	proposal, err := m.source.Proposal(tx.Height, proposalID)
 	if err != nil {
-		return fmt.Errorf("error while getting proposal: %s", err)
+		if strings.Contains(err.Error(), codes.NotFound.String()) {
+			// query the proposal details using the latest height stored in db
+			// to fix the rpc error returning code = NotFound desc = proposal x doesn't exist
+			height, err := m.db.GetLastBlockHeight()
+			if err != nil {
+				return fmt.Errorf("error while getting latest block height: %s", err)
+			}
+			proposal, err = m.source.Proposal(height, proposalID)
+			if err != nil {
+				return fmt.Errorf("error while getting proposal: %s", err)
+			}
+		} else {
+			return fmt.Errorf("error while getting proposal: %s", err)
+		}
 	}
 
 	// Store the proposal
