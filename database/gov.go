@@ -120,7 +120,19 @@ INSERT INTO proposal(
 
 	// Store the proposals
 	proposalsQuery = proposalsQuery[:len(proposalsQuery)-1] // Remove trailing ","
-	proposalsQuery += " ON CONFLICT DO NOTHING"
+	proposalsQuery += `
+ON CONFLICT (id) DO UPDATE 
+	SET title = excluded.title,
+  		description = excluded.description,
+		content = excluded.content,
+		proposer_address = excluded.proposer_address,
+		proposal_route = excluded.proposal_route,
+		proposal_type = excluded.proposal_type,
+		status = excluded.status,
+		submit_time = excluded.submit_time,
+		deposit_end_time = excluded.deposit_end_time,
+		voting_start_time = excluded.voting_start_time,
+		voting_end_time = excluded.voting_end_time`
 	_, err = db.SQL.Exec(proposalsQuery, proposalsParams...)
 	if err != nil {
 		return fmt.Errorf("error while storing proposals: %s", err)
