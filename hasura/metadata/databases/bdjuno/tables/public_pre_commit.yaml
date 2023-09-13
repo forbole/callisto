@@ -2,27 +2,18 @@ table:
   name: pre_commit
   schema: public
 object_relationships:
-  - name: validator
-    using:
-      foreign_key_constraint_on: validator_address
+- name: validator
+  using:
+    foreign_key_constraint_on: validator_address
 select_permissions:
-  - role: anonymous
-    permission:
-      columns:
-        - validator_address
-        - height
-        - timestamp
-        - voting_power
-        - proposer_priority
-      filter: {}
-      allow_aggregations: true
-  - role: client
-    permission:
-      columns:
-        - validator_address
-        - height
-        - timestamp
-        - voting_power
-        - proposer_priority
-      filter: {}
-      allow_aggregations: true
+- permission:
+    allow_aggregations: true
+    columns:
+    - validator_address
+    - height
+    - timestamp
+    - voting_power
+    - proposer_priority
+    filter: {}
+    limit: 100
+  role: anonymous

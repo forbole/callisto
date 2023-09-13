@@ -2,41 +2,42 @@ table:
   name: token_unit
   schema: public
 object_relationships:
-  - name: token
-    using:
-      foreign_key_constraint_on: token_name
-  - name: token_price
-    using:
-      manual_configuration:
-        column_mapping:
-          denom: unit_name
-        insertion_order: null
-        remote_table:
-          name: token_price
-          schema: public
+- name: token
+  using:
+    foreign_key_constraint_on: token_name
+- name: token_price
+  using:
+    manual_configuration:
+      column_mapping:
+        denom: unit_name
+      insertion_order: null
+      remote_table:
+        name: token_price
+        schema: public
 array_relationships:
-  - name: token_price_histories
-    using:
-      foreign_key_constraint_on:
-        column: unit_name
-        table:
-          name: token_price_history
-          schema: public
-  - name: token_prices
-    using:
-      foreign_key_constraint_on:
-        column: unit_name
-        table:
-          name: token_price
-          schema: public
+- name: token_price_histories
+  using:
+    foreign_key_constraint_on:
+      column: unit_name
+      table:
+        name: token_price_history
+        schema: public
+- name: token_prices
+  using:
+    foreign_key_constraint_on:
+      column: unit_name
+      table:
+        name: token_price
+        schema: public
 select_permissions:
-  - role: anonymous
-    permission:
-      columns:
-        - aliases
-        - denom
-        - exponent
-        - price_id
-        - token_name
-      filter: {}
-      allow_aggregations: true
+- permission:
+    allow_aggregations: false
+    columns:
+    - aliases
+    - denom
+    - exponent
+    - price_id
+    - token_name
+    filter: {}
+    limit: 100
+  role: anonymous

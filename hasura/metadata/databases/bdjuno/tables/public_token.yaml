@@ -2,17 +2,18 @@ table:
   name: token
   schema: public
 array_relationships:
-  - name: token_units
-    using:
-      foreign_key_constraint_on:
-        column: token_name
-        table:
-          name: token_unit
-          schema: public
+- name: token_units
+  using:
+    foreign_key_constraint_on:
+      column: token_name
+      table:
+        name: token_unit
+        schema: public
 select_permissions:
-  - role: anonymous
-    permission:
-      columns:
-        - name
-      filter: {}
-      allow_aggregations: true
+- permission:
+    allow_aggregations: false
+    columns:
+    - name
+    filter: {}
+    limit: 100
+  role: anonymous

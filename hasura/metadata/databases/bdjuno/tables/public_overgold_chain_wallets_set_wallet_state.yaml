@@ -1,7 +1,0 @@
-table:
-  name: overgold_chain_wallets_set_wallet_state
-  schema: public
-object_relationships:
-  - name: transaction
-    using:
-      foreign_key_constraint_on: transaction_hash

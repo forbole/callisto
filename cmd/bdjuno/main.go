@@ -1,27 +1,26 @@
 package main
 
 import (
-	chainapp "git.ooo.ua/vipcoin/chain/app"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/forbole/juno/v3/cmd"
-	initcmd "github.com/forbole/juno/v3/cmd/init"
-	"github.com/forbole/juno/v3/cmd/parse/genesis"
-	parsetypes "github.com/forbole/juno/v3/cmd/parse/types"
-	startcmd "github.com/forbole/juno/v3/cmd/start"
-	"github.com/forbole/juno/v3/modules/messages"
+	"github.com/forbole/juno/v5/cmd"
+	initcmd "github.com/forbole/juno/v5/cmd/init"
+	"github.com/forbole/juno/v5/cmd/parse/genesis"
+	parsetypes "github.com/forbole/juno/v5/cmd/parse/types"
+	startcmd "github.com/forbole/juno/v5/cmd/start"
+	"github.com/forbole/juno/v5/modules/messages"
 
-	migratecmd "github.com/forbole/bdjuno/v3/cmd/migrate"
+	migratecmd "github.com/forbole/bdjuno/v4/cmd/migrate"
+	parsecmd "github.com/forbole/bdjuno/v4/cmd/parse"
 
-	parsecmd "github.com/forbole/bdjuno/v3/cmd/parse"
+	"github.com/forbole/bdjuno/v4/types/config"
 
-	"github.com/forbole/bdjuno/v3/types/config"
+	"cosmossdk.io/simapp"
 
-	"github.com/forbole/bdjuno/v3/database"
-	"github.com/forbole/bdjuno/v3/modules"
+	chainapp "git.ooo.ua/vipcoin/ovg-chain/app"
 
-	"github.com/cosmos/gaia/v6/app"
-
-	vault "github.com/forbole/bdjuno/v3/config"
+	vault "github.com/forbole/bdjuno/v4/config"
+	"github.com/forbole/bdjuno/v4/database"
+	"github.com/forbole/bdjuno/v4/modules"
 )
 
 func main() {
@@ -62,7 +61,7 @@ func main() {
 // This should be edited by custom implementations if needed.
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
-		gaia.ModuleBasics,
+		simapp.ModuleBasics,
 		chainapp.ModuleBasics,
 	}
 }

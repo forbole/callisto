@@ -12,9 +12,9 @@ import (
 	cosmos "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	cosmostx "github.com/cosmos/cosmos-sdk/types/tx"
-	txtypes "github.com/forbole/juno/v3/types"
+	txtypes "github.com/forbole/juno/v5/types"
 
-	"github.com/forbole/bdjuno/v3/database/types"
+	"github.com/forbole/bdjuno/v4/database/types"
 )
 
 // GetTransaction - get transaction from database
@@ -74,7 +74,6 @@ func (db *Db) toTxTypesTx(tx types.TransactionRow) (*txtypes.Tx, error) {
 	if !tx.Success {
 		result.TxResponse.Code = 1
 	}
-
 	var anyRaw []json.RawMessage
 	if err = json.Unmarshal(tx.Messages, &anyRaw); err != nil {
 		return nil, err
@@ -83,8 +82,7 @@ func (db *Db) toTxTypesTx(tx types.TransactionRow) (*txtypes.Tx, error) {
 	result.Body.Messages = make([]*cosmos.Any, 0, len(anyRaw))
 	for _, raw := range anyRaw {
 		msg := cosmos.Any{}
-
-		if err := db.EncodingConfig.Marshaler.UnmarshalJSON(raw, &msg); err != nil {
+		if err := db.Cdc.UnmarshalJSON(raw, &msg); err != nil {
 			return nil, err
 		}
 
@@ -106,8 +104,7 @@ func (db *Db) toTxTypesTx(tx types.TransactionRow) (*txtypes.Tx, error) {
 	result.AuthInfo.SignerInfos = make([]*cosmostx.SignerInfo, 0, len(sigInfoRaw))
 	for _, sig := range sigInfoRaw {
 		sigInfo := cosmostx.SignerInfo{}
-
-		if err = db.EncodingConfig.Marshaler.UnmarshalJSON(sig, &sigInfo); err != nil {
+		if err = db.Cdc.UnmarshalJSON(sig, &sigInfo); err != nil {
 			return nil, err
 		}
 
@@ -115,7 +112,7 @@ func (db *Db) toTxTypesTx(tx types.TransactionRow) (*txtypes.Tx, error) {
 	}
 
 	result.AuthInfo.Fee = &cosmostx.Fee{}
-	if err = db.EncodingConfig.Marshaler.UnmarshalJSON(tx.Fee, result.AuthInfo.Fee); err != nil {
+	if err = db.Cdc.UnmarshalJSON(tx.Fee, result.AuthInfo.Fee); err != nil {
 		return nil, err
 	}
 

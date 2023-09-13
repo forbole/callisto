@@ -4,22 +4,24 @@ import (
 	"sync"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/forbole/juno/v3/logging"
-	"github.com/forbole/juno/v3/modules"
-	jmodules "github.com/forbole/juno/v3/modules"
+	"github.com/forbole/juno/v5/logging"
+	"github.com/forbole/juno/v5/modules"
+	jmodules "github.com/forbole/juno/v5/modules"
 
-	"github.com/forbole/juno/v3/node"
+	"github.com/forbole/juno/v5/node"
 
-	"github.com/forbole/bdjuno/v3/database"
-	"github.com/forbole/bdjuno/v3/database/overgold/chain/last_block"
-	"github.com/forbole/bdjuno/v3/modules/overgold/chain/accounts"
-	overgoldAccountsSource "github.com/forbole/bdjuno/v3/modules/overgold/chain/accounts/source"
-	"github.com/forbole/bdjuno/v3/modules/overgold/chain/assets"
-	overgoldAssetsSource "github.com/forbole/bdjuno/v3/modules/overgold/chain/assets/source"
-	"github.com/forbole/bdjuno/v3/modules/overgold/chain/banking"
-	overgoldBankingSource "github.com/forbole/bdjuno/v3/modules/overgold/chain/banking/source"
-	"github.com/forbole/bdjuno/v3/modules/overgold/chain/wallets"
-	overgoldWalletsSource "github.com/forbole/bdjuno/v3/modules/overgold/chain/wallets/source"
+	"github.com/forbole/bdjuno/v4/database"
+	"github.com/forbole/bdjuno/v4/database/overgold/chain/last_block"
+	"github.com/forbole/bdjuno/v4/modules/overgold/chain/allowed"
+	overgoldAllowedSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/allowed/source"
+	"github.com/forbole/bdjuno/v4/modules/overgold/chain/core"
+	overgoldCoreSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/core/source"
+	"github.com/forbole/bdjuno/v4/modules/overgold/chain/feeexcluder"
+	overgoldFeeExcluderSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/feeexcluder/source"
+	"github.com/forbole/bdjuno/v4/modules/overgold/chain/referral"
+	overgoldReferralSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/referral/source"
+	"github.com/forbole/bdjuno/v4/modules/overgold/chain/stake"
+	overgoldStakeSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/stake/source"
 )
 
 var (
@@ -51,10 +53,11 @@ func NewModule(
 	node node.Node,
 	logger logging.Logger,
 
-	OvergoldAccountsSource overgoldAccountsSource.Source,
-	OvergoldWalletsSource overgoldWalletsSource.Source,
-	OvergoldBankingSource overgoldBankingSource.Source,
-	OvergoldAssetsSource overgoldAssetsSource.Source,
+	OverGoldCoreSource overgoldCoreSource.Source,
+	OverGoldAllowedSource overgoldAllowedSource.Source,
+	OverGoldFeeExcluderSource overgoldFeeExcluderSource.Source,
+	OverGoldReferralSource overgoldReferralSource.Source,
+	OverGoldStakeSource overgoldStakeSource.Source,
 ) *module {
 	module := &module{
 		cdc:           cdc,
@@ -63,10 +66,11 @@ func NewModule(
 		node:          node,
 		logger:        logger,
 		overgoldModules: []overgoldModule{
-			accounts.NewModule(OvergoldAccountsSource, cdc, db),
-			assets.NewModule(OvergoldAssetsSource, cdc, db),
-			banking.NewModule(OvergoldBankingSource, cdc, db),
-			wallets.NewModule(OvergoldWalletsSource, cdc, db),
+			core.NewModule(OverGoldCoreSource, cdc, db),
+			allowed.NewModule(OverGoldAllowedSource, cdc, db),
+			feeexcluder.NewModule(OverGoldFeeExcluderSource, cdc, db),
+			referral.NewModule(OverGoldReferralSource, cdc, db),
+			stake.NewModule(OverGoldStakeSource, cdc, db),
 		},
 	}
 

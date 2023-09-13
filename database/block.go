@@ -7,7 +7,7 @@ import (
 	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
 
-	"github.com/forbole/bdjuno/v3/database/types"
+	"github.com/forbole/bdjuno/v4/database/types"
 )
 
 // GetBlock - get block from database

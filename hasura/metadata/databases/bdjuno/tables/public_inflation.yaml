@@ -2,16 +2,11 @@ table:
   name: inflation
   schema: public
 select_permissions:
-  - role: anonymous
-    permission:
-      columns:
-        - value
-        - height
-      filter: {}
-      allow_aggregations: true
-  - role: client
-    permission:
-      columns:
-        - height
-      filter: {}
-      allow_aggregations: true
+- permission:
+    allow_aggregations: false
+    columns:
+    - value
+    - height
+    filter: {}
+    limit: 1
+  role: anonymous

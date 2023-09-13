@@ -4,54 +4,56 @@ import (
 	"fmt"
 	"os"
 
-	accountstypes "git.ooo.ua/vipcoin/chain/x/accounts/types"
-	assetstypes "git.ooo.ua/vipcoin/chain/x/assets/types"
-	bankingtypes "git.ooo.ua/vipcoin/chain/x/banking/types"
-	walletstypes "git.ooo.ua/vipcoin/chain/x/wallets/types"
-	"github.com/cosmos/cosmos-sdk/simapp"
-	"github.com/tendermint/tendermint/libs/log"
+	allowedtypes "git.ooo.ua/vipcoin/ovg-chain/x/allowed/types"
+	coretypes "git.ooo.ua/vipcoin/ovg-chain/x/core/types"
+	feeexcludertypes "git.ooo.ua/vipcoin/ovg-chain/x/feeexcluder/types"
+	referraltypes "git.ooo.ua/vipcoin/ovg-chain/x/referral/types"
+	staketypes "git.ooo.ua/vipcoin/ovg-chain/x/stake/types"
+	"github.com/cometbft/cometbft/libs/log"
+	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
-	"github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/forbole/juno/v3/node/remote"
+	"cosmossdk.io/simapp"
+	"cosmossdk.io/simapp/params"
+	"github.com/forbole/juno/v5/node/remote"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/forbole/juno/v3/node/local"
+	"github.com/forbole/juno/v5/node/local"
 
-	nodeconfig "github.com/forbole/juno/v3/node/config"
+	nodeconfig "github.com/forbole/juno/v5/node/config"
 
-	banksource "github.com/forbole/bdjuno/v3/modules/bank/source"
-	localbanksource "github.com/forbole/bdjuno/v3/modules/bank/source/local"
-	remotebanksource "github.com/forbole/bdjuno/v3/modules/bank/source/remote"
-	distrsource "github.com/forbole/bdjuno/v3/modules/distribution/source"
-	localdistrsource "github.com/forbole/bdjuno/v3/modules/distribution/source/local"
-	remotedistrsource "github.com/forbole/bdjuno/v3/modules/distribution/source/remote"
-	govsource "github.com/forbole/bdjuno/v3/modules/gov/source"
-	localgovsource "github.com/forbole/bdjuno/v3/modules/gov/source/local"
-	remotegovsource "github.com/forbole/bdjuno/v3/modules/gov/source/remote"
-	mintsource "github.com/forbole/bdjuno/v3/modules/mint/source"
-	localmintsource "github.com/forbole/bdjuno/v3/modules/mint/source/local"
-	remotemintsource "github.com/forbole/bdjuno/v3/modules/mint/source/remote"
-	remoteOvergoldAccountsSource "github.com/forbole/bdjuno/v3/modules/overgold/chain/accounts/source/remote"
-	remoteOvergoldAssetsSource "github.com/forbole/bdjuno/v3/modules/overgold/chain/assets/source/remote"
-	remoteOvergoldBankingSource "github.com/forbole/bdjuno/v3/modules/overgold/chain/banking/source/remote"
-	remoteOvergoldWalletsSource "github.com/forbole/bdjuno/v3/modules/overgold/chain/wallets/source/remote"
-	slashingsource "github.com/forbole/bdjuno/v3/modules/slashing/source"
-	localslashingsource "github.com/forbole/bdjuno/v3/modules/slashing/source/local"
-	remoteslashingsource "github.com/forbole/bdjuno/v3/modules/slashing/source/remote"
-	stakingsource "github.com/forbole/bdjuno/v3/modules/staking/source"
-	localstakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/local"
-	remotestakingsource "github.com/forbole/bdjuno/v3/modules/staking/source/remote"
-
-	overgoldAccountsSource "github.com/forbole/bdjuno/v3/modules/overgold/chain/accounts/source"
-	overgoldAssetsSource "github.com/forbole/bdjuno/v3/modules/overgold/chain/assets/source"
-	overgoldBankingSource "github.com/forbole/bdjuno/v3/modules/overgold/chain/banking/source"
-	overgoldWalletsSource "github.com/forbole/bdjuno/v3/modules/overgold/chain/wallets/source"
+	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
+	localbanksource "github.com/forbole/bdjuno/v4/modules/bank/source/local"
+	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"
+	distrsource "github.com/forbole/bdjuno/v4/modules/distribution/source"
+	remotedistrsource "github.com/forbole/bdjuno/v4/modules/distribution/source/remote"
+	govsource "github.com/forbole/bdjuno/v4/modules/gov/source"
+	localgovsource "github.com/forbole/bdjuno/v4/modules/gov/source/local"
+	remotegovsource "github.com/forbole/bdjuno/v4/modules/gov/source/remote"
+	mintsource "github.com/forbole/bdjuno/v4/modules/mint/source"
+	localmintsource "github.com/forbole/bdjuno/v4/modules/mint/source/local"
+	remotemintsource "github.com/forbole/bdjuno/v4/modules/mint/source/remote"
+	overgoldAllowedSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/allowed/source"
+	remoteOvergoldAllowedSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/allowed/source/remote"
+	overgoldCoreSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/core/source"
+	remoteOvergoldCoreSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/core/source/remote"
+	overgoldFeeExcluderSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/feeexcluder/source"
+	remoteOvergoldFeeExcluderSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/feeexcluder/source/remote"
+	overgoldReferralSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/referral/source"
+	remoteOvergoldReferralSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/referral/source/remote"
+	overgoldStakeSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/stake/source"
+	remoteOvergoldStakeSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/stake/source/remote"
+	slashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source"
+	localslashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source/local"
+	remoteslashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source/remote"
+	stakingsource "github.com/forbole/bdjuno/v4/modules/staking/source"
+	localstakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/local"
+	remotestakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/remote"
 )
 
 type Sources struct {
@@ -63,10 +65,11 @@ type Sources struct {
 	StakingSource  stakingsource.Source
 
 	// Custom OVG sources
-	OvergoldAccountsSource overgoldAccountsSource.Source
-	OvergoldWalletsSource  overgoldWalletsSource.Source
-	OvergoldBankingSource  overgoldBankingSource.Source
-	OvergoldAssetsSource   overgoldAssetsSource.Source
+	OverGoldCoreSource        overgoldCoreSource.Source
+	OverGoldAllowedSource     overgoldAllowedSource.Source
+	OverGoldFeeExcluderSource overgoldFeeExcluderSource.Source
+	OverGoldReferralSource    overgoldReferralSource.Source
+	OverGoldStakeSource       overgoldStakeSource.Source
 }
 
 func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -88,14 +91,13 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 	}
 
 	app := simapp.NewSimApp(
-		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
-		cfg.Home, 0, simapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
+		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, nil, nil,
 	)
 
 	sources := &Sources{
-		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
-		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
-		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
+		BankSource: localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
+		// DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
+		GovSource:      localgovsource.NewSource(source, govtypesv1.QueryServer(app.GovKeeper), nil),
 		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
 		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
@@ -134,15 +136,16 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 	return &Sources{
 		BankSource:     remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
 		DistrSource:    remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
-		GovSource:      remotegovsource.NewSource(source, govtypes.NewQueryClient(source.GrpcConn)),
+		GovSource:      remotegovsource.NewSource(source, govtypesv1.NewQueryClient(source.GrpcConn), govtypesv1beta1.NewQueryClient(source.GrpcConn)),
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
 
 		// Custom OVG sources
-		OvergoldAccountsSource: remoteOvergoldAccountsSource.NewSource(source, accountstypes.NewQueryClient(source.GrpcConn)),
-		OvergoldWalletsSource:  remoteOvergoldWalletsSource.NewSource(source, walletstypes.NewQueryClient(source.GrpcConn)),
-		OvergoldBankingSource:  remoteOvergoldBankingSource.NewSource(source, bankingtypes.NewQueryClient(source.GrpcConn)),
-		OvergoldAssetsSource:   remoteOvergoldAssetsSource.NewSource(source, assetstypes.NewQueryClient(source.GrpcConn)),
+		OverGoldCoreSource:        remoteOvergoldCoreSource.NewSource(source, coretypes.NewQueryClient(source.GrpcConn)),
+		OverGoldAllowedSource:     remoteOvergoldAllowedSource.NewSource(source, allowedtypes.NewQueryClient(source.GrpcConn)),
+		OverGoldFeeExcluderSource: remoteOvergoldFeeExcluderSource.NewSource(source, feeexcludertypes.NewQueryClient(source.GrpcConn)),
+		OverGoldReferralSource:    remoteOvergoldReferralSource.NewSource(source, referraltypes.NewQueryClient(source.GrpcConn)),
+		OverGoldStakeSource:       remoteOvergoldStakeSource.NewSource(source, staketypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }

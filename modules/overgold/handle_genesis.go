@@ -3,8 +3,8 @@ package overgold
 import (
 	"encoding/json"
 
-	"github.com/forbole/juno/v3/modules"
-	tmtypes "github.com/tendermint/tendermint/types"
+	tmtypes "github.com/cometbft/cometbft/types"
+	"github.com/forbole/juno/v5/modules"
 )
 
 // HandleGenesis implements modules.GenesisModule

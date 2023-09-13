@@ -3,15 +3,15 @@ package feegrant
 import (
 	"fmt"
 
-	abci "github.com/tendermint/tendermint/abci/types"
+	abci "github.com/cometbft/cometbft/abci/types"
 
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
-	juno "github.com/forbole/juno/v3/types"
+	juno "github.com/forbole/juno/v5/types"
 
+	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 	"github.com/rs/zerolog/log"
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 )
 
 // HandleBlock implements BlockModule
@@ -43,7 +43,7 @@ func (m *Module) removeExpiredFeeGrantAllowances(height int64, events []abci.Eve
 		if err != nil {
 			return fmt.Errorf("error while getting fee grant grantee address: %s", err)
 		}
-		err = m.db.DeleteFeeGrantAllowance(types.NewGrantRemoval(string(granteeAddress.Value), string(granterAddress.Value), height))
+		err = m.db.DeleteFeeGrantAllowance(types.NewGrantRemoval(granteeAddress.Value, granterAddress.Value, height))
 		if err != nil {
 			return fmt.Errorf("error while deleting fee grant allowance: %s", err)
 

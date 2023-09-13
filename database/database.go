@@ -3,8 +3,8 @@ package database
 import (
 	"fmt"
 
-	db "github.com/forbole/juno/v3/database"
-	"github.com/forbole/juno/v3/database/postgresql"
+	db "github.com/forbole/juno/v5/database"
+	"github.com/forbole/juno/v5/database/postgresql"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -31,7 +31,7 @@ func Builder(ctx *db.Context) (db.Database, error) {
 
 	return &Db{
 		Database: psqlDb,
-		Sqlx:     sqlx.NewDb(psqlDb.Sql, "pgx"),
+		Sqlx:     sqlx.NewDb(psqlDb.SQL.DB, "postgresql"),
 	}, nil
 }
 

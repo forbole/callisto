@@ -1,7 +1,0 @@
-table:
-  name: overgold_chain_accounts_account_migrate
-  schema: public
-object_relationships:
-  - name: transaction
-    using:
-      foreign_key_constraint_on: transaction_hash

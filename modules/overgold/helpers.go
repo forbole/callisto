@@ -3,15 +3,15 @@ package overgold
 import (
 	"fmt"
 
+	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
+	tmtypes "github.com/cometbft/cometbft/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/forbole/juno/v3/modules"
-	"github.com/forbole/juno/v3/types"
-	txtypes "github.com/forbole/juno/v3/types"
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
-	tmtypes "github.com/tendermint/tendermint/types"
+	"github.com/forbole/juno/v5/modules"
+	"github.com/forbole/juno/v5/types"
+	txtypes "github.com/forbole/juno/v5/types"
 
-	dbhelpers "github.com/forbole/bdjuno/v3/database/types"
-	dbtypes "github.com/forbole/bdjuno/v3/database/types"
+	dbhelpers "github.com/forbole/bdjuno/v4/database/types"
+	dbtypes "github.com/forbole/bdjuno/v4/database/types"
 )
 
 // parseMissingBlocksAndTransactions - parse missing blocks and transactions
