@@ -33,7 +33,7 @@ func (m *Module) updateProposals(height int64, blockTime time.Time, blockVals *t
 	for _, id := range ids {
 		err = m.UpdateProposal(height, blockTime, id)
 		if err != nil {
-			return fmt.Errorf("error while updating proposal: %s", err)
+			return fmt.Errorf("error while updating proposal %d: %s", id, err)
 		}
 
 		err = m.UpdateProposalValidatorStatusesSnapshot(height, blockVals, id)
