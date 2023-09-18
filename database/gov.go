@@ -251,8 +251,7 @@ func (db *Db) SaveDeposits(deposits []types.Deposit) error {
 	query = query[:len(query)-1] // Remove trailing ","
 	query += `
 ON CONFLICT ON CONSTRAINT unique_deposit DO UPDATE
-	SET amount = excluded.amount,
-		timestamp = excluded.timestamp,
+	SET timestamp = excluded.timestamp,
 		height = excluded.height
 WHERE proposal_deposit.height <= excluded.height`
 	_, err = db.SQL.Exec(query, param...)
@@ -335,17 +334,19 @@ func (db *Db) SaveProposalStakingPoolSnapshot(snapshot types.ProposalStakingPool
 	stmt := `
 INSERT INTO proposal_staking_pool_snapshot (proposal_id, bonded_tokens, not_bonded_tokens, height)
 VALUES ($1, $2, $3, $4)
-ON CONFLICT ON CONSTRAINT unique_staking_pool_snapshot DO UPDATE SET
-	proposal_id = excluded.proposal_id,
-    bonded_tokens = excluded.bonded_tokens,
-	not_bonded_tokens = excluded.not_bonded_tokens,
+ON CONFLICT ON CONSTRAINT unique_staking_pool_snapshot DO UPDATE 
+	SET bonded_tokens = excluded.bonded_tokens,
+	not_bonded_tokens = excluded.not_bonded_tokens, 
 	height = excluded.height
 WHERE proposal_staking_pool_snapshot.height <= excluded.height`
 
 	_, err := db.SQL.Exec(stmt,
-		snapshot.ProposalID, snapshot.Pool.BondedTokens.String(), snapshot.Pool.NotBondedTokens.String(), snapshot.Pool.Height)
+		snapshot.ProposalID, snapshot.Pool.BondedTokens.String(),
+		snapshot.Pool.NotBondedTokens.String(), snapshot.Pool.Height)
+
 	if err != nil {
-		return fmt.Errorf("error while storing proposal staking pool snapshot for proposal %d: %s", snapshot.ProposalID, err)
+		return fmt.Errorf("error while storing proposal staking pool snapshot for proposal %d: %s",
+			snapshot.ProposalID, err)
 	}
 
 	return nil
@@ -358,7 +359,7 @@ func (db *Db) SaveProposalValidatorsStatusesSnapshots(snapshots []types.Proposal
 	}
 
 	stmt := `
-INSERT INTO proposal_validator_status_snapshot(proposal_id, validator_address, voting_power, status, jailed, height)
+INSERT INTO proposal_validator_status_snapshot (proposal_id, validator_address, voting_power, status, jailed, height) 
 VALUES `
 
 	var args []interface{}
@@ -373,11 +374,9 @@ VALUES `
 
 	stmt = stmt[:len(stmt)-1]
 	stmt += `
-ON CONFLICT ON CONSTRAINT unique_validator_status_snapshot DO UPDATE
-	SET proposal_id = excluded.proposal_id,
-		validator_address = excluded.validator_address,
-		voting_power = excluded.voting_power,
-		status = excluded.status,
+ON CONFLICT ON CONSTRAINT unique_validator_status_snapshot DO UPDATE 
+	SET voting_power = excluded.voting_power, 
+		status = excluded.status, 
 		jailed = excluded.jailed,
 		height = excluded.height
 WHERE proposal_validator_status_snapshot.height <= excluded.height`

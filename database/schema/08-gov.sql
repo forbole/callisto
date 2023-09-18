@@ -29,7 +29,7 @@ CREATE TABLE proposal_deposit
     amount            COIN[],
     timestamp         TIMESTAMP,
     height            BIGINT  NOT NULL,
-    CONSTRAINT unique_deposit UNIQUE (proposal_id, depositor_address)
+    CONSTRAINT unique_deposit UNIQUE (proposal_id, depositor_address, amount)
 );
 CREATE INDEX proposal_deposit_proposal_id_index ON proposal_deposit (proposal_id);
 CREATE INDEX proposal_deposit_depositor_address_index ON proposal_deposit (depositor_address);
@@ -73,13 +73,13 @@ CREATE INDEX proposal_staking_pool_snapshot_proposal_id_index ON proposal_stakin
 
 CREATE TABLE proposal_validator_status_snapshot
 (
-    id                SERIAL PRIMARY KEY NOT NULL,
+    id                SERIAL  PRIMARY KEY NOT NULL,
     proposal_id       INTEGER REFERENCES proposal (id),
-    validator_address TEXT               NOT NULL REFERENCES validator (consensus_address),
-    voting_power      BIGINT             NOT NULL,
-    status            INT                NOT NULL,
-    jailed            BOOLEAN            NOT NULL,
-    height            BIGINT             NOT NULL,
+    validator_address TEXT                NOT NULL REFERENCES validator (consensus_address),
+    voting_power      BIGINT              NOT NULL,
+    status            INT                 NOT NULL,
+    jailed            BOOLEAN             NOT NULL,
+    height            BIGINT              NOT NULL,
     CONSTRAINT unique_validator_status_snapshot UNIQUE (proposal_id, validator_address)
 );
 CREATE INDEX proposal_validator_status_snapshot_proposal_id_index ON proposal_validator_status_snapshot (proposal_id);
