@@ -193,7 +193,7 @@ func refreshProposalVotes(parseCtx *parser.Context, proposalID uint64, govModule
 			} else {
 				// check if requested proposal ID is the same as proposal ID returned
 				// from the msg as some txs may contain multiple MsgVote msgs
-				// for different proposals which can cause error if one of proposal
+				// for different proposals which can cause error if one of the proposals
 				// info is not stored in database
 				if proposalID == msgVote.ProposalId {
 					err = govModule.HandleMsg(index, msg, junoTx)
