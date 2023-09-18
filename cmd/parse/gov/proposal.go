@@ -188,13 +188,23 @@ func refreshProposalVotes(parseCtx *parser.Context, proposalID uint64, govModule
 
 		// Handle the MsgVote messages
 		for index, msg := range junoTx.GetMsgs() {
-			if _, ok := msg.(*govtypesv1.MsgVote); !ok {
+			if msgVote, ok := msg.(*govtypesv1.MsgVote); !ok {
 				continue
-			}
-
-			err = govModule.HandleMsg(index, msg, junoTx)
-			if err != nil {
-				return fmt.Errorf("error while handling MsgVote: %s", err)
+			} else {
+				// check if requested proposal ID is the same as proposal ID returned
+				// from the msg as some txs may contain multiple MsgVote msgs
+				// for different proposals which can cause error if one of proposal
+				// info is not stored in database
+				if proposalID == msgVote.ProposalId {
+					err = govModule.HandleMsg(index, msg, junoTx)
+					if err != nil {
+						return fmt.Errorf("error while handling MsgVote: %s", err)
+					}
+				} else {
+					// skip votes for proposals with IDs
+					// different than requested in the query
+					continue
+				}
 			}
 		}
 	}
