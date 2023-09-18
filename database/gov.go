@@ -146,7 +146,7 @@ func (db *Db) GetProposal(id uint64) (types.Proposal, error) {
 	var rows []*dbtypes.ProposalRow
 	err := db.SQL.Select(&rows, `SELECT * FROM proposal WHERE id = $1`, id)
 	if err != nil {
-		return types.Proposal{}, err
+		return types.Proposal{}, fmt.Errorf("error while getting proposal %d: %s", id, err)
 	}
 
 	if len(rows) == 0 {
@@ -215,7 +215,7 @@ func (db *Db) UpdateProposal(update types.ProposalUpdate) error {
 		update.ProposalID,
 	)
 	if err != nil {
-		return fmt.Errorf("error while updating proposal: %s", err)
+		return fmt.Errorf("error while updating proposal %d: %s", update.ProposalID, err)
 	}
 
 	return nil
@@ -284,7 +284,7 @@ WHERE proposal_vote.height <= excluded.height`
 
 	_, err = db.SQL.Exec(query, vote.ProposalID, vote.Voter, vote.Option.String(), vote.Timestamp, vote.Height)
 	if err != nil {
-		return fmt.Errorf("error while storing vote: %s", err)
+		return fmt.Errorf("error while storing vote for proposal %d: %s", vote.ProposalID, err)
 	}
 
 	return nil
@@ -345,7 +345,7 @@ WHERE proposal_staking_pool_snapshot.height <= excluded.height`
 	_, err := db.SQL.Exec(stmt,
 		snapshot.ProposalID, snapshot.Pool.BondedTokens.String(), snapshot.Pool.NotBondedTokens.String(), snapshot.Pool.Height)
 	if err != nil {
-		return fmt.Errorf("error while storing proposal staking pool snapshot: %s", err)
+		return fmt.Errorf("error while storing proposal staking pool snapshot for proposal %d: %s", snapshot.ProposalID, err)
 	}
 
 	return nil
@@ -383,7 +383,7 @@ ON CONFLICT ON CONSTRAINT unique_validator_status_snapshot DO UPDATE
 WHERE proposal_validator_status_snapshot.height <= excluded.height`
 	_, err := db.SQL.Exec(stmt, args...)
 	if err != nil {
-		return fmt.Errorf("error while storing proposal validator statuses snapshot: %s", err)
+		return fmt.Errorf("error while storing proposal validator statuses snapshots: %s", err)
 	}
 
 	return nil
@@ -405,7 +405,7 @@ WHERE software_upgrade_plan.height <= excluded.height`
 	_, err := db.SQL.Exec(stmt,
 		proposalID, plan.Name, plan.Height, plan.Info, height)
 	if err != nil {
-		return fmt.Errorf("error while storing software upgrade plan: %s", err)
+		return fmt.Errorf("error while storing software upgrade plan for proposal %d: %s", proposalID, err)
 	}
 
 	return nil
@@ -417,7 +417,7 @@ func (db *Db) DeleteSoftwareUpgradePlan(proposalID uint64) error {
 
 	_, err := db.SQL.Exec(stmt, proposalID)
 	if err != nil {
-		return fmt.Errorf("error while deleting software upgrade plan: %s", err)
+		return fmt.Errorf("error while deleting software upgrade plan for proposal %d: %s", proposalID, err)
 	}
 
 	return nil
