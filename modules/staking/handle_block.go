@@ -65,7 +65,7 @@ func (m *Module) updateDoubleSignEvidence(height int64, evidenceList tmtypes.Evi
 		)
 	}
 
-	err := m.db.SaveDoubleSignEvidence(evidences)
+	err := m.db.SaveDoubleSignEvidences(evidences)
 	if err != nil {
 		log.Error().Str("module", "staking").Err(err).Int64("height", height).
 			Msg("error while saving double sign evidence")

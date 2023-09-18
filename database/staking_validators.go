@@ -456,8 +456,8 @@ VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT DO NOTHING RETURNING id`
 	return id, err
 }
 
-// SaveDoubleSignEvidence saves the given double sign evidence inside the proper tables
-func (db *Db) SaveDoubleSignEvidence(evidence []types.DoubleSignEvidence) error {
+// SaveDoubleSignEvidences saves the given double sign evidences inside the database
+func (db *Db) SaveDoubleSignEvidences(evidence []types.DoubleSignEvidence) error {
 	if len(evidence) == 0 {
 		return nil
 	}
@@ -488,7 +488,7 @@ VALUES `
 	stmt += "ON CONFLICT DO NOTHING"
 	_, err := db.SQL.Exec(stmt, doubleSignEvidence...)
 	if err != nil {
-		return fmt.Errorf("error while storing double sign evidence: %s", err)
+		return fmt.Errorf("error while storing double sign evidences: %s", err)
 	}
 
 	return nil
