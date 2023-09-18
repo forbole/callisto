@@ -1,7 +1,7 @@
 package source
 
 import (
-	ccvprovidertypes "github.com/cosmos/interchain-security/x/ccv/provider/types"
+	ccvprovidertypes "github.com/cosmos/interchain-security/v2/x/ccv/provider/types"
 )
 
 type Source interface {

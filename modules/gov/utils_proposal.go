@@ -17,7 +17,7 @@ import (
 	"github.com/forbole/bdjuno/v4/types"
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	ccvprovidertypes "github.com/cosmos/interchain-security/x/ccv/provider/types"
+	ccvprovidertypes "github.com/cosmos/interchain-security/v2/x/ccv/provider/types"
 
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 )

@@ -1,7 +1,7 @@
 package remote
 
 import (
-	ccvprovidertypes "github.com/cosmos/interchain-security/x/ccv/provider/types"
+	ccvprovidertypes "github.com/cosmos/interchain-security/v2/x/ccv/provider/types"
 	ccvprovidersource "github.com/forbole/bdjuno/v4/modules/ccv/provider/source"
 	"github.com/forbole/juno/v4/node/remote"
 )

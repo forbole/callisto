@@ -21,8 +21,8 @@ import (
 
 	nodeconfig "github.com/forbole/juno/v4/node/config"
 
-	gaiaapp "github.com/cosmos/gaia/v10/app"
-	ccvprovidertypes "github.com/cosmos/interchain-security/x/ccv/provider/types"
+	gaiaapp "github.com/cosmos/gaia/v12/app"
+	ccvprovidertypes "github.com/cosmos/interchain-security/v2/x/ccv/provider/types"
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v4/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"
