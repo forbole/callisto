@@ -23,16 +23,18 @@ func NewContext(node node.Node, sources *modulestypes.Sources) *Context {
 }
 
 // GetHeight uses the lastest height when the input height is empty from graphql request
+// It returns the height that is one block below the latest height
+// to fix 'cannot query with height in the future' error 
 func (c *Context) GetHeight(payload *Payload) (int64, error) {
 	if payload == nil || payload.Input.Height == 0 {
 		latestHeight, err := c.node.LatestHeight()
 		if err != nil {
 			return 0, fmt.Errorf("error while getting chain latest block height: %s", err)
 		}
-		return latestHeight, nil
+		return latestHeight - 1, nil
 	}
 
-	return payload.Input.Height, nil
+	return payload.Input.Height - 1, nil
 }
 
 // ActionHandler represents a Hasura action request handler.
