@@ -23,7 +23,7 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 
 	// refresh proposal tally results every 5 mins
 	if _, err := scheduler.Every(5).Minutes().Do(func() {
-		utils.WatchMethod(m.UpdateProposalTallyResults)
+		utils.WatchMethod(m.UpdateAllActiveProposalsTallyResults)
 	}); err != nil {
 		return fmt.Errorf("error while setting up gov period operations: %s", err)
 	}
