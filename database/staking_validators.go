@@ -485,7 +485,8 @@ VALUES `
 
 	}
 
-	stmt += "ON CONFLICT DO NOTHING"
+	stmt = stmt[:len(stmt)-1] // remove tailing ","
+	stmt += " ON CONFLICT DO NOTHING"
 	_, err := db.SQL.Exec(stmt, doubleSignEvidence...)
 	if err != nil {
 		return fmt.Errorf("error while storing double sign evidences: %s", err)
