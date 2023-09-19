@@ -24,6 +24,8 @@ import (
 	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
 )
 
+// UpdateProposalStatus queries the latest details of given proposal ID, updates it's status
+// in database and handles changes if the proposal has been passed.
 func (m *Module) UpdateProposalStatus(height int64, blockTime time.Time, id uint64) error {
 	// Get the proposal
 	proposal, err := m.source.Proposal(height, id)
@@ -62,7 +64,9 @@ func (m *Module) updateProposalStatus(proposal *govtypesv1.Proposal) error {
 	)
 }
 
-func (m *Module) UpdateProposalsStakingPoolSnapshot() error {
+// UpdateAllActiveProposalsStakingPoolSnapshot updates 
+// staking pool snapshots for active proposals
+func (m *Module) UpdateAllActiveProposalsStakingPoolSnapshot() error {
 	log.Debug().Str("module", "gov").Msg("refreshing proposal staking pool snapshots")
 	blockTime, err := m.db.GetLastBlockTimestamp()
 	if err != nil {
