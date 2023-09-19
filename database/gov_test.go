@@ -421,13 +421,11 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 	// ----------------------------------------------------------------------------------------------------------------
 	// Update values
 
-	amount = sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(10)))
-	amount2 = sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(20)))
 	amount3 = sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(30)))
 
 	deposit = []types.Deposit{
 		types.NewDeposit(proposal.ID, depositor.String(), amount, timestamp1, 9),
-		types.NewDeposit(proposal.ID, depositor2.String(), amount2, timestamp2, 10),
+		types.NewDeposit(proposal.ID, depositor2.String(), amount2, timestamp2, 11),
 		types.NewDeposit(proposal.ID, depositor3.String(), amount3, timestamp3, 11),
 	}
 
@@ -435,9 +433,10 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 	suite.Require().NoError(err)
 
 	expected = []dbtypes.DepositRow{
-		dbtypes.NewDepositRow(1, depositor.String(), dbtypes.NewDbCoins(
-			sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(10000)))), timestamp1, 10),
-		dbtypes.NewDepositRow(1, depositor2.String(), dbtypes.NewDbCoins(amount2), timestamp2, 10),
+		dbtypes.NewDepositRow(1, depositor.String(), dbtypes.NewDbCoins(amount), timestamp1, 10),
+		dbtypes.NewDepositRow(1, depositor3.String(), dbtypes.NewDbCoins(
+			sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(50000)))), timestamp3, 10),
+		dbtypes.NewDepositRow(1, depositor2.String(), dbtypes.NewDbCoins(amount2), timestamp2, 11),
 		dbtypes.NewDepositRow(1, depositor3.String(), dbtypes.NewDbCoins(amount3), timestamp3, 11),
 	}
 
@@ -681,7 +680,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 			1,
 			validator1.GetConsAddr(),
 			100,
-			int(stakingtypes.Bonded),
+			stakingtypes.Bonded,
 			false,
 			10,
 		),
@@ -689,7 +688,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 			1,
 			validator2.GetConsAddr(),
 			100,
-			int(stakingtypes.Unbonding),
+			stakingtypes.Unbonding,
 			true,
 			10,
 		),
@@ -730,7 +729,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 			1,
 			validator1.GetConsAddr(),
 			10,
-			int(stakingtypes.Bonded),
+			stakingtypes.Bonded,
 			true,
 			9,
 		),
@@ -738,7 +737,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 			1,
 			validator2.GetConsAddr(),
 			700,
-			int(stakingtypes.Unbonding),
+			stakingtypes.Unbonding,
 			true,
 			9,
 		),
@@ -779,7 +778,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 			1,
 			validator1.GetConsAddr(),
 			10,
-			int(stakingtypes.Bonded),
+			stakingtypes.Bonded,
 			true,
 			10,
 		),
@@ -787,7 +786,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 			1,
 			validator2.GetConsAddr(),
 			700,
-			int(stakingtypes.Unbonding),
+			stakingtypes.Unbonding,
 			true,
 			10,
 		),
@@ -828,7 +827,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 			1,
 			validator1.GetConsAddr(),
 			100000,
-			int(stakingtypes.Unspecified),
+			stakingtypes.Unspecified,
 			false,
 			11,
 		),
@@ -836,7 +835,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalValidatorsStatusesSnapshot
 			1,
 			validator2.GetConsAddr(),
 			700000,
-			int(stakingtypes.Unbonded),
+			stakingtypes.Unbonded,
 			false,
 			11,
 		),
