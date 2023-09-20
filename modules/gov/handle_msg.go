@@ -39,6 +39,9 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 
 	case *govtypesv1.MsgVote:
 		return m.handleMsgVote(tx, cosmosMsg)
+
+	case *govtypesv1.MsgVoteWeighted:
+		return m.handleMsgVoteWeighted(tx, cosmosMsg)
 	}
 
 	return nil
@@ -163,6 +166,25 @@ func (m *Module) handleMsgVote(tx *juno.Tx, msg *govtypesv1.MsgVote) error {
 	err = m.db.SaveVote(vote)
 	if err != nil {
 		return fmt.Errorf("error while saving vote: %s", err)
+	}
+
+	// update tally result for given proposal
+	return m.UpdateProposalTallyResult(msg.ProposalId, tx.Height)
+}
+
+// handleMsgVoteWeighted allows to properly handle a MsgVoteWeighted
+func (m *Module) handleMsgVoteWeighted(tx *juno.Tx, msg *govtypesv1.MsgVoteWeighted) error {
+	txTimestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
+	if err != nil {
+		return fmt.Errorf("error while parsing time: %s", err)
+	}
+
+	for _, option := range msg.Options {
+		vote := types.NewVote(msg.ProposalId, msg.Voter, option.Option, option.Weight, txTimestamp, tx.Height)
+		err = m.db.SaveVote(vote)
+		if err != nil {
+			return fmt.Errorf("error while saving weighted vote for address %s: %s", msg.Voter, err)
+		}
 	}
 
 	// update tally result for given proposal
