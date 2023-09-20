@@ -37,6 +37,7 @@ func (m *Module) updateProposalsStatus(height int64, blockTime time.Time, blockV
 	}
 
 	var ids []uint64
+	// check if EndBlockEvents contains active_proposal event 
 	eventsList := juno.FindEventsByType(events, govtypes.EventTypeActiveProposal)
 	if len(eventsList) == 0 {
 		return nil
