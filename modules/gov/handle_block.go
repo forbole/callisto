@@ -18,10 +18,10 @@ import (
 
 // HandleBlock implements modules.BlockModule
 func (m *Module) HandleBlock(
-	b *tmctypes.ResultBlock, blockResults *tmctypes.ResultBlockResults, txs []*juno.Tx, vals *tmctypes.ResultValidators,
+	b *tmctypes.ResultBlock, blockResults *tmctypes.ResultBlockResults, _ []*juno.Tx, _ *tmctypes.ResultValidators,
 ) error {
 
-	err := m.updateProposalsStatus(b.Block.Height, b.Block.Time, vals, blockResults.EndBlockEvents)
+	err := m.updateProposalsStatus(b.Block.Height, b.Block.Time, blockResults.EndBlockEvents)
 	if err != nil {
 		log.Error().Str("module", "gov").Int64("height", b.Block.Height).
 			Err(err).Msg("error while updating proposals")
@@ -31,7 +31,7 @@ func (m *Module) HandleBlock(
 }
 
 // updateProposalsStatus updates the status of proposals if they have been included in the EndBlockEvents
-func (m *Module) updateProposalsStatus(height int64, blockTime time.Time, blockVals *tmctypes.ResultValidators, events []abci.Event) error {
+func (m *Module) updateProposalsStatus(height int64, blockTime time.Time, events []abci.Event) error {
 	if len(events) == 0 {
 		return nil
 	}
