@@ -43,7 +43,7 @@ CREATE TABLE proposal_vote
     weight        TEXT    NOT NULL,
     timestamp     TIMESTAMP,
     height        BIGINT  NOT NULL,
-    CONSTRAINT unique_vote UNIQUE (proposal_id, voter_address, option, weight)
+    CONSTRAINT unique_vote UNIQUE (proposal_id, voter_address, option)
 );
 CREATE INDEX proposal_vote_proposal_id_index ON proposal_vote (proposal_id);
 CREATE INDEX proposal_vote_voter_address_index ON proposal_vote (voter_address);

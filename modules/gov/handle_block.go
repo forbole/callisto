@@ -9,9 +9,8 @@ import (
 
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	abci "github.com/cometbft/cometbft/abci/types"
-
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 
 	"github.com/rs/zerolog/log"
 )
@@ -37,7 +36,7 @@ func (m *Module) updateProposalsStatus(height int64, blockTime time.Time, events
 	}
 
 	var ids []uint64
-	// check if EndBlockEvents contains active_proposal event 
+	// check if EndBlockEvents contains active_proposal event
 	eventsList := juno.FindEventsByType(events, govtypes.EventTypeActiveProposal)
 	if len(eventsList) == 0 {
 		return nil
@@ -51,7 +50,7 @@ func (m *Module) updateProposalsStatus(height int64, blockTime time.Time, events
 		}
 
 		// parse proposal ID from []byte to unit64
-		id, err := strconv.ParseUint(string(proposalID.Value), 10, 64)
+		id, err := strconv.ParseUint(proposalID.Value, 10, 64)
 		if err != nil {
 			return fmt.Errorf("error while parsing proposal id: %s", err)
 		}

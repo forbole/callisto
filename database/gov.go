@@ -126,8 +126,6 @@ ON CONFLICT (id) DO UPDATE
   		description = excluded.description,
 		content = excluded.content,
 		proposer_address = excluded.proposer_address,
-		proposal_route = excluded.proposal_route,
-		proposal_type = excluded.proposal_type,
 		status = excluded.status,
 		submit_time = excluded.submit_time,
 		deposit_end_time = excluded.deposit_end_time,
@@ -272,7 +270,8 @@ func (db *Db) SaveVote(vote types.Vote) error {
 INSERT INTO proposal_vote (proposal_id, voter_address, option, weight, timestamp, height)
 VALUES ($1, $2, $3, $4, $5, $6)
 ON CONFLICT ON CONSTRAINT unique_vote DO UPDATE
-	SET timestamp = excluded.timestamp,
+	SET weight = excluded.weight, 
+		timestamp = excluded.timestamp,
 		height = excluded.height
 WHERE proposal_vote.height <= excluded.height`
 

@@ -117,6 +117,7 @@ type VoteRow struct {
 	ProposalID int64     `db:"proposal_id"`
 	Voter      string    `db:"voter_address"`
 	Option     string    `db:"option"`
+	Weight     string    `db:"weight"`
 	Timestamp  time.Time `db:"timestamp"`
 	Height     int64     `db:"height"`
 }
@@ -126,6 +127,7 @@ func NewVoteRow(
 	proposalID int64,
 	voter string,
 	option string,
+	weight string,
 	timestamp time.Time,
 	height int64,
 ) VoteRow {
@@ -133,6 +135,7 @@ func NewVoteRow(
 		ProposalID: proposalID,
 		Voter:      voter,
 		Option:     option,
+		Weight:     weight,
 		Timestamp:  timestamp,
 		Height:     height,
 	}
@@ -143,6 +146,7 @@ func (w VoteRow) Equals(v VoteRow) bool {
 	return w.ProposalID == v.ProposalID &&
 		w.Voter == v.Voter &&
 		w.Option == v.Option &&
+		w.Weight == v.Weight &&
 		w.Timestamp.Equal(v.Timestamp) &&
 		w.Height == v.Height
 }

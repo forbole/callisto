@@ -460,54 +460,86 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveVote() {
 
 	timestamp := time.Date(2020, 1, 1, 15, 00, 00, 000, time.UTC)
 
-	vote := types.NewVote(1, voter.String(), govtypesv1.OptionYes, timestamp, 1)
+	vote := types.NewVote(1, voter.String(), govtypesv1.OptionYes, "0.5", timestamp, 1)
 	err := suite.database.SaveVote(vote)
 	suite.Require().NoError(err)
 
-	expected := dbtypes.NewVoteRow(int64(proposal.ID), voter.String(), govtypesv1.OptionYes.String(), timestamp, 1)
+	vote2 := types.NewVote(1, voter.String(), govtypesv1.OptionNo, "0.5", timestamp, 1)
+	err = suite.database.SaveVote(vote2)
+	suite.Require().NoError(err)
+
+	expected := []dbtypes.VoteRow{
+		dbtypes.NewVoteRow(int64(proposal.ID), voter.String(), govtypesv1.OptionYes.String(), "0.5", timestamp, 1),
+		dbtypes.NewVoteRow(int64(proposal.ID), voter.String(), govtypesv1.OptionNo.String(), "0.5", timestamp, 1),
+	}
 
 	var result []dbtypes.VoteRow
 	err = suite.database.SQL.Select(&result, `SELECT * FROM proposal_vote`)
 	suite.Require().NoError(err)
-	suite.Require().Len(result, 1)
-	suite.Require().True(expected.Equals(result[0]))
+	suite.Require().Len(result, 2)
+	for i, r := range result {
+		suite.Require().True(expected[i].Equals(r))
+	}
 
 	// Update with lower height should not change option
-	vote = types.NewVote(1, voter.String(), govtypesv1.OptionNo, timestamp, 0)
+	vote = types.NewVote(1, voter.String(), govtypesv1.OptionYes, "0.7", timestamp, 0)
 	err = suite.database.SaveVote(vote)
+	suite.Require().NoError(err)
+
+	vote2 = types.NewVote(1, voter.String(), govtypesv1.OptionNo, "0.3", timestamp, 0)
+	err = suite.database.SaveVote(vote2)
 	suite.Require().NoError(err)
 
 	result = []dbtypes.VoteRow{}
 	err = suite.database.SQL.Select(&result, `SELECT * FROM proposal_vote`)
 	suite.Require().NoError(err)
-	suite.Require().Len(result, 1)
-	suite.Require().True(expected.Equals(result[0]))
+	suite.Require().Len(result, 2)
+	for i, r := range result {
+		suite.Require().True(expected[i].Equals(r))
+	}
 
 	// Update with same height should change option
-	vote = types.NewVote(1, voter.String(), govtypesv1.OptionAbstain, timestamp, 1)
+	vote = types.NewVote(1, voter.String(), govtypesv1.OptionYes, "0.6", timestamp, 1)
 	err = suite.database.SaveVote(vote)
 	suite.Require().NoError(err)
 
-	expected = dbtypes.NewVoteRow(int64(proposal.ID), voter.String(), govtypesv1.OptionAbstain.String(), timestamp, 1)
+	vote2 = types.NewVote(1, voter.String(), govtypesv1.OptionNo, "0.4", timestamp, 1)
+	err = suite.database.SaveVote(vote2)
+	suite.Require().NoError(err)
+
+	expected = []dbtypes.VoteRow{
+		dbtypes.NewVoteRow(int64(proposal.ID), voter.String(), govtypesv1.OptionYes.String(), "0.6", timestamp, 1),
+		dbtypes.NewVoteRow(int64(proposal.ID), voter.String(), govtypesv1.OptionNo.String(), "0.4", timestamp, 1),
+	}
 
 	result = []dbtypes.VoteRow{}
 	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_vote`)
 	suite.Require().NoError(err)
-	suite.Require().Len(result, 1)
-	suite.Require().True(expected.Equals(result[0]))
+	suite.Require().Len(result, 2)
+	for i, r := range result {
+		suite.Require().True(expected[i].Equals(r))
+	}
 
 	// Update with higher height should change option
-	vote = types.NewVote(1, voter.String(), govtypesv1.OptionNoWithVeto, timestamp, 2)
+	vote = types.NewVote(1, voter.String(), govtypesv1.OptionYes, "0.6", timestamp, 3)
 	err = suite.database.SaveVote(vote)
 	suite.Require().NoError(err)
 
-	expected = dbtypes.NewVoteRow(int64(proposal.ID), voter.String(), govtypesv1.OptionNoWithVeto.String(), timestamp, 2)
+	vote2 = types.NewVote(1, voter.String(), govtypesv1.OptionNo, "0.4", timestamp, 3)
+	err = suite.database.SaveVote(vote2)
+	suite.Require().NoError(err)
 
+	expected = []dbtypes.VoteRow{
+		dbtypes.NewVoteRow(int64(proposal.ID), voter.String(), govtypesv1.OptionYes.String(), "0.6", timestamp, 3),
+		dbtypes.NewVoteRow(int64(proposal.ID), voter.String(), govtypesv1.OptionNo.String(), "0.4", timestamp, 3),
+	}
 	result = []dbtypes.VoteRow{}
 	err = suite.database.Sqlx.Select(&result, `SELECT * FROM proposal_vote`)
 	suite.Require().NoError(err)
-	suite.Require().Len(result, 1)
-	suite.Require().True(expected.Equals(result[0]))
+	suite.Require().Len(result, 2)
+	for i, r := range result {
+		suite.Require().True(expected[i].Equals(r))
+	}
 }
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveTallyResults() {
