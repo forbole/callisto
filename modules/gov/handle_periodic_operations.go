@@ -16,14 +16,14 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 	// refresh proposal staking pool snapshots every 5 mins
 	// (set the same interval as staking pool periodic ops)
 	if _, err := scheduler.Every(5).Minutes().Do(func() {
-		utils.WatchMethod(m.UpdateAllActiveProposalsStakingPoolSnapshot)
+		utils.WatchMethod(m.UpdateProposalsStakingPoolSnapshot)
 	}); err != nil {
 		return fmt.Errorf("error while setting up gov period operations: %s", err)
 	}
 
 	// refresh proposal tally results every 5 mins
 	if _, err := scheduler.Every(5).Minutes().Do(func() {
-		utils.WatchMethod(m.UpdateAllActiveProposalsTallyResults)
+		utils.WatchMethod(m.UpdateProposalsTallyResults)
 	}); err != nil {
 		return fmt.Errorf("error while setting up gov period operations: %s", err)
 	}
