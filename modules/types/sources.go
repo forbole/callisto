@@ -10,16 +10,17 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/forbole/juno/v4/node/remote"
 
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	minttypes "github.com/osmosis-labs/osmosis/v16/x/mint/types"
-
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/juno/v4/node/local"
 	mintkeeper "github.com/osmosis-labs/osmosis/v16/x/mint/keeper"
+	minttypes "github.com/osmosis-labs/osmosis/v16/x/mint/types"
 
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
@@ -43,6 +44,9 @@ import (
 	superfluidsource "github.com/forbole/bdjuno/v4/modules/superfluid/source"
 	localsuperfluidsource "github.com/forbole/bdjuno/v4/modules/superfluid/source/local"
 	remotesuperfluidsource "github.com/forbole/bdjuno/v4/modules/superfluid/source/remote"
+	wasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source"
+	localwasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source/local"
+	remotewasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source/remote"
 	nodeconfig "github.com/forbole/juno/v4/node/config"
 	osmosisapp "github.com/osmosis-labs/osmosis/v16/app"
 	superfluidkeeper "github.com/osmosis-labs/osmosis/v16/x/superfluid/keeper"
@@ -57,6 +61,7 @@ type Sources struct {
 	SlashingSource   slashingsource.Source
 	StakingSource    stakingsource.Source
 	SuperfluidSource superfluidsource.Source
+	WasmSource       wasmsource.Source
 }
 
 func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -90,6 +95,7 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		SlashingSource:   localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
 		StakingSource:    localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: *app.StakingKeeper}),
 		SuperfluidSource: localsuperfluidsource.NewSource(source, superfluidkeeper.Querier{Keeper: *app.SuperfluidKeeper}),
+		WasmSource:       localwasmsource.NewSource(source, wasmkeeper.Querier(app.WasmKeeper)),
 	}
 
 	// Mount and initialize the stores
@@ -130,5 +136,6 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		SlashingSource:   remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:    remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
 		SuperfluidSource: remotesuperfluidsource.NewSource(source, superfluidtypes.NewQueryClient(source.GrpcConn)),
+		WasmSource:       remotewasmsource.NewSource(source, wasmtypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }

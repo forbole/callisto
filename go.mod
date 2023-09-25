@@ -3,6 +3,7 @@ module github.com/forbole/bdjuno/v4
 go 1.19
 
 require (
+	github.com/CosmWasm/wasmd v0.31.0
 	github.com/cosmos/cosmos-sdk v0.47.3
 	github.com/forbole/juno/v4 v4.1.1-0.20230224042450-1943a6dc1572
 	github.com/go-co-op/gocron v1.19.0
@@ -27,7 +28,6 @@ require (
 	github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 // indirect
 	github.com/99designs/keyring v1.2.1 // indirect
 	github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d // indirect
-	github.com/CosmWasm/wasmd v0.31.0 // indirect
 	github.com/CosmWasm/wasmvm v1.2.1 // indirect
 	github.com/Workiva/go-datastructures v1.0.53 // indirect
 	github.com/armon/go-metrics v0.4.1 // indirect
@@ -150,16 +150,6 @@ require (
 	nhooyr.io/websocket v1.8.7 // indirect
 )
 
-// replace (
-// 	github.com/CosmWasm/wasmd => github.com/osmosis-labs/wasmd v0.30.0-osmo-v15
-// 	github.com/CosmWasm/wasmvm => github.com/CosmWasm/wasmvm v1.1.2
-// 	github.com/confio/ics23/go => github.com/cosmos/cosmos-sdk/ics23/go v0.8.0
-// 	github.com/cosmos/cosmos-sdk => github.com/osmosis-labs/cosmos-sdk v0.45.1-0.20230508231321-931007612436
-// 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-// 	github.com/tendermint/tendermint => github.com/informalsystems/tendermint v0.34.24
-// // google.golang.org/grpc => google.golang.org/grpc v1.33.2
-// )
-
 replace (
 	// osmosis-patched wasmd.
 	github.com/CosmWasm/wasmd => github.com/osmosis-labs/wasmd v0.31.0-osmo-v16
@@ -177,6 +167,4 @@ replace (
 
 	// Informal Tendermint fork
 	github.com/tendermint/tendermint => github.com/informalsystems/tendermint v0.34.24
-// use grpc compatible with cosmos protobufs
-// google.golang.org/grpc => google.golang.org/grpc v1.33.2
 )
