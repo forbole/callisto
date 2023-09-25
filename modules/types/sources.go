@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/forbole/juno/v4/node/remote"
 
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
@@ -13,8 +14,6 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/juno/v4/node/local"
 	minttypes "github.com/public-awesome/stargaze/v11/x/mint/types"
-
-	nodeconfig "github.com/forbole/juno/v4/node/config"
 
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
 	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"
@@ -28,6 +27,9 @@ import (
 	remoteslashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source/remote"
 	stakingsource "github.com/forbole/bdjuno/v4/modules/staking/source"
 	remotestakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/remote"
+	wasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source"
+	remotewasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source/remote"
+	nodeconfig "github.com/forbole/juno/v4/node/config"
 )
 
 type Sources struct {
@@ -37,6 +39,7 @@ type Sources struct {
 	MintSource     mintsource.Source
 	SlashingSource slashingsource.Source
 	StakingSource  stakingsource.Source
+	WasmSource     wasmsource.Source
 }
 
 func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -111,5 +114,6 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
+		WasmSource:     remotewasmsource.NewSource(source, wasmtypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }
