@@ -1,7 +1,7 @@
 package database_test
 
 import (
-	"io/ioutil"
+	"os"
 	"path"
 	"path/filepath"
 	"regexp"
@@ -24,8 +24,7 @@ import (
 	tmtypes "github.com/cometbft/cometbft/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"cosmossdk.io/simapp/params"
-
+	simappparams "cosmossdk.io/simapp/params"
 	"github.com/stretchr/testify/suite"
 
 	_ "github.com/proullon/ramsql/driver"
@@ -43,11 +42,12 @@ type DbTestSuite struct {
 
 func (suite *DbTestSuite) SetupTest() {
 	// Create the codec
-	codec := params.MakeTestEncodingConfig()
+	codec := simappparams.MakeTestEncodingConfig()
 
 	// Build the database
 	dbCfg := dbconfig.NewDatabaseConfig(
 		"postgresql://bdjuno:password@localhost:6433/bdjuno?sslmode=disable&search_path=public",
+		"",
 		"",
 		"",
 		"",
@@ -72,11 +72,11 @@ func (suite *DbTestSuite) SetupTest() {
 	suite.Require().NoError(err)
 
 	dirPath := path.Join(".", "schema")
-	dir, err := ioutil.ReadDir(dirPath)
+	dir, err := os.ReadDir(dirPath)
 	suite.Require().NoError(err)
 
 	for _, fileInfo := range dir {
-		file, err := ioutil.ReadFile(filepath.Join(dirPath, fileInfo.Name()))
+		file, err := os.ReadFile(filepath.Join(dirPath, fileInfo.Name()))
 		suite.Require().NoError(err)
 
 		commentsRegExp := regexp.MustCompile(`/\*.*\*/`)

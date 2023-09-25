@@ -1,4 +1,11 @@
 ## Unreleased
+- ([\#610](https://github.com/forbole/bdjuno/pull/610)) Add support for gov `v1` proposals
+
+
+## Version v4.0.0
+## Notes
+This version is thought to be used with Cosmos SDK `v0.47.x`.
+
 ### Changes
 
 #### Stride

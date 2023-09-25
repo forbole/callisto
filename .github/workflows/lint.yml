@@ -16,12 +16,12 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Go 🧰
         uses: actions/setup-go@v4
         with:
-          go-version: 1.19
+          go-version: "1.20"
 
       - name: Compute diff 📜
         uses: technote-space/get-diff-action@v6.1.2

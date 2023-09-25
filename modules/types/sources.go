@@ -6,24 +6,21 @@ import (
 
 	"github.com/cometbft/cometbft/libs/log"
 
-	providertypes "github.com/cosmos/interchain-security/v3/x/ccv/provider/types"
-	"github.com/forbole/juno/v5/node/local"
-
-	providersource "github.com/forbole/bdjuno/v4/modules/ccv/provider/source"
-	remoteprovidersource "github.com/forbole/bdjuno/v4/modules/ccv/provider/source/remote"
-
 	simappparams "cosmossdk.io/simapp/params"
 	minttypes "github.com/MonikaCat/stride/v15/x/mint/types"
+	providertypes "github.com/cosmos/interchain-security/v3/x/ccv/provider/types"
+	providersource "github.com/forbole/bdjuno/v4/modules/ccv/provider/source"
+	remoteprovidersource "github.com/forbole/bdjuno/v4/modules/ccv/provider/source/remote"
 	"github.com/forbole/juno/v5/node/remote"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distributionkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
-	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	"github.com/forbole/juno/v5/node/local"
 
 	strideapp "github.com/MonikaCat/stride/v15/app"
 	mintkeeper "github.com/MonikaCat/stride/v15/x/mint/keeper"
@@ -89,7 +86,7 @@ func buildLocalSources(cfg *local.Details, encodingConfig *simappparams.Encoding
 	sources := &Sources{
 		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
 		DistrSource:    localdistrsource.NewSource(source, distributionkeeper.Querier{Keeper: app.DistrKeeper}),
-		GovSource:      localgovsource.NewSource(source, govtypesv1.QueryServer(app.GovKeeper), nil),
+		GovSource:      localgovsource.NewSource(source, govtypesv1.QueryServer(app.GovKeeper)),
 		MintSource:     localmintsource.NewSource(source, mintkeeper.Querier{Keeper: app.MintKeeper}),
 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
 		StakeIBCSource: localstakeibcsource.NewSource(source, stakeibctypes.QueryServer(app.StakeibcKeeper)),
@@ -134,7 +131,7 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 	return &Sources{
 		BankSource:     remotebanksource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
 		DistrSource:    remotedistrsource.NewSource(source, distrtypes.NewQueryClient(source.GrpcConn)),
-		GovSource:      remotegovsource.NewSource(source, govtypesv1.NewQueryClient(source.GrpcConn), govtypesv1beta1.NewQueryClient(source.GrpcConn)),
+		GovSource:      remotegovsource.NewSource(source, govtypesv1.NewQueryClient(source.GrpcConn)),
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakeIBCSource: remotestakeibcsource.NewSource(source, stakeibctypes.NewQueryClient(source.GrpcConn)),

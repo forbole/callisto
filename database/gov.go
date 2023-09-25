@@ -3,87 +3,36 @@ package database
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
-	"github.com/gogo/protobuf/proto"
-
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-
-	"github.com/forbole/bdjuno/v4/types"
+	"github.com/lib/pq"
 
 	dbtypes "github.com/forbole/bdjuno/v4/database/types"
-
-	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
-	"github.com/lib/pq"
+	"github.com/forbole/bdjuno/v4/types"
 )
 
 // SaveGovParams saves the given x/gov parameters inside the database
 func (db *Db) SaveGovParams(params *types.GovParams) error {
-
-	depositParamsBz, err := json.Marshal(&params.DepositParams)
+	paramsBz, err := json.Marshal(&params.Params)
 	if err != nil {
-		return fmt.Errorf("error while marshaling deposit params: %s", err)
-	}
-
-	votingParamsBz, err := json.Marshal(&params.VotingParams)
-	if err != nil {
-		return fmt.Errorf("error while marshaling voting params: %s", err)
-	}
-
-	tallyingParams, err := json.Marshal(&params.TallyParams)
-	if err != nil {
-		return fmt.Errorf("error while marshaling tally params: %s", err)
+		return fmt.Errorf("error while marshalling gov params: %s", err)
 	}
 
 	stmt := `
-INSERT INTO gov_params(deposit_params, voting_params, tally_params, height)
-VALUES ($1, $2, $3, $4)
+INSERT INTO gov_params(params, height) 
+VALUES ($1, $2) 
 ON CONFLICT (one_row_id) DO UPDATE
-	SET deposit_params = excluded.deposit_params,
-  		voting_params = excluded.voting_params,
-		tally_params = excluded.tally_params,
+	SET params = excluded.params,
 		height = excluded.height
 WHERE gov_params.height <= excluded.height`
-	_, err = db.SQL.Exec(stmt, string(depositParamsBz), string(votingParamsBz), string(tallyingParams), params.Height)
+	_, err = db.SQL.Exec(stmt, string(paramsBz), params.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing gov params: %s", err)
-	}
-
-	return nil
-}
-
-// SaveGenesisGovParams saves the genesis x/gov parameters inside the database
-func (db *Db) SaveGenesisGovParams(params *types.GenesisGovParams) error {
-
-	depositParamsBz, err := json.Marshal(&params.DepositParams)
-	if err != nil {
-		return fmt.Errorf("error while marshaling genesis deposit params: %s", err)
-	}
-
-	votingParamsBz, err := json.Marshal(&params.VotingParams)
-	if err != nil {
-		return fmt.Errorf("error while marshaling genesis voting params: %s", err)
-	}
-
-	tallyingParams, err := json.Marshal(&params.TallyParams)
-	if err != nil {
-		return fmt.Errorf("error while marshaling genesis tally params: %s", err)
-	}
-
-	stmt := `
-INSERT INTO gov_params(deposit_params, voting_params, tally_params, height)
-VALUES ($1, $2, $3, $4)
-ON CONFLICT (one_row_id) DO UPDATE
-	SET deposit_params = excluded.deposit_params,
-  		voting_params = excluded.voting_params,
-		tally_params = excluded.tally_params,
-		height = excluded.height
-WHERE gov_params.height <= excluded.height`
-	_, err = db.SQL.Exec(stmt, string(depositParamsBz), string(votingParamsBz), string(tallyingParams), params.Height)
-	if err != nil {
-		return fmt.Errorf("error while storing genesis gov params: %s", err)
 	}
 
 	return nil
@@ -103,28 +52,13 @@ func (db *Db) GetGovParams() (*types.GovParams, error) {
 
 	row := rows[0]
 
-	var depositParams types.DepositParams
-	err = json.Unmarshal([]byte(row.DepositParams), &depositParams)
+	var params govtypesv1.Params
+	err = json.Unmarshal([]byte(row.Params), &params)
 	if err != nil {
 		return nil, err
 	}
 
-	var votingParams types.VotingParams
-	err = json.Unmarshal([]byte(row.VotingParams), &votingParams)
-	if err != nil {
-		return nil, err
-	}
-
-	var tallyParams types.TallyParams
-	err = json.Unmarshal([]byte(row.TallyParams), &tallyParams)
-	if err != nil {
-		return nil, err
-	}
-
-	return types.NewGovParams(
-		votingParams, depositParams, tallyParams,
-		row.Height,
-	), nil
+	return types.NewGovParams(&params, row.Height), nil
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -139,7 +73,7 @@ func (db *Db) SaveProposals(proposals []types.Proposal) error {
 
 	proposalsQuery := `
 INSERT INTO proposal(
-	id, title, description, content, proposer_address, proposal_route, proposal_type, status,
+	id, title, description, metadata, content, proposer_address, status,
     submit_time, deposit_end_time, voting_start_time, voting_end_time
 ) VALUES`
 	var proposalsParams []interface{}
@@ -149,34 +83,27 @@ INSERT INTO proposal(
 		accounts = append(accounts, types.NewAccount(proposal.Proposer))
 
 		// Prepare the proposal query
-		vi := i * 12
-		proposalsQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
-			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11, vi+12)
+		vi := i * 11
+		proposalsQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
+			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11)
 
-		// Encode the content properly
-		protoContent, ok := proposal.Content.(proto.Message)
-		if !ok {
-			return fmt.Errorf("invalid proposal content types: %T", proposal.Content)
-		}
-
-		anyContent, err := codectypes.NewAnyWithValue(protoContent)
-		if err != nil {
-			return fmt.Errorf("error while wrapping proposal proto content: %s", err)
-		}
-
-		contentBz, err := db.Cdc.MarshalJSON(anyContent)
-		if err != nil {
-			return fmt.Errorf("error while marshaling proposal content: %s", err)
+		var jsonMessages []string
+		var protoCodec codec.ProtoCodec
+		for _, msg := range proposal.Messages {
+			contentBz, err := protoCodec.MarshalJSON(msg)
+			if err != nil {
+				return fmt.Errorf("error while marshalling proposal msg: %s", err)
+			}
+			jsonMessages = append(jsonMessages, string(contentBz))
 		}
 
 		proposalsParams = append(proposalsParams,
-			proposal.ProposalID,
-			proposal.Content.GetTitle(),
-			proposal.Content.GetDescription(),
-			string(contentBz),
+			proposal.ID,
+			proposal.Title,
+			proposal.Summary,
+			proposal.Metadata,
+			fmt.Sprintf("[%s]", strings.Join(jsonMessages, ",")),
 			proposal.Proposer,
-			proposal.ProposalRoute,
-			proposal.ProposalType,
 			proposal.Status,
 			proposal.SubmitTime,
 			proposal.DepositEndTime,
@@ -205,7 +132,7 @@ INSERT INTO proposal(
 // GetProposal returns the proposal with the given id, or nil if not found
 func (db *Db) GetProposal(id uint64) (types.Proposal, error) {
 	var rows []*dbtypes.ProposalRow
-	err := db.Sqlx.Select(&rows, `SELECT * FROM proposal WHERE id = $1`, id)
+	err := db.SQL.Select(&rows, `SELECT * FROM proposal WHERE id = $1`, id)
 	if err != nil {
 		return types.Proposal{}, err
 	}
@@ -216,28 +143,31 @@ func (db *Db) GetProposal(id uint64) (types.Proposal, error) {
 
 	row := rows[0]
 
-	var contentAny codectypes.Any
-	err = db.Cdc.UnmarshalJSON([]byte(row.Content), &contentAny)
-	if err != nil {
-		return types.Proposal{}, err
-	}
+	trimContent := strings.TrimPrefix(row.Content, "{")
+	trimContent = strings.TrimPrefix(trimContent, "}")
+	jsonMessages := strings.Split(trimContent, ",")
 
-	var content govtypesv1beta1.Content
-	err = db.Cdc.UnpackAny(&contentAny, &content)
-	if err != nil {
-		return types.Proposal{}, err
+	var messages []*codectypes.Any
+	for _, jsonMessage := range jsonMessages {
+		var msg codectypes.Any
+		err = db.Cdc.UnmarshalJSON([]byte(jsonMessage), &msg)
+		if err != nil {
+			return types.Proposal{}, err
+		}
+		messages = append(messages, &msg)
 	}
 
 	proposal := types.NewProposal(
 		row.ProposalID,
-		row.ProposalRoute,
-		row.ProposalType,
-		content,
+		row.Title,
+		row.Description,
+		row.Metadata,
+		messages,
 		row.Status,
 		row.SubmitTime,
 		row.DepositEndTime,
-		row.VotingStartTime,
-		row.VotingEndTime,
+		dbtypes.NullTimeToTime(row.VotingStartTime),
+		dbtypes.NullTimeToTime(row.VotingEndTime),
 		row.Proposer,
 	)
 	return proposal, nil

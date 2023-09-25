@@ -8,15 +8,15 @@ require (
 	github.com/MonikaCat/stride/v15 v15.0.1-0.20230925034825-6d6daf5a8631
 	github.com/cometbft/cometbft v0.38.0-rc2
 	github.com/cosmos/cosmos-sdk v0.47.4
-	github.com/cosmos/gogoproto v1.4.10 // indirect
+	github.com/cosmos/gogoproto v1.4.10
 	github.com/cosmos/ibc-go/v7 v7.2.0
 	github.com/cosmos/interchain-security/v3 v3.1.0
 	github.com/forbole/juno/v5 v5.2.1-0.20230829050156-45b544318904
 	github.com/go-co-op/gocron v1.18.0
-	github.com/gogo/protobuf v1.3.3
+	github.com/gogo/protobuf v1.3.3 // indirect
 	github.com/golangci/golangci-lint v1.52.2
 	github.com/jmoiron/sqlx v1.3.5
-	github.com/lib/pq v1.10.7
+	github.com/lib/pq v1.10.9
 	github.com/pelletier/go-toml v1.9.5
 	github.com/prometheus/client_golang v1.16.0
 	github.com/proullon/ramsql v0.0.0-20230531154420-daa2b47fbbb0
@@ -319,6 +319,7 @@ replace (
 	github.com/cometbft/cometbft => github.com/cometbft/cometbft v0.37.2
 	github.com/cosmos/cosmos-proto => github.com/cosmos/cosmos-proto v1.0.0-beta.2
 	github.com/cosmos/cosmos-sdk => github.com/Stride-Labs/cosmos-sdk v0.47.4-stride-distribution-fix-1
+	github.com/cosmos/gogoproto => github.com/cosmos/gogoproto v1.4.8
 	github.com/cosmos/iavl => github.com/cosmos/iavl v0.20.0
 	github.com/cosmos/interchain-security/v3 => github.com/Stride-Labs/interchain-security/v3 v3.1.0-remove-validation-bug-7d3d9d
 	github.com/evmos/vesting => github.com/Stride-Labs/vesting v1.0.0-check-base-account

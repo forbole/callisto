@@ -13,25 +13,10 @@ func (m *Module) UpdateParams(height int64) error {
 	log.Debug().Str("module", "gov").Int64("height", height).
 		Msg("updating params")
 
-	depositParams, err := m.source.DepositParams(height)
+	params, err := m.source.Params(height)
 	if err != nil {
-		return fmt.Errorf("error while getting gov deposit params: %s", err)
+		return fmt.Errorf("error while getting gov params: %s", err)
 	}
 
-	votingParams, err := m.source.VotingParams(height)
-	if err != nil {
-		return fmt.Errorf("error while getting gov voting params: %s", err)
-	}
-
-	tallyParams, err := m.source.TallyParams(height)
-	if err != nil {
-		return fmt.Errorf("error while getting gov tally params: %s", err)
-	}
-
-	return m.db.SaveGovParams(types.NewGovParams(
-		types.NewVotingParams(votingParams),
-		types.NewDepositParam(depositParams),
-		types.NewTallyParams(tallyParams),
-		height,
-	))
+	return m.db.SaveGovParams(types.NewGovParams(params, height))
 }

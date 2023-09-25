@@ -2,8 +2,9 @@ package modules
 
 import (
 	"github.com/forbole/bdjuno/v4/modules/actions"
-	"github.com/forbole/bdjuno/v4/modules/stakeibc"
 	"github.com/forbole/bdjuno/v4/modules/types"
+
+	"github.com/forbole/bdjuno/v4/modules/stakeibc"
 	"github.com/forbole/juno/v5/modules/pruning"
 	"github.com/forbole/juno/v5/modules/telemetry"
 
@@ -23,9 +24,10 @@ import (
 	ccvconsumer "github.com/forbole/bdjuno/v4/modules/ccv/consumer"
 	ccvprovider "github.com/forbole/bdjuno/v4/modules/ccv/provider"
 	"github.com/forbole/bdjuno/v4/modules/consensus"
-	dailyrefetch "github.com/forbole/bdjuno/v4/modules/daily_refetch"
 	"github.com/forbole/bdjuno/v4/modules/distribution"
 	"github.com/forbole/bdjuno/v4/modules/feegrant"
+
+	dailyrefetch "github.com/forbole/bdjuno/v4/modules/daily_refetch"
 	"github.com/forbole/bdjuno/v4/modules/gov"
 	"github.com/forbole/bdjuno/v4/modules/mint"
 	"github.com/forbole/bdjuno/v4/modules/modules"

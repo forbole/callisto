@@ -27,7 +27,6 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveStakeIBCParams() {
 		9,
 		10,
 		10,
-		10,
 	)
 	err := suite.database.SaveStakeIBCParams(types.NewStakeIBCParams(icsParams, 10))
 	suite.Require().NoError(err)

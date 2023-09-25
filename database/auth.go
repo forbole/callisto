@@ -6,7 +6,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting/exported"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
-	"github.com/gogo/protobuf/proto"
+	"github.com/cosmos/gogoproto/proto"
 	"github.com/lib/pq"
 
 	dbtypes "github.com/forbole/bdjuno/v4/database/types"
