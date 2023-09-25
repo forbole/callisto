@@ -13,7 +13,7 @@ import (
 	remoteprovidersource "github.com/forbole/bdjuno/v4/modules/ccv/provider/source/remote"
 
 	simappparams "cosmossdk.io/simapp/params"
-	minttypes "github.com/Stride-Labs/stride/v12/x/mint/types"
+	minttypes "github.com/MonikaCat/stride/v15/x/mint/types"
 	"github.com/forbole/juno/v5/node/remote"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -25,9 +25,9 @@ import (
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	strideapp "github.com/Stride-Labs/stride/v12/app"
-	mintkeeper "github.com/Stride-Labs/stride/v12/x/mint/keeper"
-	stakeibctypes "github.com/Stride-Labs/stride/v12/x/stakeibc/types"
+	strideapp "github.com/MonikaCat/stride/v15/app"
+	mintkeeper "github.com/MonikaCat/stride/v15/x/mint/keeper"
+	stakeibctypes "github.com/MonikaCat/stride/v15/x/stakeibc/types"
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v4/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"

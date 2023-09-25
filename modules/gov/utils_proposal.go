@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	minttypes "github.com/Stride-Labs/stride/v12/x/mint/types"
-	stakeibctypes "github.com/Stride-Labs/stride/v12/x/stakeibc/types"
+	minttypes "github.com/MonikaCat/stride/v15/x/mint/types"
+	stakeibctypes "github.com/MonikaCat/stride/v15/x/stakeibc/types"
 	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"

@@ -1,7 +1,7 @@
 package source
 
 import (
-	stakeibctypes "github.com/Stride-Labs/stride/v12/x/stakeibc/types"
+	stakeibctypes "github.com/MonikaCat/stride/v15/x/stakeibc/types"
 )
 
 type Source interface {

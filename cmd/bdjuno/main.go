@@ -14,7 +14,7 @@ import (
 	"github.com/forbole/bdjuno/v4/types/config"
 
 	"cosmossdk.io/simapp"
-	strideapp "github.com/Stride-Labs/stride/v12/app"
+	strideapp "github.com/MonikaCat/stride/v15/app"
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules"
 )
