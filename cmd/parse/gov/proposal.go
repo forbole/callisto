@@ -4,7 +4,6 @@ import (
 	"encoding/hex"
 	"fmt"
 	"strconv"
-	"time"
 
 	"github.com/rs/zerolog/log"
 
@@ -79,7 +78,7 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				return fmt.Errorf("error while getting chain latest block height: %s", err)
 			}
 
-			err = govModule.UpdateProposalStatus(height, time.Now(), proposalID)
+			err = govModule.UpdateProposalStatus(height, proposalID)
 			if err != nil {
 				return err
 			}

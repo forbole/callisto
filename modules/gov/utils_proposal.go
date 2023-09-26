@@ -3,7 +3,6 @@ package gov
 import (
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -26,7 +25,7 @@ import (
 
 // UpdateProposalStatus queries the latest details of given proposal ID, updates it's status
 // in database and handles changes if the proposal has been passed.
-func (m *Module) UpdateProposalStatus(height int64, blockTime time.Time, id uint64) error {
+func (m *Module) UpdateProposalStatus(height int64, id uint64) error {
 	// Get the proposal
 	proposal, err := m.source.Proposal(height, id)
 	if err != nil {

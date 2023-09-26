@@ -61,7 +61,7 @@ func (m *Module) updateProposalsStatus(height int64, blockTime time.Time, events
 
 	// update status for proposals IDs stored in ids array
 	for _, id := range ids {
-		err := m.UpdateProposalStatus(height, blockTime, id)
+		err := m.UpdateProposalStatus(height, id)
 		if err != nil {
 			return fmt.Errorf("error while updating proposal %d status: %s", id, err)
 		}
