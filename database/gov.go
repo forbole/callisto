@@ -249,7 +249,10 @@ func (db *Db) SaveDeposits(deposits []types.Deposit) error {
 	}
 
 	query = query[:len(query)-1] // Remove trailing ","
-	query += " ON CONFLICT DO NOTHING"
+	query += `
+ON CONFLICT ON CONSTRAINT unique_deposit DO UPDATE
+	SET height = excluded.height
+WHERE proposal_deposit.height <= excluded.height`
 	_, err = db.SQL.Exec(query, param...)
 	if err != nil {
 		return fmt.Errorf("error while storing deposits: %s", err)

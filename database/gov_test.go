@@ -421,12 +421,10 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 	// ----------------------------------------------------------------------------------------------------------------
 	// Update values
 
-	amount3 = sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(30)))
-
 	deposit = []types.Deposit{
 		types.NewDeposit(proposal.ID, depositor.String(), amount, timestamp1, 9),
 		types.NewDeposit(proposal.ID, depositor2.String(), amount2, timestamp2, 11),
-		types.NewDeposit(proposal.ID, depositor3.String(), amount3, timestamp3, 11),
+		types.NewDeposit(proposal.ID, depositor3.String(), sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(30))), timestamp3, 11),
 	}
 
 	err = suite.database.SaveDeposits(deposit)
@@ -434,10 +432,9 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 
 	expected = []dbtypes.DepositRow{
 		dbtypes.NewDepositRow(1, depositor.String(), dbtypes.NewDbCoins(amount), timestamp1, 10),
-		dbtypes.NewDepositRow(1, depositor3.String(), dbtypes.NewDbCoins(
-			sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(50000)))), timestamp3, 10),
+		dbtypes.NewDepositRow(1, depositor3.String(), dbtypes.NewDbCoins(amount3), timestamp3, 10),
 		dbtypes.NewDepositRow(1, depositor2.String(), dbtypes.NewDbCoins(amount2), timestamp2, 11),
-		dbtypes.NewDepositRow(1, depositor3.String(), dbtypes.NewDbCoins(amount3), timestamp3, 11),
+		dbtypes.NewDepositRow(1, depositor3.String(), dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(30)))), timestamp3, 11),
 	}
 
 	result = []dbtypes.DepositRow{}
