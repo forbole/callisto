@@ -29,7 +29,7 @@ CREATE TABLE proposal_deposit
     amount            COIN[],
     timestamp         TIMESTAMP,
     height            BIGINT  NOT NULL,
-    CONSTRAINT unique_deposit UNIQUE (proposal_id, depositor_address, amount)
+    CONSTRAINT unique_deposit UNIQUE (proposal_id, depositor_address, amount, timestamp)
 );
 CREATE INDEX proposal_deposit_proposal_id_index ON proposal_deposit (proposal_id);
 CREATE INDEX proposal_deposit_depositor_address_index ON proposal_deposit (depositor_address);
