@@ -3,7 +3,6 @@ package gov
 import (
 	"fmt"
 	"strconv"
-	"time"
 
 	juno "github.com/forbole/juno/v5/types"
 
@@ -20,7 +19,7 @@ func (m *Module) HandleBlock(
 	b *tmctypes.ResultBlock, blockResults *tmctypes.ResultBlockResults, _ []*juno.Tx, _ *tmctypes.ResultValidators,
 ) error {
 
-	err := m.updateProposalsStatus(b.Block.Height, b.Block.Time, blockResults.EndBlockEvents)
+	err := m.updateProposalsStatus(b.Block.Height, blockResults.EndBlockEvents)
 	if err != nil {
 		log.Error().Str("module", "gov").Int64("height", b.Block.Height).
 			Err(err).Msg("error while updating proposals")
@@ -30,7 +29,7 @@ func (m *Module) HandleBlock(
 }
 
 // updateProposalsStatus updates the status of proposals if they have been included in the EndBlockEvents
-func (m *Module) updateProposalsStatus(height int64, blockTime time.Time, events []abci.Event) error {
+func (m *Module) updateProposalsStatus(height int64, events []abci.Event) error {
 	if len(events) == 0 {
 		return nil
 	}

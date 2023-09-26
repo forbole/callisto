@@ -105,7 +105,7 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1
 
 	err = m.db.SaveAccounts(addresses)
 	if err != nil {
-		return fmt.Errorf("error while storing MsgCommunityPoolSpend proposal recipient: %s", err)
+		return fmt.Errorf("error while storing proposal recipient: %s", err)
 	}
 
 	// Store the proposal
