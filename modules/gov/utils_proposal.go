@@ -68,24 +68,18 @@ func (m *Module) updateProposalStatus(proposal *govtypesv1.Proposal) error {
 // staking pool snapshots for active proposals
 func (m *Module) UpdateProposalsStakingPoolSnapshot() error {
 	log.Debug().Str("module", "gov").Msg("refreshing proposal staking pool snapshots")
-	blockTime, err := m.db.GetLastBlockTimestamp()
+	block, err := m.db.GetLastBlockHeightAndTimestamp()
 	if err != nil {
 		return err
 	}
 
-	ids, err := m.db.GetOpenProposalsIds(blockTime)
+	ids, err := m.db.GetOpenProposalsIds(block.BlockTimestamp)
 	if err != nil {
 		log.Error().Err(err).Str("module", "gov").Msg("error while getting open proposals ids")
 	}
 
-	// Get the latest block height from db
-	height, err := m.db.GetLastBlockHeight()
-	if err != nil {
-		return fmt.Errorf("error while getting latest block height from db: %s", err)
-	}
-
 	for _, proposalID := range ids {
-		err = m.UpdateProposalStakingPoolSnapshot(height, proposalID)
+		err = m.UpdateProposalStakingPoolSnapshot(block.Height, proposalID)
 		if err != nil {
 			return fmt.Errorf("error while updating proposal %d staking pool snapshots: %s", proposalID, err)
 		}
@@ -167,23 +161,18 @@ func (m *Module) handleParamChangeProposal(height int64, moduleName string) (err
 // UpdateProposalsTallyResults updates the tally for active proposals
 func (m *Module) UpdateProposalsTallyResults() error {
 	log.Debug().Str("module", "gov").Msg("refreshing proposal tally results")
-	blockTime, err := m.db.GetLastBlockTimestamp()
+	block, err := m.db.GetLastBlockHeightAndTimestamp()
 	if err != nil {
 		return err
 	}
 
-	ids, err := m.db.GetOpenProposalsIds(blockTime)
+	ids, err := m.db.GetOpenProposalsIds(block.BlockTimestamp)
 	if err != nil {
 		log.Error().Err(err).Str("module", "gov").Msg("error while getting open proposals ids")
 	}
 
-	height, err := m.db.GetLastBlockHeight()
-	if err != nil {
-		return err
-	}
-
 	for _, proposalID := range ids {
-		err = m.UpdateProposalTallyResult(proposalID, height)
+		err = m.UpdateProposalTallyResult(proposalID, block.Height)
 		if err != nil {
 			return fmt.Errorf("error while updating proposal %d tally result : %s", proposalID, err)
 		}

@@ -205,30 +205,24 @@ func (m *Module) GetValidatorsStatuses(height int64, validators []stakingtypes.V
 // and active proposals validator status snapshots
 func (m *Module) UpdateValidatorStatuses() error {
 	// get the latest block height from db
-	height, err := m.db.GetLastBlockHeight()
+	block, err := m.db.GetLastBlockHeightAndTimestamp()
 	if err != nil {
 		return fmt.Errorf("error while getting latest block height from db: %s", err)
 	}
 
-	validators, _, err := m.GetValidatorsWithStatus(height, stakingtypes.Bonded.String())
+	validators, _, err := m.GetValidatorsWithStatus(block.Height, stakingtypes.Bonded.String())
 	if err != nil {
 		return fmt.Errorf("error while getting validators with bonded status: %s", err)
 	}
 
 	// update validators status and voting power in database
-	err = m.updateValidatorStatusAndVP(height, validators)
+	err = m.updateValidatorStatusAndVP(block.Height, validators)
 	if err != nil {
 		return fmt.Errorf("error while updating validators status and voting power: %s", err)
 	}
 
-	// get the latest block timestamp from db
-	blockTime, err := m.db.GetLastBlockTimestamp()
-	if err != nil {
-		return err
-	}
-
 	// get all active proposals IDs from db
-	ids, err := m.db.GetOpenProposalsIds(blockTime)
+	ids, err := m.db.GetOpenProposalsIds(block.BlockTimestamp)
 	if err != nil {
 		return fmt.Errorf("error while getting open proposals ids: %s", err)
 	}
@@ -237,7 +231,7 @@ func (m *Module) UpdateValidatorStatuses() error {
 	// returned from database
 	for _, id := range ids {
 		// update validator status snapshot for given height and proposal ID
-		err = m.updateProposalValidatorStatusSnapshot(height, id, validators)
+		err = m.updateProposalValidatorStatusSnapshot(block.Height, id, validators)
 		if err != nil {
 			return fmt.Errorf("error while updating proposal validator status snapshots: %s", err)
 		}

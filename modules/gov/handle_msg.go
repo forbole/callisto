@@ -71,11 +71,11 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1
 		if strings.Contains(err.Error(), codes.NotFound.String()) {
 			// query the proposal details using the latest height stored in db
 			// to fix the rpc error returning code = NotFound desc = proposal x doesn't exist
-			height, err := m.db.GetLastBlockHeight()
+			block, err := m.db.GetLastBlockHeightAndTimestamp()
 			if err != nil {
 				return fmt.Errorf("error while getting latest block height: %s", err)
 			}
-			proposal, err = m.source.Proposal(height, proposalID)
+			proposal, err = m.source.Proposal(block.Height, proposalID)
 			if err != nil {
 				return fmt.Errorf("error while getting proposal: %s", err)
 			}

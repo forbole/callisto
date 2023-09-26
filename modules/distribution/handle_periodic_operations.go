@@ -25,10 +25,10 @@ func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
 
 // GetLatestCommunityPool gets the latest community pool from the chain and stores inside the database
 func (m *Module) GetLatestCommunityPool() error {
-	height, err := m.db.GetLastBlockHeight()
+	block, err := m.db.GetLastBlockHeightAndTimestamp()
 	if err != nil {
 		return fmt.Errorf("error while getting latest block height: %s", err)
 	}
 
-	return m.updateCommunityPool(height)
+	return m.updateCommunityPool(block.Height)
 }
