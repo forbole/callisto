@@ -230,3 +230,15 @@ sender = $1, admin = $2 WHERE contract_address = $2 `
 	}
 	return nil
 }
+
+func (db *Db) UpdateMsgInvolvedAccountsAddresses(contractAddress string, txHash string) error {
+
+	stmt := `UPDATE message SET 
+involved_accounts_addresses = ARRAY_APPEND(involved_accounts_addresses, $1) WHERE transaction_hash = $2 `
+
+	_, err := db.SQL.Exec(stmt, contractAddress, txHash)
+	if err != nil {
+		return fmt.Errorf("error while updating wasm contract message: %s", err)
+	}
+	return nil
+}
