@@ -28,8 +28,9 @@ CREATE TABLE proposal_deposit
     depositor_address TEXT REFERENCES account (address),
     amount            COIN[],
     timestamp         TIMESTAMP,
+    transaction_hash  TEXT    NOT NULL,
     height            BIGINT  NOT NULL,
-    CONSTRAINT unique_deposit UNIQUE (proposal_id, depositor_address, amount, timestamp)
+    CONSTRAINT unique_deposit UNIQUE (proposal_id, depositor_address, transaction_hash)
 );
 CREATE INDEX proposal_deposit_proposal_id_index ON proposal_deposit (proposal_id);
 CREATE INDEX proposal_deposit_depositor_address_index ON proposal_deposit (depositor_address);

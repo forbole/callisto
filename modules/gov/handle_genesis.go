@@ -75,6 +75,7 @@ func (m *Module) saveGenesisProposals(slice govtypesv1.Proposals, genDoc *tmtype
 			"",
 			proposal.TotalDeposit,
 			genDoc.GenesisTime,
+			"",
 			genDoc.InitialHeight,
 		)
 	}

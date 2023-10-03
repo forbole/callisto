@@ -134,7 +134,7 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1
 	}
 
 	// Store the deposit
-	deposit := types.NewDeposit(proposal.Id, msg.Proposer, msg.InitialDeposit, txTimestamp, tx.Height)
+	deposit := types.NewDeposit(proposal.Id, msg.Proposer, msg.InitialDeposit, txTimestamp, tx.TxHash, tx.Height)
 	return m.db.SaveDeposits([]types.Deposit{deposit})
 }
 
@@ -150,7 +150,7 @@ func (m *Module) handleMsgDeposit(tx *juno.Tx, msg *govtypesv1.MsgDeposit) error
 	}
 
 	return m.db.SaveDeposits([]types.Deposit{
-		types.NewDeposit(msg.ProposalId, msg.Depositor, deposit.Amount, txTimestamp, tx.Height),
+		types.NewDeposit(msg.ProposalId, msg.Depositor, deposit.Amount, txTimestamp, tx.TxHash, tx.Height),
 	})
 }
 

@@ -95,11 +95,12 @@ func NewProposalUpdate(proposalID uint64, status string, votingStartTime, voting
 
 // Deposit contains the data of a single deposit made towards a proposal
 type Deposit struct {
-	ProposalID uint64
-	Depositor  string
-	Amount     sdk.Coins
-	Timestamp  time.Time
-	Height     int64
+	ProposalID      uint64
+	Depositor       string
+	Amount          sdk.Coins
+	Timestamp       time.Time
+	TransactionHash string
+	Height          int64
 }
 
 // NewDeposit return a new Deposit instance
@@ -108,14 +109,16 @@ func NewDeposit(
 	depositor string,
 	amount sdk.Coins,
 	timestamp time.Time,
+	transactionHash string,
 	height int64,
 ) Deposit {
 	return Deposit{
-		ProposalID: proposalID,
-		Depositor:  depositor,
-		Amount:     amount,
-		Timestamp:  timestamp,
-		Height:     height,
+		ProposalID:      proposalID,
+		Depositor:       depositor,
+		Amount:          amount,
+		Timestamp:       timestamp,
+		TransactionHash: transactionHash,
+		Height:          height,
 	}
 }
 
