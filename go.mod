@@ -9,7 +9,7 @@ require (
 	github.com/cosmos/cosmos-sdk v0.47.2
 	github.com/cosmos/gogoproto v1.4.10
 	github.com/forbole/juno/v5 v5.2.0
-	github.com/go-co-op/gocron v1.34.2
+	github.com/go-co-op/gocron v1.35.0
 	github.com/golangci/golangci-lint v1.54.2
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.9
