@@ -269,8 +269,8 @@ github.com/fsnotify/fsnotify v1.6.0/go.mod h1:sl3t1tCWJFWoRz9R8WJCbQihKKwmorjAbS
 github.com/fzipp/gocyclo v0.6.0 h1:lsblElZG7d3ALtGMx9fmxeTKZaLLpU8mET09yN4BBLo=
 github.com/fzipp/gocyclo v0.6.0/go.mod h1:rXPyn8fnlpa0R2csP/31uerbiVBugk5whMdlyaLkLoA=
 github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
-github.com/go-co-op/gocron v1.34.2 h1:vI/Up5gQDogTF7VIQQ1ynwkVDIuUwQ0oPhDR13/X/KM=
-github.com/go-co-op/gocron v1.34.2/go.mod h1:NLi+bkm4rRSy1F8U7iacZOz0xPseMoIOnvabGoSe/no=
+github.com/go-co-op/gocron v1.35.0 h1:niC91OHiSEimXgPPay02AI1gLGL4JGBgDzmWtgZ8n5A=
+github.com/go-co-op/gocron v1.35.0/go.mod h1:NLi+bkm4rRSy1F8U7iacZOz0xPseMoIOnvabGoSe/no=
 github.com/go-critic/go-critic v0.9.0 h1:Pmys9qvU3pSML/3GEQ2Xd9RZ/ip+aXHKILuxczKGV/U=
 github.com/go-critic/go-critic v0.9.0/go.mod h1:5P8tdXL7m/6qnyG6oRAlYLORvoXH0WDypYgAEmagT40=
 github.com/go-gl/glfw v0.0.0-20190409004039-e6da0acd62b1/go.mod h1:vR7hzQXu2zJy9AVAgeJqvqgH9Q5CA+iKCZ2gyEVpxRU=
