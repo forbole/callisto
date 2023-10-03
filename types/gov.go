@@ -7,6 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
 const (
@@ -94,11 +95,12 @@ func NewProposalUpdate(proposalID uint64, status string, votingStartTime, voting
 
 // Deposit contains the data of a single deposit made towards a proposal
 type Deposit struct {
-	ProposalID uint64
-	Depositor  string
-	Amount     sdk.Coins
-	Timestamp  time.Time
-	Height     int64
+	ProposalID      uint64
+	Depositor       string
+	Amount          sdk.Coins
+	Timestamp       time.Time
+	TransactionHash string
+	Height          int64
 }
 
 // NewDeposit return a new Deposit instance
@@ -107,14 +109,16 @@ func NewDeposit(
 	depositor string,
 	amount sdk.Coins,
 	timestamp time.Time,
+	transactionHash string,
 	height int64,
 ) Deposit {
 	return Deposit{
-		ProposalID: proposalID,
-		Depositor:  depositor,
-		Amount:     amount,
-		Timestamp:  timestamp,
-		Height:     height,
+		ProposalID:      proposalID,
+		Depositor:       depositor,
+		Amount:          amount,
+		Timestamp:       timestamp,
+		TransactionHash: transactionHash,
+		Height:          height,
 	}
 }
 
@@ -125,6 +129,7 @@ type Vote struct {
 	ProposalID uint64
 	Voter      string
 	Option     govtypesv1.VoteOption
+	Weight     string
 	Timestamp  time.Time
 	Height     int64
 }
@@ -134,6 +139,7 @@ func NewVote(
 	proposalID uint64,
 	voter string,
 	option govtypesv1.VoteOption,
+	weight string,
 	timestamp time.Time,
 	height int64,
 ) Vote {
@@ -141,6 +147,7 @@ func NewVote(
 		ProposalID: proposalID,
 		Voter:      voter,
 		Option:     option,
+		Weight:     weight,
 		Timestamp:  timestamp,
 		Height:     height,
 	}
@@ -201,7 +208,7 @@ type ProposalValidatorStatusSnapshot struct {
 	ProposalID           uint64
 	ValidatorConsAddress string
 	ValidatorVotingPower int64
-	ValidatorStatus      int
+	ValidatorStatus      stakingtypes.BondStatus
 	ValidatorJailed      bool
 	Height               int64
 }
@@ -211,7 +218,7 @@ func NewProposalValidatorStatusSnapshot(
 	proposalID uint64,
 	validatorConsAddr string,
 	validatorVotingPower int64,
-	validatorStatus int,
+	validatorStatus stakingtypes.BondStatus,
 	validatorJailed bool,
 	height int64,
 ) ProposalValidatorStatusSnapshot {
