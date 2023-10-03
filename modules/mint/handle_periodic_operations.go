@@ -35,7 +35,7 @@ func (m *Module) UpdateInflation() error {
 		Str("operation", "inflation").
 		Msg("getting inflation data")
 
-	height, err := m.db.GetLastBlockHeight()
+	block, err := m.db.GetLastBlockHeightAndTimestamp()
 	if err != nil {
 		return err
 	}
@@ -59,5 +59,5 @@ func (m *Module) UpdateInflation() error {
 		return fmt.Errorf("error while unmarshaling response body: %s", err)
 	}
 
-	return m.db.SaveInflation(inf.Inflation, height)
+	return m.db.SaveInflation(inf.Inflation, block.Height)
 }

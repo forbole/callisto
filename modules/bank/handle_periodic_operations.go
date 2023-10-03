@@ -27,15 +27,15 @@ func (m *Module) UpdateSupply() error {
 	log.Trace().Str("module", "bank").Str("operation", "total supply").
 		Msg("updating total supply")
 
-	height, err := m.db.GetLastBlockHeight()
+	block, err := m.db.GetLastBlockHeightAndTimestamp()
 	if err != nil {
 		return fmt.Errorf("error while getting latest block height: %s", err)
 	}
 
-	supply, err := m.keeper.GetSupply(height)
+	supply, err := m.keeper.GetSupply(block.Height)
 	if err != nil {
 		return err
 	}
 
-	return m.db.SaveSupply(supply, height)
+	return m.db.SaveSupply(supply, block.Height)
 }

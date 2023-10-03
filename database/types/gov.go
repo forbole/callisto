@@ -117,6 +117,7 @@ type VoteRow struct {
 	ProposalID int64     `db:"proposal_id"`
 	Voter      string    `db:"voter_address"`
 	Option     string    `db:"option"`
+	Weight     string    `db:"weight"`
 	Timestamp  time.Time `db:"timestamp"`
 	Height     int64     `db:"height"`
 }
@@ -126,6 +127,7 @@ func NewVoteRow(
 	proposalID int64,
 	voter string,
 	option string,
+	weight string,
 	timestamp time.Time,
 	height int64,
 ) VoteRow {
@@ -133,6 +135,7 @@ func NewVoteRow(
 		ProposalID: proposalID,
 		Voter:      voter,
 		Option:     option,
+		Weight:     weight,
 		Timestamp:  timestamp,
 		Height:     height,
 	}
@@ -143,17 +146,19 @@ func (w VoteRow) Equals(v VoteRow) bool {
 	return w.ProposalID == v.ProposalID &&
 		w.Voter == v.Voter &&
 		w.Option == v.Option &&
+		w.Weight == v.Weight &&
 		w.Timestamp.Equal(v.Timestamp) &&
 		w.Height == v.Height
 }
 
 // DepositRow represents a single row inside the deposit table
 type DepositRow struct {
-	ProposalID int64     `db:"proposal_id"`
-	Depositor  string    `db:"depositor_address"`
-	Amount     DbCoins   `db:"amount"`
-	Timestamp  time.Time `db:"timestamp"`
-	Height     int64     `db:"height"`
+	ProposalID      int64     `db:"proposal_id"`
+	Depositor       string    `db:"depositor_address"`
+	Amount          DbCoins   `db:"amount"`
+	Timestamp       time.Time `db:"timestamp"`
+	TransactionHash string    `db:"transaction_hash"`
+	Height          int64     `db:"height"`
 }
 
 // NewDepositRow allows to easily create a new NewDepositRow
@@ -162,14 +167,16 @@ func NewDepositRow(
 	depositor string,
 	amount DbCoins,
 	timestamp time.Time,
+	transactionHash string,
 	height int64,
 ) DepositRow {
 	return DepositRow{
-		ProposalID: proposalID,
-		Depositor:  depositor,
-		Amount:     amount,
-		Timestamp:  timestamp,
-		Height:     height,
+		ProposalID:      proposalID,
+		Depositor:       depositor,
+		Amount:          amount,
+		Timestamp:       timestamp,
+		TransactionHash: transactionHash,
+		Height:          height,
 	}
 }
 
@@ -179,6 +186,7 @@ func (w DepositRow) Equals(v DepositRow) bool {
 		w.Depositor == v.Depositor &&
 		w.Amount.Equal(&v.Amount) &&
 		w.Timestamp.Equal(v.Timestamp) &&
+		w.TransactionHash == v.TransactionHash &&
 		w.Height == v.Height
 }
 

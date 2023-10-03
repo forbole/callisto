@@ -1,6 +1,6 @@
 ## Unreleased
 - ([\#610](https://github.com/forbole/bdjuno/pull/610)) Add support for gov `v1` proposals
-
+- ([\#652](https://github.com/forbole/bdjuno/pull/652)) Update gov module parsing 
 
 ## Version v4.0.0
 ## Notes

@@ -4,7 +4,6 @@ import (
 	"encoding/hex"
 	"fmt"
 	"strconv"
-	"time"
 
 	"github.com/rs/zerolog/log"
 
@@ -57,7 +56,7 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			stakingModule := staking.NewModule(sources.StakingSource, parseCtx.EncodingConfig.Codec, db)
 			profilesModule := profiles.NewModule(sources.ProfilesSource, parseCtx.EncodingConfig.Codec, db)
 			// Build the gov module
-			govModule := gov.NewModule(sources.GovSource, nil, distrModule, mintModule, profilesModule, slashingModule, stakingModule, parseCtx.EncodingConfig.Codec, db)
+			govModule := gov.NewModule(sources.GovSource, distrModule, mintModule, profilesModule, slashingModule, stakingModule, parseCtx.EncodingConfig.Codec, db)
 
 			err = refreshProposalDetails(parseCtx, proposalID, govModule)
 			if err != nil {
@@ -80,7 +79,17 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				return fmt.Errorf("error while getting chain latest block height: %s", err)
 			}
 
-			err = govModule.UpdateProposal(height, time.Now(), proposalID)
+			err = govModule.UpdateProposalStatus(height, proposalID)
+			if err != nil {
+				return err
+			}
+
+			err = govModule.UpdateProposalTallyResult(proposalID, height)
+			if err != nil {
+				return err
+			}
+
+			err = govModule.UpdateProposalStakingPoolSnapshot(height, proposalID)
 			if err != nil {
 				return err
 			}
@@ -179,13 +188,23 @@ func refreshProposalVotes(parseCtx *parser.Context, proposalID uint64, govModule
 
 		// Handle the MsgVote messages
 		for index, msg := range junoTx.GetMsgs() {
-			if _, ok := msg.(*govtypesv1.MsgVote); !ok {
+			if msgVote, ok := msg.(*govtypesv1.MsgVote); !ok {
 				continue
-			}
-
-			err = govModule.HandleMsg(index, msg, junoTx)
-			if err != nil {
-				return fmt.Errorf("error while handling MsgVote: %s", err)
+			} else {
+				// check if requested proposal ID is the same as proposal ID returned
+				// from the msg as some txs may contain multiple MsgVote msgs
+				// for different proposals which can cause error if one of the proposals
+				// info is not stored in database
+				if proposalID == msgVote.ProposalId {
+					err = govModule.HandleMsg(index, msg, junoTx)
+					if err != nil {
+						return fmt.Errorf("error while handling MsgVote: %s", err)
+					}
+				} else {
+					// skip votes for proposals with IDs
+					// different than requested in the query
+					continue
+				}
 			}
 		}
 	}
