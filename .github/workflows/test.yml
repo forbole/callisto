@@ -1,12 +1,12 @@
 name: Tests
+
 # Tests / Code Coverage workflow runs unit tests and uploads a code coverage report.
 # This workflow is run on pushes to master & every Pull Requests where a .go, .mod, .sum have been changed.
 on:
   pull_request:
   push:
     branches:
-      - chains/*
-      - cosmos/*
+      - main
 
 jobs:
   Cleanup-runs:
@@ -47,6 +47,6 @@ jobs:
 
       - name: Upload coverage 📤
         if: "env.GIT_DIFF != ''"
-        uses: codecov/codecov-action@v4-beta
+        uses: codecov/codecov-action@v3
         with:
           file: ./coverage.txt
