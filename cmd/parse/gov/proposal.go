@@ -15,6 +15,8 @@ import (
 	"github.com/forbole/juno/v5/types/config"
 	"github.com/spf13/cobra"
 
+	"github.com/forbole/bdjuno/v4/modules/profiles"
+
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules/distribution"
 	"github.com/forbole/bdjuno/v4/modules/gov"
@@ -53,9 +55,19 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			mintModule := mint.NewModule(sources.MintSource, parseCtx.EncodingConfig.Codec, db)
 			slashingModule := slashing.NewModule(sources.SlashingSource, parseCtx.EncodingConfig.Codec, db)
 			stakingModule := staking.NewModule(sources.StakingSource, parseCtx.EncodingConfig.Codec, db)
+			profilesModule := profiles.NewModule(sources.ProfilesSource, parseCtx.EncodingConfig.Codec, db)
 
 			// Build the gov module
-			govModule := gov.NewModule(sources.GovSource, distrModule, mintModule, slashingModule, stakingModule, parseCtx.EncodingConfig.Codec, db)
+			govModule := gov.NewModule(
+				sources.GovSource,
+				distrModule,
+				mintModule,
+				slashingModule,
+				stakingModule,
+				profilesModule,
+				parseCtx.EncodingConfig.Codec,
+				db,
+			)
 
 			err = refreshProposalDetails(parseCtx, proposalID, govModule)
 			if err != nil {

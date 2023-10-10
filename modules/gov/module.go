@@ -26,6 +26,7 @@ type Module struct {
 	mintModule     MintModule
 	slashingModule SlashingModule
 	stakingModule  StakingModule
+	profilesModule ProfilesModule
 }
 
 // NewModule returns a new Module instance
@@ -35,6 +36,7 @@ func NewModule(
 	mintModule MintModule,
 	slashingModule SlashingModule,
 	stakingModule StakingModule,
+	profilesModule ProfilesModule,
 	cdc codec.Codec,
 	db *database.Db,
 ) *Module {
@@ -45,6 +47,7 @@ func NewModule(
 		mintModule:     mintModule,
 		slashingModule: slashingModule,
 		stakingModule:  stakingModule,
+		profilesModule: profilesModule,
 		db:             db,
 	}
 }
