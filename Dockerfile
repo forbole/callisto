@@ -1,5 +1,7 @@
 FROM golang:1.20-alpine AS builder
+
 RUN apk update && apk add --no-cache make git
+
 WORKDIR /go/src/github.com/forbole/bdjuno
 COPY . ./
 
@@ -11,13 +13,18 @@ RUN sha256sum /lib/libwasmvm_muslc.aarch64.a | grep b1610f9c8ad8bdebf5b8f819f71d
 ADD https://github.com/CosmWasm/wasmvm/releases/download/v1.3.0/libwasmvm_muslc.x86_64.a /lib/libwasmvm_muslc.x86_64.a
 RUN sha256sum /lib/libwasmvm_muslc.x86_64.a | grep b4aad4480f9b4c46635b4943beedbb72c929eab1d1b9467fe3b43e6dbf617e32
 
-## Copy the library you want to the final location that will be found by the linker flag `-lwasmvm_muslc`
 RUN cp /lib/libwasmvm_muslc.$(uname -m).a /lib/libwasmvm_muslc.a
-RUN go mod download
+
+RUN go mod tidy
+
 RUN LINK_STATICALLY=true BUILD_TAGS="muslc" make build
 
 FROM alpine:latest
+
 RUN apk update && apk add --no-cache ca-certificates build-base
+
 WORKDIR /bdjuno
+
 COPY --from=builder /go/src/github.com/forbole/bdjuno/build/bdjuno /usr/bin/bdjuno
+
 CMD [ "bdjuno" ]
