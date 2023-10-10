@@ -2,18 +2,17 @@ package main
 
 import (
 	"github.com/cosmos/cosmos-sdk/types/module"
+	desmosapp "github.com/desmos-labs/desmos/v6/app"
 	"github.com/forbole/juno/v5/cmd"
 	initcmd "github.com/forbole/juno/v5/cmd/init"
+	migratecmd "github.com/forbole/juno/v5/cmd/migrate"
 	parsetypes "github.com/forbole/juno/v5/cmd/parse/types"
 	startcmd "github.com/forbole/juno/v5/cmd/start"
 	"github.com/forbole/juno/v5/modules/messages"
 
-	migratecmd "github.com/forbole/bdjuno/v4/cmd/migrate"
 	parsecmd "github.com/forbole/bdjuno/v4/cmd/parse"
 
 	"github.com/forbole/bdjuno/v4/types/config"
-
-	"cosmossdk.io/simapp"
 
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules"
@@ -55,7 +54,7 @@ func main() {
 // This should be edited by custom implementations if needed.
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
-		simapp.ModuleBasics,
+		desmosapp.ModuleBasics,
 	}
 }
 
@@ -64,6 +63,7 @@ func getBasicManagers() []module.BasicManager {
 // This should be edited by custom implementations if needed.
 func getAddressesParser() messages.MessageAddressesParser {
 	return messages.JoinMessageParsers(
+		desmosMessageAddressesParser,
 		messages.CosmosMessageAddressesParser,
 	)
 }

@@ -21,3 +21,7 @@ type StakingModule interface {
 	GetStakingPoolSnapshot(height int64) (*types.PoolSnapshot, error)
 	UpdateParams(height int64) error
 }
+
+type ProfilesModule interface {
+	UpdateParams(height int64) error
+}
