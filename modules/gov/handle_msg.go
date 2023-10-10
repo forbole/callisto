@@ -8,8 +8,9 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/x/authz"
 
-	"github.com/forbole/bdjuno/v4/types"
 	"google.golang.org/grpc/codes"
+
+	"github.com/forbole/bdjuno/v4/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"

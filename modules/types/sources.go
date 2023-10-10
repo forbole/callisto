@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"os"
 
-	"cosmossdk.io/simapp"
 	"cosmossdk.io/simapp/params"
 	"github.com/cometbft/cometbft/libs/log"
+	desmosapp "github.com/desmos-labs/desmos/v6/app"
+	profilestypes "github.com/desmos-labs/desmos/v6/x/profiles/types"
 	"github.com/forbole/juno/v5/node/remote"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -31,6 +32,9 @@ import (
 	mintsource "github.com/forbole/bdjuno/v4/modules/mint/source"
 	localmintsource "github.com/forbole/bdjuno/v4/modules/mint/source/local"
 	remotemintsource "github.com/forbole/bdjuno/v4/modules/mint/source/remote"
+	profilessource "github.com/forbole/bdjuno/v4/modules/profiles/source"
+	localprofilessource "github.com/forbole/bdjuno/v4/modules/profiles/source/local"
+	remoteprofilessource "github.com/forbole/bdjuno/v4/modules/profiles/source/remote"
 	slashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source"
 	localslashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source/local"
 	remoteslashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source/remote"
@@ -46,6 +50,7 @@ type Sources struct {
 	MintSource     mintsource.Source
 	SlashingSource slashingsource.Source
 	StakingSource  stakingsource.Source
+	ProfilesSource profilessource.Source
 }
 
 func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -66,17 +71,17 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		return nil, err
 	}
 
-	app := simapp.NewSimApp(
+	app := desmosapp.NewDesmosApp(
 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, nil, nil,
 	)
 
 	sources := &Sources{
-		BankSource: localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
-		// DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
+		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
 		GovSource:      localgovsource.NewSource(source, govtypesv1.QueryServer(app.GovKeeper)),
 		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
 		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
+		ProfilesSource: localprofilessource.NewSource(source, profilestypes.QueryServer(app.ProfilesKeeper)),
 	}
 
 	// Mount and initialize the stores
@@ -116,5 +121,6 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
+		ProfilesSource: remoteprofilessource.NewSource(source, profilestypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }

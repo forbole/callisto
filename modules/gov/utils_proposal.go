@@ -9,6 +9,7 @@ import (
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+	profilestypes "github.com/desmos-labs/desmos/v6/x/profiles/types"
 	"github.com/rs/zerolog/log"
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -136,8 +137,6 @@ func (m *Module) handleParamChangeProposal(height int64, moduleName string) (err
 		if err != nil {
 			return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", minttypes.ModuleName, err)
 		}
-
-		// Update the inflation
 		err = m.mintModule.UpdateInflation()
 		if err != nil {
 			return fmt.Errorf("error while updating inflation with ParamChangeProposal: %s", err)
@@ -152,6 +151,13 @@ func (m *Module) handleParamChangeProposal(height int64, moduleName string) (err
 		if err != nil {
 			return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", stakingtypes.ModuleName, err)
 		}
+
+	case profilestypes.ModuleName:
+		err = m.profilesModule.UpdateParams(height)
+		if err != nil {
+			return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", profilestypes.ModuleName, err)
+		}
+
 	}
 
 	return nil
