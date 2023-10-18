@@ -106,7 +106,3 @@ format:
 	find . -name '*.go' -type f -not -path "*.git*" -not -name '*.pb.go' -not -name '*_mocks.go' | xargs misspell -w
 	find . -name '*.go' -type f -not -path "*.git*" -not -name '*.pb.go' -not -name '*_mocks.go' | xargs goimports -w -local github.com/forbole/bdjuno
 .PHONY: format
-
-clean:
-	rm -f tools-stamp ./build/**
-.PHONY: clean
