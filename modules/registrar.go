@@ -1,22 +1,13 @@
 package modules
 
 import (
-	"github.com/forbole/bdjuno/v4/modules/actions"
-	"github.com/forbole/bdjuno/v4/modules/types"
-
-	"github.com/forbole/juno/v5/modules/pruning"
-	"github.com/forbole/juno/v5/modules/telemetry"
-
-	"github.com/forbole/bdjuno/v4/modules/slashing"
-
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/forbole/bdjuno/v4/modules/profiles"
+	juno "github.com/forbole/juno/v5/types"
 
 	jmodules "github.com/forbole/juno/v5/modules"
 	"github.com/forbole/juno/v5/modules/messages"
+	"github.com/forbole/juno/v5/modules/pruning"
 	"github.com/forbole/juno/v5/modules/registrar"
+	"github.com/forbole/juno/v5/modules/telemetry"
 
 	"github.com/forbole/bdjuno/v4/utils"
 
@@ -27,19 +18,23 @@ import (
 	"github.com/forbole/bdjuno/v4/modules/distribution"
 	"github.com/forbole/bdjuno/v4/modules/feegrant"
 
+	"github.com/forbole/bdjuno/v4/modules/actions"
 	dailyrefetch "github.com/forbole/bdjuno/v4/modules/daily_refetch"
 	"github.com/forbole/bdjuno/v4/modules/gov"
 	"github.com/forbole/bdjuno/v4/modules/mint"
 	"github.com/forbole/bdjuno/v4/modules/modules"
 	"github.com/forbole/bdjuno/v4/modules/pricefeed"
+	"github.com/forbole/bdjuno/v4/modules/profiles"
+	"github.com/forbole/bdjuno/v4/modules/slashing"
 	"github.com/forbole/bdjuno/v4/modules/staking"
+	"github.com/forbole/bdjuno/v4/modules/types"
 	"github.com/forbole/bdjuno/v4/modules/upgrade"
 )
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
 func UniqueAddressesParser(parser messages.MessageAddressesParser) messages.MessageAddressesParser {
-	return func(cdc codec.Codec, msg sdk.Msg) ([]string, error) {
-		addresses, err := parser(cdc, msg)
+	return func(tx *juno.Tx) ([]string, error) {
+		addresses, err := parser(tx)
 		if err != nil {
 			return nil, err
 		}
