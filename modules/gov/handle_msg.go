@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/x/authz"
-
+	"github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"google.golang.org/grpc/codes"
 
 	"github.com/forbole/bdjuno/v4/types"
@@ -32,6 +32,9 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	}
 
 	switch cosmosMsg := msg.(type) {
+	case *v1beta1.MsgSubmitProposal:
+		return m.handleMsgLegacySubmitProposal(tx, index, cosmosMsg)
+
 	case *govtypesv1.MsgSubmitProposal:
 		return m.handleMsgSubmitProposal(tx, index, cosmosMsg)
 
@@ -48,22 +51,22 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	return nil
 }
 
-// handleMsgSubmitProposal allows to properly handle a MsgSubmitProposal
-func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1.MsgSubmitProposal) error {
+// saveProposalAndDeposit allows to properly get and store a proposal and its initial deposit
+func (m *Module) saveProposalAndDeposit(tx *juno.Tx, index int, proposer string, initialDeposit []sdk.Coin) (types.Proposal, error) {
 	// Get the proposal id
 	event, err := tx.FindEventByType(index, gov.EventTypeSubmitProposal)
 	if err != nil {
-		return fmt.Errorf("error while searching for EventTypeSubmitProposal: %s", err)
+		return types.Proposal{}, fmt.Errorf("error while searching for EventTypeSubmitProposal: %s", err)
 	}
 
 	id, err := tx.FindAttributeByKey(event, gov.AttributeKeyProposalID)
 	if err != nil {
-		return fmt.Errorf("error while searching for AttributeKeyProposalID: %s", err)
+		return types.Proposal{}, fmt.Errorf("error while searching for AttributeKeyProposalID: %s", err)
 	}
 
 	proposalID, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
-		return fmt.Errorf("error while parsing proposal id: %s", err)
+		return types.Proposal{}, fmt.Errorf("error while parsing proposal id: %s", err)
 	}
 
 	// Get the proposal
@@ -74,15 +77,58 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1
 			// to fix the rpc error returning code = NotFound desc = proposal x doesn't exist
 			block, err := m.db.GetLastBlockHeightAndTimestamp()
 			if err != nil {
-				return fmt.Errorf("error while getting latest block height: %s", err)
+				return types.Proposal{}, fmt.Errorf("error while getting latest block height: %s", err)
 			}
 			proposal, err = m.source.Proposal(block.Height, proposalID)
 			if err != nil {
-				return fmt.Errorf("error while getting proposal: %s", err)
+				return types.Proposal{}, fmt.Errorf("error while getting proposal: %s", err)
 			}
 		} else {
-			return fmt.Errorf("error while getting proposal: %s", err)
+			return types.Proposal{}, fmt.Errorf("error while getting proposal: %s", err)
 		}
+	}
+
+	// Store the proposal
+	proposalObj := types.NewProposal(
+		proposal.Id,
+		proposal.Title,
+		proposal.Summary,
+		proposal.Metadata,
+		proposal.Messages,
+		proposal.Status.String(),
+		*proposal.SubmitTime,
+		*proposal.DepositEndTime,
+		proposal.VotingStartTime,
+		proposal.VotingEndTime,
+		proposal.Proposer,
+	)
+
+	err = m.db.SaveProposals([]types.Proposal{proposalObj})
+	if err != nil {
+		return types.Proposal{}, err
+	}
+
+	txTimestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
+	if err != nil {
+		return types.Proposal{}, fmt.Errorf("error while parsing time: %s", err)
+	}
+
+	// Store the deposit
+	deposit := types.NewDeposit(proposal.Id, proposer, initialDeposit, txTimestamp, tx.TxHash, tx.Height)
+	return proposalObj, m.db.SaveDeposits([]types.Deposit{deposit})
+}
+
+// handleMsgSubmitProposal allows to properly handle a v1beta1.MsgSubmitProposal
+func (m *Module) handleMsgLegacySubmitProposal(tx *juno.Tx, index int, msg *v1beta1.MsgSubmitProposal) error {
+	_, err := m.saveProposalAndDeposit(tx, index, msg.Proposer, msg.InitialDeposit)
+	return err
+}
+
+// handleMsgSubmitProposal allows to properly handle a v1.MsgSubmitProposal
+func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1.MsgSubmitProposal) error {
+	proposal, err := m.saveProposalAndDeposit(tx, index, msg.Proposer, msg.InitialDeposit)
+	if err != nil {
+		return err
 	}
 
 	var addresses []types.Account
@@ -104,39 +150,7 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1
 		}
 	}
 
-	err = m.db.SaveAccounts(addresses)
-	if err != nil {
-		return fmt.Errorf("error while storing proposal recipient: %s", err)
-	}
-
-	// Store the proposal
-	proposalObj := types.NewProposal(
-		proposal.Id,
-		proposal.Title,
-		proposal.Summary,
-		proposal.Metadata,
-		msg.Messages,
-		proposal.Status.String(),
-		*proposal.SubmitTime,
-		*proposal.DepositEndTime,
-		proposal.VotingStartTime,
-		proposal.VotingEndTime,
-		msg.Proposer,
-	)
-
-	err = m.db.SaveProposals([]types.Proposal{proposalObj})
-	if err != nil {
-		return err
-	}
-
-	txTimestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
-	if err != nil {
-		return fmt.Errorf("error while parsing time: %s", err)
-	}
-
-	// Store the deposit
-	deposit := types.NewDeposit(proposal.Id, msg.Proposer, msg.InitialDeposit, txTimestamp, tx.TxHash, tx.Height)
-	return m.db.SaveDeposits([]types.Deposit{deposit})
+	return m.db.SaveAccounts(addresses)
 }
 
 // handleMsgDeposit allows to properly handle a MsgDeposit
