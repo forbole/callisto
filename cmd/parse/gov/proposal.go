@@ -54,8 +54,8 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			// Build expected modules of gov modules for handleParamChangeProposal
 			distrModule := distribution.NewModule(sources.DistrSource, parseCtx.EncodingConfig.Codec, db)
 			mintModule := mint.NewModule(sources.MintSource, parseCtx.EncodingConfig.Codec, db)
-			slashingModule := slashing.NewModule(sources.SlashingSource, parseCtx.EncodingConfig.Codec, db)
 			stakingModule := staking.NewModule(sources.StakingSource, parseCtx.EncodingConfig.Codec, db)
+			slashingModule := slashing.NewModule(sources.SlashingSource, stakingModule, parseCtx.EncodingConfig.Codec, db)
 			profilesModule := profiles.NewModule(sources.ProfilesSource, parseCtx.EncodingConfig.Codec, db)
 
 			// Build the gov module
