@@ -2,6 +2,7 @@ package upgrade
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/forbole/juno/v5/types"
 
@@ -12,7 +13,7 @@ import (
 func (m *Module) HandleBlock(
 	b *tmctypes.ResultBlock, _ *tmctypes.ResultBlockResults, _ []*types.Tx, _ *tmctypes.ResultValidators,
 ) error {
-	err := m.refreshDataUponSoftwareUpgrade(b.Block.Height)
+	err := m.refreshDataUponSoftwareUpgrade(b.Block.Height, b.Block.Time)
 	if err != nil {
 		return fmt.Errorf("error while refreshing data upon software upgrade: %s", err)
 	}
@@ -20,7 +21,7 @@ func (m *Module) HandleBlock(
 	return nil
 }
 
-func (m *Module) refreshDataUponSoftwareUpgrade(height int64) error {
+func (m *Module) refreshDataUponSoftwareUpgrade(height int64, timestamp time.Time) error {
 	exist, err := m.db.CheckSoftwareUpgradePlan(height)
 	if err != nil {
 		return fmt.Errorf("error while checking software upgrade plan existence: %s", err)
@@ -30,7 +31,7 @@ func (m *Module) refreshDataUponSoftwareUpgrade(height int64) error {
 	}
 
 	// Refresh validator infos
-	err = m.stakingModule.RefreshAllValidatorInfos(height)
+	err = m.stakingModule.RefreshAllValidatorInfos(height, timestamp)
 	if err != nil {
 		return fmt.Errorf("error while refreshing validator infos upon software upgrade: %s", err)
 	}

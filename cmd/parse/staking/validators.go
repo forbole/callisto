@@ -42,7 +42,12 @@ func validatorsCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				return fmt.Errorf("error while getting latest block height: %s", err)
 			}
 
-			err = stakingModule.RefreshAllValidatorInfos(height)
+			block, err := parseCtx.Node.Block(height)
+			if err != nil {
+				return fmt.Errorf("error while getting block at height %d: %s", height, err)
+			}
+
+			err = stakingModule.RefreshAllValidatorInfos(block.Block.Height, block.Block.Time)
 			if err != nil {
 				return fmt.Errorf("error while refreshing all validators infos: %s", err)
 			}
