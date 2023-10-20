@@ -262,10 +262,15 @@ func (m *Module) updateProposalValidatorStatusSnapshot(height int64, proposalID 
 			return err
 		}
 
+		var votingPower = validator.Tokens.Int64()
+		if validator.Status != stakingtypes.Bonded || validator.IsJailed() {
+			votingPower = 0
+		}
+
 		snapshots[index] = types.NewProposalValidatorStatusSnapshot(
 			proposalID,
 			consAddr.String(),
-			validator.Tokens.Int64(),
+			votingPower,
 			validator.Status,
 			validator.Jailed,
 			height,
@@ -298,7 +303,16 @@ func (m *Module) updateValidatorsStatusesAndVotingPowers(height int64, validator
 			return err
 		}
 
-		votingPowers[index] = types.NewValidatorVotingPower(consAddr.String(), validator.Tokens.Int64(), height)
+		var votingPower = validator.Tokens.Int64()
+		if validator.Status != stakingtypes.Bonded || validator.IsJailed() {
+			votingPower = 0
+		}
+
+		votingPowers[index] = types.NewValidatorVotingPower(
+			consAddr.String(),
+			votingPower,
+			height,
+		)
 
 		statuses[index] = types.NewValidatorStatus(
 			consAddr.String(),
