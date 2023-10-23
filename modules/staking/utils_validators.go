@@ -262,7 +262,7 @@ func (m *Module) updateProposalValidatorStatusSnapshot(height int64, proposalID 
 			return err
 		}
 
-		var votingPower = validator.Tokens.Int64()
+		var votingPower = validator.Tokens.Int64() / 1_000_000
 		if validator.Status != stakingtypes.Bonded || validator.IsJailed() {
 			votingPower = 0
 		}
@@ -303,7 +303,7 @@ func (m *Module) updateValidatorsStatusesAndVotingPowers(height int64, validator
 			return err
 		}
 
-		var votingPower = validator.Tokens.Int64()
+		var votingPower = validator.Tokens.Int64() / 1_000_000
 		if validator.Status != stakingtypes.Bonded || validator.IsJailed() {
 			votingPower = 0
 		}
