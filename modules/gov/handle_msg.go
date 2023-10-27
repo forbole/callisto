@@ -88,12 +88,18 @@ func (m *Module) saveProposalAndDeposit(tx *juno.Tx, index int, proposer string,
 		}
 	}
 
+	// Get the proposal metadata (if it's an URL)
+	metadata, err := GetProposalMetadata(proposal.Metadata)
+	if err != nil {
+		return types.Proposal{}, fmt.Errorf("error while getting proposal metadata: %s", err)
+	}
+
 	// Store the proposal
 	proposalObj := types.NewProposal(
 		proposal.Id,
 		proposal.Title,
 		proposal.Summary,
-		proposal.Metadata,
+		metadata,
 		proposal.Messages,
 		proposal.Status.String(),
 		*proposal.SubmitTime,
