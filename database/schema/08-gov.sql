@@ -10,8 +10,9 @@ CREATE TABLE proposal
 (
     id                INTEGER   NOT NULL PRIMARY KEY,
     title             TEXT      NOT NULL,
-    description       TEXT      NOT NULL,
-    metadata          TEXT      NOT NULL,
+    summary           TEXT,
+    description       TEXT,
+    metadata          TEXT,
     content           JSONB     NOT NULL DEFAULT '[]'::JSONB,
     submit_time       TIMESTAMP NOT NULL,
     deposit_end_time  TIMESTAMP,
@@ -75,13 +76,13 @@ CREATE INDEX proposal_staking_pool_snapshot_proposal_id_index ON proposal_stakin
 
 CREATE TABLE proposal_validator_status_snapshot
 (
-    id                SERIAL  PRIMARY KEY NOT NULL,
+    id                SERIAL PRIMARY KEY NOT NULL,
     proposal_id       INTEGER REFERENCES proposal (id),
-    validator_address TEXT                NOT NULL REFERENCES validator (consensus_address),
-    voting_power      BIGINT              NOT NULL,
-    status            INT                 NOT NULL,
-    jailed            BOOLEAN             NOT NULL,
-    height            BIGINT              NOT NULL,
+    validator_address TEXT               NOT NULL REFERENCES validator (consensus_address),
+    voting_power      BIGINT             NOT NULL,
+    status            INT                NOT NULL,
+    jailed            BOOLEAN            NOT NULL,
+    height            BIGINT             NOT NULL,
     CONSTRAINT unique_validator_status_snapshot UNIQUE (proposal_id, validator_address)
 );
 CREATE INDEX proposal_validator_status_snapshot_proposal_id_index ON proposal_validator_status_snapshot (proposal_id);

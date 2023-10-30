@@ -105,6 +105,7 @@ func (suite *DbTestSuite) getProposalRow(id int) types.Proposal {
 	proposal := types.NewProposal(
 		uint64(id),
 		fmt.Sprintf("Proposal %d", id),
+		fmt.Sprintf("Summary %d", id),
 		fmt.Sprintf("Description of proposal %d", id),
 		fmt.Sprintf("Metadata of proposal %d", id),
 		[]*codectypes.Any{msgAny},
@@ -147,6 +148,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 		types.NewProposal(
 			1,
 			"Proposal Title 1",
+			"Proposal Summary 1",
 			"Proposal Description 1",
 			"Proposal Metadata 1",
 			[]*codectypes.Any{msgAny},
@@ -160,6 +162,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 		types.NewProposal(
 			2,
 			"Proposal Title 2",
+			"Proposal Summary 2",
 			"Proposal Description 2",
 			"Proposal Metadata 2",
 			nil,
@@ -183,8 +186,9 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 		dbtypes.NewProposalRow(
 			1,
 			"Proposal Title 1",
-			"Proposal Description 1",
-			"Proposal Metadata 1",
+			dbtypes.StringToNullString("Proposal Summary 1"),
+			dbtypes.StringToNullString("Proposal Description 1"),
+			dbtypes.StringToNullString("Proposal Metadata 1"),
 			"[{\"@type\": \"/cosmos.gov.v1.MsgUpdateParams\", \"params\": {\"quorum\": \"0.5\", \"threshold\": \"0.3\", \"min_deposit\": [{\"denom\": \"uatom\", \"amount\": \"1000\"}], \"voting_period\": \"0.000300s\", \"burn_vote_veto\": false, \"veto_threshold\": \"0.15\", \"burn_vote_quorum\": false, \"max_deposit_period\": \"300s\", \"min_initial_deposit_ratio\": \"0\", \"burn_proposal_deposit_prevote\": false}, \"authority\": \"cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn\"}]",
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 			time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC),
@@ -196,8 +200,9 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 		dbtypes.NewProposalRow(
 			2,
 			"Proposal Title 2",
-			"Proposal Description 2",
-			"Proposal Metadata 2",
+			dbtypes.StringToNullString("Proposal Summary 2"),
+			dbtypes.StringToNullString("Proposal Description 2"),
+			dbtypes.StringToNullString("Proposal Metadata 2"),
 			"[]",
 			time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC),
 			time.Date(2020, 1, 2, 01, 00, 00, 000, time.UTC),
@@ -233,6 +238,7 @@ func (suite *DbTestSuite) TestBigDipperDb_GetProposal() {
 	proposal := types.NewProposal(
 		1,
 		"Proposal Title 1",
+		"Proposal Summary 1",
 		"Proposal Description 1",
 		"Proposal Metadata 1",
 		[]*codectypes.Any{msgAny},
@@ -261,6 +267,7 @@ func (suite *DbTestSuite) TestBigDipperDb_GetOpenProposalsIds() {
 	invalidProposal := types.NewProposal(
 		6,
 		"Proposal Title 6",
+		"Proposal Summary 6",
 		"Proposal Description 6",
 		"Proposal Metadata 6",
 		nil,
@@ -276,6 +283,7 @@ func (suite *DbTestSuite) TestBigDipperDb_GetOpenProposalsIds() {
 		types.NewProposal(
 			1,
 			"Proposal Title 2",
+			"Proposal Summary 2",
 			"Proposal Description 2",
 			"Proposal Metadata 2",
 			nil,
@@ -289,6 +297,7 @@ func (suite *DbTestSuite) TestBigDipperDb_GetOpenProposalsIds() {
 		types.NewProposal(
 			2,
 			"Proposal Title 2",
+			"Proposal Summary 2",
 			"Proposal Description 2",
 			"Proposal Metadata 2",
 			nil,
@@ -302,6 +311,7 @@ func (suite *DbTestSuite) TestBigDipperDb_GetOpenProposalsIds() {
 		types.NewProposal(
 			3,
 			"Proposal Title 3",
+			"Proposal Summary 3",
 			"Proposal Description 3",
 			"Proposal Metadata 3",
 			nil,
@@ -315,6 +325,7 @@ func (suite *DbTestSuite) TestBigDipperDb_GetOpenProposalsIds() {
 		types.NewProposal(
 			5,
 			"Proposal Title 5",
+			"Proposal Summary 5",
 			"Proposal Description 5",
 			"Proposal Metadata 5",
 			nil,
@@ -358,8 +369,9 @@ func (suite *DbTestSuite) TestBigDipperDb_UpdateProposal() {
 	expected := dbtypes.NewProposalRow(
 		proposal.ID,
 		"Proposal 1",
-		"Description of proposal 1",
-		"Metadata of proposal 1",
+		dbtypes.StringToNullString("Summary of proposal 1"),
+		dbtypes.StringToNullString("Description of proposal 1"),
+		dbtypes.StringToNullString("Metadata of proposal 1"),
 		"[{\"@type\": \"/cosmos.gov.v1.MsgUpdateParams\", \"params\": {\"quorum\": \"0.5\", \"threshold\": \"0.3\", \"min_deposit\": [{\"denom\": \"uatom\", \"amount\": \"1000\"}], \"voting_period\": \"0.000300s\", \"burn_vote_veto\": false, \"veto_threshold\": \"0.15\", \"burn_vote_quorum\": false, \"max_deposit_period\": \"300s\", \"min_initial_deposit_ratio\": \"0\", \"burn_proposal_deposit_prevote\": false}, \"authority\": \"cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn\"}]",
 		proposal.SubmitTime,
 		proposal.DepositEndTime,

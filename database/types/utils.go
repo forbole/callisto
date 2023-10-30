@@ -65,3 +65,17 @@ func NullTimeToTime(t sql.NullTime) *time.Time {
 func AreNullTimesEqual(first sql.NullTime, second sql.NullTime) bool {
 	return first.Valid == second.Valid && first.Time.Equal(second.Time)
 }
+
+func StringToNullString(s string) sql.NullString {
+	return sql.NullString{
+		String: s,
+		Valid:  s != "",
+	}
+}
+
+func NullStringToString(s sql.NullString) string {
+	if !s.Valid {
+		return ""
+	}
+	return s.String
+}

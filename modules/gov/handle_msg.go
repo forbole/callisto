@@ -88,18 +88,29 @@ func (m *Module) saveProposalAndDeposit(tx *juno.Tx, index int, proposer string,
 		}
 	}
 
-	// Get the proposal metadata (if it's an URL)
-	metadata, err := GetProposalMetadata(proposal.Metadata)
+	// For backward-compatibility we use the summary as the proposal description, and we don't consider the summary
+	var summary = ""
+	var description = proposal.Summary
+
+	// If the user has set a long-text description, then we use the metadata description
+	// as the proposal description, and the summary as the summary (as it should be)
+	metadataDescription, err := GetDescriptionFromMetadata(proposal.Metadata)
 	if err != nil {
 		return types.Proposal{}, fmt.Errorf("error while getting proposal metadata: %s", err)
+	}
+
+	if metadataDescription != "" {
+		summary = proposal.Summary
+		description = metadataDescription
 	}
 
 	// Store the proposal
 	proposalObj := types.NewProposal(
 		proposal.Id,
 		proposal.Title,
-		proposal.Summary,
-		metadata,
+		summary,
+		description,
+		proposal.Metadata,
 		proposal.Messages,
 		proposal.Status.String(),
 		*proposal.SubmitTime,

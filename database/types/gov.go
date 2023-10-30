@@ -16,25 +16,27 @@ type GovParamsRow struct {
 
 // ProposalRow represents a single row inside the proposal table
 type ProposalRow struct {
-	Title           string       `db:"title"`
-	Description     string       `db:"description"`
-	Metadata        string       `db:"metadata"`
-	Content         string       `db:"content"`
-	ProposalID      uint64       `db:"id"`
-	SubmitTime      time.Time    `db:"submit_time"`
-	DepositEndTime  time.Time    `db:"deposit_end_time"`
-	VotingStartTime sql.NullTime `db:"voting_start_time"`
-	VotingEndTime   sql.NullTime `db:"voting_end_time"`
-	Proposer        string       `db:"proposer_address"`
-	Status          string       `db:"status"`
+	Title           string         `db:"title"`
+	Summary         sql.NullString `db:"summary"`
+	Description     sql.NullString `db:"description"`
+	Metadata        sql.NullString `db:"metadata"`
+	Content         string         `db:"content"`
+	ProposalID      uint64         `db:"id"`
+	SubmitTime      time.Time      `db:"submit_time"`
+	DepositEndTime  time.Time      `db:"deposit_end_time"`
+	VotingStartTime sql.NullTime   `db:"voting_start_time"`
+	VotingEndTime   sql.NullTime   `db:"voting_end_time"`
+	Proposer        string         `db:"proposer_address"`
+	Status          string         `db:"status"`
 }
 
 // NewProposalRow allows to easily create a new ProposalRow
 func NewProposalRow(
 	proposalID uint64,
 	title string,
-	description string,
-	metadata string,
+	summary sql.NullString,
+	description sql.NullString,
+	metadata sql.NullString,
 	content string,
 	submitTime time.Time,
 	depositEndTime time.Time,
@@ -46,6 +48,7 @@ func NewProposalRow(
 	return ProposalRow{
 		ProposalID:      proposalID,
 		Title:           title,
+		Summary:         summary,
 		Description:     description,
 		Metadata:        metadata,
 		Content:         content,

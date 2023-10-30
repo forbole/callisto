@@ -28,17 +28,18 @@ import (
 	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
 )
 
-// GetProposalMetadata tries reading the given metadata as an URL.
-// If it's a valid URL, gets the content of the page and returns it.
-func GetProposalMetadata(metadata string) (string, error) {
+// GetDescriptionFromMetadata tries reading the given metadata as an URL pointing to a text page.
+// If it's a URL and the content type is text, it returns the content of the page, otherwise it returns
+// an empty string.
+func GetDescriptionFromMetadata(metadata string) (string, error) {
 	parsedURL, err := url.Parse(metadata)
 	if err != nil {
-		return metadata, nil
+		return "", nil
 	}
 
 	// Make sure the parse URL is valid
 	if parsedURL.Scheme != "http" && parsedURL.Scheme != "https" {
-		return metadata, nil
+		return "", nil
 	}
 
 	// Get the data from the URL
@@ -51,7 +52,7 @@ func GetProposalMetadata(metadata string) (string, error) {
 	// Make sure the response type is text
 	contentType := res.Header.Get("Content-Type")
 	if !strings.HasPrefix(contentType, "text") {
-		return metadata, nil
+		return "", nil
 	}
 
 	// Read the response body

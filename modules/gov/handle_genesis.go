@@ -51,6 +51,7 @@ func (m *Module) saveGenesisProposals(slice govtypesv1.Proposals, genDoc *tmtype
 			proposal.Id,
 			proposal.Title,
 			proposal.Summary,
+			"",
 			proposal.Metadata,
 			proposal.Messages,
 			proposal.Status.String(),

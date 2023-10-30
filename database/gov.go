@@ -73,7 +73,7 @@ func (db *Db) SaveProposals(proposals []types.Proposal) error {
 
 	proposalsQuery := `
 INSERT INTO proposal(
-	id, title, description, metadata, content, proposer_address, status,
+	id, title, summary, description, metadata, content, proposer_address, status,
     submit_time, deposit_end_time, voting_start_time, voting_end_time
 ) VALUES`
 	var proposalsParams []interface{}
@@ -83,9 +83,9 @@ INSERT INTO proposal(
 		accounts = append(accounts, types.NewAccount(proposal.Proposer))
 
 		// Prepare the proposal query
-		vi := i * 11
-		proposalsQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
-			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11)
+		vi := i * 12
+		proposalsQuery += fmt.Sprintf("($%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d,$%d),",
+			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11, vi+12)
 
 		var jsonMessages []string
 		var protoCodec codec.ProtoCodec
@@ -100,8 +100,9 @@ INSERT INTO proposal(
 		proposalsParams = append(proposalsParams,
 			proposal.ID,
 			proposal.Title,
-			proposal.Summary,
-			proposal.Metadata,
+			dbtypes.StringToNullString(proposal.Summary),
+			dbtypes.StringToNullString(proposal.Description),
+			dbtypes.StringToNullString(proposal.Metadata),
 			fmt.Sprintf("[%s]", strings.Join(jsonMessages, ",")),
 			proposal.Proposer,
 			proposal.Status,
@@ -123,6 +124,7 @@ INSERT INTO proposal(
 	proposalsQuery += `
 ON CONFLICT (id) DO UPDATE 
 	SET title = excluded.title,
+    	summary = excluded.summary,
   		description = excluded.description,
 		content = excluded.content,
 		proposer_address = excluded.proposer_address,
@@ -170,8 +172,9 @@ func (db *Db) GetProposal(id uint64) (types.Proposal, error) {
 	proposal := types.NewProposal(
 		row.ProposalID,
 		row.Title,
-		row.Description,
-		row.Metadata,
+		dbtypes.NullStringToString(row.Summary),
+		dbtypes.NullStringToString(row.Description),
+		dbtypes.NullStringToString(row.Metadata),
 		messages,
 		row.Status,
 		row.SubmitTime,
