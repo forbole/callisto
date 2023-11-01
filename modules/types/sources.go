@@ -6,17 +6,16 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/forbole/juno/v4/node/remote"
 
-	minttypes "github.com/MonikaCat/canine-chain/v2/x/jklmint/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/juno/v4/node/local"
+	minttypes "github.com/jackalLabs/canine-chain/v3/x/jklmint/types"
 
 	nodeconfig "github.com/forbole/juno/v4/node/config"
 
-	storagetypes "github.com/MonikaCat/canine-chain/v2/x/storage/types"
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
 	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"
 	distrsource "github.com/forbole/bdjuno/v4/modules/distribution/source"
@@ -31,6 +30,7 @@ import (
 	remotestakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/remote"
 	storagesource "github.com/forbole/bdjuno/v4/modules/storage/source"
 	remotestoragesource "github.com/forbole/bdjuno/v4/modules/storage/source/remote"
+	storagetypes "github.com/jackalLabs/canine-chain/v3/x/storage/types"
 )
 
 type Sources struct {

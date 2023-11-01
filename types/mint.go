@@ -1,6 +1,6 @@
 package types
 
-import minttypes "github.com/MonikaCat/canine-chain/v2/x/jklmint/types"
+import minttypes "github.com/jackalLabs/canine-chain/v3/x/jklmint/types"
 
 // MintParams represents the x/mint parameters
 type MintParams struct {

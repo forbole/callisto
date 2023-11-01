@@ -1,6 +1,6 @@
 package types
 
-import storagetypes "github.com/MonikaCat/canine-chain/v2/x/storage/types"
+import storagetypes "github.com/jackalLabs/canine-chain/v3/x/storage/types"
 
 // StorageParams represents the x/storage parameters
 type StorageParams struct {
