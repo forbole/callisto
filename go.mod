@@ -10,7 +10,7 @@ require (
 	github.com/cosmos/gogoproto v1.4.10
 	github.com/desmos-labs/desmos/v6 v6.1.0
 	github.com/forbole/juno/v5 v5.2.0
-	github.com/go-co-op/gocron v1.35.0
+	github.com/go-co-op/gocron v1.35.3
 	github.com/golangci/golangci-lint v1.54.2
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.9
@@ -156,7 +156,7 @@ require (
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/orderedcode v0.0.1 // indirect
 	github.com/google/s2a-go v0.1.4 // indirect
-	github.com/google/uuid v1.3.1 // indirect
+	github.com/google/uuid v1.4.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.2.3 // indirect
 	github.com/googleapis/gax-go/v2 v2.11.0 // indirect
 	github.com/gordonklaus/ineffassign v0.0.0-20230610083614-0e73809eb601 // indirect
