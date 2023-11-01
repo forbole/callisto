@@ -19,8 +19,8 @@ import (
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/juno/v4/node/local"
-	mintkeeper "github.com/osmosis-labs/osmosis/v16/x/mint/keeper"
-	minttypes "github.com/osmosis-labs/osmosis/v16/x/mint/types"
+	mintkeeper "github.com/osmosis-labs/osmosis/v20/x/mint/keeper"
+	minttypes "github.com/osmosis-labs/osmosis/v20/x/mint/types"
 
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
@@ -48,9 +48,9 @@ import (
 	localwasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source/local"
 	remotewasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source/remote"
 	nodeconfig "github.com/forbole/juno/v4/node/config"
-	osmosisapp "github.com/osmosis-labs/osmosis/v16/app"
-	superfluidkeeper "github.com/osmosis-labs/osmosis/v16/x/superfluid/keeper"
-	superfluidtypes "github.com/osmosis-labs/osmosis/v16/x/superfluid/types"
+	osmosisapp "github.com/osmosis-labs/osmosis/v20/app"
+	superfluidkeeper "github.com/osmosis-labs/osmosis/v20/x/superfluid/keeper"
+	superfluidtypes "github.com/osmosis-labs/osmosis/v20/x/superfluid/types"
 )
 
 type Sources struct {

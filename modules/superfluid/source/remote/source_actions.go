@@ -2,7 +2,7 @@ package remote
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	superfluidtypes "github.com/osmosis-labs/osmosis/v16/x/superfluid/types"
+	superfluidtypes "github.com/osmosis-labs/osmosis/v20/x/superfluid/types"
 
 	"github.com/forbole/juno/v4/node/remote"
 

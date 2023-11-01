@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	minttypes "github.com/osmosis-labs/osmosis/v16/x/mint/types"
+	minttypes "github.com/osmosis-labs/osmosis/v20/x/mint/types"
 
 	"github.com/forbole/bdjuno/v4/types"
 
