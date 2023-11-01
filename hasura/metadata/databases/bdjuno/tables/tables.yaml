@@ -43,3 +43,6 @@
 - "!include public_validator_voting_power.yaml"
 - "!include public_vesting_account.yaml"
 - "!include public_vesting_period.yaml"
+- "!include public_nft_denom.yaml"
+- "!include public_nft_nft.yaml"
+#- "!include public_nft_transfer_history.yaml"

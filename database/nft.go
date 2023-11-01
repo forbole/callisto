@@ -23,25 +23,28 @@ func (tx *DbTx) SaveNFT(txHash string, tokenID uint64, denomID, name, descriptio
 }
 
 // UpdateNFT update info about NFT in db.
-func (db *Db) UpdateNFT(id, denomID, name, uri, dataText string) error {
+func (db *Db) UpdateNFT(id, denomID, name, uri, description string) error {
 	_, err := db.SQL.Exec(`
 		UPDATE nft_nft 
-		SET name = $1, uri = $2, data_text = $4 
-		WHERE id = $5 AND denom_id = $6`, name, uri, dataText, id, denomID)
+		SET name = $1, uri = $2, description = $4 
+		WHERE id = $5 AND denom_id = $6`, name, uri, description, id, denomID)
 	return err
 }
 
 // UpdateNFTOwner update info about owner NFT.
-func (tx *DbTx) UpdateNFTOwner(id, denomID, owner string) error {
-	_, err := tx.Exec(`UPDATE nft_nft SET owner = $1 WHERE id = $2 AND denom_id = $3`, owner, id, denomID)
+func (tx *DbTx) UpdateNFTOwner(id, denomID, recipient string) error {
+	_, err := tx.Exec(`
+		UPDATE nft_nft 
+		SET recipient = $1 
+		WHERE id = $2 AND denom_id = $3`, recipient, id, denomID)
 	return err
 }
 
 // UpdateNFTHistory update history of transfer NFT.
-func (tx *DbTx) UpdateNFTHistory(txHash string, tokenID uint64, denomID, from, to string, timestamp uint64) error {
-	_, err := tx.Exec(`
-        INSERT INTO nft_transfer_history (transaction_hash, id, denom_id, old_owner, new_owner, timestamp, uniq_id) 
-        VALUES($1, $2, $3, $4, $5, $6, $7) ON CONFLICT DO NOTHING`,
-		txHash, tokenID, denomID, from, to, timestamp, utils.FormatUniqID(tokenID, denomID))
-	return err
-}
+//func (tx *DbTx) UpdateNFTHistory(txHash string, tokenID uint64, denomID, from, to string, timestamp uint64) error {
+//	_, err := tx.Exec(`
+//       INSERT INTO nft_transfer_history (transaction_hash, id, denom_id, old_owner, new_owner, timestamp, uniq_id)
+//       VALUES($1, $2, $3, $4, $5, $6, $7) ON CONFLICT DO NOTHING`,
+//		txHash, tokenID, denomID, from, to, timestamp, utils.FormatUniqID(tokenID, denomID))
+//	return err
+//}
