@@ -172,7 +172,7 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1
 
 // handleMsgDeposit allows to properly handle a MsgDeposit
 func (m *Module) handleMsgDeposit(tx *juno.Tx, msg *govtypesv1.MsgDeposit) error {
-	deposit, err := m.source.ProposalDeposit(tx.Height, msg.ProposalId, msg.Depositor)
+	govDeposit, err := m.source.ProposalDeposit(tx.Height, msg.ProposalId, msg.Depositor)
 	if err != nil {
 		return fmt.Errorf("error while getting proposal deposit: %s", err)
 	}
@@ -181,9 +181,15 @@ func (m *Module) handleMsgDeposit(tx *juno.Tx, msg *govtypesv1.MsgDeposit) error
 		return fmt.Errorf("error while parsing time: %s", err)
 	}
 
-	return m.db.SaveDeposits([]types.Deposit{
-		types.NewDeposit(msg.ProposalId, msg.Depositor, deposit.Amount, txTimestamp, tx.TxHash, tx.Height),
-	})
+	// Save the deposit
+	deposit := types.NewDeposit(govDeposit.ProposalId, govDeposit.Depositor, govDeposit.Amount, txTimestamp, tx.TxHash, tx.Height)
+	err = m.db.SaveDeposits([]types.Deposit{deposit})
+	if err != nil {
+		return err
+	}
+
+	// Update the proposal status (in case the deposit made the proposal enter the voting phase)
+	return m.UpdateProposalStatus(tx.Height, msg.ProposalId)
 }
 
 // handleMsgVote allows to properly handle a MsgVote
