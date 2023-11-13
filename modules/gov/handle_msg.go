@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/x/authz"
-	"github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"google.golang.org/grpc/codes"
 
 	"github.com/forbole/bdjuno/v4/types"
@@ -15,6 +14,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
 	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
 	juno "github.com/forbole/juno/v5/types"
@@ -32,7 +32,7 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	}
 
 	switch cosmosMsg := msg.(type) {
-	case *v1beta1.MsgSubmitProposal:
+	case *govtypesv1beta1.MsgSubmitProposal:
 		return m.handleMsgLegacySubmitProposal(tx, index, cosmosMsg)
 
 	case *govtypesv1.MsgSubmitProposal:
@@ -136,7 +136,7 @@ func (m *Module) saveProposalAndDeposit(tx *juno.Tx, index int, proposer string,
 }
 
 // handleMsgSubmitProposal allows to properly handle a v1beta1.MsgSubmitProposal
-func (m *Module) handleMsgLegacySubmitProposal(tx *juno.Tx, index int, msg *v1beta1.MsgSubmitProposal) error {
+func (m *Module) handleMsgLegacySubmitProposal(tx *juno.Tx, index int, msg *govtypesv1beta1.MsgSubmitProposal) error {
 	_, err := m.saveProposalAndDeposit(tx, index, msg.Proposer, msg.InitialDeposit)
 	return err
 }
