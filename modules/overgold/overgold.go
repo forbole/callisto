@@ -53,8 +53,8 @@ func NewModule(
 	node node.Node,
 	logger logging.Logger,
 
-	OverGoldCoreSource overgoldCoreSource.Source,
 	OverGoldAllowedSource overgoldAllowedSource.Source,
+	OverGoldCoreSource overgoldCoreSource.Source,
 	OverGoldFeeExcluderSource overgoldFeeExcluderSource.Source,
 	OverGoldReferralSource overgoldReferralSource.Source,
 	OverGoldStakeSource overgoldStakeSource.Source,

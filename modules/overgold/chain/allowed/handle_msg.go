@@ -1,6 +1,8 @@
 package allowed
 
 import (
+	"fmt"
+
 	"git.ooo.ua/vipcoin/ovg-chain/x/allowed/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	juno "github.com/forbole/juno/v5/types"
@@ -12,18 +14,16 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return nil
 	}
 
-	// switch allowedMsg := msg.(type) {
-	switch msg.(type) {
+	switch allowedMsg := msg.(type) {
 	case *types.MsgCreateAddresses:
-		// TODO: create addresses
-		return nil
+		return m.handleMsgCreateAddresses(tx, index, allowedMsg)
+	case *types.MsgDeleteByAddresses:
+		return m.handleMsgDeleteByAddresses(tx, index, allowedMsg)
+	case *types.MsgDeleteByID:
+		return m.handleMsgDeleteByID(tx, index, allowedMsg)
 	case *types.MsgUpdateAddresses:
-		// TODO: update addresses
-		return nil
-	case *types.MsgDeleteAddresses:
-		// TODO: delete addresses
-		return nil
+		return m.handleMsgUpdateAddresses(tx, index, allowedMsg)
 	default:
-		return nil
+		return fmt.Errorf("unrecognized %s message type: %T", types.ModuleName, allowedMsg)
 	}
 }

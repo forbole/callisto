@@ -65,8 +65,8 @@ type Sources struct {
 	StakingSource  stakingsource.Source
 
 	// Custom OVG sources
-	OverGoldCoreSource        overgoldCoreSource.Source
 	OverGoldAllowedSource     overgoldAllowedSource.Source
+	OverGoldCoreSource        overgoldCoreSource.Source
 	OverGoldFeeExcluderSource overgoldFeeExcluderSource.Source
 	OverGoldReferralSource    overgoldReferralSource.Source
 	OverGoldStakeSource       overgoldStakeSource.Source
@@ -142,8 +142,8 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
 
 		// Custom OVG sources
-		OverGoldCoreSource:        remoteOvergoldCoreSource.NewSource(source, coretypes.NewQueryClient(source.GrpcConn)),
 		OverGoldAllowedSource:     remoteOvergoldAllowedSource.NewSource(source, allowedtypes.NewQueryClient(source.GrpcConn)),
+		OverGoldCoreSource:        remoteOvergoldCoreSource.NewSource(source, coretypes.NewQueryClient(source.GrpcConn)),
 		OverGoldFeeExcluderSource: remoteOvergoldFeeExcluderSource.NewSource(source, feeexcludertypes.NewQueryClient(source.GrpcConn)),
 		OverGoldReferralSource:    remoteOvergoldReferralSource.NewSource(source, referraltypes.NewQueryClient(source.GrpcConn)),
 		OverGoldStakeSource:       remoteOvergoldStakeSource.NewSource(source, staketypes.NewQueryClient(source.GrpcConn)),

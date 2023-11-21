@@ -1,37 +1,32 @@
 package modules
 
 import (
-	"github.com/forbole/bdjuno/v4/modules/actions"
-	"github.com/forbole/bdjuno/v4/modules/overgold"
-	"github.com/forbole/bdjuno/v4/modules/types"
-
-	"github.com/forbole/juno/v5/modules/pruning"
-	"github.com/forbole/juno/v5/modules/telemetry"
-
-	"github.com/forbole/bdjuno/v4/modules/slashing"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	jmodules "github.com/forbole/juno/v5/modules"
 	"github.com/forbole/juno/v5/modules/messages"
+	"github.com/forbole/juno/v5/modules/pruning"
 	"github.com/forbole/juno/v5/modules/registrar"
-
-	"github.com/forbole/bdjuno/v4/utils"
+	"github.com/forbole/juno/v5/modules/telemetry"
 
 	"github.com/forbole/bdjuno/v4/database"
+	"github.com/forbole/bdjuno/v4/modules/actions"
 	"github.com/forbole/bdjuno/v4/modules/auth"
 	"github.com/forbole/bdjuno/v4/modules/bank"
 	"github.com/forbole/bdjuno/v4/modules/consensus"
+	dailyrefetch "github.com/forbole/bdjuno/v4/modules/daily_refetch"
 	"github.com/forbole/bdjuno/v4/modules/distribution"
 	"github.com/forbole/bdjuno/v4/modules/feegrant"
-
-	dailyrefetch "github.com/forbole/bdjuno/v4/modules/daily_refetch"
 	"github.com/forbole/bdjuno/v4/modules/gov"
 	"github.com/forbole/bdjuno/v4/modules/mint"
 	"github.com/forbole/bdjuno/v4/modules/modules"
+	"github.com/forbole/bdjuno/v4/modules/overgold"
 	"github.com/forbole/bdjuno/v4/modules/pricefeed"
+	"github.com/forbole/bdjuno/v4/modules/slashing"
 	"github.com/forbole/bdjuno/v4/modules/staking"
+	"github.com/forbole/bdjuno/v4/modules/types"
 	"github.com/forbole/bdjuno/v4/modules/upgrade"
+	"github.com/forbole/bdjuno/v4/utils"
 )
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
@@ -93,8 +88,8 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		ctx.Proxy,
 		ctx.Logger,
 
-		sources.OverGoldCoreSource,
 		sources.OverGoldAllowedSource,
+		sources.OverGoldCoreSource,
 		sources.OverGoldFeeExcluderSource,
 		sources.OverGoldReferralSource,
 		sources.OverGoldStakeSource,

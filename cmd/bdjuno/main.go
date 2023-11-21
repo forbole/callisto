@@ -1,6 +1,8 @@
 package main
 
 import (
+	"cosmossdk.io/simapp"
+	chainapp "git.ooo.ua/vipcoin/ovg-chain/app"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/forbole/juno/v5/cmd"
 	initcmd "github.com/forbole/juno/v5/cmd/init"
@@ -11,16 +13,10 @@ import (
 
 	migratecmd "github.com/forbole/bdjuno/v4/cmd/migrate"
 	parsecmd "github.com/forbole/bdjuno/v4/cmd/parse"
-
-	"github.com/forbole/bdjuno/v4/types/config"
-
-	"cosmossdk.io/simapp"
-
-	chainapp "git.ooo.ua/vipcoin/ovg-chain/app"
-
 	vault "github.com/forbole/bdjuno/v4/config"
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules"
+	"github.com/forbole/bdjuno/v4/types/config"
 )
 
 func main() {

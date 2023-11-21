@@ -12,6 +12,7 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return nil
 	}
 
+	// TODO: update
 	// switch feeexcluderMsg := msg.(type) {
 	switch msg.(type) {
 	case *types.MsgCreateAddress:
@@ -19,12 +20,6 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	case *types.MsgDeleteAddress:
 		return nil
 	case *types.MsgUpdateAddress:
-		return nil
-	case *types.MsgCreateFees:
-		return nil
-	case *types.MsgDeleteFees:
-		return nil
-	case *types.MsgUpdateFees:
 		return nil
 	default:
 		return nil
