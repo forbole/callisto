@@ -3,11 +3,11 @@ package utils
 import (
 	"fmt"
 
-	"github.com/forbole/juno/v4/node"
-	"github.com/forbole/juno/v4/types/config"
-	tmjson "github.com/tendermint/tendermint/libs/json"
-	tmos "github.com/tendermint/tendermint/libs/os"
-	tmtypes "github.com/tendermint/tendermint/types"
+	tmjson "github.com/cometbft/cometbft/libs/json"
+	tmos "github.com/cometbft/cometbft/libs/os"
+	tmtypes "github.com/cometbft/cometbft/types"
+	"github.com/forbole/juno/v5/node"
+	"github.com/forbole/juno/v5/types/config"
 )
 
 // ReadGenesis reads the genesis data based on the given config
