@@ -10,19 +10,18 @@ import (
 // SaveWasmParams allows to store the wasm params
 func (db *Db) SaveWasmParams(params types.WasmParams) error {
 	stmt := `
-INSERT INTO wasm_params(code_upload_access, instantiate_default_permission, max_wasm_code_size, height) 
-VALUES ($1, $2, $3, $4) 
+INSERT INTO wasm_params(code_upload_access, instantiate_default_permission, height) 
+VALUES ($1, $2, $3) 
 ON CONFLICT (one_row_id) DO UPDATE 
 	SET code_upload_access = excluded.code_upload_access, 
 		instantiate_default_permission = excluded.instantiate_default_permission, 
-		max_wasm_code_size = excluded.max_wasm_code_size 
 WHERE wasm_params.height <= excluded.height
 `
 	accessConfig := dbtypes.NewDbAccessConfig(params.CodeUploadAccess)
 	cfgValue, _ := accessConfig.Value()
 
 	_, err := db.SQL.Exec(stmt,
-		cfgValue, params.InstantiateDefaultPermission, params.MaxWasmCodeSize, params.Height,
+		cfgValue, params.InstantiateDefaultPermission, params.Height,
 	)
 	if err != nil {
 		return fmt.Errorf("error while saving wasm params: %s", err)

@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/forbole/bdjuno/v4/types"
-	tmtypes "github.com/tendermint/tendermint/types"
+	tmtypes "github.com/cometbft/cometbft/types"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/rs/zerolog/log"
@@ -32,7 +32,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 
 func (m *Module) SaveGenesisParams(params wasmtypes.Params, initHeight int64) error {
 	err := m.db.SaveWasmParams(
-		types.NewWasmParams(&params.CodeUploadAccess, int32(params.InstantiateDefaultPermission), params.MaxWasmCodeSize, initHeight),
+		types.NewWasmParams(&params.CodeUploadAccess, int32(params.InstantiateDefaultPermission), initHeight),
 	)
 	if err != nil {
 		return fmt.Errorf("error while saving genesis wasm params: %s", err)
