@@ -18,7 +18,7 @@ require (
 	github.com/prometheus/client_golang v1.17.0
 	github.com/proullon/ramsql v0.1.3
 	github.com/rs/zerolog v1.31.0
-	github.com/spf13/cobra v1.7.0
+	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.8.4
 	google.golang.org/grpc v1.59.0
 	gopkg.in/yaml.v3 v3.0.1
