@@ -32,12 +32,21 @@ func GetTokensPrices(ids []string) ([]types.TokenPrice, error) {
 func ConvertCoingeckoPrices(prices []MarketTicker) []types.TokenPrice {
 	tokenPrices := make([]types.TokenPrice, len(prices))
 	for i, price := range prices {
-		tokenPrices[i] = types.NewTokenPrice(
-			price.Symbol,
-			price.CurrentPrice,
-			int64(math.Trunc(price.MarketCap)),
-			price.LastUpdated,
-		)
+		if price.Symbol == "nym" {
+			tokenPrices[i] = types.NewTokenPrice(
+				"nyx", // hard code value until coingecko gets updated
+				price.CurrentPrice,
+				int64(math.Trunc(price.MarketCap)),
+				price.LastUpdated,
+			)
+		} else {
+			tokenPrices[i] = types.NewTokenPrice(
+				price.Symbol,
+				price.CurrentPrice,
+				int64(math.Trunc(price.MarketCap)),
+				price.LastUpdated,
+			)
+		}
 	}
 	return tokenPrices
 }
