@@ -9,6 +9,7 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/bdjuno/v4/database/overgold/chain/allowed"
+	"github.com/forbole/bdjuno/v4/database/overgold/chain/bank"
 	"github.com/forbole/bdjuno/v4/database/overgold/chain/core"
 	"github.com/forbole/bdjuno/v4/database/overgold/chain/feeexcluder"
 	"github.com/forbole/bdjuno/v4/database/overgold/chain/last_block"
@@ -32,6 +33,7 @@ var (
 
 	Datastore struct {
 		Allowed    *allowed.Repository
+		Bank       *bank.Repository
 		Core       *core.Repository
 		FeeExluder *feeexcluder.Repository
 		LastBlock  *last_block.Repository
@@ -55,10 +57,14 @@ func init() {
 	// Create the codec.
 	// TODO: rework it: Codec = registrar.Context{}.EncodingConfig.Codec
 
+	// OverGold modules
 	Datastore.Allowed = allowed.NewRepository(DB, Codec)
 	Datastore.Core = core.NewRepository(DB, Codec)
 	Datastore.FeeExluder = feeexcluder.NewRepository(DB, Codec)
-	Datastore.LastBlock = last_block.NewRepository(DB)
 	Datastore.Referral = referral.NewRepository(DB, Codec)
 	Datastore.Stake = stake.NewRepository(DB, Codec)
+
+	// Cosmos modules
+	Datastore.Bank = bank.NewRepository(DB)
+	Datastore.LastBlock = last_block.NewRepository(DB)
 }

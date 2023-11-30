@@ -4,9 +4,16 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"fmt"
+	"regexp"
 	"strings"
 
+	"git.ooo.ua/vipcoin/lib/errs"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/lib/pq"
+)
+
+var (
+	coinsRegEx = regexp.MustCompile(`\(([^,]+),(\d+)\)`)
 )
 
 func ToString(value sql.NullString) string {
@@ -38,8 +45,8 @@ func RemoveEmpty(s []string) []string {
 
 // DbCoin represents the information stored inside the database about a single coin
 type DbCoin struct {
-	Denom  string
-	Amount string
+	Denom  string `json:"denom"`
+	Amount string `json:"amount"`
 }
 
 // NewDbCoin builds a DbCoin starting from an SDK Coin
@@ -138,6 +145,16 @@ func (coins *DbCoins) Scan(src interface{}) error {
 	return nil
 }
 
+// Value implements driver.Valuer, e.g.: {(ovg,100000000),(stovg,500000000000)}
+func (coins *DbCoins) Value() (driver.Value, error) {
+	res := make(pq.StringArray, 0, len(coins.ToCoins()))
+	for _, coin := range coins.ToCoins() {
+		res = append(res, fmt.Sprintf("(%s,%s)", coin.Denom, coin.Amount.String()))
+	}
+
+	return fmt.Sprintf("{%s}", strings.Join(res, ",")), nil
+}
+
 // ToCoins converts this DbCoins to sdk.Coins
 func (coins DbCoins) ToCoins() sdk.Coins {
 	var sdkCoins = make([]sdk.Coin, len(coins))
@@ -145,6 +162,39 @@ func (coins DbCoins) ToCoins() sdk.Coins {
 		sdkCoins[index] = coins[index].ToCoin()
 	}
 	return sdkCoins
+}
+
+// FromPqStringArrayToCoins - converts pq.StringArray to sdk.Coins, e.g.: {(ovg,10),(stovg,5)}
+func FromPqStringArrayToCoins(arr pq.StringArray) (sdk.Coins, error) {
+	res := make(sdk.Coins, 0)
+	for _, v := range arr {
+		coin, err := parseCoin(v)
+		if err != nil {
+			return nil, err
+		}
+
+		res = append(res, coin)
+	}
+
+	return res, nil
+}
+
+// parseCoin - parses a single coin, e.g.: (ovg,100000000)
+func parseCoin(coinStr string) (sdk.Coin, error) {
+	match := coinsRegEx.FindStringSubmatch(coinStr)
+	if match != nil {
+		denom := match[1]
+		amountStr := match[2]
+
+		amount, ok := sdk.NewIntFromString(amountStr)
+		if !ok {
+			return sdk.Coin{}, errs.Internal{Cause: "invalid amount"}
+		}
+
+		return sdk.NewCoin(denom, amount), nil
+	}
+
+	return sdk.Coin{}, errs.Internal{Cause: "invalid coin"}
 }
 
 // --------------------------------------------------------------------------------------------------------------------

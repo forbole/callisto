@@ -19,10 +19,13 @@ func (r Repository) GetAllDeleteByAddresses(filter filter.Filter) ([]allowed.Msg
 	var result []types.AllowedDeleteByAddresses
 	if err := r.db.Select(&result, query, args...); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, errs.NotFound{What: "delete_by_addresses"}
+			return nil, errs.NotFound{What: tableDeleteByAddresses}
 		}
 
 		return nil, errs.Internal{Cause: err.Error()}
+	}
+	if len(result) == 0 {
+		return nil, errs.NotFound{What: tableDeleteByAddresses}
 	}
 
 	return toDeleteByAddressesDomainList(result), nil

@@ -40,6 +40,8 @@ import (
 	remotemintsource "github.com/forbole/bdjuno/v4/modules/mint/source/remote"
 	overgoldAllowedSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/allowed/source"
 	remoteOvergoldAllowedSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/allowed/source/remote"
+	overgoldBankSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/bank/source"
+	remoteOvergoldBankSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/bank/source/remote"
 	overgoldCoreSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/core/source"
 	remoteOvergoldCoreSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/core/source/remote"
 	overgoldFeeExcluderSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/feeexcluder/source"
@@ -65,11 +67,15 @@ type Sources struct {
 	StakingSource  stakingsource.Source
 
 	// Custom OVG sources
-	OverGoldAllowedSource     overgoldAllowedSource.Source
+	OverGoldAllowedSource overgoldAllowedSource.Source
+
 	OverGoldCoreSource        overgoldCoreSource.Source
 	OverGoldFeeExcluderSource overgoldFeeExcluderSource.Source
 	OverGoldReferralSource    overgoldReferralSource.Source
 	OverGoldStakeSource       overgoldStakeSource.Source
+
+	// Custom SDK sources
+	OverGoldBankSource overgoldBankSource.Source
 }
 
 func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -142,6 +148,7 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
 
 		// Custom OVG sources
+		OverGoldBankSource:        remoteOvergoldBankSource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
 		OverGoldAllowedSource:     remoteOvergoldAllowedSource.NewSource(source, allowedtypes.NewQueryClient(source.GrpcConn)),
 		OverGoldCoreSource:        remoteOvergoldCoreSource.NewSource(source, coretypes.NewQueryClient(source.GrpcConn)),
 		OverGoldFeeExcluderSource: remoteOvergoldFeeExcluderSource.NewSource(source, feeexcludertypes.NewQueryClient(source.GrpcConn)),

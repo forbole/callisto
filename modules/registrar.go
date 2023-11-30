@@ -89,6 +89,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		ctx.Logger,
 
 		sources.OverGoldAllowedSource,
+		sources.OverGoldBankSource,
 		sources.OverGoldCoreSource,
 		sources.OverGoldFeeExcluderSource,
 		sources.OverGoldReferralSource,

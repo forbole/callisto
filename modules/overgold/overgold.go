@@ -7,13 +7,14 @@ import (
 	"github.com/forbole/juno/v5/logging"
 	"github.com/forbole/juno/v5/modules"
 	jmodules "github.com/forbole/juno/v5/modules"
-
 	"github.com/forbole/juno/v5/node"
 
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/database/overgold/chain/last_block"
 	"github.com/forbole/bdjuno/v4/modules/overgold/chain/allowed"
 	overgoldAllowedSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/allowed/source"
+	customBank "github.com/forbole/bdjuno/v4/modules/overgold/chain/bank"
+	overgoldBankSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/bank/source"
 	"github.com/forbole/bdjuno/v4/modules/overgold/chain/core"
 	overgoldCoreSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/core/source"
 	"github.com/forbole/bdjuno/v4/modules/overgold/chain/feeexcluder"
@@ -25,8 +26,8 @@ import (
 )
 
 var (
-	_ modules.Module        = &module{}
-	_ modules.GenesisModule = &module{}
+	_ modules.Module        = &Module{}
+	_ modules.GenesisModule = &Module{}
 )
 
 type overgoldModule interface {
@@ -35,7 +36,7 @@ type overgoldModule interface {
 	jmodules.MessageModule
 }
 
-type module struct {
+type Module struct {
 	cdc             codec.Codec
 	db              *database.Db
 	lastBlockRepo   last_block.Repository
@@ -54,23 +55,28 @@ func NewModule(
 	logger logging.Logger,
 
 	OverGoldAllowedSource overgoldAllowedSource.Source,
+	OverGoldBankSource overgoldBankSource.Source,
 	OverGoldCoreSource overgoldCoreSource.Source,
 	OverGoldFeeExcluderSource overgoldFeeExcluderSource.Source,
 	OverGoldReferralSource overgoldReferralSource.Source,
 	OverGoldStakeSource overgoldStakeSource.Source,
-) *module {
-	module := &module{
+) *Module {
+	module := &Module{
 		cdc:           cdc,
 		db:            db,
 		lastBlockRepo: *last_block.NewRepository(db.Sqlx),
 		node:          node,
 		logger:        logger,
 		overgoldModules: []overgoldModule{
-			core.NewModule(OverGoldCoreSource, cdc, db),
+			// OverGold modules
 			allowed.NewModule(OverGoldAllowedSource, cdc, db),
+			core.NewModule(OverGoldCoreSource, cdc, db),
 			feeexcluder.NewModule(OverGoldFeeExcluderSource, cdc, db),
 			referral.NewModule(OverGoldReferralSource, cdc, db),
 			stake.NewModule(OverGoldStakeSource, cdc, db),
+
+			// custom SDK modules
+			customBank.NewModule(OverGoldBankSource, cdc, db),
 		},
 	}
 
@@ -80,6 +86,6 @@ func NewModule(
 }
 
 // Name implements modules.Module
-func (m *module) Name() string {
-	return "overgold"
+func (m *Module) Name() string {
+	return module
 }

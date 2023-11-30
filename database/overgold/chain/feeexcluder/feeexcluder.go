@@ -3,7 +3,11 @@ package feeexcluder
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/jmoiron/sqlx"
+
+	"github.com/forbole/bdjuno/v4/database/overgold/chain"
 )
+
+var _ chain.FeeExcluder = &Repository{}
 
 type (
 	// Repository - defines a repository for fee exclude repository

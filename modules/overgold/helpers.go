@@ -2,6 +2,7 @@ package overgold
 
 import (
 	"fmt"
+	"time"
 
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 	tmtypes "github.com/cometbft/cometbft/types"
@@ -14,8 +15,14 @@ import (
 	dbtypes "github.com/forbole/bdjuno/v4/database/types"
 )
 
+const (
+	intervalLastBlock = time.Second
+
+	module = "overgold"
+)
+
 // parseMissingBlocksAndTransactions - parse missing blocks and transactions
-func (m *module) parseMissingBlocksAndTransactions(height int64) (dbtypes.BlockRow, []*txtypes.Tx, error) {
+func (m *Module) parseMissingBlocksAndTransactions(height int64) (dbtypes.BlockRow, []*txtypes.Tx, error) {
 	block, err := m.node.Block(height)
 	if err != nil {
 		return dbtypes.BlockRow{}, []*txtypes.Tx{}, fmt.Errorf("failed to get block from node: %s", err)
@@ -41,8 +48,8 @@ func (m *module) parseMissingBlocksAndTransactions(height int64) (dbtypes.BlockR
 
 // ExportBlock accepts a finalized block and a corresponding set of transactions
 // and persists them to the database along with attributable metadata. An error
-// is returned if the write fails.
-func (m *module) ExportBlock(
+// is returned if the writing fails.
+func (m *Module) ExportBlock(
 	b *tmctypes.ResultBlock, r *tmctypes.ResultBlockResults, txs []*types.Tx, vals *tmctypes.ResultValidators,
 ) (dbtypes.BlockRow, []*txtypes.Tx, error) {
 	// Save all validators
@@ -55,7 +62,8 @@ func (m *module) ExportBlock(
 	proposerAddr := sdk.ConsAddress(b.Block.ProposerAddress).String()
 	val := findValidatorByAddr(proposerAddr, vals)
 	if val == nil {
-		return dbtypes.BlockRow{}, []*txtypes.Tx{}, fmt.Errorf("failed to find validator by proposer address %s: %s", proposerAddr, err)
+		return dbtypes.BlockRow{}, []*txtypes.Tx{},
+			fmt.Errorf("failed to find validator by proposer address %s: %s", proposerAddr, err)
 	}
 
 	block := types.NewBlockFromTmBlock(b, sumGasTxs(txs))
@@ -101,7 +109,7 @@ func (m *module) ExportBlock(
 // SaveValidators persists a list of Tendermint validators with an address and a
 // consensus public key. An error is returned if the public key cannot be Bech32
 // encoded or if the DB write fails.
-func (m *module) SaveValidators(vals []*tmtypes.Validator) error {
+func (m *Module) SaveValidators(vals []*tmtypes.Validator) error {
 	var validators = make([]*types.Validator, len(vals))
 	for index, val := range vals {
 		consAddr := sdk.ConsAddress(val.Address).String()
@@ -148,8 +156,8 @@ func sumGasTxs(txs []*types.Tx) uint64 {
 
 // ExportCommit accepts a block commitment and a corresponding set of
 // validators for the commitment and persists them to the database. An error is
-// returned if any write fails or if there is any missing aggregated data.
-func (m *module) ExportCommit(commit *tmtypes.Commit, vals *tmctypes.ResultValidators) error {
+// returned if any writing fails or if there is any missing-aggregated data.
+func (m *Module) ExportCommit(commit *tmtypes.Commit, vals *tmctypes.ResultValidators) error {
 	var signatures []*types.CommitSig
 	for _, commitSig := range commit.Signatures {
 		// Avoid empty commits
@@ -182,7 +190,7 @@ func (m *module) ExportCommit(commit *tmtypes.Commit, vals *tmctypes.ResultValid
 
 // ExportTxs accepts a slice of transactions and persists then inside the database.
 // An error is returned if the write fails.
-func (m *module) ExportTxs(txs []*types.Tx) ([]*txtypes.Tx, error) {
+func (m *Module) ExportTxs(txs []*types.Tx) ([]*txtypes.Tx, error) {
 	// Handle all the transactions inside the block
 	for _, tx := range txs {
 		// Save the transaction itself

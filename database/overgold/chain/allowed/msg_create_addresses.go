@@ -19,10 +19,13 @@ func (r Repository) GetAllCreateAddresses(filter filter.Filter) ([]allowed.MsgCr
 	var result []types.AllowedCreateAddresses
 	if err := r.db.Select(&result, query, args...); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, errs.NotFound{What: "create_addresses"}
+			return nil, errs.NotFound{What: tableCreateAddresses}
 		}
 
 		return nil, errs.Internal{Cause: err.Error()}
+	}
+	if len(result) == 0 {
+		return nil, errs.NotFound{What: tableCreateAddresses}
 	}
 
 	return toCreateAddressesDomainList(result), nil

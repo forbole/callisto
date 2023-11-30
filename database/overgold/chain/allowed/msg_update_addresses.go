@@ -19,10 +19,13 @@ func (r Repository) GetAllUpdateAddresses(filter filter.Filter) ([]allowed.MsgUp
 	var result []types.AllowedUpdateAddresses
 	if err := r.db.Select(&result, query, args...); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, errs.NotFound{What: "update_addresses"}
+			return nil, errs.NotFound{What: tableUpdateAddresses}
 		}
 
 		return nil, errs.Internal{Cause: err.Error()}
+	}
+	if len(result) == 0 {
+		return nil, errs.NotFound{What: tableUpdateAddresses}
 	}
 
 	return toUpdateAddressesDomainList(result), nil

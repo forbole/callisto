@@ -19,10 +19,13 @@ func (r Repository) GetAllAddresses(filter filter.Filter) ([]allowed.Addresses, 
 	var result []types.AllowedAddresses
 	if err := r.db.Select(&result, query, args...); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, errs.NotFound{What: "addresses"}
+			return nil, errs.NotFound{What: tableAddresses}
 		}
 
 		return nil, errs.Internal{Cause: err.Error()}
+	}
+	if len(result) == 0 {
+		return nil, errs.NotFound{What: tableAddresses}
 	}
 
 	return toAddressesDomainList(result), nil

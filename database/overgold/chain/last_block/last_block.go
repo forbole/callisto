@@ -6,7 +6,11 @@ import (
 
 	"git.ooo.ua/vipcoin/lib/errs"
 	"github.com/jmoiron/sqlx"
+
+	"github.com/forbole/bdjuno/v4/database/overgold/chain"
 )
+
+var _ chain.LastBlock = &Repository{}
 
 type (
 	// Repository - defines a repository for last block repository
@@ -33,7 +37,7 @@ func (r Repository) create(id uint64) error {
 	return nil
 }
 
-// Get - define repository method which get last block from db.
+// Get - define repository method which gets last block from db.
 func (r Repository) Get() (uint64, error) {
 	query := `SELECT block FROM last_block`
 

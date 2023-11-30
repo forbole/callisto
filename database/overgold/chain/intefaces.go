@@ -3,8 +3,10 @@ package chain
 import (
 	"git.ooo.ua/vipcoin/lib/filter"
 	allowed "git.ooo.ua/vipcoin/ovg-chain/x/allowed/types"
+	bank "github.com/cosmos/cosmos-sdk/x/bank/types"
 )
 
+// custom ovg types
 type (
 	// Allowed - describes an interface for working with database models.
 	Allowed interface {
@@ -37,11 +39,6 @@ type (
 		// TODO
 	}
 
-	// LastBlock - describes an interface for working with database models.
-	LastBlock interface {
-		// TODO
-	}
-
 	// Referral - describes an interface for working with database models.
 	Referral interface {
 		// TODO
@@ -50,5 +47,23 @@ type (
 	// Stake - describes an interface for working with database models.
 	Stake interface {
 		// TODO
+	}
+)
+
+// custom sdk types
+type (
+	// Bank - describes an interface for working with database models.
+	Bank interface {
+		GetAllMsgMultiSend(filter filter.Filter) ([]bank.MsgMultiSend, error)
+		InsertMsgMultiSend(hash string, msgs ...bank.MsgMultiSend) error
+
+		GetAllMsgSend(filter filter.Filter) ([]bank.MsgSend, error)
+		InsertMsgSend(hash string, msgs ...bank.MsgSend) error
+	}
+
+	// LastBlock - describes an interface for working with database models.
+	LastBlock interface {
+		Get() (uint64, error)
+		Update(id uint64) error
 	}
 )

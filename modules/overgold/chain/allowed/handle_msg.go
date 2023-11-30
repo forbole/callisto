@@ -24,6 +24,6 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	case *types.MsgUpdateAddresses:
 		return m.handleMsgUpdateAddresses(tx, index, allowedMsg)
 	default:
-		return fmt.Errorf("unrecognized %s message type: %T", types.ModuleName, allowedMsg)
+		return fmt.Errorf("unrecognized %s message type: %T", m.Name(), allowedMsg)
 	}
 }

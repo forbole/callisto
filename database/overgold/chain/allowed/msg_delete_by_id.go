@@ -19,10 +19,13 @@ func (r Repository) GetAllDeleteByID(filter filter.Filter) ([]allowed.MsgDeleteB
 	var result []types.AllowedDeleteByID
 	if err := r.db.Select(&result, query, args...); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, errs.NotFound{What: "delete_by_id"}
+			return nil, errs.NotFound{What: tableDeleteByID}
 		}
 
 		return nil, errs.Internal{Cause: err.Error()}
+	}
+	if len(result) == 0 {
+		return nil, errs.NotFound{What: tableDeleteByID}
 	}
 
 	return toDeleteByIDDomainList(result), nil
