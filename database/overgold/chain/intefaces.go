@@ -3,6 +3,7 @@ package chain
 import (
 	"git.ooo.ua/vipcoin/lib/filter"
 	allowed "git.ooo.ua/vipcoin/ovg-chain/x/allowed/types"
+	core "git.ooo.ua/vipcoin/ovg-chain/x/core/types"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/types"
 )
 
@@ -31,7 +32,14 @@ type (
 
 	// Core - describes an interface for working with database models.
 	Core interface {
-		// TODO
+		GetAllMsgIssue(filter filter.Filter) ([]core.MsgIssue, error)
+		InsertMsgIssue(hash string, msgs ...core.MsgIssue) error
+
+		GetAllMsgWithdraw(filter filter.Filter) ([]core.MsgWithdraw, error)
+		InsertMsgWithdraw(hash string, msgs ...core.MsgWithdraw) error
+
+		GetAllMsgSend(filter filter.Filter) ([]core.MsgSend, error)
+		InsertMsgSend(hash string, msgs ...core.MsgSend) error
 	}
 
 	// FeeExcluder - describes an interface for working with database models.

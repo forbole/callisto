@@ -9,8 +9,8 @@ CREATE TABLE IF NOT EXISTS msg_multi_send
 (
     id               BIGSERIAL      NOT NULL PRIMARY KEY,
     tx_hash          TEXT           NOT NULL,
-    inputs           COIN[]         NOT NULL,
-    outputs          COIN[]         NOT NULL
+    inputs           SEND_DATA[]    NOT NULL DEFAULT '{}',
+    outputs          SEND_DATA[]    NOT NULL DEFAULT '{}'
 );
 
 CREATE TABLE IF NOT EXISTS msg_send

@@ -8,6 +8,5 @@ import (
 
 // HandleGenesis implements GenesisModule
 func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
-	// TODO: implement method if need
-	return nil
+	return nil // don't need to do anything, SDK module
 }

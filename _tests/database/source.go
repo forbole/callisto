@@ -25,6 +25,7 @@ const (
 
 const (
 	TestAddressCreator = "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u"
+	TestAddress        = "ovg1wc054fnnd4mr5rtvxntnmucgvce98frgfrq5rh"
 )
 
 var (

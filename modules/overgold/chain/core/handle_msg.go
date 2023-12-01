@@ -12,13 +12,14 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return nil
 	}
 
-	// switch coreMsg := msg.(type) {
-	switch msg.(type) {
+	switch coreMsg := msg.(type) {
 	case *types.MsgIssue:
-		return nil
+		return m.handleMsgIssue(tx, index, coreMsg)
 	case *types.MsgWithdraw:
-		return nil
+		return m.handleMsgWithdraw(tx, index, coreMsg)
+	case *types.MsgSend:
+		return m.handleMsgSend(tx, index, coreMsg)
 	default:
-		return nil
+		return nil // TODO: return err
 	}
 }

@@ -10,7 +10,7 @@ import (
 
 // HandleGenesis implements GenesisModule
 func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
-	log.Debug().Str("module", "allowed").Msg("parsing genesis")
+	log.Debug().Str("module", allowed.ModuleName).Msg("parsing genesis")
 
 	// Unmarshal the bank state
 	var allowedState allowed.GenesisState
