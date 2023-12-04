@@ -12,11 +12,14 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return nil
 	}
 
-	// switch stakeMsg := msg.(type) {
-	switch msg.(type) {
-	case *types.MsgDistributeRewards:
-		return nil
+	switch stakeMsg := msg.(type) {
+	case *types.MsgSellRequest:
+		return m.handleMsgSell(tx, index, stakeMsg)
+	case *types.MsgMsgCancelSell:
+		return m.handleMsgSellCancel(tx, index, stakeMsg)
+	case *types.MsgBuyRequest:
+		return m.handleMsgBuy(tx, index, stakeMsg)
 	default:
-		return nil
+		return nil // TODO: return err
 	}
 }

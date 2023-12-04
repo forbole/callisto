@@ -4,6 +4,7 @@ import (
 	"git.ooo.ua/vipcoin/lib/filter"
 	allowed "git.ooo.ua/vipcoin/ovg-chain/x/allowed/types"
 	core "git.ooo.ua/vipcoin/ovg-chain/x/core/types"
+	stake "git.ooo.ua/vipcoin/ovg-chain/x/stake/types"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/types"
 )
 
@@ -54,7 +55,14 @@ type (
 
 	// Stake - describes an interface for working with database models.
 	Stake interface {
-		// TODO
+		GetAllMsgSell(filter filter.Filter) ([]stake.MsgSellRequest, error)
+		InsertMsgSell(hash string, msgs ...stake.MsgSellRequest) error
+
+		GetAllMsgBuy(filter filter.Filter) ([]stake.MsgBuyRequest, error)
+		InsertMsgBuy(hash string, msgs ...stake.MsgBuyRequest) error
+
+		GetAllMsgSellCancel(filter filter.Filter) ([]stake.MsgMsgCancelSell, error)
+		InsertMsgSellCancel(hash string, msgs ...stake.MsgMsgCancelSell) error
 	}
 )
 

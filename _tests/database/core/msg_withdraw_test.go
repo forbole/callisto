@@ -14,7 +14,7 @@ import (
 
 func TestRepository_InsertMsgWithdraw(t *testing.T) {
 	type args struct {
-		msg  []*core.MsgWithdraw
+		msg  []core.MsgWithdraw
 		hash string
 	}
 	tests := []struct {
@@ -25,7 +25,7 @@ func TestRepository_InsertMsgWithdraw(t *testing.T) {
 		{
 			name: "[success] InsertMsgWithdraw",
 			args: args{
-				msg: []*core.MsgWithdraw{
+				msg: []core.MsgWithdraw{
 					{
 						Creator: d.TestAddressCreator,
 						Amount:  "100000000",
@@ -39,7 +39,7 @@ func TestRepository_InsertMsgWithdraw(t *testing.T) {
 		{
 			name: "[success] InsertMsgWithdraw (random address)",
 			args: args{
-				msg: []*core.MsgWithdraw{
+				msg: []core.MsgWithdraw{
 					{
 						Creator: d.TestAddressCreator,
 						Amount:  "50000000000",
