@@ -18,7 +18,7 @@ import (
 	"github.com/forbole/bdjuno/v4/types/config"
 )
 
-const isLocal = true
+const isLocal = false
 
 func main() {
 	initCfg := initcmd.NewConfig().
