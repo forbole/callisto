@@ -1,3 +1,4 @@
+-- +migrate Up
 CREATE TABLE software_upgrade_plan
 (
     proposal_id     INTEGER REFERENCES proposal (id) UNIQUE,

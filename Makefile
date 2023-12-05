@@ -1,5 +1,6 @@
 VERSION := $(shell echo $(shell git describe --tags) | sed 's/^v//')
 COMMIT  := $(shell git log -1 --format='%H')
+CONFIG := ./volume/
 
 export GO111MODULE = on
 
@@ -40,6 +41,12 @@ else
 endif
 .PHONY: build
 
+## TODO: docker build for mac os
+#docker-build: go.sum
+#	@echo "building bdjuno binary..."
+#	@LEDGER_ENABLED=false CGO_ENABLED=1 GOOS=darwin GOARCH=arm64 go build -mod=readonly $(BUILD_FLAGS) -o build/bdjuno ./cmd/bdjuno
+#.PHONY: docker-build
+
 ###############################################################################
 ###                                 Install                                 ###
 ###############################################################################
@@ -48,6 +55,40 @@ install: go.sum
 	@echo "installing bdjuno binary..."
 	@go install -mod=readonly $(BUILD_FLAGS) ./cmd/bdjuno
 .PHONY: install
+
+###############################################################################
+###                                   Run                                   ###
+###############################################################################
+
+run:
+ifeq ($(OS),Windows_NT)
+	@echo "running bdjuno for Windows..."
+	@go run cmd/bdjuno/main.go start --home $(CONFIG)
+else
+	@echo "running bdjuno for Linux..."
+	@go run cmd/bdjuno/main.go start --home $(CONFIG)
+endif
+.PHONY: run
+
+run-build: build
+ifeq ($(OS),Windows_NT)
+	@echo "running bdjuno for Windows..."
+	@./build/bdjuno.exe start --home $(CONFIG)
+else
+	@echo "running bdjuno for Linux..."
+	@./build/bdjuno start --home $(CONFIG)
+endif
+.PHONY: run-build
+
+start:
+ifeq ($(OS),Windows_NT)
+	@echo "running bdjuno for Windows..."
+	@./build/bdjuno.exe start --home $(CONFIG)
+else
+	@echo "running bdjuno for Linux..."
+	@./build/bdjuno start --home $(CONFIG)
+endif
+.PHONY: start
 
 ###############################################################################
 ###                           Tests & Simulation                            ###

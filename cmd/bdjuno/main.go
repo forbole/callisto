@@ -1,23 +1,24 @@
 package main
 
 import (
+	"cosmossdk.io/simapp"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/forbole/juno/v5/cmd"
 	initcmd "github.com/forbole/juno/v5/cmd/init"
+	"github.com/forbole/juno/v5/cmd/parse/genesis"
 	parsetypes "github.com/forbole/juno/v5/cmd/parse/types"
 	startcmd "github.com/forbole/juno/v5/cmd/start"
 	"github.com/forbole/juno/v5/modules/messages"
 
 	migratecmd "github.com/forbole/bdjuno/v4/cmd/migrate"
 	parsecmd "github.com/forbole/bdjuno/v4/cmd/parse"
-
-	"github.com/forbole/bdjuno/v4/types/config"
-
-	"cosmossdk.io/simapp"
-
+	vault "github.com/forbole/bdjuno/v4/config"
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules"
+	"github.com/forbole/bdjuno/v4/types/config"
 )
+
+const isLocal = true
 
 func main() {
 	initCfg := initcmd.NewConfig().
@@ -38,6 +39,8 @@ func main() {
 	rootCmd.AddCommand(
 		cmd.VersionCmd(),
 		initcmd.NewInitCmd(cfg.GetInitConfig()),
+		vault.CheckVaultConfig(cfg.GetName(), isLocal, startcmd.NewStartCmd(cfg.GetParseConfig())),
+		genesis.NewGenesisCmd(cfg.GetParseConfig()),
 		parsecmd.NewParseCmd(cfg.GetParseConfig()),
 		migratecmd.NewMigrateCmd(cfg.GetName(), cfg.GetParseConfig()),
 		startcmd.NewStartCmd(cfg.GetParseConfig()),

@@ -1,3 +1,4 @@
+-- +migrate Up
 CREATE TABLE validator
 (
     consensus_address TEXT NOT NULL PRIMARY KEY, /* Validator consensus address */

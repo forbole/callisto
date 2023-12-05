@@ -6,9 +6,12 @@ import (
 
 	"cosmossdk.io/simapp"
 	"cosmossdk.io/simapp/params"
+	allowedtypes "git.ooo.ua/vipcoin/ovg-chain/x/allowed/types"
+	coretypes "git.ooo.ua/vipcoin/ovg-chain/x/core/types"
+	feeexcludertypes "git.ooo.ua/vipcoin/ovg-chain/x/feeexcluder/types"
+	referraltypes "git.ooo.ua/vipcoin/ovg-chain/x/referral/types"
+	staketypes "git.ooo.ua/vipcoin/ovg-chain/x/stake/types"
 	"github.com/cometbft/cometbft/libs/log"
-	"github.com/forbole/juno/v5/node/remote"
-
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
@@ -16,9 +19,9 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/forbole/juno/v5/node/local"
-
 	nodeconfig "github.com/forbole/juno/v5/node/config"
+	"github.com/forbole/juno/v5/node/local"
+	"github.com/forbole/juno/v5/node/remote"
 
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v4/modules/bank/source/local"
@@ -31,6 +34,18 @@ import (
 	mintsource "github.com/forbole/bdjuno/v4/modules/mint/source"
 	localmintsource "github.com/forbole/bdjuno/v4/modules/mint/source/local"
 	remotemintsource "github.com/forbole/bdjuno/v4/modules/mint/source/remote"
+	overgoldAllowedSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/allowed/source"
+	remoteOvergoldAllowedSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/allowed/source/remote"
+	overgoldBankSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/bank/source"
+	remoteOvergoldBankSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/bank/source/remote"
+	overgoldCoreSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/core/source"
+	remoteOvergoldCoreSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/core/source/remote"
+	overgoldFeeExcluderSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/feeexcluder/source"
+	remoteOvergoldFeeExcluderSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/feeexcluder/source/remote"
+	overgoldReferralSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/referral/source"
+	remoteOvergoldReferralSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/referral/source/remote"
+	overgoldStakeSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/stake/source"
+	remoteOvergoldStakeSource "github.com/forbole/bdjuno/v4/modules/overgold/chain/stake/source/remote"
 	slashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source"
 	localslashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source/local"
 	remoteslashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source/remote"
@@ -46,6 +61,16 @@ type Sources struct {
 	MintSource     mintsource.Source
 	SlashingSource slashingsource.Source
 	StakingSource  stakingsource.Source
+
+	// Custom OVG sources
+	OverGoldAllowedSource     overgoldAllowedSource.Source
+	OverGoldCoreSource        overgoldCoreSource.Source
+	OverGoldFeeExcluderSource overgoldFeeExcluderSource.Source
+	OverGoldReferralSource    overgoldReferralSource.Source
+	OverGoldStakeSource       overgoldStakeSource.Source
+
+	// Custom SDK sources
+	OverGoldBankSource overgoldBankSource.Source
 }
 
 func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -116,5 +141,13 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
+
+		// Custom OVG sources
+		OverGoldAllowedSource:     remoteOvergoldAllowedSource.NewSource(source, allowedtypes.NewQueryClient(source.GrpcConn)),
+		OverGoldBankSource:        remoteOvergoldBankSource.NewSource(source, banktypes.NewQueryClient(source.GrpcConn)),
+		OverGoldCoreSource:        remoteOvergoldCoreSource.NewSource(source, coretypes.NewQueryClient(source.GrpcConn)),
+		OverGoldFeeExcluderSource: remoteOvergoldFeeExcluderSource.NewSource(source, feeexcludertypes.NewQueryClient(source.GrpcConn)),
+		OverGoldReferralSource:    remoteOvergoldReferralSource.NewSource(source, referraltypes.NewQueryClient(source.GrpcConn)),
+		OverGoldStakeSource:       remoteOvergoldStakeSource.NewSource(source, staketypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }

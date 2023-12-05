@@ -2,7 +2,12 @@ package types
 
 import (
 	"database/sql"
+	"encoding/json"
+	"fmt"
 	"time"
+
+	"git.ooo.ua/vipcoin/lib/errs"
+	"github.com/lib/pq"
 )
 
 type GenesisRow struct {
@@ -94,4 +99,36 @@ type BlockRow struct {
 type BlockHeightAndTimestamp struct {
 	Height         int64     `db:"height"`
 	BlockTimestamp time.Time `db:"timestamp"`
+}
+
+// -------------------------------------------------------------------------------------------------------------------
+
+// TransactionRow represents a single transaction row stored inside the database
+type TransactionRow struct {
+	Hash        string          `db:"hash"`
+	Height      int64           `db:"height"`
+	Success     bool            `db:"success"`
+	Messages    json.RawMessage `db:"messages"`
+	Memo        string          `db:"memo"`
+	Signatures  pq.StringArray  `db:"signatures"`
+	SignerInfos json.RawMessage `db:"signer_infos"`
+	Fee         json.RawMessage `db:"fee"`
+	GasWanted   int64           `db:"gas_wanted"`
+	GasUsed     int64           `db:"gas_used"`
+	RawLog      string          `db:"raw_log"`
+	Logs        json.RawMessage `db:"logs"`
+	PartitionID int64           `db:"partition_id"`
+}
+
+// CheckTxNumCount checks if the number of transactions is greater than 0
+func (b BlockRow) CheckTxNumCount(txs int64) error {
+	if b.TxNum != txs {
+		return &errs.Conflict{
+			Cause: fmt.Errorf("mismatch txs in block: height - %d, expected tx num - %d, exist - %d ",
+				b.Height,
+				b.TxNum,
+				txs).Error()}
+	}
+
+	return nil
 }

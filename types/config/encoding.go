@@ -2,6 +2,11 @@ package config
 
 import (
 	"cosmossdk.io/simapp/params"
+	allowed "git.ooo.ua/vipcoin/ovg-chain/x/allowed/types"
+	core "git.ooo.ua/vipcoin/ovg-chain/x/core/types"
+	feeexcludertypes "git.ooo.ua/vipcoin/ovg-chain/x/feeexcluder/types"
+	referral "git.ooo.ua/vipcoin/ovg-chain/x/referral/types"
+	stake "git.ooo.ua/vipcoin/ovg-chain/x/stake/types"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/types/module"
 )
@@ -15,6 +20,14 @@ func MakeEncodingConfig(managers []module.BasicManager) func() params.EncodingCo
 		manager := mergeBasicManagers(managers)
 		manager.RegisterLegacyAminoCodec(encodingConfig.Amino)
 		manager.RegisterInterfaces(encodingConfig.InterfaceRegistry)
+
+		// custom modules
+		allowed.RegisterInterfaces(encodingConfig.InterfaceRegistry)
+		core.RegisterInterfaces(encodingConfig.InterfaceRegistry)
+		feeexcludertypes.RegisterInterfaces(encodingConfig.InterfaceRegistry)
+		referral.RegisterInterfaces(encodingConfig.InterfaceRegistry)
+		stake.RegisterInterfaces(encodingConfig.InterfaceRegistry)
+
 		return encodingConfig
 	}
 }
