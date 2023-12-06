@@ -8,21 +8,30 @@ import (
 	"github.com/forbole/juno/v5/node/remote"
 	parserconfig "github.com/forbole/juno/v5/parser/config"
 	junoconf "github.com/forbole/juno/v5/types/config"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
 // CheckVaultConfig - checking the ability to load the configuration from vault
 func CheckVaultConfig(serviceName string, isLocal bool, cmdAndConf *cobra.Command) *cobra.Command {
-	var (
-		config = getDebugConfig()
-		err    error
-	)
+	if isLocal {
+		log.Info().Msg("using local configuration")
 
-	if !isLocal {
-		config, err = loadFromVault(serviceName)
-		if err != nil {
-			return cmdAndConf
+		cmdAndConf.PreRunE = func(_ *cobra.Command, _ []string) error {
+			// Set the global configuration
+			junoconf.Cfg = getDebugConfig()
+			return nil
 		}
+
+		return cmdAndConf
+	}
+
+	log.Info().Msg("using vault configuration")
+
+	config, err := loadFromVault(serviceName)
+	if err != nil {
+		log.Err(err).Msg("failed to load config from vault")
+		return cmdAndConf
 	}
 
 	cmdAndConf.PreRunE = func(_ *cobra.Command, _ []string) error {
