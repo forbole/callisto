@@ -46,22 +46,22 @@ func (r Repository) InsertMsgSell(hash string, msgs ...stake.MsgSellRequest) err
 		_ = tx.Rollback()
 	}()
 
-	query := `
+	q := `
 		INSERT INTO overgold_stake_sell (
 			tx_hash, creator, amount
 		) VALUES (
-			:tx_hash, :creator, :amount
+			$1, $2, $3
 		) RETURNING
 			id, tx_hash, creator, amount
 	`
 
 	for _, msg := range msgs {
-		model, err := toMsgSellDatabase(hash, msg)
+		m, err := toMsgSellDatabase(hash, msg)
 		if err != nil {
 			return err
 		}
 
-		if _, err = tx.NamedExec(query, model); err != nil {
+		if _, err = tx.Exec(q, m.TxHash, m.Creator, m.Amount); err != nil {
 			return errs.Internal{Cause: err.Error()}
 		}
 	}

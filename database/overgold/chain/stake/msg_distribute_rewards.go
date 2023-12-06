@@ -50,15 +50,15 @@ func (r Repository) InsertMsgDistributeRewards(hash string, msgs ...stake.MsgDis
 		INSERT INTO overgold_stake_distribute_rewards (
 			tx_hash, creator
 		) VALUES (
-			:tx_hash, :creator
+			$1, $2
 		) RETURNING
 			id, tx_hash, creator
 	`
 
 	for _, msg := range msgs {
-		model := toMsgDistributeDatabase(hash, msg)
+		m := toMsgDistributeDatabase(hash, msg)
 
-		if _, err = tx.NamedExec(query, model); err != nil {
+		if _, err = tx.Exec(query, m.TxHash, m.Creator); err != nil {
 			return errs.Internal{Cause: err.Error()}
 		}
 	}

@@ -14,10 +14,10 @@ import (
 
 // GetAllCreateAddresses - method that get data from a db (overgold_allowed_create_addresses).
 func (r Repository) GetAllCreateAddresses(filter filter.Filter) ([]allowed.MsgCreateAddresses, error) {
-	query, args := filter.Build(tableCreateAddresses)
+	q, args := filter.Build(tableCreateAddresses)
 
 	var result []types.AllowedCreateAddresses
-	if err := r.db.Select(&result, query, args...); err != nil {
+	if err := r.db.Select(&result, q, args...); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, errs.NotFound{What: tableCreateAddresses}
 		}
@@ -46,17 +46,18 @@ func (r Repository) InsertToCreateAddresses(hash string, msgs ...*allowed.MsgCre
 		_ = tx.Rollback()
 	}()
 
-	query := `
+	q := `
 		INSERT INTO overgold_allowed_create_addresses (
 			tx_hash, creator, address
 		) VALUES (
-			:tx_hash, :creator, :address
+			$1, $2, $3
 		) RETURNING
 			id, tx_hash, creator, address
 	`
 
-	for _, m := range msgs {
-		if _, err = tx.NamedExec(query, toCreateAddressesDatabase(hash, m)); err != nil {
+	for _, msg := range msgs {
+		m := toCreateAddressesDatabase(hash, msg)
+		if _, err = tx.Exec(q, m.TxHash, m.Creator, m.Address); err != nil {
 			return errs.Internal{Cause: err.Error()}
 		}
 	}

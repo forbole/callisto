@@ -19,8 +19,10 @@ func (m *Module) handleMsgCreateAddresses(tx *juno.Tx, index int, msg *allowed.M
 	createAddresses, err := m.allowedRepo.GetAllCreateAddresses(filter.NewFilter().SetCondition(filter.ConditionAND).
 		SetArgument(types.FieldCreator, msg.Creator).
 		SetArgument(types.FieldAddress, msg.Address))
-	if err != nil && !errors.Is(err, errs.NotFound{}) {
-		return err
+	if err != nil {
+		if !errors.As(err, &errs.NotFound{}) {
+			return err
+		}
 	}
 	if len(createAddresses) > 0 {
 		return errs.AlreadyExists{What: "create_addresses, address: " + strings.Join(msg.Address, ", ")}
@@ -36,8 +38,10 @@ func (m *Module) handleMsgCreateAddresses(tx *juno.Tx, index int, msg *allowed.M
 	addresses, err := m.allowedRepo.GetAllAddresses(filter.NewFilter().SetCondition(filter.ConditionAND).
 		SetArgument(types.FieldCreator, msg.Creator).
 		SetArgument(types.FieldAddress, msg.Address))
-	if err != nil && !errors.Is(err, errs.NotFound{}) {
-		return err
+	if err != nil {
+		if !errors.As(err, &errs.NotFound{}) {
+			return err
+		}
 	}
 	if len(addresses) > 0 {
 		return errs.AlreadyExists{What: "addresses, address: " + strings.Join(msg.Address, ", ")}

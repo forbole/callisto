@@ -63,10 +63,15 @@ func toMsgSellCancelDomainList(m []db.StakeMsgSellCancel) []types.MsgMsgCancelSe
 
 // toMsgSellCancelDatabase - mapping func to a database model.
 func toMsgSellCancelDatabase(hash string, m types.MsgMsgCancelSell) (db.StakeMsgSellCancel, error) {
+	amount := uint64(0)
+	if m.Amount.Denom != "" && m.Amount.Amount.IsPositive() {
+		amount = m.Amount.Amount.Uint64()
+	}
+
 	return db.StakeMsgSellCancel{
 		TxHash:  hash,
 		Creator: m.Creator,
-		Amount:  m.Amount.Amount.Uint64(),
+		Amount:  amount,
 	}, nil
 }
 
@@ -94,6 +99,7 @@ func toMsgBuyDatabase(hash string, m types.MsgBuyRequest) (db.StakeMsgBuy, error
 	if err != nil {
 		return db.StakeMsgBuy{}, errs.Internal{Cause: err.Error()}
 	}
+
 	return db.StakeMsgBuy{
 		TxHash:  hash,
 		Creator: m.Creator,
@@ -146,9 +152,14 @@ func toMsgClaimRewardDomainList(m []db.StakeMsgClaim) []types.MsgClaimReward {
 
 // toMsgClaimRewardDatabase - mapping func to a database model.
 func toMsgClaimRewardDatabase(hash string, m types.MsgClaimReward) db.StakeMsgClaim {
+	amount := uint64(0)
+	if m.Amount.Denom != "" && m.Amount.Amount.IsPositive() {
+		amount = m.Amount.Amount.Uint64()
+	}
+
 	return db.StakeMsgClaim{
 		TxHash:  hash,
 		Creator: m.Creator,
-		Amount:  m.Amount.Amount.Uint64(),
+		Amount:  amount,
 	}
 }

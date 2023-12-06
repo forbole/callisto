@@ -14,10 +14,10 @@ import (
 
 // GetAllDeleteByAddresses - method that get data from a db (overgold_allowed_delete_by_addresses).
 func (r Repository) GetAllDeleteByAddresses(filter filter.Filter) ([]allowed.MsgDeleteByAddresses, error) {
-	query, args := filter.Build(tableDeleteByAddresses)
+	q, args := filter.Build(tableDeleteByAddresses)
 
 	var result []types.AllowedDeleteByAddresses
-	if err := r.db.Select(&result, query, args...); err != nil {
+	if err := r.db.Select(&result, q, args...); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, errs.NotFound{What: tableDeleteByAddresses}
 		}
@@ -46,17 +46,18 @@ func (r Repository) InsertToDeleteByAddresses(hash string, msgs ...*allowed.MsgD
 		_ = tx.Rollback()
 	}()
 
-	query := `
+	q := `
 		INSERT INTO overgold_allowed_delete_by_addresses (
 			tx_hash, creator, address
 		) VALUES (
-			:tx_hash, :creator, :address
+			$1, $2, $3
 		) RETURNING
 			id, tx_hash, creator, address
 	`
 
-	for _, m := range msgs {
-		if _, err = tx.NamedExec(query, toDeleteByAddressesDatabase(hash, m)); err != nil {
+	for _, msg := range msgs {
+		m := toDeleteByAddressesDatabase(hash, msg)
+		if _, err = tx.Exec(q, m.TxHash, m.Creator, m.Address); err != nil {
 			return errs.Internal{Cause: err.Error()}
 		}
 	}

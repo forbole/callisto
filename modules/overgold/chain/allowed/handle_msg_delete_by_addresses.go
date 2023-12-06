@@ -19,8 +19,10 @@ func (m *Module) handleMsgDeleteByAddresses(tx *juno.Tx, index int, msg *allowed
 	deleteAddresses, err := m.allowedRepo.GetAllDeleteByAddresses(filter.NewFilter().SetCondition(filter.ConditionAND).
 		SetArgument(types.FieldCreator, msg.Creator).
 		SetArgument(types.FieldAddress, msg.Address))
-	if err != nil && !errors.Is(err, errs.NotFound{}) {
-		return err
+	if err != nil {
+		if !errors.As(err, &errs.NotFound{}) {
+			return err
+		}
 	}
 	if len(deleteAddresses) > 0 {
 		return errs.AlreadyExists{What: "delete_by_addresses, address: " + strings.Join(msg.Address, ", ")}
@@ -37,7 +39,9 @@ func (m *Module) handleMsgDeleteByAddresses(tx *juno.Tx, index int, msg *allowed
 		SetArgument(types.FieldCreator, msg.Creator).
 		SetArgument(types.FieldAddress, msg.Address))
 	if err != nil {
-		return err
+		if !errors.As(err, &errs.NotFound{}) {
+			return err
+		}
 	}
 
 	// 2.2) delete data from table

@@ -14,10 +14,10 @@ import (
 
 // GetAllUpdateAddresses - method that get data from a db (overgold_allowed_update_addresses).
 func (r Repository) GetAllUpdateAddresses(filter filter.Filter) ([]allowed.MsgUpdateAddresses, error) {
-	query, args := filter.Build(tableUpdateAddresses)
+	q, args := filter.Build(tableUpdateAddresses)
 
 	var result []types.AllowedUpdateAddresses
-	if err := r.db.Select(&result, query, args...); err != nil {
+	if err := r.db.Select(&result, q, args...); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, errs.NotFound{What: tableUpdateAddresses}
 		}
@@ -46,17 +46,18 @@ func (r Repository) InsertToUpdateAddresses(hash string, msgs ...*allowed.MsgUpd
 		_ = tx.Rollback()
 	}()
 
-	query := `
+	q := `
 		INSERT INTO overgold_allowed_update_addresses (
 			id, tx_hash, creator, address
 		) VALUES (
-			:id, :tx_hash, :creator, :address
+			$1, $2, $3, $4
 		) RETURNING
 			id, tx_hash, creator, address
 	`
 
-	for _, m := range msgs {
-		if _, err = tx.NamedExec(query, toUpdateAddressesDatabase(hash, m)); err != nil {
+	for _, msg := range msgs {
+		m := toUpdateAddressesDatabase(hash, msg)
+		if _, err = tx.Exec(q, m.ID, m.TxHash, m.Creator, m.Address); err != nil {
 			return errs.Internal{Cause: err.Error()}
 		}
 	}

@@ -20,8 +20,10 @@ func (m *Module) handleMsgUpdateAddresses(tx *juno.Tx, index int, msg *allowed.M
 		SetArgument(types.FieldID, msg.Id).
 		SetArgument(types.FieldCreator, msg.Creator).
 		SetArgument(types.FieldAddress, msg.Address))
-	if err != nil && !errors.Is(err, errs.NotFound{}) {
-		return err
+	if err != nil {
+		if !errors.As(err, &errs.NotFound{}) {
+			return err
+		}
 	}
 	if len(updateAddresses) > 0 {
 		return errs.AlreadyExists{What: "update_addresses, id: " + strconv.FormatUint(msg.Id, 10)}
@@ -39,7 +41,9 @@ func (m *Module) handleMsgUpdateAddresses(tx *juno.Tx, index int, msg *allowed.M
 		SetArgument(types.FieldAddress, msg.Address).
 		SetArgument(types.FieldID, msg.Id))
 	if err != nil {
-		return err
+		if !errors.As(err, &errs.NotFound{}) {
+			return err
+		}
 	}
 
 	// 2.2) update data in table

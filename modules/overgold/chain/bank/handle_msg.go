@@ -1,8 +1,6 @@
 package bank
 
 import (
-	"fmt"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/types"
 	juno "github.com/forbole/juno/v5/types"
@@ -20,6 +18,6 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	case *bank.MsgMultiSend:
 		return m.handleMsgMultiSend(tx, index, bankMsg)
 	default:
-		return fmt.Errorf("unrecognized %s message type: %T", m.Name(), bankMsg)
+		return nil
 	}
 }

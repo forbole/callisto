@@ -16,8 +16,10 @@ func (m *Module) handleMsgSetReferrer(tx *juno.Tx, index int, msg *referral.MsgS
 	msgs, err := m.referralRepo.GetAllMsgSetReferrer(filter.NewFilter().SetCondition(filter.ConditionAND).
 		SetArgument(db.FieldTxHash, tx.TxHash).
 		SetArgument(db.FieldCreator, msg.Creator))
-	if err != nil && !errors.Is(err, errs.NotFound{}) {
-		return err
+	if err != nil {
+		if !errors.As(err, &errs.NotFound{}) {
+			return err
+		}
 	}
 	if len(msgs) > 0 {
 		return errs.AlreadyExists{What: "msg set referrer, referrer address: " + msg.ReferrerAddress}

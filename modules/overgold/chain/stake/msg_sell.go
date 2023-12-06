@@ -17,8 +17,10 @@ func (m *Module) handleMsgSell(tx *juno.Tx, _ int, msg *types.MsgSellRequest) er
 	msgs, err := m.stakeRepo.GetAllMsgSell(filter.NewFilter().SetCondition(filter.ConditionAND).
 		SetArgument(db.FieldTxHash, tx.TxHash).
 		SetArgument(db.FieldCreator, msg.Creator))
-	if err != nil && !errors.Is(err, errs.NotFound{}) {
-		return err
+	if err != nil {
+		if !errors.As(err, &errs.NotFound{}) {
+			return err
+		}
 	}
 	if len(msgs) > 0 {
 		return errs.AlreadyExists{What: fmt.Sprintf("msg sell, creator: %s, sell amount %s  ", msg.Creator, msg.Amount)}

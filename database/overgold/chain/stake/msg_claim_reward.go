@@ -31,7 +31,7 @@ func (r Repository) GetAllMsgClaimReward(filter filter.Filter) ([]stake.MsgClaim
 	return toMsgClaimRewardDomainList(result), nil
 }
 
-// InsertClaimReward - insert a new ClaimReward in a database (overgold_stake_claim_reward).
+// InsertMsgClaimReward - insert a new ClaimReward in a database (overgold_stake_claim_reward).
 func (r Repository) InsertMsgClaimReward(hash string, msgs ...stake.MsgClaimReward) error {
 	if len(msgs) == 0 || hash == "" {
 		return nil
@@ -46,19 +46,19 @@ func (r Repository) InsertMsgClaimReward(hash string, msgs ...stake.MsgClaimRewa
 		_ = tx.Rollback()
 	}()
 
-	query := `
+	q := `
 		INSERT INTO overgold_stake_claim_reward (
 			tx_hash, creator, amount
 		) VALUES (
-			:tx_hash, :creator, :amount
-		) RETURNING
+			$1, $2, $3
+		) RETURNING 
 			id, tx_hash, creator, amount
 	`
 
 	for _, msg := range msgs {
-		model := toMsgClaimRewardDatabase(hash, msg)
+		m := toMsgClaimRewardDatabase(hash, msg)
 
-		if _, err = tx.NamedExec(query, model); err != nil {
+		if _, err = tx.Exec(q, m.TxHash, m.Creator, m.Amount); err != nil {
 			return errs.Internal{Cause: err.Error()}
 		}
 	}

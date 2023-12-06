@@ -15,8 +15,10 @@ import (
 func (m *Module) handleMsgMultiSend(tx *juno.Tx, index int, msg *bank.MsgMultiSend) error {
 	// 1) check if already exists (not found is ok)
 	msgs, err := m.bankRepo.GetAllMsgMultiSend(filter.NewFilter().SetArgument(types.FieldTxHash, tx.TxHash))
-	if err != nil && !errors.Is(err, errs.NotFound{}) {
-		return err
+	if err != nil {
+		if !errors.As(err, &errs.NotFound{}) {
+			return err
+		}
 	}
 	if len(msgs) > 0 {
 		return errs.AlreadyExists{What: "msg multi send, hash: " + tx.TxHash}

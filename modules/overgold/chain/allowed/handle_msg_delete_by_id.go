@@ -19,8 +19,10 @@ func (m *Module) handleMsgDeleteByID(tx *juno.Tx, index int, msg *allowed.MsgDel
 	deleteByIDs, err := m.allowedRepo.GetAllDeleteByID(filter.NewFilter().SetCondition(filter.ConditionAND).
 		SetArgument(types.FieldCreator, msg.Creator).
 		SetArgument(types.FieldID, msg.Id))
-	if err != nil && !errors.Is(err, errs.NotFound{}) {
-		return err
+	if err != nil {
+		if !errors.As(err, &errs.NotFound{}) {
+			return err
+		}
 	}
 	if len(deleteByIDs) > 0 {
 		return errs.AlreadyExists{What: "delete_by_id, id: " + strconv.FormatUint(msg.Id, 10)}
@@ -37,7 +39,9 @@ func (m *Module) handleMsgDeleteByID(tx *juno.Tx, index int, msg *allowed.MsgDel
 		SetArgument(types.FieldCreator, msg.Creator).
 		SetArgument(types.FieldID, msg.Id))
 	if err != nil {
-		return err
+		if !errors.As(err, &errs.NotFound{}) {
+			return err
+		}
 	}
 
 	// 2.2) delete data from table

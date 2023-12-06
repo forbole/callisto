@@ -16,8 +16,10 @@ func (m *Module) handleMsgSend(tx *juno.Tx, index int, msg *types.MsgSend) error
 	msgs, err := m.coreRepo.GetAllMsgSend(filter.NewFilter().SetCondition(filter.ConditionAND).
 		SetArgument(db.FieldTxHash, tx.TxHash).
 		SetArgument(db.FieldCreator, msg.Creator))
-	if err != nil && !errors.Is(err, errs.NotFound{}) {
-		return err
+	if err != nil {
+		if !errors.As(err, &errs.NotFound{}) {
+			return err
+		}
 	}
 	if len(msgs) > 0 {
 		return errs.AlreadyExists{What: "msg send, address from: " + msg.From}

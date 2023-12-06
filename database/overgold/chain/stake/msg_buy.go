@@ -50,18 +50,18 @@ func (r Repository) InsertMsgBuy(hash string, msgs ...types.MsgBuyRequest) error
 		INSERT INTO overgold_stake_buy (
 			tx_hash, creator, amount
 		) VALUES (
-			:tx_hash, :creator, :amount
+			$1, $2, $3
 		) RETURNING
 			id, tx_hash, creator, amount
 	`
 
 	for _, msg := range msgs {
-		model, err := toMsgBuyDatabase(hash, msg)
+		m, err := toMsgBuyDatabase(hash, msg)
 		if err != nil {
 			return err
 		}
 
-		if _, err = tx.NamedExec(query, model); err != nil {
+		if _, err = tx.Exec(query, m.TxHash, m.Creator, m.Amount); err != nil {
 			return errs.Internal{Cause: err.Error()}
 		}
 	}

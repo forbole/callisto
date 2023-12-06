@@ -1,8 +1,6 @@
 package allowed
 
 import (
-	"fmt"
-
 	"git.ooo.ua/vipcoin/ovg-chain/x/allowed/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	juno "github.com/forbole/juno/v5/types"
@@ -24,6 +22,6 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	case *types.MsgUpdateAddresses:
 		return m.handleMsgUpdateAddresses(tx, index, allowedMsg)
 	default:
-		return fmt.Errorf("unrecognized %s message type: %T", m.Name(), allowedMsg)
+		return nil
 	}
 }

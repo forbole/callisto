@@ -118,6 +118,10 @@ func (m *Module) parseMessages(tx *types.Tx) error {
 		for _, module := range m.overgoldModules {
 			if messageModule, ok := module.(modules.MessageModule); ok {
 				if err := messageModule.HandleMsg(i, stdMsg, tx); err != nil {
+					if errors.As(err, &errs.NotFound{}) {
+						continue
+					}
+
 					m.logger.MsgError(module, tx, stdMsg, err)
 					return err
 				}

@@ -14,10 +14,10 @@ import (
 
 // GetAllDeleteByID - method that get data from a db (overgold_allowed_delete_by_id).
 func (r Repository) GetAllDeleteByID(filter filter.Filter) ([]allowed.MsgDeleteByID, error) {
-	query, args := filter.Build(tableDeleteByID)
+	q, args := filter.Build(tableDeleteByID)
 
 	var result []types.AllowedDeleteByID
-	if err := r.db.Select(&result, query, args...); err != nil {
+	if err := r.db.Select(&result, q, args...); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, errs.NotFound{What: tableDeleteByID}
 		}
@@ -46,17 +46,18 @@ func (r Repository) InsertToDeleteByID(hash string, msgs ...*allowed.MsgDeleteBy
 		_ = tx.Rollback()
 	}()
 
-	query := `
+	q := `
 		INSERT INTO overgold_allowed_delete_by_id (
 			id, tx_hash, creator
 		) VALUES (
-			:id, :tx_hash, :creator
+			$1, $2, $3
 		) RETURNING
 			id, tx_hash, creator
 	`
 
-	for _, m := range msgs {
-		if _, err = tx.NamedExec(query, toDeleteByIDDatabase(hash, m)); err != nil {
+	for _, msg := range msgs {
+		m := toDeleteByIDDatabase(hash, msg)
+		if _, err = tx.Exec(q, m.ID, m.TxHash, m.Creator); err != nil {
 			return errs.Internal{Cause: err.Error()}
 		}
 	}

@@ -1,3271 +1,3186 @@
 {
-  "jsonrpc": "2.0",
-  "id": -1,
-  "result": {
-    "genesis": {
-      "genesis_time": "2023-10-02T11:46:26.731699207Z",
-      "chain_id": "ovg",
-      "initial_height": "1",
-      "consensus_params": {
-        "block": {
-          "max_bytes": "22020096",
-          "max_gas": "-1"
-        },
-        "evidence": {
-          "max_age_num_blocks": "100000",
-          "max_age_duration": "172800000000000",
-          "max_bytes": "1048576"
-        },
-        "validator": {
-          "pub_key_types": [
-            "ed25519"
-          ]
-        },
-        "version": {
-          "app": "0"
-        }
+  "genesis_time": "2023-10-02T11:46:26.731699207Z",
+  "chain_id": "ovg",
+  "initial_height": "1",
+  "consensus_params": {
+    "block": {
+      "max_bytes": "22020096",
+      "max_gas": "-1"
+    },
+    "evidence": {
+      "max_age_num_blocks": "100000",
+      "max_age_duration": "172800000000000",
+      "max_bytes": "1048576"
+    },
+    "validator": {
+      "pub_key_types": [
+        "ed25519"
+      ]
+    },
+    "version": {
+      "app": "0"
+    }
+  },
+  "validators": [
+    {
+      "address": "6D9A624AD8CCAD31D95F5C0D08B5C047D6DA171E",
+      "pub_key": {
+        "type": "tendermint/PubKeyEd25519",
+        "value": "6EIwvfqTCHPCjvHjLgtNPzprGKsWQFPXhTauiWWTHXM="
       },
-      "validators": [
+      "power": "1000000",
+      "name": "ovg-1"
+    }
+  ],
+  "app_hash": "",
+  "app_state": {
+    "allowed": {
+      "addressesCount": "12",
+      "addressesList": [
         {
-          "address": "6D9A624AD8CCAD31D95F5C0D08B5C047D6DA171E",
-          "pub_key": {
-            "type": "tendermint/PubKeyEd25519",
-            "value": "6EIwvfqTCHPCjvHjLgtNPzprGKsWQFPXhTauiWWTHXM="
-          },
-          "power": "1000000",
-          "name": "ovg-1"
+          "address": [
+            "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u"
+          ],
+          "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+          "id": "0"
+        },
+        {
+          "address": [
+            "ovg1q6lxkmt09gfxgayknlsyadaelx47pkyfq3pr90"
+          ],
+          "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+          "id": "1"
+        },
+        {
+          "address": [
+            "ovg1sfcetrkh74m3pp7fqgpqk0k9as38g6502tv4e6"
+          ],
+          "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+          "id": "2"
+        },
+        {
+          "address": [
+            "ovg1duszt6ulwv84sa5ydkxffljvzthjcrwystkq6d"
+          ],
+          "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+          "id": "3"
+        },
+        {
+          "address": [
+            "ovg1zmdpez58emw62v8egusa6lxmxap7fcphjfep88"
+          ],
+          "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+          "id": "4"
+        },
+        {
+          "address": [
+            "ovg126e4j99g0n2746nv7ggsvrwcy6hf25hej6kdv9"
+          ],
+          "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+          "id": "5"
+        },
+        {
+          "address": [
+            "ovg1wpyql4le8l5j3ueqapllv25g2v4z65e93uylgk"
+          ],
+          "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+          "id": "6"
+        },
+        {
+          "address": [
+            "ovg1xevks8hc6xe9s9snxeha4yztsuhvrl9teyralm"
+          ],
+          "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+          "id": "7"
+        },
+        {
+          "address": [
+            "ovg1mt9z8j79c2y0gqy2jm5u9h499rnny09p056vr6"
+          ],
+          "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+          "id": "8"
+        },
+        {
+          "address": [
+            "ovg1wdfc6hwfvjdevdsn5anqp0ta9e0v0emnp09cma"
+          ],
+          "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+          "id": "9"
+        },
+        {
+          "address": [
+            "ovg1vhya4e8kwungdvt538xr7p09myj5nqqmeuhsan"
+          ],
+          "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+          "id": "10"
+        },
+        {
+          "address": [
+            "ovg1wllug6ppv58tslwddgp82tfldtvvmauc30hug2"
+          ],
+          "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+          "id": "11"
         }
       ],
-      "app_hash": "",
-      "app_state": {
-        "allowed": {
-          "addressesCount": "12",
-          "addressesList": [
-            {
-              "address": [
-                "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u"
-              ],
-              "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-              "id": "0"
-            },
-            {
-              "address": [
-                "ovg1q6lxkmt09gfxgayknlsyadaelx47pkyfq3pr90"
-              ],
-              "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-              "id": "1"
-            },
-            {
-              "address": [
-                "ovg1sfcetrkh74m3pp7fqgpqk0k9as38g6502tv4e6"
-              ],
-              "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-              "id": "2"
-            },
-            {
-              "address": [
-                "ovg1duszt6ulwv84sa5ydkxffljvzthjcrwystkq6d"
-              ],
-              "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-              "id": "3"
-            },
-            {
-              "address": [
-                "ovg1zmdpez58emw62v8egusa6lxmxap7fcphjfep88"
-              ],
-              "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-              "id": "4"
-            },
-            {
-              "address": [
-                "ovg126e4j99g0n2746nv7ggsvrwcy6hf25hej6kdv9"
-              ],
-              "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-              "id": "5"
-            },
-            {
-              "address": [
-                "ovg1wpyql4le8l5j3ueqapllv25g2v4z65e93uylgk"
-              ],
-              "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-              "id": "6"
-            },
-            {
-              "address": [
-                "ovg1xevks8hc6xe9s9snxeha4yztsuhvrl9teyralm"
-              ],
-              "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-              "id": "7"
-            },
-            {
-              "address": [
-                "ovg1mt9z8j79c2y0gqy2jm5u9h499rnny09p056vr6"
-              ],
-              "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-              "id": "8"
-            },
-            {
-              "address": [
-                "ovg1wdfc6hwfvjdevdsn5anqp0ta9e0v0emnp09cma"
-              ],
-              "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-              "id": "9"
-            },
-            {
-              "address": [
-                "ovg1vhya4e8kwungdvt538xr7p09myj5nqqmeuhsan"
-              ],
-              "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-              "id": "10"
-            },
-            {
-              "address": [
-                "ovg1wllug6ppv58tslwddgp82tfldtvvmauc30hug2"
-              ],
-              "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-              "id": "11"
-            }
-          ],
-          "params": {
-
-          }
+      "params": {
+      }
+    },
+    "auth": {
+      "accounts": [
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "39",
+          "address": "ovg1qd2tarjumdw9jfg4cw8m6gctuu74qqdhdkmvlc",
+          "pub_key": null,
+          "sequence": "0"
         },
-        "auth": {
-          "accounts": [
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "39",
-              "address": "ovg1qd2tarjumdw9jfg4cw8m6gctuu74qqdhdkmvlc",
-              "pub_key": null,
-              "sequence": "0"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "44",
-              "address": "ovg1q3nq26tpp64h4fp5848cz74dnrw2584pjsfuf3",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "Aier7jc9KnPA0stcIE7KY9lLbHMUR3qwEpo2L8Y6pNrn"
-              },
-              "sequence": "46"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "51",
-              "address": "ovg1qjx5772hxmxqv5ckuu9v4tag2hzv7dm7e9avnz",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "AkAltsN4h+pn67kOn3L28UX0GKTm8FBHlpQANym5S61m"
-              },
-              "sequence": "2"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "32",
-              "address": "ovg1q6lxkmt09gfxgayknlsyadaelx47pkyfq3pr90",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "A8tOfNHL+QQrfPU3SLZ5w4Q5ytN5aCeEiIymMDyg2lot"
-              },
-              "sequence": "17"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "42",
-              "address": "ovg1p8yrl93qhllh6juy07zwxy4pu6d4ct7v47r904",
-              "pub_key": null,
-              "sequence": "0"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.ModuleAccount",
-              "base_account": {
-                "account_number": "7",
-                "address": "ovg1p4zltl2x9wx8p0lmzqpp4sdulul43u5mhzs9dw",
-                "pub_key": null,
-                "sequence": "0"
-              },
-              "name": "core",
-              "permissions": [
-                "minter",
-                "burner"
-              ]
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "40",
-              "address": "ovg1zp3wme5an2xvzqq0r90wet55y2a24undkp9d55",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "AhpjIyUHCnCxAKFm5EtEDMaUnHyQib913El5l1PTb+VH"
-              },
-              "sequence": "10"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "45",
-              "address": "ovg1z8sck54yx0p7fxfe43w89tan2jyngvf0wvlx2j",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "AudD/cUjZ988sXuPdMuR19sNsGE0FdOcsXfD63eflyeU"
-              },
-              "sequence": "18"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "64",
-              "address": "ovg1z4epz540pf7q5g600hx78k62dz5kmv20s2096t",
-              "pub_key": null,
-              "sequence": "0"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "17",
-              "address": "ovg1zht07e3emwqh7xwxl8uympcl4cmqf9jjnqga8s",
-              "pub_key": null,
-              "sequence": "0"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "67",
-              "address": "ovg1r4chaz0ad9wxw7h4g0wht8sy6f5jsyjm87q0st",
-              "pub_key": null,
-              "sequence": "0"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "48",
-              "address": "ovg19zlkde4hy6auvac4d8quj7nyt8hcc097cpye5c",
-              "pub_key": null,
-              "sequence": "0"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "57",
-              "address": "ovg19239pqwhun0xwlzczsjtyxgf2e54jjd2r44mw7",
-              "pub_key": null,
-              "sequence": "0"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "21",
-              "address": "ovg1x2gcxy2geazssf2qs5ef7w8xuuwycpd7540hrc",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "A6i+RCuaWUCzMzpjssthQTZ/i3E01i4zp6/cWeeqMOC1"
-              },
-              "sequence": "18"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "52",
-              "address": "ovg1xevks8hc6xe9s9snxeha4yztsuhvrl9teyralm",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "A9UjajgCboffIX0MUjGVcfdl5cKNNZ7lMlFAqOGGuqLH"
-              },
-              "sequence": "140"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "0",
-              "address": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "Au2bTqYOXFWIbTACEfwo0cUU+oNsPry3lMIZa2DMyOlB"
-              },
-              "sequence": "562"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "14",
-              "address": "ovg18a0pespllm7p75nf8u3h4x4j2szqcmansykxx9",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "Awj39EdyeVnnHJiGzwcr4nJtReA5dQ8GjXS0ppAxpvFY"
-              },
-              "sequence": "1"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "46",
-              "address": "ovg1gy3pxkye27rnthegsq657dhmqu5dgrtx4zujp4",
-              "pub_key": null,
-              "sequence": "0"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "59",
-              "address": "ovg1gxkwfy9ahs8u0jwkvcrdsyv57uvujrgzjg4fk3",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "A3GJs6D2HkR1X0l8zLHmqSrP/3GxSxSnC7QgFRbWSr/H"
-              },
-              "sequence": "23"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "20",
-              "address": "ovg1gtz6u5ed8p4gjqcx69nd20yej2nrccsfph877e",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "AsTEP9WHda0J8Vh9hi2DTiZCo3huofFrzKdJgDfZ8VYN"
-              },
-              "sequence": "10"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "36",
-              "address": "ovg1gv3hfs6kz83z27en3z99sgz72mvnkatdksn7tk",
-              "pub_key": null,
-              "sequence": "0"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.ModuleAccount",
-              "base_account": {
-                "account_number": "9",
-                "address": "ovg1g3d72n2g5tnzjsmfepxxrngf9ysf6nssuulytk",
-                "pub_key": null,
-                "sequence": "0"
-              },
-              "name": "void",
-              "permissions": [
-                "burner"
-              ]
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "15",
-              "address": "ovg1g647a0vrgfxpe6rhkfmtq84762w2xc3e0f87ge",
-              "pub_key": null,
-              "sequence": "0"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "47",
-              "address": "ovg1fk75tfa8dxr68628yvw5qrk730nx3lthwdfkjt",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "A2qFzFOUWSIAWLQCMhYdvtR7kZazKsyDn5OMFH0URm+K"
-              },
-              "sequence": "3"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.ModuleAccount",
-              "base_account": {
-                "account_number": "3",
-                "address": "ovg1fl48vsnmsdzcv85q5d2q4z5ajdha8yu33c34p8",
-                "pub_key": null,
-                "sequence": "0"
-              },
-              "name": "bonded_tokens_pool",
-              "permissions": [
-                "burner",
-                "staking"
-              ]
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "71",
-              "address": "ovg12wv9yyk22p9cjzggealag2fx00y9dx73vdls9y",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "A3dJMQVG0Kr9+wMz1ExCG2MqbVooqHsX63fLpbqznBua"
-              },
-              "sequence": "2"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.ModuleAccount",
-              "base_account": {
-                "account_number": "11",
-                "address": "ovg1245yut9zht8q4hz39sd0lzqtzkuw5us573ptk6",
-                "pub_key": null,
-                "sequence": "0"
-              },
-              "name": "rewards",
-              "permissions": [
-
-              ]
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "50",
-              "address": "ovg126e4j99g0n2746nv7ggsvrwcy6hf25hej6kdv9",
-              "pub_key": null,
-              "sequence": "0"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.ModuleAccount",
-              "base_account": {
-                "account_number": "4",
-                "address": "ovg1tygms3xhhs3yv487phx3dw4a95jn7t7l9cdyhn",
-                "pub_key": null,
-                "sequence": "0"
-              },
-              "name": "not_bonded_tokens_pool",
-              "permissions": [
-                "burner",
-                "staking"
-              ]
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.ModuleAccount",
-              "base_account": {
-                "account_number": "10",
-                "address": "ovg1tdhh4w0yftc4pe7mqytj8clfea7sptw76yhtr5",
-                "pub_key": null,
-                "sequence": "0"
-              },
-              "name": "stakerewards",
-              "permissions": [
-
-              ]
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "33",
-              "address": "ovg1vqsxwjezgkvc4s9pvrtfzhtatkesz0u8700uhx",
-              "pub_key": null,
-              "sequence": "0"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "61",
-              "address": "ovg1v93c7yszy9npwmtp6xf7zf9f5alrsux6fuzypk",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "AwI2FA8QGtBBQKk2s/Hc3aRqFS8Hd7agqcONE6Vc3AHD"
-              },
-              "sequence": "4"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "19",
-              "address": "ovg1v2ah3dnfs6xedpa56nwmjzjhsv8l9fsx3yxfx6",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "AgzI0snSAvXt5JctV5WGy5Uxo52NpsQMc8MkrRA7PK6R"
-              },
-              "sequence": "86"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "72",
-              "address": "ovg1vvjj0veagkz2z73ngvc0sc6nc9aenewtx3js29",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "A8SFMubwnmubHtaBwc5lt7/mHx1PJjI9avn7ho84FGFn"
-              },
-              "sequence": "1"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "58",
-              "address": "ovg1vhya4e8kwungdvt538xr7p09myj5nqqmeuhsan",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "AuoVDWXcnayuaGb46yww5UsScEq+7EbsjdiVpNgppTaA"
-              },
-              "sequence": "41"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "66",
-              "address": "ovg1dzx4fj4gyh3m5fp32jxf43pjkuy06hsegkm0xf",
-              "pub_key": null,
-              "sequence": "0"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "41",
-              "address": "ovg1d885aakpyvexapsuk6wfnpcjgkq8dqn4l3ukec",
-              "pub_key": null,
-              "sequence": "0"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "63",
-              "address": "ovg1djqvn5l9cdt922xg9u4hhgdh6xeg0cldqqdc80",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "AvYcuMvVyreiK5jpoDNTKPZrUvxyuo4djbFuGD7wnThi"
-              },
-              "sequence": "2"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "65",
-              "address": "ovg1d6ptl3rlsy7gsnc534hvarhem0qezd3h8t5pc8",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "A/YIRK+x1nEJQKxJ5Q7exy3ba0Ar855vl78J4YNltf4W"
-              },
-              "sequence": "1"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "68",
-              "address": "ovg1dasc05kkzqs495l77yay383nydvqkese2se4eg",
-              "pub_key": null,
-              "sequence": "0"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "53",
-              "address": "ovg1wpyql4le8l5j3ueqapllv25g2v4z65e93uylgk",
-              "pub_key": null,
-              "sequence": "0"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "56",
-              "address": "ovg1w8femvkv233y4gl8d82en9vums4qq0emqht2eh",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "A/PPYpUQMQw3FhOXcMvuhbzYKjPhsa3pouGy1Cy0HaL0"
-              },
-              "sequence": "9"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "55",
-              "address": "ovg1wdfc6hwfvjdevdsn5anqp0ta9e0v0emnp09cma",
-              "pub_key": null,
-              "sequence": "0"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "49",
-              "address": "ovg1wc054fnnd4mr5rtvxntnmucgvce98frgfrq5rh",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "AqI6kgMRkDcLYvAQgQZ4V68+0XPDAbKhv6uT0AbRHlfd"
-              },
-              "sequence": "1"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "60",
-              "address": "ovg1wllug6ppv58tslwddgp82tfldtvvmauc30hug2",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "A3IXpq7yeRlHJ4CaH5JRXZWv6Mg+RxQSrDyPa0vJwV2S"
-              },
-              "sequence": "243"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.ModuleAccount",
-              "base_account": {
-                "account_number": "5",
-                "address": "ovg10d07y265gmmuvt4z0w9aw880jnsr700j7ptlwr",
-                "pub_key": null,
-                "sequence": "0"
-              },
-              "name": "gov",
-              "permissions": [
-                "burner"
-              ]
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "30",
-              "address": "ovg1sfcetrkh74m3pp7fqgpqk0k9as38g6502tv4e6",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "AmqL7cecnHgXPmB4xBjWa+fjnzI1OmHhUAoH6l7Clu+9"
-              },
-              "sequence": "5"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "25",
-              "address": "ovg1swrxdzghezp98zafyk8qajjqjy3txh6q2h7v8h",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "As+lB5+43Kcq6brsm3amQEFdMXE1vOJRQYHuprHwo7nO"
-              },
-              "sequence": "1"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "27",
-              "address": "ovg1383yakd5h5uc4w2ftkle2qvneye4pp7hkunqqh",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "A8U05wuaBgnerscW7/QJLYAJPw9N223mUwdlvABLezkS"
-              },
-              "sequence": "4"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "35",
-              "address": "ovg13h8xpgj7tldlfft79m38aq33lhcp6rqxc50z8r",
-              "pub_key": null,
-              "sequence": "0"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.ModuleAccount",
-              "base_account": {
-                "account_number": "2",
-                "address": "ovg1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8ruux30",
-                "pub_key": null,
-                "sequence": "0"
-              },
-              "name": "distribution",
-              "permissions": [
-
-              ]
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "12",
-              "address": "ovg1ndqydj9hpvrpu0jyqrkzfjgkq8jy7cxtfexxd5",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "An0uwJl/pyEwpVBJj/YWXUB7b5vTPelV2IBXosEBFLdz"
-              },
-              "sequence": "50"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "26",
-              "address": "ovg1n5gu2s50rhdvp0csah44k29fylus7l4v92tqx5",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "AiO8ZDw6h6Y6Vc3pCkGVp2LkMHsZiauJTW2ybL1mk48k"
-              },
-              "sequence": "2"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "62",
-              "address": "ovg1naplvawwllxffpvg28m9g658nsck4slnvgvppr",
-              "pub_key": null,
-              "sequence": "0"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "13",
-              "address": "ovg1hd3ahvkhhqj6sxrarr0xkk5ga72g5rujl6v224",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "AvjpPcm8rZeKhXO1L8DtYrdhOg6KegzIlPt+vmOwH11/"
-              },
-              "sequence": "1"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "31",
-              "address": "ovg1etzz58c0qk0hzgmjv0aqccs8fnwedcrcgjlsc2",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "AvLY5wZ0B+QP1EsQYqtoMFDGdZmUdF8i82gMGMpO0ag6"
-              },
-              "sequence": "3"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "24",
-              "address": "ovg1edz8has9g46rwnzkz7gak00lu7pcqf7hqcdaxc",
-              "pub_key": null,
-              "sequence": "0"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "69",
-              "address": "ovg16xgg4ehm6v03vjuf88zqfqa7gr8r9txsy8dfa2",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "AmoVbzymPwIJBG04CwcVTv8ZiKWnCa8hwWOjGS/e44ZB"
-              },
-              "sequence": "3"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "38",
-              "address": "ovg16tagtvh4x882zs2eadlrwscmj7d9e820frshnc",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "AlXqEZ1VUK3bgVa1eqgDXamLjkH0aDqg591EDbsHJZvT"
-              },
-              "sequence": "19"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "18",
-              "address": "ovg16n0mfppxtxhh0783aam4a68g5t5wf2c5gljae5",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "AyhVwes/D2t1LVSFwxmGEmOVWsvvQ5OrKglhiNL1bB9R"
-              },
-              "sequence": "43"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "8",
-              "address": "ovg164q2gc7cf250l7fzjfsae7kjke7uylhy433373",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "AuEMEc3wDyM++HYGqewGrUAteyvQJdzHQ2ut0LMXyMBY"
-              },
-              "sequence": "14"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "34",
-              "address": "ovg167dn4tpty3mxmsmhct3kym4vphv2yksjs4tay6",
-              "pub_key": null,
-              "sequence": "0"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "29",
-              "address": "ovg1mqrx5prlkfr9uveg2fp7c0hr3j0h6wunz8ejdr",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "AuMcm2M9lTfMQZM70+sSYmGFpiZ0Pg3gPxR/cYZoZXie"
-              },
-              "sequence": "4"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "23",
-              "address": "ovg1m9c860aaqxfuh32vkh64kdpkcx7v8mkk7hcdfl",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "AsAKI/dBp5DFxyKWHWXfNZfr4dUeVmOjgWQJmVnmCbgx"
-              },
-              "sequence": "4"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "54",
-              "address": "ovg1mt9z8j79c2y0gqy2jm5u9h499rnny09p056vr6",
-              "pub_key": null,
-              "sequence": "0"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.ModuleAccount",
-              "base_account": {
-                "account_number": "6",
-                "address": "ovg1m3h30wlvsf8llruxtpukdvsy0km2kum8vjlzls",
-                "pub_key": null,
-                "sequence": "0"
-              },
-              "name": "mint",
-              "permissions": [
-                "minter"
-              ]
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "22",
-              "address": "ovg1a9qknvws7ezq580f9pwkdethxy746sxng90qc6",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "AniHxcGvHhmnbioFwz9XvoUR4ClaBuCSfmfULju+x0HJ"
-              },
-              "sequence": "67"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "43",
-              "address": "ovg1ajeju2zaajdnj5j857sk7sjjlve65k2287jrfv",
-              "pub_key": null,
-              "sequence": "0"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "70",
-              "address": "ovg1ah2hga6x6caehvp6zkd7jyc6u9k4gvhyqj042m",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "A+zN8yjavNrI99MvD5zqR5B+/IjWzLq+xSUeWRWQE/4Q"
-              },
-              "sequence": "1"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "28",
-              "address": "ovg1alvn0uhw2jqac06v5pm82fhawxkf22ml9z704x",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "A79bOpcuGAUI/N/uJCE+kiCqJlWaRum/M5L5y88/pqNb"
-              },
-              "sequence": "1"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.ModuleAccount",
-              "base_account": {
-                "account_number": "1",
-                "address": "ovg17xpfvakm2amg962yls6f84z3kell8c5l56m6nd",
-                "pub_key": null,
-                "sequence": "0"
-              },
-              "name": "fee_collector",
-              "permissions": [
-
-              ]
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "37",
-              "address": "ovg1lralusn8a773lr7vpppw9vng2gzaakmvkghcdu",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "AjXvWBgh0SRvLH0cpgm0JU4pDPIHXPcY/taFah7kK9Vr"
-              },
-              "sequence": "1"
-            },
-            {
-              "@type": "/cosmos.auth.v1beta1.BaseAccount",
-              "account_number": "16",
-              "address": "ovg1lm5sth2qsdz028d4gcx2d796nmkkwurgxdu2tf",
-              "pub_key": {
-                "@type": "/cosmos.crypto.secp256k1.PubKey",
-                "key": "A3F3gABShoIzKSCNoH48mPKMQfUxWvhTUl8sIhHuc+Go"
-              },
-              "sequence": "57"
-            }
-          ],
-          "params": {
-            "max_memo_characters": "256",
-            "sig_verify_cost_ed25519": "590",
-            "sig_verify_cost_secp256k1": "1000",
-            "tx_sig_limit": "7",
-            "tx_size_cost_per_byte": "10"
-          }
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "44",
+          "address": "ovg1q3nq26tpp64h4fp5848cz74dnrw2584pjsfuf3",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "Aier7jc9KnPA0stcIE7KY9lLbHMUR3qwEpo2L8Y6pNrn"
+          },
+          "sequence": "46"
         },
-        "authz": {
-          "authorization": [
-
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "51",
+          "address": "ovg1qjx5772hxmxqv5ckuu9v4tag2hzv7dm7e9avnz",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "AkAltsN4h+pn67kOn3L28UX0GKTm8FBHlpQANym5S61m"
+          },
+          "sequence": "2"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "32",
+          "address": "ovg1q6lxkmt09gfxgayknlsyadaelx47pkyfq3pr90",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "A8tOfNHL+QQrfPU3SLZ5w4Q5ytN5aCeEiIymMDyg2lot"
+          },
+          "sequence": "17"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "42",
+          "address": "ovg1p8yrl93qhllh6juy07zwxy4pu6d4ct7v47r904",
+          "pub_key": null,
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.ModuleAccount",
+          "base_account": {
+            "account_number": "7",
+            "address": "ovg1p4zltl2x9wx8p0lmzqpp4sdulul43u5mhzs9dw",
+            "pub_key": null,
+            "sequence": "0"
+          },
+          "name": "core",
+          "permissions": [
+            "minter",
+            "burner"
           ]
         },
-        "bank": {
-          "balances": [
-            {
-              "address": "ovg1qd2tarjumdw9jfg4cw8m6gctuu74qqdhdkmvlc",
-              "coins": [
-                {
-                  "amount": "1267200",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1q3nq26tpp64h4fp5848cz74dnrw2584pjsfuf3",
-              "coins": [
-                {
-                  "amount": "3515389953884",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1qjx5772hxmxqv5ckuu9v4tag2hzv7dm7e9avnz",
-              "coins": [
-                {
-                  "amount": "150",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1q6lxkmt09gfxgayknlsyadaelx47pkyfq3pr90",
-              "coins": [
-                {
-                  "amount": "600000000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1p8yrl93qhllh6juy07zwxy4pu6d4ct7v47r904",
-              "coins": [
-                {
-                  "amount": "438015055122",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1zp3wme5an2xvzqq0r90wet55y2a24undkp9d55",
-              "coins": [
-                {
-                  "amount": "97000000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1z8sck54yx0p7fxfe43w89tan2jyngvf0wvlx2j",
-              "coins": [
-                {
-                  "amount": "55090874911",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1z4epz540pf7q5g600hx78k62dz5kmv20s2096t",
-              "coins": [
-                {
-                  "amount": "990000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1zht07e3emwqh7xwxl8uympcl4cmqf9jjnqga8s",
-              "coins": [
-                {
-                  "amount": "1000000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1r4chaz0ad9wxw7h4g0wht8sy6f5jsyjm87q0st",
-              "coins": [
-                {
-                  "amount": "99797000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg19zlkde4hy6auvac4d8quj7nyt8hcc097cpye5c",
-              "coins": [
-                {
-                  "amount": "298500000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg19239pqwhun0xwlzczsjtyxgf2e54jjd2r44mw7",
-              "coins": [
-                {
-                  "amount": "10791000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1x2gcxy2geazssf2qs5ef7w8xuuwycpd7540hrc",
-              "coins": [
-                {
-                  "amount": "10490000000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1xevks8hc6xe9s9snxeha4yztsuhvrl9teyralm",
-              "coins": [
-                {
-                  "amount": "2000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-              "coins": [
-                {
-                  "amount": "970000018050",
-                  "denom": "ovg"
-                },
-                {
-                  "amount": "99809033734579",
-                  "denom": "stake"
-                }
-              ]
-            },
-            {
-              "address": "ovg18a0pespllm7p75nf8u3h4x4j2szqcmansykxx9",
-              "coins": [
-                {
-                  "amount": "1000000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1gy3pxkye27rnthegsq657dhmqu5dgrtx4zujp4",
-              "coins": [
-                {
-                  "amount": "10000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1gxkwfy9ahs8u0jwkvcrdsyv57uvujrgzjg4fk3",
-              "coins": [
-                {
-                  "amount": "58841343597",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1gtz6u5ed8p4gjqcx69nd20yej2nrccsfph877e",
-              "coins": [
-                {
-                  "amount": "1000000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1gv3hfs6kz83z27en3z99sgz72mvnkatdksn7tk",
-              "coins": [
-                {
-                  "amount": "10100000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1g647a0vrgfxpe6rhkfmtq84762w2xc3e0f87ge",
-              "coins": [
-                {
-                  "amount": "11100000099",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1fk75tfa8dxr68628yvw5qrk730nx3lthwdfkjt",
-              "coins": [
-                {
-                  "amount": "701020445648",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1fl48vsnmsdzcv85q5d2q4z5ajdha8yu33c34p8",
-              "coins": [
-                {
-                  "amount": "1000000000000",
-                  "denom": "stake"
-                }
-              ]
-            },
-            {
-              "address": "ovg12wv9yyk22p9cjzggealag2fx00y9dx73vdls9y",
-              "coins": [
-                {
-                  "amount": "10000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1245yut9zht8q4hz39sd0lzqtzkuw5us573ptk6",
-              "coins": [
-                {
-                  "amount": "69278214830",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg126e4j99g0n2746nv7ggsvrwcy6hf25hej6kdv9",
-              "coins": [
-                {
-                  "amount": "100000000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1tdhh4w0yftc4pe7mqytj8clfea7sptw76yhtr5",
-              "coins": [
-                {
-                  "amount": "6157665740",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1vqsxwjezgkvc4s9pvrtfzhtatkesz0u8700uhx",
-              "coins": [
-                {
-                  "amount": "1000000000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1v93c7yszy9npwmtp6xf7zf9f5alrsux6fuzypk",
-              "coins": [
-                {
-                  "amount": "1",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1v2ah3dnfs6xedpa56nwmjzjhsv8l9fsx3yxfx6",
-              "coins": [
-                {
-                  "amount": "11186185120197",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1vvjj0veagkz2z73ngvc0sc6nc9aenewtx3js29",
-              "coins": [
-                {
-                  "amount": "9910000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1vhya4e8kwungdvt538xr7p09myj5nqqmeuhsan",
-              "coins": [
-                {
-                  "amount": "99480339672",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1dzx4fj4gyh3m5fp32jxf43pjkuy06hsegkm0xf",
-              "coins": [
-                {
-                  "amount": "2829697930",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1d885aakpyvexapsuk6wfnpcjgkq8dqn4l3ukec",
-              "coins": [
-                {
-                  "amount": "102790000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1djqvn5l9cdt922xg9u4hhgdh6xeg0cldqqdc80",
-              "coins": [
-                {
-                  "amount": "109293343433",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1d6ptl3rlsy7gsnc534hvarhem0qezd3h8t5pc8",
-              "coins": [
-                {
-                  "amount": "4900000050",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1dasc05kkzqs495l77yay383nydvqkese2se4eg",
-              "coins": [
-                {
-                  "amount": "19820000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1wpyql4le8l5j3ueqapllv25g2v4z65e93uylgk",
-              "coins": [
-                {
-                  "amount": "118407273046",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1w8femvkv233y4gl8d82en9vums4qq0emqht2eh",
-              "coins": [
-                {
-                  "amount": "848910000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1wdfc6hwfvjdevdsn5anqp0ta9e0v0emnp09cma",
-              "coins": [
-                {
-                  "amount": "100300001000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1wc054fnnd4mr5rtvxntnmucgvce98frgfrq5rh",
-              "coins": [
-                {
-                  "amount": "39436500000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1wllug6ppv58tslwddgp82tfldtvvmauc30hug2",
-              "coins": [
-                {
-                  "amount": "10000000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1sfcetrkh74m3pp7fqgpqk0k9as38g6502tv4e6",
-              "coins": [
-                {
-                  "amount": "400300000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1swrxdzghezp98zafyk8qajjqjy3txh6q2h7v8h",
-              "coins": [
-                {
-                  "amount": "1000000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1383yakd5h5uc4w2ftkle2qvneye4pp7hkunqqh",
-              "coins": [
-                {
-                  "amount": "1000000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg13h8xpgj7tldlfft79m38aq33lhcp6rqxc50z8r",
-              "coins": [
-                {
-                  "amount": "100000000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8ruux30",
-              "coins": [
-                {
-                  "amount": "16510892545",
-                  "denom": "stake"
-                }
-              ]
-            },
-            {
-              "address": "ovg1ndqydj9hpvrpu0jyqrkzfjgkq8jy7cxtfexxd5",
-              "coins": [
-                {
-                  "amount": "1502360209981",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1n5gu2s50rhdvp0csah44k29fylus7l4v92tqx5",
-              "coins": [
-                {
-                  "amount": "1000000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1hd3ahvkhhqj6sxrarr0xkk5ga72g5rujl6v224",
-              "coins": [
-                {
-                  "amount": "1000000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1etzz58c0qk0hzgmjv0aqccs8fnwedcrcgjlsc2",
-              "coins": [
-                {
-                  "amount": "589467447057",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1edz8has9g46rwnzkz7gak00lu7pcqf7hqcdaxc",
-              "coins": [
-                {
-                  "amount": "1000000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg16xgg4ehm6v03vjuf88zqfqa7gr8r9txsy8dfa2",
-              "coins": [
-                {
-                  "amount": "10421700000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg16tagtvh4x882zs2eadlrwscmj7d9e820frshnc",
-              "coins": [
-                {
-                  "amount": "142068779465",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg16n0mfppxtxhh0783aam4a68g5t5wf2c5gljae5",
-              "coins": [
-                {
-                  "amount": "1125546985468",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg164q2gc7cf250l7fzjfsae7kjke7uylhy433373",
-              "coins": [
-                {
-                  "amount": "1109204455",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg167dn4tpty3mxmsmhct3kym4vphv2yksjs4tay6",
-              "coins": [
-                {
-                  "amount": "550100000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1m9c860aaqxfuh32vkh64kdpkcx7v8mkk7hcdfl",
-              "coins": [
-                {
-                  "amount": "1000000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1mt9z8j79c2y0gqy2jm5u9h499rnny09p056vr6",
-              "coins": [
-                {
-                  "amount": "100110147884",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1a9qknvws7ezq580f9pwkdethxy746sxng90qc6",
-              "coins": [
-                {
-                  "amount": "906148576075",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1ajeju2zaajdnj5j857sk7sjjlve65k2287jrfv",
-              "coins": [
-                {
-                  "amount": "26670136501059",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1ah2hga6x6caehvp6zkd7jyc6u9k4gvhyqj042m",
-              "coins": [
-                {
-                  "amount": "9999000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1alvn0uhw2jqac06v5pm82fhawxkf22ml9z704x",
-              "coins": [
-                {
-                  "amount": "1000000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1lralusn8a773lr7vpppw9vng2gzaakmvkghcdu",
-              "coins": [
-                {
-                  "amount": "9900000000",
-                  "denom": "ovg"
-                }
-              ]
-            },
-            {
-              "address": "ovg1lm5sth2qsdz028d4gcx2d796nmkkwurgxdu2tf",
-              "coins": [
-                {
-                  "amount": "1000000000",
-                  "denom": "ovg"
-                }
-              ]
-            }
-          ],
-          "denom_metadata": [
-
-          ],
-          "params": {
-            "default_send_enabled": true,
-            "send_enabled": [
-
-            ]
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "40",
+          "address": "ovg1zp3wme5an2xvzqq0r90wet55y2a24undkp9d55",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "AhpjIyUHCnCxAKFm5EtEDMaUnHyQib913El5l1PTb+VH"
           },
-          "send_enabled": [
-
-          ],
-          "supply": [
+          "sequence": "10"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "45",
+          "address": "ovg1z8sck54yx0p7fxfe43w89tan2jyngvf0wvlx2j",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "AudD/cUjZ988sXuPdMuR19sNsGE0FdOcsXfD63eflyeU"
+          },
+          "sequence": "18"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "64",
+          "address": "ovg1z4epz540pf7q5g600hx78k62dz5kmv20s2096t",
+          "pub_key": null,
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "17",
+          "address": "ovg1zht07e3emwqh7xwxl8uympcl4cmqf9jjnqga8s",
+          "pub_key": null,
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "67",
+          "address": "ovg1r4chaz0ad9wxw7h4g0wht8sy6f5jsyjm87q0st",
+          "pub_key": null,
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "48",
+          "address": "ovg19zlkde4hy6auvac4d8quj7nyt8hcc097cpye5c",
+          "pub_key": null,
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "57",
+          "address": "ovg19239pqwhun0xwlzczsjtyxgf2e54jjd2r44mw7",
+          "pub_key": null,
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "21",
+          "address": "ovg1x2gcxy2geazssf2qs5ef7w8xuuwycpd7540hrc",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "A6i+RCuaWUCzMzpjssthQTZ/i3E01i4zp6/cWeeqMOC1"
+          },
+          "sequence": "18"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "52",
+          "address": "ovg1xevks8hc6xe9s9snxeha4yztsuhvrl9teyralm",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "A9UjajgCboffIX0MUjGVcfdl5cKNNZ7lMlFAqOGGuqLH"
+          },
+          "sequence": "140"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "0",
+          "address": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "Au2bTqYOXFWIbTACEfwo0cUU+oNsPry3lMIZa2DMyOlB"
+          },
+          "sequence": "562"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "14",
+          "address": "ovg18a0pespllm7p75nf8u3h4x4j2szqcmansykxx9",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "Awj39EdyeVnnHJiGzwcr4nJtReA5dQ8GjXS0ppAxpvFY"
+          },
+          "sequence": "1"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "46",
+          "address": "ovg1gy3pxkye27rnthegsq657dhmqu5dgrtx4zujp4",
+          "pub_key": null,
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "59",
+          "address": "ovg1gxkwfy9ahs8u0jwkvcrdsyv57uvujrgzjg4fk3",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "A3GJs6D2HkR1X0l8zLHmqSrP/3GxSxSnC7QgFRbWSr/H"
+          },
+          "sequence": "23"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "20",
+          "address": "ovg1gtz6u5ed8p4gjqcx69nd20yej2nrccsfph877e",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "AsTEP9WHda0J8Vh9hi2DTiZCo3huofFrzKdJgDfZ8VYN"
+          },
+          "sequence": "10"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "36",
+          "address": "ovg1gv3hfs6kz83z27en3z99sgz72mvnkatdksn7tk",
+          "pub_key": null,
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.ModuleAccount",
+          "base_account": {
+            "account_number": "9",
+            "address": "ovg1g3d72n2g5tnzjsmfepxxrngf9ysf6nssuulytk",
+            "pub_key": null,
+            "sequence": "0"
+          },
+          "name": "void",
+          "permissions": [
+            "burner"
+          ]
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "15",
+          "address": "ovg1g647a0vrgfxpe6rhkfmtq84762w2xc3e0f87ge",
+          "pub_key": null,
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "47",
+          "address": "ovg1fk75tfa8dxr68628yvw5qrk730nx3lthwdfkjt",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "A2qFzFOUWSIAWLQCMhYdvtR7kZazKsyDn5OMFH0URm+K"
+          },
+          "sequence": "3"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.ModuleAccount",
+          "base_account": {
+            "account_number": "3",
+            "address": "ovg1fl48vsnmsdzcv85q5d2q4z5ajdha8yu33c34p8",
+            "pub_key": null,
+            "sequence": "0"
+          },
+          "name": "bonded_tokens_pool",
+          "permissions": [
+            "burner",
+            "staking"
+          ]
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "71",
+          "address": "ovg12wv9yyk22p9cjzggealag2fx00y9dx73vdls9y",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "A3dJMQVG0Kr9+wMz1ExCG2MqbVooqHsX63fLpbqznBua"
+          },
+          "sequence": "2"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.ModuleAccount",
+          "base_account": {
+            "account_number": "11",
+            "address": "ovg1245yut9zht8q4hz39sd0lzqtzkuw5us573ptk6",
+            "pub_key": null,
+            "sequence": "0"
+          },
+          "name": "rewards",
+          "permissions": [
+          ]
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "50",
+          "address": "ovg126e4j99g0n2746nv7ggsvrwcy6hf25hej6kdv9",
+          "pub_key": null,
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.ModuleAccount",
+          "base_account": {
+            "account_number": "4",
+            "address": "ovg1tygms3xhhs3yv487phx3dw4a95jn7t7l9cdyhn",
+            "pub_key": null,
+            "sequence": "0"
+          },
+          "name": "not_bonded_tokens_pool",
+          "permissions": [
+            "burner",
+            "staking"
+          ]
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.ModuleAccount",
+          "base_account": {
+            "account_number": "10",
+            "address": "ovg1tdhh4w0yftc4pe7mqytj8clfea7sptw76yhtr5",
+            "pub_key": null,
+            "sequence": "0"
+          },
+          "name": "stakerewards",
+          "permissions": [
+          ]
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "33",
+          "address": "ovg1vqsxwjezgkvc4s9pvrtfzhtatkesz0u8700uhx",
+          "pub_key": null,
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "61",
+          "address": "ovg1v93c7yszy9npwmtp6xf7zf9f5alrsux6fuzypk",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "AwI2FA8QGtBBQKk2s/Hc3aRqFS8Hd7agqcONE6Vc3AHD"
+          },
+          "sequence": "4"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "19",
+          "address": "ovg1v2ah3dnfs6xedpa56nwmjzjhsv8l9fsx3yxfx6",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "AgzI0snSAvXt5JctV5WGy5Uxo52NpsQMc8MkrRA7PK6R"
+          },
+          "sequence": "86"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "72",
+          "address": "ovg1vvjj0veagkz2z73ngvc0sc6nc9aenewtx3js29",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "A8SFMubwnmubHtaBwc5lt7/mHx1PJjI9avn7ho84FGFn"
+          },
+          "sequence": "1"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "58",
+          "address": "ovg1vhya4e8kwungdvt538xr7p09myj5nqqmeuhsan",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "AuoVDWXcnayuaGb46yww5UsScEq+7EbsjdiVpNgppTaA"
+          },
+          "sequence": "41"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "66",
+          "address": "ovg1dzx4fj4gyh3m5fp32jxf43pjkuy06hsegkm0xf",
+          "pub_key": null,
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "41",
+          "address": "ovg1d885aakpyvexapsuk6wfnpcjgkq8dqn4l3ukec",
+          "pub_key": null,
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "63",
+          "address": "ovg1djqvn5l9cdt922xg9u4hhgdh6xeg0cldqqdc80",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "AvYcuMvVyreiK5jpoDNTKPZrUvxyuo4djbFuGD7wnThi"
+          },
+          "sequence": "2"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "65",
+          "address": "ovg1d6ptl3rlsy7gsnc534hvarhem0qezd3h8t5pc8",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "A/YIRK+x1nEJQKxJ5Q7exy3ba0Ar855vl78J4YNltf4W"
+          },
+          "sequence": "1"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "68",
+          "address": "ovg1dasc05kkzqs495l77yay383nydvqkese2se4eg",
+          "pub_key": null,
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "53",
+          "address": "ovg1wpyql4le8l5j3ueqapllv25g2v4z65e93uylgk",
+          "pub_key": null,
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "56",
+          "address": "ovg1w8femvkv233y4gl8d82en9vums4qq0emqht2eh",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "A/PPYpUQMQw3FhOXcMvuhbzYKjPhsa3pouGy1Cy0HaL0"
+          },
+          "sequence": "9"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "55",
+          "address": "ovg1wdfc6hwfvjdevdsn5anqp0ta9e0v0emnp09cma",
+          "pub_key": null,
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "49",
+          "address": "ovg1wc054fnnd4mr5rtvxntnmucgvce98frgfrq5rh",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "AqI6kgMRkDcLYvAQgQZ4V68+0XPDAbKhv6uT0AbRHlfd"
+          },
+          "sequence": "1"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "60",
+          "address": "ovg1wllug6ppv58tslwddgp82tfldtvvmauc30hug2",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "A3IXpq7yeRlHJ4CaH5JRXZWv6Mg+RxQSrDyPa0vJwV2S"
+          },
+          "sequence": "243"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.ModuleAccount",
+          "base_account": {
+            "account_number": "5",
+            "address": "ovg10d07y265gmmuvt4z0w9aw880jnsr700j7ptlwr",
+            "pub_key": null,
+            "sequence": "0"
+          },
+          "name": "gov",
+          "permissions": [
+            "burner"
+          ]
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "30",
+          "address": "ovg1sfcetrkh74m3pp7fqgpqk0k9as38g6502tv4e6",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "AmqL7cecnHgXPmB4xBjWa+fjnzI1OmHhUAoH6l7Clu+9"
+          },
+          "sequence": "5"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "25",
+          "address": "ovg1swrxdzghezp98zafyk8qajjqjy3txh6q2h7v8h",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "As+lB5+43Kcq6brsm3amQEFdMXE1vOJRQYHuprHwo7nO"
+          },
+          "sequence": "1"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "27",
+          "address": "ovg1383yakd5h5uc4w2ftkle2qvneye4pp7hkunqqh",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "A8U05wuaBgnerscW7/QJLYAJPw9N223mUwdlvABLezkS"
+          },
+          "sequence": "4"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "35",
+          "address": "ovg13h8xpgj7tldlfft79m38aq33lhcp6rqxc50z8r",
+          "pub_key": null,
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.ModuleAccount",
+          "base_account": {
+            "account_number": "2",
+            "address": "ovg1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8ruux30",
+            "pub_key": null,
+            "sequence": "0"
+          },
+          "name": "distribution",
+          "permissions": [
+          ]
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "12",
+          "address": "ovg1ndqydj9hpvrpu0jyqrkzfjgkq8jy7cxtfexxd5",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "An0uwJl/pyEwpVBJj/YWXUB7b5vTPelV2IBXosEBFLdz"
+          },
+          "sequence": "50"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "26",
+          "address": "ovg1n5gu2s50rhdvp0csah44k29fylus7l4v92tqx5",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "AiO8ZDw6h6Y6Vc3pCkGVp2LkMHsZiauJTW2ybL1mk48k"
+          },
+          "sequence": "2"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "62",
+          "address": "ovg1naplvawwllxffpvg28m9g658nsck4slnvgvppr",
+          "pub_key": null,
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "13",
+          "address": "ovg1hd3ahvkhhqj6sxrarr0xkk5ga72g5rujl6v224",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "AvjpPcm8rZeKhXO1L8DtYrdhOg6KegzIlPt+vmOwH11/"
+          },
+          "sequence": "1"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "31",
+          "address": "ovg1etzz58c0qk0hzgmjv0aqccs8fnwedcrcgjlsc2",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "AvLY5wZ0B+QP1EsQYqtoMFDGdZmUdF8i82gMGMpO0ag6"
+          },
+          "sequence": "3"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "24",
+          "address": "ovg1edz8has9g46rwnzkz7gak00lu7pcqf7hqcdaxc",
+          "pub_key": null,
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "69",
+          "address": "ovg16xgg4ehm6v03vjuf88zqfqa7gr8r9txsy8dfa2",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "AmoVbzymPwIJBG04CwcVTv8ZiKWnCa8hwWOjGS/e44ZB"
+          },
+          "sequence": "3"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "38",
+          "address": "ovg16tagtvh4x882zs2eadlrwscmj7d9e820frshnc",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "AlXqEZ1VUK3bgVa1eqgDXamLjkH0aDqg591EDbsHJZvT"
+          },
+          "sequence": "19"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "18",
+          "address": "ovg16n0mfppxtxhh0783aam4a68g5t5wf2c5gljae5",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "AyhVwes/D2t1LVSFwxmGEmOVWsvvQ5OrKglhiNL1bB9R"
+          },
+          "sequence": "43"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "8",
+          "address": "ovg164q2gc7cf250l7fzjfsae7kjke7uylhy433373",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "AuEMEc3wDyM++HYGqewGrUAteyvQJdzHQ2ut0LMXyMBY"
+          },
+          "sequence": "14"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "34",
+          "address": "ovg167dn4tpty3mxmsmhct3kym4vphv2yksjs4tay6",
+          "pub_key": null,
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "29",
+          "address": "ovg1mqrx5prlkfr9uveg2fp7c0hr3j0h6wunz8ejdr",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "AuMcm2M9lTfMQZM70+sSYmGFpiZ0Pg3gPxR/cYZoZXie"
+          },
+          "sequence": "4"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "23",
+          "address": "ovg1m9c860aaqxfuh32vkh64kdpkcx7v8mkk7hcdfl",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "AsAKI/dBp5DFxyKWHWXfNZfr4dUeVmOjgWQJmVnmCbgx"
+          },
+          "sequence": "4"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "54",
+          "address": "ovg1mt9z8j79c2y0gqy2jm5u9h499rnny09p056vr6",
+          "pub_key": null,
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.ModuleAccount",
+          "base_account": {
+            "account_number": "6",
+            "address": "ovg1m3h30wlvsf8llruxtpukdvsy0km2kum8vjlzls",
+            "pub_key": null,
+            "sequence": "0"
+          },
+          "name": "mint",
+          "permissions": [
+            "minter"
+          ]
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "22",
+          "address": "ovg1a9qknvws7ezq580f9pwkdethxy746sxng90qc6",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "AniHxcGvHhmnbioFwz9XvoUR4ClaBuCSfmfULju+x0HJ"
+          },
+          "sequence": "67"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "43",
+          "address": "ovg1ajeju2zaajdnj5j857sk7sjjlve65k2287jrfv",
+          "pub_key": null,
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "70",
+          "address": "ovg1ah2hga6x6caehvp6zkd7jyc6u9k4gvhyqj042m",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "A+zN8yjavNrI99MvD5zqR5B+/IjWzLq+xSUeWRWQE/4Q"
+          },
+          "sequence": "1"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "28",
+          "address": "ovg1alvn0uhw2jqac06v5pm82fhawxkf22ml9z704x",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "A79bOpcuGAUI/N/uJCE+kiCqJlWaRum/M5L5y88/pqNb"
+          },
+          "sequence": "1"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.ModuleAccount",
+          "base_account": {
+            "account_number": "1",
+            "address": "ovg17xpfvakm2amg962yls6f84z3kell8c5l56m6nd",
+            "pub_key": null,
+            "sequence": "0"
+          },
+          "name": "fee_collector",
+          "permissions": [
+          ]
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "37",
+          "address": "ovg1lralusn8a773lr7vpppw9vng2gzaakmvkghcdu",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "AjXvWBgh0SRvLH0cpgm0JU4pDPIHXPcY/taFah7kK9Vr"
+          },
+          "sequence": "1"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "account_number": "16",
+          "address": "ovg1lm5sth2qsdz028d4gcx2d796nmkkwurgxdu2tf",
+          "pub_key": {
+            "@type": "/cosmos.crypto.secp256k1.PubKey",
+            "key": "A3F3gABShoIzKSCNoH48mPKMQfUxWvhTUl8sIhHuc+Go"
+          },
+          "sequence": "57"
+        }
+      ],
+      "params": {
+        "max_memo_characters": "256",
+        "sig_verify_cost_ed25519": "590",
+        "sig_verify_cost_secp256k1": "1000",
+        "tx_sig_limit": "7",
+        "tx_size_cost_per_byte": "10"
+      }
+    },
+    "authz": {
+      "authorization": [
+      ]
+    },
+    "bank": {
+      "balances": [
+        {
+          "address": "ovg1qd2tarjumdw9jfg4cw8m6gctuu74qqdhdkmvlc",
+          "coins": [
             {
-              "amount": "102710087168004",
+              "amount": "1267200",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1q3nq26tpp64h4fp5848cz74dnrw2584pjsfuf3",
+          "coins": [
+            {
+              "amount": "3515389953884",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1qjx5772hxmxqv5ckuu9v4tag2hzv7dm7e9avnz",
+          "coins": [
+            {
+              "amount": "150",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1q6lxkmt09gfxgayknlsyadaelx47pkyfq3pr90",
+          "coins": [
+            {
+              "amount": "600000000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1p8yrl93qhllh6juy07zwxy4pu6d4ct7v47r904",
+          "coins": [
+            {
+              "amount": "438015055122",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1zp3wme5an2xvzqq0r90wet55y2a24undkp9d55",
+          "coins": [
+            {
+              "amount": "97000000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1z8sck54yx0p7fxfe43w89tan2jyngvf0wvlx2j",
+          "coins": [
+            {
+              "amount": "55090874911",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1z4epz540pf7q5g600hx78k62dz5kmv20s2096t",
+          "coins": [
+            {
+              "amount": "990000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1zht07e3emwqh7xwxl8uympcl4cmqf9jjnqga8s",
+          "coins": [
+            {
+              "amount": "1000000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1r4chaz0ad9wxw7h4g0wht8sy6f5jsyjm87q0st",
+          "coins": [
+            {
+              "amount": "99797000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg19zlkde4hy6auvac4d8quj7nyt8hcc097cpye5c",
+          "coins": [
+            {
+              "amount": "298500000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg19239pqwhun0xwlzczsjtyxgf2e54jjd2r44mw7",
+          "coins": [
+            {
+              "amount": "10791000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1x2gcxy2geazssf2qs5ef7w8xuuwycpd7540hrc",
+          "coins": [
+            {
+              "amount": "10490000000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1xevks8hc6xe9s9snxeha4yztsuhvrl9teyralm",
+          "coins": [
+            {
+              "amount": "2000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+          "coins": [
+            {
+              "amount": "970000018050",
               "denom": "ovg"
             },
             {
-              "amount": "100825544627124",
+              "amount": "99809033734579",
               "denom": "stake"
             }
           ]
         },
-        "capability": {
-          "index": "3",
-          "owners": [
+        {
+          "address": "ovg18a0pespllm7p75nf8u3h4x4j2szqcmansykxx9",
+          "coins": [
             {
-              "index": "1",
-              "index_owners": {
-                "owners": [
-                  {
-                    "module": "ibc",
-                    "name": "ports/transfer"
-                  },
-                  {
-                    "module": "transfer",
-                    "name": "ports/transfer"
-                  }
-                ]
-              }
-            },
-            {
-              "index": "2",
-              "index_owners": {
-                "owners": [
-                  {
-                    "module": "ibc",
-                    "name": "ports/icahost"
-                  },
-                  {
-                    "module": "icahost",
-                    "name": "ports/icahost"
-                  }
-                ]
-              }
+              "amount": "1000000000",
+              "denom": "ovg"
             }
           ]
         },
-        "consensus": null,
-        "core": {
-          "params": {
-
-          },
-          "statsList": [
-
+        {
+          "address": "ovg1gy3pxkye27rnthegsq657dhmqu5dgrtx4zujp4",
+          "coins": [
+            {
+              "amount": "10000000",
+              "denom": "ovg"
+            }
           ]
         },
-        "crisis": {
-          "constant_fee": {
-            "amount": "1000",
+        {
+          "address": "ovg1gxkwfy9ahs8u0jwkvcrdsyv57uvujrgzjg4fk3",
+          "coins": [
+            {
+              "amount": "58841343597",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1gtz6u5ed8p4gjqcx69nd20yej2nrccsfph877e",
+          "coins": [
+            {
+              "amount": "1000000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1gv3hfs6kz83z27en3z99sgz72mvnkatdksn7tk",
+          "coins": [
+            {
+              "amount": "10100000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1g647a0vrgfxpe6rhkfmtq84762w2xc3e0f87ge",
+          "coins": [
+            {
+              "amount": "11100000099",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1fk75tfa8dxr68628yvw5qrk730nx3lthwdfkjt",
+          "coins": [
+            {
+              "amount": "701020445648",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1fl48vsnmsdzcv85q5d2q4z5ajdha8yu33c34p8",
+          "coins": [
+            {
+              "amount": "1000000000000",
+              "denom": "stake"
+            }
+          ]
+        },
+        {
+          "address": "ovg12wv9yyk22p9cjzggealag2fx00y9dx73vdls9y",
+          "coins": [
+            {
+              "amount": "10000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1245yut9zht8q4hz39sd0lzqtzkuw5us573ptk6",
+          "coins": [
+            {
+              "amount": "69278214830",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg126e4j99g0n2746nv7ggsvrwcy6hf25hej6kdv9",
+          "coins": [
+            {
+              "amount": "100000000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1tdhh4w0yftc4pe7mqytj8clfea7sptw76yhtr5",
+          "coins": [
+            {
+              "amount": "6157665740",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1vqsxwjezgkvc4s9pvrtfzhtatkesz0u8700uhx",
+          "coins": [
+            {
+              "amount": "1000000000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1v93c7yszy9npwmtp6xf7zf9f5alrsux6fuzypk",
+          "coins": [
+            {
+              "amount": "1",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1v2ah3dnfs6xedpa56nwmjzjhsv8l9fsx3yxfx6",
+          "coins": [
+            {
+              "amount": "11186185120197",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1vvjj0veagkz2z73ngvc0sc6nc9aenewtx3js29",
+          "coins": [
+            {
+              "amount": "9910000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1vhya4e8kwungdvt538xr7p09myj5nqqmeuhsan",
+          "coins": [
+            {
+              "amount": "99480339672",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1dzx4fj4gyh3m5fp32jxf43pjkuy06hsegkm0xf",
+          "coins": [
+            {
+              "amount": "2829697930",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1d885aakpyvexapsuk6wfnpcjgkq8dqn4l3ukec",
+          "coins": [
+            {
+              "amount": "102790000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1djqvn5l9cdt922xg9u4hhgdh6xeg0cldqqdc80",
+          "coins": [
+            {
+              "amount": "109293343433",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1d6ptl3rlsy7gsnc534hvarhem0qezd3h8t5pc8",
+          "coins": [
+            {
+              "amount": "4900000050",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1dasc05kkzqs495l77yay383nydvqkese2se4eg",
+          "coins": [
+            {
+              "amount": "19820000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1wpyql4le8l5j3ueqapllv25g2v4z65e93uylgk",
+          "coins": [
+            {
+              "amount": "118407273046",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1w8femvkv233y4gl8d82en9vums4qq0emqht2eh",
+          "coins": [
+            {
+              "amount": "848910000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1wdfc6hwfvjdevdsn5anqp0ta9e0v0emnp09cma",
+          "coins": [
+            {
+              "amount": "100300001000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1wc054fnnd4mr5rtvxntnmucgvce98frgfrq5rh",
+          "coins": [
+            {
+              "amount": "39436500000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1wllug6ppv58tslwddgp82tfldtvvmauc30hug2",
+          "coins": [
+            {
+              "amount": "10000000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1sfcetrkh74m3pp7fqgpqk0k9as38g6502tv4e6",
+          "coins": [
+            {
+              "amount": "400300000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1swrxdzghezp98zafyk8qajjqjy3txh6q2h7v8h",
+          "coins": [
+            {
+              "amount": "1000000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1383yakd5h5uc4w2ftkle2qvneye4pp7hkunqqh",
+          "coins": [
+            {
+              "amount": "1000000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg13h8xpgj7tldlfft79m38aq33lhcp6rqxc50z8r",
+          "coins": [
+            {
+              "amount": "100000000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8ruux30",
+          "coins": [
+            {
+              "amount": "16510892545",
+              "denom": "stake"
+            }
+          ]
+        },
+        {
+          "address": "ovg1ndqydj9hpvrpu0jyqrkzfjgkq8jy7cxtfexxd5",
+          "coins": [
+            {
+              "amount": "1502360209981",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1n5gu2s50rhdvp0csah44k29fylus7l4v92tqx5",
+          "coins": [
+            {
+              "amount": "1000000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1hd3ahvkhhqj6sxrarr0xkk5ga72g5rujl6v224",
+          "coins": [
+            {
+              "amount": "1000000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1etzz58c0qk0hzgmjv0aqccs8fnwedcrcgjlsc2",
+          "coins": [
+            {
+              "amount": "589467447057",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1edz8has9g46rwnzkz7gak00lu7pcqf7hqcdaxc",
+          "coins": [
+            {
+              "amount": "1000000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg16xgg4ehm6v03vjuf88zqfqa7gr8r9txsy8dfa2",
+          "coins": [
+            {
+              "amount": "10421700000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg16tagtvh4x882zs2eadlrwscmj7d9e820frshnc",
+          "coins": [
+            {
+              "amount": "142068779465",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg16n0mfppxtxhh0783aam4a68g5t5wf2c5gljae5",
+          "coins": [
+            {
+              "amount": "1125546985468",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg164q2gc7cf250l7fzjfsae7kjke7uylhy433373",
+          "coins": [
+            {
+              "amount": "1109204455",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg167dn4tpty3mxmsmhct3kym4vphv2yksjs4tay6",
+          "coins": [
+            {
+              "amount": "550100000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1m9c860aaqxfuh32vkh64kdpkcx7v8mkk7hcdfl",
+          "coins": [
+            {
+              "amount": "1000000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1mt9z8j79c2y0gqy2jm5u9h499rnny09p056vr6",
+          "coins": [
+            {
+              "amount": "100110147884",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1a9qknvws7ezq580f9pwkdethxy746sxng90qc6",
+          "coins": [
+            {
+              "amount": "906148576075",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1ajeju2zaajdnj5j857sk7sjjlve65k2287jrfv",
+          "coins": [
+            {
+              "amount": "26670136501059",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1ah2hga6x6caehvp6zkd7jyc6u9k4gvhyqj042m",
+          "coins": [
+            {
+              "amount": "9999000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1alvn0uhw2jqac06v5pm82fhawxkf22ml9z704x",
+          "coins": [
+            {
+              "amount": "1000000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1lralusn8a773lr7vpppw9vng2gzaakmvkghcdu",
+          "coins": [
+            {
+              "amount": "9900000000",
+              "denom": "ovg"
+            }
+          ]
+        },
+        {
+          "address": "ovg1lm5sth2qsdz028d4gcx2d796nmkkwurgxdu2tf",
+          "coins": [
+            {
+              "amount": "1000000000",
+              "denom": "ovg"
+            }
+          ]
+        }
+      ],
+      "denom_metadata": [
+      ],
+      "params": {
+        "default_send_enabled": true,
+        "send_enabled": [
+        ]
+      },
+      "send_enabled": [
+      ],
+      "supply": [
+        {
+          "amount": "102710087168004",
+          "denom": "ovg"
+        },
+        {
+          "amount": "100825544627124",
+          "denom": "stake"
+        }
+      ]
+    },
+    "capability": {
+      "index": "3",
+      "owners": [
+        {
+          "index": "1",
+          "index_owners": {
+            "owners": [
+              {
+                "module": "ibc",
+                "name": "ports/transfer"
+              },
+              {
+                "module": "transfer",
+                "name": "ports/transfer"
+              }
+            ]
+          }
+        },
+        {
+          "index": "2",
+          "index_owners": {
+            "owners": [
+              {
+                "module": "ibc",
+                "name": "ports/icahost"
+              },
+              {
+                "module": "icahost",
+                "name": "ports/icahost"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "consensus": null,
+    "core": {
+      "params": {
+      },
+      "statsList": [
+      ]
+    },
+    "crisis": {
+      "constant_fee": {
+        "amount": "1000",
+        "denom": "stake"
+      }
+    },
+    "customstake": {
+      "buyRequestsList": [
+      ],
+      "dailyStatsCount": "0",
+      "limitsList": [
+        {
+          "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+          "denom": "stovg",
+          "minAmounts": {
+            "buy": {
+              "amount": "100000000",
+              "denom": "stovg"
+            },
+            "sell": {
+              "amount": "10000000",
+              "denom": "stovg"
+            }
+          }
+        }
+      ],
+      "params": {
+      },
+      "sellRequestsList": [
+      ],
+      "stakesList": [
+      ],
+      "statsList": [
+      ],
+      "totalFree": "0",
+      "totalSell": "0",
+      "userStatsList": [
+      ],
+      "usersCount": "0"
+    },
+    "distribution": {
+      "delegator_starting_infos": [
+        {
+          "delegator_address": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+          "starting_info": {
+            "height": "0",
+            "previous_period": "1",
+            "stake": "1000000000000.000000000000000000"
+          },
+          "validator_address": "ovgvaloper18p9heyy3m4dsq7fj86p6v9yzzx8a64f8zgf7w7"
+        }
+      ],
+      "delegator_withdraw_infos": [
+      ],
+      "fee_pool": {
+        "community_pool": [
+          {
+            "amount": "16510892545.000000000000000000",
             "denom": "stake"
           }
-        },
-        "customstake": {
-          "buyRequestsList": [
-
-          ],
-          "dailyStatsCount": "0",
-          "limitsList": [
-            {
-              "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-              "denom": "stovg",
-              "minAmounts": {
-                "buy": {
-                  "amount": "100000000",
-                  "denom": "stovg"
-                },
-                "sell": {
-                  "amount": "10000000",
-                  "denom": "stovg"
-                }
-              }
-            }
-          ],
-          "params": {
-
-          },
-          "sellRequestsList": [
-
-          ],
-          "stakesList": [
-
-          ],
-          "statsList": [
-
-          ],
-          "totalFree": "0",
-          "totalSell": "0",
-          "userStatsList": [
-
-          ],
-          "usersCount": "0"
-        },
-        "distribution": {
-          "delegator_starting_infos": [
-            {
-              "delegator_address": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-              "starting_info": {
-                "height": "0",
-                "previous_period": "1",
-                "stake": "1000000000000.000000000000000000"
-              },
-              "validator_address": "ovgvaloper18p9heyy3m4dsq7fj86p6v9yzzx8a64f8zgf7w7"
-            }
-          ],
-          "delegator_withdraw_infos": [
-
-          ],
-          "fee_pool": {
-            "community_pool": [
-              {
-                "amount": "16510892545.000000000000000000",
-                "denom": "stake"
-              }
-            ]
-          },
+        ]
+      },
+      "outstanding_rewards": [
+        {
           "outstanding_rewards": [
-            {
-              "outstanding_rewards": [
-
-              ],
-              "validator_address": "ovgvaloper18p9heyy3m4dsq7fj86p6v9yzzx8a64f8zgf7w7"
-            }
           ],
-          "params": {
-            "base_proposer_reward": "0.000000000000000000",
-            "bonus_proposer_reward": "0.000000000000000000",
-            "community_tax": "0.020000000000000000",
-            "withdraw_addr_enabled": true
+          "validator_address": "ovgvaloper18p9heyy3m4dsq7fj86p6v9yzzx8a64f8zgf7w7"
+        }
+      ],
+      "params": {
+        "base_proposer_reward": "0.000000000000000000",
+        "bonus_proposer_reward": "0.000000000000000000",
+        "community_tax": "0.020000000000000000",
+        "withdraw_addr_enabled": true
+      },
+      "previous_proposer": "ovgvalcons1dkdxyjkcejknrk2ltsxs3dwqgltd59c75vpuxe",
+      "validator_accumulated_commissions": [
+        {
+          "accumulated": {
+            "commission": [
+            ]
           },
-          "previous_proposer": "ovgvalcons1dkdxyjkcejknrk2ltsxs3dwqgltd59c75vpuxe",
-          "validator_accumulated_commissions": [
-            {
-              "accumulated": {
-                "commission": [
-
-                ]
-              },
-              "validator_address": "ovgvaloper18p9heyy3m4dsq7fj86p6v9yzzx8a64f8zgf7w7"
-            }
-          ],
-          "validator_current_rewards": [
-            {
-              "rewards": {
-                "period": "2",
-                "rewards": [
-
-                ]
-              },
-              "validator_address": "ovgvaloper18p9heyy3m4dsq7fj86p6v9yzzx8a64f8zgf7w7"
-            }
-          ],
-          "validator_historical_rewards": [
-            {
-              "period": "1",
-              "rewards": {
-                "cumulative_reward_ratio": [
-
-                ],
-                "reference_count": 2
-              },
-              "validator_address": "ovgvaloper18p9heyy3m4dsq7fj86p6v9yzzx8a64f8zgf7w7"
-            }
-          ],
-          "validator_slash_events": [
-
-          ]
-        },
-        "evidence": {
-          "evidence": [
-
-          ]
-        },
-        "feeexcluder": {
-          "addressCount": "5",
-          "addressList": [
-            {
-              "address": "ovg1q6lxkmt09gfxgayknlsyadaelx47pkyfq3pr90",
-              "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-              "id": "0"
-            },
-            {
-              "address": "ovg1vqsxwjezgkvc4s9pvrtfzhtatkesz0u8700uhx",
-              "creator": "ovg1q6lxkmt09gfxgayknlsyadaelx47pkyfq3pr90",
-              "id": "1"
-            },
-            {
-              "address": "ovg16d2ck4t42gk4efc9cq4cxthtr0eg4ktuz2czdg",
-              "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-              "id": "3"
-            },
-            {
-              "address": "ovg1z8sck54yx0p7fxfe43w89tan2jyngvf0wvlx2j",
-              "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-              "id": "4"
-            }
-          ],
-          "dailyStatsCount": "0",
-          "dailyStatsList": [
-
-          ],
-          "params": {
-
+          "validator_address": "ovgvaloper18p9heyy3m4dsq7fj86p6v9yzzx8a64f8zgf7w7"
+        }
+      ],
+      "validator_current_rewards": [
+        {
+          "rewards": {
+            "period": "2",
+            "rewards": [
+            ]
           },
-          "statsList": [
-
-          ],
-          "tariffsList": [
+          "validator_address": "ovgvaloper18p9heyy3m4dsq7fj86p6v9yzzx8a64f8zgf7w7"
+        }
+      ],
+      "validator_historical_rewards": [
+        {
+          "period": "1",
+          "rewards": {
+            "cumulative_reward_ratio": [
+            ],
+            "reference_count": 2
+          },
+          "validator_address": "ovgvaloper18p9heyy3m4dsq7fj86p6v9yzzx8a64f8zgf7w7"
+        }
+      ],
+      "validator_slash_events": [
+      ]
+    },
+    "evidence": {
+      "evidence": [
+      ]
+    },
+    "feeexcluder": {
+      "addressCount": "5",
+      "addressList": [
+        {
+          "address": "ovg1q6lxkmt09gfxgayknlsyadaelx47pkyfq3pr90",
+          "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+          "id": "0"
+        },
+        {
+          "address": "ovg1vqsxwjezgkvc4s9pvrtfzhtatkesz0u8700uhx",
+          "creator": "ovg1q6lxkmt09gfxgayknlsyadaelx47pkyfq3pr90",
+          "id": "1"
+        },
+        {
+          "address": "ovg16d2ck4t42gk4efc9cq4cxthtr0eg4ktuz2czdg",
+          "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+          "id": "3"
+        },
+        {
+          "address": "ovg1z8sck54yx0p7fxfe43w89tan2jyngvf0wvlx2j",
+          "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+          "id": "4"
+        }
+      ],
+      "dailyStatsCount": "0",
+      "dailyStatsList": [
+      ],
+      "params": {
+      },
+      "statsList": [
+      ],
+      "tariffsList": [
+        {
+          "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+          "denom": "ovg",
+          "tariffs": [
             {
-              "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-              "denom": "ovg",
-              "tariffs": [
+              "amount": "0",
+              "denom": "stovg",
+              "fees": [
                 {
-                  "amount": "0",
-                  "denom": "stovg",
-                  "fees": [
-                    {
-                      "amountFrom": "0",
-                      "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-                      "fee": "0.01",
-                      "id": "0",
-                      "minAmount": "1000",
-                      "noRefReward": false,
-                      "refReward": "0.25",
-                      "stakeReward": "0.5"
-                    },
-                    {
-                      "amountFrom": "10000000000",
-                      "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-                      "fee": "0.009",
-                      "id": "1",
-                      "minAmount": "1000",
-                      "noRefReward": false,
-                      "refReward": "0.25",
-                      "stakeReward": "0.5"
-                    },
-                    {
-                      "amountFrom": "50000000000",
-                      "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-                      "fee": "0.007",
-                      "id": "2",
-                      "minAmount": "1000",
-                      "noRefReward": false,
-                      "refReward": "0.25",
-                      "stakeReward": "0.5"
-                    },
-                    {
-                      "amountFrom": "100000000000",
-                      "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-                      "fee": "0.005",
-                      "id": "3",
-                      "minAmount": "1000",
-                      "noRefReward": false,
-                      "refReward": "0.25",
-                      "stakeReward": "0.5"
-                    },
-                    {
-                      "amountFrom": "1000000000000",
-                      "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-                      "fee": "0.002",
-                      "id": "4",
-                      "minAmount": "1000",
-                      "noRefReward": false,
-                      "refReward": "0.25",
-                      "stakeReward": "0.5"
-                    },
-                    {
-                      "amountFrom": "10000000000000",
-                      "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-                      "fee": "0.001",
-                      "id": "5",
-                      "minAmount": "1000",
-                      "noRefReward": false,
-                      "refReward": "0.25",
-                      "stakeReward": "0.5"
-                    }
-                  ],
+                  "amountFrom": "0",
+                  "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+                  "fee": "0.01",
                   "id": "0",
-                  "minRefBalance": "10000000000"
+                  "minAmount": "1000",
+                  "noRefReward": false,
+                  "refReward": "0.25",
+                  "stakeReward": "0.5"
                 },
                 {
-                  "amount": "100000000000",
-                  "denom": "stovg",
-                  "fees": [
-                    {
-                      "amountFrom": "0",
-                      "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-                      "fee": "0.009",
-                      "id": "0",
-                      "minAmount": "1000",
-                      "noRefReward": false,
-                      "refReward": "0.25",
-                      "stakeReward": "0.5"
-                    },
-                    {
-                      "amountFrom": "10000000000",
-                      "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-                      "fee": "0.0085",
-                      "id": "1",
-                      "minAmount": "1000",
-                      "noRefReward": false,
-                      "refReward": "0.25",
-                      "stakeReward": "0.5"
-                    },
-                    {
-                      "amountFrom": "50000000000",
-                      "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-                      "fee": "0.0065",
-                      "id": "2",
-                      "minAmount": "1000",
-                      "noRefReward": false,
-                      "refReward": "0.25",
-                      "stakeReward": "0.5"
-                    },
-                    {
-                      "amountFrom": "100000000000",
-                      "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-                      "fee": "0.0045",
-                      "id": "3",
-                      "minAmount": "1000",
-                      "noRefReward": false,
-                      "refReward": "0.25",
-                      "stakeReward": "0.5"
-                    },
-                    {
-                      "amountFrom": "1000000000000",
-                      "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-                      "fee": "0.0015",
-                      "id": "4",
-                      "minAmount": "1000",
-                      "noRefReward": false,
-                      "refReward": "0.25",
-                      "stakeReward": "0.5"
-                    },
-                    {
-                      "amountFrom": "10000000000000",
-                      "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-                      "fee": "0.0005",
-                      "id": "5",
-                      "minAmount": "1000",
-                      "noRefReward": false,
-                      "refReward": "0.25",
-                      "stakeReward": "0.5"
-                    }
-                  ],
+                  "amountFrom": "10000000000",
+                  "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+                  "fee": "0.009",
                   "id": "1",
-                  "minRefBalance": "10000000000"
-                }
-              ]
-            }
-          ]
-        },
-        "feegrant": {
-          "allowances": [
-
-          ]
-        },
-        "genutil": {
-          "gen_txs": [
-
-          ]
-        },
-        "gov": {
-          "deposit_params": null,
-          "deposits": [
-
-          ],
-          "params": {
-            "burn_proposal_deposit_prevote": false,
-            "burn_vote_quorum": false,
-            "burn_vote_veto": true,
-            "max_deposit_period": "172800s",
-            "min_deposit": [
-              {
-                "amount": "10000000",
-                "denom": "stake"
-              }
-            ],
-            "min_initial_deposit_ratio": "0.000000000000000000",
-            "quorum": "0.334000000000000000",
-            "threshold": "0.500000000000000000",
-            "veto_threshold": "0.334000000000000000",
-            "voting_period": "172800s"
-          },
-          "proposals": [
-
-          ],
-          "starting_proposal_id": "1",
-          "tally_params": null,
-          "votes": [
-
-          ],
-          "voting_params": null
-        },
-        "group": {
-          "group_members": [
-
-          ],
-          "group_policies": [
-
-          ],
-          "group_policy_seq": "0",
-          "group_seq": "0",
-          "groups": [
-
-          ],
-          "proposal_seq": "0",
-          "proposals": [
-
-          ],
-          "votes": [
-
-          ]
-        },
-        "ibc": {
-          "channel_genesis": {
-            "ack_sequences": [
-
-            ],
-            "acknowledgements": [
-
-            ],
-            "channels": [
-
-            ],
-            "commitments": [
-
-            ],
-            "next_channel_sequence": "0",
-            "receipts": [
-
-            ],
-            "recv_sequences": [
-
-            ],
-            "send_sequences": [
-
-            ]
-          },
-          "client_genesis": {
-            "clients": [
-              {
-                "client_id": "09-localhost",
-                "client_state": {
-                  "@type": "/ibc.lightclients.localhost.v2.ClientState",
-                  "latest_height": {
-                    "revision_height": "345428",
-                    "revision_number": "0"
-                  }
-                }
-              }
-            ],
-            "clients_consensus": [
-
-            ],
-            "clients_metadata": [
-
-            ],
-            "create_localhost": false,
-            "next_client_sequence": "0",
-            "params": {
-              "allowed_clients": [
-                "06-solomachine",
-                "07-tendermint",
-                "09-localhost"
-              ]
-            }
-          },
-          "connection_genesis": {
-            "client_connection_paths": [
-
-            ],
-            "connections": [
-              {
-                "client_id": "09-localhost",
-                "counterparty": {
-                  "client_id": "09-localhost",
-                  "connection_id": "connection-localhost",
-                  "prefix": {
-                    "key_prefix": "aWJj"
-                  }
+                  "minAmount": "1000",
+                  "noRefReward": false,
+                  "refReward": "0.25",
+                  "stakeReward": "0.5"
                 },
-                "delay_period": "0",
-                "id": "connection-localhost",
-                "state": "STATE_OPEN",
-                "versions": [
-                  {
-                    "features": [
-                      "ORDER_ORDERED",
-                      "ORDER_UNORDERED"
-                    ],
-                    "identifier": "1"
-                  }
-                ]
+                {
+                  "amountFrom": "50000000000",
+                  "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+                  "fee": "0.007",
+                  "id": "2",
+                  "minAmount": "1000",
+                  "noRefReward": false,
+                  "refReward": "0.25",
+                  "stakeReward": "0.5"
+                },
+                {
+                  "amountFrom": "100000000000",
+                  "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+                  "fee": "0.005",
+                  "id": "3",
+                  "minAmount": "1000",
+                  "noRefReward": false,
+                  "refReward": "0.25",
+                  "stakeReward": "0.5"
+                },
+                {
+                  "amountFrom": "1000000000000",
+                  "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+                  "fee": "0.002",
+                  "id": "4",
+                  "minAmount": "1000",
+                  "noRefReward": false,
+                  "refReward": "0.25",
+                  "stakeReward": "0.5"
+                },
+                {
+                  "amountFrom": "10000000000000",
+                  "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+                  "fee": "0.001",
+                  "id": "5",
+                  "minAmount": "1000",
+                  "noRefReward": false,
+                  "refReward": "0.25",
+                  "stakeReward": "0.5"
+                }
+              ],
+              "id": "0",
+              "minRefBalance": "10000000000"
+            },
+            {
+              "amount": "100000000000",
+              "denom": "stovg",
+              "fees": [
+                {
+                  "amountFrom": "0",
+                  "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+                  "fee": "0.009",
+                  "id": "0",
+                  "minAmount": "1000",
+                  "noRefReward": false,
+                  "refReward": "0.25",
+                  "stakeReward": "0.5"
+                },
+                {
+                  "amountFrom": "10000000000",
+                  "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+                  "fee": "0.0085",
+                  "id": "1",
+                  "minAmount": "1000",
+                  "noRefReward": false,
+                  "refReward": "0.25",
+                  "stakeReward": "0.5"
+                },
+                {
+                  "amountFrom": "50000000000",
+                  "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+                  "fee": "0.0065",
+                  "id": "2",
+                  "minAmount": "1000",
+                  "noRefReward": false,
+                  "refReward": "0.25",
+                  "stakeReward": "0.5"
+                },
+                {
+                  "amountFrom": "100000000000",
+                  "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+                  "fee": "0.0045",
+                  "id": "3",
+                  "minAmount": "1000",
+                  "noRefReward": false,
+                  "refReward": "0.25",
+                  "stakeReward": "0.5"
+                },
+                {
+                  "amountFrom": "1000000000000",
+                  "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+                  "fee": "0.0015",
+                  "id": "4",
+                  "minAmount": "1000",
+                  "noRefReward": false,
+                  "refReward": "0.25",
+                  "stakeReward": "0.5"
+                },
+                {
+                  "amountFrom": "10000000000000",
+                  "creator": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+                  "fee": "0.0005",
+                  "id": "5",
+                  "minAmount": "1000",
+                  "noRefReward": false,
+                  "refReward": "0.25",
+                  "stakeReward": "0.5"
+                }
+              ],
+              "id": "1",
+              "minRefBalance": "10000000000"
+            }
+          ]
+        }
+      ]
+    },
+    "feegrant": {
+      "allowances": [
+      ]
+    },
+    "genutil": {
+      "gen_txs": [
+      ]
+    },
+    "gov": {
+      "deposit_params": null,
+      "deposits": [
+      ],
+      "params": {
+        "burn_proposal_deposit_prevote": false,
+        "burn_vote_quorum": false,
+        "burn_vote_veto": true,
+        "max_deposit_period": "172800s",
+        "min_deposit": [
+          {
+            "amount": "10000000",
+            "denom": "stake"
+          }
+        ],
+        "min_initial_deposit_ratio": "0.000000000000000000",
+        "quorum": "0.334000000000000000",
+        "threshold": "0.500000000000000000",
+        "veto_threshold": "0.334000000000000000",
+        "voting_period": "172800s"
+      },
+      "proposals": [
+      ],
+      "starting_proposal_id": "1",
+      "tally_params": null,
+      "votes": [
+      ],
+      "voting_params": null
+    },
+    "group": {
+      "group_members": [
+      ],
+      "group_policies": [
+      ],
+      "group_policy_seq": "0",
+      "group_seq": "0",
+      "groups": [
+      ],
+      "proposal_seq": "0",
+      "proposals": [
+      ],
+      "votes": [
+      ]
+    },
+    "ibc": {
+      "channel_genesis": {
+        "ack_sequences": [
+        ],
+        "acknowledgements": [
+        ],
+        "channels": [
+        ],
+        "commitments": [
+        ],
+        "next_channel_sequence": "0",
+        "receipts": [
+        ],
+        "recv_sequences": [
+        ],
+        "send_sequences": [
+        ]
+      },
+      "client_genesis": {
+        "clients": [
+          {
+            "client_id": "09-localhost",
+            "client_state": {
+              "@type": "/ibc.lightclients.localhost.v2.ClientState",
+              "latest_height": {
+                "revision_height": "345428",
+                "revision_number": "0"
               }
-            ],
-            "next_connection_sequence": "0",
-            "params": {
-              "max_expected_time_per_block": "30000000000"
             }
           }
-        },
-        "interchainaccounts": {
-          "controller_genesis_state": {
-            "active_channels": [
-
-            ],
-            "interchain_accounts": [
-
-            ],
-            "params": {
-              "controller_enabled": true
+        ],
+        "clients_consensus": [
+        ],
+        "clients_metadata": [
+        ],
+        "create_localhost": false,
+        "next_client_sequence": "0",
+        "params": {
+          "allowed_clients": [
+            "06-solomachine",
+            "07-tendermint",
+            "09-localhost"
+          ]
+        }
+      },
+      "connection_genesis": {
+        "client_connection_paths": [
+        ],
+        "connections": [
+          {
+            "client_id": "09-localhost",
+            "counterparty": {
+              "client_id": "09-localhost",
+              "connection_id": "connection-localhost",
+              "prefix": {
+                "key_prefix": "aWJj"
+              }
             },
-            "ports": [
-
+            "delay_period": "0",
+            "id": "connection-localhost",
+            "state": "STATE_OPEN",
+            "versions": [
+              {
+                "features": [
+                  "ORDER_ORDERED",
+                  "ORDER_UNORDERED"
+                ],
+                "identifier": "1"
+              }
+            ]
+          }
+        ],
+        "next_connection_sequence": "0",
+        "params": {
+          "max_expected_time_per_block": "30000000000"
+        }
+      }
+    },
+    "interchainaccounts": {
+      "controller_genesis_state": {
+        "active_channels": [
+        ],
+        "interchain_accounts": [
+        ],
+        "params": {
+          "controller_enabled": true
+        },
+        "ports": [
+        ]
+      },
+      "host_genesis_state": {
+        "active_channels": [
+        ],
+        "interchain_accounts": [
+        ],
+        "params": {
+          "allow_messages": [
+            "*"
+          ],
+          "host_enabled": true
+        },
+        "port": "icahost"
+      }
+    },
+    "mint": {
+      "minter": {
+        "annual_provisions": "13899974449846.391978735042282238",
+        "inflation": "0.137861638187691973"
+      },
+      "params": {
+        "blocks_per_year": "6311520",
+        "goal_bonded": "0.670000000000000000",
+        "inflation_max": "0.200000000000000000",
+        "inflation_min": "0.070000000000000000",
+        "inflation_rate_change": "0.130000000000000000",
+        "mint_denom": "stake"
+      }
+    },
+    "params": null,
+    "referral": {
+      "params": {
+      },
+      "statsList": [
+        {
+          "dailyStats": {
+            "countRefReward": "18",
+            "refReward": [
+              {
+                "amount": "5150000000",
+                "denom": "ovg"
+              }
             ]
           },
-          "host_genesis_state": {
-            "active_channels": [
-
-            ],
-            "interchain_accounts": [
-
-            ],
-            "params": {
-              "allow_messages": [
-                "*"
-              ],
-              "host_enabled": true
-            },
-            "port": "icahost"
-          }
-        },
-        "mint": {
-          "minter": {
-            "annual_provisions": "13899974449846.391978735042282238",
-            "inflation": "0.137861638187691973"
-          },
-          "params": {
-            "blocks_per_year": "6311520",
-            "goal_bonded": "0.670000000000000000",
-            "inflation_max": "0.200000000000000000",
-            "inflation_min": "0.070000000000000000",
-            "inflation_rate_change": "0.130000000000000000",
-            "mint_denom": "stake"
-          }
-        },
-        "params": null,
-        "referral": {
-          "params": {
-
-          },
-          "statsList": [
-            {
-              "dailyStats": {
-                "countRefReward": "18",
-                "refReward": [
-                  {
-                    "amount": "5150000000",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-02",
-              "referrerStats": {
-                "ovg1ndqydj9hpvrpu0jyqrkzfjgkq8jy7cxtfexxd5": {
-                  "referralStats": {
-                    "ovg1ajeju2zaajdnj5j857sk7sjjlve65k2287jrfv": {
-                      "coins": [
-                        {
-                          "amount": "5000000",
-                          "denom": "ovg"
-                        }
-                      ]
-                    },
-                    "ovg1q3nq26tpp64h4fp5848cz74dnrw2584pjsfuf3": {
-                      "coins": [
-                        {
-                          "amount": "5145000000",
-                          "denom": "ovg"
-                        }
-                      ]
-                    }
-                  },
-                  "totalAmount": [
+          "date": "2023-11-02",
+          "referrerStats": {
+            "ovg1ndqydj9hpvrpu0jyqrkzfjgkq8jy7cxtfexxd5": {
+              "referralStats": {
+                "ovg1ajeju2zaajdnj5j857sk7sjjlve65k2287jrfv": {
+                  "coins": [
                     {
-                      "amount": "5150000000",
+                      "amount": "5000000",
+                      "denom": "ovg"
+                    }
+                  ]
+                },
+                "ovg1q3nq26tpp64h4fp5848cz74dnrw2584pjsfuf3": {
+                  "coins": [
+                    {
+                      "amount": "5145000000",
                       "denom": "ovg"
                     }
                   ]
                 }
-              }
-            },
-            {
-              "dailyStats": {
-                "countRefReward": "3",
-                "refReward": [
-                  {
-                    "amount": "67500000",
-                    "denom": "ovg"
-                  }
-                ]
               },
-              "date": "2023-11-06",
-              "referrerStats": {
-                "ovg1ndqydj9hpvrpu0jyqrkzfjgkq8jy7cxtfexxd5": {
-                  "referralStats": {
-                    "ovg1ajeju2zaajdnj5j857sk7sjjlve65k2287jrfv": {
-                      "coins": [
-                        {
-                          "amount": "67500000",
-                          "denom": "ovg"
-                        }
-                      ]
-                    }
-                  },
-                  "totalAmount": [
+              "totalAmount": [
+                {
+                  "amount": "5150000000",
+                  "denom": "ovg"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "dailyStats": {
+            "countRefReward": "3",
+            "refReward": [
+              {
+                "amount": "67500000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-06",
+          "referrerStats": {
+            "ovg1ndqydj9hpvrpu0jyqrkzfjgkq8jy7cxtfexxd5": {
+              "referralStats": {
+                "ovg1ajeju2zaajdnj5j857sk7sjjlve65k2287jrfv": {
+                  "coins": [
                     {
                       "amount": "67500000",
                       "denom": "ovg"
                     }
                   ]
                 }
-              }
-            },
-            {
-              "dailyStats": {
-                "countRefReward": "15",
-                "refReward": [
-                  {
-                    "amount": "5251250000",
-                    "denom": "ovg"
-                  }
-                ]
               },
-              "date": "2023-11-07",
-              "referrerStats": {
-                "ovg1ndqydj9hpvrpu0jyqrkzfjgkq8jy7cxtfexxd5": {
-                  "referralStats": {
-                    "ovg1ajeju2zaajdnj5j857sk7sjjlve65k2287jrfv": {
-                      "coins": [
-                        {
-                          "amount": "5251250000",
-                          "denom": "ovg"
-                        }
-                      ]
-                    }
-                  },
-                  "totalAmount": [
+              "totalAmount": [
+                {
+                  "amount": "67500000",
+                  "denom": "ovg"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "dailyStats": {
+            "countRefReward": "15",
+            "refReward": [
+              {
+                "amount": "5251250000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-07",
+          "referrerStats": {
+            "ovg1ndqydj9hpvrpu0jyqrkzfjgkq8jy7cxtfexxd5": {
+              "referralStats": {
+                "ovg1ajeju2zaajdnj5j857sk7sjjlve65k2287jrfv": {
+                  "coins": [
                     {
                       "amount": "5251250000",
                       "denom": "ovg"
                     }
                   ]
                 }
-              }
-            },
-            {
-              "dailyStats": {
-                "countRefReward": "12",
-                "refReward": [
-                  {
-                    "amount": "1163750000",
-                    "denom": "ovg"
-                  }
-                ]
               },
-              "date": "2023-11-08",
-              "referrerStats": {
-                "ovg1ndqydj9hpvrpu0jyqrkzfjgkq8jy7cxtfexxd5": {
-                  "referralStats": {
-                    "ovg1ajeju2zaajdnj5j857sk7sjjlve65k2287jrfv": {
-                      "coins": [
-                        {
-                          "amount": "1163750000",
-                          "denom": "ovg"
-                        }
-                      ]
-                    }
-                  },
-                  "totalAmount": [
+              "totalAmount": [
+                {
+                  "amount": "5251250000",
+                  "denom": "ovg"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "dailyStats": {
+            "countRefReward": "12",
+            "refReward": [
+              {
+                "amount": "1163750000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-08",
+          "referrerStats": {
+            "ovg1ndqydj9hpvrpu0jyqrkzfjgkq8jy7cxtfexxd5": {
+              "referralStats": {
+                "ovg1ajeju2zaajdnj5j857sk7sjjlve65k2287jrfv": {
+                  "coins": [
                     {
                       "amount": "1163750000",
                       "denom": "ovg"
                     }
                   ]
                 }
-              }
-            },
-            {
-              "dailyStats": {
-                "countRefReward": "9",
-                "refReward": [
-                  {
-                    "amount": "47625660",
-                    "denom": "ovg"
-                  }
-                ]
               },
-              "date": "2023-11-10",
-              "referrerStats": {
-                "ovg1etzz58c0qk0hzgmjv0aqccs8fnwedcrcgjlsc2": {
-                  "referralStats": {
-                    "ovg1z8sck54yx0p7fxfe43w89tan2jyngvf0wvlx2j": {
-                      "coins": [
-                        {
-                          "amount": "660",
-                          "denom": "ovg"
-                        }
-                      ]
-                    }
-                  },
-                  "totalAmount": [
+              "totalAmount": [
+                {
+                  "amount": "1163750000",
+                  "denom": "ovg"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "dailyStats": {
+            "countRefReward": "9",
+            "refReward": [
+              {
+                "amount": "47625660",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-10",
+          "referrerStats": {
+            "ovg1etzz58c0qk0hzgmjv0aqccs8fnwedcrcgjlsc2": {
+              "referralStats": {
+                "ovg1z8sck54yx0p7fxfe43w89tan2jyngvf0wvlx2j": {
+                  "coins": [
                     {
                       "amount": "660",
                       "denom": "ovg"
                     }
                   ]
-                },
-                "ovg1z8sck54yx0p7fxfe43w89tan2jyngvf0wvlx2j": {
-                  "referralStats": {
-                    "ovg16n0mfppxtxhh0783aam4a68g5t5wf2c5gljae5": {
-                      "coins": [
-                        {
-                          "amount": "24000000",
-                          "denom": "ovg"
-                        }
-                      ]
-                    },
-                    "ovg1v2ah3dnfs6xedpa56nwmjzjhsv8l9fsx3yxfx6": {
-                      "coins": [
-                        {
-                          "amount": "23625000",
-                          "denom": "ovg"
-                        }
-                      ]
-                    }
-                  },
-                  "totalAmount": [
+                }
+              },
+              "totalAmount": [
+                {
+                  "amount": "660",
+                  "denom": "ovg"
+                }
+              ]
+            },
+            "ovg1z8sck54yx0p7fxfe43w89tan2jyngvf0wvlx2j": {
+              "referralStats": {
+                "ovg16n0mfppxtxhh0783aam4a68g5t5wf2c5gljae5": {
+                  "coins": [
                     {
-                      "amount": "47625000",
+                      "amount": "24000000",
+                      "denom": "ovg"
+                    }
+                  ]
+                },
+                "ovg1v2ah3dnfs6xedpa56nwmjzjhsv8l9fsx3yxfx6": {
+                  "coins": [
+                    {
+                      "amount": "23625000",
                       "denom": "ovg"
                     }
                   ]
                 }
-              }
-            },
-            {
-              "dailyStats": {
-                "countRefReward": "1",
-                "refReward": [
-                  {
-                    "amount": "25000",
-                    "denom": "ovg"
-                  }
-                ]
               },
-              "date": "2023-11-23",
-              "referrerStats": {
-                "ovg1z8sck54yx0p7fxfe43w89tan2jyngvf0wvlx2j": {
-                  "referralStats": {
-                    "ovg16n0mfppxtxhh0783aam4a68g5t5wf2c5gljae5": {
-                      "coins": [
-                        {
-                          "amount": "25000",
-                          "denom": "ovg"
-                        }
-                      ]
-                    }
-                  },
-                  "totalAmount": [
+              "totalAmount": [
+                {
+                  "amount": "47625000",
+                  "denom": "ovg"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "dailyStats": {
+            "countRefReward": "1",
+            "refReward": [
+              {
+                "amount": "25000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-23",
+          "referrerStats": {
+            "ovg1z8sck54yx0p7fxfe43w89tan2jyngvf0wvlx2j": {
+              "referralStats": {
+                "ovg16n0mfppxtxhh0783aam4a68g5t5wf2c5gljae5": {
+                  "coins": [
                     {
                       "amount": "25000",
                       "denom": "ovg"
                     }
                   ]
                 }
-              }
-            },
-            {
-              "dailyStats": {
-                "countRefReward": "4",
-                "refReward": [
-                  {
-                    "amount": "170250000",
-                    "denom": "ovg"
-                  }
-                ]
               },
-              "date": "2023-11-24",
-              "referrerStats": {
-                "ovg1etzz58c0qk0hzgmjv0aqccs8fnwedcrcgjlsc2": {
-                  "referralStats": {
-                    "ovg1z8sck54yx0p7fxfe43w89tan2jyngvf0wvlx2j": {
-                      "coins": [
-                        {
-                          "amount": "22500000",
-                          "denom": "ovg"
-                        }
-                      ]
-                    }
-                  },
-                  "totalAmount": [
+              "totalAmount": [
+                {
+                  "amount": "25000",
+                  "denom": "ovg"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "dailyStats": {
+            "countRefReward": "4",
+            "refReward": [
+              {
+                "amount": "170250000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-24",
+          "referrerStats": {
+            "ovg1etzz58c0qk0hzgmjv0aqccs8fnwedcrcgjlsc2": {
+              "referralStats": {
+                "ovg1z8sck54yx0p7fxfe43w89tan2jyngvf0wvlx2j": {
+                  "coins": [
                     {
                       "amount": "22500000",
                       "denom": "ovg"
                     }
                   ]
-                },
-                "ovg1z8sck54yx0p7fxfe43w89tan2jyngvf0wvlx2j": {
-                  "referralStats": {
-                    "ovg16n0mfppxtxhh0783aam4a68g5t5wf2c5gljae5": {
-                      "coins": [
-                        {
-                          "amount": "147750000",
-                          "denom": "ovg"
-                        }
-                      ]
-                    }
-                  },
-                  "totalAmount": [
+                }
+              },
+              "totalAmount": [
+                {
+                  "amount": "22500000",
+                  "denom": "ovg"
+                }
+              ]
+            },
+            "ovg1z8sck54yx0p7fxfe43w89tan2jyngvf0wvlx2j": {
+              "referralStats": {
+                "ovg16n0mfppxtxhh0783aam4a68g5t5wf2c5gljae5": {
+                  "coins": [
                     {
                       "amount": "147750000",
                       "denom": "ovg"
                     }
                   ]
                 }
-              }
-            }
-          ],
-          "userList": [
-            {
-              "accountAddress": "ovg13h8xpgj7tldlfft79m38aq33lhcp6rqxc50z8r",
-              "referrals": [
-
-              ],
-              "referrer": "ovg18z44dhyk3cxzx5e47gzac7uply7azg4wsv4ypn"
-            },
-            {
-              "accountAddress": "ovg16n0mfppxtxhh0783aam4a68g5t5wf2c5gljae5",
-              "referrals": [
-
-              ],
-              "referrer": "ovg1z8sck54yx0p7fxfe43w89tan2jyngvf0wvlx2j"
-            },
-            {
-              "accountAddress": "ovg18z44dhyk3cxzx5e47gzac7uply7azg4wsv4ypn",
-              "referrals": [
-                "ovg13h8xpgj7tldlfft79m38aq33lhcp6rqxc50z8r"
-              ],
-              "referrer": ""
-            },
-            {
-              "accountAddress": "ovg1a9qknvws7ezq580f9pwkdethxy746sxng90qc6",
-              "referrals": [
-
-              ],
-              "referrer": ""
-            },
-            {
-              "accountAddress": "ovg1ajeju2zaajdnj5j857sk7sjjlve65k2287jrfv",
-              "referrals": [
-
-              ],
-              "referrer": "ovg1ndqydj9hpvrpu0jyqrkzfjgkq8jy7cxtfexxd5"
-            },
-            {
-              "accountAddress": "ovg1d885aakpyvexapsuk6wfnpcjgkq8dqn4l3ukec",
-              "referrals": [
-
-              ],
-              "referrer": ""
-            },
-            {
-              "accountAddress": "ovg1dasc05kkzqs495l77yay383nydvqkese2se4eg",
-              "referrals": [
-                "ovg1vvjj0veagkz2z73ngvc0sc6nc9aenewtx3js29"
-              ],
-              "referrer": ""
-            },
-            {
-              "accountAddress": "ovg1edz8has9g46rwnzkz7gak00lu7pcqf7hqcdaxc",
-              "referrals": [
-                "ovg1swrxdzghezp98zafyk8qajjqjy3txh6q2h7v8h"
-              ],
-              "referrer": ""
-            },
-            {
-              "accountAddress": "ovg1etzz58c0qk0hzgmjv0aqccs8fnwedcrcgjlsc2",
-              "referrals": [
-                "ovg1z8sck54yx0p7fxfe43w89tan2jyngvf0wvlx2j"
-              ],
-              "referrer": ""
-            },
-            {
-              "accountAddress": "ovg1ndqydj9hpvrpu0jyqrkzfjgkq8jy7cxtfexxd5",
-              "referrals": [
-                "ovg1ajeju2zaajdnj5j857sk7sjjlve65k2287jrfv",
-                "ovg1q3nq26tpp64h4fp5848cz74dnrw2584pjsfuf3"
-              ],
-              "referrer": ""
-            },
-            {
-              "accountAddress": "ovg1q3nq26tpp64h4fp5848cz74dnrw2584pjsfuf3",
-              "referrals": [
-
-              ],
-              "referrer": "ovg1ndqydj9hpvrpu0jyqrkzfjgkq8jy7cxtfexxd5"
-            },
-            {
-              "accountAddress": "ovg1qd2tarjumdw9jfg4cw8m6gctuu74qqdhdkmvlc",
-              "referrals": [
-
-              ],
-              "referrer": ""
-            },
-            {
-              "accountAddress": "ovg1swrxdzghezp98zafyk8qajjqjy3txh6q2h7v8h",
-              "referrals": [
-
-              ],
-              "referrer": "ovg1edz8has9g46rwnzkz7gak00lu7pcqf7hqcdaxc"
-            },
-            {
-              "accountAddress": "ovg1tdhh4w0yftc4pe7mqytj8clfea7sptw76yhtr5",
-              "referrals": [
-
-              ],
-              "referrer": ""
-            },
-            {
-              "accountAddress": "ovg1v2ah3dnfs6xedpa56nwmjzjhsv8l9fsx3yxfx6",
-              "referrals": [
-
-              ],
-              "referrer": "ovg1z8sck54yx0p7fxfe43w89tan2jyngvf0wvlx2j"
-            },
-            {
-              "accountAddress": "ovg1vvjj0veagkz2z73ngvc0sc6nc9aenewtx3js29",
-              "referrals": [
-
-              ],
-              "referrer": "ovg1dasc05kkzqs495l77yay383nydvqkese2se4eg"
-            },
-            {
-              "accountAddress": "ovg1z8sck54yx0p7fxfe43w89tan2jyngvf0wvlx2j",
-              "referrals": [
-                "ovg16n0mfppxtxhh0783aam4a68g5t5wf2c5gljae5",
-                "ovg1v2ah3dnfs6xedpa56nwmjzjhsv8l9fsx3yxfx6"
-              ],
-              "referrer": "ovg1etzz58c0qk0hzgmjv0aqccs8fnwedcrcgjlsc2"
-            }
-          ]
-        },
-        "rewards": {
-          "params": {
-
-          },
-          "statsList": [
-            {
-              "dailyStats": {
-                "countSysRefReward": "4",
-                "sysRefReward": [
-                  {
-                    "amount": "50011000",
-                    "denom": "ovg"
-                  }
-                ]
               },
-              "date": "2023-10-25"
-            },
-            {
-              "dailyStats": {
-                "countSysRefReward": "12",
-                "sysRefReward": [
-                  {
-                    "amount": "1170500000",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-10-26"
-            },
-            {
-              "dailyStats": {
-                "countSysRefReward": "18",
-                "sysRefReward": [
-                  {
-                    "amount": "26814906066",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-10-27"
-            },
-            {
-              "dailyStats": {
-                "countSysRefReward": "15",
-                "sysRefReward": [
-                  {
-                    "amount": "1116075000",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-01"
-            },
-            {
-              "dailyStats": {
-                "countSysRefReward": "20",
-                "sysRefReward": [
-                  {
-                    "amount": "7036130000",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-02"
-            },
-            {
-              "dailyStats": {
-                "countSysRefReward": "12",
-                "sysRefReward": [
-                  {
-                    "amount": "2402200",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-03"
-            },
-            {
-              "dailyStats": {
-                "countSysRefReward": "3",
-                "sysRefReward": [
-                  {
-                    "amount": "523750000",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-06"
-            },
-            {
-              "dailyStats": {
-                "countSysRefReward": "16",
-                "sysRefReward": [
-                  {
-                    "amount": "4610000000",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-08"
-            },
-            {
-              "dailyStats": {
-                "countSysRefReward": "11",
-                "sysRefReward": [
-                  {
-                    "amount": "8138807699",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-09"
-            },
-            {
-              "dailyStats": {
-                "countSysRefReward": "11",
-                "sysRefReward": [
-                  {
-                    "amount": "28825000",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-10"
-            },
-            {
-              "dailyStats": {
-                "countSysRefReward": "2",
-                "sysRefReward": [
-                  {
-                    "amount": "2500250000",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-13"
-            },
-            {
-              "dailyStats": {
-                "countSysRefReward": "5",
-                "sysRefReward": [
-                  {
-                    "amount": "7500500000",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-14"
-            },
-            {
-              "dailyStats": {
-                "countSysRefReward": "13",
-                "sysRefReward": [
-                  {
-                    "amount": "5877500000",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-15"
-            },
-            {
-              "dailyStats": {
-                "countSysRefReward": "6",
-                "sysRefReward": [
-                  {
-                    "amount": "2501165000",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-16"
-            },
-            {
-              "dailyStats": {
-                "countSysRefReward": "3",
-                "sysRefReward": [
-                  {
-                    "amount": "125000",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-23"
-            },
-            {
-              "dailyStats": {
-                "countSysRefReward": "8",
-                "sysRefReward": [
-                  {
-                    "amount": "175502500",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-24"
-            },
-            {
-              "dailyStats": {
-                "countSysRefReward": "5",
-                "sysRefReward": [
-                  {
-                    "amount": "148030864",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-27"
-            },
-            {
-              "dailyStats": {
-                "countSysRefReward": "19",
-                "sysRefReward": [
-                  {
-                    "amount": "7075958",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-28"
-            },
-            {
-              "dailyStats": {
-                "countSysRefReward": "10",
-                "sysRefReward": [
-                  {
-                    "amount": "25856077",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-29"
-            },
-            {
-              "dailyStats": {
-                "countSysRefReward": "12",
-                "sysRefReward": [
-                  {
-                    "amount": "49575013",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-30"
-            },
-            {
-              "dailyStats": {
-                "countSysRefReward": "6",
-                "sysRefReward": [
-                  {
-                    "amount": "1227453",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-12-01"
-            }
-          ]
-        },
-        "slashing": {
-          "missed_blocks": [
-            {
-              "address": "ovgvalcons1dkdxyjkcejknrk2ltsxs3dwqgltd59c75vpuxe",
-              "missed_blocks": [
-
+              "totalAmount": [
+                {
+                  "amount": "147750000",
+                  "denom": "ovg"
+                }
               ]
             }
-          ],
-          "params": {
-            "downtime_jail_duration": "600s",
-            "min_signed_per_window": "0.500000000000000000",
-            "signed_blocks_window": "100",
-            "slash_fraction_double_sign": "0.050000000000000000",
-            "slash_fraction_downtime": "0.010000000000000000"
-          },
-          "signing_infos": [
-            {
-              "address": "ovgvalcons1dkdxyjkcejknrk2ltsxs3dwqgltd59c75vpuxe",
-              "validator_signing_info": {
-                "address": "ovgvalcons1dkdxyjkcejknrk2ltsxs3dwqgltd59c75vpuxe",
-                "index_offset": "387441",
-                "jailed_until": "1970-01-01T00:00:00Z",
-                "missed_blocks_counter": "0",
-                "start_height": "0",
-                "tombstoned": false
-              }
-            }
-          ]
-        },
-        "stakerewards": {
-          "params": {
-
-          },
-          "statsList": [
-            {
-              "dailyStats": {
-                "countSysReward": "4",
-                "sysReward": [
-                  {
-                    "amount": "100022000",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-10-25"
-            },
-            {
-              "dailyStats": {
-                "countSysReward": "12",
-                "sysReward": [
-                  {
-                    "amount": "2341000000",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-10-26"
-            },
-            {
-              "dailyStats": {
-                "countSysReward": "18",
-                "sysReward": [
-                  {
-                    "amount": "53629812134",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-10-27"
-            },
-            {
-              "dailyStats": {
-                "countSysReward": "15",
-                "sysReward": [
-                  {
-                    "amount": "2232150000",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-01"
-            },
-            {
-              "dailyStats": {
-                "countSysReward": "38",
-                "sysReward": [
-                  {
-                    "amount": "24372260000",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-02"
-            },
-            {
-              "dailyStats": {
-                "countSysReward": "12",
-                "sysReward": [
-                  {
-                    "amount": "4804400",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-03"
-            },
-            {
-              "dailyStats": {
-                "countSysReward": "6",
-                "sysReward": [
-                  {
-                    "amount": "1182500000",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-06"
-            },
-            {
-              "dailyStats": {
-                "countSysReward": "18",
-                "sysReward": [
-                  {
-                    "amount": "10705000000",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-07"
-            },
-            {
-              "dailyStats": {
-                "countSysReward": "28",
-                "sysReward": [
-                  {
-                    "amount": "11547500000",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-08"
-            },
-            {
-              "dailyStats": {
-                "countSysReward": "11",
-                "sysReward": [
-                  {
-                    "amount": "16277615399",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-09"
-            },
-            {
-              "dailyStats": {
-                "countSysReward": "20",
-                "sysReward": [
-                  {
-                    "amount": "152901320",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-10"
-            },
-            {
-              "dailyStats": {
-                "countSysReward": "2",
-                "sysReward": [
-                  {
-                    "amount": "5000500000",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-13"
-            },
-            {
-              "dailyStats": {
-                "countSysReward": "5",
-                "sysReward": [
-                  {
-                    "amount": "15001000000",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-14"
-            },
-            {
-              "dailyStats": {
-                "countSysReward": "13",
-                "sysReward": [
-                  {
-                    "amount": "11755000000",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-15"
-            },
-            {
-              "dailyStats": {
-                "countSysReward": "6",
-                "sysReward": [
-                  {
-                    "amount": "5002330000",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-16"
-            },
-            {
-              "dailyStats": {
-                "countSysReward": "4",
-                "sysReward": [
-                  {
-                    "amount": "300000",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-23"
-            },
-            {
-              "dailyStats": {
-                "countSysReward": "12",
-                "sysReward": [
-                  {
-                    "amount": "691505000",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-24"
-            },
-            {
-              "dailyStats": {
-                "countSysReward": "5",
-                "sysReward": [
-                  {
-                    "amount": "296061728",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-27"
-            },
-            {
-              "dailyStats": {
-                "countSysReward": "19",
-                "sysReward": [
-                  {
-                    "amount": "14151919",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-28"
-            },
-            {
-              "dailyStats": {
-                "countSysReward": "10",
-                "sysReward": [
-                  {
-                    "amount": "51712157",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-29"
-            },
-            {
-              "dailyStats": {
-                "countSysReward": "12",
-                "sysReward": [
-                  {
-                    "amount": "99150028",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-11-30"
-            },
-            {
-              "dailyStats": {
-                "countSysReward": "6",
-                "sysReward": [
-                  {
-                    "amount": "2454907",
-                    "denom": "ovg"
-                  }
-                ]
-              },
-              "date": "2023-12-01"
-            }
-          ]
-        },
-        "staking": {
-          "delegations": [
-            {
-              "delegator_address": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
-              "shares": "1000000000000.000000000000000000",
-              "validator_address": "ovgvaloper18p9heyy3m4dsq7fj86p6v9yzzx8a64f8zgf7w7"
-            }
-          ],
-          "exported": true,
-          "last_total_power": "1000000",
-          "last_validator_powers": [
-            {
-              "address": "ovgvaloper18p9heyy3m4dsq7fj86p6v9yzzx8a64f8zgf7w7",
-              "power": "1000000"
-            }
-          ],
-          "params": {
-            "bond_denom": "stake",
-            "historical_entries": 10000,
-            "max_entries": 7,
-            "max_validators": 100,
-            "min_commission_rate": "0.000000000000000000",
-            "unbonding_time": "1814400s"
-          },
-          "redelegations": [
-
-          ],
-          "unbonding_delegations": [
-
-          ],
-          "validators": [
-            {
-              "commission": {
-                "commission_rates": {
-                  "max_change_rate": "0.010000000000000000",
-                  "max_rate": "0.200000000000000000",
-                  "rate": "0.100000000000000000"
-                },
-                "update_time": "2023-10-02T11:46:26.731699207Z"
-              },
-              "consensus_pubkey": {
-                "@type": "/cosmos.crypto.ed25519.PubKey",
-                "key": "6EIwvfqTCHPCjvHjLgtNPzprGKsWQFPXhTauiWWTHXM="
-              },
-              "delegator_shares": "1000000000000.000000000000000000",
-              "description": {
-                "details": "",
-                "identity": "",
-                "moniker": "ovg-1",
-                "security_contact": "",
-                "website": ""
-              },
-              "jailed": false,
-              "min_self_delegation": "1",
-              "operator_address": "ovgvaloper18p9heyy3m4dsq7fj86p6v9yzzx8a64f8zgf7w7",
-              "status": "BOND_STATUS_BONDED",
-              "tokens": "1000000000000",
-              "unbonding_height": "0",
-              "unbonding_ids": [
-
-              ],
-              "unbonding_on_hold_ref_count": "0",
-              "unbonding_time": "1970-01-01T00:00:00Z"
-            }
-          ]
-        },
-        "stats": {
-          "assetList": [
-
-          ],
-          "params": {
-
-          },
-          "userList": [
-
-          ]
-        },
-        "transfer": {
-          "denom_traces": [
-
-          ],
-          "params": {
-            "receive_enabled": true,
-            "send_enabled": true
-          },
-          "port_id": "transfer",
-          "total_escrowed": [
-
-          ]
-        },
-        "upgrade": {
-
-        },
-        "user": {
-          "params": {
-
-          },
-          "statsList": [
-            {
-              "dailyStats": {
-                "countNewUsers": "0",
-                "countUniqueActiveUsers": "1"
-              },
-              "date": "2023-10-23"
-            },
-            {
-              "dailyStats": {
-                "countNewUsers": "2",
-                "countUniqueActiveUsers": "1"
-              },
-              "date": "2023-10-24"
-            },
-            {
-              "dailyStats": {
-                "countNewUsers": "3",
-                "countUniqueActiveUsers": "2"
-              },
-              "date": "2023-10-25"
-            },
-            {
-              "dailyStats": {
-                "countNewUsers": "0",
-                "countUniqueActiveUsers": "2"
-              },
-              "date": "2023-10-26"
-            },
-            {
-              "dailyStats": {
-                "countNewUsers": "0",
-                "countUniqueActiveUsers": "4"
-              },
-              "date": "2023-10-27"
-            },
-            {
-              "dailyStats": {
-                "countNewUsers": "1",
-                "countUniqueActiveUsers": "0"
-              },
-              "date": "2023-10-29"
-            },
-            {
-              "dailyStats": {
-                "countNewUsers": "0",
-                "countUniqueActiveUsers": "1"
-              },
-              "date": "2023-11-01"
-            },
-            {
-              "dailyStats": {
-                "countNewUsers": "2",
-                "countUniqueActiveUsers": "3"
-              },
-              "date": "2023-11-02"
-            },
-            {
-              "dailyStats": {
-                "countNewUsers": "2",
-                "countUniqueActiveUsers": "2"
-              },
-              "date": "2023-11-03"
-            },
-            {
-              "dailyStats": {
-                "countNewUsers": "0",
-                "countUniqueActiveUsers": "1"
-              },
-              "date": "2023-11-06"
-            },
-            {
-              "dailyStats": {
-                "countNewUsers": "1",
-                "countUniqueActiveUsers": "1"
-              },
-              "date": "2023-11-07"
-            },
-            {
-              "dailyStats": {
-                "countNewUsers": "2",
-                "countUniqueActiveUsers": "3"
-              },
-              "date": "2023-11-08"
-            },
-            {
-              "dailyStats": {
-                "countNewUsers": "0",
-                "countUniqueActiveUsers": "3"
-              },
-              "date": "2023-11-09"
-            },
-            {
-              "dailyStats": {
-                "countNewUsers": "0",
-                "countUniqueActiveUsers": "5"
-              },
-              "date": "2023-11-10"
-            },
-            {
-              "dailyStats": {
-                "countNewUsers": "2",
-                "countUniqueActiveUsers": "4"
-              },
-              "date": "2023-11-13"
-            },
-            {
-              "dailyStats": {
-                "countNewUsers": "1",
-                "countUniqueActiveUsers": "2"
-              },
-              "date": "2023-11-14"
-            },
-            {
-              "dailyStats": {
-                "countNewUsers": "7",
-                "countUniqueActiveUsers": "2"
-              },
-              "date": "2023-11-15"
-            },
-            {
-              "dailyStats": {
-                "countNewUsers": "1",
-                "countUniqueActiveUsers": "3"
-              },
-              "date": "2023-11-16"
-            },
-            {
-              "dailyStats": {
-                "countNewUsers": "1",
-                "countUniqueActiveUsers": "0"
-              },
-              "date": "2023-11-22"
-            },
-            {
-              "dailyStats": {
-                "countNewUsers": "2",
-                "countUniqueActiveUsers": "1"
-              },
-              "date": "2023-11-23"
-            },
-            {
-              "dailyStats": {
-                "countNewUsers": "2",
-                "countUniqueActiveUsers": "4"
-              },
-              "date": "2023-11-24"
-            },
-            {
-              "dailyStats": {
-                "countNewUsers": "4",
-                "countUniqueActiveUsers": "4"
-              },
-              "date": "2023-11-27"
-            },
-            {
-              "dailyStats": {
-                "countNewUsers": "3",
-                "countUniqueActiveUsers": "6"
-              },
-              "date": "2023-11-28"
-            },
-            {
-              "dailyStats": {
-                "countNewUsers": "1",
-                "countUniqueActiveUsers": "4"
-              },
-              "date": "2023-11-29"
-            },
-            {
-              "dailyStats": {
-                "countNewUsers": "0",
-                "countUniqueActiveUsers": "3"
-              },
-              "date": "2023-11-30"
-            },
-            {
-              "dailyStats": {
-                "countNewUsers": "0",
-                "countUniqueActiveUsers": "1"
-              },
-              "date": "2023-12-01"
-            }
-          ],
-          "uniqueUsersList": [
-            {
-              "date": "2023-12-01",
-              "uniqueUserAddresses": {
-                "addresses": [
-                  "ovg1vhya4e8kwungdvt538xr7p09myj5nqqmeuhsan"
-                ]
-              }
-            }
-          ]
-        },
-        "vesting": {
-
-        },
-        "void": {
-          "params": {
-
           }
         }
+      ],
+      "userList": [
+        {
+          "accountAddress": "ovg13h8xpgj7tldlfft79m38aq33lhcp6rqxc50z8r",
+          "referrals": [
+          ],
+          "referrer": "ovg18z44dhyk3cxzx5e47gzac7uply7azg4wsv4ypn"
+        },
+        {
+          "accountAddress": "ovg16n0mfppxtxhh0783aam4a68g5t5wf2c5gljae5",
+          "referrals": [
+          ],
+          "referrer": "ovg1z8sck54yx0p7fxfe43w89tan2jyngvf0wvlx2j"
+        },
+        {
+          "accountAddress": "ovg18z44dhyk3cxzx5e47gzac7uply7azg4wsv4ypn",
+          "referrals": [
+            "ovg13h8xpgj7tldlfft79m38aq33lhcp6rqxc50z8r"
+          ],
+          "referrer": ""
+        },
+        {
+          "accountAddress": "ovg1a9qknvws7ezq580f9pwkdethxy746sxng90qc6",
+          "referrals": [
+          ],
+          "referrer": ""
+        },
+        {
+          "accountAddress": "ovg1ajeju2zaajdnj5j857sk7sjjlve65k2287jrfv",
+          "referrals": [
+          ],
+          "referrer": "ovg1ndqydj9hpvrpu0jyqrkzfjgkq8jy7cxtfexxd5"
+        },
+        {
+          "accountAddress": "ovg1d885aakpyvexapsuk6wfnpcjgkq8dqn4l3ukec",
+          "referrals": [
+          ],
+          "referrer": ""
+        },
+        {
+          "accountAddress": "ovg1dasc05kkzqs495l77yay383nydvqkese2se4eg",
+          "referrals": [
+            "ovg1vvjj0veagkz2z73ngvc0sc6nc9aenewtx3js29"
+          ],
+          "referrer": ""
+        },
+        {
+          "accountAddress": "ovg1edz8has9g46rwnzkz7gak00lu7pcqf7hqcdaxc",
+          "referrals": [
+            "ovg1swrxdzghezp98zafyk8qajjqjy3txh6q2h7v8h"
+          ],
+          "referrer": ""
+        },
+        {
+          "accountAddress": "ovg1etzz58c0qk0hzgmjv0aqccs8fnwedcrcgjlsc2",
+          "referrals": [
+            "ovg1z8sck54yx0p7fxfe43w89tan2jyngvf0wvlx2j"
+          ],
+          "referrer": ""
+        },
+        {
+          "accountAddress": "ovg1ndqydj9hpvrpu0jyqrkzfjgkq8jy7cxtfexxd5",
+          "referrals": [
+            "ovg1ajeju2zaajdnj5j857sk7sjjlve65k2287jrfv",
+            "ovg1q3nq26tpp64h4fp5848cz74dnrw2584pjsfuf3"
+          ],
+          "referrer": ""
+        },
+        {
+          "accountAddress": "ovg1q3nq26tpp64h4fp5848cz74dnrw2584pjsfuf3",
+          "referrals": [
+          ],
+          "referrer": "ovg1ndqydj9hpvrpu0jyqrkzfjgkq8jy7cxtfexxd5"
+        },
+        {
+          "accountAddress": "ovg1qd2tarjumdw9jfg4cw8m6gctuu74qqdhdkmvlc",
+          "referrals": [
+          ],
+          "referrer": ""
+        },
+        {
+          "accountAddress": "ovg1swrxdzghezp98zafyk8qajjqjy3txh6q2h7v8h",
+          "referrals": [
+          ],
+          "referrer": "ovg1edz8has9g46rwnzkz7gak00lu7pcqf7hqcdaxc"
+        },
+        {
+          "accountAddress": "ovg1tdhh4w0yftc4pe7mqytj8clfea7sptw76yhtr5",
+          "referrals": [
+          ],
+          "referrer": ""
+        },
+        {
+          "accountAddress": "ovg1v2ah3dnfs6xedpa56nwmjzjhsv8l9fsx3yxfx6",
+          "referrals": [
+          ],
+          "referrer": "ovg1z8sck54yx0p7fxfe43w89tan2jyngvf0wvlx2j"
+        },
+        {
+          "accountAddress": "ovg1vvjj0veagkz2z73ngvc0sc6nc9aenewtx3js29",
+          "referrals": [
+          ],
+          "referrer": "ovg1dasc05kkzqs495l77yay383nydvqkese2se4eg"
+        },
+        {
+          "accountAddress": "ovg1z8sck54yx0p7fxfe43w89tan2jyngvf0wvlx2j",
+          "referrals": [
+            "ovg16n0mfppxtxhh0783aam4a68g5t5wf2c5gljae5",
+            "ovg1v2ah3dnfs6xedpa56nwmjzjhsv8l9fsx3yxfx6"
+          ],
+          "referrer": "ovg1etzz58c0qk0hzgmjv0aqccs8fnwedcrcgjlsc2"
+        }
+      ]
+    },
+    "rewards": {
+      "params": {
+      },
+      "statsList": [
+        {
+          "dailyStats": {
+            "countSysRefReward": "4",
+            "sysRefReward": [
+              {
+                "amount": "50011000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-10-25"
+        },
+        {
+          "dailyStats": {
+            "countSysRefReward": "12",
+            "sysRefReward": [
+              {
+                "amount": "1170500000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-10-26"
+        },
+        {
+          "dailyStats": {
+            "countSysRefReward": "18",
+            "sysRefReward": [
+              {
+                "amount": "26814906066",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-10-27"
+        },
+        {
+          "dailyStats": {
+            "countSysRefReward": "15",
+            "sysRefReward": [
+              {
+                "amount": "1116075000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-01"
+        },
+        {
+          "dailyStats": {
+            "countSysRefReward": "20",
+            "sysRefReward": [
+              {
+                "amount": "7036130000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-02"
+        },
+        {
+          "dailyStats": {
+            "countSysRefReward": "12",
+            "sysRefReward": [
+              {
+                "amount": "2402200",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-03"
+        },
+        {
+          "dailyStats": {
+            "countSysRefReward": "3",
+            "sysRefReward": [
+              {
+                "amount": "523750000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-06"
+        },
+        {
+          "dailyStats": {
+            "countSysRefReward": "16",
+            "sysRefReward": [
+              {
+                "amount": "4610000000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-08"
+        },
+        {
+          "dailyStats": {
+            "countSysRefReward": "11",
+            "sysRefReward": [
+              {
+                "amount": "8138807699",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-09"
+        },
+        {
+          "dailyStats": {
+            "countSysRefReward": "11",
+            "sysRefReward": [
+              {
+                "amount": "28825000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-10"
+        },
+        {
+          "dailyStats": {
+            "countSysRefReward": "2",
+            "sysRefReward": [
+              {
+                "amount": "2500250000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-13"
+        },
+        {
+          "dailyStats": {
+            "countSysRefReward": "5",
+            "sysRefReward": [
+              {
+                "amount": "7500500000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-14"
+        },
+        {
+          "dailyStats": {
+            "countSysRefReward": "13",
+            "sysRefReward": [
+              {
+                "amount": "5877500000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-15"
+        },
+        {
+          "dailyStats": {
+            "countSysRefReward": "6",
+            "sysRefReward": [
+              {
+                "amount": "2501165000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-16"
+        },
+        {
+          "dailyStats": {
+            "countSysRefReward": "3",
+            "sysRefReward": [
+              {
+                "amount": "125000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-23"
+        },
+        {
+          "dailyStats": {
+            "countSysRefReward": "8",
+            "sysRefReward": [
+              {
+                "amount": "175502500",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-24"
+        },
+        {
+          "dailyStats": {
+            "countSysRefReward": "5",
+            "sysRefReward": [
+              {
+                "amount": "148030864",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-27"
+        },
+        {
+          "dailyStats": {
+            "countSysRefReward": "19",
+            "sysRefReward": [
+              {
+                "amount": "7075958",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-28"
+        },
+        {
+          "dailyStats": {
+            "countSysRefReward": "10",
+            "sysRefReward": [
+              {
+                "amount": "25856077",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-29"
+        },
+        {
+          "dailyStats": {
+            "countSysRefReward": "12",
+            "sysRefReward": [
+              {
+                "amount": "49575013",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-30"
+        },
+        {
+          "dailyStats": {
+            "countSysRefReward": "6",
+            "sysRefReward": [
+              {
+                "amount": "1227453",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-12-01"
+        }
+      ]
+    },
+    "slashing": {
+      "missed_blocks": [
+        {
+          "address": "ovgvalcons1dkdxyjkcejknrk2ltsxs3dwqgltd59c75vpuxe",
+          "missed_blocks": [
+          ]
+        }
+      ],
+      "params": {
+        "downtime_jail_duration": "600s",
+        "min_signed_per_window": "0.500000000000000000",
+        "signed_blocks_window": "100",
+        "slash_fraction_double_sign": "0.050000000000000000",
+        "slash_fraction_downtime": "0.010000000000000000"
+      },
+      "signing_infos": [
+        {
+          "address": "ovgvalcons1dkdxyjkcejknrk2ltsxs3dwqgltd59c75vpuxe",
+          "validator_signing_info": {
+            "address": "ovgvalcons1dkdxyjkcejknrk2ltsxs3dwqgltd59c75vpuxe",
+            "index_offset": "387441",
+            "jailed_until": "1970-01-01T00:00:00Z",
+            "missed_blocks_counter": "0",
+            "start_height": "0",
+            "tombstoned": false
+          }
+        }
+      ]
+    },
+    "stakerewards": {
+      "params": {
+      },
+      "statsList": [
+        {
+          "dailyStats": {
+            "countSysReward": "4",
+            "sysReward": [
+              {
+                "amount": "100022000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-10-25"
+        },
+        {
+          "dailyStats": {
+            "countSysReward": "12",
+            "sysReward": [
+              {
+                "amount": "2341000000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-10-26"
+        },
+        {
+          "dailyStats": {
+            "countSysReward": "18",
+            "sysReward": [
+              {
+                "amount": "53629812134",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-10-27"
+        },
+        {
+          "dailyStats": {
+            "countSysReward": "15",
+            "sysReward": [
+              {
+                "amount": "2232150000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-01"
+        },
+        {
+          "dailyStats": {
+            "countSysReward": "38",
+            "sysReward": [
+              {
+                "amount": "24372260000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-02"
+        },
+        {
+          "dailyStats": {
+            "countSysReward": "12",
+            "sysReward": [
+              {
+                "amount": "4804400",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-03"
+        },
+        {
+          "dailyStats": {
+            "countSysReward": "6",
+            "sysReward": [
+              {
+                "amount": "1182500000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-06"
+        },
+        {
+          "dailyStats": {
+            "countSysReward": "18",
+            "sysReward": [
+              {
+                "amount": "10705000000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-07"
+        },
+        {
+          "dailyStats": {
+            "countSysReward": "28",
+            "sysReward": [
+              {
+                "amount": "11547500000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-08"
+        },
+        {
+          "dailyStats": {
+            "countSysReward": "11",
+            "sysReward": [
+              {
+                "amount": "16277615399",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-09"
+        },
+        {
+          "dailyStats": {
+            "countSysReward": "20",
+            "sysReward": [
+              {
+                "amount": "152901320",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-10"
+        },
+        {
+          "dailyStats": {
+            "countSysReward": "2",
+            "sysReward": [
+              {
+                "amount": "5000500000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-13"
+        },
+        {
+          "dailyStats": {
+            "countSysReward": "5",
+            "sysReward": [
+              {
+                "amount": "15001000000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-14"
+        },
+        {
+          "dailyStats": {
+            "countSysReward": "13",
+            "sysReward": [
+              {
+                "amount": "11755000000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-15"
+        },
+        {
+          "dailyStats": {
+            "countSysReward": "6",
+            "sysReward": [
+              {
+                "amount": "5002330000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-16"
+        },
+        {
+          "dailyStats": {
+            "countSysReward": "4",
+            "sysReward": [
+              {
+                "amount": "300000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-23"
+        },
+        {
+          "dailyStats": {
+            "countSysReward": "12",
+            "sysReward": [
+              {
+                "amount": "691505000",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-24"
+        },
+        {
+          "dailyStats": {
+            "countSysReward": "5",
+            "sysReward": [
+              {
+                "amount": "296061728",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-27"
+        },
+        {
+          "dailyStats": {
+            "countSysReward": "19",
+            "sysReward": [
+              {
+                "amount": "14151919",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-28"
+        },
+        {
+          "dailyStats": {
+            "countSysReward": "10",
+            "sysReward": [
+              {
+                "amount": "51712157",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-29"
+        },
+        {
+          "dailyStats": {
+            "countSysReward": "12",
+            "sysReward": [
+              {
+                "amount": "99150028",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-11-30"
+        },
+        {
+          "dailyStats": {
+            "countSysReward": "6",
+            "sysReward": [
+              {
+                "amount": "2454907",
+                "denom": "ovg"
+              }
+            ]
+          },
+          "date": "2023-12-01"
+        }
+      ]
+    },
+    "staking": {
+      "delegations": [
+        {
+          "delegator_address": "ovg18p9heyy3m4dsq7fj86p6v9yzzx8a64f86eec7u",
+          "shares": "1000000000000.000000000000000000",
+          "validator_address": "ovgvaloper18p9heyy3m4dsq7fj86p6v9yzzx8a64f8zgf7w7"
+        }
+      ],
+      "exported": true,
+      "last_total_power": "1000000",
+      "last_validator_powers": [
+        {
+          "address": "ovgvaloper18p9heyy3m4dsq7fj86p6v9yzzx8a64f8zgf7w7",
+          "power": "1000000"
+        }
+      ],
+      "params": {
+        "bond_denom": "stake",
+        "historical_entries": 10000,
+        "max_entries": 7,
+        "max_validators": 100,
+        "min_commission_rate": "0.000000000000000000",
+        "unbonding_time": "1814400s"
+      },
+      "redelegations": [
+      ],
+      "unbonding_delegations": [
+      ],
+      "validators": [
+        {
+          "commission": {
+            "commission_rates": {
+              "max_change_rate": "0.010000000000000000",
+              "max_rate": "0.200000000000000000",
+              "rate": "0.100000000000000000"
+            },
+            "update_time": "2023-10-02T11:46:26.731699207Z"
+          },
+          "consensus_pubkey": {
+            "@type": "/cosmos.crypto.ed25519.PubKey",
+            "key": "6EIwvfqTCHPCjvHjLgtNPzprGKsWQFPXhTauiWWTHXM="
+          },
+          "delegator_shares": "1000000000000.000000000000000000",
+          "description": {
+            "details": "",
+            "identity": "",
+            "moniker": "ovg-1",
+            "security_contact": "",
+            "website": ""
+          },
+          "jailed": false,
+          "min_self_delegation": "1",
+          "operator_address": "ovgvaloper18p9heyy3m4dsq7fj86p6v9yzzx8a64f8zgf7w7",
+          "status": "BOND_STATUS_BONDED",
+          "tokens": "1000000000000",
+          "unbonding_height": "0",
+          "unbonding_ids": [
+          ],
+          "unbonding_on_hold_ref_count": "0",
+          "unbonding_time": "1970-01-01T00:00:00Z"
+        }
+      ]
+    },
+    "stats": {
+      "assetList": [
+      ],
+      "params": {
+      },
+      "userList": [
+      ]
+    },
+    "transfer": {
+      "denom_traces": [
+      ],
+      "params": {
+        "receive_enabled": true,
+        "send_enabled": true
+      },
+      "port_id": "transfer",
+      "total_escrowed": [
+      ]
+    },
+    "upgrade": {
+    },
+    "user": {
+      "params": {
+      },
+      "statsList": [
+        {
+          "dailyStats": {
+            "countNewUsers": "0",
+            "countUniqueActiveUsers": "1"
+          },
+          "date": "2023-10-23"
+        },
+        {
+          "dailyStats": {
+            "countNewUsers": "2",
+            "countUniqueActiveUsers": "1"
+          },
+          "date": "2023-10-24"
+        },
+        {
+          "dailyStats": {
+            "countNewUsers": "3",
+            "countUniqueActiveUsers": "2"
+          },
+          "date": "2023-10-25"
+        },
+        {
+          "dailyStats": {
+            "countNewUsers": "0",
+            "countUniqueActiveUsers": "2"
+          },
+          "date": "2023-10-26"
+        },
+        {
+          "dailyStats": {
+            "countNewUsers": "0",
+            "countUniqueActiveUsers": "4"
+          },
+          "date": "2023-10-27"
+        },
+        {
+          "dailyStats": {
+            "countNewUsers": "1",
+            "countUniqueActiveUsers": "0"
+          },
+          "date": "2023-10-29"
+        },
+        {
+          "dailyStats": {
+            "countNewUsers": "0",
+            "countUniqueActiveUsers": "1"
+          },
+          "date": "2023-11-01"
+        },
+        {
+          "dailyStats": {
+            "countNewUsers": "2",
+            "countUniqueActiveUsers": "3"
+          },
+          "date": "2023-11-02"
+        },
+        {
+          "dailyStats": {
+            "countNewUsers": "2",
+            "countUniqueActiveUsers": "2"
+          },
+          "date": "2023-11-03"
+        },
+        {
+          "dailyStats": {
+            "countNewUsers": "0",
+            "countUniqueActiveUsers": "1"
+          },
+          "date": "2023-11-06"
+        },
+        {
+          "dailyStats": {
+            "countNewUsers": "1",
+            "countUniqueActiveUsers": "1"
+          },
+          "date": "2023-11-07"
+        },
+        {
+          "dailyStats": {
+            "countNewUsers": "2",
+            "countUniqueActiveUsers": "3"
+          },
+          "date": "2023-11-08"
+        },
+        {
+          "dailyStats": {
+            "countNewUsers": "0",
+            "countUniqueActiveUsers": "3"
+          },
+          "date": "2023-11-09"
+        },
+        {
+          "dailyStats": {
+            "countNewUsers": "0",
+            "countUniqueActiveUsers": "5"
+          },
+          "date": "2023-11-10"
+        },
+        {
+          "dailyStats": {
+            "countNewUsers": "2",
+            "countUniqueActiveUsers": "4"
+          },
+          "date": "2023-11-13"
+        },
+        {
+          "dailyStats": {
+            "countNewUsers": "1",
+            "countUniqueActiveUsers": "2"
+          },
+          "date": "2023-11-14"
+        },
+        {
+          "dailyStats": {
+            "countNewUsers": "7",
+            "countUniqueActiveUsers": "2"
+          },
+          "date": "2023-11-15"
+        },
+        {
+          "dailyStats": {
+            "countNewUsers": "1",
+            "countUniqueActiveUsers": "3"
+          },
+          "date": "2023-11-16"
+        },
+        {
+          "dailyStats": {
+            "countNewUsers": "1",
+            "countUniqueActiveUsers": "0"
+          },
+          "date": "2023-11-22"
+        },
+        {
+          "dailyStats": {
+            "countNewUsers": "2",
+            "countUniqueActiveUsers": "1"
+          },
+          "date": "2023-11-23"
+        },
+        {
+          "dailyStats": {
+            "countNewUsers": "2",
+            "countUniqueActiveUsers": "4"
+          },
+          "date": "2023-11-24"
+        },
+        {
+          "dailyStats": {
+            "countNewUsers": "4",
+            "countUniqueActiveUsers": "4"
+          },
+          "date": "2023-11-27"
+        },
+        {
+          "dailyStats": {
+            "countNewUsers": "3",
+            "countUniqueActiveUsers": "6"
+          },
+          "date": "2023-11-28"
+        },
+        {
+          "dailyStats": {
+            "countNewUsers": "1",
+            "countUniqueActiveUsers": "4"
+          },
+          "date": "2023-11-29"
+        },
+        {
+          "dailyStats": {
+            "countNewUsers": "0",
+            "countUniqueActiveUsers": "3"
+          },
+          "date": "2023-11-30"
+        },
+        {
+          "dailyStats": {
+            "countNewUsers": "0",
+            "countUniqueActiveUsers": "1"
+          },
+          "date": "2023-12-01"
+        }
+      ],
+      "uniqueUsersList": [
+        {
+          "date": "2023-12-01",
+          "uniqueUserAddresses": {
+            "addresses": [
+              "ovg1vhya4e8kwungdvt538xr7p09myj5nqqmeuhsan"
+            ]
+          }
+        }
+      ]
+    },
+    "vesting": {
+    },
+    "void": {
+      "params": {
       }
     }
   }

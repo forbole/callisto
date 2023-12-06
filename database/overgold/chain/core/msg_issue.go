@@ -46,22 +46,22 @@ func (r Repository) InsertMsgIssue(hash string, msgs ...core.MsgIssue) error {
 		_ = tx.Rollback()
 	}()
 
-	query := `
+	q := `
 		INSERT INTO overgold_core_issue (
 			tx_hash, creator, amount, denom, address
 		) VALUES (
-			:tx_hash, :creator, :amount, :denom, :address
+			$1, $2, $3, $4, $5
 		) RETURNING
 			id, tx_hash, creator, amount, denom, address
 	`
 
 	for _, msg := range msgs {
-		model, err := toMsgIssueDatabase(hash, msg)
+		m, err := toMsgIssueDatabase(hash, msg)
 		if err != nil {
 			return err
 		}
 
-		if _, err = tx.NamedExec(query, model); err != nil {
+		if _, err = tx.Exec(q, m.TxHash, m.Creator, m.Amount, m.Denom, m.Address); err != nil {
 			return errs.Internal{Cause: err.Error()}
 		}
 	}

@@ -16,8 +16,10 @@ func (m *Module) handleMsgWithdraw(tx *juno.Tx, index int, msg *types.MsgWithdra
 	msgs, err := m.coreRepo.GetAllMsgWithdraw(filter.NewFilter().SetCondition(filter.ConditionAND).
 		SetArgument(db.FieldTxHash, tx.TxHash).
 		SetArgument(db.FieldCreator, msg.Creator))
-	if err != nil && !errors.Is(err, errs.NotFound{}) {
-		return err
+	if err != nil {
+		if !errors.As(err, &errs.NotFound{}) {
+			return err
+		}
 	}
 	if len(msgs) > 0 {
 		return errs.AlreadyExists{What: "msg withdraw, address: " + msg.Address}

@@ -18,8 +18,10 @@ func (m *Module) handleMsgSend(tx *juno.Tx, index int, msg *bank.MsgSend) error 
 		SetArgument(types.FieldTxHash, tx.TxHash).
 		SetArgument(types.FieldFromAddress, msg.FromAddress).
 		SetArgument(types.FieldToAddress, msg.ToAddress))
-	if err != nil && !errors.Is(err, errs.NotFound{}) {
-		return err
+	if err != nil {
+		if !errors.As(err, &errs.NotFound{}) {
+			return err
+		}
 	}
 	if len(msgs) > 0 {
 		return errs.AlreadyExists{What: "msg send, hash: " + tx.TxHash}

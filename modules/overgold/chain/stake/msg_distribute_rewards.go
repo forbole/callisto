@@ -17,8 +17,10 @@ func (m *Module) handleMsgDistributeRewards(tx *juno.Tx, _ int, msg *types.MsgDi
 	msgs, err := m.stakeRepo.GetAllMsgDistributeRewards(filter.NewFilter().SetCondition(filter.ConditionAND).
 		SetArgument(db.FieldTxHash, tx.TxHash).
 		SetArgument(db.FieldCreator, msg.Creator))
-	if err != nil && !errors.Is(err, errs.NotFound{}) {
-		return err
+	if err != nil {
+		if !errors.As(err, &errs.NotFound{}) {
+			return err
+		}
 	}
 	if len(msgs) > 0 {
 		return errs.AlreadyExists{What: fmt.Sprintf("msg distribute rewards, creator: %s", msg.Creator)}

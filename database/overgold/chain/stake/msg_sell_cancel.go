@@ -14,10 +14,10 @@ import (
 
 // GetAllMsgSellCancel - method that get data from a db (overgold_stake_sell_cancel).
 func (r Repository) GetAllMsgSellCancel(filter filter.Filter) ([]stake.MsgMsgCancelSell, error) {
-	query, args := filter.Build(tableSellCancel)
+	q, args := filter.Build(tableSellCancel)
 
 	var result []db.StakeMsgSellCancel
-	if err := r.db.Select(&result, query, args...); err != nil {
+	if err := r.db.Select(&result, q, args...); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, errs.NotFound{What: tableSellCancel}
 		}
@@ -46,22 +46,22 @@ func (r Repository) InsertMsgSellCancel(hash string, msgs ...stake.MsgMsgCancelS
 		_ = tx.Rollback()
 	}()
 
-	query := `
+	q := `
 		INSERT INTO overgold_stake_sell_cancel (
 			tx_hash, creator, amount
 		) VALUES (
-			:tx_hash, :creator, :amount
+			$1, $2, $3
 		) RETURNING
 			id, tx_hash, creator, amount
 	`
 
 	for _, msg := range msgs {
-		model, err := toMsgSellCancelDatabase(hash, msg)
+		m, err := toMsgSellCancelDatabase(hash, msg)
 		if err != nil {
 			return err
 		}
 
-		if _, err = tx.NamedExec(query, model); err != nil {
+		if _, err = tx.Exec(q, m.TxHash, m.Creator, m.Amount); err != nil {
 			return errs.Internal{Cause: err.Error()}
 		}
 	}

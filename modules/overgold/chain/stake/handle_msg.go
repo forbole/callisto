@@ -24,6 +24,6 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	case *types.MsgClaimReward:
 		return m.handleMsgClaimReward(tx, index, stakeMsg)
 	default:
-		return nil // TODO: return err
+		return nil
 	}
 }

@@ -18,7 +18,6 @@ func CheckVaultConfig(serviceName string, isLocal bool, cmdAndConf *cobra.Comman
 		log.Info().Msg("using local configuration")
 
 		cmdAndConf.PreRunE = func(_ *cobra.Command, _ []string) error {
-			// Set the global configuration
 			junoconf.Cfg = getDebugConfig()
 			return nil
 		}
@@ -35,7 +34,6 @@ func CheckVaultConfig(serviceName string, isLocal bool, cmdAndConf *cobra.Comman
 	}
 
 	cmdAndConf.PreRunE = func(_ *cobra.Command, _ []string) error {
-		// Set the global configuration
 		junoconf.Cfg = config
 		return nil
 	}
@@ -90,7 +88,7 @@ func getDebugConfig() junoconf.Config {
 			},
 		},
 		Parser: parserconfig.Config{
-			GenesisFilePath: "/bdjuno/genesis.json",
+			GenesisFilePath: "./volume/genesis.json",
 			Workers:         5,
 			StartHeight:     0,
 			AvgBlockTime:    nil,
@@ -103,8 +101,8 @@ func getDebugConfig() junoconf.Config {
 			URL:                "postgresql://postgres:postgres@localhost:5432/juno?sslmode=disable",
 			MaxOpenConnections: 10,
 			MaxIdleConnections: 10,
-			PartitionSize:      0,
-			PartitionBatchSize: 0,
+			PartitionSize:      100000,
+			PartitionBatchSize: 1000,
 			SSLModeEnable:      "disable",
 			SSLRootCert:        "",
 			SSLCert:            "",

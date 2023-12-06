@@ -14,10 +14,10 @@ import (
 
 // GetAllAddresses - method that get data from a db (overgold_allowed_addresses).
 func (r Repository) GetAllAddresses(filter filter.Filter) ([]allowed.Addresses, error) {
-	query, args := filter.Build(tableAddresses)
+	q, args := filter.Build(tableAddresses)
 
 	var result []types.AllowedAddresses
-	if err := r.db.Select(&result, query, args...); err != nil {
+	if err := r.db.Select(&result, q, args...); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, errs.NotFound{What: tableAddresses}
 		}
@@ -46,17 +46,18 @@ func (r Repository) InsertToAddresses(addresses ...allowed.Addresses) error {
 		_ = tx.Rollback()
 	}()
 
-	query := `
+	q := `
 		INSERT INTO overgold_allowed_addresses (
 			creator, address
 		) VALUES (
-			:creator, :address
+			$1, $2
 		) RETURNING
 			creator, address
 	`
 
 	for _, a := range addresses {
-		if _, err = tx.NamedExec(query, toAddressesDatabase(a)); err != nil {
+		m := toAddressesDatabase(a)
+		if _, err = tx.Exec(q, m.Creator, m.Address); err != nil {
 			return errs.Internal{Cause: err.Error()}
 		}
 	}
@@ -79,15 +80,14 @@ func (r Repository) UpdateAddresses(assets ...allowed.Addresses) error {
 		_ = tx.Rollback()
 	}()
 
-	query := `UPDATE overgold_allowed_addresses SET
-				 creator = :creator,
-				 address = :address
-			 WHERE id = :id`
+	q := `UPDATE overgold_allowed_addresses SET
+				 creator = $1,
+				 address = $2
+			 WHERE id = $3`
 
 	for _, asset := range assets {
-		assetDB := toAddressesDatabase(asset)
-
-		if _, err = tx.NamedExec(query, assetDB); err != nil {
+		m := toAddressesDatabase(asset)
+		if _, err = tx.Exec(q, m.Creator, m.Address, m.ID); err != nil {
 			return err
 		}
 	}
@@ -108,9 +108,9 @@ func (r Repository) DeleteAddressesByAddress(addresses ...string) error {
 
 	defer tx.Rollback()
 
-	query := `DELETE FROM overgold_allowed_addresses WHERE address IN (:address)`
+	q := `DELETE FROM overgold_allowed_addresses WHERE address IN ($1)`
 
-	if _, err = tx.NamedExec(query, deleteAddressesDB{Address: addresses}); err != nil {
+	if _, err = tx.Exec(q, deleteAddressesDB{Address: addresses}); err != nil {
 		return errs.Internal{Cause: err.Error()}
 	}
 
@@ -130,10 +130,10 @@ func (r Repository) DeleteAddressesByID(ids ...uint64) error {
 
 	defer tx.Rollback()
 
-	query := `DELETE FROM overgold_allowed_addresses WHERE id = :id`
+	q := `DELETE FROM overgold_allowed_addresses WHERE id = $1`
 
 	for _, id := range ids {
-		if _, err = tx.NamedExec(query, deleteAddressesDB{ID: id}); err != nil {
+		if _, err = tx.Exec(q, deleteAddressesDB{ID: id}); err != nil {
 			return errs.Internal{Cause: err.Error()}
 		}
 	}

@@ -46,22 +46,22 @@ func (r Repository) InsertMsgSend(hash string, msgs ...core.MsgSend) error {
 		_ = tx.Rollback()
 	}()
 
-	query := `
+	q := `
 		INSERT INTO overgold_core_send (
 			tx_hash, creator, amount, denom, address_from, address_to
 		) VALUES (
-			:tx_hash, :creator, :amount, :denom, :address_from, :address_to
+			$1, $2, $3, $4, $5, $6
 		) RETURNING
 			id, tx_hash, creator, amount, denom, address_from, address_to
 	`
 
 	for _, msg := range msgs {
-		model, err := toMsgSendDatabase(hash, msg)
+		m, err := toMsgSendDatabase(hash, msg)
 		if err != nil {
 			return err
 		}
 
-		if _, err = tx.NamedExec(query, model); err != nil {
+		if _, err = tx.Exec(q, m.TxHash, m.Creator, m.Amount, m.Denom, m.AddressFrom, m.AddressTo); err != nil {
 			return errs.Internal{Cause: err.Error()}
 		}
 	}

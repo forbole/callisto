@@ -16,8 +16,10 @@ func (m *Module) handleMsgIssue(tx *juno.Tx, index int, msg *types.MsgIssue) err
 	msgs, err := m.coreRepo.GetAllMsgIssue(filter.NewFilter().SetCondition(filter.ConditionAND).
 		SetArgument(db.FieldTxHash, tx.TxHash).
 		SetArgument(db.FieldCreator, msg.Creator))
-	if err != nil && !errors.Is(err, errs.NotFound{}) {
-		return err
+	if err != nil {
+		if !errors.As(err, &errs.NotFound{}) {
+			return err
+		}
 	}
 	if len(msgs) > 0 {
 		return errs.AlreadyExists{What: "msg issue, address: " + msg.Address}

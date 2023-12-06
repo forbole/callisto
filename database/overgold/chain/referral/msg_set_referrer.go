@@ -14,10 +14,10 @@ import (
 
 // GetAllMsgSetReferrer - method that get data from a db (overgold_referral_set_referrer).
 func (r Repository) GetAllMsgSetReferrer(filter filter.Filter) ([]types.MsgSetReferrer, error) {
-	query, args := filter.Build(tableSetReferrer)
+	q, args := filter.Build(tableSetReferrer)
 
 	var result []db.DbReferralSetReferrer
-	if err := r.db.Select(&result, query, args...); err != nil {
+	if err := r.db.Select(&result, q, args...); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, errs.NotFound{What: tableSetReferrer}
 		}
@@ -46,17 +46,18 @@ func (r Repository) InsertMsgSetReferrer(hash string, msgs ...types.MsgSetReferr
 		_ = tx.Rollback()
 	}()
 
-	query := `
+	q := `
 		INSERT INTO overgold_referral_set_referrer (
 			tx_hash, creator, referrer_address, referral_address
 		) VALUES (
-			:tx_hash, :creator, :referrer_address, :referral_address
+			$1, $2, $3, $4
 		) RETURNING
 			id, tx_hash, creator, referrer_address, referral_address
 	`
 
 	for _, msg := range msgs {
-		if _, err = tx.NamedExec(query, toMsgSetReferrerDatabase(hash, msg)); err != nil {
+		m := toMsgSetReferrerDatabase(hash, msg)
+		if _, err = tx.Exec(q, m.TxHash, m.Creator, m.ReferrerAddress, m.ReferralAddress); err != nil {
 			return errs.Internal{Cause: err.Error()}
 		}
 	}

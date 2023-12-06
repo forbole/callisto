@@ -1,9 +1,11 @@
 package overgold
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
+	"git.ooo.ua/vipcoin/lib/errs"
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 	tmtypes "github.com/cometbft/cometbft/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -210,7 +212,7 @@ func (m *Module) ExportTxs(txs []*types.Tx) ([]*txtypes.Tx, error) {
 		}
 
 		// Handle all the messages contained inside the transaction
-		for i, msg := range tx.Body.Messages {
+		for _, msg := range tx.Body.Messages {
 			var stdMsg sdk.Msg
 			err = m.cdc.UnpackAny(msg, &stdMsg)
 			if err != nil {
@@ -218,10 +220,14 @@ func (m *Module) ExportTxs(txs []*types.Tx) ([]*txtypes.Tx, error) {
 			}
 
 			// Call the handlers
-			for _, mod := range m.overgoldModules {
+			for i, mod := range m.overgoldModules {
 				if messageModule, ok := mod.(modules.MessageModule); ok {
 					err = messageModule.HandleMsg(i, stdMsg, tx)
 					if err != nil {
+						if errors.As(err, &errs.NotFound{}) {
+							continue
+						}
+
 						m.logger.MsgError(mod, tx, stdMsg, err)
 					}
 				}
