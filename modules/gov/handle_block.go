@@ -6,14 +6,14 @@ import (
 
 	juno "github.com/forbole/juno/v4/types"
 
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+	cbfttypes "github.com/cometbft/cometbft/rpc/core/types"
 
 	"github.com/rs/zerolog/log"
 )
 
 // HandleBlock implements modules.BlockModule
 func (m *Module) HandleBlock(
-	b *tmctypes.ResultBlock, _ *tmctypes.ResultBlockResults, _ []*juno.Tx, vals *tmctypes.ResultValidators,
+	b *cbfttypes.ResultBlock, _ *cbfttypes.ResultBlockResults, _ []*juno.Tx, vals *cbfttypes.ResultValidators,
 ) error {
 	err := m.updateProposals(b.Block.Height, b.Block.Time, vals)
 	if err != nil {
@@ -24,7 +24,7 @@ func (m *Module) HandleBlock(
 }
 
 // updateProposals updates the proposals
-func (m *Module) updateProposals(height int64, blockTime time.Time, blockVals *tmctypes.ResultValidators) error {
+func (m *Module) updateProposals(height int64, blockTime time.Time, blockVals *cbfttypes.ResultValidators) error {
 	ids, err := m.db.GetOpenProposalsIds(blockTime)
 	if err != nil {
 		log.Error().Err(err).Str("module", "gov").Msg("error while getting open ids")

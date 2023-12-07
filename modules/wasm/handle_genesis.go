@@ -4,15 +4,15 @@ import (
 	"encoding/json"
 	"fmt"
 
+	cbfttypes "github.com/cometbft/cometbft/types"
 	"github.com/forbole/bdjuno/v4/types"
-	tmtypes "github.com/tendermint/tendermint/types"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/rs/zerolog/log"
 )
 
 // HandleGenesis implements GenesisModule
-func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
+func (m *Module) HandleGenesis(doc *cbfttypes.GenesisDoc, appState map[string]json.RawMessage) error {
 	log.Debug().Str("module", "wasm").Msg("parsing genesis")
 
 	// Read the genesis state
@@ -80,7 +80,7 @@ func (m *Module) SaveGenesisCodes(codes []wasmtypes.Code, initHeight int64) erro
 	return nil
 }
 
-func (m *Module) SaveGenesisContracts(contracts []wasmtypes.Contract, doc *tmtypes.GenesisDoc) error {
+func (m *Module) SaveGenesisContracts(contracts []wasmtypes.Contract, doc *cbfttypes.GenesisDoc) error {
 	log.Debug().Str("module", "wasm").Str("operation", "genesis contracts").
 		Int("contract counts", len(contracts)).Msg("parsing genesis")
 
@@ -117,7 +117,7 @@ func (m *Module) SaveGenesisContracts(contracts []wasmtypes.Contract, doc *tmtyp
 	return nil
 }
 
-func (m *Module) SaveGenesisMsgs(msgs []wasmtypes.GenesisState_GenMsgs, doc *tmtypes.GenesisDoc) error {
+func (m *Module) SaveGenesisMsgs(msgs []wasmtypes.GenesisState_GenMsgs, doc *cbfttypes.GenesisDoc) error {
 	log.Debug().Str("module", "wasm").Str("operation", "genesis messages").
 		Int("message counts", len(msgs)).Msg("parsing genesis")
 

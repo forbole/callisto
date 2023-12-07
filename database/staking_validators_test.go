@@ -1,7 +1,7 @@
 package database_test
 
 import (
-	tmtypes "github.com/tendermint/tendermint/proto/tendermint/types"
+	cbfttypes "github.com/cometbft/cometbft/proto/tendermint/types"
 
 	"github.com/forbole/bdjuno/v4/types"
 
@@ -727,7 +727,7 @@ func (suite *DbTestSuite) TestSaveDoubleVoteEvidence() {
 	evidence := types.NewDoubleSignEvidence(
 		10,
 		types.NewDoubleSignVote(
-			int(tmtypes.PrevoteType),
+			int(cbfttypes.PrevoteType),
 			10,
 			1,
 			"A42C9492F5DE01BFA6117137102C3EF909F1A46C2F56915F542D12AC2D0A5BCA",
@@ -736,7 +736,7 @@ func (suite *DbTestSuite) TestSaveDoubleVoteEvidence() {
 			"1qwPQjPrc7DH7+f6YAE3fOkq6phDAJ60dEyhmcZ7dx2ZgGvi9DbVLsn4leYqRNA/63ZeeH5kVly8zI1jCh4iBg==",
 		),
 		types.NewDoubleSignVote(
-			int(tmtypes.PrevoteType),
+			int(cbfttypes.PrevoteType),
 			10,
 			1,
 			"418A20D12F45FC9340BE0CD2EDB0FFA1E4316176B8CE11E123EF6CBED23C8423",
@@ -758,7 +758,7 @@ func (suite *DbTestSuite) TestSaveDoubleVoteEvidence() {
 	expectVotes := []dbtypes.DoubleSignVoteRow{
 		dbtypes.NewDoubleSignVoteRow(
 			1,
-			int(tmtypes.PrevoteType),
+			int(cbfttypes.PrevoteType),
 			10,
 			1,
 			"A42C9492F5DE01BFA6117137102C3EF909F1A46C2F56915F542D12AC2D0A5BCA",
@@ -768,7 +768,7 @@ func (suite *DbTestSuite) TestSaveDoubleVoteEvidence() {
 		),
 		dbtypes.NewDoubleSignVoteRow(
 			2,
-			int(tmtypes.PrevoteType),
+			int(cbfttypes.PrevoteType),
 			10,
 			1,
 			"418A20D12F45FC9340BE0CD2EDB0FFA1E4316176B8CE11E123EF6CBED23C8423",

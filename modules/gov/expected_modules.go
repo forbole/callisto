@@ -1,8 +1,8 @@
 package gov
 
 import (
+	cbfttypes "github.com/cometbft/cometbft/rpc/core/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"github.com/forbole/bdjuno/v4/types"
 )
@@ -28,7 +28,7 @@ type StakingModule interface {
 	GetStakingPool(height int64) (*types.Pool, error)
 	GetStakingPoolSnapshot(height int64) (*types.PoolSnapshot, error)
 	GetValidatorsWithStatus(height int64, status string) ([]stakingtypes.Validator, []types.Validator, error)
-	GetValidatorsVotingPowers(height int64, vals *tmctypes.ResultValidators) ([]types.ValidatorVotingPower, error)
+	GetValidatorsVotingPowers(height int64, vals *cbfttypes.ResultValidators) ([]types.ValidatorVotingPower, error)
 	GetValidatorsStatuses(height int64, validators []stakingtypes.Validator) ([]types.ValidatorStatus, error)
 	UpdateParams(height int64) error
 }

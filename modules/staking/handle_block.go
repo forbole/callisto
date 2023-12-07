@@ -9,14 +9,14 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	juno "github.com/forbole/juno/v4/types"
 
+	cbftcoretypes "github.com/cometbft/cometbft/rpc/core/types"
+	cbfttypes "github.com/cometbft/cometbft/types"
 	"github.com/rs/zerolog/log"
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
-	tmtypes "github.com/tendermint/tendermint/types"
 )
 
 // HandleBlock implements BlockModule
 func (m *Module) HandleBlock(
-	block *tmctypes.ResultBlock, res *tmctypes.ResultBlockResults, _ []*juno.Tx, vals *tmctypes.ResultValidators,
+	block *cbftcoretypes.ResultBlock, res *cbftcoretypes.ResultBlockResults, _ []*juno.Tx, vals *cbftcoretypes.ResultValidators,
 ) error {
 	// Update the validators
 	validators, err := m.updateValidators(block.Block.Height)
@@ -58,7 +58,7 @@ func (m *Module) updateValidatorsStatus(height int64, validators []stakingtypes.
 }
 
 // updateValidatorVotingPower fetches and stores into the database all the current validators' voting powers
-func (m *Module) updateValidatorVotingPower(height int64, vals *tmctypes.ResultValidators) {
+func (m *Module) updateValidatorVotingPower(height int64, vals *cbftcoretypes.ResultValidators) {
 	log.Debug().Str("module", "staking").Int64("height", height).
 		Msg("updating validators voting powers")
 
@@ -79,12 +79,12 @@ func (m *Module) updateValidatorVotingPower(height int64, vals *tmctypes.ResultV
 }
 
 // updateDoubleSignEvidence updates the double sign evidence of all validators
-func (m *Module) updateDoubleSignEvidence(height int64, evidenceList tmtypes.EvidenceList) {
+func (m *Module) updateDoubleSignEvidence(height int64, evidenceList cbfttypes.EvidenceList) {
 	log.Debug().Str("module", "staking").Int64("height", height).
 		Msg("updating double sign evidence")
 
 	for _, ev := range evidenceList {
-		dve, ok := ev.(*tmtypes.DuplicateVoteEvidence)
+		dve, ok := ev.(*cbfttypes.DuplicateVoteEvidence)
 		if !ok {
 			continue
 		}

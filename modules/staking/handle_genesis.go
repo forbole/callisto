@@ -8,7 +8,7 @@ import (
 
 	"github.com/forbole/bdjuno/v4/types"
 
-	tmtypes "github.com/tendermint/tendermint/types"
+	cbfttypes "github.com/cometbft/cometbft/types"
 
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -17,7 +17,7 @@ import (
 )
 
 // HandleGenesis implements GenesisModule
-func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
+func (m *Module) HandleGenesis(doc *cbfttypes.GenesisDoc, appState map[string]json.RawMessage) error {
 	log.Debug().Str("module", "staking").Msg("parsing genesis")
 
 	// Read the genesis state
@@ -59,7 +59,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	return nil
 }
 
-func (m *Module) parseGenesisTransactions(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
+func (m *Module) parseGenesisTransactions(doc *cbfttypes.GenesisDoc, appState map[string]json.RawMessage) error {
 	var genUtilState genutiltypes.GenesisState
 	err := m.cdc.UnmarshalJSON(appState[genutiltypes.ModuleName], &genUtilState)
 	if err != nil {
@@ -95,7 +95,7 @@ func (m *Module) parseGenesisTransactions(doc *tmtypes.GenesisDoc, appState map[
 // --------------------------------------------------------------------------------------------------------------------
 
 // saveValidators stores the validators data present inside the given genesis state
-func (m *Module) saveValidators(doc *tmtypes.GenesisDoc, validators stakingtypes.Validators) error {
+func (m *Module) saveValidators(doc *cbfttypes.GenesisDoc, validators stakingtypes.Validators) error {
 	vals := make([]types.Validator, len(validators))
 	for i, val := range validators {
 		validator, err := m.convertValidator(doc.InitialHeight, val)
@@ -110,7 +110,7 @@ func (m *Module) saveValidators(doc *tmtypes.GenesisDoc, validators stakingtypes
 }
 
 // saveValidatorDescription saves the description for the given validators
-func (m *Module) saveValidatorDescription(doc *tmtypes.GenesisDoc, validators stakingtypes.Validators) error {
+func (m *Module) saveValidatorDescription(doc *cbfttypes.GenesisDoc, validators stakingtypes.Validators) error {
 	for _, account := range validators {
 		description := m.convertValidatorDescription(
 			doc.InitialHeight,

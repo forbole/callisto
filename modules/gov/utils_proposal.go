@@ -5,12 +5,12 @@ import (
 	"strings"
 	"time"
 
+	cbfttypes "github.com/cometbft/cometbft/rpc/core/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"google.golang.org/grpc/codes"
 
@@ -59,7 +59,7 @@ func (m *Module) UpdateProposal(height int64, blockTime time.Time, id uint64) er
 	return nil
 }
 
-func (m *Module) UpdateProposalValidatorStatusesSnapshot(height int64, blockVals *tmctypes.ResultValidators, id uint64) error {
+func (m *Module) UpdateProposalValidatorStatusesSnapshot(height int64, blockVals *cbfttypes.ResultValidators, id uint64) error {
 	err := m.updateProposalValidatorStatusesSnapshot(height, id, blockVals)
 	if err != nil {
 		return fmt.Errorf("error while updating proposal validator statuses snapshot: %s", err)
@@ -68,7 +68,7 @@ func (m *Module) UpdateProposalValidatorStatusesSnapshot(height int64, blockVals
 	return nil
 }
 
-func (m *Module) UpdateProposalStakingPoolSnapshot(height int64, blockVals *tmctypes.ResultValidators, id uint64) error {
+func (m *Module) UpdateProposalStakingPoolSnapshot(height int64, blockVals *cbfttypes.ResultValidators, id uint64) error {
 	err := m.updateProposalStakingPoolSnapshot(height, id)
 	if err != nil {
 		return fmt.Errorf("error while updating proposal staking pool snapshot: %s", err)
@@ -209,7 +209,7 @@ func (m *Module) updateProposalStakingPoolSnapshot(height int64, proposalID uint
 // updateProposalValidatorStatusesSnapshot updates the snapshots of the various validators for
 // the proposal having the given id
 func (m *Module) updateProposalValidatorStatusesSnapshot(
-	height int64, proposalID uint64, blockVals *tmctypes.ResultValidators,
+	height int64, proposalID uint64, blockVals *cbfttypes.ResultValidators,
 ) error {
 	validators, _, err := m.stakingModule.GetValidatorsWithStatus(height, stakingtypes.Bonded.String())
 	if err != nil {

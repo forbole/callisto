@@ -5,13 +5,13 @@ import (
 
 	juno "github.com/forbole/juno/v4/types"
 
+	cbfttypes "github.com/cometbft/cometbft/rpc/core/types"
 	"github.com/rs/zerolog/log"
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
 
 // HandleBlock implements BlockModule
 func (m *Module) HandleBlock(
-	block *tmctypes.ResultBlock, results *tmctypes.ResultBlockResults, _ []*juno.Tx, _ *tmctypes.ResultValidators,
+	block *cbfttypes.ResultBlock, results *cbfttypes.ResultBlockResults, _ []*juno.Tx, _ *cbfttypes.ResultValidators,
 ) error {
 	// Update the signing infos
 	err := m.updateSigningInfo(block.Block.Height)

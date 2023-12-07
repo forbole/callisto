@@ -13,7 +13,7 @@ import (
 
 	"github.com/forbole/bdjuno/v4/types/config"
 
-	coreumapp "github.com/CoreumFoundation/coreum/app"
+	coreumapp "github.com/CoreumFoundation/coreum/v2/app"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules"

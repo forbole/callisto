@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	tmtypes "github.com/tendermint/tendermint/types"
+	cbfttypes "github.com/cometbft/cometbft/types"
 
 	"github.com/forbole/bdjuno/v4/types"
 
@@ -13,7 +13,7 @@ import (
 )
 
 // HandleGenesis implements modules.Module
-func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json.RawMessage) error {
+func (m *Module) HandleGenesis(doc *cbfttypes.GenesisDoc, appState map[string]json.RawMessage) error {
 	log.Debug().Str("module", "gov").Msg("parsing genesis")
 
 	// Read the genesis state
@@ -44,7 +44,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 }
 
 // saveProposals save proposals from genesis file
-func (m *Module) saveProposals(slice govtypes.Proposals, genDoc *tmtypes.GenesisDoc) error {
+func (m *Module) saveProposals(slice govtypes.Proposals, genDoc *cbfttypes.GenesisDoc) error {
 	proposals := make([]types.Proposal, len(slice))
 	tallyResults := make([]types.TallyResult, len(slice))
 	deposits := make([]types.Deposit, len(slice))

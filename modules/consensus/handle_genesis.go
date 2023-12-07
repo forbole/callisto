@@ -6,12 +6,12 @@ import (
 
 	"github.com/forbole/bdjuno/v4/types"
 
+	cbfttypes "github.com/cometbft/cometbft/types"
 	"github.com/rs/zerolog/log"
-	tmtypes "github.com/tendermint/tendermint/types"
 )
 
 // HandleGenesis implements modules.Module
-func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, _ map[string]json.RawMessage) error {
+func (m *Module) HandleGenesis(doc *cbfttypes.GenesisDoc, _ map[string]json.RawMessage) error {
 	log.Debug().Str("module", "consensus").Msg("parsing genesis")
 
 	// Save the genesis time

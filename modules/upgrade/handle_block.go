@@ -5,12 +5,12 @@ import (
 
 	"github.com/forbole/juno/v4/types"
 
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+	cbfttypes "github.com/cometbft/cometbft/rpc/core/types"
 )
 
 // HandleBlock implements modules.Module
 func (m *Module) HandleBlock(
-	b *tmctypes.ResultBlock, _ *tmctypes.ResultBlockResults, _ []*types.Tx, _ *tmctypes.ResultValidators,
+	b *cbfttypes.ResultBlock, _ *cbfttypes.ResultBlockResults, _ []*types.Tx, _ *cbfttypes.ResultValidators,
 ) error {
 	err := m.refreshDataUponSoftwareUpgrade(b.Block.Height)
 	if err != nil {

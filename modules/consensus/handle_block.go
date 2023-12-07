@@ -7,12 +7,12 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+	cbfttypes "github.com/cometbft/cometbft/rpc/core/types"
 )
 
 // HandleBlock implements modules.Module
 func (m *Module) HandleBlock(
-	b *tmctypes.ResultBlock, _ *tmctypes.ResultBlockResults, _ []*types.Tx, _ *tmctypes.ResultValidators,
+	b *cbfttypes.ResultBlock, _ *cbfttypes.ResultBlockResults, _ []*types.Tx, _ *cbfttypes.ResultValidators,
 ) error {
 	err := m.updateBlockTimeFromGenesis(b)
 	if err != nil {
@@ -24,7 +24,7 @@ func (m *Module) HandleBlock(
 }
 
 // updateBlockTimeFromGenesis insert average block time from genesis
-func (m *Module) updateBlockTimeFromGenesis(block *tmctypes.ResultBlock) error {
+func (m *Module) updateBlockTimeFromGenesis(block *cbfttypes.ResultBlock) error {
 	log.Trace().Str("module", "consensus").Int64("height", block.Block.Height).
 		Msg("updating block time from genesis")
 

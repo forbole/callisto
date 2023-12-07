@@ -3,8 +3,8 @@ package staking
 import (
 	"fmt"
 
+	cbfttypes "github.com/cometbft/cometbft/rpc/core/types"
 	juno "github.com/forbole/juno/v4/types"
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"github.com/forbole/bdjuno/v4/modules/staking/keybase"
 	"github.com/forbole/bdjuno/v4/types"
@@ -204,7 +204,7 @@ func (m *Module) GetValidatorsStatuses(height int64, validators []stakingtypes.V
 	return statuses, nil
 }
 
-func (m *Module) GetValidatorsVotingPowers(height int64, vals *tmctypes.ResultValidators) ([]types.ValidatorVotingPower, error) {
+func (m *Module) GetValidatorsVotingPowers(height int64, vals *cbfttypes.ResultValidators) ([]types.ValidatorVotingPower, error) {
 	stakingVals, _, err := m.getValidators(height)
 	if err != nil {
 		return nil, err

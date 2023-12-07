@@ -19,10 +19,10 @@ import (
 
 	juno "github.com/forbole/juno/v4/types"
 
+	cbftversion "github.com/cometbft/cometbft/proto/tendermint/version"
+	cbftcoretypes "github.com/cometbft/cometbft/rpc/core/types"
+	cbfttypes "github.com/cometbft/cometbft/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	tmversion "github.com/tendermint/tendermint/proto/tendermint/version"
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
-	tmtypes "github.com/tendermint/tendermint/types"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/stretchr/testify/suite"
@@ -96,15 +96,15 @@ func (suite *DbTestSuite) getBlock(height int64) *juno.Block {
 	addr, err := sdk.ConsAddressFromBech32(validator.GetConsAddr())
 	suite.Require().NoError(err)
 
-	tmBlock := &tmctypes.ResultBlock{
-		BlockID: tmtypes.BlockID{},
-		Block: &tmtypes.Block{
-			Header: tmtypes.Header{
-				Version:            tmversion.Consensus{},
+	cbftBlock := &cbftcoretypes.ResultBlock{
+		BlockID: cbfttypes.BlockID{},
+		Block: &cbfttypes.Block{
+			Header: cbfttypes.Header{
+				Version:            cbftversion.Consensus{},
 				ChainID:            "",
 				Height:             height,
 				Time:               time.Now(),
-				LastBlockID:        tmtypes.BlockID{},
+				LastBlockID:        cbfttypes.BlockID{},
 				LastCommitHash:     nil,
 				DataHash:           nil,
 				ValidatorsHash:     []byte("hash"),
@@ -113,20 +113,20 @@ func (suite *DbTestSuite) getBlock(height int64) *juno.Block {
 				AppHash:            nil,
 				LastResultsHash:    nil,
 				EvidenceHash:       nil,
-				ProposerAddress:    tmtypes.Address(addr.Bytes()),
+				ProposerAddress:    cbfttypes.Address(addr.Bytes()),
 			},
-			Data:     tmtypes.Data{},
-			Evidence: tmtypes.EvidenceData{},
-			LastCommit: &tmtypes.Commit{
+			Data:     cbfttypes.Data{},
+			Evidence: cbfttypes.EvidenceData{},
+			LastCommit: &cbfttypes.Commit{
 				Height:     height - 1,
 				Round:      1,
-				BlockID:    tmtypes.BlockID{},
+				BlockID:    cbfttypes.BlockID{},
 				Signatures: nil,
 			},
 		},
 	}
 
-	block := juno.NewBlockFromTmBlock(tmBlock, 10000)
+	block := juno.NewBlockFromTmBlock(cbftBlock, 10000)
 	err = suite.database.SaveBlock(block)
 	suite.Require().NoError(err)
 	return block
