@@ -26,6 +26,8 @@ func (m *Module) scheduler() {
 
 		lastBlock++
 
+		// TODO: compare with current block and skip if lastBlock > currentBlock
+
 		if err = m.parseBlock(lastBlock); err != nil {
 			time.Sleep(intervalLastBlock)
 
