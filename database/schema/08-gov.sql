@@ -87,3 +87,25 @@ CREATE TABLE proposal_validator_status_snapshot
 );
 CREATE INDEX proposal_validator_status_snapshot_proposal_id_index ON proposal_validator_status_snapshot (proposal_id);
 CREATE INDEX proposal_validator_status_snapshot_validator_address_index ON proposal_validator_status_snapshot (validator_address);
+
+
+-- +migrate Down
+DROP INDEX IF EXISTS proposal_validator_status_snapshot_validator_address_index;
+DROP INDEX IF EXISTS proposal_validator_status_snapshot_proposal_id_index;
+DROP TABLE IF EXISTS proposal_validator_status_snapshot CASCADE;
+DROP INDEX IF EXISTS proposal_staking_pool_snapshot_proposal_id_index;
+DROP TABLE IF EXISTS proposal_staking_pool_snapshot CASCADE;
+DROP INDEX IF EXISTS proposal_tally_result_height_index;
+DROP INDEX IF EXISTS proposal_tally_result_proposal_id_index;
+DROP TABLE IF EXISTS proposal_tally_result CASCADE;
+DROP INDEX IF EXISTS proposal_vote_height_index;
+DROP INDEX IF EXISTS proposal_vote_voter_address_index;
+DROP INDEX IF EXISTS proposal_vote_proposal_id_index;
+DROP TABLE IF EXISTS proposal_vote CASCADE;
+DROP INDEX IF EXISTS proposal_deposit_depositor_height_index;
+DROP INDEX IF EXISTS proposal_deposit_depositor_address_index;
+DROP INDEX IF EXISTS proposal_deposit_proposal_id_index;
+DROP TABLE IF EXISTS proposal_deposit CASCADE;
+DROP INDEX IF EXISTS proposal_proposer_address_index;
+DROP TABLE IF EXISTS proposal CASCADE;
+DROP TABLE IF EXISTS gov_params CASCADE;

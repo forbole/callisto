@@ -106,3 +106,23 @@ CREATE TABLE pruning
 (
     last_pruned_height BIGINT NOT NULL
 );
+
+-- +migrate Down
+DROP TABLE IF EXISTS pruning CASCADE;
+DROP FUNCTION IF EXISTS messages_by_address(TEXT[], TEXT[], BIGINT, BIGINT);
+DROP INDEX IF EXISTS message_involved_accounts_index;
+DROP INDEX IF EXISTS message_type_index;
+DROP INDEX IF EXISTS message_transaction_hash_index;
+DROP TABLE IF EXISTS message CASCADE;
+DROP INDEX IF EXISTS transaction_partition_id_index;
+DROP INDEX IF EXISTS transaction_height_index;
+DROP INDEX IF EXISTS transaction_hash_index;
+DROP TABLE IF EXISTS transaction CASCADE;
+DROP INDEX IF EXISTS block_proposer_address_index;
+DROP INDEX IF EXISTS block_hash_index;
+DROP INDEX IF EXISTS block_height_index;
+DROP TABLE IF EXISTS block CASCADE;
+DROP INDEX IF EXISTS pre_commit_height_index;
+DROP INDEX IF EXISTS pre_commit_validator_address_index;
+DROP TABLE IF EXISTS pre_commit CASCADE;
+DROP TABLE IF EXISTS validator CASCADE;

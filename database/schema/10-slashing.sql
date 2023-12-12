@@ -19,3 +19,9 @@ CREATE TABLE slashing_params
     CHECK (one_row_id)
 );
 CREATE INDEX slashing_params_height_index ON slashing_params (height);
+
+-- +migrate Down
+DROP INDEX IF EXISTS slashing_params_height_index;
+DROP TABLE IF EXISTS slashing_params CASCADE;
+DROP INDEX IF EXISTS validator_signing_info_height_index;
+DROP TABLE IF EXISTS validator_signing_info CASCADE;

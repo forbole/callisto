@@ -9,3 +9,7 @@ CREATE TABLE supply
     CHECK (one_row_id)
 );
 CREATE INDEX supply_height_index ON supply (height);
+
+-- +migrate Down
+DROP INDEX IF EXISTS supply_height_index;
+DROP TABLE IF EXISTS supply CASCADE;

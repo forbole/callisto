@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS overgold_allowed_delete_by_addresses
 
 CREATE TABLE IF NOT EXISTS overgold_allowed_delete_by_id
 (
-    id               BIGSERIAL  NOT NULL,
+    id               BIGSERIAL  NOT NULL PRIMARY KEY,
     tx_hash          TEXT       NOT NULL,
     creator          TEXT       NOT NULL
 );

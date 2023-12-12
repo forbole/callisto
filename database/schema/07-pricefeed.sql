@@ -41,3 +41,11 @@ CREATE TABLE token_price_history
     CONSTRAINT unique_price_for_timestamp UNIQUE (unit_name, timestamp)
 );
 CREATE INDEX token_price_history_timestamp_index ON token_price_history (timestamp);
+
+-- +migrate Down
+DROP INDEX IF EXISTS token_price_history_timestamp_index;
+DROP TABLE IF EXISTS token_price_history CASCADE;
+DROP INDEX IF EXISTS token_price_timestamp_index;
+DROP TABLE IF EXISTS token_price CASCADE;
+DROP TABLE IF EXISTS token_unit CASCADE;
+DROP TABLE IF EXISTS token CASCADE;

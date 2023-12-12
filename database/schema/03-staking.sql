@@ -109,3 +109,25 @@ CREATE TABLE double_sign_evidence
     vote_b_id BIGINT NOT NULL REFERENCES double_sign_vote (id)
 );
 CREATE INDEX double_sign_evidence_height_index ON double_sign_evidence (height);
+
+-- +migrate Down
+DROP INDEX IF EXISTS double_sign_evidence_height_index;
+DROP TABLE IF EXISTS double_sign_evidence CASCADE;
+DROP INDEX IF EXISTS double_sign_vote_height_index;
+DROP INDEX IF EXISTS double_sign_vote_validator_address_index;
+DROP TABLE IF EXISTS double_sign_vote CASCADE;
+DROP INDEX IF EXISTS validator_status_height_index;
+DROP TABLE IF EXISTS validator_status CASCADE;
+DROP INDEX IF EXISTS validator_voting_power_height_index;
+DROP TABLE IF EXISTS validator_voting_power CASCADE;
+DROP INDEX IF EXISTS validator_commission_height_index;
+DROP TABLE IF EXISTS validator_commission CASCADE;
+DROP INDEX IF EXISTS validator_description_height_index;
+DROP TABLE IF EXISTS validator_description CASCADE;
+DROP INDEX IF EXISTS validator_info_self_delegate_address_index;
+DROP INDEX IF EXISTS validator_info_operator_address_index;
+DROP TABLE IF EXISTS validator_info CASCADE;
+DROP INDEX IF EXISTS staking_pool_height_index;
+DROP TABLE IF EXISTS staking_pool CASCADE;
+DROP INDEX IF EXISTS staking_params_height_index;
+DROP TABLE IF EXISTS staking_params CASCADE;

@@ -33,3 +33,10 @@ CREATE TABLE vesting_period
     length              BIGINT  NOT NULL,
     amount              COIN[]  NOT NULL DEFAULT '{}'
 );
+
+-- +migrate Down
+DROP TABLE IF EXISTS vesting_period CASCADE;
+DROP INDEX IF EXISTS vesting_account_address_idx;
+DROP TABLE IF EXISTS vesting_account CASCADE;
+DROP TYPE IF EXISTS COIN;
+DROP TABLE IF EXISTS account CASCADE;

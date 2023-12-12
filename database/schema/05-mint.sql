@@ -19,3 +19,8 @@ CREATE TABLE inflation
     CONSTRAINT one_row_uni CHECK (one_row_id)
 );
 CREATE INDEX inflation_height_index ON inflation (height);
+
+-- +migrate Down
+DROP INDEX IF EXISTS inflation_height_index;
+DROP TABLE IF EXISTS inflation CASCADE;
+DROP TABLE IF EXISTS mint_params CASCADE;
