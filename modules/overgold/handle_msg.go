@@ -18,6 +18,7 @@ import (
 // scheduler runs the scheduler
 func (m *Module) scheduler() {
 	for {
+		// get the latest-parsed block from a database
 		lastBlock, err := m.lastBlockRepo.Get()
 		if err != nil {
 			m.logger.Error("Fail lastBlockRepo.Get", "module", m.Name(), "error", err)
@@ -26,7 +27,15 @@ func (m *Module) scheduler() {
 
 		lastBlock++
 
-		// TODO: compare with current block and skip if lastBlock > currentBlock
+		// get the latest block from node
+		lastBlockHeight, err := m.node.LatestHeight()
+		if err != nil {
+			return
+		}
+
+		if lastBlock > uint64(lastBlockHeight) {
+			continue
+		}
 
 		if err = m.parseBlock(lastBlock); err != nil {
 			time.Sleep(intervalLastBlock)
