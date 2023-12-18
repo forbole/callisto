@@ -11,5 +11,5 @@ FROM alpine:latest
 RUN apk update && apk add --no-cache ca-certificates build-base
 WORKDIR /bdjuno
 COPY --from=builder /go/src/github.com/forbole/bdjuno/build/bdjuno /usr/bin/bdjuno
-COPY --from=builder /go/src/github.com/forbole/bdjuno/volume /bdjuno
+# COPY --from=builder /go/src/github.com/forbole/bdjuno/volume /bdjuno
 CMD [ "bdjuno" ]
