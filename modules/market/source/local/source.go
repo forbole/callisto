@@ -5,7 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	markettypes "github.com/akash-network/node/x/market/types/v1beta2"
+	markettypes "github.com/akash-network/akash-api/go/node/market/v1beta4"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/forbole/juno/v4/node/local"
 

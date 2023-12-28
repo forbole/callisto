@@ -4,7 +4,7 @@ import (
 	"database/sql/driver"
 	"fmt"
 
-	providertypes "github.com/akash-network/node/x/provider/types/v1beta2"
+	providertypes "github.com/akash-network/akash-api/go/node/provider/v1beta3"
 	"github.com/forbole/bdjuno/v4/types"
 )
 

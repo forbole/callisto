@@ -6,7 +6,7 @@ import (
 	"github.com/forbole/bdjuno/v4/types"
 	"github.com/rs/zerolog/log"
 
-	markettypes "github.com/akash-network/node/x/market/types/v1beta2"
+	markettypes "github.com/akash-network/akash-api/go/node/market/v1beta4"
 )
 
 // updateLeases fetch all the leases with latest statuses and store them into database
