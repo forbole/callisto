@@ -362,8 +362,8 @@ github.com/fjl/memsize v0.0.0-20190710130421-bcb5799ab5e5/go.mod h1:VvhXpOYNQvB+
 github.com/flosch/pongo2 v0.0.0-20190707114632-bbf5a6c351f4/go.mod h1:T9YF2M40nIgbVgp3rreNmTged+9HrbNTIQf1PsaIiTA=
 github.com/flowstack/go-jsonschema v0.1.1/go.mod h1:yL7fNggx1o8rm9RlgXv7hTBWxdBM0rVwpMwimd3F3N0=
 github.com/fogleman/gg v1.2.1-0.20190220221249-0403632d5b90/go.mod h1:R/bRT+9gY/C5z7JzPU0zXsXHKM4/ayA+zqcVNZzPa1k=
-github.com/forbole/juno/v4 v4.2.1-0.20230704040123-a274ebda943e h1:Rpxq5LL2KHvdak2NMGGyIQrpTfmjNyAqYhLcdRpJPYY=
-github.com/forbole/juno/v4 v4.2.1-0.20230704040123-a274ebda943e/go.mod h1:7m5S3kqXTDP8C5H4psqgDDVbPa3vZcMK8uLsN/I9Qio=
+github.com/forbole/juno/v4 v4.2.1-0.20231227090829-9e0702ab304f h1:bHQEpTw81ZTn96ZRpNNXA7zt6mZT411eZLQUXeSQc+w=
+github.com/forbole/juno/v4 v4.2.1-0.20231227090829-9e0702ab304f/go.mod h1:7m5S3kqXTDP8C5H4psqgDDVbPa3vZcMK8uLsN/I9Qio=
 github.com/fortytw2/leaktest v1.3.0 h1:u8491cBMTQ8ft8aeV+adlcytMZylmA5nnwwkRZjI8vw=
 github.com/franela/goblin v0.0.0-20200105215937-c9ffbefa60db/go.mod h1:7dvUGVsVBjqR7JHJk0brhHOZYGmfBYOrK0ZhYMEtBr4=
 github.com/franela/goreq v0.0.0-20171204163338-bcd34c9993f8/go.mod h1:ZhphrRTfi2rbfLwlschooIH4+wKKDR4Pdxhh+TRoA20=
