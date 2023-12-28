@@ -4,11 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"cosmossdk.io/simapp"
-	"cosmossdk.io/simapp/params"
-	"github.com/cometbft/cometbft/libs/log"
-	"github.com/forbole/juno/v5/node/remote"
-	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -19,10 +14,13 @@ import (
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/juno/v5/node/local"
+	"github.com/forbole/juno/v5/node/remote"
+	"github.com/forbole/juno/v5/types/params"
 
 	nodeconfig "github.com/forbole/juno/v5/node/config"
 
-	archwayapp "github.com/MonikaCat/archway/v2/app"
+	archwayapp "github.com/MonikaCat/archway/v5/app"
+	tmlog "github.com/cometbft/cometbft/libs/log"
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v4/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"
@@ -43,7 +41,6 @@ import (
 	wasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source"
 	localwasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source/local"
 	remotewasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source/remote"
-	// tmlog "github.com/tendermint/tendermint/libs/log"
 )
 
 type Sources struct {
@@ -56,7 +53,7 @@ type Sources struct {
 	WasmSource     wasmsource.Source
 }
 
-func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
+func BuildSources(nodeCfg nodeconfig.Config, encodingConfig params.EncodingConfig) (*Sources, error) {
 	switch cfg := nodeCfg.Details.(type) {
 	case *remote.Details:
 		return buildRemoteSources(cfg)
@@ -68,7 +65,7 @@ func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConf
 	}
 }
 
-func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig) (*Sources, error) {
+func buildLocalSources(cfg *local.Details, encodingConfig params.EncodingConfig) (*Sources, error) {
 	source, err := local.NewSource(cfg.Home, encodingConfig)
 	if err != nil {
 		return nil, err
@@ -76,19 +73,17 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 
 	app := archwayapp.NewArchwayApp(
 		tmlog.NewTMLogger(tmlog.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
-		cfg.Home, 0, archwayapp.MakeEncodingConfig(), wasm.EnableAllProposals, simapp.EmptyAppOptions{}, nil,
+		cfg.Home, 0, archwayapp.MakeEncodingConfig(), nil, nil,
 	)
 
-	// app := simapp.NewSimApp(
-	// 	log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, nil, nil,
 	sources := &Sources{
-		BankSource: localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
-		// DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
-		GovSource:      localgovsource.NewSource(source, govtypesv1.QueryServer(app.GovKeeper)),
-		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
-		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
-		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
-		WasmSource:     localwasmsource.NewSource(source, wasmkeeper.Querier(&app.WASMKeeper)),
+		BankSource: localbanksource.NewSource(source, banktypes.QueryServer(app.Keepers.BankKeeper)),
+		// DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.Keepers.DistrKeeper)),
+		GovSource:      localgovsource.NewSource(source, govtypesv1.QueryServer(app.Keepers.GovKeeper)),
+		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.Keepers.MintKeeper)),
+		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.Keepers.SlashingKeeper)),
+		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.Keepers.StakingKeeper}),
+		WasmSource:     localwasmsource.NewSource(source, wasmkeeper.Querier(&app.Keepers.WASMKeeper)),
 	}
 
 	// Mount and initialize the stores

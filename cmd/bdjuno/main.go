@@ -11,7 +11,7 @@ import (
 	migratecmd "github.com/forbole/bdjuno/v4/cmd/migrate"
 	parsecmd "github.com/forbole/bdjuno/v4/cmd/parse"
 
-	archwayapp "github.com/MonikaCat/archway/v2/app"
+	archwayapp "github.com/MonikaCat/archway/v5/app"
 	"github.com/forbole/bdjuno/v4/types/config"
 
 	"cosmossdk.io/simapp"

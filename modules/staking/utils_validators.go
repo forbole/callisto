@@ -288,8 +288,7 @@ func (m *Module) updateValidatorStatusAndVP(height int64, validators []stakingty
 			return err
 		}
 
-		votingPowers[index] = types.NewValidatorVotingPower(consAddr.String(), validator.Tokens.Int64(), height)
-
+		votingPowers[index] = types.NewValidatorVotingPower(consAddr.String(), validator.Tokens, height)
 		statuses[index] = types.NewValidatorStatus(
 			consAddr.String(),
 			consPubKey.String(),

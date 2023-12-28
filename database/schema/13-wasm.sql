@@ -1,7 +1,7 @@
 CREATE TYPE ACCESS_CONFIG AS
 (
     permission  INT,
-    address     TEXT
+    address     []TEXT
 );
 
 CREATE TABLE wasm_params

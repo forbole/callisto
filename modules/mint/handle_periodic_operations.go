@@ -59,5 +59,5 @@ func (m *Module) UpdateInflation() error {
 		return fmt.Errorf("error while unmarshaling response body: %s", err)
 	}
 
-	return m.db.SaveInflation(inf.Inflation, height)
+	return m.db.SaveInflation(inf.Inflation, block.Height)
 }

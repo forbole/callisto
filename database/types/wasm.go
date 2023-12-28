@@ -10,15 +10,15 @@ import (
 
 // DbAccessConfig represents the information stored inside the database about a single access_config
 type DbAccessConfig struct {
-	Permission int    `db:"permission"`
-	Address    string `db:"address"`
+	Permission int      `db:"permission"`
+	Address    []string `db:"address"`
 }
 
 // NewDbAccessConfig builds a DbAccessConfig starting from an CosmWasm type AccessConfig
 func NewDbAccessConfig(accessCfg *wasmtypes.AccessConfig) DbAccessConfig {
 	return DbAccessConfig{
 		Permission: int(accessCfg.Permission),
-		Address:    accessCfg.Address,
+		Address:    accessCfg.Addresses,
 	}
 }
 
@@ -33,7 +33,7 @@ func (cfg *DbAccessConfig) Value() (driver.Value, error) {
 
 // Equal tells whether a and b represent the same access_config
 func (cfg *DbAccessConfig) Equal(b *DbAccessConfig) bool {
-	return cfg.Address == b.Address && cfg.Permission == b.Permission
+	return cfg.Address[0] == b.Address[0] && cfg.Permission == b.Permission
 }
 
 // ===================== Params =====================

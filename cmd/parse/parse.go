@@ -8,8 +8,6 @@ import (
 
 	parsegenesis "github.com/forbole/juno/v5/cmd/parse/genesis"
 
-	parsetransaction "github.com/forbole/juno/v5/cmd/parse/transactions"
-
 	parseauth "github.com/forbole/bdjuno/v4/cmd/parse/auth"
 	parsebank "github.com/forbole/bdjuno/v4/cmd/parse/bank"
 	parsedistribution "github.com/forbole/bdjuno/v4/cmd/parse/distribution"
