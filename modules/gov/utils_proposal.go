@@ -282,7 +282,7 @@ func (m *Module) handlePassedProposal(proposal govtypesv1beta1.Proposal, height 
 
 	// Unpack proposal
 	var content govtypesv1beta1.Content
-	err := m.db.EncodingConfig.Codec.UnpackAny(proposal.Content, &content)
+	err := m.db.Cdc.UnpackAny(proposal.Content, &content)
 	if err != nil {
 		return fmt.Errorf("error while handling ParamChangeProposal: %s", err)
 	}

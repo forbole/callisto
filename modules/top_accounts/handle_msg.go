@@ -19,7 +19,7 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	}
 
 	// Refresh x/bank available account balances
-	addresses, err := m.messageParser(m.cdc, msg)
+	addresses, err := m.messageParser(tx)
 	if err != nil {
 		return fmt.Errorf("error while parsing account addresses of message type %s: %s", proto.MessageName(msg), err)
 	}

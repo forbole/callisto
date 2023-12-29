@@ -65,6 +65,5 @@ func getBasicManagers() []module.BasicManager {
 func getAddressesParser() messages.MessageAddressesParser {
 	return messages.JoinMessageParsers(
 		messages.CosmosMessageAddressesParser,
-		CheqdAddressesParser,
 	)
 }
