@@ -3,9 +3,6 @@ package types
 import (
 	"fmt"
 
-	"github.com/cosmos/cosmos-sdk/simapp"
-	"github.com/tendermint/tendermint/libs/log"
-
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/forbole/juno/v4/node/remote"
 
@@ -14,36 +11,38 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
-	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/juno/v4/node/local"
 
 	nodeconfig "github.com/forbole/juno/v4/node/config"
 
-	bandapp "github.com/bandprotocol/chain/v2/app"
-	oraclekeeper "github.com/bandprotocol/chain/v2/x/oracle/keeper"
 	oracletypes "github.com/bandprotocol/chain/v2/x/oracle/types"
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
-	localbanksource "github.com/forbole/bdjuno/v4/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"
 	distrsource "github.com/forbole/bdjuno/v4/modules/distribution/source"
-	localdistrsource "github.com/forbole/bdjuno/v4/modules/distribution/source/local"
 	remotedistrsource "github.com/forbole/bdjuno/v4/modules/distribution/source/remote"
 	govsource "github.com/forbole/bdjuno/v4/modules/gov/source"
-	localgovsource "github.com/forbole/bdjuno/v4/modules/gov/source/local"
 	remotegovsource "github.com/forbole/bdjuno/v4/modules/gov/source/remote"
 	mintsource "github.com/forbole/bdjuno/v4/modules/mint/source"
-	localmintsource "github.com/forbole/bdjuno/v4/modules/mint/source/local"
 	remotemintsource "github.com/forbole/bdjuno/v4/modules/mint/source/remote"
 	oraclesource "github.com/forbole/bdjuno/v4/modules/oracle/source"
-	localoraclesource "github.com/forbole/bdjuno/v4/modules/oracle/source/local"
 	remoteoraclesource "github.com/forbole/bdjuno/v4/modules/oracle/source/remote"
 	slashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source"
-	localslashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source/local"
 	remoteslashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source/remote"
 	stakingsource "github.com/forbole/bdjuno/v4/modules/staking/source"
-	localstakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/remote"
+	// localstakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/local"
+	// localslashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source/local"
+	// localoraclesource "github.com/forbole/bdjuno/v4/modules/oracle/source/local"
+	// localmintsource "github.com/forbole/bdjuno/v4/modules/mint/source/local"
+	// localgovsource "github.com/forbole/bdjuno/v4/modules/gov/source/local"
+	// localdistrsource "github.com/forbole/bdjuno/v4/modules/distribution/source/local"
+	// localbanksource "github.com/forbole/bdjuno/v4/modules/bank/source/local"
+	// bandapp "github.com/bandprotocol/chain/v2/app"
+	// oraclekeeper "github.com/bandprotocol/chain/v2/x/oracle/keeper"
+	// stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+	// "github.com/cosmos/cosmos-sdk/simapp"
+	// "github.com/cometbft/cometbft/libs/log"
 )
 
 type Sources struct {
@@ -61,57 +60,57 @@ func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConf
 	case *remote.Details:
 		return buildRemoteSources(cfg)
 	case *local.Details:
-		return buildLocalSources(cfg, encodingConfig)
+		return nil, fmt.Errorf("local mode is currently not supported")
 
 	default:
 		return nil, fmt.Errorf("invalid configuration type: %T", cfg)
 	}
 }
 
-func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig) (*Sources, error) {
-	source, err := local.NewSource(cfg.Home, encodingConfig)
-	if err != nil {
-		return nil, err
-	}
+// func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig) (*Sources, error) {
+// 	source, err := local.NewSource(cfg.Home, encodingConfig)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	app := bandapp.NewBandApp(
-		log.NewNopLogger(), source.StoreDB, nil, false, map[int64]bool{}, cfg.Home, 0,
-		bandapp.MakeEncodingConfig(), simapp.EmptyAppOptions{}, false, 0,
-	)
+// 	app := bandapp.NewBandApp(
+// 		log.NewNopLogger(), source.StoreDB, nil, false, map[int64]bool{}, cfg.Home, 0,
+// 		bandapp.MakeEncodingConfig(), simapp.EmptyAppOptions{}, false, 0,
+// 	)
 
-	sources := &Sources{
-		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
-		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
-		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
-		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
-		OracleSource:   localoraclesource.NewSource(source, oraclekeeper.Querier{Keeper: app.OracleKeeper}),
-		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
-		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
-	}
+// 	sources := &Sources{
+// 		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
+// 		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
+// 		GovSource:      localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
+// 		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
+// 		OracleSource:   localoraclesource.NewSource(source, oraclekeeper.Querier{Keeper: app.OracleKeeper}),
+// 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
+// 		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
+// 	}
 
-	// Mount and initialize the stores
-	err = source.MountKVStores(app, "keys")
-	if err != nil {
-		return nil, err
-	}
+// 	// Mount and initialize the stores
+// 	err = source.MountKVStores(app, "keys")
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	err = source.MountTransientStores(app, "tkeys")
-	if err != nil {
-		return nil, err
-	}
+// 	err = source.MountTransientStores(app, "tkeys")
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	err = source.MountMemoryStores(app, "memKeys")
-	if err != nil {
-		return nil, err
-	}
+// 	err = source.MountMemoryStores(app, "memKeys")
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	err = source.InitStores()
-	if err != nil {
-		return nil, err
-	}
+// 	err = source.InitStores()
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return sources, nil
-}
+// 	return sources, nil
+// }
 
 func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 	source, err := remote.NewSource(cfg.GRPC)
