@@ -6,7 +6,7 @@ require (
 	github.com/AssetMantle/node v1.0.0
 	github.com/cometbft/cometbft v0.37.2
 	github.com/cosmos/cosmos-sdk v0.45.16
-	github.com/forbole/juno/v4 v4.2.1-0.20230704040123-a274ebda943e
+	github.com/forbole/juno/v4 v4.2.1-0.20231227090829-9e0702ab304f
 	github.com/go-co-op/gocron v1.19.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
