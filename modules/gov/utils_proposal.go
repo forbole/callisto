@@ -22,7 +22,7 @@ import (
 
 	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
 
-	inflationtypes "github.com/evmos/evmos/v13/x/inflation/types"
+	inflationtypes "github.com/evmos/evmos/v15/x/inflation/types"
 )
 
 // UpdateProposalStatus queries the latest details of given proposal ID, updates it's status
