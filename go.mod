@@ -5,10 +5,10 @@ go 1.20
 require (
 	github.com/cometbft/cometbft v0.37.2
 	github.com/cosmos/cosmos-sdk v0.45.17
-	github.com/forbole/juno/v4 v4.2.1-0.20230704040123-a274ebda943e
+	github.com/forbole/juno/v4 v4.2.1-0.20231227090829-9e0702ab304f
 	github.com/go-co-op/gocron v1.28.2
 	github.com/gogo/protobuf v1.3.3
-	github.com/jackalLabs/canine-chain/v3 v3.0.2
+	github.com/jackalLabs/canine-chain/v3 v3.0.4
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.9
 	github.com/pelletier/go-toml v1.9.5
