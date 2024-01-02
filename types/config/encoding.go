@@ -1,7 +1,8 @@
 package config
 
 import (
-	"github.com/cosmos/cosmos-sdk/simapp/params"
+	"cosmossdk.io/simapp/params"
+	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	ethermint "github.com/evmos/evmos/v13/encoding"
 	evmtypes "github.com/evmos/evmos/v13/x/evm/types"

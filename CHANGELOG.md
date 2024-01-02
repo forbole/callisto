@@ -1,11 +1,17 @@
 ## Unreleased
-### Changes
+- ([\#610](https://github.com/forbole/bdjuno/pull/610)) Add support for gov `v1` proposals
+- ([\#652](https://github.com/forbole/bdjuno/pull/652)) Update gov module parsing 
 
 #### Evmos Gov Module
 - ([\#519](https://github.com/forbole/bdjuno/pull/519)) Upgrade evmos version to `v10.0.0`, update proposals parsing to correctly parse `v1` gov module proposals details
 
 #### CI
 - ([\#508](https://github.com/forbole/bdjuno/pull/508)) Upgrade workflow golangci version to v1.50.1
+## Version v4.0.0
+## Notes
+This version is thought to be used with Cosmos SDK `v0.47.x`.
+
+### Changes
 
 #### Parse Command
 - ([\#492](https://github.com/forbole/bdjuno/pull/492)) Add parse command for periodic tasks: `x/bank` total supply, `x/distribution` community pool, `x/mint` inflation, `pricefeed` token price and price history, `x/staking` staking pool
@@ -16,7 +22,7 @@
 #### Staking Module
 - ([\#443](https://github.com/forbole/bdjuno/pull/443)) Remove tombstone status from staking module(already stored in slashing module)
 - ([\#455](https://github.com/forbole/bdjuno/pull/455)) Added `unbonding_tokens` and `staked_not_bonded_tokens` values to staking pool table
-- ([\#536](https://github.com/forbole/bdjuno/pull/536) Fix `PoolSnapshot` tokens type from  `sdk.Int` to `sdkmath.Int`
+- ([\#536](https://github.com/forbole/bdjuno/pull/536)) Fix `PoolSnapshot` tokens type from  `sdk.Int` to `sdkmath.Int`
 
 #### Gov Module
 - ([\#461](https://github.com/forbole/bdjuno/pull/461)) Parse `x/gov` genesis with `genesisDoc.InitialHeight` instead of the hard-coded height 1
@@ -33,7 +39,8 @@
 - ([\#491](https://github.com/forbole/bdjuno/pull/491)) Add host address to Hasura actions
 
 ### Dependencies
-- ([\#462](https://github.com/forbole/bdjuno/pull/462)) Updated Juno to `v3.4.0`
+- ([\#542](https://github.com/forbole/bdjuno/pull/542)) Updated Juno to `v5.1.0`
+
 
 ## Version v3.2.0
 ### Changes

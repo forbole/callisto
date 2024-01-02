@@ -4,19 +4,17 @@ import (
 	"encoding/hex"
 	"fmt"
 	"strconv"
-	"time"
 
-	modulestypes "github.com/forbole/bdjuno/v4/modules/types"
 	"github.com/rs/zerolog/log"
 
+	modulestypes "github.com/forbole/bdjuno/v4/modules/types"
+
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
-	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
-	"github.com/forbole/juno/v4/types/config"
+	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
+	"github.com/forbole/juno/v5/parser"
+	"github.com/forbole/juno/v5/types/config"
 	"github.com/spf13/cobra"
 
-	"github.com/forbole/juno/v4/parser"
-
-	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules/distribution"
 	"github.com/forbole/bdjuno/v4/modules/gov"
@@ -60,7 +58,7 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			stakingModule := staking.NewModule(sources.StakingSource, parseCtx.EncodingConfig.Codec, db)
 
 			// Build the gov module
-			govModule := gov.NewModule(sources.GovSource, nil, distrModule, inflationModule, mintModule, slashingModule, stakingModule, parseCtx.EncodingConfig.Codec, db)
+			govModule := gov.NewModule(sources.GovSource, distrModule, inflationModule, mintModule, slashingModule, stakingModule, parseCtx.EncodingConfig.Codec, db)
 
 			err = refreshProposalDetails(parseCtx, proposalID, govModule)
 			if err != nil {
@@ -83,7 +81,17 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				return fmt.Errorf("error while getting chain latest block height: %s", err)
 			}
 
-			err = govModule.UpdateProposal(height, time.Now(), proposalID)
+			err = govModule.UpdateProposalStatus(height, proposalID)
+			if err != nil {
+				return err
+			}
+
+			err = govModule.UpdateProposalTallyResult(proposalID, height)
+			if err != nil {
+				return err
+			}
+
+			err = govModule.UpdateProposalStakingPoolSnapshot(height, proposalID)
 			if err != nil {
 				return err
 			}
@@ -119,7 +127,7 @@ func refreshProposalDetails(parseCtx *parser.Context, proposalID uint64, govModu
 
 	// Handle the MsgSubmitProposal messages
 	for index, msg := range tx.GetMsgs() {
-		if _, ok := msg.(*govtypesv1beta1.MsgSubmitProposal); !ok {
+		if _, ok := msg.(*govtypesv1.MsgSubmitProposal); !ok {
 			continue
 		}
 
@@ -182,13 +190,23 @@ func refreshProposalVotes(parseCtx *parser.Context, proposalID uint64, govModule
 
 		// Handle the MsgVote messages
 		for index, msg := range junoTx.GetMsgs() {
-			if _, ok := msg.(*govtypesv1.MsgVote); !ok {
+			if msgVote, ok := msg.(*govtypesv1.MsgVote); !ok {
 				continue
-			}
-
-			err = govModule.HandleMsg(index, msg, junoTx)
-			if err != nil {
-				return fmt.Errorf("error while handling MsgVote: %s", err)
+			} else {
+				// check if requested proposal ID is the same as proposal ID returned
+				// from the msg as some txs may contain multiple MsgVote msgs
+				// for different proposals which can cause error if one of the proposals
+				// info is not stored in database
+				if proposalID == msgVote.ProposalId {
+					err = govModule.HandleMsg(index, msg, junoTx)
+					if err != nil {
+						return fmt.Errorf("error while handling MsgVote: %s", err)
+					}
+				} else {
+					// skip votes for proposals with IDs
+					// different than requested in the query
+					continue
+				}
 			}
 		}
 	}
