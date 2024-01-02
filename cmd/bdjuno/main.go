@@ -16,7 +16,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules"
-	gitopiaapp "github.com/gitopia/gitopia/v2/app"
+	gitopiaapp "github.com/gitopia/gitopia/v3/app"
 )
 
 func main() {
