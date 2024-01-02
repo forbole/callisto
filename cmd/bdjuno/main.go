@@ -2,11 +2,11 @@ package main
 
 import (
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/forbole/juno/v4/cmd"
-	initcmd "github.com/forbole/juno/v4/cmd/init"
-	parsetypes "github.com/forbole/juno/v4/cmd/parse/types"
-	startcmd "github.com/forbole/juno/v4/cmd/start"
-	"github.com/forbole/juno/v4/modules/messages"
+	"github.com/forbole/juno/v5/cmd"
+	initcmd "github.com/forbole/juno/v5/cmd/init"
+	parsetypes "github.com/forbole/juno/v5/cmd/parse/types"
+	startcmd "github.com/forbole/juno/v5/cmd/start"
+	"github.com/forbole/juno/v5/modules/messages"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
 	migratecmd "github.com/forbole/bdjuno/v4/cmd/migrate"
@@ -14,9 +14,9 @@ import (
 
 	"github.com/forbole/bdjuno/v4/types/config"
 
+	humansaiapp "github.com/MonCatCat/humans/app"
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules"
-	humansaiapp "github.com/MonCatCat/humans/app"
 )
 
 func main() {
