@@ -2,10 +2,6 @@ package types
 
 import (
 	"fmt"
-	"os"
-
-	"github.com/cosmos/cosmos-sdk/simapp"
-	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/forbole/juno/v4/node/remote"
@@ -14,41 +10,29 @@ import (
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
-	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	liquidstakingkeeper "github.com/crescent-network/crescent/v5/x/liquidstaking/keeper"
 	liquidstakingtypes "github.com/crescent-network/crescent/v5/x/liquidstaking/types"
-	lpfarmkeeper "github.com/crescent-network/crescent/v5/x/lpfarm/keeper"
 	lpfarmtypes "github.com/crescent-network/crescent/v5/x/lpfarm/types"
 	creminttypes "github.com/crescent-network/crescent/v5/x/mint/types"
 	"github.com/forbole/juno/v4/node/local"
 
 	nodeconfig "github.com/forbole/juno/v4/node/config"
 
-	crescentapp "github.com/crescent-network/crescent/v5/app"
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
-	localbanksource "github.com/forbole/bdjuno/v4/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"
 	distrsource "github.com/forbole/bdjuno/v4/modules/distribution/source"
-	localdistrsource "github.com/forbole/bdjuno/v4/modules/distribution/source/local"
 	remotedistrsource "github.com/forbole/bdjuno/v4/modules/distribution/source/remote"
 	govsource "github.com/forbole/bdjuno/v4/modules/gov/source"
-	localgovsource "github.com/forbole/bdjuno/v4/modules/gov/source/local"
 	remotegovsource "github.com/forbole/bdjuno/v4/modules/gov/source/remote"
 	liquidstakingsource "github.com/forbole/bdjuno/v4/modules/liquidstaking/source"
-	localliquidstakingsource "github.com/forbole/bdjuno/v4/modules/liquidstaking/source/local"
 	remotesliquidstakingsource "github.com/forbole/bdjuno/v4/modules/liquidstaking/source/remote"
 	lpfarmsource "github.com/forbole/bdjuno/v4/modules/lpfarm/source"
-	locallpfarmsource "github.com/forbole/bdjuno/v4/modules/lpfarm/source/local"
 	remotelpfarmsource "github.com/forbole/bdjuno/v4/modules/lpfarm/source/remote"
 	mintsource "github.com/forbole/bdjuno/v4/modules/mint/source"
-	localmintsource "github.com/forbole/bdjuno/v4/modules/mint/source/local"
 	remotemintsource "github.com/forbole/bdjuno/v4/modules/mint/source/remote"
 	slashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source"
-	localslashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source/local"
 	remoteslashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source/remote"
 	stakingsource "github.com/forbole/bdjuno/v4/modules/staking/source"
-	localstakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/remote"
 )
 
@@ -68,61 +52,61 @@ func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConf
 	case *remote.Details:
 		return buildRemoteSources(cfg)
 	case *local.Details:
-		return buildLocalSources(cfg, encodingConfig)
+		return nil, fmt.Errorf("local mode is currently not supported")
 
 	default:
 		return nil, fmt.Errorf("invalid configuration type: %T", cfg)
 	}
 }
 
-func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig) (*Sources, error) {
-	source, err := local.NewSource(cfg.Home, encodingConfig)
-	if err != nil {
-		return nil, err
-	}
+// func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig) (*Sources, error) {
+// 	source, err := local.NewSource(cfg.Home, encodingConfig)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	app := simapp.NewSimApp(
-		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
-		cfg.Home, 0, simapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
-	)
+// 	app := simapp.NewSimApp(
+// 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
+// 		cfg.Home, 0, simapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
+// 	)
 
-	crescentApp := crescentapp.NewApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
-		cfg.Home, 0, crescentapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{})
+// 	crescentApp := crescentapp.NewApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
+// 		cfg.Home, 0, crescentapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{})
 
-	sources := &Sources{
-		BankSource:          localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
-		DistrSource:         localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
-		GovSource:           localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
-		LiquidStakingSource: localliquidstakingsource.NewSource(source, liquidstakingkeeper.Querier{Keeper: crescentApp.LiquidStakingKeeper}),
-		LPFarmSource:        locallpfarmsource.NewSource(source, lpfarmkeeper.Querier{Keeper: crescentApp.LPFarmKeeper}),
-		MintSource:          localmintsource.NewSource(source, creminttypes.QueryServer(crescentApp.MintKeeper)),
-		SlashingSource:      localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
-		StakingSource:       localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
-	}
+// 	sources := &Sources{
+// 		BankSource:          localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
+// 		DistrSource:         localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
+// 		GovSource:           localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
+// 		LiquidStakingSource: localliquidstakingsource.NewSource(source, liquidstakingkeeper.Querier{Keeper: crescentApp.LiquidStakingKeeper}),
+// 		LPFarmSource:        locallpfarmsource.NewSource(source, lpfarmkeeper.Querier{Keeper: crescentApp.LPFarmKeeper}),
+// 		MintSource:          localmintsource.NewSource(source, creminttypes.QueryServer(crescentApp.MintKeeper)),
+// 		SlashingSource:      localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
+// 		StakingSource:       localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
+// 	}
 
-	// Mount and initialize the stores
-	err = source.MountKVStores(app, "keys")
-	if err != nil {
-		return nil, err
-	}
+// 	// Mount and initialize the stores
+// 	err = source.MountKVStores(app, "keys")
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	err = source.MountTransientStores(app, "tkeys")
-	if err != nil {
-		return nil, err
-	}
+// 	err = source.MountTransientStores(app, "tkeys")
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	err = source.MountMemoryStores(app, "memKeys")
-	if err != nil {
-		return nil, err
-	}
+// 	err = source.MountMemoryStores(app, "memKeys")
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	err = source.InitStores()
-	if err != nil {
-		return nil, err
-	}
+// 	err = source.InitStores()
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return sources, nil
-}
+// 	return sources, nil
+// }
 
 func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 	source, err := remote.NewSource(cfg.GRPC)
