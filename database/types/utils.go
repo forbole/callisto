@@ -1,5 +1,10 @@
 package types
 
+import (
+	"database/sql"
+	"time"
+)
+
 // ModuleRow represents a single row inside the modules table
 type ModuleRow struct {
 	Module string `db:"module_name"`
@@ -38,4 +43,25 @@ func (v ModuleRows) Equal(w *ModuleRows) bool {
 		}
 	}
 	return true
+}
+
+func TimeToNullTime(t *time.Time) sql.NullTime {
+	if t == nil {
+		return sql.NullTime{}
+	}
+	return sql.NullTime{
+		Time:  *t,
+		Valid: true,
+	}
+}
+
+func NullTimeToTime(t sql.NullTime) *time.Time {
+	if !t.Valid {
+		return nil
+	}
+	return &t.Time
+}
+
+func AreNullTimesEqual(first sql.NullTime, second sql.NullTime) bool {
+	return first.Valid == second.Valid && first.Time.Equal(second.Time)
 }

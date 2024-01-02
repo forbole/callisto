@@ -2,19 +2,19 @@ package main
 
 import (
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/forbole/juno/v4/cmd"
-	initcmd "github.com/forbole/juno/v4/cmd/init"
-	parsetypes "github.com/forbole/juno/v4/cmd/parse/types"
-	startcmd "github.com/forbole/juno/v4/cmd/start"
-	"github.com/forbole/juno/v4/modules/messages"
+	"github.com/forbole/juno/v5/cmd"
+	initcmd "github.com/forbole/juno/v5/cmd/init"
+	parsetypes "github.com/forbole/juno/v5/cmd/parse/types"
+	startcmd "github.com/forbole/juno/v5/cmd/start"
+	"github.com/forbole/juno/v5/modules/messages"
 
 	migratecmd "github.com/forbole/bdjuno/v4/cmd/migrate"
 	parsecmd "github.com/forbole/bdjuno/v4/cmd/parse"
 
 	"github.com/forbole/bdjuno/v4/types/config"
 
-	coreumapp "github.com/CoreumFoundation/coreum/v2/app"
-	"github.com/cosmos/cosmos-sdk/simapp"
+	coreumapp "github.com/CoreumFoundation/coreum/v3/app"
+
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules"
 )
@@ -55,7 +55,6 @@ func main() {
 // This should be edited by custom implementations if needed.
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
-		simapp.ModuleBasics,
 		coreumapp.ModuleBasics,
 	}
 }

@@ -1,12 +1,12 @@
 package source
 
-import govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+import (
+	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+)
 
 type Source interface {
-	Proposal(height int64, id uint64) (govtypes.Proposal, error)
-	ProposalDeposit(height int64, id uint64, depositor string) (govtypes.Deposit, error)
-	TallyResult(height int64, proposalID uint64) (govtypes.TallyResult, error)
-	DepositParams(height int64) (govtypes.DepositParams, error)
-	VotingParams(height int64) (govtypes.VotingParams, error)
-	TallyParams(height int64) (govtypes.TallyParams, error)
+	Proposal(height int64, id uint64) (*govtypesv1.Proposal, error)
+	ProposalDeposit(height int64, id uint64, depositor string) (*govtypesv1.Deposit, error)
+	TallyResult(height int64, proposalID uint64) (*govtypesv1.TallyResult, error)
+	Params(height int64) (*govtypesv1.Params, error)
 }

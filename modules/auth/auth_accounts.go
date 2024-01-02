@@ -50,6 +50,9 @@ func GetAccounts(height int64, addresses []string) []types.Account {
 // RefreshAccounts takes the given addresses and for each one queries the chain
 // retrieving the account data and stores it inside the database.
 func (m *Module) RefreshAccounts(height int64, addresses []string) error {
+	if len(addresses) == 0 {
+		return nil
+	}
 	accounts := GetAccounts(height, addresses)
 	return m.db.SaveAccounts(accounts)
 }
