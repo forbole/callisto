@@ -1,15 +1,15 @@
 package config
 
 import (
-	"cosmossdk.io/simapp/params"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	junoparams "github.com/forbole/juno/v5/types/params"
 )
 
 // MakeEncodingConfig creates an EncodingConfig to properly handle all the messages
-func MakeEncodingConfig(managers []module.BasicManager) func() params.EncodingConfig {
-	return func() params.EncodingConfig {
-		encodingConfig := params.MakeTestEncodingConfig()
+func MakeEncodingConfig(managers []module.BasicManager) func() junoparams.EncodingConfig {
+	return func() junoparams.EncodingConfig {
+		encodingConfig := junoparams.MakeTestEncodingConfig()
 		std.RegisterLegacyAminoCodec(encodingConfig.Amino)
 		std.RegisterInterfaces(encodingConfig.InterfaceRegistry)
 		manager := mergeBasicManagers(managers)

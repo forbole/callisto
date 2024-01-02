@@ -4,8 +4,8 @@ go 1.20
 
 require (
 	cosmossdk.io/math v1.2.0
-	github.com/CoreumFoundation/coreum/v2 v2.0.2
-	github.com/CosmWasm/wasmd v0.30.0
+	github.com/CoreumFoundation/coreum/v3 v3.0.2
+	github.com/CosmWasm/wasmd v0.44.0
 	github.com/cometbft/cometbft v0.37.2
 	github.com/cosmos/cosmos-sdk v0.47.5
 	github.com/cosmos/gogoproto v1.4.10

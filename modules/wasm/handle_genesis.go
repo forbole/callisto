@@ -37,11 +37,6 @@ func (m *Module) HandleGenesis(doc *cbfttypes.GenesisDoc, appState map[string]js
 		return fmt.Errorf("error while saving genesis wasm contracts: %s", err)
 	}
 
-	err = m.SaveGenesisMsgs(genState.GenMsgs, doc)
-	if err != nil {
-		return fmt.Errorf("error while saving genesis wasm execute contracts: %s", err)
-	}
-
 	return nil
 }
 
@@ -115,33 +110,4 @@ func (m *Module) SaveGenesisContracts(contracts []wasmtypes.Contract, doc *cbftt
 	}
 
 	return nil
-}
-
-func (m *Module) SaveGenesisMsgs(msgs []wasmtypes.GenesisState_GenMsgs, doc *cbfttypes.GenesisDoc) error {
-	log.Debug().Str("module", "wasm").Str("operation", "genesis messages").
-		Int("message counts", len(msgs)).Msg("parsing genesis")
-
-	var genesisExecuteContracts = []types.WasmExecuteContract{}
-	for _, msg := range msgs {
-		// Handle genesis execute contract messages
-		if msgExecuteContract, ok := msg.Sum.(*wasmtypes.GenesisState_GenMsgs_ExecuteContract); ok {
-			execution := msgExecuteContract.ExecuteContract
-			executeContract := types.NewWasmExecuteContract(
-				execution.Sender,
-				execution.Contract,
-				execution.Msg,
-				execution.Funds,
-				"",
-				doc.GenesisTime,
-				doc.InitialHeight,
-			)
-			genesisExecuteContracts = append(genesisExecuteContracts, executeContract)
-		}
-	}
-
-	if len(genesisExecuteContracts) == 0 {
-		return nil
-	}
-
-	return m.db.SaveWasmExecuteContracts(genesisExecuteContracts)
 }
