@@ -6,8 +6,8 @@ import (
 	modulestypes "github.com/forbole/bdjuno/v4/modules/types"
 	"github.com/forbole/bdjuno/v4/modules/wasm"
 
-	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
-	"github.com/forbole/juno/v4/types/config"
+	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
+	"github.com/forbole/juno/v5/types/config"
 	"github.com/spf13/cobra"
 
 	"github.com/forbole/bdjuno/v4/database"
@@ -37,7 +37,7 @@ func codeCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				return err
 			}
 
-			wasmModule := wasm.NewModule(sources.WasmSource, parseCtx.EncodingConfig.Marshaler, db)
+			wasmModule := wasm.NewModule(sources.WasmSource, parseCtx.EncodingConfig.Codec, db)
 
 			wasmCodes, err := wasmModule.GetWasmCodes(height)
 			if err != nil {
