@@ -5,7 +5,7 @@ import (
 	types "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	markersource "github.com/forbole/bdjuno/v4/modules/marker/source"
-	"github.com/forbole/juno/v4/node/remote"
+	"github.com/forbole/juno/v5/node/remote"
 )
 
 var (

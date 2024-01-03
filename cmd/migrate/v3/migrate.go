@@ -6,12 +6,12 @@ import (
 
 	"github.com/forbole/bdjuno/v4/modules/actions"
 
-	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
+	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
 
 	"gopkg.in/yaml.v3"
 
-	junov3 "github.com/forbole/juno/v4/cmd/migrate/v4"
-	"github.com/forbole/juno/v4/types/config"
+	junov3 "github.com/forbole/juno/v5/cmd/migrate/v4"
+	"github.com/forbole/juno/v5/types/config"
 )
 
 // RunMigration runs the migrations from v2 to v3
