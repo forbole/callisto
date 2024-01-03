@@ -1,7 +1,7 @@
 package database_test
 
 import (
-	"io/ioutil"
+	"os"
 	"path"
 	"path/filepath"
 	"regexp"
@@ -9,21 +9,21 @@ import (
 	"testing"
 	"time"
 
-	dbconfig "github.com/forbole/juno/v4/database/config"
-	"github.com/forbole/juno/v4/logging"
+	dbconfig "github.com/forbole/juno/v5/database/config"
+	"github.com/forbole/juno/v5/logging"
 
-	junodb "github.com/forbole/juno/v4/database"
+	junodb "github.com/forbole/juno/v5/database"
 
 	"github.com/forbole/bdjuno/v4/database"
 
-	juno "github.com/forbole/juno/v4/types"
+	juno "github.com/forbole/juno/v5/types"
 
 	tmversion "github.com/cometbft/cometbft/proto/tendermint/version"
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 	tmtypes "github.com/cometbft/cometbft/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/cosmos/cosmos-sdk/simapp"
+	simappparams "cosmossdk.io/simapp/params"
 	"github.com/stretchr/testify/suite"
 
 	_ "github.com/proullon/ramsql/driver"
@@ -41,11 +41,15 @@ type DbTestSuite struct {
 
 func (suite *DbTestSuite) SetupTest() {
 	// Create the codec
-	codec := simapp.MakeTestEncodingConfig()
+	codec := simappparams.MakeTestEncodingConfig()
 
 	// Build the database
 	dbCfg := dbconfig.NewDatabaseConfig(
 		"postgresql://bdjuno:password@localhost:6433/bdjuno?sslmode=disable&search_path=public",
+		"",
+		"",
+		"",
+		"",
 		-1,
 		-1,
 		100000,
@@ -66,11 +70,11 @@ func (suite *DbTestSuite) SetupTest() {
 	suite.Require().NoError(err)
 
 	dirPath := path.Join(".", "schema")
-	dir, err := ioutil.ReadDir(dirPath)
+	dir, err := os.ReadDir(dirPath)
 	suite.Require().NoError(err)
 
 	for _, fileInfo := range dir {
-		file, err := ioutil.ReadFile(filepath.Join(dirPath, fileInfo.Name()))
+		file, err := os.ReadFile(filepath.Join(dirPath, fileInfo.Name()))
 		suite.Require().NoError(err)
 
 		commentsRegExp := regexp.MustCompile(`/\*.*\*/`)

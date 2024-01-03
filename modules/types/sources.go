@@ -2,9 +2,12 @@ package types
 
 import (
 	"fmt"
+	"os"
 
-	"github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/forbole/juno/v4/node/remote"
+	"cosmossdk.io/simapp"
+	"cosmossdk.io/simapp/params"
+	"github.com/cometbft/cometbft/libs/log"
+	"github.com/forbole/juno/v5/node/remote"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -12,6 +15,7 @@ import (
 	providertypes "github.com/cosmos/interchain-security/x/ccv/provider/types"
 	remotewasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source/remote"
 	"github.com/forbole/juno/v4/node/local"
+	nodeconfig "github.com/forbole/juno/v5/node/config"
 
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
 	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"
@@ -21,6 +25,8 @@ import (
 	remoteslashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source/remote"
 	wasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source"
 	nodeconfig "github.com/forbole/juno/v4/node/config"
+	neutronapp "github.com/neutron-org/neutron/app"
+
 )
 
 type Sources struct {
@@ -39,6 +45,47 @@ func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConf
 	default:
 		return nil, fmt.Errorf("invalid configuration type: %T", cfg)
 	}
+}
+
+func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig) (*Sources, error) {
+	source, err := local.NewSource(cfg.Home, encodingConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	app := neutronapp.New(
+		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, nil, nil,
+	)
+
+	sources := &Sources{
+		BankSource: localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
+		ProviderSource: localprovidersource.NewSource(source, providertypes.QueryServer(app.ProviderKeeper)),
+		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
+		WasmSource: localwasmsource.NewSource(source, wasmtypes.QueryServer(app.WasmKeeper)),
+	}
+
+	// Mount and initialize the stores
+	err = source.MountKVStores(app, "keys")
+	if err != nil {
+		return nil, err
+	}
+
+	err = source.MountTransientStores(app, "tkeys")
+	if err != nil {
+		return nil, err
+	}
+
+	err = source.MountMemoryStores(app, "memKeys")
+	if err != nil {
+		return nil, err
+	}
+
+	err = source.InitStores()
+	if err != nil {
+		return nil, err
+	}
+
+	return sources, nil
 }
 
 func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
