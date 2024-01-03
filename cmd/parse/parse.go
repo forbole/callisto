@@ -1,8 +1,14 @@
 package parse
 
 import (
-	parse "github.com/forbole/juno/v4/cmd/parse/types"
+	parse "github.com/forbole/juno/v5/cmd/parse/types"
 	"github.com/spf13/cobra"
+
+	parseblocks "github.com/forbole/juno/v5/cmd/parse/blocks"
+
+	parsegenesis "github.com/forbole/juno/v5/cmd/parse/genesis"
+
+	parsetransaction "github.com/forbole/juno/v5/cmd/parse/transactions"
 
 	parseauth "github.com/forbole/bdjuno/v4/cmd/parse/auth"
 	parsebank "github.com/forbole/bdjuno/v4/cmd/parse/bank"
@@ -14,9 +20,6 @@ import (
 	parsepricefeed "github.com/forbole/bdjuno/v4/cmd/parse/pricefeed"
 	parsestakers "github.com/forbole/bdjuno/v4/cmd/parse/stakers"
 	parsestaking "github.com/forbole/bdjuno/v4/cmd/parse/staking"
-	parseblocks "github.com/forbole/juno/v4/cmd/parse/blocks"
-	parsegenesis "github.com/forbole/juno/v4/cmd/parse/genesis"
-	parsetransaction "github.com/forbole/juno/v4/cmd/parse/transactions"
 )
 
 // NewParseCmd returns the Cobra command allowing to parse some chain data without having to re-sync the whole database

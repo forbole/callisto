@@ -31,12 +31,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	}
 
 	// Save the params
-	err = m.db.SaveGovParams(types.NewGovParams(
-		types.NewVotingParams(genState.VotingParams),
-		types.NewDepositParam(genState.DepositParams),
-		types.NewTallyParams(genState.TallyParams),
-		doc.InitialHeight,
-	))
+	err = m.db.SaveGovParams(types.NewGovParams(genState.Params, doc.InitialHeight))
 	if err != nil {
 		return fmt.Errorf("error while storing genesis governance params: %s", err)
 	}
@@ -54,11 +49,13 @@ func (m *Module) saveGenesisProposals(slice govtypesv1.Proposals, genDoc *tmtype
 		// Since it's not possible to get the proposer, set it to nil
 		proposals[index] = types.NewProposal(
 			proposal.Id,
-			proposal.Messages,
+			proposal.Title,
+			proposal.Summary,
 			proposal.Metadata,
+			proposal.Messages,
 			proposal.Status.String(),
-			proposal.SubmitTime,
-			proposal.DepositEndTime,
+			*proposal.SubmitTime,
+			*proposal.DepositEndTime,
 			proposal.VotingStartTime,
 			proposal.VotingEndTime,
 			"",
@@ -78,6 +75,7 @@ func (m *Module) saveGenesisProposals(slice govtypesv1.Proposals, genDoc *tmtype
 			"",
 			proposal.TotalDeposit,
 			genDoc.GenesisTime,
+			"",
 			genDoc.InitialHeight,
 		)
 	}

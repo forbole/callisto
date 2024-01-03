@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/cosmos/cosmos-sdk/simapp/params"
+	"cosmossdk.io/simapp/params"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/types/module"
 )

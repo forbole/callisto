@@ -65,6 +65,7 @@ select_permissions:
     - voting_end_time
     - proposer_address
     - status
+    - metadata
     - content
     - metadata
     filter: {}

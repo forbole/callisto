@@ -1,35 +1,32 @@
 package types
 
 import (
+	"database/sql"
 	"time"
-
-	"github.com/lib/pq"
 )
 
 // GovParamsRow represents a single row of the "gov_params" table
 type GovParamsRow struct {
-	OneRowID      bool   `db:"one_row_id"`
-	DepositParams string `db:"deposit_params"`
-	VotingParams  string `db:"voting_params"`
-	TallyParams   string `db:"tally_params"`
-	Height        int64  `db:"height"`
+	OneRowID bool   `db:"one_row_id"`
+	Params   string `db:"params"`
+	Height   int64  `db:"height"`
 }
 
 // --------------------------------------------------------------------------------------------------------------------
 
 // ProposalRow represents a single row inside the proposal table
 type ProposalRow struct {
-	Title           string         `db:"title"`
-	Description     string         `db:"description"`
-	Content         pq.StringArray `db:"content"`
-	Metadata        string         `db:"metadata"`
-	ProposalID      uint64         `db:"id"`
-	SubmitTime      time.Time      `db:"submit_time"`
-	DepositEndTime  time.Time      `db:"deposit_end_time"`
-	VotingStartTime time.Time      `db:"voting_start_time"`
-	VotingEndTime   time.Time      `db:"voting_end_time"`
-	Proposer        string         `db:"proposer_address"`
-	Status          string         `db:"status"`
+	Title           string       `db:"title"`
+	Description     string       `db:"description"`
+	Metadata        string       `db:"metadata"`
+	Content         string       `db:"content"`
+	ProposalID      uint64       `db:"id"`
+	SubmitTime      time.Time    `db:"submit_time"`
+	DepositEndTime  time.Time    `db:"deposit_end_time"`
+	VotingStartTime sql.NullTime `db:"voting_start_time"`
+	VotingEndTime   sql.NullTime `db:"voting_end_time"`
+	Proposer        string       `db:"proposer_address"`
+	Status          string       `db:"status"`
 }
 
 // NewProposalRow allows to easily create a new ProposalRow
@@ -37,27 +34,27 @@ func NewProposalRow(
 	proposalID uint64,
 	title string,
 	description string,
-	content pq.StringArray,
 	metadata string,
+	content string,
 	submitTime time.Time,
 	depositEndTime time.Time,
-	votingStartTime time.Time,
-	votingEndTime time.Time,
+	votingStartTime *time.Time,
+	votingEndTime *time.Time,
 	proposer string,
 	status string,
 ) ProposalRow {
 	return ProposalRow{
+		ProposalID:      proposalID,
 		Title:           title,
 		Description:     description,
-		Content:         content,
 		Metadata:        metadata,
-		ProposalID:      proposalID,
+		Content:         content,
+		Status:          status,
 		SubmitTime:      submitTime,
 		DepositEndTime:  depositEndTime,
-		VotingStartTime: votingStartTime,
-		VotingEndTime:   votingEndTime,
+		VotingStartTime: TimeToNullTime(votingStartTime),
+		VotingEndTime:   TimeToNullTime(votingEndTime),
 		Proposer:        proposer,
-		Status:          status,
 	}
 }
 
@@ -65,12 +62,14 @@ func NewProposalRow(
 func (w ProposalRow) Equals(v ProposalRow) bool {
 	return w.Title == v.Title &&
 		w.Description == v.Description &&
+		w.Metadata == v.Metadata &&
+		w.Content == v.Content &&
 		w.ProposalID == v.ProposalID &&
 		w.Metadata == v.Metadata &&
 		w.SubmitTime.Equal(v.SubmitTime) &&
 		w.DepositEndTime.Equal(v.DepositEndTime) &&
-		w.VotingStartTime.Equal(v.VotingStartTime) &&
-		w.VotingEndTime.Equal(v.VotingEndTime) &&
+		AreNullTimesEqual(w.VotingStartTime, v.VotingStartTime) &&
+		AreNullTimesEqual(w.VotingEndTime, v.VotingEndTime) &&
 		w.Proposer == v.Proposer &&
 		w.Status == v.Status
 }
@@ -155,11 +154,12 @@ func (w VoteRow) Equals(v VoteRow) bool {
 
 // DepositRow represents a single row inside the deposit table
 type DepositRow struct {
-	ProposalID int64     `db:"proposal_id"`
-	Depositor  string    `db:"depositor_address"`
-	Amount     DbCoins   `db:"amount"`
-	Timestamp  time.Time `db:"timestamp"`
-	Height     int64     `db:"height"`
+	ProposalID      int64     `db:"proposal_id"`
+	Depositor       string    `db:"depositor_address"`
+	Amount          DbCoins   `db:"amount"`
+	Timestamp       time.Time `db:"timestamp"`
+	TransactionHash string    `db:"transaction_hash"`
+	Height          int64     `db:"height"`
 }
 
 // NewDepositRow allows to easily create a new NewDepositRow
@@ -168,14 +168,16 @@ func NewDepositRow(
 	depositor string,
 	amount DbCoins,
 	timestamp time.Time,
+	transactionHash string,
 	height int64,
 ) DepositRow {
 	return DepositRow{
-		ProposalID: proposalID,
-		Depositor:  depositor,
-		Amount:     amount,
-		Timestamp:  timestamp,
-		Height:     height,
+		ProposalID:      proposalID,
+		Depositor:       depositor,
+		Amount:          amount,
+		Timestamp:       timestamp,
+		TransactionHash: transactionHash,
+		Height:          height,
 	}
 }
 
@@ -185,6 +187,7 @@ func (w DepositRow) Equals(v DepositRow) bool {
 		w.Depositor == v.Depositor &&
 		w.Amount.Equal(&v.Amount) &&
 		w.Timestamp.Equal(v.Timestamp) &&
+		w.TransactionHash == v.TransactionHash &&
 		w.Height == v.Height
 }
 

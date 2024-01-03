@@ -3,9 +3,10 @@ package feegrant
 import (
 	"encoding/hex"
 	"fmt"
+	"sort"
 
-	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
-	"github.com/forbole/juno/v4/types/config"
+	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
+	"github.com/forbole/juno/v5/types/config"
 
 	"github.com/forbole/bdjuno/v4/modules/feegrant"
 	"github.com/forbole/bdjuno/v4/utils"
@@ -13,8 +14,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/forbole/bdjuno/v4/database"
-
-	"sort"
 
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 
