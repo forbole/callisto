@@ -15,7 +15,6 @@ import (
 	parseccv "github.com/forbole/bdjuno/v4/cmd/parse/ccv"
 	parsefeegrant "github.com/forbole/bdjuno/v4/cmd/parse/feegrant"
 	parsepricefeed "github.com/forbole/bdjuno/v4/cmd/parse/pricefeed"
-	parsestaking "github.com/forbole/bdjuno/v4/cmd/parse/staking"
 	parsewasm "github.com/forbole/bdjuno/v4/cmd/parse/wasm"
 )
 

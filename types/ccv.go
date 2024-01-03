@@ -1,9 +1,9 @@
 package types
 
 import (
-	"github.com/cosmos/ibc-go/v4/modules/light-clients/07-tendermint/types"
-	ccvconsumertypes "github.com/cosmos/interchain-security/x/ccv/consumer/types"
-	abcitypes "github.com/tendermint/tendermint/abci/types"
+	types "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
+	ccvconsumertypes "github.com/cosmos/interchain-security/v3/x/ccv/consumer/types"
+	abcitypes "github.com/cometbft/cometbft/abci/types"
 )
 
 // CcvConsumerParams represents the parameters of the ccv consumer module at a given height

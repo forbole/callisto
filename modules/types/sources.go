@@ -4,19 +4,19 @@ import (
 	"fmt"
 	"os"
 
-	"cosmossdk.io/simapp"
-	"cosmossdk.io/simapp/params"
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/forbole/juno/v5/node/remote"
+	params "github.com/forbole/juno/v5/types/params"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
-	providertypes "github.com/cosmos/interchain-security/x/ccv/provider/types"
+	providertypes "github.com/cosmos/interchain-security/v3/x/ccv/provider/types"
 	remotewasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source/remote"
-	"github.com/forbole/juno/v4/node/local"
 	nodeconfig "github.com/forbole/juno/v5/node/config"
+	"github.com/forbole/juno/v5/node/local"
 
+	neutronapp "github.com/MonikaCat/neutron/v2/app"
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
 	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"
 	providersource "github.com/forbole/bdjuno/v4/modules/ccv/provider/source"
@@ -24,9 +24,9 @@ import (
 	slashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source"
 	remoteslashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source/remote"
 	wasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source"
-	nodeconfig "github.com/forbole/juno/v4/node/config"
-	neutronapp "github.com/neutron-org/neutron/app"
 
+	localbanksource "github.com/forbole/bdjuno/v4/modules/bank/source/local"
+	localslashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source/local"
 )
 
 type Sources struct {
@@ -36,7 +36,7 @@ type Sources struct {
 	WasmSource     wasmsource.Source
 }
 
-func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
+func BuildSources(nodeCfg nodeconfig.Config, encodingConfig params.EncodingConfig) (*Sources, error) {
 	switch cfg := nodeCfg.Details.(type) {
 	case *remote.Details:
 		return buildRemoteSources(cfg)
@@ -47,21 +47,20 @@ func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConf
 	}
 }
 
-func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig) (*Sources, error) {
+func buildLocalSources(cfg *local.Details, encodingConfig params.EncodingConfig) (*Sources, error) {
 	source, err := local.NewSource(cfg.Home, encodingConfig)
 	if err != nil {
 		return nil, err
 	}
 
-	app := neutronapp.New(
-		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, nil, nil,
+	app := neutronapp.New(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
+		cfg.Home, 0, neutronapp.MakeEncodingConfig(), nil, nil, nil,
 	)
 
 	sources := &Sources{
-		BankSource: localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
-		ProviderSource: localprovidersource.NewSource(source, providertypes.QueryServer(app.ProviderKeeper)),
+		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
-		WasmSource: localwasmsource.NewSource(source, wasmtypes.QueryServer(app.WasmKeeper)),
+		// WasmSource:     localwasmsource.NewSource(source, wasmtypes.QueryServer(app.WasmKeeper)),
 	}
 
 	// Mount and initialize the stores

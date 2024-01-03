@@ -32,7 +32,7 @@ func ccvValidatorsCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			db := database.Cast(parseCtx.Database)
 
 			// Build the ccv consumer module
-			ccvConsumerModule := consumer.NewModule(sources.ProviderSource, parseCtx.EncodingConfig.Marshaler, db)
+			ccvConsumerModule := consumer.NewModule(sources.ProviderSource, parseCtx.EncodingConfig.Codec, db)
 
 			// Get latest height
 			height, err := parseCtx.Node.LatestHeight()

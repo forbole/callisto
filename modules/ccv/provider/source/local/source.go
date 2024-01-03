@@ -4,9 +4,9 @@ package local
 // 	"fmt"
 
 // 	sdk "github.com/cosmos/cosmos-sdk/types"
-// 	"github.com/forbole/juno/v4/node/local"
+// 	"github.com/forbole/juno/v5/node/local"
 
-// 	providertypes "github.com/cosmos/interchain-security/x/ccv/provider/types"
+// 	providertypes "github.com/cosmos/interchain-security/v3/x/ccv/provider/types"
 
 // 	providersource "github.com/forbole/bdjuno/v4/modules/ccv/provider/source"
 // )

@@ -13,13 +13,10 @@ import (
 
 	"github.com/forbole/bdjuno/v4/types/config"
 
-	"cosmossdk.io/simapp"
-
+	neutronapp "github.com/MonikaCat/neutron/v2/app"
+	gaia "github.com/cosmos/gaia/v11/app"
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules"
-
-	"github.com/cosmos/cosmos-sdk/simapp"
-	neutronapp "github.com/neutron-org/neutron/app"
 )
 
 func main() {
@@ -58,7 +55,7 @@ func main() {
 // This should be edited by custom implementations if needed.
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
-		simapp.ModuleBasics,
+		gaia.ModuleBasics,
 		neutronapp.ModuleBasics,
 	}
 }
