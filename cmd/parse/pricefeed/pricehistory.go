@@ -26,7 +26,7 @@ func priceHistoryCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			db := database.Cast(parseCtx.Database)
 
 			// Build pricefeed module
-			pricefeedModule := pricefeed.NewModule(config.Cfg, parseCtx.EncodingConfig.Marshaler, db)
+			pricefeedModule := pricefeed.NewModule(config.Cfg, parseCtx.EncodingConfig.Codec, db)
 
 			err = pricefeedModule.RunAdditionalOperations()
 			if err != nil {
