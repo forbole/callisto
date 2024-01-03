@@ -2,7 +2,7 @@ package remote
 
 import (
 	globaltypes "github.com/KYVENetwork/chain/x/global/types"
-	"github.com/forbole/juno/v4/node/remote"
+	"github.com/forbole/juno/v5/node/remote"
 
 	globalsource "github.com/forbole/bdjuno/v4/modules/global/source"
 )

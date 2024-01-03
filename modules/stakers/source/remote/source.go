@@ -7,7 +7,7 @@ import (
 	stakerstypes "github.com/KYVENetwork/chain/x/stakers/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	stakerssource "github.com/forbole/bdjuno/v4/modules/stakers/source"
-	"github.com/forbole/juno/v4/node/remote"
+	"github.com/forbole/juno/v5/node/remote"
 )
 
 var (

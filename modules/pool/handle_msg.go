@@ -5,7 +5,7 @@ import (
 
 	pooltypes "github.com/KYVENetwork/chain/x/pool/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	juno "github.com/forbole/juno/v4/types"
+	juno "github.com/forbole/juno/v5/types"
 )
 
 // HandleMsg implements modules.MessageModule

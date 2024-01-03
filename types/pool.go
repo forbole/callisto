@@ -17,12 +17,10 @@ type PoolList struct {
 	CurrentIndex             uint64
 	TotalBundles             uint64
 	UploadInterval           uint64
-	OperatingCost            uint64
+	InflationShareWeight     uint64
 	MinDelegation            uint64
 	MaxBundleSize            uint64
 	Disabled                 bool
-	Funders                  []*pooltypes.Funder
-	TotalFunds               uint64
 	Protocol                 *pooltypes.Protocol
 	UpgradePlan              *pooltypes.UpgradePlan
 	CurrentStorageProviderID uint32
@@ -43,12 +41,10 @@ func NewPoolList(
 	currentIndex uint64,
 	totalBundles uint64,
 	uploadInterval uint64,
-	operatingCost uint64,
+	inflationShareWeight uint64,
 	minDelegation uint64,
 	maxBundleSize uint64,
 	disabled bool,
-	funders []*pooltypes.Funder,
-	totalFunds uint64,
 	protocol *pooltypes.Protocol,
 	upgradePlan *pooltypes.UpgradePlan,
 	currentStorageProviderID uint32,
@@ -66,12 +62,10 @@ func NewPoolList(
 		CurrentIndex:             currentIndex,
 		TotalBundles:             totalBundles,
 		UploadInterval:           uploadInterval,
-		OperatingCost:            operatingCost,
+		InflationShareWeight:     inflationShareWeight,
 		MinDelegation:            minDelegation,
 		MaxBundleSize:            maxBundleSize,
 		Disabled:                 disabled,
-		Funders:                  funders,
-		TotalFunds:               totalFunds,
 		Protocol:                 protocol,
 		UpgradePlan:              upgradePlan,
 		CurrentStorageProviderID: currentStorageProviderID,

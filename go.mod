@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	cosmossdk.io/math v1.2.0
-	github.com/KYVENetwork/chain v1.2.2
+	github.com/KYVENetwork/chain v1.4.0
 	github.com/cometbft/cometbft v0.37.2
 	github.com/cosmos/cosmos-sdk v0.47.5
 	github.com/cosmos/gogoproto v1.4.10
@@ -330,8 +330,8 @@ require (
 )
 
 replace (
-	github.com/cosmos/cosmos-sdk => github.com/KYVENetwork/cosmos-sdk v0.46.13-kyve
+	github.com/cosmos/cosmos-sdk => github.com/KYVENetwork/cosmos-sdk v0.47.6-kyve-rc0
+	github.com/cosmos/gogoproto => github.com/cosmos/gogoproto v1.4.8
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
-	github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.34.28
 )

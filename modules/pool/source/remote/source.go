@@ -4,7 +4,7 @@ import (
 	poolquerytypes "github.com/KYVENetwork/chain/x/query/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 
-	"github.com/forbole/juno/v4/node/remote"
+	"github.com/forbole/juno/v5/node/remote"
 
 	poolsource "github.com/forbole/bdjuno/v4/modules/pool/source"
 )

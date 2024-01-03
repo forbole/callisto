@@ -24,7 +24,7 @@ import (
 	tmtypes "github.com/cometbft/cometbft/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	simappparams "cosmossdk.io/simapp/params"
+	params "github.com/forbole/juno/v5/types/params"
 	"github.com/stretchr/testify/suite"
 
 	_ "github.com/proullon/ramsql/driver"
@@ -42,7 +42,7 @@ type DbTestSuite struct {
 
 func (suite *DbTestSuite) SetupTest() {
 	// Create the codec
-	codec := simappparams.MakeTestEncodingConfig()
+	codec := params.MakeTestEncodingConfig()
 
 	// Build the database
 	dbCfg := dbconfig.NewDatabaseConfig(

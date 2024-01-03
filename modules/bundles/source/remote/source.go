@@ -2,7 +2,7 @@ package remote
 
 import (
 	bundlestypes "github.com/KYVENetwork/chain/x/bundles/types"
-	"github.com/forbole/juno/v4/node/remote"
+	"github.com/forbole/juno/v5/node/remote"
 
 	bundlessource "github.com/forbole/bdjuno/v4/modules/bundles/source"
 )

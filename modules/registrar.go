@@ -5,6 +5,7 @@ import (
 	"github.com/forbole/bdjuno/v4/modules/bundles"
 	"github.com/forbole/bdjuno/v4/modules/global"
 	"github.com/forbole/bdjuno/v4/modules/pool"
+	"github.com/forbole/bdjuno/v4/modules/stakers"
 	"github.com/forbole/bdjuno/v4/modules/types"
 
 	"github.com/forbole/juno/v5/modules/pruning"
@@ -89,6 +90,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
 	stakingModule := staking.NewModule(sources.StakingSource, cdc, db)
 	govModule := gov.NewModule(sources.GovSource, distrModule, mintModule, slashingModule, stakingModule, cdc, db)
+	stakersModule := stakers.NewModule(sources.StakersSource, cdc, db)
 	upgradeModule := upgrade.NewModule(db, stakingModule)
 
 	return []jmodules.Module{
