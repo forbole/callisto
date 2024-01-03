@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/forbole/juno/v4/node/local"
-	superfluidtypes "github.com/osmosis-labs/osmosis/v20/x/superfluid/types"
+	"github.com/forbole/juno/v5/node/local"
+	superfluidtypes "github.com/osmosis-labs/osmosis/v21/x/superfluid/types"
 
 	superfluidsource "github.com/forbole/bdjuno/v4/modules/superfluid/source"
 )

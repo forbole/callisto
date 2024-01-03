@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"cosmossdk.io/simapp"
-	"cosmossdk.io/simapp/params"
+	"github.com/forbole/juno/v5/types/params"
+
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/forbole/juno/v5/node/remote"
 
@@ -18,10 +18,9 @@ import (
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/juno/v5/node/local"
-	mintkeeper "github.com/osmosis-labs/osmosis/v20/x/mint/keeper"
-	minttypes "github.com/osmosis-labs/osmosis/v20/x/mint/types"
+	mintkeeper "github.com/osmosis-labs/osmosis/v21/x/mint/keeper"
+	minttypes "github.com/osmosis-labs/osmosis/v21/x/mint/types"
 
-	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	nodeconfig "github.com/forbole/juno/v5/node/config"
 
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
@@ -47,10 +46,9 @@ import (
 	wasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source"
 	localwasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source/local"
 	remotewasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source/remote"
-	nodeconfig "github.com/forbole/juno/v5/node/config"
-	osmosisapp "github.com/osmosis-labs/osmosis/v20/app"
-	superfluidkeeper "github.com/osmosis-labs/osmosis/v20/x/superfluid/keeper"
-	superfluidtypes "github.com/osmosis-labs/osmosis/v20/x/superfluid/types"
+	osmosisapp "github.com/osmosis-labs/osmosis/v21/app"
+	superfluidkeeper "github.com/osmosis-labs/osmosis/v21/x/superfluid/keeper"
+	superfluidtypes "github.com/osmosis-labs/osmosis/v21/x/superfluid/types"
 )
 
 type Sources struct {
@@ -64,7 +62,7 @@ type Sources struct {
 	WasmSource       wasmsource.Source
 }
 
-func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
+func BuildSources(nodeCfg nodeconfig.Config, encodingConfig params.EncodingConfig) (*Sources, error) {
 	switch cfg := nodeCfg.Details.(type) {
 	case *remote.Details:
 		return buildRemoteSources(cfg)
@@ -76,7 +74,7 @@ func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConf
 	}
 }
 
-func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig) (*Sources, error) {
+func buildLocalSources(cfg *local.Details, encodingConfig params.EncodingConfig) (*Sources, error) {
 	source, err := local.NewSource(cfg.Home, encodingConfig)
 	if err != nil {
 		return nil, err
@@ -84,17 +82,17 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 
 	app := osmosisapp.NewOsmosisApp(
 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
-		cfg.Home, 0, simapp.EmptyAppOptions{}, osmosisapp.EmptyWasmOpts,
+		cfg.Home, 0, nil, osmosisapp.EmptyWasmOpts,
 	)
 
 	sources := &Sources{
-		BankSource:  localbanksource.NewSource(source, bankkeeper.Querier{BaseKeeper: *app.BankKeeper}),
-		DistrSource: localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
+		BankSource: localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
+		// DistrSource: localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
 		// GovSource:        localgovsource.NewSource(source, govtypes.QueryServer(app.GovKeeper)),
 		GovSource:        localgovsource.NewSource(source, govtypesv1.QueryServer(app.GovKeeper)),
 		MintSource:       localmintsource.NewSource(source, mintkeeper.Querier{Keeper: *app.MintKeeper}),
 		SlashingSource:   localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
-		StakingSource:    localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: *app.StakingKeeper}),
+		StakingSource:    localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
 		SuperfluidSource: localsuperfluidsource.NewSource(source, superfluidkeeper.Querier{Keeper: *app.SuperfluidKeeper}),
 		WasmSource:       localwasmsource.NewSource(source, wasmkeeper.Querier(app.WasmKeeper)),
 	}

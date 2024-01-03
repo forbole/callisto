@@ -2,7 +2,7 @@ package source
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	minttypes "github.com/osmosis-labs/osmosis/v20/x/mint/types"
+	minttypes "github.com/osmosis-labs/osmosis/v21/x/mint/types"
 )
 
 type Source interface {

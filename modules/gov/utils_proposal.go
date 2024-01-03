@@ -8,7 +8,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
-	minttypes "github.com/osmosis-labs/osmosis/v20/x/mint/types"
+	minttypes "github.com/osmosis-labs/osmosis/v21/x/mint/types"
 	"github.com/rs/zerolog/log"
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -270,8 +270,6 @@ func getParamChangeSubspace(msg sdk.Msg) (string, bool) {
 		return distrtypes.ModuleName, true
 	case *govtypesv1.MsgUpdateParams:
 		return gov.ModuleName, true
-	case *minttypes.MsgUpdateParams:
-		return minttypes.ModuleName, true
 	case *slashingtypes.MsgUpdateParams:
 		return slashingtypes.ModuleName, true
 	case *stakingtypes.MsgUpdateParams:

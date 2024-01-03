@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/forbole/juno/v5/cmd"
 	initcmd "github.com/forbole/juno/v5/cmd/init"
@@ -14,14 +13,10 @@ import (
 
 	"github.com/forbole/bdjuno/v4/types/config"
 
-	"cosmossdk.io/simapp"
-
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	osmosisapp "github.com/osmosis-labs/osmosis/v20/app"
-	gammtypes "github.com/osmosis-labs/osmosis/v20/x/gamm/pool-models/balancer"
+	osmosisapp "github.com/osmosis-labs/osmosis/v21/app"
 )
 
 func main() {
@@ -60,7 +55,6 @@ func main() {
 // This should be edited by custom implementations if needed.
 func getBasicManagers() []module.BasicManager {
 	return []module.BasicManager{
-		simapp.ModuleBasics,
 		osmosisapp.ModuleBasics,
 	}
 }
@@ -70,18 +64,6 @@ func getBasicManagers() []module.BasicManager {
 // This should be edited by custom implementations if needed.
 func getAddressesParser() messages.MessageAddressesParser {
 	return messages.JoinMessageParsers(
-		OsmoMessageAddressesParser,
 		messages.CosmosMessageAddressesParser,
 	)
-}
-
-// OsmoMessageAddressesParser returns the list of all the accounts involved in the given
-// message if it's related to the x/gamm module
-func OsmoMessageAddressesParser(_ codec.Codec, cosmosMsg sdk.Msg) ([]string, error) {
-
-	if msg, ok := cosmosMsg.(*gammtypes.MsgCreateBalancerPool); ok {
-		return []string{msg.Sender, msg.FuturePoolGovernor}, nil
-	}
-
-	return nil, messages.MessageNotSupported(cosmosMsg)
 }

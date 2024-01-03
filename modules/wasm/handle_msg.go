@@ -9,7 +9,7 @@ import (
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/bdjuno/v4/types"
-	juno "github.com/forbole/juno/v4/types"
+	juno "github.com/forbole/juno/v5/types"
 )
 
 // HandleMsg implements modules.MessageModule
@@ -220,7 +220,7 @@ func (m *Module) HandleMsgUpdateAdmin(msg *wasmtypes.MsgUpdateAdmin, tx *juno.Tx
 	if err != nil {
 		return fmt.Errorf("error while saving contract address inside the involved addresses in message table: %s", err)
 	}
-	
+
 	return m.db.UpdateContractAdmin(msg.Sender, msg.Contract, msg.NewAdmin)
 }
 

@@ -32,12 +32,12 @@ func (m *Module) UpdateSupply() error {
 		return fmt.Errorf("error while getting latest block height: %s", err)
 	}
 
-	params, err := m.stakingModule.GetParams(height)
+	params, err := m.stakingModule.GetParams(block.Height)
 	if err != nil {
 		return fmt.Errorf("error while getting bond denom type: %s", err)
 	}
 
-	supply, err := m.keeper.GetSupply(height, params.BondDenom)
+	supply, err := m.keeper.GetSupply(block.Height, params.BondDenom)
 	if err != nil {
 		return err
 	}
