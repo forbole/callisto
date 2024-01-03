@@ -12,7 +12,7 @@ import (
 	minttypes "github.com/ingenuity-build/quicksilver/x/mint/types"
 	"google.golang.org/grpc/codes"
 
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 
 	"github.com/forbole/bdjuno/v4/types"
 

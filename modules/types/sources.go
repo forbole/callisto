@@ -2,47 +2,33 @@ package types
 
 import (
 	"fmt"
-	"os"
-
-	"github.com/CosmWasm/wasmd/x/wasm"
-	"github.com/cosmos/cosmos-sdk/simapp"
-	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/forbole/juno/v4/node/remote"
+	"github.com/forbole/juno/v5/node/remote"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
-	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/forbole/juno/v4/node/local"
-	mintkeeper "github.com/ingenuity-build/quicksilver/x/mint/keeper"
+	"github.com/forbole/juno/v5/node/local"
 	minttypes "github.com/ingenuity-build/quicksilver/x/mint/types"
 
-	nodeconfig "github.com/forbole/juno/v4/node/config"
+	nodeconfig "github.com/forbole/juno/v5/node/config"
 
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
-	localbanksource "github.com/forbole/bdjuno/v4/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"
 	distrsource "github.com/forbole/bdjuno/v4/modules/distribution/source"
-	localdistrsource "github.com/forbole/bdjuno/v4/modules/distribution/source/local"
 	remotedistrsource "github.com/forbole/bdjuno/v4/modules/distribution/source/remote"
 	govsource "github.com/forbole/bdjuno/v4/modules/gov/source"
-	localgovsource "github.com/forbole/bdjuno/v4/modules/gov/source/local"
 	remotegovsource "github.com/forbole/bdjuno/v4/modules/gov/source/remote"
 	mintsource "github.com/forbole/bdjuno/v4/modules/mint/source"
-	localmintsource "github.com/forbole/bdjuno/v4/modules/mint/source/local"
 	remotemintsource "github.com/forbole/bdjuno/v4/modules/mint/source/remote"
 	slashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source"
-	localslashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source/local"
 	remoteslashingsource "github.com/forbole/bdjuno/v4/modules/slashing/source/remote"
 	stakingsource "github.com/forbole/bdjuno/v4/modules/staking/source"
-	localstakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/bdjuno/v4/modules/staking/source/remote"
-	quicksilverapp "github.com/ingenuity-build/quicksilver/app"
 )
 
 type Sources struct {
@@ -59,56 +45,56 @@ func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConf
 	case *remote.Details:
 		return buildRemoteSources(cfg)
 	case *local.Details:
-		return buildLocalSources(cfg, encodingConfig)
+		return nil, fmt.Errorf("local node is currently not supported")
 
 	default:
 		return nil, fmt.Errorf("invalid configuration type: %T", cfg)
 	}
 }
 
-func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig) (*Sources, error) {
-	source, err := local.NewSource(cfg.Home, encodingConfig)
-	if err != nil {
-		return nil, err
-	}
+// func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig) (*Sources, error) {
+// 	source, err := local.NewSource(cfg.Home, encodingConfig)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	app := quicksilverapp.NewQuicksilver(
-		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
-		cfg.Home, 0, quicksilverapp.MakeEncodingConfig(), wasm.EnableAllProposals, simapp.EmptyAppOptions{}, quicksilverapp.GetWasmOpts(simapp.EmptyAppOptions{}), false,
-	)
+// 	app := quicksilverapp.NewQuicksilver(
+// 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
+// 		cfg.Home, 0, quicksilverapp.MakeEncodingConfig(), wasm.EnableAllProposals, simapp.EmptyAppOptions{}, quicksilverapp.GetWasmOpts(simapp.EmptyAppOptions{}), false,
+// 	)
 
-	sources := &Sources{
-		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
-		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
-		GovSource:      localgovsource.NewSource(source, govtypesv1.QueryServer(app.GovKeeper), nil),
-		MintSource:     localmintsource.NewSource(source, mintkeeper.Querier{Keeper: app.MintKeeper}),
-		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
-		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
-	}
+// 	sources := &Sources{
+// 		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
+// 		DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
+// 		GovSource:      localgovsource.NewSource(source, govtypesv1.QueryServer(app.GovKeeper), nil),
+// 		MintSource:     localmintsource.NewSource(source, mintkeeper.Querier{Keeper: app.MintKeeper}),
+// 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
+// 		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
+// 	}
 
-	// Mount and initialize the stores
-	err = source.MountKVStores(app, "keys")
-	if err != nil {
-		return nil, err
-	}
+// 	// Mount and initialize the stores
+// 	err = source.MountKVStores(app, "keys")
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	err = source.MountTransientStores(app, "tkeys")
-	if err != nil {
-		return nil, err
-	}
+// 	err = source.MountTransientStores(app, "tkeys")
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	err = source.MountMemoryStores(app, "memKeys")
-	if err != nil {
-		return nil, err
-	}
+// 	err = source.MountMemoryStores(app, "memKeys")
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	err = source.InitStores()
-	if err != nil {
-		return nil, err
-	}
+// 	err = source.InitStores()
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return sources, nil
-}
+// 	return sources, nil
+// }
 
 func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 	source, err := remote.NewSource(cfg.GRPC)
