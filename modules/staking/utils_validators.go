@@ -255,7 +255,7 @@ func (m *Module) updateProposalValidatorStatusSnapshot(
 		snapshots[index] = types.NewProposalValidatorStatusSnapshot(
 			proposalID,
 			consAddr.String(),
-			validator.Tokens.Int64(),
+			validator.Tokens.String(),
 			validator.Status,
 			validator.Jailed,
 			height,
@@ -288,7 +288,7 @@ func (m *Module) updateValidatorStatusAndVP(height int64, validators []stakingty
 			return err
 		}
 
-		votingPowers[index] = types.NewValidatorVotingPower(consAddr.String(), validator.Tokens.Int64(), height)
+		votingPowers[index] = types.NewValidatorVotingPower(consAddr.String(), validator.Tokens.String(), height)
 
 		statuses[index] = types.NewValidatorStatus(
 			consAddr.String(),
