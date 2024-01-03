@@ -42,7 +42,7 @@ import (
 	wasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source"
 	localwasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source/local"
 	remotewasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source/remote"
-	persistenceapp "github.com/persistenceOne/persistenceCore/v8/app"
+	persistenceapp "github.com/persistenceOne/persistenceCore/v11/app"
 )
 
 type Sources struct {
