@@ -29,16 +29,16 @@ func (m *Module) UpdateInflation() error {
 		Str("operation", "inflation").
 		Msg("getting inflation data")
 
-	height, err := m.db.GetLastBlockHeight()
+	block, err := m.db.GetLastBlockHeightAndTimestamp()
 	if err != nil {
 		return err
 	}
 
 	// Get the inflation
-	inflation, err := m.source.GetInflation(height)
+	inflation, err := m.source.GetInflation(block.Height)
 	if err != nil {
 		return err
 	}
 
-	return m.db.SaveInflation(inflation, height)
+	return m.db.SaveInflation(inflation, block.Height)
 }

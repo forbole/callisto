@@ -98,8 +98,14 @@ func (db *Db) storeVestingAccount(account exported.VestingAccount) (int, error) 
 			start_time = excluded.start_time
 			RETURNING id `
 
+	// Store the vesting account
+	err := db.SaveAccounts([]types.Account{types.NewAccount(account.GetAddress().String())})
+	if err != nil {
+		return 0, fmt.Errorf("error while storing vesting account address: %s", err)
+	}
+
 	var vestingAccountRowID int
-	err := db.SQL.QueryRow(stmt,
+	err = db.SQL.QueryRow(stmt,
 		proto.MessageName(account),
 		account.GetAddress().String(),
 		pq.Array(dbtypes.NewDbCoins(account.GetOriginalVesting())),
@@ -124,7 +130,13 @@ func (db *Db) StoreBaseVestingAccountFromMsg(bva *vestingtypes.BaseVestingAccoun
 			start_time = excluded.start_time, 
 			end_time = excluded.end_time`
 
-	_, err := db.SQL.Exec(stmt,
+	// Store the vesting account
+	err := db.SaveAccounts([]types.Account{types.NewAccount(bva.GetAddress().String())})
+	if err != nil {
+		return fmt.Errorf("error while storing vesting account address: %s", err)
+	}
+
+	_, err = db.SQL.Exec(stmt,
 		proto.MessageName(bva),
 		bva.GetAddress().String(),
 		pq.Array(dbtypes.NewDbCoins(bva.OriginalVesting)),
