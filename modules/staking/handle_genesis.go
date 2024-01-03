@@ -8,7 +8,7 @@ import (
 
 	"github.com/forbole/bdjuno/v4/types"
 
-	tmtypes "github.com/tendermint/tendermint/types"
+	tmtypes "github.com/cometbft/cometbft/types"
 
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -132,10 +132,12 @@ func (m *Module) saveValidatorDescription(doc *tmtypes.GenesisDoc, validators st
 // saveValidatorsCommissions save the initial commission for each validator
 func (m *Module) saveValidatorsCommissions(height int64, validators stakingtypes.Validators) error {
 	for _, account := range validators {
+		commissionRate := account.Commission.Rate
+		minSelfDelegation := account.MinSelfDelegation
 		err := m.db.SaveValidatorCommission(types.NewValidatorCommission(
 			account.OperatorAddress,
-			&account.Commission.Rate,
-			&account.MinSelfDelegation,
+			&commissionRate,
+			&minSelfDelegation,
 			height,
 		))
 		if err != nil {

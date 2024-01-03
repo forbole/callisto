@@ -3,21 +3,22 @@ package main
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/forbole/juno/v4/cmd"
-	initcmd "github.com/forbole/juno/v4/cmd/init"
-	parsetypes "github.com/forbole/juno/v4/cmd/parse/types"
-	startcmd "github.com/forbole/juno/v4/cmd/start"
-	"github.com/forbole/juno/v4/modules/messages"
+	"github.com/forbole/juno/v5/cmd"
+	initcmd "github.com/forbole/juno/v5/cmd/init"
+	parsetypes "github.com/forbole/juno/v5/cmd/parse/types"
+	startcmd "github.com/forbole/juno/v5/cmd/start"
+	"github.com/forbole/juno/v5/modules/messages"
 
 	migratecmd "github.com/forbole/bdjuno/v4/cmd/migrate"
 	parsecmd "github.com/forbole/bdjuno/v4/cmd/parse"
 
 	"github.com/forbole/bdjuno/v4/types/config"
 
+	"cosmossdk.io/simapp"
+
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules"
 
-	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	osmosisapp "github.com/osmosis-labs/osmosis/v20/app"
 	gammtypes "github.com/osmosis-labs/osmosis/v20/x/gamm/pool-models/balancer"

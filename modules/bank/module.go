@@ -6,9 +6,9 @@ import (
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules/bank/source"
 
-	junomessages "github.com/forbole/juno/v4/modules/messages"
+	junomessages "github.com/forbole/juno/v5/modules/messages"
 
-	"github.com/forbole/juno/v4/modules"
+	"github.com/forbole/juno/v5/modules"
 )
 
 var (
