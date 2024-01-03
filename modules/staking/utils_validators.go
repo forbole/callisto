@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
-	juno "github.com/forbole/juno/v4/types"
+	juno "github.com/forbole/juno/v5/types"
 
 	"github.com/forbole/bdjuno/v4/modules/staking/keybase"
 	"github.com/forbole/bdjuno/v4/modules/utils"

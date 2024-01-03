@@ -4,7 +4,7 @@ import (
 	iscntypes "github.com/likecoin/likecoin-chain/v4/x/iscn/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	juno "github.com/forbole/juno/v4/types"
+	juno "github.com/forbole/juno/v5/types"
 )
 
 // HandleMsg implements modules.MessageModule

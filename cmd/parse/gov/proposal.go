@@ -18,9 +18,9 @@ import (
 	"github.com/forbole/bdjuno/v4/modules/slashing"
 	"github.com/forbole/bdjuno/v4/modules/staking"
 	"github.com/forbole/bdjuno/v4/utils"
-	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
-	"github.com/forbole/juno/v4/parser"
-	"github.com/forbole/juno/v4/types/config"
+	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
+	"github.com/forbole/juno/v5/parser"
+	"github.com/forbole/juno/v5/types/config"
 	"github.com/spf13/cobra"
 )
 

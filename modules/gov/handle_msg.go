@@ -13,7 +13,7 @@ import (
 
 	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
-	juno "github.com/forbole/juno/v4/types"
+	juno "github.com/forbole/juno/v5/types"
 )
 
 // HandleMsg implements modules.MessageModule
