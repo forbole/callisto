@@ -2,7 +2,7 @@ package iscn
 
 import (
 	juno "github.com/forbole/juno/v4/types"
-	iscntypes "github.com/likecoin/likecoin-chain/v3/x/iscn/types"
+	iscntypes "github.com/likecoin/likecoin-chain/v4/x/iscn/types"
 
 	"github.com/forbole/bdjuno/v4/types"
 )

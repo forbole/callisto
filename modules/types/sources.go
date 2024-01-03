@@ -4,23 +4,21 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/simapp"
-	likeapp "github.com/likecoin/likecoin-chain/v3/app"
-	"github.com/tendermint/tendermint/libs/log"
+	likeapp "github.com/likecoin/likecoin-chain/v4/app"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/forbole/juno/v4/node/remote"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
-	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/juno/v4/node/local"
-	iscntypes "github.com/likecoin/likecoin-chain/v3/x/iscn/types"
+	iscntypes "github.com/likecoin/likecoin-chain/v4/x/iscn/types"
 
 	nodeconfig "github.com/forbole/juno/v4/node/config"
 

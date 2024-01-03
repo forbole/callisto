@@ -8,7 +8,7 @@ import (
 	"github.com/forbole/bdjuno/v4/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	iscntypes "github.com/likecoin/likecoin-chain/v3/x/iscn/types"
+	iscntypes "github.com/likecoin/likecoin-chain/v4/x/iscn/types"
 
 	"github.com/rs/zerolog/log"
 )

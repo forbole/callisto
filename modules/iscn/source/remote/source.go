@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/forbole/juno/v4/node/remote"
-	iscntypes "github.com/likecoin/likecoin-chain/v3/x/iscn/types"
+	iscntypes "github.com/likecoin/likecoin-chain/v4/x/iscn/types"
 
 	iscnsource "github.com/forbole/bdjuno/v4/modules/iscn/source"
 	"github.com/forbole/bdjuno/v4/utils"
