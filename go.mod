@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/CosmWasm/wasmd v0.30.0
 	github.com/cosmos/cosmos-sdk v0.45.12
-	github.com/forbole/juno/v4 v4.1.1-0.20230221021913-841842bdefed
+	github.com/forbole/juno/v5 v5.0.0-20240104050236-33fa0eb9acb9
 	github.com/go-co-op/gocron v1.19.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.5
@@ -93,7 +93,7 @@ require (
 	github.com/libp2p/go-buffer-pool v0.1.0 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.16 // indirect
+	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369 // indirect
 	github.com/mimoo/StrobeGo v0.0.0-20210601165009-122bf33a46e0 // indirect
 	github.com/minio/highwayhash v1.0.2 // indirect
@@ -130,7 +130,7 @@ require (
 	github.com/zondax/hid v0.9.1 // indirect
 	github.com/zondax/ledger-go v0.14.1 // indirect
 	go.etcd.io/bbolt v1.3.6 // indirect
-	golang.org/x/crypto v0.2.0 // indirect
+	golang.org/x/crypto v0.5.0 // indirect
 	golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e // indirect
 	golang.org/x/net v0.8.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
@@ -152,3 +152,5 @@ replace (
 	github.com/wormhole-foundation/wormchain => github.com/wormhole-foundation/wormhole/wormchain v0.0.0-20231212202205-094a404902cf // v2.23.31
 	github.com/wormhole-foundation/wormhole/sdk => github.com/wormhole-foundation/wormhole/sdk v0.0.0-20231220145614-818038ef805d // v2.23.31
 )
+
+// replace github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.34.29

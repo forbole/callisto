@@ -8,7 +8,7 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/forbole/juno/v4/node/remote"
+	"github.com/forbole/juno/v5/node/remote"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -17,7 +17,7 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/forbole/juno/v4/node/local"
+	"github.com/forbole/juno/v5/node/local"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
@@ -44,7 +44,7 @@ import (
 	wormholesource "github.com/forbole/bdjuno/v4/modules/wormhole/source"
 	localwormholesource "github.com/forbole/bdjuno/v4/modules/wormhole/source/local"
 	remotewormholesource "github.com/forbole/bdjuno/v4/modules/wormhole/source/remote"
-	nodeconfig "github.com/forbole/juno/v4/node/config"
+	nodeconfig "github.com/forbole/juno/v5/node/config"
 	wormholetypes "github.com/wormhole-foundation/wormchain/x/wormhole/types"
 )
 

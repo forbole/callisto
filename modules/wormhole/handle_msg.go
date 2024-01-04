@@ -2,7 +2,7 @@ package wormhole
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	juno "github.com/forbole/juno/v4/types"
+	juno "github.com/forbole/juno/v5/types"
 	wormholetypes "github.com/wormhole-foundation/wormchain/x/wormhole/types"
 )
 

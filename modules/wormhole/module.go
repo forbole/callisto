@@ -2,7 +2,7 @@ package wormhole
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/forbole/juno/v4/modules"
+	"github.com/forbole/juno/v5/modules"
 
 	"github.com/forbole/bdjuno/v4/database"
 	wormholesource "github.com/forbole/bdjuno/v4/modules/wormhole/source"

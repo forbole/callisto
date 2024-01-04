@@ -2,7 +2,7 @@ package remote
 
 import (
 	"github.com/cosmos/cosmos-sdk/types/query"
-	"github.com/forbole/juno/v4/node/remote"
+	"github.com/forbole/juno/v5/node/remote"
 
 	wormholesource "github.com/forbole/bdjuno/v4/modules/wormhole/source"
 	wormholetypes "github.com/wormhole-foundation/wormchain/x/wormhole/types"
