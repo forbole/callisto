@@ -3,7 +3,7 @@ package database
 import (
 	"encoding/json"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 )
 
 // SaveEMoneyInflation allows to store the eMoney inflation (scheduler = per day)

@@ -1,24 +1,22 @@
-module github.com/forbole/bdjuno/v3
+module github.com/forbole/bdjuno/v4
 
-go 1.18
+go 1.19
 
 require (
-	github.com/cosmos/cosmos-sdk v0.42.11
-	github.com/e-money/em-ledger v1.2.0 //emoney mod version with public inflation type
-	github.com/forbole/juno/v3 v3.3.0-stargate
-	github.com/go-co-op/gocron v1.15.1
+	github.com/cosmos/cosmos-sdk v0.45.8
+	github.com/forbole/juno/v4 v4.1.0
+	github.com/go-co-op/gocron v1.28.2
 	github.com/gogo/protobuf v1.3.3
-	github.com/gorilla/mux v1.8.0 // indirect
-	github.com/jmoiron/sqlx v1.3.4
-	github.com/lib/pq v1.10.5
-	github.com/pelletier/go-toml v1.9.4
-	github.com/prometheus/client_golang v1.12.1
+	github.com/jmoiron/sqlx v1.3.5
+	github.com/lib/pq v1.10.9
+	github.com/pelletier/go-toml v1.9.5
+	github.com/prometheus/client_golang v1.15.1
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
-	github.com/rs/zerolog v1.27.0
-	github.com/spf13/cobra v1.5.0
-	github.com/stretchr/testify v1.8.0
-	github.com/tendermint/tendermint v0.34.14
-	google.golang.org/grpc v1.45.0
+	github.com/rs/zerolog v1.29.1
+	github.com/spf13/cobra v1.7.0
+	github.com/stretchr/testify v1.8.4
+	github.com/tendermint/tendermint v0.34.24
+	google.golang.org/grpc v1.55.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -29,7 +27,7 @@ require (
 	github.com/armon/go-metrics v0.3.10 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bgentry/speakeasy v0.1.0 // indirect
-	github.com/btcsuite/btcd v0.22.0-beta // indirect
+	github.com/btcsuite/btcd v0.22.1 // indirect
 	github.com/cespare/xxhash v1.1.0 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/confio/ics23/go v0.6.6 // indirect
@@ -38,7 +36,8 @@ require (
 	github.com/cosmos/iavl v0.17.3 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.11.1 // indirect
 	github.com/cosmos/ledger-go v0.9.2 // indirect
-	github.com/danieljoos/wincred v1.0.2 // indirect
+	github.com/creachadair/taskgroup v0.3.2 // indirect
+	github.com/danieljoos/wincred v1.1.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgraph-io/badger/v2 v2.2007.4 // indirect
 	github.com/dgraph-io/ristretto v0.1.0 // indirect
@@ -85,10 +84,10 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_model v0.3.0 // indirect
-	github.com/prometheus/common v0.37.0 // indirect
-	github.com/prometheus/procfs v0.8.0 // indirect
+	github.com/prometheus/common v0.42.0 // indirect
+	github.com/prometheus/procfs v0.9.0 // indirect
 	github.com/rakyll/statik v0.1.7 // indirect
-	github.com/rcrowley/go-metrics v0.0.0-20200313005456-10cdbea86bc0 // indirect
+	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/regen-network/cosmos-proto v0.3.1 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/rs/cors v1.7.0 // indirect

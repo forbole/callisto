@@ -5,8 +5,8 @@ import (
 
 	"github.com/lib/pq"
 
-	dbtypes "github.com/forbole/bdjuno/v3/database/types"
-	"github.com/forbole/bdjuno/v3/types"
+	dbtypes "github.com/forbole/bdjuno/v4/database/types"
+	"github.com/forbole/bdjuno/v4/types"
 )
 
 // SaveEMoneyGasPrices allows to save the gas prices set by the authority(key)

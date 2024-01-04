@@ -3,12 +3,12 @@ package coingecko
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"math"
 	"net/http"
 	"strings"
 
-	"github.com/forbole/bdjuno/v3/types"
+	"github.com/forbole/bdjuno/v4/types"
 )
 
 // GetCoinsList allows to fetch from the remote APIs the list of all the supported tokens
@@ -51,7 +51,7 @@ func queryCoinGecko(endpoint string, ptr interface{}) error {
 
 	defer resp.Body.Close()
 
-	bz, err := ioutil.ReadAll(resp.Body)
+	bz, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return fmt.Errorf("error while reading response body: %s", err)
 	}

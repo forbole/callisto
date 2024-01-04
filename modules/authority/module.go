@@ -2,10 +2,10 @@ package authority
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/forbole/juno/v3/modules"
+	"github.com/forbole/juno/v4/modules"
 
-	"github.com/forbole/bdjuno/v3/database"
-	authoritysource "github.com/forbole/bdjuno/v3/modules/authority/source"
+	"github.com/forbole/bdjuno/v4/database"
+	authoritysource "github.com/forbole/bdjuno/v4/modules/authority/source"
 )
 
 var (
