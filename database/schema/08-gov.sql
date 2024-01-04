@@ -78,7 +78,7 @@ CREATE TABLE proposal_validator_status_snapshot
     id                SERIAL  PRIMARY KEY NOT NULL,
     proposal_id       INTEGER REFERENCES proposal (id),
     validator_address TEXT                NOT NULL REFERENCES validator (consensus_address),
-    voting_power      BIGINT              NOT NULL,
+    voting_power      TEXT              NOT NULL,
     status            INT                 NOT NULL,
     jailed            BOOLEAN             NOT NULL,
     height            BIGINT              NOT NULL,

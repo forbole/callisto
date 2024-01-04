@@ -214,14 +214,14 @@ type ProposalValidatorVotingPowerSnapshotRow struct {
 	ID               int64  `db:"id"`
 	ProposalID       int64  `db:"proposal_id"`
 	ValidatorAddress string `db:"validator_address"`
-	VotingPower      int64  `db:"voting_power"`
+	VotingPower      string `db:"voting_power"`
 	Status           int    `db:"status"`
 	Jailed           bool   `db:"jailed"`
 	Height           int64  `db:"height"`
 }
 
 func NewProposalValidatorVotingPowerSnapshotRow(
-	id int64, proposalID int64, validatorAddr string, votingPower int64, status int, jailed bool, height int64,
+	id int64, proposalID int64, validatorAddr string, votingPower string, status int, jailed bool, height int64,
 ) ProposalValidatorVotingPowerSnapshotRow {
 	return ProposalValidatorVotingPowerSnapshotRow{
 		ID:               id,
