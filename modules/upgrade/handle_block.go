@@ -3,7 +3,7 @@ package upgrade
 import (
 	"fmt"
 
-	"github.com/forbole/juno/v4/types"
+	"github.com/forbole/juno/v5/types"
 
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 )

@@ -5,7 +5,7 @@ import (
 
 	authoritytypes "github.com/MonikaCat/em-ledger/x/authority/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/forbole/juno/v4/node/local"
+	"github.com/forbole/juno/v5/node/local"
 
 	authoritysource "github.com/forbole/bdjuno/v4/modules/authority/source"
 )
