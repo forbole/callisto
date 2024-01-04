@@ -3,8 +3,8 @@ package utils
 import (
 	"fmt"
 
-	"github.com/forbole/juno/v4/node"
-	coretypes "github.com/tendermint/tendermint/rpc/core/types"
+	coretypes "github.com/cometbft/cometbft/rpc/core/types"
+	"github.com/forbole/juno/v5/node"
 )
 
 // QueryTxs queries all the transactions from the given node corresponding to the given query

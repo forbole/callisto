@@ -5,7 +5,7 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	juno "github.com/forbole/juno/v4/types"
+	juno "github.com/forbole/juno/v5/types"
 	"github.com/gogo/protobuf/proto"
 	"github.com/rs/zerolog/log"
 
@@ -18,7 +18,7 @@ import (
 
 // HandleMsg implements modules.MessageModule
 func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
-	addresses, err := m.messagesParser(m.cdc, msg)
+	addresses, err := m.messagesParser(tx)
 	if err != nil {
 		log.Error().Str("module", "auth").Err(err).
 			Str("operation", "refresh account").
