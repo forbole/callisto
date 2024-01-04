@@ -168,6 +168,12 @@ type (
 
 		GetAllMsgDistributeRewards(filter filter.Filter) ([]stake.MsgDistributeRewards, error)
 		InsertMsgDistributeRewards(hash string, msgs ...stake.MsgDistributeRewards) error
+
+		GetAllMsgTransferFromUser(filter filter.Filter) ([]stake.MsgTransferFromUser, error)
+		InsertMsgTransferFromUser(hash string, msgs ...stake.MsgTransferFromUser) error
+
+		GetAllMsgTransferToUser(filter filter.Filter) ([]stake.MsgTransferToUser, error)
+		InsertMsgTransferToUser(hash string, msgs ...stake.MsgTransferToUser) error
 	}
 )
 

@@ -23,6 +23,10 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return m.handleMsgDistributeRewards(tx, index, stakeMsg)
 	case *types.MsgClaimReward:
 		return m.handleMsgClaimReward(tx, index, stakeMsg)
+	case *types.MsgTransferFromUser:
+		return m.handleMsgTransferFromUser(tx, index, stakeMsg)
+	case *types.MsgTransferToUser:
+		return m.handleMsgTransferToUser(tx, index, stakeMsg)
 	default:
 		return nil
 	}
