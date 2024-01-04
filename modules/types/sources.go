@@ -23,8 +23,8 @@ import (
 
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-	quasarapp "github.com/MonikaCat/quasar/app"
-	quasarappparams "github.com/MonikaCat/quasar/app/params"
+	quasarapp "github.com/MonCatCat/quasar/app"
+	quasarappparams "github.com/MonCatCat/quasar/app/params"
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v4/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"
