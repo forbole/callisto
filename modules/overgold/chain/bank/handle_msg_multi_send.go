@@ -12,7 +12,7 @@ import (
 )
 
 // handleMsgMultiSend allows to properly handle a MsgMultiSend
-func (m *Module) handleMsgMultiSend(tx *juno.Tx, index int, msg *bank.MsgMultiSend) error {
+func (m *Module) handleMsgMultiSend(tx *juno.Tx, _ int, msg *bank.MsgMultiSend) error {
 	// 1) check if already exists (not found is ok)
 	msgs, err := m.bankRepo.GetAllMsgMultiSend(filter.NewFilter().SetArgument(types.FieldTxHash, tx.TxHash))
 	if err != nil {

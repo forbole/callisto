@@ -3,7 +3,6 @@ package overgold
 import (
 	"errors"
 	"fmt"
-	"strings"
 	"time"
 
 	"git.ooo.ua/vipcoin/lib/errs"
@@ -27,10 +26,8 @@ const (
 // parseMissingBlocksAndTransactions - parse missing blocks and transactions
 func (m *Module) parseMissingBlocksAndTransactions(height int64) (dbtypes.BlockRow, []*txtypes.Tx, error) {
 	block, err := m.node.Block(height)
-	if err != nil { // skip height > current
-		if !strings.Contains(err.Error(), "must be less than or equal to the current blockchain height") {
-			return dbtypes.BlockRow{}, []*txtypes.Tx{}, fmt.Errorf("failed to get block from node: %s", err)
-		}
+	if err != nil {
+		return dbtypes.BlockRow{}, []*txtypes.Tx{}, fmt.Errorf("failed to get block from node: %s", err)
 	}
 
 	events, err := m.node.BlockResults(height)

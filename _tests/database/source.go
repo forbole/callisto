@@ -32,13 +32,13 @@ var (
 	Codec codec.Codec
 
 	Datastore struct {
-		Allowed    *allowed.Repository
-		Bank       *bank.Repository
-		Core       *core.Repository
-		FeeExluder *feeexcluder.Repository
-		LastBlock  *last_block.Repository
-		Referral   *referral.Repository
-		Stake      *stake.Repository
+		Allowed     *allowed.Repository
+		Bank        *bank.Repository
+		Core        *core.Repository
+		FeeExcluder *feeexcluder.Repository
+		LastBlock   *last_block.Repository
+		Referral    *referral.Repository
+		Stake       *stake.Repository
 	}
 )
 
@@ -60,7 +60,7 @@ func init() {
 	// OverGold modules
 	Datastore.Allowed = allowed.NewRepository(DB, Codec)
 	Datastore.Core = core.NewRepository(DB, Codec)
-	Datastore.FeeExluder = feeexcluder.NewRepository(DB, Codec)
+	Datastore.FeeExcluder = feeexcluder.NewRepository(DB, Codec)
 	Datastore.Referral = referral.NewRepository(DB, Codec)
 	Datastore.Stake = stake.NewRepository(DB, Codec)
 

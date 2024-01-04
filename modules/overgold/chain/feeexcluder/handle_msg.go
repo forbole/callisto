@@ -12,15 +12,19 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return nil
 	}
 
-	// TODO: update
-	// switch feeexcluderMsg := msg.(type) {
-	switch msg.(type) {
+	switch feeExcluderMsg := msg.(type) {
 	case *types.MsgCreateAddress:
-		return nil
-	case *types.MsgDeleteAddress:
-		return nil
+		return m.handleMsgCreateAddress(tx, index, feeExcluderMsg)
 	case *types.MsgUpdateAddress:
-		return nil
+		return m.handleMsgUpdateAddress(tx, index, feeExcluderMsg)
+	case *types.MsgDeleteAddress:
+		return m.handleMsgDeleteAddress(tx, index, feeExcluderMsg)
+	case *types.MsgCreateTariffs:
+		return m.handleMsgCreateTariffs(tx, index, feeExcluderMsg)
+	case *types.MsgUpdateTariffs:
+		return m.handleMsgUpdateTariffs(tx, index, feeExcluderMsg)
+	case *types.MsgDeleteTariffs:
+		return m.handleMsgDeleteTariffs(tx, index, feeExcluderMsg)
 	default:
 		return nil
 	}

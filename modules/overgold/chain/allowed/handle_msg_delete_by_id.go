@@ -13,7 +13,7 @@ import (
 )
 
 // handleMsgDeleteByID allows to properly handle a MsgDeleteByID
-func (m *Module) handleMsgDeleteByID(tx *juno.Tx, index int, msg *allowed.MsgDeleteByID) error {
+func (m *Module) handleMsgDeleteByID(tx *juno.Tx, _ int, msg *allowed.MsgDeleteByID) error {
 	// 1) logic for table overgold_allowed_delete_by_id
 	// 1.1) check if already exists (not found is ok)
 	deleteByIDs, err := m.allowedRepo.GetAllDeleteByID(filter.NewFilter().SetCondition(filter.ConditionAND).

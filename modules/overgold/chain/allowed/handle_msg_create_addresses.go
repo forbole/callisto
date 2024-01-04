@@ -13,7 +13,7 @@ import (
 )
 
 // handleMsgCreateAddresses allows to properly handle a MsgCreateAddresses
-func (m *Module) handleMsgCreateAddresses(tx *juno.Tx, index int, msg *allowed.MsgCreateAddresses) error {
+func (m *Module) handleMsgCreateAddresses(tx *juno.Tx, _ int, msg *allowed.MsgCreateAddresses) error {
 	// 1) logic for table overgold_allowed_create_addresses
 	// 1.1) check if already exists (not found is ok)
 	createAddresses, err := m.allowedRepo.GetAllCreateAddresses(filter.NewFilter().SetCondition(filter.ConditionAND).

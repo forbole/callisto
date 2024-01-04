@@ -12,7 +12,7 @@ import (
 )
 
 // handleMsgSetReferrer allows to properly handle a MsgSetReferrer
-func (m *Module) handleMsgSetReferrer(tx *juno.Tx, index int, msg *referral.MsgSetReferrer) error {
+func (m *Module) handleMsgSetReferrer(tx *juno.Tx, _ int, msg *referral.MsgSetReferrer) error {
 	msgs, err := m.referralRepo.GetAllMsgSetReferrer(filter.NewFilter().SetCondition(filter.ConditionAND).
 		SetArgument(db.FieldTxHash, tx.TxHash).
 		SetArgument(db.FieldCreator, msg.Creator))

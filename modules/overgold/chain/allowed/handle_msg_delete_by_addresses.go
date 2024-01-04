@@ -13,7 +13,7 @@ import (
 )
 
 // handleMsgDeleteByAddresses allows to properly handle a MsgDeleteByAddresses
-func (m *Module) handleMsgDeleteByAddresses(tx *juno.Tx, index int, msg *allowed.MsgDeleteByAddresses) error {
+func (m *Module) handleMsgDeleteByAddresses(tx *juno.Tx, _ int, msg *allowed.MsgDeleteByAddresses) error {
 	// 1) logic for table overgold_allowed_delete_by_addresses
 	// 1.1) check if already exists (not found is ok)
 	deleteAddresses, err := m.allowedRepo.GetAllDeleteByAddresses(filter.NewFilter().SetCondition(filter.ConditionAND).

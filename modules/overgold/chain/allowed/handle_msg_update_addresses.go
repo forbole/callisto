@@ -13,7 +13,7 @@ import (
 )
 
 // handleMsgUpdateAddresses allows to properly handle a MsgUpdateAddresses
-func (m *Module) handleMsgUpdateAddresses(tx *juno.Tx, index int, msg *allowed.MsgUpdateAddresses) error {
+func (m *Module) handleMsgUpdateAddresses(tx *juno.Tx, _ int, msg *allowed.MsgUpdateAddresses) error {
 	// 1) logic for table overgold_allowed_update_addresses
 	// 1.1) check if already exists (not found is ok)
 	updateAddresses, err := m.allowedRepo.GetAllUpdateAddresses(filter.NewFilter().SetCondition(filter.ConditionAND).

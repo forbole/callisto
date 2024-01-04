@@ -66,8 +66,8 @@ func (r Repository) InsertToAddresses(addresses ...allowed.Addresses) error {
 }
 
 // UpdateAddresses - method that updates in a database (overgold_allowed_addresses).
-func (r Repository) UpdateAddresses(assets ...allowed.Addresses) error {
-	if len(assets) == 0 {
+func (r Repository) UpdateAddresses(addresses ...allowed.Addresses) error {
+	if len(addresses) == 0 {
 		return nil
 	}
 
@@ -85,8 +85,8 @@ func (r Repository) UpdateAddresses(assets ...allowed.Addresses) error {
 				 address = $2
 			 WHERE id = $3`
 
-	for _, asset := range assets {
-		m := toAddressesDatabase(asset)
+	for _, address := range addresses {
+		m := toAddressesDatabase(address)
 		if _, err = tx.Exec(q, m.Creator, m.Address, m.ID); err != nil {
 			return err
 		}

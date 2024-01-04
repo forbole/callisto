@@ -5,13 +5,15 @@ import (
 
 	"git.ooo.ua/vipcoin/lib/filter"
 	allowed "git.ooo.ua/vipcoin/ovg-chain/x/allowed/types"
+	"github.com/brianvoe/gofakeit/v6"
 
 	d "github.com/forbole/bdjuno/v4/_tests/database"
 )
 
 func TestRepository_InsertToAddresses(t *testing.T) {
 	type args struct {
-		msg []allowed.Addresses
+		msg  []allowed.Addresses
+		hash string
 	}
 	tests := []struct {
 		name    string
@@ -35,12 +37,13 @@ func TestRepository_InsertToAddresses(t *testing.T) {
 						Creator: d.TestAddressCreator,
 					},
 				},
+				hash: gofakeit.LetterN(64),
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := d.Datastore.Allowed.InsertToAddresses(tt.args.msg...); (err != nil) != tt.wantErr {
+			if err := d.Datastore.Allowed.InsertToAddresses(tt.args.hash, tt.args.msg...); (err != nil) != tt.wantErr {
 				t.Errorf("InsertToAddresses() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -77,7 +80,8 @@ func TestRepository_GetAllAddresses(t *testing.T) {
 
 func TestRepository_UpdateAddresses(t *testing.T) {
 	type args struct {
-		msg []allowed.Addresses
+		msg  []allowed.Addresses
+		hash string
 	}
 	tests := []struct {
 		name    string
@@ -94,12 +98,13 @@ func TestRepository_UpdateAddresses(t *testing.T) {
 						Creator: d.TestAddressCreator,
 					},
 				},
+				hash: gofakeit.LetterN(64),
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := d.Datastore.Allowed.UpdateAddresses(tt.args.msg...); (err != nil) != tt.wantErr {
+			if err := d.Datastore.Allowed.UpdateAddresses(tt.args.hash, tt.args.msg...); (err != nil) != tt.wantErr {
 				t.Errorf("UpdateAddresses() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
