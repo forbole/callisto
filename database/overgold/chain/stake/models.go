@@ -163,3 +163,71 @@ func toMsgClaimRewardDatabase(hash string, m types.MsgClaimReward) db.StakeMsgCl
 		Amount:  amount,
 	}
 }
+
+// toMsgTransferFromUser - mapping func to a domain model.
+func toMsgTransferFromUser(m db.StakeMsgTransferFromUser) types.MsgTransferFromUser {
+	return types.MsgTransferFromUser{
+		Creator: m.Creator,
+		Amount:  strconv.FormatUint(m.Amount, 10),
+		Address: m.Address,
+	}
+}
+
+// toMsgTransferFromUserDomainList - mapping func to a domain list.
+func toMsgTransferFromUserDomainList(m []db.StakeMsgTransferFromUser) []types.MsgTransferFromUser {
+	res := make([]types.MsgTransferFromUser, 0, len(m))
+	for _, msg := range m {
+		res = append(res, toMsgTransferFromUser(msg))
+	}
+
+	return res
+}
+
+// toMsgTransferFromUserDatabase - mapping func to a database model.
+func toMsgTransferFromUserDatabase(hash string, m types.MsgTransferFromUser) (db.StakeMsgTransferFromUser, error) {
+	amount, err := strconv.ParseUint(m.Amount, 10, 64)
+	if err != nil {
+		return db.StakeMsgTransferFromUser{}, errs.Internal{Cause: err.Error()}
+	}
+
+	return db.StakeMsgTransferFromUser{
+		TxHash:  hash,
+		Creator: m.Creator,
+		Amount:  amount,
+		Address: m.Address,
+	}, nil
+}
+
+// toMsgTransferToUser - mapping func to a domain model.
+func toMsgTransferToUser(m db.StakeMsgTransferToUser) types.MsgTransferToUser {
+	return types.MsgTransferToUser{
+		Creator: m.Creator,
+		Amount:  strconv.FormatUint(m.Amount, 10),
+		Address: m.Address,
+	}
+}
+
+// toMsgTransferToUserDomainList - mapping func to a domain list.
+func toMsgTransferToUserDomainList(m []db.StakeMsgTransferToUser) []types.MsgTransferToUser {
+	res := make([]types.MsgTransferToUser, 0, len(m))
+	for _, msg := range m {
+		res = append(res, toMsgTransferToUser(msg))
+	}
+
+	return res
+}
+
+// toMsgTransferToUserDatabase - mapping func to a database model.
+func toMsgTransferToUserDatabase(hash string, m types.MsgTransferToUser) (db.StakeMsgTransferToUser, error) {
+	amount, err := strconv.ParseUint(m.Amount, 10, 64)
+	if err != nil {
+		return db.StakeMsgTransferToUser{}, errs.Internal{Cause: err.Error()}
+	}
+
+	return db.StakeMsgTransferToUser{
+		TxHash:  hash,
+		Creator: m.Creator,
+		Amount:  amount,
+		Address: m.Address,
+	}, nil
+}

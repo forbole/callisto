@@ -16,14 +16,12 @@ require (
 	git.ooo.ua/vipcoin/lib/filter v1.0.21
 	git.ooo.ua/vipcoin/lib/vault v1.0.7
 	git.ooo.ua/vipcoin/ovg-chain v1.0.9
-	github.com/brianvoe/gofakeit/v6 v6.23.2
 	github.com/cometbft/cometbft v0.37.2
 	github.com/cosmos/cosmos-sdk v0.47.7
 	github.com/cosmos/gogoproto v1.4.10
 	github.com/forbole/juno/v5 v5.2.0
 	github.com/go-co-op/gocron v1.36.0
 	github.com/golangci/golangci-lint v1.55.2
-	github.com/jackc/pgx/v5 v5.5.1
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.9
 	github.com/pelletier/go-toml v1.9.5
@@ -201,9 +199,8 @@ require (
 	github.com/huandu/skiplist v1.2.0 // indirect
 	github.com/improbable-eng/grpc-web v0.15.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20231201235250-de7065d80cb9 // indirect
-	github.com/jackc/puddle/v2 v2.2.1 // indirect
+	github.com/jackc/pgx/v5 v5.5.1 // indirect
 	github.com/jgautheron/goconst v1.6.0 // indirect
 	github.com/jingyugao/rowserrcheck v1.1.1 // indirect
 	github.com/jirfag/go-printf-func-name v0.0.0-20200119135958-7558a9eaa5af // indirect

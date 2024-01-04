@@ -39,4 +39,22 @@ type (
 		Creator string `db:"creator"`
 		Amount  uint64 `db:"amount"`
 	}
+
+	// StakeMsgTransferFromUser - db model for 'overgold_stake_transfer_from_user'
+	StakeMsgTransferFromUser struct {
+		ID      uint64 `db:"id"`
+		TxHash  string `db:"tx_hash"`
+		Creator string `db:"creator"`
+		Amount  uint64 `db:"amount"`
+		Address string `db:"address"`
+	}
+
+	// StakeMsgTransferToUser - db model for 'overgold_stake_transfer_to_user'
+	StakeMsgTransferToUser struct {
+		ID      uint64 `db:"id"`
+		TxHash  string `db:"tx_hash"`
+		Creator string `db:"creator"`
+		Amount  uint64 `db:"amount"`
+		Address string `db:"address"`
+	}
 )
