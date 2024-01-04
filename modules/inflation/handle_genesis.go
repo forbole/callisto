@@ -5,7 +5,7 @@ import (
 
 	tmtypes "github.com/tendermint/tendermint/types"
 
-	inflationtypes "github.com/e-money/em-ledger/x/inflation/types"
+	inflationtypes "github.com/MonikaCat/em-ledger/x/inflation/types"
 	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/bdjuno/v4/types"

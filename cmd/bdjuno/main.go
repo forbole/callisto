@@ -14,7 +14,7 @@ import (
 
 	"github.com/forbole/bdjuno/v4/types/config"
 
-	emoneyapp "github.com/e-money/em-ledger"
+	emoneyapp "github.com/MonikaCat/em-ledger"
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules"
 )

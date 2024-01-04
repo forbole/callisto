@@ -3,7 +3,7 @@ package types
 import (
 	"time"
 
-	inflationtypes "github.com/e-money/em-ledger/x/inflation/types"
+	inflationtypes "github.com/MonikaCat/em-ledger/x/inflation/types"
 )
 
 type EMoneyInflation struct {

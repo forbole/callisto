@@ -11,7 +11,7 @@ import (
 )
 
 // GetGenesisAccounts parses the given appState and returns the genesis accounts
-func GetGenesisAccounts(appState map[string]json.RawMessage, cdc codec.Marshaler) ([]types.Account, error) {
+func GetGenesisAccounts(appState map[string]json.RawMessage, cdc codec.Codec) ([]types.Account, error) {
 	var authState authttypes.GenesisState
 	if err := cdc.UnmarshalJSON(appState[authttypes.ModuleName], &authState); err != nil {
 		return nil, err

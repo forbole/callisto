@@ -19,7 +19,7 @@ ON CONFLICT (one_row_id) DO UPDATE
 		height = excluded.height
 WHERE emoney_gas_prices.height <= excluded.height`
 
-	_, err := db.Sql.Exec(stmt, pq.Array(dbtypes.NewDbDecCoins(gasPrices.GasPrices)), gasPrices.Height)
+	_, err := db.SQL.Exec(stmt, pq.Array(dbtypes.NewDbDecCoins(gasPrices.GasPrices)), gasPrices.Height)
 	if err != nil {
 		return fmt.Errorf("error while storing e-Money gas prices: %s", err)
 	}

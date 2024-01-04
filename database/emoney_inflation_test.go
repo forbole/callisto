@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
-	inflationtypes "github.com/e-money/em-ledger/x/inflation/types"
+	inflationtypes "github.com/MonikaCat/em-ledger/x/inflation/types"
 
 	dbtypes "github.com/forbole/bdjuno/v4/database/types"
 	"github.com/forbole/bdjuno/v4/types"

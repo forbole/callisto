@@ -3,7 +3,7 @@ package authority
 import (
 	"encoding/json"
 
-	authoritytypes "github.com/e-money/em-ledger/x/authority/types"
+	authoritytypes "github.com/MonikaCat/em-ledger/x/authority/types"
 	"github.com/rs/zerolog/log"
 	tmtypes "github.com/tendermint/tendermint/types"
 

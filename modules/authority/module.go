@@ -16,13 +16,13 @@ var (
 
 // Module represent database/mint module
 type Module struct {
-	cdc    codec.Marshaler
+	cdc    codec.Codec
 	db     *database.Db
 	source authoritysource.Source
 }
 
 // NewModule returns a new Module instance
-func NewModule(cdc codec.Marshaler, source authoritysource.Source, db *database.Db) *Module {
+func NewModule(cdc codec.Codec, source authoritysource.Source, db *database.Db) *Module {
 	return &Module{
 		cdc:    cdc,
 		db:     db,

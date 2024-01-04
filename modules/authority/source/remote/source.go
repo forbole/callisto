@@ -3,8 +3,8 @@ package remote
 import (
 	"fmt"
 
+	authoritytypes "github.com/MonikaCat/em-ledger/x/authority/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authoritytypes "github.com/e-money/em-ledger/x/authority/types"
 	"github.com/forbole/juno/v4/node/remote"
 
 	authoritysource "github.com/forbole/bdjuno/v4/modules/authority/source"

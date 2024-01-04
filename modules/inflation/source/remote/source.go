@@ -3,7 +3,7 @@ package remote
 import (
 	"fmt"
 
-	inflationtypes "github.com/e-money/em-ledger/x/inflation/types"
+	inflationtypes "github.com/MonikaCat/em-ledger/x/inflation/types"
 	"github.com/forbole/juno/v4/node/remote"
 
 	inflationsource "github.com/forbole/bdjuno/v4/modules/inflation/source"

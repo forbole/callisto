@@ -23,7 +23,7 @@ ON CONFLICT (one_row_id) DO UPDATE
 		last_applied_height = excluded.last_applied_height,
 		height = excluded.height
 WHERE emoney_inflation.height <= excluded.height`
-	_, err = db.Sql.Exec(stmt, string(inflationBz), eMoneyInflation.LastAppliedTime, eMoneyInflation.LastAppliedHeight, eMoneyInflation.Height)
+	_, err = db.SQL.Exec(stmt, string(inflationBz), eMoneyInflation.LastAppliedTime, eMoneyInflation.LastAppliedHeight, eMoneyInflation.Height)
 	if err != nil {
 		return err
 	}

@@ -21,9 +21,9 @@ import (
 
 	nodeconfig "github.com/forbole/juno/v4/node/config"
 
-	emoneyapp "github.com/e-money/em-ledger"
-	authoritytypes "github.com/e-money/em-ledger/x/authority/types"
-	inflationtypes "github.com/e-money/em-ledger/x/inflation/types"
+	emoneyapp "github.com/MonikaCat/em-ledger"
+	authoritytypes "github.com/MonikaCat/em-ledger/x/authority/types"
+	inflationtypes "github.com/MonikaCat/em-ledger/x/inflation/types"
 	authoritysource "github.com/forbole/bdjuno/v4/modules/authority/source"
 	localauthoritysource "github.com/forbole/bdjuno/v4/modules/authority/source/local"
 	remoteauthoritysource "github.com/forbole/bdjuno/v4/modules/authority/source/remote"
