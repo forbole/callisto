@@ -10,8 +10,6 @@ import (
 
 	"github.com/forbole/bdjuno/v4/modules/slashing"
 
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	jmodules "github.com/forbole/juno/v5/modules"
 	"github.com/forbole/juno/v5/modules/messages"
 	"github.com/forbole/juno/v5/modules/registrar"
@@ -26,6 +24,7 @@ import (
 	"github.com/forbole/bdjuno/v4/modules/consensus"
 	"github.com/forbole/bdjuno/v4/modules/distribution"
 	"github.com/forbole/bdjuno/v4/modules/feegrant"
+	juno "github.com/forbole/juno/v5/types"
 
 	dailyrefetch "github.com/forbole/bdjuno/v4/modules/daily_refetch"
 	"github.com/forbole/bdjuno/v4/modules/gov"
@@ -38,8 +37,8 @@ import (
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
 func UniqueAddressesParser(parser messages.MessageAddressesParser) messages.MessageAddressesParser {
-	return func(cdc codec.Codec, msg sdk.Msg) ([]string, error) {
-		addresses, err := parser(cdc, msg)
+	return func(tx *juno.Tx) ([]string, error) {
+		addresses, err := parser(tx)
 		if err != nil {
 			return nil, err
 		}
@@ -91,7 +90,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
 	stakeIBCModule := stakeibc.NewModule(sources.StakeIBCSource, cdc, db)
 	stakingModule := staking.NewModule(sources.StakingSource, cdc, db)
-	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakeIBCModule, stakingModule, cdc, db)
+	govModule := gov.NewModule(sources.GovSource, distrModule, mintModule, slashingModule, stakeIBCModule, stakingModule, cdc, db)
 	upgradeModule := upgrade.NewModule(db, stakingModule)
 
 	return []jmodules.Module{

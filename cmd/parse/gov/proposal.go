@@ -57,7 +57,7 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			stakeIBCModule := stakeibc.NewModule(sources.StakeIBCSource, parseCtx.EncodingConfig.Codec, db)
 
 			// Build the gov module
-			govModule := gov.NewModule(sources.GovSource, nil, distrModule, mintModule, slashingModule, stakeIBCModule, stakingModule, parseCtx.EncodingConfig.Codec, db)
+			govModule := gov.NewModule(sources.GovSource, distrModule, mintModule, slashingModule, stakeIBCModule, stakingModule, parseCtx.EncodingConfig.Codec, db)
 
 			err = refreshProposalDetails(parseCtx, proposalID, govModule)
 			if err != nil {

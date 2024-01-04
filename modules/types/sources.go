@@ -5,9 +5,9 @@ import (
 	"os"
 
 	"github.com/cometbft/cometbft/libs/log"
+	"github.com/forbole/juno/v5/types/params"
 
-	simappparams "cosmossdk.io/simapp/params"
-	minttypes "github.com/MonikaCat/stride/v15/x/mint/types"
+	minttypes "github.com/Stride-Labs/stride/v16/x/mint/types"
 	providertypes "github.com/cosmos/interchain-security/v3/x/ccv/provider/types"
 	providersource "github.com/forbole/bdjuno/v4/modules/ccv/provider/source"
 	remoteprovidersource "github.com/forbole/bdjuno/v4/modules/ccv/provider/source/remote"
@@ -22,9 +22,9 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/juno/v5/node/local"
 
-	strideapp "github.com/MonikaCat/stride/v15/app"
-	mintkeeper "github.com/MonikaCat/stride/v15/x/mint/keeper"
-	stakeibctypes "github.com/MonikaCat/stride/v15/x/stakeibc/types"
+	strideapp "github.com/Stride-Labs/stride/v16/app"
+	mintkeeper "github.com/Stride-Labs/stride/v16/x/mint/keeper"
+	stakeibctypes "github.com/Stride-Labs/stride/v16/x/stakeibc/types"
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v4/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"
@@ -60,7 +60,7 @@ type Sources struct {
 	ProviderSource providersource.Source
 }
 
-func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *simappparams.EncodingConfig) (*Sources, error) {
+func BuildSources(nodeCfg nodeconfig.Config, encodingConfig params.EncodingConfig) (*Sources, error) {
 	switch cfg := nodeCfg.Details.(type) {
 	case *remote.Details:
 		return buildRemoteSources(cfg)
@@ -72,7 +72,7 @@ func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *simappparams.Encodi
 	}
 }
 
-func buildLocalSources(cfg *local.Details, encodingConfig *simappparams.EncodingConfig) (*Sources, error) {
+func buildLocalSources(cfg *local.Details, encodingConfig params.EncodingConfig) (*Sources, error) {
 	source, err := local.NewSource(cfg.Home, encodingConfig)
 	if err != nil {
 		return nil, err

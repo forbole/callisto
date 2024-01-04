@@ -24,7 +24,7 @@ import (
 	tmtypes "github.com/cometbft/cometbft/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	simappparams "cosmossdk.io/simapp/params"
+	params "github.com/forbole/juno/v5/types/params"
 	"github.com/stretchr/testify/suite"
 
 	_ "github.com/proullon/ramsql/driver"
@@ -42,12 +42,11 @@ type DbTestSuite struct {
 
 func (suite *DbTestSuite) SetupTest() {
 	// Create the codec
-	codec := simappparams.MakeTestEncodingConfig()
+	codec := params.MakeTestEncodingConfig()
 
 	// Build the database
 	dbCfg := dbconfig.NewDatabaseConfig(
 		"postgresql://bdjuno:password@localhost:6433/bdjuno?sslmode=disable&search_path=public",
-		"",
 		"",
 		"",
 		"",
@@ -57,7 +56,7 @@ func (suite *DbTestSuite) SetupTest() {
 		100000,
 		100,
 	)
-	db, err := database.Builder(junodb.NewContext(dbCfg, &codec, logging.DefaultLogger()))
+	db, err := database.Builder(junodb.NewContext(dbCfg, codec, logging.DefaultLogger()))
 	suite.Require().NoError(err)
 
 	bigDipperDb, ok := (db).(*database.Db)

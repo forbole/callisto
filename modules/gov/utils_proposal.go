@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	minttypes "github.com/MonikaCat/stride/v15/x/mint/types"
-	stakeibctypes "github.com/MonikaCat/stride/v15/x/stakeibc/types"
+	minttypes "github.com/Stride-Labs/stride/v16/x/mint/types"
+	stakeibctypes "github.com/Stride-Labs/stride/v16/x/stakeibc/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"

@@ -8,7 +8,7 @@ import (
 
 	"github.com/forbole/bdjuno/v4/types"
 
-	stakeibctypes "github.com/MonikaCat/stride/v15/x/stakeibc/types"
+	stakeibctypes "github.com/Stride-Labs/stride/v16/x/stakeibc/types"
 	"github.com/rs/zerolog/log"
 )
 

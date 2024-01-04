@@ -1,7 +1,7 @@
 package source
 
 import (
-	minttypes "github.com/MonikaCat/stride/v15/x/mint/types"
+	minttypes "github.com/Stride-Labs/stride/v16/x/mint/types"
 )
 
 type Source interface {
