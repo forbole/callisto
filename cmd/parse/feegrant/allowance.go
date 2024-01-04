@@ -4,8 +4,8 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
-	"github.com/forbole/juno/v4/types/config"
+	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
+	"github.com/forbole/juno/v5/types/config"
 
 	"github.com/forbole/bdjuno/v4/modules/feegrant"
 	"github.com/forbole/bdjuno/v4/utils"
@@ -16,7 +16,7 @@ import (
 
 	"sort"
 
-	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
+	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
 	"github.com/rs/zerolog/log"
