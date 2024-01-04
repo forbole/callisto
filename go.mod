@@ -149,6 +149,6 @@ replace (
 	github.com/CosmWasm/wasmd v0.30.0 => github.com/wormhole-foundation/wasmd v0.30.0-wormchain-2
 	github.com/cosmos/cosmos-sdk => github.com/wormhole-foundation/cosmos-sdk v0.45.9-wormhole-2
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-	github.com/wormhole-foundation/wormchain => github.com/wormhole-foundation/wormhole/wormchain v0.0.0-20230817011418-deddbdf58302 // v2.23.0
-	github.com/wormhole-foundation/wormhole/sdk => github.com/wormhole-foundation/wormhole/sdk v0.0.0-20230817002457-6b3819cc41bc
+	github.com/wormhole-foundation/wormchain => github.com/wormhole-foundation/wormhole/wormchain v0.0.0-20231212202205-094a404902cf // v2.23.31
+	github.com/wormhole-foundation/wormhole/sdk => github.com/wormhole-foundation/wormhole/sdk v0.0.0-20231220145614-818038ef805d // v2.23.31
 )

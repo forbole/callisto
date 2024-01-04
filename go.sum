@@ -2128,10 +2128,10 @@ github.com/wormhole-foundation/cosmos-sdk v0.45.9-wormhole-2 h1:ZHvVEU+03UbmUOLf
 github.com/wormhole-foundation/cosmos-sdk v0.45.9-wormhole-2/go.mod h1:Z5M4TX7PsHNHlF/1XanI2DIpORQ+Q/st7oaeufEjnvU=
 github.com/wormhole-foundation/wasmd v0.30.0-wormchain-2 h1:T5lnEObp6nfp83K1GJSvgaRQ8VQjhokupAsEPWBph4A=
 github.com/wormhole-foundation/wasmd v0.30.0-wormchain-2/go.mod h1:BcwmiI8b2fR2MGioz3HeVvON5QjSDfrnUbGu0gKRk5U=
-github.com/wormhole-foundation/wormhole/sdk v0.0.0-20230817002457-6b3819cc41bc h1:0RDQ+zJoRwj9U7Bgcxp5r7fWzapX43k5QTp/Tu4fSPU=
-github.com/wormhole-foundation/wormhole/sdk v0.0.0-20230817002457-6b3819cc41bc/go.mod h1:pE/jYet19kY4P3V6mE2+01zvEfxdyBqv6L6HsnSa5uc=
-github.com/wormhole-foundation/wormhole/wormchain v0.0.0-20230817011418-deddbdf58302 h1:yBLfEE/RY70BZEYp3jPpkV/VjxK+UVCWPz6XmUJBnz4=
-github.com/wormhole-foundation/wormhole/wormchain v0.0.0-20230817011418-deddbdf58302/go.mod h1:CC+LHbL5uHSgxEh6NB4Q49XQXD6aQWFc75vhzNgChdQ=
+github.com/wormhole-foundation/wormhole/sdk v0.0.0-20231220145614-818038ef805d h1:vr9+k0nYWKjTKabHz2cyFu7zZ8zXE+OreLk6sEriqBk=
+github.com/wormhole-foundation/wormhole/sdk v0.0.0-20231220145614-818038ef805d/go.mod h1:pE/jYet19kY4P3V6mE2+01zvEfxdyBqv6L6HsnSa5uc=
+github.com/wormhole-foundation/wormhole/wormchain v0.0.0-20231212202205-094a404902cf h1:9GElvBfaSNguD1HHhk5P5iZ0zjKFRMui0jwKpR9p8os=
+github.com/wormhole-foundation/wormhole/wormchain v0.0.0-20231212202205-094a404902cf/go.mod h1:CC+LHbL5uHSgxEh6NB4Q49XQXD6aQWFc75vhzNgChdQ=
 github.com/wsddn/go-ecdh v0.0.0-20161211032359-48726bab9208/go.mod h1:IotVbo4F+mw0EzQ08zFqg7pK3FebNXpaMsRy2RT+Ees=
 github.com/xanzy/go-gitlab v0.31.0/go.mod h1:sPLojNBn68fMUWSxIJtdVVIP8uSBYqesTfDUseX11Ug=
 github.com/xanzy/go-gitlab v0.32.0/go.mod h1:sPLojNBn68fMUWSxIJtdVVIP8uSBYqesTfDUseX11Ug=
