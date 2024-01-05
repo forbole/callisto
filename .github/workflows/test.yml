@@ -25,7 +25,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
-          go-version: 1.19
+          go-version: "1.20"
       - name: Test & Create coverage report
         run: make install test-unit stop-docker-test
       - name: Upload cove coverage
