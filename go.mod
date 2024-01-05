@@ -1,6 +1,6 @@
 module github.com/forbole/bdjuno/v4
 
-go 1.21
+go 1.20
 
 require (
 	cosmossdk.io/math v1.1.2
