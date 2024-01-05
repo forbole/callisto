@@ -1,7 +1,7 @@
 package oracle
 
 import (
-	"github.com/forbole/juno/v4/modules"
+	"github.com/forbole/juno/v5/modules"
 
 	"github.com/forbole/bdjuno/v4/database"
 	oraclesource "github.com/forbole/bdjuno/v4/modules/oracle/source"

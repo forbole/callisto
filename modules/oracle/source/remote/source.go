@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	oracletypes "github.com/bandprotocol/chain/v2/x/oracle/types"
-	"github.com/forbole/juno/v4/node/remote"
+	"github.com/forbole/juno/v5/node/remote"
 
 	oraclesource "github.com/forbole/bdjuno/v4/modules/oracle/source"
 )
