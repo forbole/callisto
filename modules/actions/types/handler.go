@@ -3,7 +3,7 @@ package types
 import (
 	"fmt"
 
-	"github.com/forbole/juno/v4/node"
+	"github.com/forbole/juno/v5/node"
 
 	modulestypes "github.com/forbole/bdjuno/v4/modules/types"
 )
@@ -24,7 +24,7 @@ func NewContext(node node.Node, sources *modulestypes.Sources) *Context {
 
 // GetHeight uses the lastest height when the input height is empty from graphql request
 // It returns the height that is one block below the latest height
-// to fix 'cannot query with height in the future' error 
+// to fix 'cannot query with height in the future' error
 func (c *Context) GetHeight(payload *Payload) (int64, error) {
 	if payload == nil || payload.Input.Height == 0 {
 		latestHeight, err := c.node.LatestHeight()

@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	ccvprovidertypes "github.com/cosmos/interchain-security/v2/x/ccv/provider/types"
 	ccvprovidersource "github.com/forbole/bdjuno/v4/modules/ccv/provider/source"
-	"github.com/forbole/juno/v4/node/local"
+	"github.com/forbole/juno/v5/node/local"
 )
 
 var (
