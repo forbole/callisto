@@ -6,10 +6,10 @@ WORKDIR /go/src/github.com/forbole/bdjuno
 COPY . ./
 
 RUN apk update && apk add --no-cache ca-certificates build-base git
-ADD https://github.com/CosmWasm/wasmvm/releases/download/v1.2.2/libwasmvm_muslc.aarch64.a /lib/libwasmvm_muslc.aarch64.a
-ADD https://github.com/CosmWasm/wasmvm/releases/download/v1.2.2/libwasmvm_muslc.x86_64.a /lib/libwasmvm_muslc.x86_64.a
-RUN sha256sum /lib/libwasmvm_muslc.aarch64.a | grep 20ab42fceddd5347b973c254717eed62b2d46925c098f58304d09488ed59464a
-RUN sha256sum /lib/libwasmvm_muslc.x86_64.a | grep fc859817a1c548ceb0e02ad8cf5c8e374d240caac547d04dd02b284ace8ab33d
+ADD https://github.com/CosmWasm/wasmvm/releases/download/v1.5.0/libwasmvm_muslc.aarch64.a /lib/libwasmvm_muslc.aarch64.a
+ADD https://github.com/CosmWasm/wasmvm/releases/download/v1.5.0/libwasmvm_muslc.x86_64.a /lib/libwasmvm_muslc.x86_64.a
+RUN sha256sum /lib/libwasmvm_muslc.aarch64.a | grep 2687afbdae1bc6c7c8b05ae20dfb8ffc7ddc5b4e056697d0f37853dfe294e913
+RUN sha256sum /lib/libwasmvm_muslc.x86_64.a | grep 465e3a088e96fd009a11bfd234c69fb8a0556967677e54511c084f815cf9ce63
 ## Copy the library you want to the final location that will be found by the linker flag `-lwasmvm_muslc`
 RUN cp /lib/libwasmvm_muslc.$(uname -m).a /lib/libwasmvm_muslc.a
 RUN go mod download
