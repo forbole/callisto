@@ -7,7 +7,6 @@ require (
 	github.com/cometbft/cometbft v0.38.2
 	github.com/cosmos/cosmos-sdk v0.46.13
 	github.com/forbole/juno/v5 v5.0.0-20240102102059-0f91fef36cd5
-	// v4.1.1-0.20230523054250-61a89d3e8082 // branch cosmos/v0.46.x-cometbft
 	github.com/gitopia/gitopia/v3 v3.3.0
 	github.com/go-co-op/gocron v1.27.1
 	github.com/gogo/protobuf v1.3.3
