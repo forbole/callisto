@@ -11,13 +11,13 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
-	"github.com/forbole/juno/v4/node/remote"
+	"github.com/forbole/juno/v5/node/remote"
 
 	// stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
-	nodeconfig "github.com/forbole/juno/v4/node/config"
-	"github.com/forbole/juno/v4/node/local"
+	nodeconfig "github.com/forbole/juno/v5/node/config"
+	"github.com/forbole/juno/v5/node/local"
 
 	// localbanksource "github.com/forbole/bdjuno/v4/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"
