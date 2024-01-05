@@ -2,7 +2,7 @@ package liquidstaking
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/forbole/juno/v4/modules"
+	"github.com/forbole/juno/v5/modules"
 
 	"github.com/forbole/bdjuno/v4/database"
 	liquidstaking "github.com/forbole/bdjuno/v4/modules/liquidstaking/source"

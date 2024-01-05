@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/forbole/juno/v4/node/remote"
+	"github.com/forbole/juno/v5/node/remote"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -14,9 +14,9 @@ import (
 	liquidstakingtypes "github.com/crescent-network/crescent/v5/x/liquidstaking/types"
 	lpfarmtypes "github.com/crescent-network/crescent/v5/x/lpfarm/types"
 	creminttypes "github.com/crescent-network/crescent/v5/x/mint/types"
-	"github.com/forbole/juno/v4/node/local"
+	"github.com/forbole/juno/v5/node/local"
 
-	nodeconfig "github.com/forbole/juno/v4/node/config"
+	nodeconfig "github.com/forbole/juno/v5/node/config"
 
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
 	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"

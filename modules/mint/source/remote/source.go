@@ -2,7 +2,7 @@ package remote
 
 import (
 	creminttypes "github.com/crescent-network/crescent/v5/x/mint/types"
-	"github.com/forbole/juno/v4/node/remote"
+	"github.com/forbole/juno/v5/node/remote"
 
 	mintsource "github.com/forbole/bdjuno/v4/modules/mint/source"
 )

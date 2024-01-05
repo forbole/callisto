@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	lpfarmtypes "github.com/crescent-network/crescent/v5/x/lpfarm/types"
-	"github.com/forbole/juno/v4/node/remote"
+	"github.com/forbole/juno/v5/node/remote"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	lpfarmsource "github.com/forbole/bdjuno/v4/modules/lpfarm/source"
