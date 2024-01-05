@@ -1,7 +1,7 @@
 package remote
 
 import (
-	"github.com/forbole/juno/v4/node/remote"
+	"github.com/forbole/juno/v5/node/remote"
 	storagetypes "github.com/jackalLabs/canine-chain/v3/x/storage/types"
 
 	storagesource "github.com/forbole/bdjuno/v4/modules/storage/source"

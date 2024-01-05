@@ -1,7 +1,7 @@
 package pricefeed
 
 import (
-	parsecmdtypes "github.com/forbole/juno/v4/cmd/parse/types"
+	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
 	"github.com/spf13/cobra"
 )
 

@@ -4,17 +4,17 @@ import (
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/forbole/juno/v4/node/remote"
+	"github.com/forbole/juno/v5/node/remote"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/forbole/juno/v4/node/local"
+	"github.com/forbole/juno/v5/node/local"
 	minttypes "github.com/jackalLabs/canine-chain/v3/x/jklmint/types"
 
-	nodeconfig "github.com/forbole/juno/v4/node/config"
+	nodeconfig "github.com/forbole/juno/v5/node/config"
 
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
 	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"

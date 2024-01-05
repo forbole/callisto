@@ -4,7 +4,7 @@ package local
 // 	"fmt"
 
 // 	sdk "github.com/cosmos/cosmos-sdk/types"
-// 	"github.com/forbole/juno/v4/node/local"
+// 	"github.com/forbole/juno/v5/node/local"
 
 // 	storagesource "github.com/forbole/bdjuno/v4/modules/storage/source"
 // 	storagetypes "github.com/jackalLabs/canine-chain/v3/x/storage/types"

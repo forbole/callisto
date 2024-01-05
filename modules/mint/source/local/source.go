@@ -5,7 +5,7 @@ package local
 
 // 	sdk "github.com/cosmos/cosmos-sdk/types"
 // 	minttypes "github.com/jackalLabs/canine-chain/v3/x/jklmint/types"
-// 	"github.com/forbole/juno/v4/node/local"
+// 	"github.com/forbole/juno/v5/node/local"
 
 // 	mintsource "github.com/forbole/bdjuno/v4/modules/mint/source"
 // )
