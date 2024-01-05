@@ -1,6 +1,6 @@
 module github.com/forbole/bdjuno/v4
 
-go 1.19
+go 1.20
 
 require (
 	github.com/Agoric/agoric-sdk/golang/cosmos v0.0.0-20231224064603-a0d8229524d8
