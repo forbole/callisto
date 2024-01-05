@@ -1,6 +1,6 @@
 
 
-FROM golang:1.20-alpine AS builder
+FROM golang:1.21.0-alpine3.18 AS builder
 RUN apk update && apk add --no-cache make git
 WORKDIR /go/src/github.com/forbole/bdjuno
 COPY . ./
@@ -15,7 +15,7 @@ RUN cp /lib/libwasmvm_muslc.$(uname -m).a /lib/libwasmvm_muslc.a
 RUN go mod download
 RUN LINK_STATICALLY=true BUILD_TAGS="muslc" make build
 
-FROM alpine:latest
+FROM golang:1.21.0-alpine3.18
 RUN apk update && apk add --no-cache ca-certificates build-base
 WORKDIR /bdjuno
 COPY --from=builder /go/src/github.com/forbole/bdjuno/build/bdjuno /usr/bin/bdjuno
