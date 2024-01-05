@@ -3,7 +3,7 @@ package market
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/forbole/bdjuno/v4/database"
-	"github.com/forbole/juno/v4/modules"
+	"github.com/forbole/juno/v5/modules"
 
 	marketsource "github.com/forbole/bdjuno/v4/modules/market/source"
 )

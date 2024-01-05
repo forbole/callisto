@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/forbole/juno/v4/node/remote"
+	"github.com/forbole/juno/v5/node/remote"
 
 	markettypes "github.com/akash-network/akash-api/go/node/market/v1beta4"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -13,9 +13,9 @@ import (
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/forbole/juno/v4/node/local"
+	"github.com/forbole/juno/v5/node/local"
 
-	nodeconfig "github.com/forbole/juno/v4/node/config"
+	nodeconfig "github.com/forbole/juno/v5/node/config"
 
 	providertypes "github.com/akash-network/akash-api/go/node/provider/v1beta3"
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"

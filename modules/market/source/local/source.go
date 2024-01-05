@@ -7,7 +7,7 @@ import (
 
 	markettypes "github.com/akash-network/akash-api/go/node/market/v1beta4"
 	"github.com/cosmos/cosmos-sdk/types/query"
-	"github.com/forbole/juno/v4/node/local"
+	"github.com/forbole/juno/v5/node/local"
 
 	marketsource "github.com/forbole/bdjuno/v4/modules/market/source"
 )

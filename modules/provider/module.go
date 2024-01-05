@@ -4,13 +4,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/forbole/bdjuno/v4/database"
 	providersource "github.com/forbole/bdjuno/v4/modules/provider/source"
-	"github.com/forbole/juno/v4/modules"
+	"github.com/forbole/juno/v5/modules"
 )
 
 var (
-	_ modules.Module        = &Module{}
-	_ modules.GenesisModule = &Module{}
-	_ modules.MessageModule = &Module{}
+	_ modules.Module                   = &Module{}
+	_ modules.GenesisModule            = &Module{}
+	_ modules.MessageModule            = &Module{}
 	_ modules.PeriodicOperationsModule = &Module{}
 )
 

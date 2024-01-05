@@ -4,7 +4,7 @@ import (
 	providertypes "github.com/akash-network/akash-api/go/node/provider/v1beta3"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/bdjuno/v4/types"
-	junotypes "github.com/forbole/juno/v4/types"
+	junotypes "github.com/forbole/juno/v5/types"
 )
 
 // HandleMsg implements modules.MessageModule

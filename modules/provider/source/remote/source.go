@@ -6,7 +6,7 @@ import (
 	providersource "github.com/forbole/bdjuno/v4/modules/provider/source"
 
 	"github.com/cosmos/cosmos-sdk/types/query"
-	"github.com/forbole/juno/v4/node/remote"
+	"github.com/forbole/juno/v5/node/remote"
 
 	providertypes "github.com/akash-network/akash-api/go/node/provider/v1beta3"
 )
