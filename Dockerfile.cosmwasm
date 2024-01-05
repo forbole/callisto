@@ -1,5 +1,3 @@
-
-
 FROM golang:1.21-alpine AS builder
 RUN apk update && apk add --no-cache make git
 WORKDIR /go/src/github.com/forbole/bdjuno
@@ -13,7 +11,7 @@ RUN sha256sum /lib/libwasmvm_muslc.x86_64.a | grep ce3d892377d2523cf563e01120cb1
 ## Copy the library you want to the final location that will be found by the linker flag `-lwasmvm_muslc`
 RUN cp /lib/libwasmvm_muslc.$(uname -m).a /lib/libwasmvm_muslc.a
 RUN go mod download
-RUN LINK_STATICALLY=true BUILD_TAGS="muslc" make build
+RUN BUILD_TAGS="muslc linkstatic" LDFLAGS='-linkmode external -extldflags "-static"' make build
 
 FROM alpine:latest
 RUN apk update && apk add --no-cache ca-certificates build-base
