@@ -11,7 +11,7 @@ import (
 // DbAccessConfig represents the information stored inside the database about a single access_config
 type DbAccessConfig struct {
 	Permission int      `db:"permission"`
-	Addresses  []string `db:"address"`
+	Addresses  []string `db:"addresses"`
 }
 
 // NewDbAccessConfig builds a DbAccessConfig starting from an CosmWasm type AccessConfig
@@ -33,7 +33,7 @@ func (cfg *DbAccessConfig) Value() (driver.Value, error) {
 
 // Equal tells whether a and b represent the same access_config
 func (cfg *DbAccessConfig) Equal(b *DbAccessConfig) bool {
-	return cfg.Addresses[0] == b.Addresses[0] && cfg.Permission == b.Permission
+	return cfg.Permission == b.Permission
 }
 
 // ===================== Params =====================
@@ -42,18 +42,16 @@ func (cfg *DbAccessConfig) Equal(b *DbAccessConfig) bool {
 type WasmParams struct {
 	CodeUploadAccess             *DbAccessConfig `db:"code_upload_access"`
 	InstantiateDefaultPermission int32           `db:"instantiate_default_permission"`
-	MaxWasmCodeSize              uint64          `db:"max_wasm_code_size"`
 	Height                       int64           `db:"height"`
 }
 
 // NewWasmParams allows to build a new x/wasm params instance
 func NewWasmParams(
-	codeUploadAccess *DbAccessConfig, instantiateDefaultPermission int32, maxWasmCodeSize uint64, height int64,
+	codeUploadAccess *DbAccessConfig, instantiateDefaultPermission int32, height int64,
 ) WasmParams {
 	return WasmParams{
 		CodeUploadAccess:             codeUploadAccess,
 		InstantiateDefaultPermission: instantiateDefaultPermission,
-		MaxWasmCodeSize:              maxWasmCodeSize,
 		Height:                       height,
 	}
 }

@@ -1,7 +1,7 @@
 CREATE TYPE ACCESS_CONFIG AS
 (
     permission  INT,
-    address     TEXT
+    addresses   TEXT
 );
 
 CREATE TABLE wasm_params
@@ -11,7 +11,6 @@ CREATE TABLE wasm_params
     instantiate_default_permission  INT             NOT NULL,
     height                          BIGINT          NOT NULL
 );
-
 
 CREATE TABLE wasm_code
 (
@@ -52,4 +51,3 @@ CREATE TABLE wasm_execute_contract
     height                  BIGINT          NOT NULL
 );
 CREATE INDEX execute_contract_height_index ON wasm_execute_contract (height);
- 

@@ -16,7 +16,7 @@ INSERT INTO wasm_params(code_upload_access, instantiate_default_permission, heig
 VALUES ($1, $2, $3) 
 ON CONFLICT (one_row_id) DO UPDATE 
 	SET code_upload_access = excluded.code_upload_access, 
-		instantiate_default_permission = excluded.instantiate_default_permission
+		instantiate_default_permission = excluded.instantiate_default_permission, 
 WHERE wasm_params.height <= excluded.height
 `
 	accessConfig := dbtypes.NewDbAccessConfig(params.CodeUploadAccess)
@@ -42,6 +42,10 @@ func (db *Db) SaveWasmCodes(wasmCodes []types.WasmCode) error {
 	stmt := `
 INSERT INTO wasm_code(sender, byte_code, instantiate_permission, code_id, height) 
 VALUES `
+
+	if len(wasmCodes) == 0 {
+		return fmt.Errorf("wasm codes list is empty")
+	}
 
 	var args []interface{}
 	for i, code := range wasmCodes {
@@ -104,6 +108,8 @@ data, instantiated_at, contract_info_extension, contract_states, height)
 VALUES `
 
 	var args []interface{}
+	var accounts []types.Account
+
 	for i, contract := range wasmContracts {
 		ii := i * paramsNumber
 		stmt += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d),",
@@ -113,6 +119,12 @@ VALUES `
 			pq.Array(dbtypes.NewDbCoins(contract.Funds)), contract.ContractAddress, contract.Data,
 			contract.InstantiatedAt, contract.ContractInfoExtension, string(contract.ContractStates), contract.Height,
 		)
+		accounts = append(accounts, types.NewAccount(contract.Creator), types.NewAccount(contract.Sender))
+	}
+
+	err := db.SaveAccounts(accounts)
+	if err != nil {
+		return fmt.Errorf("error while storing wasm contract creator account: %s", err)
 	}
 
 	stmt = stmt[:len(stmt)-1] // Remove trailing ","
@@ -132,7 +144,7 @@ VALUES `
 			height = excluded.height
 	WHERE wasm_contract.height <= excluded.height`
 
-	_, err := db.SQL.Exec(stmt, args...)
+	_, err = db.SQL.Exec(stmt, args...)
 	if err != nil {
 		return fmt.Errorf("error while saving wasm contracts: %s", err)
 	}
@@ -219,6 +231,18 @@ sender = $1, admin = $2 WHERE contract_address = $2 `
 	_, err := db.SQL.Exec(stmt, sender, newAdmin, contractAddress)
 	if err != nil {
 		return fmt.Errorf("error while updating wsm contract admin: %s", err)
+	}
+	return nil
+}
+
+func (db *Db) UpdateMsgInvolvedAccountsAddresses(contractAddress string, txHash string) error {
+
+	stmt := `UPDATE message SET 
+involved_accounts_addresses = ARRAY_APPEND(involved_accounts_addresses, $1) WHERE transaction_hash = $2 `
+
+	_, err := db.SQL.Exec(stmt, contractAddress, txHash)
+	if err != nil {
+		return fmt.Errorf("error while updating wasm contract message: %s", err)
 	}
 	return nil
 }

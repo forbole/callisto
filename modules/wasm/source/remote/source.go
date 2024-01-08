@@ -2,6 +2,7 @@ package remote
 
 import (
 	"fmt"
+	"strings"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
@@ -26,50 +27,6 @@ func NewSource(source *remote.Source, wasmClient wasmtypes.QueryClient) *Source 
 		Source:     source,
 		wasmClient: wasmClient,
 	}
-}
-
-// GetCodesInfos implements wasmsource.Source
-func (s Source) GetCodesInfos(height int64) ([]wasmtypes.CodeInfoResponse, error) {
-	ctx := remote.GetHeightRequestContext(s.Ctx, height)
-
-	var codeInfosRes []wasmtypes.CodeInfoResponse
-	var nextKey []byte
-	var stop = false
-	for !stop {
-		res, err := s.wasmClient.Codes(
-			ctx,
-			&wasmtypes.QueryCodesRequest{
-				Pagination: &query.PageRequest{
-					Key:   nextKey,
-					Limit: 100, // Query 100 codes at time
-				},
-			},
-		)
-		if err != nil {
-			return nil, err
-		}
-
-		nextKey = res.Pagination.NextKey
-		stop = len(res.Pagination.NextKey) == 0
-		codeInfosRes = append(codeInfosRes, res.CodeInfos...)
-	}
-
-	return codeInfosRes, nil
-}
-
-// GetCodeBinary implements wasmsource.Source
-func (s Source) GetCodeBinary(codeID uint64, height int64) ([]byte, error) {
-	res, err := s.wasmClient.Code(
-		remote.GetHeightRequestContext(s.Ctx, height),
-		&wasmtypes.QueryCodeRequest{
-			CodeId: codeID,
-		},
-	)
-	if err != nil {
-		return nil, fmt.Errorf("error while getting contract code binary: %s", err)
-	}
-
-	return res.Data, nil
 }
 
 // GetContractInfo implements wasmsource.Source
@@ -114,4 +71,52 @@ func (s Source) GetContractStates(height int64, contractAddr string) ([]wasmtype
 	}
 
 	return models, nil
+}
+
+// GetCodes implements wasmsource.Source
+func (s Source) GetCodes(height int64) ([]wasmtypes.CodeInfoResponse, error) {
+
+	var codes []wasmtypes.CodeInfoResponse
+	var nextKey []byte
+	var stop = false
+	for !stop {
+		res, err := s.wasmClient.Codes(
+			remote.GetHeightRequestContext(s.Ctx, height),
+			&wasmtypes.QueryCodesRequest{
+				Pagination: &query.PageRequest{
+					Key:   nextKey,
+					Limit: 100, // Query 100 states at time
+				},
+			},
+		)
+		if err != nil {
+			return nil, fmt.Errorf("error while getting contract codes: %s", err)
+		}
+
+		nextKey = res.Pagination.NextKey
+		stop = len(res.Pagination.NextKey) == 0
+		codes = append(codes, res.CodeInfos...)
+	}
+
+	return codes, nil
+}
+
+// GetContractsByCode implements wasmsource.Source
+func (s Source) GetContractsByCode(height int64, codeID uint64) ([]string, error) {
+	var contracts []string
+	res, err := s.wasmClient.ContractsByCode(
+		remote.GetHeightRequestContext(s.Ctx, height),
+		&wasmtypes.QueryContractsByCodeRequest{
+			CodeId: codeID,
+		},
+	)
+	if err != nil {
+		return nil, fmt.Errorf("error while getting contracts by code info: %s", err)
+	}
+
+	for _, c := range res.Contracts {
+		v := strings.Split(c, ",") // Split the values
+		contracts = append(contracts, v...)
+	}
+	return contracts, nil
 }

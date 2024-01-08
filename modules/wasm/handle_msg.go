@@ -40,12 +40,12 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 			return fmt.Errorf("error while handling MsgMigrateContract: %s", err)
 		}
 	case *wasmtypes.MsgUpdateAdmin:
-		err := m.HandleMsgUpdateAdmin(cosmosMsg)
+		err := m.HandleMsgUpdateAdmin(cosmosMsg, tx)
 		if err != nil {
 			return fmt.Errorf("error while handling MsgUpdateAdmin: %s", err)
 		}
 	case *wasmtypes.MsgClearAdmin:
-		err := m.HandleMsgClearAdmin(cosmosMsg)
+		err := m.HandleMsgClearAdmin(cosmosMsg, tx)
 		if err != nil {
 			return fmt.Errorf("error while handling MsgClearAdmin: %s", err)
 		}
@@ -94,6 +94,11 @@ func (m *Module) HandleMsgInstantiateContract(index int, tx *juno.Tx, msg *wasmt
 	contractAddress, err := tx.FindAttributeByKey(event, wasmtypes.AttributeKeyContractAddr)
 	if err != nil {
 		return fmt.Errorf("error while searching for AttributeKeyContractAddr: %s", err)
+	}
+
+	err = m.db.UpdateMsgInvolvedAccountsAddresses(contractAddress, tx.TxHash)
+	if err != nil {
+		return fmt.Errorf("error while saving contract address inside involved accounts addresses: %s", err)
 	}
 
 	// Get result data
@@ -168,6 +173,11 @@ func (m *Module) HandleMsgExecuteContract(index int, tx *juno.Tx, msg *wasmtypes
 		return fmt.Errorf("error while parsing time: %s", err)
 	}
 
+	err = m.db.UpdateMsgInvolvedAccountsAddresses(msg.Contract, tx.TxHash)
+	if err != nil {
+		return fmt.Errorf("error while saving contract address inside the involved addresses in message table: %s", err)
+	}
+
 	return m.db.SaveWasmExecuteContract(
 		types.NewWasmExecuteContract(
 			msg.Sender, msg.Contract, msg.Msg, msg.Funds,
@@ -195,17 +205,32 @@ func (m *Module) HandleMsgMigrateContract(index int, tx *juno.Tx, msg *wasmtypes
 		return fmt.Errorf("error while decoding result data: %s", err)
 	}
 
+	err = m.db.UpdateMsgInvolvedAccountsAddresses(msg.Contract, tx.TxHash)
+	if err != nil {
+		return fmt.Errorf("error while saving contract address inside the involved addresses in message table: %s", err)
+	}
+
 	return m.db.UpdateContractWithMsgMigrateContract(msg.Sender, msg.Contract, msg.CodeID, msg.Msg, string(resultDataBz))
 }
 
 // HandleMsgUpdateAdmin allows to properly handle a MsgUpdateAdmin
 // Update Admin Event updates the contract admin who can migrate the wasm contract
-func (m *Module) HandleMsgUpdateAdmin(msg *wasmtypes.MsgUpdateAdmin) error {
+func (m *Module) HandleMsgUpdateAdmin(msg *wasmtypes.MsgUpdateAdmin, tx *juno.Tx) error {
+	err := m.db.UpdateMsgInvolvedAccountsAddresses(msg.Contract, tx.TxHash)
+	if err != nil {
+		return fmt.Errorf("error while saving contract address inside the involved addresses in message table: %s", err)
+	}
+
 	return m.db.UpdateContractAdmin(msg.Sender, msg.Contract, msg.NewAdmin)
 }
 
 // HandleMsgClearAdmin allows to properly handle a MsgClearAdmin
 // Clear Admin Event clears the admin which make the contract no longer migratable
-func (m *Module) HandleMsgClearAdmin(msg *wasmtypes.MsgClearAdmin) error {
+func (m *Module) HandleMsgClearAdmin(msg *wasmtypes.MsgClearAdmin, tx *juno.Tx) error {
+	err := m.db.UpdateMsgInvolvedAccountsAddresses(msg.Contract, tx.TxHash)
+	if err != nil {
+		return fmt.Errorf("error while saving contract address inside the involved addresses in message table: %s", err)
+	}
+
 	return m.db.UpdateContractAdmin(msg.Sender, msg.Contract, "")
 }

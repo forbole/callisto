@@ -41,7 +41,7 @@ func BuildSources(nodeCfg nodeconfig.Config, encodingConfig params.EncodingConfi
 	case *remote.Details:
 		return buildRemoteSources(cfg)
 	case *local.Details:
-		return nil, fmt.Errorf("local source is not supported: %T", cfg)
+		return buildLocalSources(cfg, encodingConfig)
 	default:
 		return nil, fmt.Errorf("invalid configuration type: %T", cfg)
 	}
