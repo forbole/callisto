@@ -37,7 +37,7 @@ func codeCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				return err
 			}
 
-			wasmModule := wasm.NewModule(sources.WasmSource, parseCtx.EncodingConfig.Marshaler, db)
+			wasmModule := wasm.NewModule(sources.WasmSource, parseCtx.EncodingConfig.Codec, db)
 
 			wasmCodes, err := wasmModule.GetWasmCodes(height)
 			if err != nil {
