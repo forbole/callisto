@@ -25,7 +25,6 @@ func (m *Module) StoreContracts(height int64) error {
 			return fmt.Errorf("error while handling contracts codes: %s", err)
 		}
 
-		var wasmContracts []types.WasmContract
 		for _, contract := range contracts {
 			contractStates, err := m.source.GetContractStates(height, contract)
 			if err != nil {
@@ -37,16 +36,15 @@ func (m *Module) StoreContracts(height int64) error {
 				return fmt.Errorf("error while getting contracts info: %s", err)
 			}
 
-			wasmContracts = append(wasmContracts, types.NewWasmContract(
-				"", contractInfo.ContractInfo.Admin, contractInfo.ContractInfo.CodeID, contractInfo.ContractInfo.Label, nil, nil,
-				contract, "", time.Now(), contractInfo.ContractInfo.Creator, contractInfo.ContractInfo.Extension.GoString(), contractStates, height,
-			))
+			err = m.db.SaveWasmContracts([]types.WasmContract{
+				types.NewWasmContract("", contractInfo.ContractInfo.Admin, contractInfo.ContractInfo.CodeID, contractInfo.ContractInfo.Label, nil, nil,
+					contract, "", time.Now(), contractInfo.ContractInfo.Creator, contractInfo.ContractInfo.Extension.GoString(), contractStates, height,
+				)})
 
-		}
+			if err != nil {
+				return fmt.Errorf("error while saving wasm contract: %s", err)
+			}
 
-		err = m.db.SaveWasmContracts(wasmContracts)
-		if err != nil {
-			return fmt.Errorf("error while saving wasm contracts: %s", err)
 		}
 
 	}
