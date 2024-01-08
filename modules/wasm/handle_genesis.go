@@ -42,7 +42,7 @@ func (m *Module) HandleGenesis(doc *cbfttypes.GenesisDoc, appState map[string]js
 
 func (m *Module) SaveGenesisParams(params wasmtypes.Params, initHeight int64) error {
 	err := m.db.SaveWasmParams(
-		types.NewWasmParams(params, initHeight),
+		types.NewWasmParams(&params.CodeUploadAccess, int32(params.InstantiateDefaultPermission), initHeight),
 	)
 	if err != nil {
 		return fmt.Errorf("error while saving genesis wasm params: %s", err)

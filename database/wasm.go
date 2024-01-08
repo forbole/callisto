@@ -1,10 +1,8 @@
 package database
 
 import (
-	"encoding/json"
 	"fmt"
 
-	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	dbtypes "github.com/forbole/bdjuno/v4/database/types"
 	dbutils "github.com/forbole/bdjuno/v4/database/utils"
 	"github.com/forbole/bdjuno/v4/types"
@@ -13,21 +11,20 @@ import (
 
 // SaveWasmParams allows to store the wasm params
 func (db *Db) SaveWasmParams(params types.WasmParams) error {
-	paramsBz, err := json.Marshal(&params.Params)
-	if err != nil {
-		return fmt.Errorf("error while marshaling wasm params: %s", err)
-	}
-
 	stmt := `
-INSERT INTO wasm_params(params, height) 
-VALUES ($1, $2) 
+INSERT INTO wasm_params(code_upload_access, instantiate_default_permission, height) 
+VALUES ($1, $2, $3) 
 ON CONFLICT (one_row_id) DO UPDATE 
-	SET params = excluded.params 
+	SET code_upload_access = excluded.code_upload_access, 
+		instantiate_default_permission = excluded.instantiate_default_permission, 
 WHERE wasm_params.height <= excluded.height
 `
+	accessConfig := dbtypes.NewDbAccessConfig(params.CodeUploadAccess)
+	cfgValue, _ := accessConfig.Value()
 
-	_, err = db.SQL.Exec(stmt, string(paramsBz), params.Height)
-
+	_, err := db.SQL.Exec(stmt,
+		cfgValue, params.InstantiateDefaultPermission, params.Height,
+	)
 	if err != nil {
 		return fmt.Errorf("error while saving wasm params: %s", err)
 	}
@@ -51,22 +48,18 @@ VALUES `
 	}
 
 	var args []interface{}
-	var accounts = make([]types.Account, len(wasmCodes))
 	for i, code := range wasmCodes {
 		ii := i * 5
 
-		var permissionBz []byte
-		var err error
+		var accessConfig dbtypes.DbAccessConfig
 		if code.InstantiatePermission != nil {
-			permissionBz, err = json.Marshal(code.InstantiatePermission)
-			if err != nil {
-				return fmt.Errorf("error while marshaling wasm instantiate permission: %s", err)
-			}
+			accessConfig = dbtypes.NewDbAccessConfig(code.InstantiatePermission)
 		}
 
+		cfgValue, _ := accessConfig.Value()
+
 		stmt += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d),", ii+1, ii+2, ii+3, ii+4, ii+5)
-		args = append(args, code.Sender, code.WasmByteCode, string(permissionBz), code.CodeID, code.Height)
-		accounts[i] = types.NewAccount(code.Sender)
+		args = append(args, code.Sender, code.WasmByteCode, cfgValue, code.CodeID, code.Height)
 	}
 
 	stmt = stmt[:len(stmt)-1] // Remove trailing ","
@@ -79,12 +72,7 @@ VALUES `
 			height = excluded.height
 	WHERE wasm_code.height <= excluded.height`
 
-	err := db.SaveAccounts(accounts)
-	if err != nil {
-		return fmt.Errorf("error while saving accounts: %s", err)
-	}
-
-	_, err = db.SQL.Exec(stmt, args...)
+	_, err := db.SQL.Exec(stmt, args...)
 	if err != nil {
 		return fmt.Errorf("error while saving wasm code: %s", err)
 	}
@@ -120,28 +108,23 @@ data, instantiated_at, contract_info_extension, contract_states, height)
 VALUES `
 
 	var args []interface{}
-	var accounts = make([]types.Account, len(wasmContracts))
+	var accounts []types.Account
+
 	for i, contract := range wasmContracts {
 		ii := i * paramsNumber
 		stmt += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d),",
 			ii+1, ii+2, ii+3, ii+4, ii+5, ii+6, ii+7, ii+8, ii+9, ii+10, ii+11, ii+12, ii+13)
 		args = append(args,
-			contract.Sender,
-			contract.Creator,
-			contract.Admin,
-			contract.CodeID,
-			contract.Label,
-			string(contract.RawContractMsg),
-			pq.Array(dbtypes.NewDbCoins(contract.Funds)),
-			contract.ContractAddress,
-			contract.Data,
-			contract.InstantiatedAt,
-			contract.ContractInfoExtension,
-			string(contract.ContractStates),
-			contract.Height,
+			contract.Sender, contract.Creator, contract.Admin, contract.CodeID, contract.Label, string(contract.RawContractMsg),
+			pq.Array(dbtypes.NewDbCoins(contract.Funds)), contract.ContractAddress, contract.Data,
+			contract.InstantiatedAt, contract.ContractInfoExtension, string(contract.ContractStates), contract.Height,
 		)
+		accounts = append(accounts, types.NewAccount(contract.Creator), types.NewAccount(contract.Sender))
+	}
 
-		accounts[i] = types.NewAccount(contract.Creator)
+	err := db.SaveAccounts(accounts)
+	if err != nil {
+		return fmt.Errorf("error while storing wasm contract creator account: %s", err)
 	}
 
 	stmt = stmt[:len(stmt)-1] // Remove trailing ","
@@ -160,11 +143,6 @@ VALUES `
 			contract_states = excluded.contract_states,
 			height = excluded.height
 	WHERE wasm_contract.height <= excluded.height`
-
-	err := db.SaveAccounts(accounts)
-	if err != nil {
-		return fmt.Errorf("error while saving accounts: %s", err)
-	}
 
 	_, err = db.SQL.Exec(stmt, args...)
 	if err != nil {
@@ -227,19 +205,15 @@ VALUES `
 }
 
 func (db *Db) UpdateContractWithMsgMigrateContract(
-	sender string, contractAddress string, codeID uint64, rawContractMsg wasmtypes.RawContractMessage, data string,
+	sender string, contractAddress string, codeID uint64, rawContractMsg []byte, data string,
 ) error {
+
 	stmt := `UPDATE wasm_contract SET 
 sender = $1, code_id = $2, raw_contract_message = $3, data = $4 
 WHERE contract_address = $5 `
 
-	converted := types.ConvertRawContractMessage(rawContractMsg)
-
 	_, err := db.SQL.Exec(stmt,
-		sender,
-		codeID,
-		string(converted),
-		data,
+		sender, codeID, string(rawContractMsg), data,
 		contractAddress,
 	)
 	if err != nil {
@@ -252,11 +226,23 @@ WHERE contract_address = $5 `
 func (db *Db) UpdateContractAdmin(sender string, contractAddress string, newAdmin string) error {
 
 	stmt := `UPDATE wasm_contract SET 
-sender = $1, admin = $2 WHERE contract_address = $3 `
+sender = $1, admin = $2 WHERE contract_address = $2 `
 
 	_, err := db.SQL.Exec(stmt, sender, newAdmin, contractAddress)
 	if err != nil {
 		return fmt.Errorf("error while updating wsm contract admin: %s", err)
+	}
+	return nil
+}
+
+func (db *Db) UpdateMsgInvolvedAccountsAddresses(contractAddress string, txHash string) error {
+
+	stmt := `UPDATE message SET 
+involved_accounts_addresses = ARRAY_APPEND(involved_accounts_addresses, $1) WHERE transaction_hash = $2 `
+
+	_, err := db.SQL.Exec(stmt, contractAddress, txHash)
+	if err != nil {
+		return fmt.Errorf("error while updating wasm contract message: %s", err)
 	}
 	return nil
 }

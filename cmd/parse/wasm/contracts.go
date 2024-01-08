@@ -13,11 +13,11 @@ import (
 	"github.com/forbole/bdjuno/v4/database"
 )
 
-// codeCmd returns the Cobra command allowing to fix all things related to x/wasm contract
-func codeCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
+// contractsCmd returns a Cobra command that allows to fix the contracts info
+func contractsCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 	return &cobra.Command{
-		Use:   "codes",
-		Short: "Parse the x/wasm codes and store them in the database",
+		Use:   "contracts",
+		Short: "Query all available contracts",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			parseCtx, err := parsecmdtypes.GetParserContext(config.Cfg, parseConfig)
 			if err != nil {
@@ -32,21 +32,18 @@ func codeCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			// Get the database
 			db := database.Cast(parseCtx.Database)
 
-			height, err := db.GetLastBlockHeight()
-			if err != nil {
-				return err
-			}
-
+			// Build the wasm module
 			wasmModule := wasm.NewModule(sources.WasmSource, parseCtx.EncodingConfig.Codec, db)
 
-			wasmCodes, err := wasmModule.GetWasmCodes(height)
+			// Get latest height
+			height, err := parseCtx.Node.LatestHeight()
 			if err != nil {
-				return fmt.Errorf("error while getting wasm codes: %s", err)
+				return fmt.Errorf("error while getting latest block height: %s", err)
 			}
 
-			err = db.SaveWasmCodes(wasmCodes)
+			err = wasmModule.StoreContracts(height)
 			if err != nil {
-				return fmt.Errorf("error while saving wasm codes: %s", err)
+				return fmt.Errorf("error while stroing all x/wasm contracts infos: %s", err)
 			}
 
 			return nil

@@ -60,8 +60,7 @@ func BuildSources(nodeCfg nodeconfig.Config, encodingConfig junoparams.EncodingC
 	case *remote.Details:
 		return buildRemoteSources(cfg)
 	case *local.Details:
-		return nil, fmt.Errorf("local mode is currently not supported")
-
+		return buildLocalSources(cfg, encodingConfig)
 	default:
 		return nil, fmt.Errorf("invalid configuration type: %T", cfg)
 	}

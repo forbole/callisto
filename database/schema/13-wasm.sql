@@ -1,17 +1,22 @@
+CREATE TYPE ACCESS_CONFIG AS
+(
+    permission  INT,
+    addresses   TEXT
+);
+
 CREATE TABLE wasm_params
 (
-    one_row_id BOOLEAN NOT NULL DEFAULT TRUE PRIMARY KEY,
-    params     JSONB   NOT NULL,
-    height     BIGINT  NOT NULL,
-    CHECK (one_row_id)
+    one_row_id                      BOOLEAN         NOT NULL DEFAULT TRUE PRIMARY KEY,
+    code_upload_access              ACCESS_CONFIG   NOT NULL,
+    instantiate_default_permission  INT             NOT NULL,
+    height                          BIGINT          NOT NULL
 );
-CREATE INDEX wasm_params_height_index ON staking_params (height);
 
 CREATE TABLE wasm_code
 (
     sender                  TEXT            NULL,
     byte_code               BYTEA           NOT NULL,
-    instantiate_permission  JSONB           NULL,
+    instantiate_permission  ACCESS_CONFIG   NULL,
     code_id                 BIGINT          NOT NULL UNIQUE,
     height                  BIGINT          NOT NULL
 );
@@ -46,4 +51,3 @@ CREATE TABLE wasm_execute_contract
     height                  BIGINT          NOT NULL
 );
 CREATE INDEX execute_contract_height_index ON wasm_execute_contract (height);
- 

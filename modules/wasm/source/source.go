@@ -5,8 +5,8 @@ import (
 )
 
 type Source interface {
-	GetCodesInfos(height int64) ([]wasmtypes.CodeInfoResponse, error)
-	GetCodeBinary(codeID uint64, height int64) ([]byte, error)
 	GetContractInfo(height int64, contractAddr string) (*wasmtypes.QueryContractInfoResponse, error)
 	GetContractStates(height int64, contractAddress string) ([]wasmtypes.Model, error)
+	GetCodes(height int64) ([]wasmtypes.CodeInfoResponse, error)
+	GetContractsByCode(height int64, codeID uint64) ([]string, error)
 }
