@@ -23,7 +23,7 @@ VALUES `
 	var args []interface{}
 
 	for i, pool := range pools {
-		p := i * 7
+		p := i * 20
 
 		stmt += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d,$%d, $%d, $%d, $%d, $%d, $%d, $%d,$%d, $%d, $%d, $%d, $%d, $%d),",
 			p+1, p+2, p+3, p+4, p+5, p+6, p+7, p+8, p+9, p+10, p+11, p+12, p+13, p+14, p+15, p+16, p+17, p+18, p+19, p+20)
