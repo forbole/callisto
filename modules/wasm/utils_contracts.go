@@ -127,3 +127,36 @@ func (m *Module) getContractByCode(codeID uint64, height int64) ([]string, error
 
 	return contracts, nil
 }
+
+// ParseContractDetails gets the available contract by contract address
+// and stores it inside the database
+func (m *Module) ParseContractDetails(contractAddress string, height int64) error {
+	log.Debug().Str("module", "wasm").Int64("height", height).
+		Msg("storing x/wasm contracts")
+
+	contractStates, err := m.source.GetContractStates(height, contractAddress)
+	if err != nil {
+		return fmt.Errorf("error while getting contracts states: %s", err)
+	}
+	log.Debug().Str("module", "wasm").Int64("height", height).
+		Msg("getting contract states")
+
+	contractInfo, err := m.source.GetContractInfo(height, contractAddress)
+	if err != nil {
+		return fmt.Errorf("error while getting contracts info: %s", err)
+	}
+
+	log.Debug().Str("module", "wasm").Int64("height", height).
+		Msg("getting contract info")
+
+	err = m.db.SaveWasmContracts([]types.WasmContract{
+		types.NewWasmContract("", contractInfo.ContractInfo.Admin, contractInfo.ContractInfo.CodeID, contractInfo.ContractInfo.Label, nil, nil,
+			contractAddress, "", time.Now(), contractInfo.ContractInfo.Creator, contractInfo.ContractInfo.Extension.GoString(), contractStates, height,
+		)})
+
+	if err != nil {
+		return fmt.Errorf("error while saving wasm contract: %s", err)
+	}
+
+	return nil
+}

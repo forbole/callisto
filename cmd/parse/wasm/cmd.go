@@ -13,7 +13,8 @@ func NewWasmCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 	}
 
 	cmd.AddCommand(
-		contractCmd(parseConfig),
+		contractAddressCmd(parseConfig),
+		contractCodeCmd(parseConfig),
 		contractsCmd(parseConfig),
 	)
 

@@ -14,11 +14,11 @@ import (
 	"github.com/forbole/bdjuno/v4/database"
 )
 
-// contractCmd returns a Cobra command that allows to fix the contracts info
+// contractCodeCmd returns a Cobra command that allows to fix the contracts info
 // with given contract code
-func contractCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
+func contractCodeCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 	return &cobra.Command{
-		Use:   "contract [code]",
+		Use:   "contract-code [code]",
 		Short: "Query all available contracts for the given contract code",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			contractCode, err := strconv.ParseUint(args[0], 10, 64)
