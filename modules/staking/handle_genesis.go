@@ -24,7 +24,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	var genState stakingtypes.GenesisState
 	err := m.cdc.UnmarshalJSON(appState[stakingtypes.ModuleName], &genState)
 	if err != nil {
-		return fmt.Errorf("error while unmarshaling staking state: %s", err)
+		return fmt.Errorf("error while unmarshalling staking state: %s", err)
 	}
 
 	// Save the params
