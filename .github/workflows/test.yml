@@ -47,6 +47,6 @@ jobs:
 
       - name: Upload coverage 📤
         if: "env.GIT_DIFF != ''"
-        uses: codecov/codecov-action@v4-beta
+        uses: codecov/codecov-action@v4.0.0
         with:
           file: ./coverage.txt
