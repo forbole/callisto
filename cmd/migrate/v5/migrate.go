@@ -7,6 +7,7 @@ import (
 	parse "github.com/forbole/juno/v5/cmd/parse/types"
 	"github.com/forbole/juno/v5/database"
 	"github.com/forbole/juno/v5/database/postgresql"
+	"github.com/forbole/juno/v5/types/config"
 )
 
 // RunMigration runs the migrations to v5
@@ -25,7 +26,7 @@ func RunMigration(parseConfig *parse.Config) error {
 	return nil
 }
 
-func migrateDb(cfg Config, parseConfig *parse.Config) error {
+func migrateDb(cfg config.Config, parseConfig *parse.Config) error {
 	// Build the codec
 	encodingConfig := parseConfig.GetEncodingConfigBuilder()()
 
