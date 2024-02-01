@@ -153,6 +153,20 @@ func (db *Db) SaveWasmExecuteContract(wasmExecuteContract types.WasmExecuteContr
 	return db.SaveWasmExecuteContracts([]types.WasmExecuteContract{wasmExecuteContract})
 }
 
+func (db *Db) CheckIfContractExistsInDB(contractAddresss string) bool {
+	var rows []*dbtypes.WasmContractRow
+	err := db.SQL.Select(&rows, `SELECT * FROM wasm_contract WHERE contract_address = $1`, contractAddresss)
+	if err != nil {
+		return false
+	}
+
+	if len(rows) == 0 {
+		return false
+	}
+
+	return true
+}
+
 // SaveWasmContracts allows to store the wasm contract slice
 func (db *Db) SaveWasmExecuteContracts(executeContracts []types.WasmExecuteContract) error {
 	paramsNumber := 7
