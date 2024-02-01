@@ -31,7 +31,7 @@ func migrateDb(cfg config.Config, parseConfig *parse.Config) error {
 	encodingConfig := parseConfig.GetEncodingConfigBuilder()()
 
 	// Get the db
-	databaseCtx := database.NewContext(cfg.Database, &encodingConfig, parseConfig.GetLogger())
+	databaseCtx := database.NewContext(cfg.Database, encodingConfig, parseConfig.GetLogger())
 	db, err := postgresql.Builder(databaseCtx)
 	if err != nil {
 		return fmt.Errorf("error while building the db: %s", err)
