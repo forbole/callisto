@@ -14,11 +14,11 @@ var (
 
 type Module struct {
 	cdc    codec.Codec
-	db     database.Db
+	db     *database.Db
 	parser messages.MessageAddressesParser
 }
 
-func NewModule(parser messages.MessageAddressesParser, cdc codec.Codec, db database.Db) *Module {
+func NewModule(parser messages.MessageAddressesParser, cdc codec.Codec, db *database.Db) *Module {
 	return &Module{
 		parser: parser,
 		cdc:    cdc,
