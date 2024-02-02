@@ -59,8 +59,9 @@ func (m *Module) getWasmCodes(height int64) ([]types.WasmCode, error) {
 	}
 
 	for _, c := range codes {
+		instantiatePermission := c.InstantiatePermission
 		wasmCodes = append(wasmCodes, types.NewWasmCode(
-			"", c.DataHash, &c.InstantiatePermission, c.CodeID, height,
+			"", c.DataHash, &instantiatePermission, c.CodeID, height,
 		))
 	}
 
