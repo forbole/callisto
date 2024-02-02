@@ -6,8 +6,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/authz"
-	"github.com/gogo/protobuf/proto"
 	juno "github.com/forbole/juno/v4/types"
+	"github.com/gogo/protobuf/proto"
 	"github.com/rs/zerolog/log"
 
 	authttypes "github.com/cosmos/cosmos-sdk/x/auth/types"
