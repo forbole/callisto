@@ -1,6 +1,7 @@
 ## Unreleased
 - ([\#610](https://github.com/forbole/bdjuno/pull/610)) Add support for gov `v1` proposals
 - ([\#652](https://github.com/forbole/bdjuno/pull/652)) Update gov module parsing 
+- ([\#702](https://github.com/forbole/bdjuno/pull/702)) Add `message_type` module and store msg types inside `message_type` table, add `messages_by_type` function to allow to query messages by their types
 
 #### Evmos Gov Module
 - ([\#519](https://github.com/forbole/bdjuno/pull/519)) Upgrade evmos version to `v10.0.0`, update proposals parsing to correctly parse `v1` gov module proposals details
