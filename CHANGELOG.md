@@ -1,6 +1,7 @@
 ## Unreleased
 - ([\#610](https://github.com/forbole/bdjuno/pull/610)) Add support for gov `v1` proposals
 - ([\#652](https://github.com/forbole/bdjuno/pull/652)) Update gov module parsing 
+- ([\#702](https://github.com/forbole/bdjuno/pull/702)) Add `message_type` module and store msg types inside `message_type` table, add `messages_by_type` function to allow to query messages by their types
 
 ## Version v4.0.0
 ## Notes

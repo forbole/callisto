@@ -12,6 +12,7 @@ import (
 	providersource "github.com/forbole/bdjuno/v4/modules/ccv/provider/source"
 	remoteprovidersource "github.com/forbole/bdjuno/v4/modules/ccv/provider/source/remote"
 	"github.com/forbole/juno/v5/node/remote"
+	"github.com/forbole/juno/v5/types/params"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distributionkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
