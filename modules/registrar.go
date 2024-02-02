@@ -22,6 +22,7 @@ import (
 	"github.com/forbole/bdjuno/v4/modules/consensus"
 	dailyrefetch "github.com/forbole/bdjuno/v4/modules/daily_refetch"
 	"github.com/forbole/bdjuno/v4/modules/feegrant"
+	messagetype "github.com/forbole/bdjuno/v4/modules/message_type"
 	"github.com/forbole/bdjuno/v4/modules/modules"
 	"github.com/forbole/bdjuno/v4/modules/pricefeed"
 	"github.com/forbole/bdjuno/v4/modules/wasm"
@@ -76,6 +77,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	ccvProviderModule := ccvprovider.NewModule(sources.ProviderSource, cdc, db)
 	dailyRefetchModule := dailyrefetch.NewModule(ctx.Proxy, db)
 	feegrantModule := feegrant.NewModule(cdc, db)
+	messagetypeModule := messagetype.NewModule(r.parser, cdc, db)
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
 	wasmModule := wasm.NewModule(sources.WasmSource, cdc, db)
 
@@ -91,6 +93,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		ccvProviderModule,
 		dailyRefetchModule,
 		feegrantModule,
+		messagetypeModule,
 		modules.NewModule(ctx.JunoConfig.Chain, db),
 		pricefeed.NewModule(ctx.JunoConfig, cdc, db),
 		slashingModule,

@@ -23,7 +23,7 @@ import (
 	tmtypes "github.com/cometbft/cometbft/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	simappparams "github.com/forbole/juno/v5/types/params"
+	"github.com/forbole/juno/v5/types/params"
 
 	"github.com/stretchr/testify/suite"
 
@@ -42,7 +42,7 @@ type DbTestSuite struct {
 
 func (suite *DbTestSuite) SetupTest() {
 	// Create the codec
-	codec := simappparams.MakeTestEncodingConfig()
+	codec := params.MakeTestEncodingConfig()
 
 	// Build the database
 	dbCfg := dbconfig.NewDatabaseConfig(
@@ -57,7 +57,6 @@ func (suite *DbTestSuite) SetupTest() {
 		"",
 		"",
 	)
-
 	db, err := database.Builder(junodb.NewContext(dbCfg, codec, logging.DefaultLogger()))
 	suite.Require().NoError(err)
 
