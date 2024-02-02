@@ -413,8 +413,8 @@ cosmossdk.io/log v1.1.1-0.20230704160919-88f2c830b0ca h1:msenprh2BLLRwNT7zN56TbB
 cosmossdk.io/log v1.1.1-0.20230704160919-88f2c830b0ca/go.mod h1:PkIAKXZvaxrTRc++z53XMRvFk8AcGGWYHcMIPzVYX9c=
 cosmossdk.io/math v1.2.0 h1:8gudhTkkD3NxOP2YyyJIYYmt6dQ55ZfJkDOaxXpy7Ig=
 cosmossdk.io/math v1.2.0/go.mod h1:l2Gnda87F0su8a/7FEKJfFdJrM0JZRXQaohlgJeyQh0=
-cosmossdk.io/simapp v0.0.0-20230602123434-616841b9704d h1:G24nV8KQ5tcSLJEYPUEpKxuX4usvpQg5r7LhCLYPs1o=
-cosmossdk.io/simapp v0.0.0-20230602123434-616841b9704d/go.mod h1:xbjky3L3DJEylaho6gXplkrMvJ5sFgv+qNX+Nn47bzY=
+cosmossdk.io/simapp v0.0.0-20230712090904-031162fbb96e h1:1V2wHlfP6CqektxgLggSHVA+7nxzXSbzK6caRQI+vE8=
+cosmossdk.io/simapp v0.0.0-20230712090904-031162fbb96e/go.mod h1:Egfk2ftC9TVcJJZ/uyB8rlu9CSk9QP2OHEyvK6aRl3g=
 cosmossdk.io/tools/rosetta v0.2.1 h1:ddOMatOH+pbxWbrGJKRAawdBkPYLfKXutK9IETnjYxw=
 cosmossdk.io/tools/rosetta v0.2.1/go.mod h1:Pqdc1FdvkNV3LcNIkYWt2RQY6IP1ge6YWZk8MhhO9Hw=
 dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
@@ -752,8 +752,8 @@ github.com/firefart/nonamedreturns v1.0.4/go.mod h1:TDhe/tjI1BXo48CmYbUduTV7BdIg
 github.com/fjl/gencodec v0.0.0-20220412091415-8bb9e558978c/go.mod h1:AzA8Lj6YtixmJWL+wkKoBGsLWy9gFrAzi4g+5bCKwpY=
 github.com/fjl/memsize v0.0.0-20190710130421-bcb5799ab5e5/go.mod h1:VvhXpOYNQvB+uIk2RvXzuaQtkQJzzIx6lSBe1xv7hi0=
 github.com/fogleman/gg v1.2.1-0.20190220221249-0403632d5b90/go.mod h1:R/bRT+9gY/C5z7JzPU0zXsXHKM4/ayA+zqcVNZzPa1k=
-github.com/forbole/juno/v5 v5.2.0 h1:NEaUReU723OfArHpcDjTofsgxAiAMtwsa6ZPvQYUiVc=
-github.com/forbole/juno/v5 v5.2.0/go.mod h1:wl9jxyKnDx6rElBkc6Zn8i9DInBpMwMeoX6Kxkp71KM=
+github.com/forbole/juno/v5 v5.2.1-0.20240201075935-851426ddd905 h1:nmNDGWsEDFLFWl4+taRg9zDyzZaApb2Ge2+8XiwbaEk=
+github.com/forbole/juno/v5 v5.2.1-0.20240201075935-851426ddd905/go.mod h1:XHTUsu81JTPEDvVrVgirag5pkV5sDBSdEUluBtJdFfk=
 github.com/fortytw2/leaktest v1.3.0 h1:u8491cBMTQ8ft8aeV+adlcytMZylmA5nnwwkRZjI8vw=
 github.com/franela/goblin v0.0.0-20200105215937-c9ffbefa60db/go.mod h1:7dvUGVsVBjqR7JHJk0brhHOZYGmfBYOrK0ZhYMEtBr4=
 github.com/franela/goreq v0.0.0-20171204163338-bcd34c9993f8/go.mod h1:ZhphrRTfi2rbfLwlschooIH4+wKKDR4Pdxhh+TRoA20=

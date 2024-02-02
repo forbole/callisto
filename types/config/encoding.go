@@ -1,9 +1,9 @@
 package config
 
 import (
-	"cosmossdk.io/simapp/params"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/forbole/juno/v5/types/params"
 )
 
 // MakeEncodingConfig creates an EncodingConfig to properly handle all the messages
