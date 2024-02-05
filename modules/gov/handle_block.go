@@ -16,10 +16,10 @@ import (
 
 // HandleBlock implements modules.BlockModule
 func (m *Module) HandleBlock(
-	b *cbfttypes.ResultBlock, blockResults *cbfttypes.ResultBlockResults, _ []*juno.Tx, _ *cbfttypes.ResultValidators,
+	b *cbfttypes.ResultBlock, blockResults *cbfttypes.ResultBlockResults, txs []*juno.Tx, _ *cbfttypes.ResultValidators,
 ) error {
-
-	err := m.updateProposalsStatus(b.Block.Height, blockResults.EndBlockEvents)
+	txEvents := collectTxEvents(txs)
+	err := m.updateProposalsStatus(b.Block.Height, txEvents, blockResults.EndBlockEvents)
 	if err != nil {
 		log.Error().Str("module", "gov").Int64("height", b.Block.Height).
 			Err(err).Msg("error while updating proposals")
@@ -28,35 +28,23 @@ func (m *Module) HandleBlock(
 	return nil
 }
 
-// updateProposalsStatus updates the status of proposals if they have been included in the EndBlockEvents
-func (m *Module) updateProposalsStatus(height int64, events []abci.Event) error {
-	if len(events) == 0 {
-		return nil
-	}
-
+// updateProposalsStatus updates the status of proposals if they have been included in the EndBlockEvents or status
+// was changed from deposit to voting
+func (m *Module) updateProposalsStatus(height int64, txEvents, endBlockEvents []abci.Event) error {
 	var ids []uint64
 	// check if EndBlockEvents contains active_proposal event
-	eventsList := juno.FindEventsByType(events, govtypes.EventTypeActiveProposal)
-	if len(eventsList) == 0 {
-		return nil
+	endBlockIDs, err := findProposalIDsInEvents(endBlockEvents, govtypes.EventTypeActiveProposal, govtypes.AttributeKeyProposalID)
+	if err != nil {
+		return err
 	}
+	ids = append(ids, endBlockIDs...)
 
-	for _, event := range eventsList {
-		// find proposal ID
-		proposalID, err := juno.FindAttributeByKey(event, govtypes.AttributeKeyProposalID)
-		if err != nil {
-			return fmt.Errorf("error while getting proposal ID from block events: %s", err)
-		}
-
-		// parse proposal ID from []byte to unit64
-		id, err := strconv.ParseUint(proposalID.Value, 10, 64)
-		if err != nil {
-			return fmt.Errorf("error while parsing proposal id: %s", err)
-		}
-
-		// add proposal ID to ids array
-		ids = append(ids, id)
+	// the proposal changes state from the deposit to voting
+	txIDs, err := findProposalIDsInEvents(txEvents, govtypes.EventTypeProposalDeposit, govtypes.AttributeKeyVotingPeriodStart)
+	if err != nil {
+		return err
 	}
+	ids = append(ids, txIDs...)
 
 	// update status for proposals IDs stored in ids array
 	for _, id := range ids {
@@ -67,4 +55,38 @@ func (m *Module) updateProposalsStatus(height int64, events []abci.Event) error 
 	}
 
 	return nil
+}
+
+func findProposalIDsInEvents(events []abci.Event, eventType, attrKey string) ([]uint64, error) {
+	ids := make([]uint64, 0)
+	for _, event := range events {
+		if event.Type != eventType {
+			continue
+		}
+		for _, attr := range event.Attributes {
+			if attr.Key != attrKey {
+				continue
+			}
+			// parse proposal ID from []byte to unit64
+			id, err := strconv.ParseUint(attr.Value, 10, 64)
+			if err != nil {
+				return nil, fmt.Errorf("error while parsing proposal id: %s", err)
+			}
+			// add proposal ID to ids array
+			ids = append(ids, id)
+		}
+	}
+
+	return ids, nil
+}
+
+func collectTxEvents(txs []*juno.Tx) []abci.Event {
+	events := make([]abci.Event, 0)
+	for _, tx := range txs {
+		for _, ev := range tx.Events {
+			events = append(events, abci.Event{Type: ev.Type, Attributes: ev.Attributes})
+		}
+	}
+
+	return events
 }
