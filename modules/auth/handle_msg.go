@@ -5,8 +5,8 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	juno "github.com/forbole/juno/v5/types"
 	"github.com/cosmos/cosmos-sdk/x/authz"
+	juno "github.com/forbole/juno/v5/types"
 	"github.com/gogo/protobuf/proto"
 	"github.com/rs/zerolog/log"
 

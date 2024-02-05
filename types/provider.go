@@ -1,8 +1,8 @@
 package types
 
 import (
-	akashtypes "github.com/akash-network/akash-api/go/node/types/v1beta3"
 	providertypes "github.com/akash-network/akash-api/go/node/provider/v1beta3"
+	akashtypes "github.com/akash-network/akash-api/go/node/types/v1beta3"
 	provider "github.com/akash-network/provider"
 	clustertypes "github.com/akash-network/provider/cluster/types/v1beta3"
 )
