@@ -18,20 +18,20 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	log.Debug().Str("module", "gov").Msg("parsing genesis")
 
 	// Read the genesis state
-	var genState govtypesv1.GenesisState
-	err := m.cdc.UnmarshalJSON(appState[gov.ModuleName], &genState)
+	var genStatev1beta1 govtypesv1.GenesisState
+	err := m.cdc.UnmarshalJSON(appState[gov.ModuleName], &genStatev1beta1)
 	if err != nil {
 		return fmt.Errorf("error while reading gov genesis data: %s", err)
 	}
 
 	// Save the proposals
-	err = m.saveGenesisProposals(genState.Proposals, doc)
+	err = m.saveGenesisProposals(genStatev1beta1.Proposals, doc)
 	if err != nil {
 		return fmt.Errorf("error while storing genesis governance proposals: %s", err)
 	}
 
 	// Save the params
-	err = m.db.SaveGovParams(types.NewGovParams(genState.Params, doc.InitialHeight))
+	err = m.db.SaveGovParams(types.NewGovParams(genStatev1beta1.Params, doc.InitialHeight))
 	if err != nil {
 		return fmt.Errorf("error while storing genesis governance params: %s", err)
 	}

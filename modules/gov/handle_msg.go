@@ -190,4 +190,3 @@ func (m *Module) handleMsgVoteWeighted(tx *juno.Tx, msg *govtypesv1.MsgVoteWeigh
 	// update tally result for given proposal
 	return m.UpdateProposalTallyResult(msg.ProposalId, tx.Height)
 }
-

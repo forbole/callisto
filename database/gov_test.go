@@ -143,22 +143,6 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 
 	proposer2 := suite.getAccount("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 
-	submitTime := time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC)
-	depositEndTime := time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC)
-	votingStartTime := time.Date(2020, 1, 1, 02, 00, 00, 000, time.UTC)
-	votingEndTime := time.Date(2020, 1, 1, 03, 00, 00, 000, time.UTC)
-
-	submitTime2 := time.Date(2020, 1, 2, 00, 00, 00, 000, time.UTC)
-	depositEndTime2 := time.Date(2020, 1, 2, 01, 00, 00, 000, time.UTC)
-	votingStartTime2 := time.Date(2020, 1, 2, 02, 00, 00, 000, time.UTC)
-	votingEndTime2 := time.Date(2020, 1, 2, 03, 00, 00, 000, time.UTC)
-
-	proposalLegacyContent, err := govtypesv1.NewLegacyContent(content1, "")
-	suite.Require().NoError(err)
-
-	proposalLegacyContent2, err := govtypesv1.NewLegacyContent(content2, "")
-	suite.Require().NoError(err)
-
 	input := []types.Proposal{
 		types.NewProposal(
 			1,

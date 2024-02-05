@@ -24,7 +24,8 @@ import (
 	tmtypes "github.com/cometbft/cometbft/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	params "github.com/forbole/juno/v5/types/params"
+	"github.com/forbole/juno/v5/types/params"
+
 	"github.com/stretchr/testify/suite"
 
 	_ "github.com/proullon/ramsql/driver"
@@ -56,7 +57,7 @@ func (suite *DbTestSuite) SetupTest() {
 		100000,
 		100,
 	)
-	db, err := database.Builder(junodb.NewContext(dbCfg, &codec, logging.DefaultLogger()))
+	db, err := database.Builder(junodb.NewContext(dbCfg, codec, logging.DefaultLogger()))
 	suite.Require().NoError(err)
 
 	bigDipperDb, ok := (db).(*database.Db)

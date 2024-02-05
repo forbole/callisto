@@ -3,7 +3,7 @@ package config
 import (
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	params "github.com/forbole/juno/v5/types/params"
+	"github.com/forbole/juno/v5/types/params"
 )
 
 // MakeEncodingConfig creates an EncodingConfig to properly handle all the messages

@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/cometbft/cometbft/libs/log"
+	"github.com/forbole/juno/v5/node/remote"
+	"github.com/forbole/juno/v5/types/params"
 	bundlestypes "github.com/KYVENetwork/chain/x/bundles/types"
 	querytypes "github.com/KYVENetwork/chain/x/query/types"
 	stakerstypes "github.com/KYVENetwork/chain/x/stakers/types"
-	"github.com/cometbft/cometbft/libs/log"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
@@ -17,8 +19,6 @@ import (
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/juno/v5/node/local"
-	"github.com/forbole/juno/v5/node/remote"
-	params "github.com/forbole/juno/v5/types/params"
 
 	nodeconfig "github.com/forbole/juno/v5/node/config"
 
