@@ -36,7 +36,8 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 		genState.ProviderClientState.ChainId,
 		genState.ProviderClientState,
 		genState.ProviderConsensusState,
-		genState.InitialValSet,
+		// genState.InitialValSet, // disable until we can handle cometbft/cometbft instead of /tendermint/tendermint/abci/types".ValidatorUpdate
+		nil,
 		doc.InitialHeight))
 
 	// Save the consumer chain info

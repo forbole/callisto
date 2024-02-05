@@ -125,11 +125,13 @@ func (m *Module) RefreshValidatorInfos(height int64, valOper string) error {
 		return err
 	}
 
+	minSelfDel := stakingValidator.GetMinSelfDelegation()
+
 	// Save the commission
 	return m.db.SaveValidatorCommission(types.NewValidatorCommission(
 		stakingValidator.OperatorAddress,
 		&stakingValidator.Commission.Rate,
-		&stakingValidator.MinSelfDelegation,
+		&minSelfDel,
 		height,
 	))
 }

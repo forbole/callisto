@@ -52,12 +52,13 @@ func (m *Module) StoreValidatorsFromMsgCreateValidator(height int64, msg *stakin
 		return err
 	}
 
+	minSelfDel := sdk.NewInt(1000000)
 	// Save the commissions
 	err = m.db.SaveValidatorCommission(
 		types.NewValidatorCommission(
 			msg.ValidatorAddress,
 			&msg.Commission.Rate,
-			&msg.MinSelfDelegation,
+			&minSelfDel,
 			height,
 		),
 	)
