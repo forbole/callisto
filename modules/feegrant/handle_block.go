@@ -43,7 +43,7 @@ func (m *Module) removeExpiredFeeGrantAllowances(height int64, events []abci.Eve
 		if err != nil {
 			return fmt.Errorf("error while getting fee grant grantee address: %s", err)
 		}
-		err = m.db.DeleteFeeGrantAllowance(types.NewGrantRemoval(string(granteeAddress.Value), string(granterAddress.Value), height))
+		err = m.db.DeleteFeeGrantAllowance(types.NewGrantRemoval(granteeAddress.Value, granterAddress.Value, height))
 		if err != nil {
 			return fmt.Errorf("error while deleting fee grant allowance: %s", err)
 

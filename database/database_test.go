@@ -47,6 +47,10 @@ func (suite *DbTestSuite) SetupTest() {
 	// Build the database
 	dbCfg := dbconfig.NewDatabaseConfig(
 		"postgresql://bdjuno:password@localhost:6433/bdjuno?sslmode=disable&search_path=public",
+		"",
+		"",
+		"",
+		"",
 		-1,
 		-1,
 		100000,
