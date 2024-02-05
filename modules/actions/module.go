@@ -8,7 +8,7 @@ import (
 	"github.com/forbole/juno/v5/types/config"
 	"github.com/forbole/juno/v5/types/params"
 
-	modulestypes "github.com/forbole/bdjuno/v4/modules/types"
+	modulestypes "github.com/forbole/callisto/v4/modules/types"
 )
 
 const (

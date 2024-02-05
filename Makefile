@@ -32,11 +32,11 @@ BUILD_FLAGS :=  -ldflags '$(LD_FLAGS)' -tags "$(build_tags)"
 
 build: go.sum
 ifeq ($(OS),Windows_NT)
-	@echo "building bdjuno binary..."
-	@go build -mod=readonly $(BUILD_FLAGS) -o build/bdjuno.exe ./cmd/bdjuno
+	@echo "building callisto binary..."
+	@go build -mod=readonly $(BUILD_FLAGS) -o build/callisto.exe ./cmd/callisto
 else
-	@echo "building bdjuno binary..."
-	@go build -mod=readonly $(BUILD_FLAGS) -o build/bdjuno ./cmd/bdjuno
+	@echo "building callisto binary..."
+	@go build -mod=readonly $(BUILD_FLAGS) -o build/callisto ./cmd/callisto
 endif
 .PHONY: build
 
@@ -45,8 +45,8 @@ endif
 ###############################################################################
 
 install: go.sum
-	@echo "installing bdjuno binary..."
-	@go install -mod=readonly $(BUILD_FLAGS) ./cmd/bdjuno
+	@echo "installing callisto binary..."
+	@go install -mod=readonly $(BUILD_FLAGS) ./cmd/callisto
 .PHONY: install
 
 ###############################################################################
@@ -55,12 +55,12 @@ install: go.sum
 
 stop-docker-test:
 	@echo "Stopping Docker container..."
-	@docker stop bdjuno-test-db || true && docker rm bdjuno-test-db || true
+	@docker stop callisto-test-db || true && docker rm callisto-test-db || true
 .PHONY: stop-docker-test
 
 start-docker-test: stop-docker-test
 	@echo "Starting Docker container..."
-	@docker run --name bdjuno-test-db -e POSTGRES_USER=bdjuno -e POSTGRES_PASSWORD=password -e POSTGRES_DB=bdjuno -d -p 6433:5432 postgres
+	@docker run --name callisto-test-db -e POSTGRES_USER=callisto -e POSTGRES_PASSWORD=password -e POSTGRES_DB=callisto -d -p 6433:5432 postgres
 .PHONY: start-docker-test
 
 test-unit: start-docker-test
@@ -86,7 +86,7 @@ lint-fix:
 format:
 	find . -name '*.go' -type f -not -path "*.git*" -not -name '*.pb.go' -not -name '*_mocks.go' | xargs gofmt -w -s
 	find . -name '*.go' -type f -not -path "*.git*" -not -name '*.pb.go' -not -name '*_mocks.go' | xargs misspell -w
-	find . -name '*.go' -type f -not -path "*.git*" -not -name '*.pb.go' -not -name '*_mocks.go' | xargs goimports -w -local github.com/forbole/bdjuno
+	find . -name '*.go' -type f -not -path "*.git*" -not -name '*.pb.go' -not -name '*_mocks.go' | xargs goimports -w -local github.com/forbole/callisto
 .PHONY: format
 
 clean:

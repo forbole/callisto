@@ -6,10 +6,10 @@ import (
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 
-	"github.com/forbole/bdjuno/v4/modules/actions"
+	"github.com/forbole/callisto/v4/modules/actions"
 )
 
-// Config represents the BDJuno configuration
+// Config represents the Callisto configuration
 type Config struct {
 	JunoConfig    junoconfig.Config `yaml:"-,inline"`
 	ActionsConfig *actions.Config   `yaml:"actions"`

@@ -7,7 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	"github.com/forbole/bdjuno/v4/types"
+	"github.com/forbole/callisto/v4/types"
 )
 
 func (m *Module) GetStakingPool(height int64) (*types.Pool, error) {

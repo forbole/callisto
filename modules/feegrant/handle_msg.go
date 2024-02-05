@@ -8,7 +8,7 @@ import (
 	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
 	juno "github.com/forbole/juno/v5/types"
 
-	"github.com/forbole/bdjuno/v4/types"
+	"github.com/forbole/callisto/v4/types"
 )
 
 // HandleMsgExec implements modules.AuthzMessageModule

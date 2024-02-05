@@ -3,7 +3,7 @@ package daily_refetch
 import (
 	"github.com/forbole/juno/v5/node"
 
-	bdjunodb "github.com/forbole/bdjuno/v4/database"
+	callistodb "github.com/forbole/callisto/v4/database"
 
 	"github.com/forbole/juno/v5/modules"
 )
@@ -15,13 +15,13 @@ var (
 
 type Module struct {
 	node     node.Node
-	database *bdjunodb.Db
+	database *callistodb.Db
 }
 
 // NewModule builds a new Module instance
 func NewModule(
 	node node.Node,
-	database *bdjunodb.Db,
+	database *callistodb.Db,
 ) *Module {
 	return &Module{
 		node:     node,

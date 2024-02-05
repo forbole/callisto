@@ -3,7 +3,7 @@ package v3
 import (
 	v3 "github.com/forbole/juno/v5/cmd/migrate/v3"
 
-	"github.com/forbole/bdjuno/v4/modules/actions"
+	"github.com/forbole/callisto/v4/modules/actions"
 )
 
 type Config struct {

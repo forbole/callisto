@@ -1,5 +1,5 @@
-# Requirements of BDjuno
-The BDjuno is working as a backend for Big Dipper. The followings are the features currently supported in Big Dipper in the backend which BDjuno should adapt.
+# Requirements of Callisto
+The Callisto is working as a backend for Big Dipper. The followings are the features currently supported in Big Dipper in the backend which Callisto should adapt.
 
 ## On every block
 ### Done by Juno by default
@@ -7,7 +7,7 @@ The BDjuno is working as a backend for Big Dipper. The followings are the featur
 - [x] Parsing all transactions
 - [x] Store validator set of the block
 
-### Custom BDJuno implementations
+### Custom Callisto implementations
 - [x] Update missed block records
 - [x] Read the latest consensus state
 - [x] [x/auth] Store vesting accounts and vesting periods details
