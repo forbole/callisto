@@ -4,7 +4,6 @@ go 1.19
 
 require (
 	cosmossdk.io/math v1.2.0
-	cosmossdk.io/simapp v0.0.0-20230712090904-031162fbb96e
 	github.com/CosmWasm/wasmd v0.41.0
 	github.com/CosmWasm/wasmvm v1.3.0 // indirect
 	github.com/MonCatCat/comdex/v13 v13.4.1-0.20240102021850-7ddf026eadd2
@@ -19,7 +18,7 @@ require (
 	github.com/pelletier/go-toml v1.9.5
 	github.com/prometheus/client_golang v1.18.0
 	github.com/proullon/ramsql v0.1.3
-	github.com/rs/zerolog v1.31.0
+	github.com/rs/zerolog v1.32.0
 	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.8.4
 	google.golang.org/grpc v1.61.0
