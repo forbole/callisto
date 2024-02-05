@@ -2,20 +2,24 @@ package gov
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	juno "github.com/forbole/juno/v5/types"
 
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"github.com/rs/zerolog/log"
+	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 // HandleBlock implements modules.BlockModule
 func (m *Module) HandleBlock(
-	b *tmctypes.ResultBlock, _ *tmctypes.ResultBlockResults, _ []*juno.Tx, vals *tmctypes.ResultValidators,
+	b *tmctypes.ResultBlock, blockResults *tmctypes.ResultBlockResults, txs []*juno.Tx, vals *tmctypes.ResultValidators,
 ) error {
-	err := m.updateProposals(b.Block.Height, b.Block.Time, vals)
+	txEvents := collectTxEvents(txs)
+	err := m.updateProposalsStatus(b.Block.Height, b.Block.Time, txEvents, blockResults.EndBlockEvents, vals)
 	if err != nil {
 		log.Error().Str("module", "gov").Int64("height", b.Block.Height).
 			Err(err).Msg("error while updating proposals")
@@ -23,13 +27,25 @@ func (m *Module) HandleBlock(
 	return nil
 }
 
-// updateProposals updates the proposals
-func (m *Module) updateProposals(height int64, blockTime time.Time, blockVals *tmctypes.ResultValidators) error {
-	ids, err := m.db.GetOpenProposalsIds(blockTime)
+// updateProposalsStatus updates the status of proposals if they have been included in the EndBlockEvents or status
+// was changed from deposit to voting
+func (m *Module) updateProposalsStatus(height int64, blockTime time.Time, txEvents, endBlockEvents []abci.Event, blockVals *tmctypes.ResultValidators) error {
+	var ids []uint64
+	// check if EndBlockEvents contains active_proposal event
+	endBlockIDs, err := findProposalIDsInEvents(endBlockEvents, govtypes.EventTypeActiveProposal, govtypes.AttributeKeyProposalID)
 	if err != nil {
-		log.Error().Err(err).Str("module", "gov").Msg("error while getting open ids")
+		return err
 	}
+	ids = append(ids, endBlockIDs...)
 
+	// the proposal changes state from the deposit to voting
+	txIDs, err := findProposalIDsInEvents(txEvents, govtypes.EventTypeProposalDeposit, govtypes.AttributeKeyVotingPeriodStart)
+	if err != nil {
+		return err
+	}
+	ids = append(ids, txIDs...)
+
+	// update status for proposals IDs stored in ids array
 	for _, id := range ids {
 		err = m.UpdateProposal(height, blockTime, id)
 		if err != nil {
@@ -47,4 +63,38 @@ func (m *Module) updateProposals(height int64, blockTime time.Time, blockVals *t
 		}
 	}
 	return nil
+}
+
+func findProposalIDsInEvents(events []abci.Event, eventType, attrKey string) ([]uint64, error) {
+	ids := make([]uint64, 0)
+	for _, event := range events {
+		if event.Type != eventType {
+			continue
+		}
+		for _, attr := range event.Attributes {
+			if string(attr.Key) != attrKey {
+				continue
+			}
+			// parse proposal ID from []byte to unit64
+			id, err := strconv.ParseUint(string(attr.Value), 10, 64)
+			if err != nil {
+				return nil, fmt.Errorf("error while parsing proposal id: %s", err)
+			}
+			// add proposal ID to ids array
+			ids = append(ids, id)
+		}
+	}
+
+	return ids, nil
+}
+
+func collectTxEvents(txs []*juno.Tx) []abci.Event {
+	events := make([]abci.Event, 0)
+	for _, tx := range txs {
+		for _, ev := range tx.Events {
+			events = append(events, abci.Event{Type: ev.Type, Attributes: ev.Attributes})
+		}
+	}
+
+	return events
 }

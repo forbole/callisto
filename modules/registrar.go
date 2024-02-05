@@ -26,6 +26,7 @@ import (
 
 	dailyrefetch "github.com/forbole/bdjuno/v4/modules/daily_refetch"
 	"github.com/forbole/bdjuno/v4/modules/gov"
+	messagetype "github.com/forbole/bdjuno/v4/modules/message_type"
 	"github.com/forbole/bdjuno/v4/modules/mint"
 	"github.com/forbole/bdjuno/v4/modules/modules"
 	"github.com/forbole/bdjuno/v4/modules/pricefeed"
@@ -84,6 +85,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	liquidStakingModule := liquidstaking.NewModule(sources.LiquidStakingSource, cdc, db)
 	lpfarmModule := lpfarm.NewModule(sources.LPFarmSource, cdc, db)
 	mintModule := mint.NewModule(sources.MintSource, sources.StakingSource, cdc, db)
+	messagetypeModule := messagetype.NewModule(r.parser, cdc, db)
 	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
 	stakingModule := staking.NewModule(sources.StakingSource, sources.LiquidStakingSource, cdc, db)
 	govModule := gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakingModule, cdc, db)
@@ -105,6 +107,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		liquidStakingModule,
 		lpfarmModule,
 		mintModule,
+		messagetypeModule,
 		modules.NewModule(ctx.JunoConfig.Chain, db),
 		pricefeed.NewModule(ctx.JunoConfig, cdc, db),
 		slashingModule,

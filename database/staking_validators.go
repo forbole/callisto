@@ -437,7 +437,7 @@ ON CONFLICT (validator_address) DO UPDATE
 WHERE validator_status.height <= excluded.height`
 	_, err = db.SQL.Exec(statusStmt, statusParams...)
 	if err != nil {
-		return fmt.Errorf("error while stroring validators statuses: %s", err)
+		return fmt.Errorf("error while storing validators statuses: %s", err)
 	}
 
 	return nil
