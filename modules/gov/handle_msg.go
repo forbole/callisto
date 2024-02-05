@@ -6,6 +6,8 @@ import (
 
 	"strconv"
 
+	"github.com/cosmos/cosmos-sdk/x/authz"
+
 	"github.com/forbole/bdjuno/v4/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -15,6 +17,11 @@ import (
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	juno "github.com/forbole/juno/v5/types"
 )
+
+// HandleMsgExec implements modules.AuthzMessageModule
+func (m *Module) HandleMsgExec(index int, _ *authz.MsgExec, _ int, executedMsg sdk.Msg, tx *juno.Tx) error {
+	return m.HandleMsg(index, executedMsg, tx)
+}
 
 // HandleMsg implements modules.MessageModule
 func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {

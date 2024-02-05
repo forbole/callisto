@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/cheqd/cheqd-node/simapp"
 	dbconfig "github.com/forbole/juno/v5/database/config"
 	"github.com/forbole/juno/v5/logging"
 
@@ -46,6 +47,10 @@ func (suite *DbTestSuite) SetupTest() {
 	// Build the database
 	dbCfg := dbconfig.NewDatabaseConfig(
 		"postgresql://bdjuno:password@localhost:6433/bdjuno?sslmode=disable&search_path=public",
+		"",
+		"",
+		"",
+		"",
 		-1,
 		-1,
 		100000,
