@@ -2,7 +2,7 @@ package message_type
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/forbole/bdjuno/v4/database"
+	"github.com/forbole/callisto/v4/database"
 	"github.com/forbole/juno/v5/modules"
 	"github.com/forbole/juno/v5/modules/messages"
 )

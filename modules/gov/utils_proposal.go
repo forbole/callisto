@@ -18,7 +18,7 @@ import (
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	"google.golang.org/grpc/codes"
 
-	"github.com/forbole/bdjuno/v4/types"
+	"github.com/forbole/callisto/v4/types"
 
 	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
 )

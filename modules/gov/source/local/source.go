@@ -7,7 +7,7 @@ import (
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	"github.com/forbole/juno/v5/node/local"
 
-	govsource "github.com/forbole/bdjuno/v4/modules/gov/source"
+	govsource "github.com/forbole/callisto/v4/modules/gov/source"
 )
 
 var (

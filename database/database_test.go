@@ -14,8 +14,8 @@ import (
 
 	junodb "github.com/forbole/juno/v5/database"
 
-	"github.com/forbole/bdjuno/v4/database"
-	"github.com/forbole/bdjuno/v4/types"
+	"github.com/forbole/callisto/v4/database"
+	"github.com/forbole/callisto/v4/types"
 
 	juno "github.com/forbole/juno/v5/types"
 
@@ -47,7 +47,7 @@ func (suite *DbTestSuite) SetupTest() {
 
 	// Build the database
 	dbCfg := dbconfig.NewDatabaseConfig(
-		"postgresql://bdjuno:password@localhost:6433/bdjuno?sslmode=disable&search_path=public",
+		"postgresql://callisto:password@localhost:6433/callisto?sslmode=disable&search_path=public",
 		"",
 		"",
 		"",

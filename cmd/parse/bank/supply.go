@@ -3,14 +3,14 @@ package bank
 import (
 	"fmt"
 
-	modulestypes "github.com/forbole/bdjuno/v4/modules/types"
+	modulestypes "github.com/forbole/callisto/v4/modules/types"
 
 	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
 	"github.com/forbole/juno/v5/types/config"
 	"github.com/spf13/cobra"
 
-	"github.com/forbole/bdjuno/v4/database"
-	"github.com/forbole/bdjuno/v4/modules/bank"
+	"github.com/forbole/callisto/v4/database"
+	"github.com/forbole/callisto/v4/modules/bank"
 )
 
 // supplyCmd returns the Cobra command allowing to refresh x/bank total supply
