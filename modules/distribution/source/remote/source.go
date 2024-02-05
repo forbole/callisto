@@ -18,7 +18,7 @@ type Source struct {
 	distrClient distrtypes.QueryClient
 }
 
-// NewSource returns a new Source instace
+// NewSource returns a new Source instance
 func NewSource(source *remote.Source, distrClient distrtypes.QueryClient) *Source {
 	return &Source{
 		Source:      source,

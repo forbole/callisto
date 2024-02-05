@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/cobra"
 
 	v3 "github.com/forbole/bdjuno/v4/cmd/migrate/v3"
+	v5 "github.com/forbole/bdjuno/v4/cmd/migrate/v5"
 )
 
 type Migrator func(parseCfg *parsecmdtypes.Config) error
@@ -15,6 +16,7 @@ type Migrator func(parseCfg *parsecmdtypes.Config) error
 var (
 	migrations = map[string]Migrator{
 		"v3": v3.RunMigration,
+		"v5": v5.RunMigration,
 	}
 )
 
