@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"os"
 
-	junoparams "github.com/forbole/juno/v5/types/params"
-
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cometbft/cometbft/libs/log"
+	"github.com/forbole/juno/v5/node/remote"
+	"github.com/forbole/juno/v5/types/params"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -16,7 +16,6 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/forbole/juno/v5/node/local"
-	"github.com/forbole/juno/v5/node/remote"
 
 	localbanksource "github.com/forbole/bdjuno/v4/modules/bank/source/local"
 	localgovsource "github.com/forbole/bdjuno/v4/modules/gov/source/local"
@@ -55,7 +54,7 @@ type Sources struct {
 	WasmSource     wasmsource.Source
 }
 
-func BuildSources(nodeCfg nodeconfig.Config, encodingConfig junoparams.EncodingConfig) (*Sources, error) {
+func BuildSources(nodeCfg nodeconfig.Config, encodingConfig params.EncodingConfig) (*Sources, error) {
 	switch cfg := nodeCfg.Details.(type) {
 	case *remote.Details:
 		return buildRemoteSources(cfg)
@@ -66,7 +65,7 @@ func BuildSources(nodeCfg nodeconfig.Config, encodingConfig junoparams.EncodingC
 	}
 }
 
-func buildLocalSources(cfg *local.Details, encodingConfig junoparams.EncodingConfig) (*Sources, error) {
+func buildLocalSources(cfg *local.Details, encodingConfig params.EncodingConfig) (*Sources, error) {
 	source, err := local.NewSource(cfg.Home, encodingConfig)
 	if err != nil {
 		return nil, err
