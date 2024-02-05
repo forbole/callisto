@@ -1,4 +1,6 @@
 ## Unreleased
+- ([\#702](https://github.com/forbole/bdjuno/pull/702)) Add `message_type` module and store msg types inside `message_type` table, add `messages_by_type` function to allow to query messages by their types
+
 ### Changes
 
 #### x/marker module
@@ -27,7 +29,8 @@
 - ([\#489](https://github.com/forbole/bdjuno/pull/489)) Remove block height foreign key from proposal_vote and proposal_deposit tables and add column timestamp
 - ([\#499](https://github.com/forbole/bdjuno/pull/499)) Check if proposal has passed voting end time before marking it invalid
 - ([\#523](https://github.com/forbole/bdjuno/pull/523)) Update proposal snapshots handling on block
-
+- ([\#681](https://github.com/forbole/bdjuno/pull/681)) Handle proposal status change from deposit to voting
+- 
 #### Daily refetch
 - ([\#454](https://github.com/forbole/bdjuno/pull/454)) Added `daily refetch` module to refetch missing blocks every day
 
@@ -37,6 +40,8 @@
 
 ### Dependencies
 - ([\#462](https://github.com/forbole/bdjuno/pull/462)) Updated Juno to `v3.4.0`
+- ([\#542](https://github.com/forbole/bdjuno/pull/542)) Updated Juno to `v4.1.0`,  BDJuno to `v4` and Golang version to `1.19`
+
 
 ## Version v3.2.0
 ### Changes

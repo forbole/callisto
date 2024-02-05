@@ -44,13 +44,13 @@ func (db *Db) SaveMarkersAccounts(markersList []types.MarkerAccount) error {
 	var markerParams []interface{}
 
 	for i, marker := range markersList {
-
-		accessControl, err := json.Marshal(&marker.AccessControl)
+		accControl := marker.AccessControl
+		accessControl, err := json.Marshal(&accControl)
 		if err != nil {
 			return err
 		}
-
-		supplyValue, err := json.Marshal(&marker.TotalSupply)
+		totalSupply := marker.TotalSupply
+		supplyValue, err := json.Marshal(&totalSupply)
 		if err != nil {
 			return err
 		}

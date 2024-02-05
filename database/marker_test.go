@@ -3,6 +3,7 @@ package database_test
 import (
 	"encoding/json"
 
+	"cosmossdk.io/math"
 	"github.com/forbole/bdjuno/v4/types"
 
 	markertypes "github.com/MonCatCat/provenance/x/marker/types"
@@ -11,7 +12,7 @@ import (
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveMarkerParams() {
 	markerParams := markertypes.NewParams(
-		1000000, true, "abc",
+		1000000, true, "abc", math.NewInt(1000),
 	)
 	err := suite.database.SaveMarkerParams(types.NewMarkerParams(markerParams, 10))
 	suite.Require().NoError(err)
