@@ -61,7 +61,7 @@ func (m *Module) updateBlockTimeInMinute() error {
 
 	minute, err := m.db.GetBlockHeightTimeMinuteAgo(block.Timestamp)
 	if err != nil {
-		return fmt.Errorf("error while gettting block height a minute ago: %s", err)
+		return fmt.Errorf("error while getting block height a minute ago: %s", err)
 	}
 	newBlockTime := block.Timestamp.Sub(minute.Timestamp).Seconds() / float64(block.Height-minute.Height)
 
