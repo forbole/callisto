@@ -43,12 +43,13 @@ func (db *Db) SaveGuardianValidatorList(guardianValidatorlist []wormholetypes.Gu
 	for i, entry := range guardianValidatorlist {
 		pi := i * 3
 		stmt += fmt.Sprintf("($%d,$%d,$%d),", pi+1, pi+2, pi+3)
-		guardianKeyBz, err := json.Marshal(&entry.GuardianKey)
+		guardianKey := entry.GuardianKey
+		guardianKeyBz, err := json.Marshal(&guardianKey)
 		if err != nil {
 			return fmt.Errorf("error while marshaling wormhole guardian key: %s", err)
 		}
-
-		validatorAddrBz, err := json.Marshal(&entry.ValidatorAddr)
+		validatorAddr := entry.ValidatorAddr
+		validatorAddrBz, err := json.Marshal(&validatorAddr)
 		if err != nil {
 			return fmt.Errorf("error while marshaling wormhole validator address: %s", err)
 		}
@@ -82,7 +83,8 @@ func (db *Db) SaveGuardianSetList(guardianSet []wormholetypes.GuardianSet, heigh
 	for i, entry := range guardianSet {
 		pi := i * 4
 		stmt += fmt.Sprintf("($%d,$%d,$%d,$%d),", pi+1, pi+2, pi+3, pi+4)
-		keysBz, err := json.Marshal(&entry.Keys)
+		keys := entry.Keys
+		keysBz, err := json.Marshal(&keys)
 		if err != nil {
 			return fmt.Errorf("error while marshaling wormhole guardian key: %s", err)
 		}
