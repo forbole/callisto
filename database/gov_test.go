@@ -104,7 +104,7 @@ func (suite *DbTestSuite) encodeProposalContent(content govtypes.Content) string
 	anyContent, err := codectypes.NewAnyWithValue(protoContent)
 	suite.Require().NoError(err)
 
-	contentBz, err := suite.database.EncodingConfig.Marshaler.MarshalJSON(anyContent)
+	contentBz, err := suite.database.Cdc.MarshalJSON(anyContent)
 	suite.Require().NoError(err)
 
 	return string(contentBz)
