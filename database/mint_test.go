@@ -75,6 +75,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 func (suite *DbTestSuite) TestBigDipperDb_SaveMintParams() {
 	mintParams := minttypes.NewParams(
 		"udaric",
+		int64(1000),
+		int64(100),
 	)
 	err := suite.database.SaveMintParams(types.NewMintParams(mintParams, 10))
 	suite.Require().NoError(err)

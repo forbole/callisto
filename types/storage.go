@@ -19,7 +19,7 @@ func NewStorageParams(params storagetypes.Params, height int64) *StorageParams {
 // StorageProvidersList represents the x/storage providers
 type StorageProvidersList struct {
 	Address         string
-	Ip              string
+	IP              string
 	TotalSpace      string
 	BurnedContracts string
 	Creator         string
@@ -40,7 +40,7 @@ func NewStorageProvidersList(
 	height int64) *StorageProvidersList {
 	return &StorageProvidersList{
 		Address:         address,
-		Ip:              ip,
+		IP:              ip,
 		TotalSpace:      totalspace,
 		BurnedContracts: burnedContracts,
 		Creator:         creator,
