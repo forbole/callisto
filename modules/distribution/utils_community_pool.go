@@ -12,7 +12,7 @@ func (m *Module) updateCommunityPool(height int64) error {
 
 	pool, err := m.source.CommunityPool(height)
 	if err != nil {
-		return fmt.Errorf("error while getting comminity pool: %s", err)
+		return fmt.Errorf("error while getting community pool: %s", err)
 	}
 
 	// Store the pool into the database

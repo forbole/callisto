@@ -24,7 +24,7 @@ import (
 	tmtypes "github.com/cometbft/cometbft/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	params "github.com/forbole/juno/v5/types/params"
+	"github.com/forbole/juno/v5/types/params"
 
 	"github.com/stretchr/testify/suite"
 
