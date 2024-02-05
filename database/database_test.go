@@ -46,7 +46,7 @@ func (suite *DbTestSuite) SetupTest() {
 
 	// Build the database
 	dbCfg := dbconfig.NewDatabaseConfig(
-		"postgresql://callisto:password@localhost:6433/callisto?sslmode=disable&search_path=public",
+		"postgresql://bdjuno:password@localhost:6433/bdjuno?sslmode=disable&search_path=public",
 		"",
 		"",
 		"",
