@@ -8,7 +8,7 @@ import (
 	"github.com/forbole/juno/v4/modules/telemetry"
 
 	"github.com/forbole/bdjuno/v4/modules/slashing"
-	
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	jmodules "github.com/forbole/juno/v4/modules"
