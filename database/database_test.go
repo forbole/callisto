@@ -46,15 +46,15 @@ func (suite *DbTestSuite) SetupTest() {
 
 	// Build the database
 	dbCfg := dbconfig.NewDatabaseConfig(
-		"postgresql://user:password@localhost:5432/database-name?sslmode=disable&search_path=public",
-		"false",
+		"postgresql://bdjuno:password@localhost:6433/bdjuno?sslmode=disable&search_path=public",
 		"",
 		"",
 		"",
-		1,
-		1,
+		"",
+		-1,
+		-1,
 		100000,
-		1000,
+		100,
 	)
 	db, err := database.Builder(junodb.NewContext(dbCfg, &codec, logging.DefaultLogger()))
 	suite.Require().NoError(err)
