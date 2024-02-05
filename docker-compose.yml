@@ -15,12 +15,12 @@ services:
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
       ## uncomment next line to set an admin secret
       # HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
-  bdjuno:
+  callisto:
     build:
       context: .
       dockerfile: Dockerfile
     restart: always
-    command: bdjuno parse --home /bdjuno/.bdjuno
+    command: callisto parse --home /callisto/.callisto
     volumes:
       ## Modify first path to match configuration file.
-      - /bdjuno/.bdjuno:/bdjuno/.bdjuno
+      - /callisto/.callisto:/callisto/.callisto
