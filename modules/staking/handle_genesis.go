@@ -25,7 +25,7 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 	var genState stakingtypes.GenesisState
 	err := m.cdc.UnmarshalJSON(appState[stakingtypes.ModuleName], &genState)
 	if err != nil {
-		return fmt.Errorf("error while unmarshaling staking state: %s", err)
+		return fmt.Errorf("error while unmarshalling staking state: %s", err)
 	}
 
 	// Save the params
@@ -140,10 +140,13 @@ func (m *Module) saveValidatorsCommissions(height int64, validators stakingtypes
 			return err
 		}
 
+		commissionRate := account.Commission.Rate
+		minSelfDel := account.MinSelfDelegation
+
 		err = m.db.SaveValidatorCommission(types.NewValidatorCommission(
 			operAddr,
-			&account.Commission.Rate,
-			&account.MinSelfDelegation,
+			&commissionRate,
+			&minSelfDel,
 			height,
 		))
 		if err != nil {

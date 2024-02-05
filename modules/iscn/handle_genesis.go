@@ -93,7 +93,7 @@ func GetGenesisIscnRecords(appState map[string]json.RawMessage, db *database.Db,
 
 	// Store content_id_records
 	for index, contentIDRecord := range genState.ContentIdRecords {
-		var latestVersion uint64 = contentIDRecord.LatestVersion
+		var latestVersion = contentIDRecord.LatestVersion
 		ownerAddress := contentIDRecord.Owner
 
 		iscnID, err := iscntypes.ParseIscnId(contentIDRecord.IscnId)
