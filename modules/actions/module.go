@@ -6,7 +6,7 @@ import (
 	"github.com/forbole/juno/v5/node/builder"
 	nodeconfig "github.com/forbole/juno/v5/node/config"
 	"github.com/forbole/juno/v5/types/config"
-	params "github.com/forbole/juno/v5/types/params"
+	"github.com/forbole/juno/v5/types/params"
 
 	modulestypes "github.com/forbole/bdjuno/v4/modules/types"
 )

@@ -5,10 +5,9 @@ import (
 	"os"
 
 	"cosmossdk.io/simapp"
-	"github.com/forbole/juno/v5/types/params"
-
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/forbole/juno/v5/node/remote"
+	"github.com/forbole/juno/v5/types/params"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
