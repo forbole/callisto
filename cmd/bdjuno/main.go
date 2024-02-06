@@ -5,7 +5,7 @@ import (
 	desmosapp "github.com/desmos-labs/desmos/v6/app"
 	"github.com/forbole/juno/v5/cmd"
 	initcmd "github.com/forbole/juno/v5/cmd/init"
-	migratecmd "github.com/forbole/juno/v5/cmd/migrate"
+	migratecmd "github.com/forbole/bdjuno/v4/cmd/migrate"
 	parsetypes "github.com/forbole/juno/v5/cmd/parse/types"
 	startcmd "github.com/forbole/juno/v5/cmd/start"
 	"github.com/forbole/juno/v5/modules/messages"
