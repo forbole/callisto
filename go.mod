@@ -1,8 +1,6 @@
 module github.com/forbole/bdjuno/v4
 
-go 1.21
-
-toolchain go1.21.6
+go 1.20
 
 require (
 	github.com/CosmWasm/wasmd v0.31.0
