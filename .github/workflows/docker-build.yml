@@ -12,7 +12,8 @@ jobs:
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v4
-
+        with:
+          fetch-depth: 0
       - name: Set BDJuno chain name 🔧
         shell: bash
         run: echo "CHAIN_NAME=$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')" >> $GITHUB_ENV
