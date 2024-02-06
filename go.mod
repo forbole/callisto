@@ -1,6 +1,6 @@
 module github.com/forbole/bdjuno/v4
 
-go 1.19
+go 1.20
 
 require (
 	github.com/MonikaCat/em-ledger v1.1.1-0.20240104075437-64b4f94a7d37 // bdjuno-dragonberry-patch branch
