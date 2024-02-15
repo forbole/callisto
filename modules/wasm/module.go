@@ -3,8 +3,8 @@ package wasm
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/forbole/bdjuno/v4/database"
-	wasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source"
+	"github.com/forbole/callisto/v4/database"
+	wasmsource "github.com/forbole/callisto/v4/modules/wasm/source"
 
 	"github.com/forbole/juno/v5/modules"
 )

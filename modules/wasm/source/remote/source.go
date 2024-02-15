@@ -7,7 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/forbole/juno/v5/node/remote"
 
-	wasmsource "github.com/forbole/bdjuno/v4/modules/wasm/source"
+	wasmsource "github.com/forbole/callisto/v4/modules/wasm/source"
 )
 
 var (

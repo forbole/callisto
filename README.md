@@ -1,7 +1,7 @@
 # Callisto
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/forbole/bdjuno/Tests)](https://github.com/forbole/bdjuno/actions?query=workflow%3ATests)
-[![Go Report Card](https://goreportcard.com/badge/github.com/forbole/bdjuno)](https://goreportcard.com/report/github.com/forbole/bdjuno)
-![Codecov branch](https://img.shields.io/codecov/c/github/forbole/bdjuno/cosmos/v0.40.x)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/forbole/callisto/Tests)](https://github.com/forbole/callisto/actions?query=workflow%3ATests)
+[![Go Report Card](https://goreportcard.com/badge/github.com/forbole/callisto)](https://goreportcard.com/report/github.com/forbole/callisto)
+![Codecov branch](https://img.shields.io/codecov/c/github/forbole/callisto/cosmos/v0.40.x)
 
 Callisto (formerly BDJuno) is the [Juno](https://github.com/forbole/juno) implementation
 for [Big Dipper](https://github.com/forbole/big-dipper).

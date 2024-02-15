@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	tmtypes "github.com/cometbft/cometbft/types"
-	"github.com/forbole/bdjuno/v4/types"
+	"github.com/forbole/callisto/v4/types"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/rs/zerolog/log"
