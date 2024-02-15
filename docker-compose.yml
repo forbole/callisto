@@ -1,9 +1,9 @@
-version: '3.6'
+version: "3.6"
 services:
   hasura:
     image: hasura/graphql-engine:v2.0.4
     ports:
-    - "8080:8080"
+      - "8080:8080"
     restart: always
     environment:
       ## this env var can be used to add the above postgres database to Hasura as a data source. this can be removed/updated based on your needs
@@ -18,9 +18,9 @@ services:
   callisto:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.cosmwasm
     restart: always
-    command: callisto parse --home /callisto/.callisto
+    command: callisto start --home /callisto/.callisto
+    network_mode: "host"
     volumes:
-      ## Modify first path to match configuration file.
-      - /callisto/.callisto:/callisto/.callisto
+      - ./.callisto:/callisto/.callisto
