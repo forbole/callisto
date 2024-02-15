@@ -1,4 +1,4 @@
-- name: bdjuno
+- name: callisto
   kind: postgres
   configuration:
     connection_info:
@@ -11,5 +11,5 @@
         max_connections: 50
         retries: 1
       use_prepared_statements: true
-  tables: "!include bdjuno/tables/tables.yaml"
-  functions: "!include bdjuno/functions/functions.yaml"
+  tables: "!include callisto/tables/tables.yaml"
+  functions: "!include callisto/functions/functions.yaml"

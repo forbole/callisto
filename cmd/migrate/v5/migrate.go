@@ -3,7 +3,7 @@ package v5
 import (
 	"fmt"
 
-	v5db "github.com/forbole/bdjuno/v4/database/migrate/v5"
+	v5db "github.com/forbole/callisto/v4/database/migrate/v5"
 	parse "github.com/forbole/juno/v5/cmd/parse/types"
 	"github.com/forbole/juno/v5/database"
 	"github.com/forbole/juno/v5/database/postgresql"

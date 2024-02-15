@@ -9,10 +9,10 @@ import (
 	"github.com/cosmos/gogoproto/proto"
 	"github.com/lib/pq"
 
-	dbtypes "github.com/forbole/bdjuno/v4/database/types"
-	dbutils "github.com/forbole/bdjuno/v4/database/utils"
+	dbtypes "github.com/forbole/callisto/v4/database/types"
+	dbutils "github.com/forbole/callisto/v4/database/utils"
 
-	"github.com/forbole/bdjuno/v4/types"
+	"github.com/forbole/callisto/v4/types"
 )
 
 // SaveAccounts saves the given accounts inside the database

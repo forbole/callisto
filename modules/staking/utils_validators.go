@@ -3,8 +3,8 @@ package staking
 import (
 	"fmt"
 
-	"github.com/forbole/bdjuno/v4/modules/staking/keybase"
-	"github.com/forbole/bdjuno/v4/types"
+	"github.com/forbole/callisto/v4/modules/staking/keybase"
+	"github.com/forbole/callisto/v4/types"
 
 	"github.com/rs/zerolog/log"
 
@@ -32,7 +32,7 @@ func (m *Module) getValidatorConsAddr(validator stakingtypes.Validator) (sdk.Con
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-// ConvertValidator converts the given staking validator into a BDJuno validator
+// ConvertValidator converts the given staking validator into a Callisto validator
 func (m *Module) convertValidator(height int64, validator stakingtypes.Validator) (types.Validator, error) {
 	consAddr, err := m.getValidatorConsAddr(validator)
 	if err != nil {

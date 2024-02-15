@@ -1,36 +1,36 @@
 package modules
 
 import (
-	"github.com/forbole/bdjuno/v4/modules/actions"
-	"github.com/forbole/bdjuno/v4/modules/types"
+	"github.com/forbole/callisto/v4/modules/actions"
+	"github.com/forbole/callisto/v4/modules/types"
 
 	"github.com/forbole/juno/v5/modules/pruning"
 	"github.com/forbole/juno/v5/modules/telemetry"
 
-	"github.com/forbole/bdjuno/v4/modules/slashing"
+	"github.com/forbole/callisto/v4/modules/slashing"
 
 	jmodules "github.com/forbole/juno/v5/modules"
 	"github.com/forbole/juno/v5/modules/messages"
 	"github.com/forbole/juno/v5/modules/registrar"
 
-	"github.com/forbole/bdjuno/v4/utils"
+	"github.com/forbole/callisto/v4/utils"
 
-	"github.com/forbole/bdjuno/v4/database"
-	"github.com/forbole/bdjuno/v4/modules/auth"
-	"github.com/forbole/bdjuno/v4/modules/bank"
-	"github.com/forbole/bdjuno/v4/modules/consensus"
-	"github.com/forbole/bdjuno/v4/modules/distribution"
-	"github.com/forbole/bdjuno/v4/modules/feegrant"
+	"github.com/forbole/callisto/v4/database"
+	"github.com/forbole/callisto/v4/modules/auth"
+	"github.com/forbole/callisto/v4/modules/bank"
+	"github.com/forbole/callisto/v4/modules/consensus"
+	"github.com/forbole/callisto/v4/modules/distribution"
+	"github.com/forbole/callisto/v4/modules/feegrant"
 
-	dailyrefetch "github.com/forbole/bdjuno/v4/modules/daily_refetch"
-	"github.com/forbole/bdjuno/v4/modules/gov"
-	messagetype "github.com/forbole/bdjuno/v4/modules/message_type"
-	"github.com/forbole/bdjuno/v4/modules/mint"
-	"github.com/forbole/bdjuno/v4/modules/modules"
-	"github.com/forbole/bdjuno/v4/modules/pricefeed"
-	"github.com/forbole/bdjuno/v4/modules/staking"
-	"github.com/forbole/bdjuno/v4/modules/upgrade"
-	"github.com/forbole/bdjuno/v4/modules/wasm"
+	dailyrefetch "github.com/forbole/callisto/v4/modules/daily_refetch"
+	"github.com/forbole/callisto/v4/modules/gov"
+	messagetype "github.com/forbole/callisto/v4/modules/message_type"
+	"github.com/forbole/callisto/v4/modules/mint"
+	"github.com/forbole/callisto/v4/modules/modules"
+	"github.com/forbole/callisto/v4/modules/pricefeed"
+	"github.com/forbole/callisto/v4/modules/staking"
+	"github.com/forbole/callisto/v4/modules/upgrade"
+	"github.com/forbole/callisto/v4/modules/wasm"
 	juno "github.com/forbole/juno/v5/types"
 )
 
