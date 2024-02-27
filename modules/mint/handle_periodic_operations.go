@@ -1,12 +1,7 @@
 package mint
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
-
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 
 	"github.com/forbole/bdjuno/v4/modules/utils"
 	"github.com/go-co-op/gocron"
@@ -41,23 +36,10 @@ func (m *Module) UpdateInflation() error {
 	}
 
 	// Get the inflation
-	resp, err := http.Get("https://api.desmos.forbole.com/cosmos/mint/v1beta1/inflation")
+	inflation, err := m.source.GetInflation(block.Height)
 	if err != nil {
 		return fmt.Errorf("error while querying API for inflation value: %s", err)
 	}
 
-	defer resp.Body.Close()
-
-	bz, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return fmt.Errorf("error while reading response body: %s", err)
-	}
-
-	var inf minttypes.QueryInflationResponse
-	err = json.Unmarshal(bz, &inf)
-	if err != nil {
-		return fmt.Errorf("error while unmarshaling response body: %s", err)
-	}
-
-	return m.db.SaveInflation(inf.Inflation, block.Height)
+	return m.db.SaveInflation(inflation, block.Height)
 }

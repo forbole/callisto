@@ -1,6 +1,7 @@
 name: Lint
-# Lint runs golangci-lint over the entire Desmos repository.
-# This workflow is run on every pull request and push to master.
+
+# Lint runs golangci-lint over the entire BDJuno repository.
+# This workflow is run on every pull request and push to main.
 # The `golangci` will pass without running if no *.{go, mod, sum} files have been changed.
 on:
   pull_request:
@@ -16,7 +17,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Go 🧰
         uses: actions/setup-go@v4

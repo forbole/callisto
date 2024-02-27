@@ -5,30 +5,26 @@ import (
 	"os"
 
 	"github.com/cometbft/cometbft/libs/log"
+	desmosapp "github.com/desmos-labs/desmos/v6/app"
+	profilestypes "github.com/desmos-labs/desmos/v6/x/profiles/types"
+	"github.com/forbole/juno/v5/node/remote"
 	"github.com/forbole/juno/v5/types/params"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/forbole/juno/v5/node/local"
-	"github.com/forbole/juno/v5/node/remote"
-
 	nodeconfig "github.com/forbole/juno/v5/node/config"
-
-	desmosapp "github.com/desmos-labs/desmos/v6/app"
-	profilestypes "github.com/desmos-labs/desmos/v6/x/profiles/types"
+	"github.com/forbole/juno/v5/node/local"
 
 	banksource "github.com/forbole/bdjuno/v4/modules/bank/source"
 	localbanksource "github.com/forbole/bdjuno/v4/modules/bank/source/local"
 	remotebanksource "github.com/forbole/bdjuno/v4/modules/bank/source/remote"
 	distrsource "github.com/forbole/bdjuno/v4/modules/distribution/source"
 
-	localdistrsource "github.com/forbole/bdjuno/v4/modules/distribution/source/local"
 	remotedistrsource "github.com/forbole/bdjuno/v4/modules/distribution/source/remote"
 	govsource "github.com/forbole/bdjuno/v4/modules/gov/source"
 	localgovsource "github.com/forbole/bdjuno/v4/modules/gov/source/local"
@@ -81,7 +77,6 @@ func buildLocalSources(cfg *local.Details, encodingConfig params.EncodingConfig)
 
 	sources := &Sources{
 		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
-		DistrSource:    localdistrsource.NewSource(source, distrkeeper.Querier{Keeper: app.DistrKeeper}),
 		GovSource:      localgovsource.NewSource(source, govtypesv1.QueryServer(app.GovKeeper)),
 		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
 		ProfilesSource: localprofilessource.NewSource(source, profilestypes.QueryServer(app.ProfilesKeeper)),

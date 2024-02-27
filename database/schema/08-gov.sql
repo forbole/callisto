@@ -10,8 +10,9 @@ CREATE TABLE proposal
 (
     id                INTEGER   NOT NULL PRIMARY KEY,
     title             TEXT      NOT NULL,
-    description       TEXT      NOT NULL,
-    metadata          TEXT      NOT NULL,
+    summary           TEXT,
+    description       TEXT,
+    metadata          TEXT,
     content           JSONB     NOT NULL DEFAULT '[]'::JSONB,
     submit_time       TIMESTAMP NOT NULL,
     deposit_end_time  TIMESTAMP,

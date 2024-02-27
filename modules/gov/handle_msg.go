@@ -7,13 +7,14 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/x/authz"
+	"google.golang.org/grpc/codes"
 
 	"github.com/forbole/bdjuno/v4/types"
-	"google.golang.org/grpc/codes"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
 	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
 	juno "github.com/forbole/juno/v5/types"
@@ -31,6 +32,9 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	}
 
 	switch cosmosMsg := msg.(type) {
+	case *govtypesv1beta1.MsgSubmitProposal:
+		return m.handleMsgLegacySubmitProposal(tx, index, cosmosMsg)
+
 	case *govtypesv1.MsgSubmitProposal:
 		return m.handleMsgSubmitProposal(tx, index, cosmosMsg)
 
@@ -47,22 +51,22 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	return nil
 }
 
-// handleMsgSubmitProposal allows to properly handle a MsgSubmitProposal
-func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1.MsgSubmitProposal) error {
+// saveProposalAndDeposit allows to properly get and store a proposal and its initial deposit
+func (m *Module) saveProposalAndDeposit(tx *juno.Tx, index int, proposer string, initialDeposit []sdk.Coin) (types.Proposal, error) {
 	// Get the proposal id
 	event, err := tx.FindEventByType(index, gov.EventTypeSubmitProposal)
 	if err != nil {
-		return fmt.Errorf("error while searching for EventTypeSubmitProposal: %s", err)
+		return types.Proposal{}, fmt.Errorf("error while searching for EventTypeSubmitProposal: %s", err)
 	}
 
 	id, err := tx.FindAttributeByKey(event, gov.AttributeKeyProposalID)
 	if err != nil {
-		return fmt.Errorf("error while searching for AttributeKeyProposalID: %s", err)
+		return types.Proposal{}, fmt.Errorf("error while searching for AttributeKeyProposalID: %s", err)
 	}
 
 	proposalID, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
-		return fmt.Errorf("error while parsing proposal id: %s", err)
+		return types.Proposal{}, fmt.Errorf("error while parsing proposal id: %s", err)
 	}
 
 	// Get the proposal
@@ -73,15 +77,75 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1
 			// to fix the rpc error returning code = NotFound desc = proposal x doesn't exist
 			block, err := m.db.GetLastBlockHeightAndTimestamp()
 			if err != nil {
-				return fmt.Errorf("error while getting latest block height: %s", err)
+				return types.Proposal{}, fmt.Errorf("error while getting latest block height: %s", err)
 			}
 			proposal, err = m.source.Proposal(block.Height, proposalID)
 			if err != nil {
-				return fmt.Errorf("error while getting proposal: %s", err)
+				return types.Proposal{}, fmt.Errorf("error while getting proposal: %s", err)
 			}
 		} else {
-			return fmt.Errorf("error while getting proposal: %s", err)
+			return types.Proposal{}, fmt.Errorf("error while getting proposal: %s", err)
 		}
+	}
+
+	// For backward-compatibility we use the summary as the proposal description, and we don't consider the summary
+	var summary = ""
+	var description = proposal.Summary
+
+	// If the user has set a long-text description, then we use the metadata description
+	// as the proposal description, and the summary as the summary (as it should be)
+	metadataDescription, err := GetDescriptionFromMetadata(proposal.Metadata)
+	if err != nil {
+		return types.Proposal{}, fmt.Errorf("error while getting proposal metadata: %s", err)
+	}
+
+	if metadataDescription != "" {
+		summary = proposal.Summary
+		description = metadataDescription
+	}
+
+	// Store the proposal
+	proposalObj := types.NewProposal(
+		proposal.Id,
+		proposal.Title,
+		summary,
+		description,
+		proposal.Metadata,
+		proposal.Messages,
+		proposal.Status.String(),
+		*proposal.SubmitTime,
+		*proposal.DepositEndTime,
+		proposal.VotingStartTime,
+		proposal.VotingEndTime,
+		proposal.Proposer,
+	)
+
+	err = m.db.SaveProposals([]types.Proposal{proposalObj})
+	if err != nil {
+		return types.Proposal{}, err
+	}
+
+	txTimestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
+	if err != nil {
+		return types.Proposal{}, fmt.Errorf("error while parsing time: %s", err)
+	}
+
+	// Store the deposit
+	deposit := types.NewDeposit(proposal.Id, proposer, initialDeposit, txTimestamp, tx.TxHash, tx.Height)
+	return proposalObj, m.db.SaveDeposits([]types.Deposit{deposit})
+}
+
+// handleMsgSubmitProposal allows to properly handle a v1beta1.MsgSubmitProposal
+func (m *Module) handleMsgLegacySubmitProposal(tx *juno.Tx, index int, msg *govtypesv1beta1.MsgSubmitProposal) error {
+	_, err := m.saveProposalAndDeposit(tx, index, msg.Proposer, msg.InitialDeposit)
+	return err
+}
+
+// handleMsgSubmitProposal allows to properly handle a v1.MsgSubmitProposal
+func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1.MsgSubmitProposal) error {
+	proposal, err := m.saveProposalAndDeposit(tx, index, msg.Proposer, msg.InitialDeposit)
+	if err != nil {
+		return err
 	}
 
 	var addresses []types.Account
@@ -103,44 +167,12 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1
 		}
 	}
 
-	err = m.db.SaveAccounts(addresses)
-	if err != nil {
-		return fmt.Errorf("error while storing proposal recipient: %s", err)
-	}
-
-	// Store the proposal
-	proposalObj := types.NewProposal(
-		proposal.Id,
-		proposal.Title,
-		proposal.Summary,
-		proposal.Metadata,
-		msg.Messages,
-		proposal.Status.String(),
-		*proposal.SubmitTime,
-		*proposal.DepositEndTime,
-		proposal.VotingStartTime,
-		proposal.VotingEndTime,
-		msg.Proposer,
-	)
-
-	err = m.db.SaveProposals([]types.Proposal{proposalObj})
-	if err != nil {
-		return err
-	}
-
-	txTimestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
-	if err != nil {
-		return fmt.Errorf("error while parsing time: %s", err)
-	}
-
-	// Store the deposit
-	deposit := types.NewDeposit(proposal.Id, msg.Proposer, msg.InitialDeposit, txTimestamp, tx.TxHash, tx.Height)
-	return m.db.SaveDeposits([]types.Deposit{deposit})
+	return m.db.SaveAccounts(addresses)
 }
 
 // handleMsgDeposit allows to properly handle a MsgDeposit
 func (m *Module) handleMsgDeposit(tx *juno.Tx, msg *govtypesv1.MsgDeposit) error {
-	deposit, err := m.source.ProposalDeposit(tx.Height, msg.ProposalId, msg.Depositor)
+	govDeposit, err := m.source.ProposalDeposit(tx.Height, msg.ProposalId, msg.Depositor)
 	if err != nil {
 		return fmt.Errorf("error while getting proposal deposit: %s", err)
 	}
@@ -149,9 +181,15 @@ func (m *Module) handleMsgDeposit(tx *juno.Tx, msg *govtypesv1.MsgDeposit) error
 		return fmt.Errorf("error while parsing time: %s", err)
 	}
 
-	return m.db.SaveDeposits([]types.Deposit{
-		types.NewDeposit(msg.ProposalId, msg.Depositor, deposit.Amount, txTimestamp, tx.TxHash, tx.Height),
-	})
+	// Save the deposit
+	deposit := types.NewDeposit(govDeposit.ProposalId, govDeposit.Depositor, govDeposit.Amount, txTimestamp, tx.TxHash, tx.Height)
+	err = m.db.SaveDeposits([]types.Deposit{deposit})
+	if err != nil {
+		return err
+	}
+
+	// Update the proposal status (in case the deposit made the proposal enter the voting phase)
+	return m.UpdateProposalStatus(tx.Height, msg.ProposalId)
 }
 
 // handleMsgVote allows to properly handle a MsgVote

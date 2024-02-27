@@ -2,6 +2,7 @@ package staking
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/x/authz"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -23,22 +24,22 @@ func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
 
 	switch cosmosMsg := msg.(type) {
 	case *stakingtypes.MsgCreateValidator:
-		return m.handleMsgCreateValidator(tx.Height, cosmosMsg)
+		return m.handleMsgCreateValidator(tx, cosmosMsg)
 
 	case *stakingtypes.MsgEditValidator:
-		return m.handleEditValidator(tx.Height, cosmosMsg)
+		return m.handleEditValidator(tx, cosmosMsg)
 
 	// update validators statuses, voting power
 	// and proposals validators satatus snapshots
 	// when there is a voting power change
 	case *stakingtypes.MsgDelegate:
-		return m.UpdateValidatorStatuses()
+		return m.UpdateBondedValidatorsStatusesAndVotingPowers()
 
 	case *stakingtypes.MsgBeginRedelegate:
-		return m.UpdateValidatorStatuses()
+		return m.UpdateBondedValidatorsStatusesAndVotingPowers()
 
 	case *stakingtypes.MsgUndelegate:
-		return m.UpdateValidatorStatuses()
+		return m.UpdateBondedValidatorsStatusesAndVotingPowers()
 
 	}
 
@@ -49,8 +50,13 @@ func (m *Module) HandleMsg(_ int, msg sdk.Msg, tx *juno.Tx) error {
 
 // handleMsgCreateValidator handles properly a MsgCreateValidator instance by
 // saving into the database all the data associated to such validator
-func (m *Module) handleMsgCreateValidator(height int64, msg *stakingtypes.MsgCreateValidator) error {
-	err := m.RefreshValidatorInfos(height, msg.ValidatorAddress)
+func (m *Module) handleMsgCreateValidator(tx *juno.Tx, msg *stakingtypes.MsgCreateValidator) error {
+	timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
+	if err != nil {
+		return fmt.Errorf("error while parsing time: %s", err)
+	}
+
+	err = m.RefreshValidatorInfos(tx.Height, timestamp, msg.ValidatorAddress)
 	if err != nil {
 		return fmt.Errorf("error while refreshing validator from MsgCreateValidator: %s", err)
 	}
@@ -58,8 +64,13 @@ func (m *Module) handleMsgCreateValidator(height int64, msg *stakingtypes.MsgCre
 }
 
 // handleEditValidator handles MsgEditValidator utils, updating the validator info
-func (m *Module) handleEditValidator(height int64, msg *stakingtypes.MsgEditValidator) error {
-	err := m.RefreshValidatorInfos(height, msg.ValidatorAddress)
+func (m *Module) handleEditValidator(tx *juno.Tx, msg *stakingtypes.MsgEditValidator) error {
+	timestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
+	if err != nil {
+		return fmt.Errorf("error while parsing time: %s", err)
+	}
+
+	err = m.RefreshValidatorInfos(tx.Height, timestamp, msg.ValidatorAddress)
 	if err != nil {
 		return fmt.Errorf("error while refreshing validator from MsgEditValidator: %s", err)
 	}

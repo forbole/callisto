@@ -34,6 +34,7 @@ type Proposal struct {
 	ID              uint64
 	Title           string
 	Summary         string
+	Description     string
 	Metadata        string
 	Messages        []*codectypes.Any
 	Status          string
@@ -49,6 +50,7 @@ func NewProposal(
 	proposalID uint64,
 	title string,
 	summary string,
+	description string,
 	metadata string,
 	messages []*codectypes.Any,
 	status string,
@@ -62,6 +64,7 @@ func NewProposal(
 		ID:              proposalID,
 		Title:           title,
 		Summary:         summary,
+		Description:     description,
 		Metadata:        metadata,
 		Messages:        messages,
 		Status:          status,

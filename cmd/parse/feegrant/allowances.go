@@ -24,8 +24,9 @@ import (
 // allowanceCmd returns the Cobra command allowing to fix all things related to fee grant allowance
 func allowanceCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 	return &cobra.Command{
-		Use:   "allowance",
+		Use:   "allowances",
 		Short: "Fix granted and revoked allowances to the latest height",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			parseCtx, err := parsecmdtypes.GetParserContext(config.Cfg, parseConfig)
 			if err != nil {

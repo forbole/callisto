@@ -9,6 +9,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/types/module"
+	desmosapp "github.com/desmos-labs/desmos/v6/app"
 	dbconfig "github.com/forbole/juno/v5/database/config"
 	"github.com/forbole/juno/v5/logging"
 
@@ -16,6 +18,7 @@ import (
 
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/types"
+	"github.com/forbole/bdjuno/v4/types/config"
 
 	juno "github.com/forbole/juno/v5/types"
 
@@ -23,8 +26,6 @@ import (
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 	tmtypes "github.com/cometbft/cometbft/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/forbole/juno/v5/types/params"
 
 	"github.com/stretchr/testify/suite"
 
@@ -43,7 +44,7 @@ type DbTestSuite struct {
 
 func (suite *DbTestSuite) SetupTest() {
 	// Create the codec
-	codec := params.MakeTestEncodingConfig()
+	codec := config.MakeEncodingConfig([]module.BasicManager{desmosapp.ModuleBasics})()
 
 	// Build the database
 	dbCfg := dbconfig.NewDatabaseConfig(

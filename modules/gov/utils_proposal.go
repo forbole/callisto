@@ -2,7 +2,11 @@ package gov
 
 import (
 	"fmt"
+	"io"
+	"net/http"
+	"net/url"
 	"strings"
+	"unicode"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -24,6 +28,48 @@ import (
 
 	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
 )
+
+// GetDescriptionFromMetadata tries reading the given metadata as an URL pointing to a text page.
+// If it's a URL and the content type is text, it returns the content of the page, otherwise it returns
+// an empty string.
+func GetDescriptionFromMetadata(metadata string) (string, error) {
+	parsedURL, err := url.Parse(metadata)
+	if err != nil {
+		return "", nil
+	}
+
+	// Make sure the parse URL is valid
+	if parsedURL.Scheme != "http" && parsedURL.Scheme != "https" {
+		return "", nil
+	}
+
+	// Get the data from the URL
+	res, err := http.DefaultClient.Get(parsedURL.String())
+	if err != nil {
+		return "", err
+	}
+	defer res.Body.Close()
+
+	// Make sure the response type is text
+	contentType := res.Header.Get("Content-Type")
+	if !strings.HasPrefix(contentType, "text") {
+		return "", nil
+	}
+
+	// Read the response body
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return "", err
+	}
+
+	// Define the trimming function to remove white spaces and new lines
+	trimFunc := func(r rune) bool {
+		return unicode.IsSpace(r) || r == '\n' || r == '\r'
+	}
+
+	// Return the metadata string, trimmed from the right side (to remove last white spaces or new lines)
+	return strings.TrimRightFunc(string(body), trimFunc), nil
+}
 
 // UpdateProposalStatus queries the latest details of given proposal ID, updates it's status
 // in database and handles changes if the proposal has been passed.
@@ -138,8 +184,6 @@ func (m *Module) handleParamChangeProposal(height int64, moduleName string) (err
 		if err != nil {
 			return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", minttypes.ModuleName, err)
 		}
-
-		// Update the inflation
 		err = m.mintModule.UpdateInflation()
 		if err != nil {
 			return fmt.Errorf("error while updating inflation with ParamChangeProposal: %s", err)

@@ -1,19 +1,13 @@
 package modules
 
 import (
-	"github.com/forbole/bdjuno/v4/modules/actions"
-	"github.com/forbole/bdjuno/v4/modules/types"
-
-	"github.com/forbole/juno/v5/modules/pruning"
-	"github.com/forbole/juno/v5/modules/telemetry"
-
-	"github.com/forbole/bdjuno/v4/modules/slashing"
-
-	"github.com/forbole/bdjuno/v4/modules/profiles"
+	juno "github.com/forbole/juno/v5/types"
 
 	jmodules "github.com/forbole/juno/v5/modules"
 	"github.com/forbole/juno/v5/modules/messages"
+	"github.com/forbole/juno/v5/modules/pruning"
 	"github.com/forbole/juno/v5/modules/registrar"
+	"github.com/forbole/juno/v5/modules/telemetry"
 
 	"github.com/forbole/bdjuno/v4/utils"
 
@@ -24,15 +18,18 @@ import (
 	"github.com/forbole/bdjuno/v4/modules/distribution"
 	"github.com/forbole/bdjuno/v4/modules/feegrant"
 
+	"github.com/forbole/bdjuno/v4/modules/actions"
 	dailyrefetch "github.com/forbole/bdjuno/v4/modules/daily_refetch"
 	"github.com/forbole/bdjuno/v4/modules/gov"
 	messagetype "github.com/forbole/bdjuno/v4/modules/message_type"
 	"github.com/forbole/bdjuno/v4/modules/mint"
 	"github.com/forbole/bdjuno/v4/modules/modules"
 	"github.com/forbole/bdjuno/v4/modules/pricefeed"
+	"github.com/forbole/bdjuno/v4/modules/profiles"
+	"github.com/forbole/bdjuno/v4/modules/slashing"
 	"github.com/forbole/bdjuno/v4/modules/staking"
+	"github.com/forbole/bdjuno/v4/modules/types"
 	"github.com/forbole/bdjuno/v4/modules/upgrade"
-	juno "github.com/forbole/juno/v5/types"
 )
 
 // UniqueAddressesParser returns a wrapper around the given parser that removes all duplicated addresses
@@ -85,8 +82,8 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	messagetypeModule := messagetype.NewModule(r.parser, cdc, db)
 	mintModule := mint.NewModule(sources.MintSource, cdc, db)
 	profilesModule := profiles.NewModule(sources.ProfilesSource, cdc, db)
-	slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
 	stakingModule := staking.NewModule(sources.StakingSource, cdc, db)
+	slashingModule := slashing.NewModule(sources.SlashingSource, stakingModule, cdc, db)
 	govModule := gov.NewModule(sources.GovSource, distrModule, mintModule, profilesModule, slashingModule, stakingModule, cdc, db)
 	upgradeModule := upgrade.NewModule(db, stakingModule)
 

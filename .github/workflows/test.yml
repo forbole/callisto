@@ -1,4 +1,5 @@
 name: Tests
+
 # Tests / Code Coverage workflow runs unit tests and uploads a code coverage report.
 # This workflow is run on pushes to master & every Pull Requests where a .go, .mod, .sum have been changed.
 on:
@@ -22,7 +23,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Go 🧰
         uses: actions/setup-go@v4

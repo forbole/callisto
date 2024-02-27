@@ -2,6 +2,7 @@ package staking
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/forbole/bdjuno/v4/modules/staking/keybase"
 	"github.com/forbole/bdjuno/v4/types"
@@ -57,9 +58,7 @@ func (m *Module) convertValidator(height int64, validator stakingtypes.Validator
 
 // convertValidatorDescription returns a new types.ValidatorDescription object by fetching the avatar URL
 // using the Keybase APIs
-func (m *Module) convertValidatorDescription(
-	height int64, opAddr string, description stakingtypes.Description,
-) types.ValidatorDescription {
+func (m *Module) convertValidatorDescription(height int64, opAddr string, description stakingtypes.Description) types.ValidatorDescription {
 	var avatarURL string
 
 	if description.Identity == stakingtypes.DoNotModifyDesc {
@@ -78,7 +77,7 @@ func (m *Module) convertValidatorDescription(
 // --------------------------------------------------------------------------------------------------------------------
 
 // RefreshAllValidatorInfos refreshes the info of all the validators at the given height
-func (m *Module) RefreshAllValidatorInfos(height int64) error {
+func (m *Module) RefreshAllValidatorInfos(height int64, timestamp time.Time) error {
 	// Get all validators
 	validators, err := m.source.GetValidatorsWithStatus(height, "")
 	if err != nil {
@@ -87,7 +86,7 @@ func (m *Module) RefreshAllValidatorInfos(height int64) error {
 
 	// Refresh each validator
 	for _, validator := range validators {
-		err = m.RefreshValidatorInfos(height, validator.OperatorAddress)
+		err = m.RefreshValidatorInfos(height, timestamp, validator.OperatorAddress)
 		if err != nil {
 			return fmt.Errorf("error while refreshing validator: %s", err)
 		}
@@ -96,8 +95,10 @@ func (m *Module) RefreshAllValidatorInfos(height int64) error {
 	return nil
 }
 
-// RefreshValidatorInfos refreshes the info for the validator with the given operator address at the provided height
-func (m *Module) RefreshValidatorInfos(height int64, valOper string) error {
+// RefreshValidatorInfos refreshes the info for the validator with the given operator address at the provided height.
+// The information include the description as well as the current status
+func (m *Module) RefreshValidatorInfos(height int64, timestamp time.Time, valOper string) error {
+	// Get the validator information
 	stakingValidator, err := m.source.GetValidator(height, valOper)
 	if err != nil {
 		return err
@@ -108,27 +109,34 @@ func (m *Module) RefreshValidatorInfos(height int64, valOper string) error {
 		return fmt.Errorf("error while converting validator: %s", err)
 	}
 
-	desc := m.convertValidatorDescription(height, stakingValidator.OperatorAddress, stakingValidator.Description)
-
-	// Save the validator
+	// Save the validator generic data
 	err = m.db.SaveValidatorsData([]types.Validator{validator})
 	if err != nil {
 		return err
 	}
 
 	// Save the description
-	err = m.db.SaveValidatorDescription(desc)
+	err = m.db.SaveValidatorDescription(m.convertValidatorDescription(
+		height,
+		stakingValidator.OperatorAddress,
+		stakingValidator.Description,
+	))
 	if err != nil {
 		return err
 	}
 
 	// Save the commission
-	return m.db.SaveValidatorCommission(types.NewValidatorCommission(
+	err = m.db.SaveValidatorCommission(types.NewValidatorCommission(
 		stakingValidator.OperatorAddress,
 		&stakingValidator.Commission.Rate,
 		&stakingValidator.MinSelfDelegation,
 		height,
 	))
+	if err != nil {
+		return err
+	}
+
+	return m.updateValidatorsStatusesVotingPowersAndSnapshots(height, timestamp, []stakingtypes.Validator{stakingValidator})
 }
 
 // GetValidatorsWithStatus returns the list of all the validators having the given status at the given height
@@ -201,37 +209,42 @@ func (m *Module) GetValidatorsStatuses(height int64, validators []stakingtypes.V
 	return statuses, nil
 }
 
-// UpdateValidatorStatuses allows to update validators status, voting power
-// and active proposals validator status snapshots
-func (m *Module) UpdateValidatorStatuses() error {
-	// get the latest block height from db
+// UpdateBondedValidatorsStatusesAndVotingPowers allows to update the status and voting power
+// for all the bonded validators.
+func (m *Module) UpdateBondedValidatorsStatusesAndVotingPowers() error {
+	// Get the latest block height from db
 	block, err := m.db.GetLastBlockHeightAndTimestamp()
 	if err != nil {
 		return fmt.Errorf("error while getting latest block height from db: %s", err)
 	}
 
+	// Get all the validators that are still bonded
 	validators, _, err := m.GetValidatorsWithStatus(block.Height, stakingtypes.Bonded.String())
 	if err != nil {
 		return fmt.Errorf("error while getting validators with bonded status: %s", err)
 	}
 
-	// update validators status and voting power in database
-	err = m.updateValidatorStatusAndVP(block.Height, validators)
+	return m.updateValidatorsStatusesVotingPowersAndSnapshots(block.Height, block.BlockTimestamp, validators)
+}
+
+func (m *Module) updateValidatorsStatusesVotingPowersAndSnapshots(height int64, timestamp time.Time, validators []stakingtypes.Validator) error {
+	// Update the validators statuses and voting power
+	err := m.updateValidatorsStatusesAndVotingPowers(height, validators)
 	if err != nil {
 		return fmt.Errorf("error while updating validators status and voting power: %s", err)
 	}
 
-	// get all active proposals IDs from db
-	ids, err := m.db.GetOpenProposalsIds(block.BlockTimestamp)
+	// Get all the active on-chain proposals
+	ids, err := m.db.GetOpenProposalsIds(timestamp)
 	if err != nil {
 		return fmt.Errorf("error while getting open proposals ids: %s", err)
 	}
 
-	// update validator status snapshots for all proposals IDs
-	// returned from database
+	// Update the validators voting power associating them to the given proposals.
+	// This will make sure that we can track the voting power of each validator for each proposal
+	// once it closes, even if it changes in the future.
 	for _, id := range ids {
-		// update validator status snapshot for given height and proposal ID
-		err = m.updateProposalValidatorStatusSnapshot(block.Height, id, validators)
+		err = m.updateProposalValidatorStatusSnapshot(height, id, validators)
 		if err != nil {
 			return fmt.Errorf("error while updating proposal validator status snapshots: %s", err)
 		}
@@ -240,22 +253,24 @@ func (m *Module) UpdateValidatorStatuses() error {
 	return nil
 }
 
-// updateProposalValidatorStatusSnapshot updates validators snapshot for
-// the proposal having the given id
-func (m *Module) updateProposalValidatorStatusSnapshot(
-	height int64, proposalID uint64, validators []stakingtypes.Validator) error {
+// updateProposalValidatorStatusSnapshot updates validators snapshot for the proposal having the given id
+func (m *Module) updateProposalValidatorStatusSnapshot(height int64, proposalID uint64, validators []stakingtypes.Validator) error {
 	snapshots := make([]types.ProposalValidatorStatusSnapshot, len(validators))
-
 	for index, validator := range validators {
 		consAddr, err := validator.GetConsAddr()
 		if err != nil {
 			return err
 		}
 
+		var votingPower = validator.Tokens.Int64() / 1_000_000
+		if validator.Status != stakingtypes.Bonded || validator.IsJailed() {
+			votingPower = 0
+		}
+
 		snapshots[index] = types.NewProposalValidatorStatusSnapshot(
 			proposalID,
 			consAddr.String(),
-			validator.Tokens.Int64(),
+			votingPower,
 			validator.Status,
 			validator.Jailed,
 			height,
@@ -267,9 +282,9 @@ func (m *Module) updateProposalValidatorStatusSnapshot(
 	return m.db.SaveProposalValidatorsStatusesSnapshots(snapshots)
 }
 
-// updateValidatorStatusAndVP updates validators status
+// updateValidatorsStatusesAndVotingPowers updates validators status
 // and validators voting power
-func (m *Module) updateValidatorStatusAndVP(height int64, validators []stakingtypes.Validator) error {
+func (m *Module) updateValidatorsStatusesAndVotingPowers(height int64, validators []stakingtypes.Validator) error {
 	votingPowers := make([]types.ValidatorVotingPower, len(validators))
 	statuses := make([]types.ValidatorStatus, len(validators))
 
@@ -288,7 +303,16 @@ func (m *Module) updateValidatorStatusAndVP(height int64, validators []stakingty
 			return err
 		}
 
-		votingPowers[index] = types.NewValidatorVotingPower(consAddr.String(), validator.Tokens.Int64(), height)
+		var votingPower = validator.Tokens.Int64() / 1_000_000
+		if validator.Status != stakingtypes.Bonded || validator.IsJailed() {
+			votingPower = 0
+		}
+
+		votingPowers[index] = types.NewValidatorVotingPower(
+			consAddr.String(),
+			votingPower,
+			height,
+		)
 
 		statuses[index] = types.NewValidatorStatus(
 			consAddr.String(),

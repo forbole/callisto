@@ -1,5 +1,5 @@
 # BDJuno
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/forbole/bdjuno/Tests)](https://github.com/forbole/bdjuno/actions?query=workflow%3ATests)
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/desmos-labs/bdjuno/test.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/forbole/bdjuno)](https://goreportcard.com/report/github.com/forbole/bdjuno)
 ![Codecov branch](https://img.shields.io/codecov/c/github/forbole/bdjuno/cosmos/v0.43.x)
 

@@ -1,5 +1,6 @@
 VERSION := $(shell echo $(shell git describe --tags) | sed 's/^v//')
 COMMIT  := $(shell git log -1 --format='%H')
+BUILDDIR ?= $(CURDIR)/build
 
 export GO111MODULE = on
 
@@ -13,41 +14,40 @@ all: lint build test-unit
 ###                                Build flags                              ###
 ###############################################################################
 
-LD_FLAGS = -X github.com/forbole/juno/v5/cmd.Version=$(VERSION) \
-	-X github.com/forbole/juno/v5/cmd.Commit=$(COMMIT)
-BUILD_FLAGS :=  -ldflags '$(LD_FLAGS)'
-
-ifeq ($(LINK_STATICALLY),true)
-  LD_FLAGS += -linkmode=external -extldflags "-Wl,-z,muldefs -static"
-endif
-
+# These lines here are essential to include the muslc library for static linking of libraries
+# (which is needed for the wasmvm one) available during the build. Without them, the build will fail.
 build_tags += $(BUILD_TAGS)
 build_tags := $(strip $(build_tags))
 
-BUILD_FLAGS :=  -ldflags '$(LD_FLAGS)' -tags "$(build_tags)"
+whitespace :=
+whitespace += $(whitespace)
+comma := ,
+build_tags_comma_sep := $(subst $(whitespace),$(comma),$(build_tags))
+
+# Process linker flags
+ldflags = -X 'github.com/forbole/juno/v5/cmd.Version=$(VERSION)' \
+ 	-X 'github.com/forbole/juno/v5/cmd.Commit=$(COMMIT)'
+
+ifeq ($(LINK_STATICALLY),true)
+  ldflags += -linkmode=external -extldflags "-Wl,-z,muldefs -static"
+endif
+
+BUILD_FLAGS := -tags "$(build_tags)" -ldflags '$(ldflags)'
 
 ###############################################################################
 ###                                  Build                                  ###
 ###############################################################################
+BUILD_TARGETS := build install
 
-build: go.sum
-ifeq ($(OS),Windows_NT)
-	@echo "building bdjuno binary..."
-	@go build -mod=readonly $(BUILD_FLAGS) -o build/bdjuno.exe ./cmd/bdjuno
-else
-	@echo "building bdjuno binary..."
-	@go build -mod=readonly $(BUILD_FLAGS) -o build/bdjuno ./cmd/bdjuno
-endif
-.PHONY: build
+build: BUILD_ARGS=-o $(BUILDDIR)
 
-###############################################################################
-###                                 Install                                 ###
-###############################################################################
+$(BUILDDIR)/:
+	mkdir -p $(BUILDDIR)/
 
-install: go.sum
-	@echo "installing bdjuno binary..."
-	@go install -mod=readonly $(BUILD_FLAGS) ./cmd/bdjuno
-.PHONY: install
+$(BUILD_TARGETS): go.sum $(BUILDDIR)/
+	go $@ -mod=readonly $(BUILD_FLAGS) $(BUILD_ARGS) ./...
+
+.PHONY: build install
 
 ###############################################################################
 ###                           Tests & Simulation                            ###
@@ -69,6 +69,24 @@ test-unit: start-docker-test
 .PHONY: test-unit
 
 ###############################################################################
+###                          Tools & Dependencies                           ###
+###############################################################################
+
+go-mod-cache: go.sum
+	@echo "--> Download go modules to local cache"
+	@go mod download
+
+go.sum: go.mod
+	@echo "--> Ensure dependencies have not been modified"
+	@go mod verify
+	@go mod tidy
+
+clean:
+	rm -rf $(BUILDDIR)/
+
+.PHONY: go-mod-cache go.sum clean
+
+###############################################################################
 ###                                Linting                                  ###
 ###############################################################################
 golangci_lint_cmd=github.com/golangci/golangci-lint/cmd/golangci-lint
@@ -88,5 +106,3 @@ format:
 	find . -name '*.go' -type f -not -path "*.git*" -not -name '*.pb.go' -not -name '*_mocks.go' | xargs misspell -w
 	find . -name '*.go' -type f -not -path "*.git*" -not -name '*.pb.go' -not -name '*_mocks.go' | xargs goimports -w -local github.com/forbole/bdjuno
 .PHONY: format
-
-.PHONY: lint lint-fix format

@@ -18,6 +18,7 @@ func validatorsCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:   "validators",
 		Short: "Fix the information about validators taking them from the latest known height",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			parseCtx, err := parsecmdtypes.GetParserContext(config.Cfg, parseConfig)
 			if err != nil {
@@ -41,7 +42,12 @@ func validatorsCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				return fmt.Errorf("error while getting latest block height: %s", err)
 			}
 
-			err = stakingModule.RefreshAllValidatorInfos(height)
+			block, err := parseCtx.Node.Block(height)
+			if err != nil {
+				return fmt.Errorf("error while getting block at height %d: %s", height, err)
+			}
+
+			err = stakingModule.RefreshAllValidatorInfos(block.Block.Height, block.Block.Time)
 			if err != nil {
 				return fmt.Errorf("error while refreshing all validators infos: %s", err)
 			}

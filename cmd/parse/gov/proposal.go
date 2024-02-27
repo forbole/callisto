@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
+	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/rs/zerolog/log"
 
 	modulestypes "github.com/forbole/bdjuno/v4/modules/types"
@@ -15,11 +16,12 @@ import (
 	"github.com/forbole/juno/v5/types/config"
 	"github.com/spf13/cobra"
 
+	"github.com/forbole/bdjuno/v4/modules/profiles"
+
 	"github.com/forbole/bdjuno/v4/database"
 	"github.com/forbole/bdjuno/v4/modules/distribution"
 	"github.com/forbole/bdjuno/v4/modules/gov"
 	"github.com/forbole/bdjuno/v4/modules/mint"
-	"github.com/forbole/bdjuno/v4/modules/profiles"
 	"github.com/forbole/bdjuno/v4/modules/slashing"
 	"github.com/forbole/bdjuno/v4/modules/staking"
 	"github.com/forbole/bdjuno/v4/utils"
@@ -30,6 +32,7 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:   "proposal [id]",
 		Short: "Get the description, votes and everything related to a proposal given its id",
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			proposalID, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
@@ -52,11 +55,21 @@ func proposalCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			// Build expected modules of gov modules for handleParamChangeProposal
 			distrModule := distribution.NewModule(sources.DistrSource, parseCtx.EncodingConfig.Codec, db)
 			mintModule := mint.NewModule(sources.MintSource, parseCtx.EncodingConfig.Codec, db)
-			slashingModule := slashing.NewModule(sources.SlashingSource, parseCtx.EncodingConfig.Codec, db)
 			stakingModule := staking.NewModule(sources.StakingSource, parseCtx.EncodingConfig.Codec, db)
+			slashingModule := slashing.NewModule(sources.SlashingSource, stakingModule, parseCtx.EncodingConfig.Codec, db)
 			profilesModule := profiles.NewModule(sources.ProfilesSource, parseCtx.EncodingConfig.Codec, db)
+
 			// Build the gov module
-			govModule := gov.NewModule(sources.GovSource, distrModule, mintModule, profilesModule, slashingModule, stakingModule, parseCtx.EncodingConfig.Codec, db)
+			govModule := gov.NewModule(
+				sources.GovSource,
+				distrModule,
+				mintModule,
+				profilesModule,
+				slashingModule,
+				stakingModule,
+				parseCtx.EncodingConfig.Codec,
+				db,
+			)
 
 			err = refreshProposalDetails(parseCtx, proposalID, govModule)
 			if err != nil {
@@ -125,7 +138,10 @@ func refreshProposalDetails(parseCtx *parser.Context, proposalID uint64, govModu
 
 	// Handle the MsgSubmitProposal messages
 	for index, msg := range tx.GetMsgs() {
-		if _, ok := msg.(*govtypesv1.MsgSubmitProposal); !ok {
+		_, isv1Beta1MsgSubmitProposal := msg.(*govtypesv1beta1.MsgSubmitProposal)
+		_, isv1MsgSubmitProposal := msg.(*govtypesv1.MsgSubmitProposal)
+
+		if !isv1Beta1MsgSubmitProposal && !isv1MsgSubmitProposal {
 			continue
 		}
 
