@@ -16,18 +16,12 @@
 #
 # To exit the bash, just execute
 # > exit
-FROM golang:1.20-alpine as builder
-ARG arch=x86_64
+FROM golang:1.21.5-alpine3.18 AS builder
+RUN apk update && apk add --no-cache make git
+WORKDIR /go/src/github.com/forbole/bdjuno
+COPY . ./
 
-# Set up dependencies
-ENV PACKAGES curl make git libc-dev bash gcc linux-headers eudev-dev python3 ca-certificates build-base
-RUN set -eux; apk add --no-cache $PACKAGES;
-
-# Set working directory for the build
-WORKDIR /code
-
-# Add source files
-COPY . /code/
+RUN apk update && apk add --no-cache ca-certificates build-base git
 
 # See https://github.com/CosmWasm/wasmvm/releases
 ADD https://github.com/CosmWasm/wasmvm/releases/download/v1.4.1/libwasmvm_muslc.aarch64.a /lib/libwasmvm_muslc.aarch64.a
@@ -35,20 +29,17 @@ RUN sha256sum /lib/libwasmvm_muslc.aarch64.a | grep a8259ba852f1b68f2a5f8eb666a9
 
 ADD https://github.com/CosmWasm/wasmvm/releases/download/v1.4.1/libwasmvm_muslc.x86_64.a /lib/libwasmvm_muslc.x86_64.a
 RUN sha256sum /lib/libwasmvm_muslc.x86_64.a | grep 324c1073cb988478d644861783ed5a7de21cfd090976ccc6b1de0559098fbbad
-
-# Copy the library you want to the final location that will be found by the linker flag `-lwasmvm_muslc`
-RUN cp /lib/libwasmvm_muslc.${arch}.a /usr/local/lib/libwasmvm_muslc.a
+## Copy the library you want to the final location that will be found by the linker flag `-lwasmvm_muslc`
+RUN cp /lib/libwasmvm_muslc.$(uname -m).a /lib/libwasmvm_muslc.a
 RUN go mod download
-
-# force it to use static lib (from above) not standard libgo_cosmwasm.so file
-RUN BUILD_TAGS=muslc GOOS=linux GOARCH=amd64 LINK_STATICALLY=true make build
-RUN echo "Ensuring binary is statically linked ..." && (file /code/build/bdjuno | grep "statically linked")
+RUN LINK_STATICALLY=true BUILD_TAGS="muslc" make build
 
 FROM alpine:latest
 # Set up dependencies
 RUN apk update && apk add --no-cache ca-certificates build-base
+WORKDIR /bdjuno
 
 # Copy the binary
-COPY --from=builder /code/build/bdjuno /usr/bin/bdjuno
+COPY --from=builder /go/src/github.com/forbole/bdjuno/build/bdjuno /usr/bin/bdjuno
 
-CMD ["bdjuno"]
+CMD [ "bdjuno" ]

@@ -1,4 +1,4 @@
-FROM golang:1.20-alpine as builder
+FROM golang:1.21.5-alpine3.18 AS builder
 RUN apk update && apk add --no-cache make git
 WORKDIR /go/src/github.com/forbole/bdjuno
 COPY . ./
