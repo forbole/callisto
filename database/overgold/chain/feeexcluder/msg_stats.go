@@ -10,6 +10,7 @@ import (
 	fe "git.ooo.ua/vipcoin/ovg-chain/x/feeexcluder/types"
 	"github.com/jmoiron/sqlx"
 
+	"github.com/forbole/bdjuno/v4/database/overgold/chain"
 	"github.com/forbole/bdjuno/v4/database/types"
 )
 
@@ -49,18 +50,9 @@ func (r Repository) GetAllStats(f filter.Filter) ([]fe.Stats, error) {
 }
 
 // InsertToStats - insert new data in a database (overgold_feeexcluder_stats).
-func (r Repository) InsertToStats(tx *sqlx.Tx, stats fe.Stats) (lastID string, err error) {
-	if tx == nil {
-		tx, err = r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-		if err != nil {
-			return "", errs.Internal{Cause: err.Error()}
-		}
-
-		defer commit(tx, err)
-	}
-
+func (r Repository) InsertToStats(_ *sqlx.Tx, stats fe.Stats) (lastID string, err error) {
 	// 1) add daily stats and get unique ids
-	dailyStatsID, err := r.InsertToDailyStats(tx, *stats.Stats)
+	dailyStatsID, err := r.InsertToDailyStats(nil, *stats.Stats)
 	if err != nil {
 		return "", err
 	}
@@ -79,7 +71,10 @@ func (r Repository) InsertToStats(tx *sqlx.Tx, stats fe.Stats) (lastID string, e
 		return "", errs.Internal{Cause: err.Error()}
 	}
 
-	if err = tx.QueryRowx(q, m.ID, m.Date, m.DailyStatsID).Scan(&lastID); err != nil {
+	if err = r.db.QueryRowx(q, m.ID, m.Date, m.DailyStatsID).Scan(&lastID); err != nil {
+		if chain.IsAlreadyExists(err) {
+			return "", nil
+		}
 		return "", errs.Internal{Cause: err.Error()}
 	}
 
@@ -87,16 +82,7 @@ func (r Repository) InsertToStats(tx *sqlx.Tx, stats fe.Stats) (lastID string, e
 }
 
 // UpdateStats - method that updates in a database (overgold_feeexcluder_stats).
-func (r Repository) UpdateStats(tx *sqlx.Tx, stats fe.Stats) (err error) {
-	if tx == nil {
-		tx, err = r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-		if err != nil {
-			return errs.Internal{Cause: err.Error()}
-		}
-
-		defer commit(tx, err)
-	}
-
+func (r Repository) UpdateStats(_ *sqlx.Tx, stats fe.Stats) (err error) {
 	// 1) update stats and get unique id for daily stats
 	// 1.a) get daily stats id via stats index
 	s, err := r.getStatsWithUniqueID(filter.NewFilter().SetArgument(types.FieldID, stats.Index))
@@ -115,12 +101,12 @@ func (r Repository) UpdateStats(tx *sqlx.Tx, stats fe.Stats) (err error) {
 		return errs.Internal{Cause: err.Error()}
 	}
 
-	if _, err = tx.Exec(q, m.Date, m.DailyStatsID, m.ID); err != nil {
+	if _, err = r.db.Exec(q, m.Date, m.DailyStatsID, m.ID); err != nil {
 		return err
 	}
 
 	// 2) update daily stats
-	if err = r.UpdateDailyStats(tx, s.DailyStatsID, *stats.Stats); err != nil {
+	if err = r.UpdateDailyStats(nil, s.DailyStatsID, *stats.Stats); err != nil {
 		return err
 	}
 
@@ -128,16 +114,7 @@ func (r Repository) UpdateStats(tx *sqlx.Tx, stats fe.Stats) (err error) {
 }
 
 // DeleteStats - method that deletes data in a database (overgold_feeexcluder_stats).
-func (r Repository) DeleteStats(tx *sqlx.Tx, id string) (err error) {
-	if tx == nil {
-		tx, err = r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-		if err != nil {
-			return errs.Internal{Cause: err.Error()}
-		}
-
-		defer commit(tx, err)
-	}
-
+func (r Repository) DeleteStats(_ *sqlx.Tx, id string) (err error) {
 	// 1) delete stats and get unique id via stats index
 	// 1.a) get stats id via stats index
 	s, err := r.getStatsWithUniqueID(filter.NewFilter().SetArgument(types.FieldID, id))
@@ -148,12 +125,12 @@ func (r Repository) DeleteStats(tx *sqlx.Tx, id string) (err error) {
 	// 1.b) delete daily stats
 	q := `DELETE FROM overgold_feeexcluder_stats WHERE id IN ($1)`
 
-	if _, err = tx.Exec(q, id); err != nil {
+	if _, err = r.db.Exec(q, id); err != nil {
 		return errs.Internal{Cause: err.Error()}
 	}
 
 	// 2) delete daily stats
-	if err = r.DeleteDailyStats(tx, s.DailyStatsID); err != nil {
+	if err = r.DeleteDailyStats(nil, s.DailyStatsID); err != nil {
 		return err
 	}
 

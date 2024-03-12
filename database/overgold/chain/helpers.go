@@ -3,6 +3,8 @@ package chain
 import (
 	"database/sql"
 	"time"
+
+	"github.com/lib/pq"
 )
 
 // ToNullString - helper for creating null string from string.
@@ -35,4 +37,14 @@ func ToNullTime(value time.Time) sql.NullTime {
 		Time:  value,
 		Valid: !value.IsZero(),
 	}
+}
+
+// IsAlreadyExists - helper for checking if record in the db is already exists.
+func IsAlreadyExists(err error) bool {
+	if pqErr, ok := err.(*pq.Error); ok {
+		if pqErr.Code == "23505" { // unique_violation
+			return true
+		}
+	}
+	return err != nil && err.Error() == "pq: duplicate key value violates unique constraint"
 }

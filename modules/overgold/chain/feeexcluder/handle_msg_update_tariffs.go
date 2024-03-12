@@ -2,7 +2,6 @@ package feeexcluder
 
 import (
 	"errors"
-	"strconv"
 
 	"git.ooo.ua/vipcoin/lib/errs"
 	"git.ooo.ua/vipcoin/lib/filter"
@@ -14,22 +13,8 @@ import (
 
 // handleMsgUpdateTariffs allows to properly handle a message
 func (m *Module) handleMsgUpdateTariffs(tx *juno.Tx, _ int, msg *types.MsgUpdateTariffs) error {
-	// 1) logic for table overgold_feeexcluder_update_tariffs
-	// 1.1) check if already exists (not found is ok)
-	updTariffs, err := m.feeexcluderRepo.GetAllMsgUpdateTariffs(filter.NewFilter().SetCondition(filter.ConditionAND).
-		SetArgument(db.FieldTxHash, tx.TxHash).
-		SetArgument(db.FieldCreator, msg.Creator))
-	if err != nil {
-		if !errors.As(err, &errs.NotFound{}) {
-			return err
-		}
-	}
-	if len(updTariffs) > 0 {
-		return errs.AlreadyExists{What: "update_tariffs, tariff id: " + strconv.FormatUint(msg.Tariff.Id, 10)}
-	}
-
 	// 1.2) insert to table
-	if err = m.feeexcluderRepo.InsertToMsgUpdateTariffs(tx.TxHash, *msg); err != nil {
+	if err := m.feeexcluderRepo.InsertToMsgUpdateTariffs(tx.TxHash, *msg); err != nil {
 		return err
 	}
 

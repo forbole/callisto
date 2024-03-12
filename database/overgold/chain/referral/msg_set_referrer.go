@@ -1,7 +1,6 @@
 package referral
 
 import (
-	"context"
 	"database/sql"
 	"errors"
 
@@ -9,6 +8,7 @@ import (
 	"git.ooo.ua/vipcoin/lib/filter"
 	"git.ooo.ua/vipcoin/ovg-chain/x/referral/types"
 
+	"github.com/forbole/bdjuno/v4/database/overgold/chain"
 	db "github.com/forbole/bdjuno/v4/database/types"
 )
 
@@ -37,15 +37,6 @@ func (r Repository) InsertMsgSetReferrer(hash string, msgs ...types.MsgSetReferr
 		return nil
 	}
 
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return errs.Internal{Cause: err.Error()}
-	}
-
-	defer func() {
-		_ = tx.Rollback()
-	}()
-
 	q := `
 		INSERT INTO overgold_referral_set_referrer (
 			tx_hash, creator, referrer_address, referral_address
@@ -57,10 +48,13 @@ func (r Repository) InsertMsgSetReferrer(hash string, msgs ...types.MsgSetReferr
 
 	for _, msg := range msgs {
 		m := toMsgSetReferrerDatabase(hash, msg)
-		if _, err = tx.Exec(q, m.TxHash, m.Creator, m.ReferrerAddress, m.ReferralAddress); err != nil {
+		if _, err := r.db.Exec(q, m.TxHash, m.Creator, m.ReferrerAddress, m.ReferralAddress); err != nil {
+			if chain.IsAlreadyExists(err) {
+				continue
+			}
 			return errs.Internal{Cause: err.Error()}
 		}
 	}
 
-	return tx.Commit()
+	return nil
 }

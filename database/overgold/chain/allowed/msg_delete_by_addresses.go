@@ -1,7 +1,6 @@
 package allowed
 
 import (
-	"context"
 	"database/sql"
 	"errors"
 
@@ -9,6 +8,7 @@ import (
 	"git.ooo.ua/vipcoin/lib/filter"
 	allowed "git.ooo.ua/vipcoin/ovg-chain/x/allowed/types"
 
+	"github.com/forbole/bdjuno/v4/database/overgold/chain"
 	"github.com/forbole/bdjuno/v4/database/types"
 )
 
@@ -37,15 +37,6 @@ func (r Repository) InsertToDeleteByAddresses(hash string, msgs ...*allowed.MsgD
 		return nil
 	}
 
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return errs.Internal{Cause: err.Error()}
-	}
-
-	defer func() {
-		_ = tx.Rollback()
-	}()
-
 	q := `
 		INSERT INTO overgold_allowed_delete_by_addresses (
 			tx_hash, creator, address
@@ -57,10 +48,14 @@ func (r Repository) InsertToDeleteByAddresses(hash string, msgs ...*allowed.MsgD
 
 	for _, msg := range msgs {
 		m := toDeleteByAddressesDatabase(hash, msg)
-		if _, err = tx.Exec(q, m.TxHash, m.Creator, m.Address); err != nil {
+		if _, err := r.db.Exec(q, m.TxHash, m.Creator, m.Address); err != nil {
+			if chain.IsAlreadyExists(err) {
+				continue
+			}
+
 			return errs.Internal{Cause: err.Error()}
 		}
 	}
 
-	return tx.Commit()
+	return nil
 }

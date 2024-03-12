@@ -1,7 +1,6 @@
 package feeexcluder
 
 import (
-	"context"
 	"database/sql"
 	"errors"
 
@@ -49,19 +48,13 @@ func (r Repository) GetAllMsgUpdateTariffs(f filter.Filter) ([]fe.MsgUpdateTarif
 
 // InsertToMsgUpdateTariffs - insert new data in a database (overgold_feeexcluder_update_tariffs).
 func (r Repository) InsertToMsgUpdateTariffs(hash string, ut fe.MsgUpdateTariffs) error {
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return errs.Internal{Cause: err.Error()}
-	}
-
-	defer func() {
-		_ = tx.Rollback()
-	}()
-
 	// 1) add tariff
-	tariffID, err := r.InsertToTariff(tx, ut.Tariff)
+	tariffID, err := r.InsertToTariff(nil, ut.Tariff)
 	if err != nil {
 		return err
+	}
+	if tariffID == 0 {
+		return nil
 	}
 
 	// 2) add update tariffs
@@ -75,11 +68,7 @@ func (r Repository) InsertToMsgUpdateTariffs(hash string, ut fe.MsgUpdateTariffs
 	`
 
 	m := toMsgUpdateTariffsDatabase(hash, 0, tariffID, ut)
-	if _, err = tx.Exec(q, m.TxHash, m.Creator, m.Denom, m.TariffID); err != nil {
-		return errs.Internal{Cause: err.Error()}
-	}
-
-	if err = tx.Commit(); err != nil {
+	if _, err = r.db.Exec(q, m.TxHash, m.Creator, m.Denom, m.TariffID); err != nil {
 		return errs.Internal{Cause: err.Error()}
 	}
 
@@ -88,15 +77,6 @@ func (r Repository) InsertToMsgUpdateTariffs(hash string, ut fe.MsgUpdateTariffs
 
 // UpdateMsgUpdateTariffs - method that updates in a database (overgold_feeexcluder_update_tariffs).
 func (r Repository) UpdateMsgUpdateTariffs(hash string, id uint64, ut fe.MsgUpdateTariffs) error {
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return err
-	}
-
-	defer func() {
-		_ = tx.Rollback()
-	}()
-
 	// 1) get unique tariff id
 	tariff, err := r.getTariffWithUniqueID(filter.NewFilter().SetArgument(types.FieldMsgID, ut.Tariff.Id))
 	if err != nil {
@@ -112,32 +92,25 @@ func (r Repository) UpdateMsgUpdateTariffs(hash string, id uint64, ut fe.MsgUpda
 			 WHERE id = $5`
 
 	m := toMsgUpdateTariffsDatabase(hash, id, tariff.ID, ut)
-	if _, err = tx.Exec(q, m.TxHash, m.Creator, m.TariffID, m.Denom, m.ID); err != nil {
+	if _, err = r.db.Exec(q, m.TxHash, m.Creator, m.TariffID, m.Denom, m.ID); err != nil {
 		return err
 	}
 
 	// 3) update tariff
-	if err = r.UpdateTariff(tx, tariff.ID, ut.Tariff); err != nil {
+	if err = r.UpdateTariff(nil, tariff.ID, ut.Tariff); err != nil {
 		return err
 	}
 
-	return tx.Commit()
+	return nil
 }
 
 // DeleteMsgUpdateTariffs - method that deletes data in a database (overgold_feeexcluder_update_tariffs).
 func (r Repository) DeleteMsgUpdateTariffs(id uint64) error {
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return errs.Internal{Cause: err.Error()}
-	}
-
-	defer tx.Rollback()
-
 	q := `DELETE FROM overgold_feeexcluder_update_tariffs WHERE id IN ($1)`
 
-	if _, err = tx.Exec(q, id); err != nil {
+	if _, err := r.db.Exec(q, id); err != nil {
 		return errs.Internal{Cause: err.Error()}
 	}
 
-	return tx.Commit()
+	return nil
 }

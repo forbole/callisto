@@ -1,7 +1,6 @@
 package allowed
 
 import (
-	"context"
 	"database/sql"
 	"errors"
 
@@ -9,6 +8,7 @@ import (
 	"git.ooo.ua/vipcoin/lib/filter"
 	allowed "git.ooo.ua/vipcoin/ovg-chain/x/allowed/types"
 
+	"github.com/forbole/bdjuno/v4/database/overgold/chain"
 	"github.com/forbole/bdjuno/v4/database/types"
 )
 
@@ -37,15 +37,6 @@ func (r Repository) InsertToAddresses(addresses ...allowed.Addresses) error {
 		return nil
 	}
 
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return errs.Internal{Cause: err.Error()}
-	}
-
-	defer func() {
-		_ = tx.Rollback()
-	}()
-
 	q := `
 		INSERT INTO overgold_allowed_addresses (
 			creator, address
@@ -57,12 +48,16 @@ func (r Repository) InsertToAddresses(addresses ...allowed.Addresses) error {
 
 	for _, a := range addresses {
 		m := toAddressesDatabase(a)
-		if _, err = tx.Exec(q, m.Creator, m.Address); err != nil {
+		if _, err := r.db.Exec(q, m.Creator, m.Address); err != nil {
+			if chain.IsAlreadyExists(err) {
+				continue
+			}
+
 			return errs.Internal{Cause: err.Error()}
 		}
 	}
 
-	return tx.Commit()
+	return nil
 }
 
 // UpdateAddresses - method that updates in a database (overgold_allowed_addresses).
@@ -71,15 +66,6 @@ func (r Repository) UpdateAddresses(addresses ...allowed.Addresses) error {
 		return nil
 	}
 
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return err
-	}
-
-	defer func() {
-		_ = tx.Rollback()
-	}()
-
 	q := `UPDATE overgold_allowed_addresses SET
 				 creator = $1,
 				 address = $2
@@ -87,12 +73,12 @@ func (r Repository) UpdateAddresses(addresses ...allowed.Addresses) error {
 
 	for _, address := range addresses {
 		m := toAddressesDatabase(address)
-		if _, err = tx.Exec(q, m.Creator, m.Address, m.ID); err != nil {
+		if _, err := r.db.Exec(q, m.Creator, m.Address, m.ID); err != nil {
 			return err
 		}
 	}
 
-	return tx.Commit()
+	return nil
 }
 
 // DeleteAddressesByAddress - method that deletes data in a database (overgold_allowed_addresses).
@@ -101,20 +87,13 @@ func (r Repository) DeleteAddressesByAddress(addresses ...string) error {
 		return nil
 	}
 
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return errs.Internal{Cause: err.Error()}
-	}
-
-	defer tx.Rollback()
-
 	q := `DELETE FROM overgold_allowed_addresses WHERE address IN ($1)`
 
-	if _, err = tx.Exec(q, deleteAddressesDB{Address: addresses}); err != nil {
+	if _, err := r.db.Exec(q, deleteAddressesDB{Address: addresses}); err != nil {
 		return errs.Internal{Cause: err.Error()}
 	}
 
-	return tx.Commit()
+	return nil
 }
 
 // DeleteAddressesByID - method that deletes data in a database (overgold_allowed_addresses).
@@ -123,20 +102,13 @@ func (r Repository) DeleteAddressesByID(ids ...uint64) error {
 		return nil
 	}
 
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return errs.Internal{Cause: err.Error()}
-	}
-
-	defer tx.Rollback()
-
 	q := `DELETE FROM overgold_allowed_addresses WHERE id = $1`
 
 	for _, id := range ids {
-		if _, err = tx.Exec(q, deleteAddressesDB{ID: id}); err != nil {
+		if _, err := r.db.Exec(q, deleteAddressesDB{ID: id}); err != nil {
 			return errs.Internal{Cause: err.Error()}
 		}
 	}
 
-	return tx.Commit()
+	return nil
 }

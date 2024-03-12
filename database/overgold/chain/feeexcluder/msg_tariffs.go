@@ -10,6 +10,7 @@ import (
 	fe "git.ooo.ua/vipcoin/ovg-chain/x/feeexcluder/types"
 	"github.com/jmoiron/sqlx"
 
+	"github.com/forbole/bdjuno/v4/database/overgold/chain"
 	"github.com/forbole/bdjuno/v4/database/types"
 )
 
@@ -92,16 +93,7 @@ func (r Repository) GetAllTariffsDB(f filter.Filter) ([]types.FeeExcluderTariffs
 }
 
 // InsertToTariffs - insert new data in a database (overgold_feeexcluder_tariffs).
-func (r Repository) InsertToTariffs(tx *sqlx.Tx, tariffs fe.Tariffs) (lastID uint64, err error) {
-	if tx == nil {
-		tx, err = r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-		if err != nil {
-			return 0, errs.Internal{Cause: err.Error()}
-		}
-
-		defer commit(tx, err)
-	}
-
+func (r Repository) InsertToTariffs(_ *sqlx.Tx, tariffs fe.Tariffs) (lastID uint64, err error) {
 	// 1) add tariffs
 	q := `
 		INSERT INTO overgold_feeexcluder_tariffs (
@@ -112,14 +104,17 @@ func (r Repository) InsertToTariffs(tx *sqlx.Tx, tariffs fe.Tariffs) (lastID uin
 	`
 
 	m := toTariffsDatabase(0, tariffs)
-	if err = tx.QueryRowx(q, m.Denom, m.Creator).Scan(&lastID); err != nil {
+	if err = r.db.QueryRowx(q, m.Denom, m.Creator).Scan(&lastID); err != nil {
+		if chain.IsAlreadyExists(err) {
+			return 0, nil
+		}
 		return 0, errs.Internal{Cause: err.Error()}
 	}
 
 	// 2) add tariff and save unique ids
 	tariffIDs := make([]uint64, 0, len(tariffs.Tariffs))
 	for _, t := range tariffs.Tariffs {
-		id, err := r.InsertToTariff(tx, t)
+		id, err := r.InsertToTariff(nil, t)
 		if err != nil {
 			return 0, err
 		}
@@ -136,20 +131,11 @@ func (r Repository) InsertToTariffs(tx *sqlx.Tx, tariffs fe.Tariffs) (lastID uin
 		})
 	}
 
-	return lastID, r.InsertToM2MTariffTariffs(tx, m2m...)
+	return lastID, r.InsertToM2MTariffTariffs(nil, m2m...)
 }
 
 // UpdateTariffs - method that updates in a database (overgold_feeexcluder_tariffs).
-func (r Repository) UpdateTariffs(tx *sqlx.Tx, id uint64, tariffs fe.Tariffs) (err error) {
-	if tx == nil {
-		tx, err = r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-		if err != nil {
-			return errs.Internal{Cause: err.Error()}
-		}
-
-		defer commit(tx, err)
-	}
-
+func (r Repository) UpdateTariffs(_ *sqlx.Tx, id uint64, tariffs fe.Tariffs) (err error) {
 	// 1) update tariffs
 	q := `UPDATE overgold_feeexcluder_tariffs SET
 				 denom = $1,
@@ -157,7 +143,7 @@ func (r Repository) UpdateTariffs(tx *sqlx.Tx, id uint64, tariffs fe.Tariffs) (e
 			 WHERE id = $3`
 
 	m := toTariffsDatabase(id, tariffs)
-	if _, err = tx.Exec(q, m.Denom, m.Creator, m.ID); err != nil {
+	if _, err = r.db.Exec(q, m.Denom, m.Creator, m.ID); err != nil {
 		return err
 	}
 
@@ -179,7 +165,7 @@ func (r Repository) UpdateTariffs(tx *sqlx.Tx, id uint64, tariffs fe.Tariffs) (e
 	// 3) update tariff
 	for _, t := range tariffList {
 		for _, ts := range tariffs.Tariffs {
-			if err = r.UpdateTariff(tx, t.ID, ts); err != nil {
+			if err = r.UpdateTariff(nil, t.ID, ts); err != nil {
 				return err
 			}
 		}
@@ -189,15 +175,7 @@ func (r Repository) UpdateTariffs(tx *sqlx.Tx, id uint64, tariffs fe.Tariffs) (e
 }
 
 // DeleteTariffs - method that deletes data in a database (overgold_feeexcluder_tariffs).
-func (r Repository) DeleteTariffs(tx *sqlx.Tx, id uint64) (err error) {
-	if tx == nil {
-		tx, err = r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-		if err != nil {
-			return errs.Internal{Cause: err.Error()}
-		}
-
-		defer commit(tx, err)
-	}
+func (r Repository) DeleteTariffs(_ *sqlx.Tx, id uint64) (err error) {
 
 	// 1) delete many-to-many tariff tariffs and get ids
 	m2m, err := r.GetAllM2MTariffTariffs(filter.NewFilter().SetArgument(types.FieldTariffsID, id))
@@ -207,13 +185,13 @@ func (r Repository) DeleteTariffs(tx *sqlx.Tx, id uint64) (err error) {
 		}
 	}
 
-	if err = r.DeleteM2MTariffTariffsByTariffs(tx, id); err != nil {
+	if err = r.DeleteM2MTariffTariffsByTariffs(nil, id); err != nil {
 		return err
 	}
 
 	// 2) delete tariff
 	for _, m := range m2m {
-		if err = r.DeleteTariff(tx, m.TariffID); err != nil {
+		if err = r.DeleteTariff(nil, m.TariffID); err != nil {
 			return err
 		}
 	}
@@ -221,7 +199,7 @@ func (r Repository) DeleteTariffs(tx *sqlx.Tx, id uint64) (err error) {
 	// 3) delete tariffs
 	q := `DELETE FROM overgold_feeexcluder_tariffs WHERE id IN ($1)`
 
-	if _, err = tx.Exec(q, id); err != nil {
+	if _, err = r.db.Exec(q, id); err != nil {
 		return errs.Internal{Cause: err.Error()}
 	}
 

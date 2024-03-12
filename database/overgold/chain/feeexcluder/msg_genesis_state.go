@@ -1,7 +1,6 @@
 package feeexcluder
 
 import (
-	"context"
 	"database/sql"
 	"errors"
 
@@ -9,6 +8,7 @@ import (
 	"git.ooo.ua/vipcoin/lib/filter"
 	fe "git.ooo.ua/vipcoin/ovg-chain/x/feeexcluder/types"
 
+	"github.com/forbole/bdjuno/v4/database/overgold/chain"
 	"github.com/forbole/bdjuno/v4/database/types"
 )
 
@@ -112,15 +112,6 @@ func (r Repository) GetAllGenesisState(f filter.Filter) ([]fe.GenesisState, erro
 
 // InsertToGenesisState - insert new data in a database (overgold_feeexcluder_genesis_state).
 func (r Repository) InsertToGenesisState(gs fe.GenesisState) error {
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return errs.Internal{Cause: err.Error()}
-	}
-
-	defer func() {
-		_ = tx.Rollback()
-	}()
-
 	var genesisStateID uint64
 	m2mAddreses := make([]types.FeeExcluderM2MGenesisStateAddress, 0, len(gs.AddressList))
 	m2mDailyStats := make([]types.FeeExcluderM2MGenesisStateDailyStats, 0, len(gs.DailyStatsList))
@@ -137,15 +128,20 @@ func (r Repository) InsertToGenesisState(gs fe.GenesisState) error {
 	`
 
 	m := toGenesisStateDatabase(genesisStateID, gs)
-	if err = tx.QueryRowx(q, m.AddressCount, m.DailyStatsCount).Scan(&genesisStateID); err != nil {
-		return errs.Internal{Cause: err.Error()}
+	if err := r.db.QueryRowx(q, m.AddressCount, m.DailyStatsCount).Scan(&genesisStateID); err != nil {
+		if !chain.IsAlreadyExists(err) {
+			return errs.Internal{Cause: err.Error()}
+		}
 	}
 
 	// 2) insert address
 	for _, a := range gs.AddressList {
-		id, err := r.InsertToAddress(tx, a)
+		id, err := r.InsertToAddress(nil, a)
 		if err != nil {
 			return err
+		}
+		if id == 0 { // skip if already exists
+			continue
 		}
 
 		m2mAddreses = append(m2mAddreses, types.FeeExcluderM2MGenesisStateAddress{
@@ -156,9 +152,12 @@ func (r Repository) InsertToGenesisState(gs fe.GenesisState) error {
 
 	// 3) insert daily stats
 	for _, d := range gs.DailyStatsList {
-		id, err := r.InsertToDailyStats(tx, d)
+		id, err := r.InsertToDailyStats(nil, d)
 		if err != nil {
 			return err
+		}
+		if id == 0 { // skip if already exists
+			continue
 		}
 
 		m2mDailyStats = append(m2mDailyStats, types.FeeExcluderM2MGenesisStateDailyStats{
@@ -169,9 +168,12 @@ func (r Repository) InsertToGenesisState(gs fe.GenesisState) error {
 
 	// 4) insert stats
 	for _, s := range gs.StatsList {
-		id, err := r.InsertToStats(tx, s)
+		id, err := r.InsertToStats(nil, s)
 		if err != nil {
 			return err
+		}
+		if id == "" { // skip if already exists
+			continue
 		}
 
 		m2mStats = append(m2mStats, types.FeeExcluderM2MGenesisStateStats{
@@ -182,9 +184,12 @@ func (r Repository) InsertToGenesisState(gs fe.GenesisState) error {
 
 	// 5) insert tariffs
 	for _, t := range gs.TariffsList {
-		id, err := r.InsertToTariffs(tx, t)
+		id, err := r.InsertToTariffs(nil, t)
 		if err != nil {
 			return err
+		}
+		if id == 0 { // skip if already exists
+			continue
 		}
 
 		m2mTariffs = append(m2mTariffs, types.FeeExcluderM2MGenesisStateTariffs{
@@ -194,37 +199,30 @@ func (r Repository) InsertToGenesisState(gs fe.GenesisState) error {
 	}
 
 	// 6) insert m2m genesis state address
-	if err = r.InsertToM2MGenesisStateAddress(tx, m2mAddreses...); err != nil {
+	if err := r.InsertToM2MGenesisStateAddress(nil, m2mAddreses...); err != nil {
 		return err
 	}
 
 	// 7) insert m2m genesis state daily stats
-	if err = r.InsertToM2MGenesisStateDailyStats(tx, m2mDailyStats...); err != nil {
+	if err := r.InsertToM2MGenesisStateDailyStats(nil, m2mDailyStats...); err != nil {
 		return err
 	}
 
 	// 8) insert m2m genesis state stats
-	if err = r.InsertToM2MGenesisStateStats(tx, m2mStats...); err != nil {
+	if err := r.InsertToM2MGenesisStateStats(nil, m2mStats...); err != nil {
 		return err
 	}
 
 	// 9) insert m2m genesis state tariffs
-	if err = r.InsertToM2MGenesisStateTariffs(tx, m2mTariffs...); err != nil {
+	if err := r.InsertToM2MGenesisStateTariffs(nil, m2mTariffs...); err != nil {
 		return err
 	}
 
-	return tx.Commit()
+	return nil
 }
 
 // DeleteGenesisState - method that deletes data in a database (overgold_feeexcluder_genesis_state).
 func (r Repository) DeleteGenesisState(id uint64) error {
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return errs.Internal{Cause: err.Error()}
-	}
-
-	defer tx.Rollback()
-
 	gsFilter := filter.NewFilter().SetArgument(types.FieldGenesisStateID, id)
 
 	// 1) delete m2m genesis state address
@@ -235,7 +233,7 @@ func (r Repository) DeleteGenesisState(id uint64) error {
 		}
 	}
 
-	if err = r.DeleteM2MGenesisStateAddressByGenesisState(tx, id); err != nil {
+	if err = r.DeleteM2MGenesisStateAddressByGenesisState(nil, id); err != nil {
 		return err
 	}
 
@@ -247,7 +245,7 @@ func (r Repository) DeleteGenesisState(id uint64) error {
 		}
 	}
 
-	if err = r.DeleteM2MGenesisStateDailyStatsByGenesisState(tx, id); err != nil {
+	if err = r.DeleteM2MGenesisStateDailyStatsByGenesisState(nil, id); err != nil {
 		return err
 	}
 
@@ -259,7 +257,7 @@ func (r Repository) DeleteGenesisState(id uint64) error {
 		}
 	}
 
-	if err = r.DeleteM2MGenesisStateStatsByGenesisState(tx, id); err != nil {
+	if err = r.DeleteM2MGenesisStateStatsByGenesisState(nil, id); err != nil {
 		return err
 	}
 
@@ -271,34 +269,34 @@ func (r Repository) DeleteGenesisState(id uint64) error {
 		}
 	}
 
-	if err = r.DeleteM2MGenesisStateTariffsByGenesisState(tx, id); err != nil {
+	if err = r.DeleteM2MGenesisStateTariffsByGenesisState(nil, id); err != nil {
 		return err
 	}
 
 	// 5) delete address
 	for _, m := range m2mAddress {
-		if err = r.DeleteAddress(tx, m.AddressID); err != nil {
+		if err = r.DeleteAddress(nil, m.AddressID); err != nil {
 			return err
 		}
 	}
 
 	// 6) delete daily stats
 	for _, m := range m2mDailyStats {
-		if err = r.DeleteDailyStats(tx, m.DailyStatsID); err != nil {
+		if err = r.DeleteDailyStats(nil, m.DailyStatsID); err != nil {
 			return err
 		}
 	}
 
 	// 7) delete daily stats
 	for _, m := range m2mStats {
-		if err = r.DeleteStats(tx, m.StatsID); err != nil {
+		if err = r.DeleteStats(nil, m.StatsID); err != nil {
 			return err
 		}
 	}
 
 	// 8) delete tariffs
 	for _, m := range m2mTariffs {
-		if err = r.DeleteTariffs(tx, m.TariffsID); err != nil {
+		if err = r.DeleteTariffs(nil, m.TariffsID); err != nil {
 			return err
 		}
 	}
@@ -306,9 +304,9 @@ func (r Repository) DeleteGenesisState(id uint64) error {
 	// 9) delete genesis state
 	q := `DELETE FROM overgold_feeexcluder_genesis_state WHERE id IN ($1)`
 
-	if _, err = tx.Exec(q, id); err != nil {
+	if _, err = r.db.Exec(q, id); err != nil {
 		return errs.Internal{Cause: err.Error()}
 	}
 
-	return tx.Commit()
+	return nil
 }

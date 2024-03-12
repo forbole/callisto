@@ -10,6 +10,7 @@ import (
 	fe "git.ooo.ua/vipcoin/ovg-chain/x/feeexcluder/types"
 	"github.com/jmoiron/sqlx"
 
+	"github.com/forbole/bdjuno/v4/database/overgold/chain"
 	"github.com/forbole/bdjuno/v4/database/types"
 )
 
@@ -33,16 +34,7 @@ func (r Repository) GetAllFees(filter filter.Filter) ([]*fe.Fees, error) {
 }
 
 // InsertToFees - insert new data in a database (overgold_feeexcluder_fees).
-func (r Repository) InsertToFees(tx *sqlx.Tx, fees *fe.Fees) (lastID uint64, err error) {
-	if tx == nil {
-		tx, err = r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-		if err != nil {
-			return 0, errs.Internal{Cause: err.Error()}
-		}
-
-		defer commit(tx, err)
-	}
-
+func (r Repository) InsertToFees(_ *sqlx.Tx, fees *fe.Fees) (lastID uint64, err error) {
 	q := `
 		INSERT INTO overgold_feeexcluder_fees (
 			msg_id, creator, amount_from, fee, ref_reward, stake_reward, min_amount, no_ref_reward
@@ -56,7 +48,7 @@ func (r Repository) InsertToFees(tx *sqlx.Tx, fees *fe.Fees) (lastID uint64, err
 		return 0, errs.Internal{Cause: err.Error()}
 	}
 
-	if err = tx.QueryRowx(q,
+	if err = r.db.QueryRowx(q,
 		m.MsgID,
 		m.Creator,
 		m.AmountFrom,
@@ -66,6 +58,9 @@ func (r Repository) InsertToFees(tx *sqlx.Tx, fees *fe.Fees) (lastID uint64, err
 		m.MinAmount,
 		m.NoRefReward,
 	).Scan(&lastID); err != nil {
+		if chain.IsAlreadyExists(err) {
+			return 0, nil
+		}
 		return 0, errs.Internal{Cause: err.Error()}
 	}
 
@@ -73,16 +68,7 @@ func (r Repository) InsertToFees(tx *sqlx.Tx, fees *fe.Fees) (lastID uint64, err
 }
 
 // UpdateFees - method that updates in a database (overgold_feeexcluder_fees).
-func (r Repository) UpdateFees(tx *sqlx.Tx, id uint64, fees *fe.Fees) (err error) {
-	if tx == nil {
-		tx, err = r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-		if err != nil {
-			return errs.Internal{Cause: err.Error()}
-		}
-
-		defer commit(tx, err)
-	}
-
+func (r Repository) UpdateFees(_ *sqlx.Tx, id uint64, fees *fe.Fees) (err error) {
 	q := `UPDATE overgold_feeexcluder_fees SET
                  msg_id = $1,
 				 creator = $2,
@@ -99,7 +85,7 @@ func (r Repository) UpdateFees(tx *sqlx.Tx, id uint64, fees *fe.Fees) (err error
 		return errs.Internal{Cause: err.Error()}
 	}
 
-	if _, err = tx.Exec(q,
+	if _, err = r.db.Exec(q,
 		m.MsgID,
 		m.Creator,
 		m.AmountFrom,
@@ -117,19 +103,10 @@ func (r Repository) UpdateFees(tx *sqlx.Tx, id uint64, fees *fe.Fees) (err error
 }
 
 // DeleteFees - method that deletes data in a database (overgold_feeexcluder_fees).
-func (r Repository) DeleteFees(tx *sqlx.Tx, id uint64) (err error) {
-	if tx == nil {
-		tx, err = r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-		if err != nil {
-			return errs.Internal{Cause: err.Error()}
-		}
-
-		defer commit(tx, err)
-	}
-
+func (r Repository) DeleteFees(_ *sqlx.Tx, id uint64) (err error) {
 	q := `DELETE FROM overgold_feeexcluder_fees WHERE id IN ($1)`
 
-	if _, err = tx.Exec(q, id); err != nil {
+	if _, err = r.db.Exec(q, id); err != nil {
 		return errs.Internal{Cause: err.Error()}
 	}
 

@@ -28,7 +28,6 @@ parsing:
     workers: 1
     listen_new_blocks: true
     parse_old_blocks: true
-    genesis_file_path: ./volume/genesis.json
     parse_genesis: true
     start_height: 1
     average_block_time: 3s

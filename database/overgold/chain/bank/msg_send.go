@@ -1,7 +1,6 @@
 package bank
 
 import (
-	"context"
 	"database/sql"
 	"errors"
 
@@ -9,6 +8,8 @@ import (
 	"git.ooo.ua/vipcoin/lib/filter"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/lib/pq"
+
+	"github.com/forbole/bdjuno/v4/database/overgold/chain"
 )
 
 // GetAllMsgSend - method that get data from a db (msg_send).
@@ -36,15 +37,6 @@ func (r Repository) InsertMsgSend(hash string, msgs ...bank.MsgSend) error {
 		return nil
 	}
 
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return errs.Internal{Cause: err.Error()}
-	}
-
-	defer func() {
-		_ = tx.Rollback()
-	}()
-
 	q := `INSERT INTO msg_send (
 	    	tx_hash, from_address, to_address, amount
 	    ) VALUES (
@@ -56,10 +48,13 @@ func (r Repository) InsertMsgSend(hash string, msgs ...bank.MsgSend) error {
 	// NOTE: use tx.Exec for custom type pq.Array(DbCoins)
 	for _, msg := range msgs {
 		m := toMsgSendDatabase(hash, msg)
-		if _, err = tx.Exec(q, m.TxHash, m.FromAddress, m.ToAddress, pq.Array(m.Amount)); err != nil {
+		if _, err := r.db.Exec(q, m.TxHash, m.FromAddress, m.ToAddress, pq.Array(m.Amount)); err != nil {
+			if chain.IsAlreadyExists(err) {
+				continue
+			}
 			return errs.Internal{Cause: err.Error()}
 		}
 	}
 
-	return tx.Commit()
+	return nil
 }

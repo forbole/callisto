@@ -1,7 +1,6 @@
 package feeexcluder
 
 import (
-	"context"
 	"database/sql"
 	"errors"
 
@@ -10,6 +9,8 @@ import (
 	fe "git.ooo.ua/vipcoin/ovg-chain/x/feeexcluder/types"
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
+
+	"github.com/forbole/bdjuno/v4/database/overgold/chain"
 )
 
 // GetAllDailyStats - method that get data from a db (overgold_feeexcluder_daily_stats).
@@ -32,16 +33,7 @@ func (r Repository) GetAllDailyStats(f filter.Filter) ([]fe.DailyStats, error) {
 }
 
 // InsertToDailyStats - insert new data in a database (overgold_feeexcluder_daily_stats).
-func (r Repository) InsertToDailyStats(tx *sqlx.Tx, dailyStats fe.DailyStats) (lastID uint64, err error) {
-	if tx == nil {
-		tx, err = r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-		if err != nil {
-			return 0, errs.Internal{Cause: err.Error()}
-		}
-
-		defer commit(tx, err)
-	}
-
+func (r Repository) InsertToDailyStats(_ *sqlx.Tx, dailyStats fe.DailyStats) (lastID uint64, err error) {
 	q := `
 		INSERT INTO overgold_feeexcluder_daily_stats (
 			msg_id, amount_with_fee, amount_no_fee, fee, count_with_fee, count_no_fee
@@ -51,7 +43,7 @@ func (r Repository) InsertToDailyStats(tx *sqlx.Tx, dailyStats fe.DailyStats) (l
 	`
 
 	m := toDailyStatsDatabase(0, dailyStats)
-	if err = tx.QueryRowx(q,
+	if err = r.db.QueryRowx(q,
 		m.MsgID,
 		pq.Array(m.AmountWithFee),
 		pq.Array(m.AmountNoFee),
@@ -59,6 +51,10 @@ func (r Repository) InsertToDailyStats(tx *sqlx.Tx, dailyStats fe.DailyStats) (l
 		m.CountWithFee,
 		m.CountNoFee,
 	).Scan(&lastID); err != nil {
+		if chain.IsAlreadyExists(err) {
+			return 0, nil
+		}
+
 		return 0, errs.Internal{Cause: err.Error()}
 	}
 
@@ -66,16 +62,7 @@ func (r Repository) InsertToDailyStats(tx *sqlx.Tx, dailyStats fe.DailyStats) (l
 }
 
 // UpdateDailyStats - method that deletes in a database (overgold_feeexcluder_daily_stats).
-func (r Repository) UpdateDailyStats(tx *sqlx.Tx, id uint64, ut fe.DailyStats) (err error) {
-	if tx == nil {
-		tx, err = r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-		if err != nil {
-			return errs.Internal{Cause: err.Error()}
-		}
-
-		defer commit(tx, err)
-	}
-
+func (r Repository) UpdateDailyStats(_ *sqlx.Tx, id uint64, ut fe.DailyStats) (err error) {
 	q := `UPDATE overgold_feeexcluder_daily_stats SET
                  msg_id = $1,
 				 amount_with_fee = $2,
@@ -86,7 +73,7 @@ func (r Repository) UpdateDailyStats(tx *sqlx.Tx, id uint64, ut fe.DailyStats) (
 			 WHERE id = $7`
 
 	m := toDailyStatsDatabase(id, ut)
-	if _, err := tx.Exec(q,
+	if _, err := r.db.Exec(q,
 		m.MsgID,
 		pq.Array(m.AmountWithFee),
 		pq.Array(m.AmountNoFee),
@@ -102,19 +89,10 @@ func (r Repository) UpdateDailyStats(tx *sqlx.Tx, id uint64, ut fe.DailyStats) (
 }
 
 // DeleteDailyStats - method that deletes data in a database (overgold_feeexcluder_daily_stats).
-func (r Repository) DeleteDailyStats(tx *sqlx.Tx, id uint64) (err error) {
-	if tx == nil {
-		tx, err = r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-		if err != nil {
-			return errs.Internal{Cause: err.Error()}
-		}
-
-		defer commit(tx, err)
-	}
-
+func (r Repository) DeleteDailyStats(_ *sqlx.Tx, id uint64) (err error) {
 	q := `DELETE FROM overgold_feeexcluder_daily_stats WHERE id IN ($1)`
 
-	if _, err = tx.Exec(q, id); err != nil {
+	if _, err = r.db.Exec(q, id); err != nil {
 		return errs.Internal{Cause: err.Error()}
 	}
 

@@ -1,7 +1,6 @@
 package feeexcluder
 
 import (
-	"context"
 	"database/sql"
 	"errors"
 
@@ -9,6 +8,7 @@ import (
 	"git.ooo.ua/vipcoin/lib/filter"
 	fe "git.ooo.ua/vipcoin/ovg-chain/x/feeexcluder/types"
 
+	"github.com/forbole/bdjuno/v4/database/overgold/chain"
 	"github.com/forbole/bdjuno/v4/database/types"
 )
 
@@ -49,17 +49,8 @@ func (r Repository) GetAllMsgCreateTariffs(f filter.Filter) ([]fe.MsgCreateTarif
 
 // InsertToMsgCreateTariffs - insert new data in a database (overgold_feeexcluder_create_tariffs).
 func (r Repository) InsertToMsgCreateTariffs(hash string, ct fe.MsgCreateTariffs) error {
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return errs.Internal{Cause: err.Error()}
-	}
-
-	defer func() {
-		_ = tx.Rollback()
-	}()
-
 	// 1) add tariff
-	tariffID, err := r.InsertToTariff(tx, ct.Tariff)
+	tariffID, err := r.InsertToTariff(nil, ct.Tariff)
 	if err != nil {
 		return err
 	}
@@ -75,11 +66,10 @@ func (r Repository) InsertToMsgCreateTariffs(hash string, ct fe.MsgCreateTariffs
 	`
 
 	m := toMsgCreateTariffsDatabase(hash, 0, tariffID, ct)
-	if _, err = tx.Exec(q, m.TxHash, m.Creator, m.Denom, m.TariffID); err != nil {
-		return errs.Internal{Cause: err.Error()}
-	}
-
-	if err = tx.Commit(); err != nil {
+	if _, err = r.db.Exec(q, m.TxHash, m.Creator, m.Denom, m.TariffID); err != nil {
+		if chain.IsAlreadyExists(err) {
+			return nil
+		}
 		return errs.Internal{Cause: err.Error()}
 	}
 

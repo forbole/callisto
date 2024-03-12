@@ -1,7 +1,6 @@
 package stake
 
 import (
-	"context"
 	"database/sql"
 	"errors"
 
@@ -9,6 +8,7 @@ import (
 	"git.ooo.ua/vipcoin/lib/filter"
 	stake "git.ooo.ua/vipcoin/ovg-chain/x/stake/types"
 
+	"github.com/forbole/bdjuno/v4/database/overgold/chain"
 	db "github.com/forbole/bdjuno/v4/database/types"
 )
 
@@ -37,15 +37,6 @@ func (r Repository) InsertMsgDistributeRewards(hash string, msgs ...stake.MsgDis
 		return nil
 	}
 
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return errs.Internal{Cause: err.Error()}
-	}
-
-	defer func() {
-		_ = tx.Rollback()
-	}()
-
 	query := `
 		INSERT INTO overgold_stake_distribute_rewards (
 			tx_hash, creator
@@ -58,10 +49,13 @@ func (r Repository) InsertMsgDistributeRewards(hash string, msgs ...stake.MsgDis
 	for _, msg := range msgs {
 		m := toMsgDistributeDatabase(hash, msg)
 
-		if _, err = tx.Exec(query, m.TxHash, m.Creator); err != nil {
+		if _, err := r.db.Exec(query, m.TxHash, m.Creator); err != nil {
+			if chain.IsAlreadyExists(err) {
+				continue
+			}
 			return errs.Internal{Cause: err.Error()}
 		}
 	}
 
-	return tx.Commit()
+	return nil
 }

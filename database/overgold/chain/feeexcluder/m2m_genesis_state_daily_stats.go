@@ -1,7 +1,6 @@
 package feeexcluder
 
 import (
-	"context"
 	"database/sql"
 	"errors"
 
@@ -9,6 +8,7 @@ import (
 	"git.ooo.ua/vipcoin/lib/filter"
 	"github.com/jmoiron/sqlx"
 
+	"github.com/forbole/bdjuno/v4/database/overgold/chain"
 	"github.com/forbole/bdjuno/v4/database/types"
 )
 
@@ -32,20 +32,10 @@ func (r Repository) GetAllM2MGenesisStateDailyStats(filter filter.Filter) ([]typ
 }
 
 // InsertToM2MGenesisStateDailyStats - insert new data in a database (overgold_feeexcluder_m2m_genesis_state_daily_stats).
-func (r Repository) InsertToM2MGenesisStateDailyStats(tx *sqlx.Tx, ids ...types.FeeExcluderM2MGenesisStateDailyStats) (err error) {
+func (r Repository) InsertToM2MGenesisStateDailyStats(_ *sqlx.Tx, ids ...types.FeeExcluderM2MGenesisStateDailyStats) (err error) {
 	if len(ids) == 0 {
 		return nil
 	}
-
-	if tx == nil {
-		tx, err = r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-		if err != nil {
-			return errs.Internal{Cause: err.Error()}
-		}
-
-		defer commit(tx, err)
-	}
-
 	q := `
 		INSERT INTO overgold_feeexcluder_m2m_genesis_state_daily_stats (
 			genesis_state_id, daily_stats_id
@@ -56,7 +46,10 @@ func (r Repository) InsertToM2MGenesisStateDailyStats(tx *sqlx.Tx, ids ...types.
 	`
 
 	for _, m := range ids {
-		if _, err = tx.Exec(q, m.GenesisStateID, m.DailyStatsID); err != nil {
+		if _, err = r.db.Exec(q, m.GenesisStateID, m.DailyStatsID); err != nil {
+			if chain.IsAlreadyExists(err) {
+				continue
+			}
 			return errs.Internal{Cause: err.Error()}
 		}
 	}
@@ -66,18 +59,9 @@ func (r Repository) InsertToM2MGenesisStateDailyStats(tx *sqlx.Tx, ids ...types.
 
 // DeleteM2MGenesisStateDailyStatsByGenesisState - method that deletes data in a database (overgold_feeexcluder_m2m_genesis_state_daily_stats).
 func (r Repository) DeleteM2MGenesisStateDailyStatsByGenesisState(tx *sqlx.Tx, id uint64) (err error) {
-	if tx == nil {
-		tx, err = r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-		if err != nil {
-			return errs.Internal{Cause: err.Error()}
-		}
-
-		defer commit(tx, err)
-	}
-
 	q := `DELETE FROM overgold_feeexcluder_m2m_genesis_state_daily_stats WHERE genesis_state_id IN ($1)`
 
-	if _, err = tx.Exec(q, id); err != nil {
+	if _, err = r.db.Exec(q, id); err != nil {
 		return errs.Internal{Cause: err.Error()}
 	}
 

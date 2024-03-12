@@ -1,7 +1,6 @@
 package feeexcluder
 
 import (
-	"context"
 	"database/sql"
 	"errors"
 
@@ -9,6 +8,7 @@ import (
 	"git.ooo.ua/vipcoin/lib/filter"
 	fe "git.ooo.ua/vipcoin/ovg-chain/x/feeexcluder/types"
 
+	"github.com/forbole/bdjuno/v4/database/overgold/chain"
 	"github.com/forbole/bdjuno/v4/database/types"
 )
 
@@ -37,15 +37,6 @@ func (r Repository) InsertToMsgDeleteAddress(hash string, addresses ...fe.MsgDel
 		return nil
 	}
 
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return errs.Internal{Cause: err.Error()}
-	}
-
-	defer func() {
-		_ = tx.Rollback()
-	}()
-
 	q := `
 		INSERT INTO overgold_feeexcluder_delete_address (
 			id, tx_hash, creator
@@ -57,12 +48,15 @@ func (r Repository) InsertToMsgDeleteAddress(hash string, addresses ...fe.MsgDel
 
 	for _, a := range addresses {
 		m := toMsgDeleteAddressDatabase(hash, a)
-		if _, err = tx.Exec(q, m.ID, m.TxHash, m.Creator); err != nil {
+		if _, err := r.db.Exec(q, m.ID, m.TxHash, m.Creator); err != nil {
+			if chain.IsAlreadyExists(err) {
+				return nil
+			}
 			return errs.Internal{Cause: err.Error()}
 		}
 	}
 
-	return tx.Commit()
+	return nil
 }
 
 // UpdateMsgDeleteAddress - method that updates in a database (overgold_feeexcluder_delete_address).
@@ -71,43 +65,27 @@ func (r Repository) UpdateMsgDeleteAddress(hash string, addresses ...fe.MsgDelet
 		return nil
 	}
 
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return err
-	}
-
-	defer func() {
-		_ = tx.Rollback()
-	}()
-
 	q := `UPDATE overgold_feeexcluder_delete_address SET
 				 creator = $1
 			 WHERE id = $2`
 
 	for _, address := range addresses {
 		m := toMsgDeleteAddressDatabase(hash, address)
-		if _, err = tx.Exec(q, m.Creator, m.ID); err != nil {
+		if _, err := r.db.Exec(q, m.Creator, m.ID); err != nil {
 			return err
 		}
 	}
 
-	return tx.Commit()
+	return nil
 }
 
 // DeleteMsgDeleteAddress - method that deletes data in a database (overgold_feeexcluder_delete_address).
 func (r Repository) DeleteMsgDeleteAddress(id uint64) error {
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return errs.Internal{Cause: err.Error()}
-	}
-
-	defer tx.Rollback()
-
 	q := `DELETE FROM overgold_feeexcluder_delete_address WHERE id IN ($1)`
 
-	if _, err = tx.Exec(q, id); err != nil {
+	if _, err := r.db.Exec(q, id); err != nil {
 		return errs.Internal{Cause: err.Error()}
 	}
 
-	return tx.Commit()
+	return nil
 }

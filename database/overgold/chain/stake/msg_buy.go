@@ -1,7 +1,6 @@
 package stake
 
 import (
-	"context"
 	"database/sql"
 	"errors"
 
@@ -9,6 +8,7 @@ import (
 	"git.ooo.ua/vipcoin/lib/filter"
 	"git.ooo.ua/vipcoin/ovg-chain/x/stake/types"
 
+	"github.com/forbole/bdjuno/v4/database/overgold/chain"
 	db "github.com/forbole/bdjuno/v4/database/types"
 )
 
@@ -37,15 +37,6 @@ func (r Repository) InsertMsgBuy(hash string, msgs ...types.MsgBuyRequest) error
 		return nil
 	}
 
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return errs.Internal{Cause: err.Error()}
-	}
-
-	defer func() {
-		_ = tx.Rollback()
-	}()
-
 	query := `
 		INSERT INTO overgold_stake_buy (
 			tx_hash, creator, amount
@@ -61,10 +52,13 @@ func (r Repository) InsertMsgBuy(hash string, msgs ...types.MsgBuyRequest) error
 			return err
 		}
 
-		if _, err = tx.Exec(query, m.TxHash, m.Creator, m.Amount); err != nil {
+		if _, err := r.db.Exec(query, m.TxHash, m.Creator, m.Amount); err != nil {
+			if chain.IsAlreadyExists(err) {
+				continue
+			}
 			return errs.Internal{Cause: err.Error()}
 		}
 	}
 
-	return tx.Commit()
+	return nil
 }

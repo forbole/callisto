@@ -1,7 +1,6 @@
 package feeexcluder
 
 import (
-	"context"
 	"database/sql"
 	"errors"
 
@@ -9,6 +8,7 @@ import (
 	"git.ooo.ua/vipcoin/lib/filter"
 	"github.com/jmoiron/sqlx"
 
+	"github.com/forbole/bdjuno/v4/database/overgold/chain"
 	"github.com/forbole/bdjuno/v4/database/types"
 )
 
@@ -32,18 +32,9 @@ func (r Repository) GetAllM2MTariffTariffs(filter filter.Filter) ([]types.FeeExc
 }
 
 // InsertToM2MTariffTariffs - insert new data in a database (overgold_feeexcluder_m2m_tariff_tariffs).
-func (r Repository) InsertToM2MTariffTariffs(tx *sqlx.Tx, ids ...types.FeeExcluderM2MTariffTariffs) (err error) {
+func (r Repository) InsertToM2MTariffTariffs(_ *sqlx.Tx, ids ...types.FeeExcluderM2MTariffTariffs) (err error) {
 	if len(ids) == 0 {
 		return nil
-	}
-
-	if tx == nil {
-		tx, err = r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-		if err != nil {
-			return errs.Internal{Cause: err.Error()}
-		}
-
-		defer commit(tx, err)
 	}
 
 	q := `
@@ -56,7 +47,10 @@ func (r Repository) InsertToM2MTariffTariffs(tx *sqlx.Tx, ids ...types.FeeExclud
 	`
 
 	for _, m := range ids {
-		if _, err = tx.Exec(q, m.TariffID, m.TariffsID); err != nil {
+		if _, err = r.db.Exec(q, m.TariffID, m.TariffsID); err != nil {
+			if chain.IsAlreadyExists(err) {
+				continue
+			}
 			return errs.Internal{Cause: err.Error()}
 		}
 	}
@@ -66,18 +60,9 @@ func (r Repository) InsertToM2MTariffTariffs(tx *sqlx.Tx, ids ...types.FeeExclud
 
 // DeleteM2MTariffTariffsByTariffs - method that deletes data in a database (overgold_feeexcluder_m2m_tariff_tariffs).
 func (r Repository) DeleteM2MTariffTariffsByTariffs(tx *sqlx.Tx, id uint64) (err error) {
-	if tx == nil {
-		tx, err = r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-		if err != nil {
-			return errs.Internal{Cause: err.Error()}
-		}
-
-		defer commit(tx, err)
-	}
-
 	q := `DELETE FROM overgold_feeexcluder_m2m_tariff_tariffs WHERE tariffs_id IN ($1)`
 
-	if _, err = tx.Exec(q, id); err != nil {
+	if _, err = r.db.Exec(q, id); err != nil {
 		return errs.Internal{Cause: err.Error()}
 	}
 

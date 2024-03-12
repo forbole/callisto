@@ -17,11 +17,12 @@ require (
 	git.ooo.ua/vipcoin/lib/vault v1.0.7
 	git.ooo.ua/vipcoin/ovg-chain v1.0.9
 	github.com/cometbft/cometbft v0.37.2
-	github.com/cosmos/cosmos-sdk v0.47.7
+	github.com/cosmos/cosmos-sdk v0.47.5
 	github.com/cosmos/gogoproto v1.4.10
 	github.com/forbole/juno/v5 v5.2.0
 	github.com/go-co-op/gocron v1.37.0
 	github.com/golangci/golangci-lint v1.55.2
+	github.com/jackc/pgx v3.6.2+incompatible
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.9
 	github.com/pelletier/go-toml v1.9.5
@@ -90,6 +91,7 @@ require (
 	github.com/charithe/durationcheck v0.0.10 // indirect
 	github.com/chavacava/garif v0.1.0 // indirect
 	github.com/chzyer/readline v1.5.1 // indirect
+	github.com/cockroachdb/apd v1.1.0 // indirect
 	github.com/cockroachdb/apd/v2 v2.0.2 // indirect
 	github.com/cockroachdb/errors v1.10.0 // indirect
 	github.com/cockroachdb/logtags v0.0.0-20230118201751-21c54148d20b // indirect
@@ -199,6 +201,7 @@ require (
 	github.com/huandu/skiplist v1.2.0 // indirect
 	github.com/improbable-eng/grpc-web v0.15.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	github.com/jackc/fake v0.0.0-20150926172116-812a484cc733 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20231201235250-de7065d80cb9 // indirect
 	github.com/jackc/pgx/v5 v5.5.2 // indirect
 	github.com/jgautheron/goconst v1.6.0 // indirect

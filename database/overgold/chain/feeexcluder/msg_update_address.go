@@ -1,7 +1,6 @@
 package feeexcluder
 
 import (
-	"context"
 	"database/sql"
 	"errors"
 
@@ -33,15 +32,6 @@ func (r Repository) GetAllMsgUpdateAddress(filter filter.Filter) ([]fe.MsgUpdate
 
 // InsertToMsgUpdateAddress - insert new data in a database (overgold_feeexcluder_update_address).
 func (r Repository) InsertToMsgUpdateAddress(hash string, address fe.MsgUpdateAddress) error {
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return errs.Internal{Cause: err.Error()}
-	}
-
-	defer func() {
-		_ = tx.Rollback()
-	}()
-
 	q := `
 		INSERT INTO overgold_feeexcluder_update_address (
 			id, tx_hash, creator, address
@@ -52,11 +42,11 @@ func (r Repository) InsertToMsgUpdateAddress(hash string, address fe.MsgUpdateAd
 	`
 
 	m := toMsgUpdateAddressDatabase(hash, address)
-	if _, err = tx.Exec(q, m.ID, m.TxHash, m.Creator, m.Address); err != nil {
+	if _, err := r.db.Exec(q, m.ID, m.TxHash, m.Creator, m.Address); err != nil {
 		return errs.Internal{Cause: err.Error()}
 	}
 
-	return tx.Commit()
+	return nil
 }
 
 // UpdateMsgUpdateAddress - method that updates in a database (overgold_feeexcluder_update_address).
@@ -65,15 +55,6 @@ func (r Repository) UpdateMsgUpdateAddress(hash string, addresses ...fe.MsgUpdat
 		return nil
 	}
 
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return err
-	}
-
-	defer func() {
-		_ = tx.Rollback()
-	}()
-
 	q := `UPDATE overgold_feeexcluder_update_address SET
 				 creator = $1,
 				 address = $2
@@ -81,28 +62,21 @@ func (r Repository) UpdateMsgUpdateAddress(hash string, addresses ...fe.MsgUpdat
 
 	for _, address := range addresses {
 		m := toMsgUpdateAddressDatabase(hash, address)
-		if _, err = tx.Exec(q, m.Creator, m.Address, m.ID); err != nil {
+		if _, err := r.db.Exec(q, m.Creator, m.Address, m.ID); err != nil {
 			return err
 		}
 	}
 
-	return tx.Commit()
+	return nil
 }
 
 // DeleteMsgUpdateAddress - method that deletes data in a database (overgold_feeexcluder_update_address).
 func (r Repository) DeleteMsgUpdateAddress(id uint64) error {
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return errs.Internal{Cause: err.Error()}
-	}
-
-	defer tx.Rollback()
-
 	q := `DELETE FROM overgold_feeexcluder_update_address WHERE id IN ($1)`
 
-	if _, err = tx.Exec(q, id); err != nil {
+	if _, err := r.db.Exec(q, id); err != nil {
 		return errs.Internal{Cause: err.Error()}
 	}
 
-	return tx.Commit()
+	return nil
 }

@@ -1,7 +1,6 @@
 package feeexcluder
 
 import (
-	"context"
 	"database/sql"
 	"errors"
 
@@ -9,6 +8,7 @@ import (
 	"git.ooo.ua/vipcoin/lib/filter"
 	"github.com/jmoiron/sqlx"
 
+	"github.com/forbole/bdjuno/v4/database/overgold/chain"
 	"github.com/forbole/bdjuno/v4/database/types"
 )
 
@@ -32,15 +32,7 @@ func (r Repository) GetAllM2MGenesisStateTariffs(filter filter.Filter) ([]types.
 }
 
 // InsertToM2MGenesisStateTariffs - insert new data in a database (overgold_feeexcluder_m2m_genesis_state_tariffs).
-func (r Repository) InsertToM2MGenesisStateTariffs(tx *sqlx.Tx, t ...types.FeeExcluderM2MGenesisStateTariffs) (err error) {
-	if tx == nil {
-		tx, err = r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-		if err != nil {
-			return errs.Internal{Cause: err.Error()}
-		}
-
-		defer commit(tx, err)
-	}
+func (r Repository) InsertToM2MGenesisStateTariffs(_ *sqlx.Tx, t ...types.FeeExcluderM2MGenesisStateTariffs) (err error) {
 
 	q := `
 		INSERT INTO overgold_feeexcluder_m2m_genesis_state_tariffs (
@@ -52,7 +44,10 @@ func (r Repository) InsertToM2MGenesisStateTariffs(tx *sqlx.Tx, t ...types.FeeEx
 	`
 
 	for _, m := range t {
-		if _, err = tx.Exec(q, m.GenesisStateID, m.TariffsID); err != nil {
+		if _, err = r.db.Exec(q, m.GenesisStateID, m.TariffsID); err != nil {
+			if chain.IsAlreadyExists(err) {
+				continue
+			}
 			return errs.Internal{Cause: err.Error()}
 		}
 	}
@@ -62,15 +57,6 @@ func (r Repository) InsertToM2MGenesisStateTariffs(tx *sqlx.Tx, t ...types.FeeEx
 
 // DeleteM2MGenesisStateTariffsByGenesisState - method that deletes data in a database (overgold_feeexcluder_m2m_genesis_state_tariffs).
 func (r Repository) DeleteM2MGenesisStateTariffsByGenesisState(tx *sqlx.Tx, id uint64) (err error) {
-	if tx == nil {
-		tx, err = r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-		if err != nil {
-			return errs.Internal{Cause: err.Error()}
-		}
-
-		defer commit(tx, err)
-	}
-
 	q := `DELETE FROM overgold_feeexcluder_m2m_genesis_state_tariffs WHERE genesis_state_id IN ($1)`
 
 	if _, err = tx.Exec(q, id); err != nil {

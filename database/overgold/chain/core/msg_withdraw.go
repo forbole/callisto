@@ -1,7 +1,6 @@
 package core
 
 import (
-	"context"
 	"database/sql"
 	"errors"
 
@@ -9,6 +8,7 @@ import (
 	"git.ooo.ua/vipcoin/lib/filter"
 	core "git.ooo.ua/vipcoin/ovg-chain/x/core/types"
 
+	"github.com/forbole/bdjuno/v4/database/overgold/chain"
 	db "github.com/forbole/bdjuno/v4/database/types"
 )
 
@@ -37,15 +37,6 @@ func (r Repository) InsertMsgWithdraw(hash string, msgs ...core.MsgWithdraw) err
 		return nil
 	}
 
-	tx, err := r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return errs.Internal{Cause: err.Error()}
-	}
-
-	defer func() {
-		_ = tx.Rollback()
-	}()
-
 	q := `
 		INSERT INTO overgold_core_withdraw (
 			tx_hash, creator, amount, denom, address
@@ -61,10 +52,13 @@ func (r Repository) InsertMsgWithdraw(hash string, msgs ...core.MsgWithdraw) err
 			return err
 		}
 
-		if _, err = tx.Exec(q, m.TxHash, m.Creator, m.Amount, m.Denom, m.Address); err != nil {
+		if _, err := r.db.Exec(q, m.TxHash, m.Creator, m.Amount, m.Denom, m.Address); err != nil {
+			if chain.IsAlreadyExists(err) {
+				continue
+			}
 			return errs.Internal{Cause: err.Error()}
 		}
 	}
 
-	return tx.Commit()
+	return nil
 }

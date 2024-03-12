@@ -1,7 +1,6 @@
 package feeexcluder
 
 import (
-	"context"
 	"database/sql"
 	"errors"
 
@@ -9,6 +8,7 @@ import (
 	"git.ooo.ua/vipcoin/lib/filter"
 	"github.com/jmoiron/sqlx"
 
+	"github.com/forbole/bdjuno/v4/database/overgold/chain"
 	"github.com/forbole/bdjuno/v4/database/types"
 )
 
@@ -32,16 +32,7 @@ func (r Repository) GetAllM2MTariffFees(filter filter.Filter) ([]types.FeeExclud
 }
 
 // InsertToM2MTariffFees - insert new data in a database (overgold_feeexcluder_m2m_tariff_fees).
-func (r Repository) InsertToM2MTariffFees(tx *sqlx.Tx, ids ...types.FeeExcluderM2MTariffFees) (err error) {
-	if tx == nil {
-		tx, err = r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-		if err != nil {
-			return errs.Internal{Cause: err.Error()}
-		}
-
-		defer commit(tx, err)
-	}
-
+func (r Repository) InsertToM2MTariffFees(_ *sqlx.Tx, ids ...types.FeeExcluderM2MTariffFees) (err error) {
 	q := `
 		INSERT INTO overgold_feeexcluder_m2m_tariff_fees (
 			tariff_id, fees_id
@@ -52,7 +43,10 @@ func (r Repository) InsertToM2MTariffFees(tx *sqlx.Tx, ids ...types.FeeExcluderM
 	`
 
 	for _, m := range ids {
-		if _, err = tx.Exec(q, m.TariffID, m.FeesID); err != nil {
+		if _, err = r.db.Exec(q, m.TariffID, m.FeesID); err != nil {
+			if chain.IsAlreadyExists(err) {
+				continue
+			}
 			return errs.Internal{Cause: err.Error()}
 		}
 	}
@@ -61,19 +55,10 @@ func (r Repository) InsertToM2MTariffFees(tx *sqlx.Tx, ids ...types.FeeExcluderM
 }
 
 // DeleteM2MTariffFeesByTariff - method that deletes data in a database (overgold_feeexcluder_m2m_tariff_fees).
-func (r Repository) DeleteM2MTariffFeesByTariff(tx *sqlx.Tx, tariffID uint64) (err error) {
-	if tx == nil {
-		tx, err = r.db.BeginTxx(context.Background(), &sql.TxOptions{})
-		if err != nil {
-			return errs.Internal{Cause: err.Error()}
-		}
-
-		defer commit(tx, err)
-	}
-
+func (r Repository) DeleteM2MTariffFeesByTariff(_ *sqlx.Tx, tariffID uint64) (err error) {
 	q := `DELETE FROM overgold_feeexcluder_m2m_tariff_fees WHERE tariff_id IN ($1)`
 
-	if _, err = tx.Exec(q, tariffID); err != nil {
+	if _, err = r.db.Exec(q, tariffID); err != nil {
 		return errs.Internal{Cause: err.Error()}
 	}
 
