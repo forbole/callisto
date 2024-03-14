@@ -67,10 +67,14 @@ func allCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			waitGroup.Add(1)
 
 			// Query the latest chain height
-			height, err := parseCtx.Node.LatestHeight()
+			latestHeight, err := parseCtx.Node.LatestHeight()
 			if err != nil {
 				return fmt.Errorf("error while getting chain latest block height: %s", err)
 			}
+
+			// Set the height 5 blocks lower to avoid error
+			// codespace sdk code 26: invalid height: cannot query with height in the future
+			height := latestHeight - 5
 
 			// Store all addresses in database
 			accounts, err := authModule.RefreshTopAccountsList(height)

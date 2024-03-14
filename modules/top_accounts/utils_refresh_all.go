@@ -4,11 +4,15 @@ import "fmt"
 
 func (m *Module) RefreshAll(address string) error {
 	// Query the latest chain height
-	height, err := m.node.LatestHeight()
+	latestHeight, err := m.node.LatestHeight()
 	if err != nil {
 		return fmt.Errorf("error while getting chain latest block height: %s", err)
 	}
 
+	// Set the height 5 blocks lower to avoid error
+	// codespace sdk code 26: invalid height: cannot query with height in the future
+	height := latestHeight - 5
+	
 	err = m.bankModule.UpdateBalances([]string{address}, height)
 	if err != nil {
 		return fmt.Errorf("error while refreshing balance of account %s, error: %s", address, err)
