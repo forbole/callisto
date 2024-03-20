@@ -43,7 +43,7 @@ CREATE TABLE transaction
     success      BOOLEAN NOT NULL,
 
     /* Body */
-    messages     JSONB   NOT NULL DEFAULT '[]'::JSONB,
+    messages     JSON    NOT NULL DEFAULT '[]'::JSON,
     memo         TEXT,
     signatures   TEXT[]  NOT NULL,
 
@@ -81,7 +81,7 @@ CREATE TABLE message
     transaction_hash            TEXT   NOT NULL,
     index                       BIGINT NOT NULL,
     type                        TEXT   NOT NULL REFERENCES message_type(type),
-    value                       JSONB  NOT NULL,
+    value                       JSON   NOT NULL,
     involved_accounts_addresses TEXT[] NOT NULL,
 
     /* PSQL partition */
