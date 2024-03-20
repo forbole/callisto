@@ -2,21 +2,19 @@ package gov
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/x/authz"
-
-	"github.com/forbole/callisto/v4/types"
+	"github.com/forbole/bdjuno/v4/types"
 	"google.golang.org/grpc/codes"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+	"github.com/cosmos/cosmos-sdk/x/authz"
 
-	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
-	juno "github.com/forbole/juno/v5/types"
+	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
+
+	juno "github.com/forbole/juno/v4/types"
 )
 
 // HandleMsgExec implements modules.AuthzMessageModule
@@ -32,37 +30,35 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 
 	switch cosmosMsg := msg.(type) {
 	case *govtypesv1.MsgSubmitProposal:
-		return m.handleMsgSubmitProposal(tx, index, cosmosMsg)
+		return m.handleSubmitProposalEvent(tx, cosmosMsg.Proposer, tx.Logs[index].Events)
+	case *govtypesv1beta1.MsgSubmitProposal:
+		return m.handleSubmitProposalEvent(tx, cosmosMsg.Proposer, tx.Logs[index].Events)
 
 	case *govtypesv1.MsgDeposit:
-		return m.handleMsgDeposit(tx, cosmosMsg)
+		return m.handleDepositEvent(tx, cosmosMsg.Depositor, tx.Logs[index].Events)
+	case *govtypesv1beta1.MsgDeposit:
+		return m.handleDepositEvent(tx, cosmosMsg.Depositor, tx.Logs[index].Events)
 
 	case *govtypesv1.MsgVote:
-		return m.handleMsgVote(tx, cosmosMsg)
+		return m.handleVoteEvent(tx, cosmosMsg.Voter, tx.Logs[index].Events)
+	case *govtypesv1beta1.MsgVote:
+		return m.handleVoteEvent(tx, cosmosMsg.Voter, tx.Logs[index].Events)
 
 	case *govtypesv1.MsgVoteWeighted:
-		return m.handleMsgVoteWeighted(tx, cosmosMsg)
+		return m.handleVoteEvent(tx, cosmosMsg.Voter, tx.Logs[index].Events)
+	case *govtypesv1beta1.MsgVoteWeighted:
+		return m.handleVoteEvent(tx, cosmosMsg.Voter, tx.Logs[index].Events)
 	}
 
 	return nil
 }
 
-// handleMsgSubmitProposal allows to properly handle a MsgSubmitProposal
-func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1.MsgSubmitProposal) error {
+// handleSubmitProposalEvent allows to properly handle a handleSubmitProposalEvent
+func (m *Module) handleSubmitProposalEvent(tx *juno.Tx, proposer string, events sdk.StringEvents) error {
 	// Get the proposal id
-	event, err := tx.FindEventByType(index, gov.EventTypeSubmitProposal)
+	proposalID, err := ProposalIDFromEvents(events)
 	if err != nil {
-		return fmt.Errorf("error while searching for EventTypeSubmitProposal: %s", err)
-	}
-
-	id, err := tx.FindAttributeByKey(event, gov.AttributeKeyProposalID)
-	if err != nil {
-		return fmt.Errorf("error while searching for AttributeKeyProposalID: %s", err)
-	}
-
-	proposalID, err := strconv.ParseUint(id, 10, 64)
-	if err != nil {
-		return fmt.Errorf("error while parsing proposal id: %s", err)
+		return fmt.Errorf("error while getting proposal id: %s", err)
 	}
 
 	// Get the proposal
@@ -108,39 +104,44 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypesv1
 		return fmt.Errorf("error while storing proposal recipient: %s", err)
 	}
 
+	// Unpack the proposal interfaces
+	err = proposal.UnpackInterfaces(m.cdc)
+	if err != nil {
+		return fmt.Errorf("error while unpacking proposal interfaces: %s", err)
+	}
+
 	// Store the proposal
 	proposalObj := types.NewProposal(
-		proposal.Id,
-		proposal.Title,
-		proposal.Summary,
-		proposal.Metadata,
-		msg.Messages,
+		proposal.ProposalId,
+		proposal.GetContent().ProposalRoute(),
+		proposal.GetContent().ProposalType(),
+		proposal.GetContent(),
 		proposal.Status.String(),
 		*proposal.SubmitTime,
 		*proposal.DepositEndTime,
 		proposal.VotingStartTime,
 		proposal.VotingEndTime,
-		msg.Proposer,
+		proposer,
 	)
 
 	err = m.db.SaveProposals([]types.Proposal{proposalObj})
 	if err != nil {
-		return err
+		return fmt.Errorf("error while saving proposal: %s", err)
 	}
 
-	txTimestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
-	if err != nil {
-		return fmt.Errorf("error while parsing time: %s", err)
-	}
-
-	// Store the deposit
-	deposit := types.NewDeposit(proposal.Id, msg.Proposer, msg.InitialDeposit, txTimestamp, tx.TxHash, tx.Height)
-	return m.db.SaveDeposits([]types.Deposit{deposit})
+	// Submit proposal must have a deposit event with depositor equal to the proposer
+	return m.handleDepositEvent(tx, proposer, events)
 }
 
-// handleMsgDeposit allows to properly handle a MsgDeposit
-func (m *Module) handleMsgDeposit(tx *juno.Tx, msg *govtypesv1.MsgDeposit) error {
-	deposit, err := m.source.ProposalDeposit(tx.Height, msg.ProposalId, msg.Depositor)
+// handleDepositEvent allows to properly handle a handleDepositEvent
+func (m *Module) handleDepositEvent(tx *juno.Tx, depositor string, events sdk.StringEvents) error {
+	// Get the proposal id
+	proposalID, err := ProposalIDFromEvents(events)
+	if err != nil {
+		return fmt.Errorf("error while getting proposal id: %s", err)
+	}
+
+	deposit, err := m.source.ProposalDeposit(tx.Height, proposalID, depositor)
 	if err != nil {
 		return fmt.Errorf("error while getting proposal deposit: %s", err)
 	}
@@ -150,18 +151,30 @@ func (m *Module) handleMsgDeposit(tx *juno.Tx, msg *govtypesv1.MsgDeposit) error
 	}
 
 	return m.db.SaveDeposits([]types.Deposit{
-		types.NewDeposit(msg.ProposalId, msg.Depositor, deposit.Amount, txTimestamp, tx.TxHash, tx.Height),
+		types.NewDeposit(proposalID, depositor, deposit.Amount, txTimestamp, tx.Height),
 	})
 }
 
-// handleMsgVote allows to properly handle a MsgVote
-func (m *Module) handleMsgVote(tx *juno.Tx, msg *govtypesv1.MsgVote) error {
+// handleVoteEvent allows to properly handle a handleVoteEvent
+func (m *Module) handleVoteEvent(tx *juno.Tx, voter string, events sdk.StringEvents) error {
+	// Get the proposal id
+	proposalID, err := ProposalIDFromEvents(events)
+	if err != nil {
+		return fmt.Errorf("error while getting proposal id: %s", err)
+	}
+
 	txTimestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
 	if err != nil {
 		return fmt.Errorf("error while parsing time: %s", err)
 	}
 
-	vote := types.NewVote(msg.ProposalId, msg.Voter, msg.Option, "1.0", txTimestamp, tx.Height)
+	// Get the vote option
+	voteOption, err := VoteOptionFromEvents(events)
+	if err != nil {
+		return fmt.Errorf("error while getting vote option: %s", err)
+	}
+
+	vote := types.NewVote(proposalID, voter, voteOption, txTimestamp, tx.Height)
 
 	err = m.db.SaveVote(vote)
 	if err != nil {
