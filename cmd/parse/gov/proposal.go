@@ -114,7 +114,11 @@ func refreshProposalDetails(parseCtx *parser.Context, proposalID uint64, govModu
 
 	// Handle the MsgSubmitProposal messages
 	for index, msg := range tx.GetMsgs() {
-		if _, ok := msg.(*govtypesv1beta1.MsgSubmitProposal); !ok {
+		_, isMsgSubmitProposalV1 := msg.(*govtypesv1.MsgSubmitProposal)
+		_, isMsgSubmitProposalV1Beta1 := msg.(*govtypesv1beta1.MsgSubmitProposal)
+
+		// Skip if the message is not a submit proposal message
+		if !isMsgSubmitProposalV1 && !isMsgSubmitProposalV1Beta1 {
 			continue
 		}
 
@@ -145,7 +149,11 @@ func refreshProposalDeposits(parseCtx *parser.Context, proposalID uint64, govMod
 
 		// Handle the MsgDeposit messages
 		for index, msg := range junoTx.GetMsgs() {
-			if _, ok := msg.(*govtypesv1.MsgDeposit); !ok {
+			_, isMsgDepositV1beta1 := msg.(*govtypesv1beta1.MsgDeposit)
+			_, isMsgDepositV1 := msg.(*govtypesv1.MsgDeposit)
+
+			// Skip if the message is not a deposit message
+			if !isMsgDepositV1 && !isMsgDepositV1beta1 {
 				continue
 			}
 
@@ -177,7 +185,13 @@ func refreshProposalVotes(parseCtx *parser.Context, proposalID uint64, govModule
 
 		// Handle the MsgVote messages
 		for index, msg := range junoTx.GetMsgs() {
-			if _, ok := msg.(*govtypesv1.MsgVote); !ok {
+			_, isMsgVoteV1 := msg.(*govtypesv1.MsgVote)
+			_, isMsgVoteV1Beta1 := msg.(*govtypesv1beta1.MsgVote)
+			_, isMsgVoteWeightedV1 := msg.(*govtypesv1.MsgVoteWeighted)
+			_, isMsgVoteWeightedV1Beta1 := msg.(*govtypesv1beta1.MsgVoteWeighted)
+
+			// Skip if the message is not a vote message
+			if !isMsgVoteV1 && !isMsgVoteV1Beta1 && !isMsgVoteWeightedV1 && !isMsgVoteWeightedV1Beta1 {
 				continue
 			}
 
