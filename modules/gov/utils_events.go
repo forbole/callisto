@@ -41,14 +41,14 @@ func WeightVoteOptionFromEvents(events sdk.StringEvents) (govtypesv1.WeightedVot
 // 1. "{\"option\":1,\"weight\":\"1.000000000000000000\"}"
 // 2. "option:VOTE_OPTION_NO weight:\"1.000000000000000000\""
 func parseWeightVoteOption(optionValue string) (govtypesv1.WeightedVoteOption, error) {
-	// try parse option value as json
+	// try parse json option value
 	var weightedVoteOption govtypesv1.WeightedVoteOption
 	err := json.Unmarshal([]byte(optionValue), &weightedVoteOption)
 	if err == nil {
 		return weightedVoteOption, nil
 	}
 
-	// try parse option value as string
+	// try parse string option value
 	// option:VOTE_OPTION_NO weight:"1.000000000000000000"
 	voteOptionParsed := strings.Split(optionValue, " ")
 	if len(voteOptionParsed) != 2 {
@@ -60,7 +60,7 @@ func parseWeightVoteOption(optionValue string) (govtypesv1.WeightedVoteOption, e
 		return govtypesv1.WeightedVoteOption{}, fmt.Errorf("failed to parse vote option %s: %s", optionValue, err)
 	}
 	weight := strings.ReplaceAll(voteOptionParsed[1], "weight:", "")
-	weight = strings.ReplaceAll(weight, "\\", "")
+	weight = strings.ReplaceAll(weight, "\"", "")
 
 	return govtypesv1.WeightedVoteOption{Option: voteOption, Weight: weight}, nil
 }
