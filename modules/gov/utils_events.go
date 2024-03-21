@@ -24,40 +24,43 @@ func ProposalIDFromEvents(events sdk.StringEvents) (uint64, error) {
 	return 0, fmt.Errorf("no proposal id found")
 }
 
-// VoteOptionFromEvents returns the vote option from the given events
-func VoteOptionFromEvents(events sdk.StringEvents) (govtypesv1.VoteOption, error) {
+// WeightVoteOptionFromEvents returns the vote option from the given events
+func WeightVoteOptionFromEvents(events sdk.StringEvents) (govtypesv1.WeightedVoteOption, error) {
 	for _, event := range events {
 		attribute, ok := eventsutil.FindAttributeByKey(event, govtypes.AttributeKeyOption)
 		if ok {
-			return parseVoteOption(attribute.Value)
+			return parseWeightVoteOption(attribute.Value)
 		}
 	}
 
-	return 0, fmt.Errorf("no vote option found")
+	return govtypesv1.WeightedVoteOption{}, fmt.Errorf("no vote option found")
 }
 
-// parseVoteOption returns the vote option from the given string
-// option value in string could be 2 cases, for example:
+// parseWeightVoteOption returns the vote option from the given string
+// option value in string has 2 cases, for example:
 // 1. "{\"option\":1,\"weight\":\"1.000000000000000000\"}"
 // 2. "option:VOTE_OPTION_NO weight:\"1.000000000000000000\""
-func parseVoteOption(optionValue string) (govtypesv1.VoteOption, error) {
+func parseWeightVoteOption(optionValue string) (govtypesv1.WeightedVoteOption, error) {
 	// try parse option value as json
-	type voteOptionJSON struct {
-		Option govtypesv1.VoteOption `json:"option"`
-	}
-	var voteOptionParsedJSON voteOptionJSON
-	err := json.Unmarshal([]byte(optionValue), &voteOptionParsedJSON)
+	var weightedVoteOption govtypesv1.WeightedVoteOption
+	err := json.Unmarshal([]byte(optionValue), &weightedVoteOption)
 	if err == nil {
-		return voteOptionParsedJSON.Option, nil
+		return weightedVoteOption, nil
 	}
 
 	// try parse option value as string
 	// option:VOTE_OPTION_NO weight:"1.000000000000000000"
 	voteOptionParsed := strings.Split(optionValue, " ")
-	voteOption, err := govtypesv1.VoteOptionFromString(strings.ReplaceAll(voteOptionParsed[0], "option:", ""))
-	if err != nil {
-		return 0, fmt.Errorf("failed to parse vote option %s: %s", optionValue, err)
+	if len(voteOptionParsed) != 2 {
+		return govtypesv1.WeightedVoteOption{}, fmt.Errorf("failed to parse vote option %s", optionValue)
 	}
 
-	return voteOption, nil
+	voteOption, err := govtypesv1.VoteOptionFromString(strings.ReplaceAll(voteOptionParsed[0], "option:", ""))
+	if err != nil {
+		return govtypesv1.WeightedVoteOption{}, fmt.Errorf("failed to parse vote option %s: %s", optionValue, err)
+	}
+	weight := strings.ReplaceAll(voteOptionParsed[1], "weight:", "")
+	weight = strings.ReplaceAll(weight, "\\", "")
+
+	return govtypesv1.WeightedVoteOption{Option: voteOption, Weight: weight}, nil
 }

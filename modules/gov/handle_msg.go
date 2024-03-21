@@ -10,7 +10,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/authz"
-
+	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
@@ -112,10 +112,11 @@ func (m *Module) handleSubmitProposalEvent(tx *juno.Tx, proposer string, events 
 
 	// Store the proposal
 	proposalObj := types.NewProposal(
-		proposal.ProposalId,
-		proposal.GetContent().ProposalRoute(),
-		proposal.GetContent().ProposalType(),
-		proposal.GetContent(),
+		proposal.Id,
+		proposal.Title,
+		proposal.Summary,
+		proposal.Metadata,
+		proposal.Messages,
 		proposal.Status.String(),
 		*proposal.SubmitTime,
 		*proposal.DepositEndTime,
@@ -151,7 +152,7 @@ func (m *Module) handleDepositEvent(tx *juno.Tx, depositor string, events sdk.St
 	}
 
 	return m.db.SaveDeposits([]types.Deposit{
-		types.NewDeposit(proposalID, depositor, deposit.Amount, txTimestamp, tx.Height),
+		types.NewDeposit(proposalID, depositor, deposit.Amount, txTimestamp, tx.TxHash, tx.Height),
 	})
 }
 
@@ -169,12 +170,12 @@ func (m *Module) handleVoteEvent(tx *juno.Tx, voter string, events sdk.StringEve
 	}
 
 	// Get the vote option
-	voteOption, err := VoteOptionFromEvents(events)
+	weightVoteOption, err := WeightVoteOptionFromEvents(events)
 	if err != nil {
 		return fmt.Errorf("error while getting vote option: %s", err)
 	}
 
-	vote := types.NewVote(proposalID, voter, voteOption, txTimestamp, tx.Height)
+	vote := types.NewVote(proposalID, voter, weightVoteOption.Option, weightVoteOption.Weight, txTimestamp, tx.Height)
 
 	err = m.db.SaveVote(vote)
 	if err != nil {
@@ -182,24 +183,5 @@ func (m *Module) handleVoteEvent(tx *juno.Tx, voter string, events sdk.StringEve
 	}
 
 	// update tally result for given proposal
-	return m.UpdateProposalTallyResult(msg.ProposalId, tx.Height)
-}
-
-// handleMsgVoteWeighted allows to properly handle a MsgVoteWeighted
-func (m *Module) handleMsgVoteWeighted(tx *juno.Tx, msg *govtypesv1.MsgVoteWeighted) error {
-	txTimestamp, err := time.Parse(time.RFC3339, tx.Timestamp)
-	if err != nil {
-		return fmt.Errorf("error while parsing time: %s", err)
-	}
-
-	for _, option := range msg.Options {
-		vote := types.NewVote(msg.ProposalId, msg.Voter, option.Option, option.Weight, txTimestamp, tx.Height)
-		err = m.db.SaveVote(vote)
-		if err != nil {
-			return fmt.Errorf("error while saving weighted vote for address %s: %s", msg.Voter, err)
-		}
-	}
-
-	// update tally result for given proposal
-	return m.UpdateProposalTallyResult(msg.ProposalId, tx.Height)
+	return m.UpdateProposalTallyResult(proposalID, tx.Height)
 }
