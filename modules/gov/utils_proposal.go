@@ -68,7 +68,7 @@ func (m *Module) UpdateProposalValidatorStatusesSnapshot(height int64, blockVals
 	return nil
 }
 
-func (m *Module) UpdateProposalStakingPoolSnapshot(height int64, blockVals *tmctypes.ResultValidators, id uint64) error {
+func (m *Module) UpdateProposalStakingPoolSnapshot(height int64, id uint64) error {
 	err := m.updateProposalStakingPoolSnapshot(height, id)
 	if err != nil {
 		return fmt.Errorf("error while updating proposal staking pool snapshot: %s", err)
