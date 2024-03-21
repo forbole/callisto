@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/forbole/bdjuno/v4/types"
+	"github.com/forbole/callisto/v4/types"
 	"google.golang.org/grpc/codes"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -14,7 +14,7 @@ import (
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
-	juno "github.com/forbole/juno/v4/types"
+	juno "github.com/forbole/juno/v5/types"
 )
 
 // HandleMsgExec implements modules.AuthzMessageModule
