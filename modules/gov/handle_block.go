@@ -39,12 +39,19 @@ func (m *Module) updateProposalsStatus(height int64, txEvents, endBlockEvents []
 	}
 	ids = append(ids, endBlockIDs...)
 
-	// the proposal changes state from the deposit to voting
-	txIDs, err := findProposalIDsInEvents(txEvents, govtypes.EventTypeProposalDeposit, govtypes.AttributeKeyVotingPeriodStart)
+	// the proposal changes state from the submit to voting
+	idsInSubmitTxs, err := findProposalIDsInEvents(txEvents, govtypes.EventTypeSubmitProposal, govtypes.AttributeKeyVotingPeriodStart)
 	if err != nil {
 		return err
 	}
-	ids = append(ids, txIDs...)
+	ids = append(ids, idsInSubmitTxs...)
+
+	// the proposal changes state from the deposit to voting
+	idsInDepositTxs, err := findProposalIDsInEvents(txEvents, govtypes.EventTypeProposalDeposit, govtypes.AttributeKeyVotingPeriodStart)
+	if err != nil {
+		return err
+	}
+	ids = append(ids, idsInDepositTxs...)
 
 	// update status for proposals IDs stored in ids array
 	for _, id := range ids {
