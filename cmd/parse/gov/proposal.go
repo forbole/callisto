@@ -125,17 +125,13 @@ func refreshProposalDetails(parseCtx *parser.Context, proposalID uint64, govModu
 
 	// Handle the MsgSubmitProposal messages
 	for index, msg := range tx.GetMsgs() {
-		_, isMsgSubmitProposalV1 := msg.(*govtypesv1.MsgSubmitProposal)
-		_, isMsgSubmitProposalV1Beta1 := msg.(*govtypesv1beta1.MsgSubmitProposal)
 
-		// Skip if the message is not a submit proposal message
-		if !isMsgSubmitProposalV1 && !isMsgSubmitProposalV1Beta1 {
-			continue
-		}
-
-		err = govModule.HandleMsg(index, msg, tx)
-		if err != nil {
-			return fmt.Errorf("error while handling MsgSubmitProposal: %s", err)
+		switch msg.(type) {
+		case *govtypesv1.MsgSubmitProposal, *govtypesv1beta1.MsgSubmitProposal:
+			err = govModule.HandleMsg(index, msg, tx)
+			if err != nil {
+				return fmt.Errorf("error while handling MsgSubmitProposal: %s", err)
+			}
 		}
 	}
 
@@ -160,17 +156,12 @@ func refreshProposalDeposits(parseCtx *parser.Context, proposalID uint64, govMod
 
 		// Handle the MsgDeposit messages
 		for index, msg := range junoTx.GetMsgs() {
-			_, isMsgDepositV1beta1 := msg.(*govtypesv1beta1.MsgDeposit)
-			_, isMsgDepositV1 := msg.(*govtypesv1.MsgDeposit)
-
-			// Skip if the message is not a deposit message
-			if !isMsgDepositV1 && !isMsgDepositV1beta1 {
-				continue
-			}
-
-			err = govModule.HandleMsg(index, msg, junoTx)
-			if err != nil {
-				return fmt.Errorf("error while handling MsgDeposit: %s", err)
+			switch msg.(type) {
+			case *govtypesv1.MsgDeposit, *govtypesv1beta1.MsgDeposit:
+				err = govModule.HandleMsg(index, msg, junoTx)
+				if err != nil {
+					return fmt.Errorf("error while handling MsgDeposit: %s", err)
+				}
 			}
 		}
 	}
