@@ -10,6 +10,7 @@ import (
 	modulestypes "github.com/forbole/callisto/v4/modules/types"
 
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
 	"github.com/forbole/juno/v5/parser"
 	"github.com/forbole/juno/v5/types/config"
@@ -124,13 +125,13 @@ func refreshProposalDetails(parseCtx *parser.Context, proposalID uint64, govModu
 
 	// Handle the MsgSubmitProposal messages
 	for index, msg := range tx.GetMsgs() {
-		if _, ok := msg.(*govtypesv1.MsgSubmitProposal); !ok {
-			continue
-		}
 
-		err = govModule.HandleMsg(index, msg, tx)
-		if err != nil {
-			return fmt.Errorf("error while handling MsgSubmitProposal: %s", err)
+		switch msg.(type) {
+		case *govtypesv1.MsgSubmitProposal, *govtypesv1beta1.MsgSubmitProposal:
+			err = govModule.HandleMsg(index, msg, tx)
+			if err != nil {
+				return fmt.Errorf("error while handling MsgSubmitProposal: %s", err)
+			}
 		}
 	}
 
@@ -155,13 +156,12 @@ func refreshProposalDeposits(parseCtx *parser.Context, proposalID uint64, govMod
 
 		// Handle the MsgDeposit messages
 		for index, msg := range junoTx.GetMsgs() {
-			if _, ok := msg.(*govtypesv1.MsgDeposit); !ok {
-				continue
-			}
-
-			err = govModule.HandleMsg(index, msg, junoTx)
-			if err != nil {
-				return fmt.Errorf("error while handling MsgDeposit: %s", err)
+			switch msg.(type) {
+			case *govtypesv1.MsgDeposit, *govtypesv1beta1.MsgDeposit:
+				err = govModule.HandleMsg(index, msg, junoTx)
+				if err != nil {
+					return fmt.Errorf("error while handling MsgDeposit: %s", err)
+				}
 			}
 		}
 	}
@@ -187,23 +187,39 @@ func refreshProposalVotes(parseCtx *parser.Context, proposalID uint64, govModule
 
 		// Handle the MsgVote messages
 		for index, msg := range junoTx.GetMsgs() {
-			if msgVote, ok := msg.(*govtypesv1.MsgVote); !ok {
+			var msgProposalID uint64
+
+			switch cosmosMsg := msg.(type) {
+			case *govtypesv1.MsgVote:
+				msgProposalID = cosmosMsg.ProposalId
+
+			case *govtypesv1beta1.MsgVote:
+				msgProposalID = cosmosMsg.ProposalId
+
+			case *govtypesv1.MsgVoteWeighted:
+				msgProposalID = cosmosMsg.ProposalId
+
+			case *govtypesv1beta1.MsgVoteWeighted:
+				msgProposalID = cosmosMsg.ProposalId
+
+			// Skip if the message is not a vote message
+			default:
 				continue
-			} else {
-				// check if requested proposal ID is the same as proposal ID returned
-				// from the msg as some txs may contain multiple MsgVote msgs
-				// for different proposals which can cause error if one of the proposals
-				// info is not stored in database
-				if proposalID == msgVote.ProposalId {
-					err = govModule.HandleMsg(index, msg, junoTx)
-					if err != nil {
-						return fmt.Errorf("error while handling MsgVote: %s", err)
-					}
-				} else {
-					// skip votes for proposals with IDs
-					// different than requested in the query
-					continue
+			}
+
+			// check if requested proposal ID is the same as proposal ID returned
+			// from the msg as some txs may contain multiple MsgVote msgs
+			// for different proposals which can cause error if one of the proposals
+			// info is not stored in database
+			if proposalID == msgProposalID {
+				err = govModule.HandleMsg(index, msg, junoTx)
+				if err != nil {
+					return fmt.Errorf("error while handling MsgVote: %s", err)
 				}
+			} else {
+				// skip votes for proposals with IDs
+				// different than requested in the query
+				continue
 			}
 		}
 	}
