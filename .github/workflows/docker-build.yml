@@ -24,7 +24,7 @@ jobs:
       - name: Prepare tags 🏷️
         id: prep
         run: |
-          DOCKER_IMAGE=${{ secrets.DOCKERHUB_CALLISTO_REPO }}
+          DOCKER_IMAGE=${{ secrets.DOCKERHUB_BDJUNO_REPO }}
           CHAIN_NAME="${{env.CHAIN_NAME}}"
           VERSION="${{env.GITHUB_VERSION}}"
           TAGS="${DOCKER_IMAGE}:${CHAIN_NAME}-${VERSION}"
