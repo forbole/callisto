@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"strconv"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	"cosmossdk.io/math"
 )
 
 // ValidatorData contains all the data of a single validator.
@@ -55,22 +55,22 @@ func (v ValidatorData) GetSelfDelegateAddress() string {
 }
 
 // GetMaxChangeRate implements types.Validator
-func (v ValidatorData) GetMaxChangeRate() *sdk.Dec {
+func (v ValidatorData) GetMaxChangeRate() *math.LegacyDec {
 	n, err := strconv.ParseInt(v.MaxChangeRate, 10, 64)
 	if err != nil {
 		panic(err)
 	}
-	result := sdk.NewDec(n)
+	result := math.LegacyNewDec(n)
 	return &result
 }
 
 // GetMaxRate implements types.Validator
-func (v ValidatorData) GetMaxRate() *sdk.Dec {
+func (v ValidatorData) GetMaxRate() *math.LegacyDec {
 	n, err := strconv.ParseInt(v.MaxRate, 10, 64)
 	if err != nil {
 		panic(err)
 	}
-	result := sdk.NewDec(n)
+	result := math.LegacyNewDec(n)
 	return &result
 }
 

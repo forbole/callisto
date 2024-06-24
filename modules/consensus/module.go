@@ -3,7 +3,7 @@ package consensus
 import (
 	"github.com/forbole/callisto/v4/database"
 
-	"github.com/forbole/juno/v5/modules"
+	"github.com/forbole/juno/v6/modules"
 )
 
 var (

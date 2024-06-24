@@ -95,7 +95,7 @@ func (m *Module) parseGenesisTransactions(doc *tmtypes.GenesisDoc, appState map[
 // --------------------------------------------------------------------------------------------------------------------
 
 // saveValidators stores the validators data present inside the given genesis state
-func (m *Module) saveValidators(doc *tmtypes.GenesisDoc, validators stakingtypes.Validators) error {
+func (m *Module) saveValidators(doc *tmtypes.GenesisDoc, validators []stakingtypes.Validator) error {
 	vals := make([]types.Validator, len(validators))
 	for i, val := range validators {
 		validator, err := m.convertValidator(doc.InitialHeight, val)
@@ -110,7 +110,7 @@ func (m *Module) saveValidators(doc *tmtypes.GenesisDoc, validators stakingtypes
 }
 
 // saveValidatorDescription saves the description for the given validators
-func (m *Module) saveValidatorDescription(doc *tmtypes.GenesisDoc, validators stakingtypes.Validators) error {
+func (m *Module) saveValidatorDescription(doc *tmtypes.GenesisDoc, validators []stakingtypes.Validator) error {
 	for _, account := range validators {
 		description := m.convertValidatorDescription(
 			doc.InitialHeight,
@@ -130,7 +130,7 @@ func (m *Module) saveValidatorDescription(doc *tmtypes.GenesisDoc, validators st
 // --------------------------------------------------------------------------------------------------------------------
 
 // saveValidatorsCommissions save the initial commission for each validator
-func (m *Module) saveValidatorsCommissions(height int64, validators stakingtypes.Validators) error {
+func (m *Module) saveValidatorsCommissions(height int64, validators []stakingtypes.Validator) error {
 	for _, account := range validators {
 		commissionRate := account.Commission.Rate
 		minSelfDelegation := account.MinSelfDelegation

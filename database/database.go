@@ -3,8 +3,9 @@ package database
 import (
 	"fmt"
 
-	db "github.com/forbole/juno/v5/database"
-	"github.com/forbole/juno/v5/database/postgresql"
+	codec "github.com/cosmos/cosmos-sdk/codec"
+	db "github.com/forbole/juno/v6/database"
+	"github.com/forbole/juno/v6/database/postgresql"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -15,24 +16,28 @@ var _ db.Database = &Db{}
 type Db struct {
 	*postgresql.Database
 	Sqlx *sqlx.DB
+	cdc  codec.Codec
 }
 
 // Builder allows to create a new Db instance implementing the db.Builder type
-func Builder(ctx *db.Context) (db.Database, error) {
-	database, err := postgresql.Builder(ctx)
-	if err != nil {
-		return nil, err
-	}
+func Builder(cdc codec.Codec) db.Builder {
+	return func(ctx *db.Context) (db.Database, error) {
+		database, err := postgresql.Builder(ctx)
+		if err != nil {
+			return nil, err
+		}
 
-	psqlDb, ok := (database).(*postgresql.Database)
-	if !ok {
-		return nil, fmt.Errorf("invalid configuration database, must be PostgreSQL")
-	}
+		psqlDb, ok := (database).(*postgresql.Database)
+		if !ok {
+			return nil, fmt.Errorf("invalid configuration database, must be PostgreSQL")
+		}
 
-	return &Db{
-		Database: psqlDb,
-		Sqlx:     sqlx.NewDb(psqlDb.SQL.DB, "postgresql"),
-	}, nil
+		return &Db{
+			Database: psqlDb,
+			Sqlx:     sqlx.NewDb(psqlDb.SQL.DB, "postgresql"),
+			cdc:      cdc,
+		}, nil
+	}
 }
 
 // Cast allows to cast the given db to a Db instance

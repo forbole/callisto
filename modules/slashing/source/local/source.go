@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
-	"github.com/forbole/juno/v5/node/local"
+	"github.com/forbole/juno/v6/node/local"
 
 	slashingsource "github.com/forbole/callisto/v4/modules/slashing/source"
 )

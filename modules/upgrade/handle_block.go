@@ -3,14 +3,14 @@ package upgrade
 import (
 	"fmt"
 
-	"github.com/forbole/juno/v5/types"
+	juno "github.com/forbole/juno/v6/types"
 
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 )
 
 // HandleBlock implements modules.Module
 func (m *Module) HandleBlock(
-	b *tmctypes.ResultBlock, _ *tmctypes.ResultBlockResults, _ []*types.Tx, _ *tmctypes.ResultValidators,
+	b *tmctypes.ResultBlock, _ *tmctypes.ResultBlockResults, _ []*juno.Transaction, _ *tmctypes.ResultValidators,
 ) error {
 	err := m.refreshDataUponSoftwareUpgrade(b.Block.Height)
 	if err != nil {

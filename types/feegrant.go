@@ -1,6 +1,6 @@
 package types
 
-import feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
+import feegranttypes "cosmossdk.io/x/feegrant"
 
 // FeeGrant represents the x/feegrant module
 type FeeGrant struct {

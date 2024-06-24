@@ -7,7 +7,7 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/forbole/juno/v5/node/local"
+	"github.com/forbole/juno/v6/node/local"
 
 	"github.com/forbole/callisto/v4/modules/bank/source"
 	"github.com/forbole/callisto/v4/types"

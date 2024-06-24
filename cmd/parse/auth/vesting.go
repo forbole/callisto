@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
-	"github.com/forbole/juno/v5/types/config"
+	parsecmdtypes "github.com/forbole/juno/v6/cmd/parse/types"
+	"github.com/forbole/juno/v6/types/config"
 	"github.com/spf13/cobra"
 
 	"github.com/forbole/callisto/v4/database"
@@ -38,7 +38,7 @@ func vestingCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				return fmt.Errorf("error unmarshalling genesis doc: %s", err)
 			}
 
-			vestingAccounts, err := authutils.GetGenesisVestingAccounts(appState, parseCtx.EncodingConfig.Codec)
+			vestingAccounts, err := authutils.GetGenesisVestingAccounts(appState, utils.GetCodec())
 			if err != nil {
 				return fmt.Errorf("error while gestting vesting accounts: %s", err)
 			}

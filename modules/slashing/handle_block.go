@@ -3,7 +3,7 @@ package slashing
 import (
 	"fmt"
 
-	juno "github.com/forbole/juno/v5/types"
+	juno "github.com/forbole/juno/v6/types"
 
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 	"github.com/rs/zerolog/log"
@@ -11,7 +11,7 @@ import (
 
 // HandleBlock implements BlockModule
 func (m *Module) HandleBlock(
-	block *tmctypes.ResultBlock, results *tmctypes.ResultBlockResults, _ []*juno.Tx, _ *tmctypes.ResultValidators,
+	block *tmctypes.ResultBlock, results *tmctypes.ResultBlockResults, _ []*juno.Transaction, _ *tmctypes.ResultValidators,
 ) error {
 	// Update the signing infos
 	err := m.updateSigningInfo(block.Block.Height)

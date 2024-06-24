@@ -6,8 +6,8 @@ import (
 	tmjson "github.com/cometbft/cometbft/libs/json"
 	tmos "github.com/cometbft/cometbft/libs/os"
 	tmtypes "github.com/cometbft/cometbft/types"
-	"github.com/forbole/juno/v5/node"
-	"github.com/forbole/juno/v5/types/config"
+	"github.com/forbole/juno/v6/node"
+	"github.com/forbole/juno/v6/types/config"
 )
 
 // ReadGenesis reads the genesis data based on the given config

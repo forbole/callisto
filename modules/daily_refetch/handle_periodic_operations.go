@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/forbole/juno/v5/parser"
-	"github.com/forbole/juno/v5/types/config"
+	"github.com/forbole/juno/v6/parser"
+	"github.com/forbole/juno/v6/types/config"
 
 	"github.com/go-co-op/gocron"
 	"github.com/rs/zerolog/log"
 
-	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
+	parsecmdtypes "github.com/forbole/juno/v6/cmd/parse/types"
 )
 
 func (m *Module) RegisterPeriodicOperations(scheduler *gocron.Scheduler) error {
@@ -54,7 +54,7 @@ func (m *Module) refetchMissingBlocks() error {
 		return err
 	}
 
-	workerCtx := parser.NewContext(parseCtx.EncodingConfig, parseCtx.Node, parseCtx.Database, parseCtx.Logger, parseCtx.Modules)
+	workerCtx := parser.NewContext(parseCtx.Node, parseCtx.Database, parseCtx.Logger, parseCtx.Modules)
 	worker := parser.NewWorker(workerCtx, nil, 0)
 
 	log.Info().Int64("start height", startHeight).Int64("end height", latestBlock).

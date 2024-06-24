@@ -3,6 +3,9 @@ package gov
 import (
 	"github.com/spf13/cobra"
 
+	parsecmdtypes "github.com/forbole/juno/v6/cmd/parse/types"
+	"github.com/forbole/juno/v6/types/config"
+
 	"github.com/forbole/callisto/v4/database"
 	"github.com/forbole/callisto/v4/modules/distribution"
 	"github.com/forbole/callisto/v4/modules/gov"
@@ -10,8 +13,7 @@ import (
 	"github.com/forbole/callisto/v4/modules/slashing"
 	"github.com/forbole/callisto/v4/modules/staking"
 	modulestypes "github.com/forbole/callisto/v4/modules/types"
-	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
-	"github.com/forbole/juno/v5/types/config"
+	"github.com/forbole/callisto/v4/utils"
 )
 
 func paramsCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
@@ -24,7 +26,8 @@ func paramsCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				return err
 			}
 
-			sources, err := modulestypes.BuildSources(config.Cfg.Node, parseCtx.EncodingConfig)
+			cdc := utils.GetCodec()
+			sources, err := modulestypes.BuildSources(config.Cfg.Node, cdc)
 			if err != nil {
 				return err
 			}
@@ -33,13 +36,13 @@ func paramsCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			db := database.Cast(parseCtx.Database)
 
 			// Build expected modules of gov modules
-			distrModule := distribution.NewModule(sources.DistrSource, parseCtx.EncodingConfig.Codec, db)
-			mintModule := mint.NewModule(sources.MintSource, parseCtx.EncodingConfig.Codec, db)
-			slashingModule := slashing.NewModule(sources.SlashingSource, parseCtx.EncodingConfig.Codec, db)
-			stakingModule := staking.NewModule(sources.StakingSource, parseCtx.EncodingConfig.Codec, db)
+			distrModule := distribution.NewModule(sources.DistrSource, cdc, db)
+			mintModule := mint.NewModule(sources.MintSource, cdc, db)
+			slashingModule := slashing.NewModule(sources.SlashingSource, cdc, db)
+			stakingModule := staking.NewModule(sources.StakingSource, cdc, db)
 
 			// Build the gov module
-			govModule := gov.NewModule(sources.GovSource, distrModule, mintModule, slashingModule, stakingModule, parseCtx.EncodingConfig.Codec, db)
+			govModule := gov.NewModule(sources.GovSource, distrModule, mintModule, slashingModule, stakingModule, cdc, db)
 
 			height, err := parseCtx.Node.LatestHeight()
 			if err != nil {

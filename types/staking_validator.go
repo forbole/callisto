@@ -1,7 +1,7 @@
 package types
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	"cosmossdk.io/math"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
@@ -13,8 +13,8 @@ type Validator interface {
 	GetConsPubKey() string
 	GetOperator() string
 	GetSelfDelegateAddress() string
-	GetMaxChangeRate() *sdk.Dec
-	GetMaxRate() *sdk.Dec
+	GetMaxChangeRate() *math.LegacyDec
+	GetMaxRate() *math.LegacyDec
 	GetHeight() int64
 }
 
@@ -24,16 +24,16 @@ type validator struct {
 	ConsPubKey          string
 	OperatorAddr        string
 	SelfDelegateAddress string
-	MaxChangeRate       *sdk.Dec
-	MaxRate             *sdk.Dec
+	MaxChangeRate       *math.LegacyDec
+	MaxRate             *math.LegacyDec
 	Height              int64
 }
 
 // NewValidator allows to build a new Validator implementation having the given data
 func NewValidator(
 	consAddr string, opAddr string, consPubKey string,
-	selfDelegateAddress string, maxChangeRate *sdk.Dec,
-	maxRate *sdk.Dec, height int64,
+	selfDelegateAddress string, maxChangeRate *math.LegacyDec,
+	maxRate *math.LegacyDec, height int64,
 ) Validator {
 	return validator{
 		ConsensusAddr:       consAddr,
@@ -64,11 +64,11 @@ func (v validator) GetSelfDelegateAddress() string {
 	return v.SelfDelegateAddress
 }
 
-func (v validator) GetMaxChangeRate() *sdk.Dec {
+func (v validator) GetMaxChangeRate() *math.LegacyDec {
 	return v.MaxChangeRate
 }
 
-func (v validator) GetMaxRate() *sdk.Dec {
+func (v validator) GetMaxRate() *math.LegacyDec {
 	return v.MaxRate
 }
 
@@ -104,14 +104,14 @@ func NewValidatorDescription(
 // ValidatorCommission contains the data of a validator commission at a given height
 type ValidatorCommission struct {
 	ValAddress        string
-	Commission        *sdk.Dec
-	MinSelfDelegation *sdk.Int
+	Commission        *math.LegacyDec
+	MinSelfDelegation *math.Int
 	Height            int64
 }
 
 // NewValidatorCommission return a new validator commission instance
 func NewValidatorCommission(
-	valAddress string, rate *sdk.Dec, minSelfDelegation *sdk.Int, height int64,
+	valAddress string, rate *math.LegacyDec, minSelfDelegation *math.Int, height int64,
 ) ValidatorCommission {
 	return ValidatorCommission{
 		ValAddress:        valAddress,

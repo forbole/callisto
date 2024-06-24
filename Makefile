@@ -13,8 +13,8 @@ all: lint build test-unit
 ###                                Build flags                              ###
 ###############################################################################
 
-LD_FLAGS = -X github.com/forbole/juno/v5/cmd.Version=$(VERSION) \
-	-X github.com/forbole/juno/v5/cmd.Commit=$(COMMIT)
+LD_FLAGS = -X github.com/forbole/juno/v6/cmd.Version=$(VERSION) \
+	-X github.com/forbole/juno/v6/cmd.Commit=$(COMMIT)
 BUILD_FLAGS :=  -ldflags '$(LD_FLAGS)'
 
 ifeq ($(LINK_STATICALLY),true)
@@ -60,7 +60,7 @@ stop-docker-test:
 
 start-docker-test: stop-docker-test
 	@echo "Starting Docker container..."
-	@docker run --name callisto-test-db -e POSTGRES_USER=callisto -e POSTGRES_PASSWORD=password -e POSTGRES_DB=callisto -d -p 6433:5432 postgres
+	@docker run --name callisto-test-db -e POSTGRES_USER=callisto -e POSTGRES_PASSWORD=password -e POSTGRES_DB=callisto -d -p 6433:5432 -v ./database/schema:/docker-entrypoint-initdb.d postgres
 .PHONY: start-docker-test
 
 test-unit: start-docker-test

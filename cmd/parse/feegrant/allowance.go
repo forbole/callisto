@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"sort"
 
-	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
-	"github.com/forbole/juno/v5/types/config"
+	parsecmdtypes "github.com/forbole/juno/v6/cmd/parse/types"
+	"github.com/forbole/juno/v6/types/config"
 
 	"github.com/forbole/callisto/v4/modules/feegrant"
 	"github.com/forbole/callisto/v4/utils"
@@ -17,7 +17,7 @@ import (
 
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 
-	feegranttypes "github.com/cosmos/cosmos-sdk/x/feegrant"
+	feegranttypes "cosmossdk.io/x/feegrant"
 	"github.com/rs/zerolog/log"
 )
 
@@ -36,7 +36,7 @@ func allowanceCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			db := database.Cast(parseCtx.Database)
 
 			// Build feegrant module
-			feegrantModule := feegrant.NewModule(parseCtx.EncodingConfig.Codec, db)
+			feegrantModule := feegrant.NewModule(utils.GetCodec(), db)
 
 			// Get the accounts
 			// Collect all the transactions
@@ -71,15 +71,15 @@ func allowanceCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				}
 
 				// Handle only the MsgGrantAllowance and MsgRevokeAllowance instances
-				for index, msg := range transaction.GetMsgs() {
-					_, isMsgGrantAllowance := msg.(*feegranttypes.MsgGrantAllowance)
-					_, isMsgRevokeAllowance := msg.(*feegranttypes.MsgRevokeAllowance)
+				for index, sdkMsg := range transaction.GetMsgs() {
+					_, isMsgGrantAllowance := sdkMsg.(*feegranttypes.MsgGrantAllowance)
+					_, isMsgRevokeAllowance := sdkMsg.(*feegranttypes.MsgRevokeAllowance)
 
 					if !isMsgGrantAllowance && !isMsgRevokeAllowance {
 						continue
 					}
 
-					err = feegrantModule.HandleMsg(index, msg, transaction)
+					err = feegrantModule.HandleMsg(index, transaction.Body.Messages[index], transaction)
 					if err != nil {
 						return fmt.Errorf("error while handling feegrant module message: %s", err)
 					}

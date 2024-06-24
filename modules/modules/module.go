@@ -1,8 +1,8 @@
 package modules
 
 import (
-	"github.com/forbole/juno/v5/modules"
-	"github.com/forbole/juno/v5/types/config"
+	"github.com/forbole/juno/v6/modules"
+	"github.com/forbole/juno/v6/types/config"
 
 	"github.com/forbole/callisto/v4/database"
 )

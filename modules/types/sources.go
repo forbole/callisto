@@ -2,23 +2,22 @@ package types
 
 import (
 	"fmt"
-	"os"
 
-	"cosmossdk.io/simapp"
-	"github.com/cometbft/cometbft/libs/log"
-	"github.com/forbole/juno/v5/node/remote"
-	"github.com/forbole/juno/v5/types/params"
+	"github.com/forbole/juno/v6/node/remote"
 
+	"github.com/cosmos/cosmos-sdk/codec"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/forbole/juno/v5/node/local"
+	"github.com/forbole/juno/v6/node/local"
 
-	nodeconfig "github.com/forbole/juno/v5/node/config"
+	nodeconfig "github.com/forbole/juno/v6/node/config"
 
 	banksource "github.com/forbole/callisto/v4/modules/bank/source"
 	localbanksource "github.com/forbole/callisto/v4/modules/bank/source/local"
@@ -37,6 +36,7 @@ import (
 	stakingsource "github.com/forbole/callisto/v4/modules/staking/source"
 	localstakingsource "github.com/forbole/callisto/v4/modules/staking/source/local"
 	remotestakingsource "github.com/forbole/callisto/v4/modules/staking/source/remote"
+	"github.com/forbole/callisto/v4/utils/simapp"
 )
 
 type Sources struct {
@@ -48,33 +48,31 @@ type Sources struct {
 	StakingSource  stakingsource.Source
 }
 
-func BuildSources(nodeCfg nodeconfig.Config, encodingConfig params.EncodingConfig) (*Sources, error) {
+func BuildSources(nodeCfg nodeconfig.Config, cdc codec.Codec) (*Sources, error) {
 	switch cfg := nodeCfg.Details.(type) {
 	case *remote.Details:
 		return buildRemoteSources(cfg)
 	case *local.Details:
-		return buildLocalSources(cfg, encodingConfig)
+		return buildLocalSources(cfg, cdc)
 
 	default:
 		return nil, fmt.Errorf("invalid configuration type: %T", cfg)
 	}
 }
 
-func buildLocalSources(cfg *local.Details, encodingConfig params.EncodingConfig) (*Sources, error) {
-	source, err := local.NewSource(cfg.Home, encodingConfig)
+func buildLocalSources(cfg *local.Details, cdc codec.Codec) (*Sources, error) {
+	source, err := local.NewSource(cfg.Home, cdc)
 	if err != nil {
 		return nil, err
 	}
 
-	app := simapp.NewSimApp(
-		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, nil, nil,
-	)
+	app := simapp.NewSimApp(cdc)
 
 	sources := &Sources{
 		BankSource: localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
 		// DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
-		GovSource:      localgovsource.NewSource(source, govtypesv1.QueryServer(app.GovKeeper)),
-		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
+		GovSource:      localgovsource.NewSource(source, govkeeper.NewQueryServer(&app.GovKeeper)),
+		MintSource:     localmintsource.NewSource(source, mintkeeper.NewQueryServerImpl(app.MintKeeper)),
 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
 		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
 	}

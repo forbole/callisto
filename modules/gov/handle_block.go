@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	juno "github.com/forbole/juno/v5/types"
+	juno "github.com/forbole/juno/v6/types"
 
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 
@@ -16,10 +16,10 @@ import (
 
 // HandleBlock implements modules.BlockModule
 func (m *Module) HandleBlock(
-	b *tmctypes.ResultBlock, blockResults *tmctypes.ResultBlockResults, txs []*juno.Tx, _ *tmctypes.ResultValidators,
+	b *tmctypes.ResultBlock, blockResults *tmctypes.ResultBlockResults, txs []*juno.Transaction, _ *tmctypes.ResultValidators,
 ) error {
 	txEvents := collectTxEvents(txs)
-	err := m.updateProposalsStatus(b.Block.Height, txEvents, blockResults.EndBlockEvents)
+	err := m.updateProposalsStatus(b.Block.Height, txEvents, blockResults.FinalizeBlockEvents)
 	if err != nil {
 		log.Error().Str("module", "gov").Int64("height", b.Block.Height).
 			Err(err).Msg("error while updating proposals")
@@ -87,7 +87,7 @@ func findProposalIDsInEvents(events []abci.Event, eventType, attrKey string) ([]
 	return ids, nil
 }
 
-func collectTxEvents(txs []*juno.Tx) []abci.Event {
+func collectTxEvents(txs []*juno.Transaction) []abci.Event {
 	events := make([]abci.Event, 0)
 	for _, tx := range txs {
 		for _, ev := range tx.Events {

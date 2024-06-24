@@ -9,22 +9,22 @@ import (
 	"testing"
 	"time"
 
-	dbconfig "github.com/forbole/juno/v5/database/config"
-	"github.com/forbole/juno/v5/logging"
+	"cosmossdk.io/math"
+	dbconfig "github.com/forbole/juno/v6/database/config"
+	"github.com/forbole/juno/v6/logging"
 
-	junodb "github.com/forbole/juno/v5/database"
+	junodb "github.com/forbole/juno/v6/database"
 
 	"github.com/forbole/callisto/v4/database"
 	"github.com/forbole/callisto/v4/types"
+	"github.com/forbole/callisto/v4/utils"
 
-	juno "github.com/forbole/juno/v5/types"
+	juno "github.com/forbole/juno/v6/types"
 
 	tmversion "github.com/cometbft/cometbft/proto/tendermint/version"
 	tmctypes "github.com/cometbft/cometbft/rpc/core/types"
 	tmtypes "github.com/cometbft/cometbft/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/forbole/juno/v5/types/params"
 
 	"github.com/stretchr/testify/suite"
 
@@ -42,9 +42,6 @@ type DbTestSuite struct {
 }
 
 func (suite *DbTestSuite) SetupTest() {
-	// Create the codec
-	codec := params.MakeTestEncodingConfig()
-
 	// Build the database
 	dbCfg := dbconfig.NewDatabaseConfig(
 		"postgresql://callisto:password@localhost:6433/callisto?sslmode=disable&search_path=public",
@@ -57,7 +54,8 @@ func (suite *DbTestSuite) SetupTest() {
 		100000,
 		100,
 	)
-	db, err := database.Builder(junodb.NewContext(dbCfg, codec, logging.DefaultLogger()))
+
+	db, err := database.Builder(utils.GetCodec())(junodb.NewContext(dbCfg, logging.DefaultLogger()))
 	suite.Require().NoError(err)
 
 	bigDipperDb, ok := (db).(*database.Db)
@@ -142,8 +140,8 @@ func (suite *DbTestSuite) getBlock(height int64) *juno.Block {
 func (suite *DbTestSuite) getValidator(consAddr, valAddr, pubkey string) types.Validator {
 	selfDelegation := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 
-	maxRate := sdk.NewDec(10)
-	maxChangeRate := sdk.NewDec(20)
+	maxRate := math.LegacyNewDec(10)
+	maxChangeRate := math.LegacyNewDec(20)
 
 	validator := types.NewValidator(
 		consAddr,

@@ -6,10 +6,10 @@ import (
 	"strings"
 	"time"
 
+	upgradetypes "cosmossdk.io/x/upgrade/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
-	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	"github.com/lib/pq"
 
 	dbtypes "github.com/forbole/callisto/v4/database/types"
@@ -160,7 +160,7 @@ func (db *Db) GetProposal(id uint64) (types.Proposal, error) {
 	var messages []*codectypes.Any
 	for _, jsonMessage := range jsonMessages {
 		var msg codectypes.Any
-		err = db.Cdc.UnmarshalJSON([]byte(jsonMessage), &msg)
+		err = db.cdc.UnmarshalJSON([]byte(jsonMessage), &msg)
 		if err != nil {
 			return types.Proposal{}, err
 		}

@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"time"
 
+	"cosmossdk.io/math"
+	upgradetypes "cosmossdk.io/x/upgrade/types"
 	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
@@ -22,7 +23,7 @@ import (
 
 func (suite *DbTestSuite) TestBigDipperDb_SaveGovParams() {
 	params := govtypesv1.Params{
-		MinDeposit:                 []sdk.Coin{sdk.NewCoin("uatom", sdk.NewInt(1000))},
+		MinDeposit:                 []sdk.Coin{sdk.NewCoin("uatom", math.NewInt(1000))},
 		MaxDepositPeriod:           testutils.NewDurationPointer(time.Duration(int64(300000000000))),
 		VotingPeriod:               testutils.NewDurationPointer(time.Duration(int64(300000))),
 		Quorum:                     "0.5",
@@ -88,7 +89,7 @@ func (suite *DbTestSuite) getProposalRow(id int) types.Proposal {
 	msgAny, err := codectypes.NewAnyWithValue(&govtypesv1.MsgUpdateParams{
 		Authority: authtypes.NewModuleAddress(gov.ModuleName).String(),
 		Params: govtypesv1.Params{
-			MinDeposit:                 []sdk.Coin{sdk.NewCoin("uatom", sdk.NewInt(1000))},
+			MinDeposit:                 []sdk.Coin{sdk.NewCoin("uatom", math.NewInt(1000))},
 			MaxDepositPeriod:           testutils.NewDurationPointer(time.Duration(int64(300000000000))),
 			VotingPeriod:               testutils.NewDurationPointer(time.Duration(int64(300000))),
 			Quorum:                     "0.5",
@@ -127,7 +128,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 	msgAny, err := codectypes.NewAnyWithValue(&govtypesv1.MsgUpdateParams{
 		Authority: authtypes.NewModuleAddress(gov.ModuleName).String(),
 		Params: govtypesv1.Params{
-			MinDeposit:                 []sdk.Coin{sdk.NewCoin("uatom", sdk.NewInt(1000))},
+			MinDeposit:                 []sdk.Coin{sdk.NewCoin("uatom", math.NewInt(1000))},
 			MaxDepositPeriod:           testutils.NewDurationPointer(time.Duration(int64(300000000000))),
 			VotingPeriod:               testutils.NewDurationPointer(time.Duration(int64(300000))),
 			Quorum:                     "0.5",
@@ -217,7 +218,7 @@ func (suite *DbTestSuite) TestBigDipperDb_GetProposal() {
 	msgAny, err := codectypes.NewAnyWithValue(&govtypesv1.MsgUpdateParams{
 		Authority: authtypes.NewModuleAddress(gov.ModuleName).String(),
 		Params: govtypesv1.Params{
-			MinDeposit:                 []sdk.Coin{sdk.NewCoin("uatom", sdk.NewInt(1000))},
+			MinDeposit:                 []sdk.Coin{sdk.NewCoin("uatom", math.NewInt(1000))},
 			MaxDepositPeriod:           testutils.NewDurationPointer(time.Duration(int64(300000000000))),
 			VotingPeriod:               testutils.NewDurationPointer(time.Duration(int64(300000))),
 			Quorum:                     "0.5",
@@ -385,15 +386,15 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 	proposal := suite.getProposalRow(1)
 
 	depositor := suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
-	amount := sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(10000)))
+	amount := sdk.NewCoins(sdk.NewCoin("desmos", math.NewInt(10000)))
 	txHash := "D40FE0C386FA85677FFB9B3C4CECD54CF2CD7ABECE4EF15FAEF328FCCBF4C3A8"
 
 	depositor2 := suite.getAccount("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
-	amount2 := sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(30000)))
+	amount2 := sdk.NewCoins(sdk.NewCoin("desmos", math.NewInt(30000)))
 	txHash2 := "40A9812A137256E88593E19428E006C01D87DB35F60F8D14739B4A46AC3C67A5"
 
 	depositor3 := suite.getAccount("cosmos1gyds87lg3m52hex9yqta2mtwzw89pfukx3jl7g")
-	amount3 := sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(50000)))
+	amount3 := sdk.NewCoins(sdk.NewCoin("desmos", math.NewInt(50000)))
 	txHash3 := "086CFE10741EF3800DB7F72B1666DE298DD40913BBB84C5530C87AF5EDE8027A"
 
 	timestamp1 := time.Date(2020, 1, 1, 15, 00, 00, 000, time.UTC)
@@ -427,7 +428,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 	deposit = []types.Deposit{
 		types.NewDeposit(proposal.ID, depositor.String(), amount, timestamp1, "8E6EA32C656A6EED84132425533E897D458F1B877080DF842B068C4AS92WP01A", 9),
 		types.NewDeposit(proposal.ID, depositor2.String(), amount2, timestamp2, txHash2, 11),
-		types.NewDeposit(proposal.ID, depositor3.String(), sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(30))), timestamp3, txHash3, 11),
+		types.NewDeposit(proposal.ID, depositor3.String(), sdk.NewCoins(sdk.NewCoin("desmos", math.NewInt(30))), timestamp3, txHash3, 11),
 	}
 
 	err = suite.database.SaveDeposits(deposit)
@@ -437,7 +438,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveDeposits() {
 		dbtypes.NewDepositRow(1, depositor.String(), dbtypes.NewDbCoins(amount), timestamp1, txHash, 10),
 		dbtypes.NewDepositRow(1, depositor.String(), dbtypes.NewDbCoins(amount), timestamp1, "8E6EA32C656A6EED84132425533E897D458F1B877080DF842B068C4AS92WP01A", 9),
 		dbtypes.NewDepositRow(1, depositor2.String(), dbtypes.NewDbCoins(amount2), timestamp2, txHash2, 11),
-		dbtypes.NewDepositRow(1, depositor3.String(), dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("desmos", sdk.NewInt(30)))), timestamp3, txHash3, 11),
+		dbtypes.NewDepositRow(1, depositor3.String(), dbtypes.NewDbCoins(sdk.NewCoins(sdk.NewCoin("desmos", math.NewInt(30)))), timestamp3, txHash3, 11),
 	}
 
 	result = []dbtypes.DepositRow{}
@@ -605,8 +606,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalStakingPoolSnapshot() {
 	// Save snapshot
 
 	snapshot := types.NewProposalStakingPoolSnapshot(1, types.NewPoolSnapshot(
-		sdk.NewInt(100),
-		sdk.NewInt(200),
+		math.NewInt(100),
+		math.NewInt(200),
 		10,
 	))
 	err := suite.database.SaveProposalStakingPoolSnapshot(snapshot)
@@ -627,8 +628,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalStakingPoolSnapshot() {
 	// Update with lower height
 
 	err = suite.database.SaveProposalStakingPoolSnapshot(types.NewProposalStakingPoolSnapshot(1, types.NewPoolSnapshot(
-		sdk.NewInt(200),
-		sdk.NewInt(500),
+		math.NewInt(200),
+		math.NewInt(500),
 		9,
 	)))
 	suite.Require().NoError(err)
@@ -648,8 +649,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalStakingPoolSnapshot() {
 	// Update with same height
 
 	err = suite.database.SaveProposalStakingPoolSnapshot(types.NewProposalStakingPoolSnapshot(1, types.NewPoolSnapshot(
-		sdk.NewInt(500),
-		sdk.NewInt(1000),
+		math.NewInt(500),
+		math.NewInt(1000),
 		10,
 	)))
 	suite.Require().NoError(err)
@@ -669,8 +670,8 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposalStakingPoolSnapshot() {
 	// Update with higher height
 
 	err = suite.database.SaveProposalStakingPoolSnapshot(types.NewProposalStakingPoolSnapshot(1, types.NewPoolSnapshot(
-		sdk.NewInt(1000),
-		sdk.NewInt(2000),
+		math.NewInt(1000),
+		math.NewInt(2000),
 		11,
 	)))
 	suite.Require().NoError(err)

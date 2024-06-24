@@ -3,7 +3,7 @@ package types
 import (
 	"fmt"
 
-	"github.com/forbole/juno/v5/node"
+	"github.com/forbole/juno/v6/node"
 
 	modulestypes "github.com/forbole/callisto/v4/modules/types"
 )

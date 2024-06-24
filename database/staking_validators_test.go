@@ -1,31 +1,31 @@
 package database_test
 
 import (
-	tmtypes "github.com/tendermint/tendermint/proto/tendermint/types"
+	tmtypes "github.com/cometbft/cometbft/proto/tendermint/types"
 
 	"github.com/forbole/callisto/v4/types"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	"cosmossdk.io/math"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	dbtypes "github.com/forbole/callisto/v4/database/types"
 )
 
-func newDecPts(value int64, prec int64) *sdk.Dec {
-	dec := sdk.NewDecWithPrec(value, prec)
+func newDecPts(value int64, prec int64) *math.LegacyDec {
+	dec := math.LegacyNewDecWithPrec(value, prec)
 	return &dec
 }
 
-func newIntPtr(value int64) *sdk.Int {
-	val := sdk.NewInt(value)
+func newIntPtr(value int64) *math.Int {
+	val := math.NewInt(value)
 	return &val
 }
 
 // -----------------------------------------------------------
 
 func (suite *DbTestSuite) TestSaveValidator() {
-	expectedMaxRate := sdk.NewDec(int64(1))
-	expectedMaxChangeRate := sdk.NewDec(int64(2))
+	expectedMaxRate := math.LegacyNewDec(int64(1))
+	expectedMaxChangeRate := math.LegacyNewDec(int64(2))
 
 	suite.getAccount("cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs")
 	validator := dbtypes.NewValidatorData(
@@ -101,16 +101,16 @@ func (suite *DbTestSuite) TestSaveValidators() {
 			"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 			"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
 			"cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs",
-			sdk.NewDec(int64(1)).String(),
-			sdk.NewDec(int64(2)).String(),
+			math.LegacyNewDec(int64(1)).String(),
+			math.LegacyNewDec(int64(2)).String(),
 			10,
 		),
 		dbtypes.NewValidatorInfoRow(
 			"cosmosvalcons1qq92t2l4jz5pt67tmts8ptl4p0jhr6utx5xa8y",
 			"cosmosvaloper1000ya26q2cmh399q4c5aaacd9lmmdqp90kw2jn",
 			"cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a",
-			sdk.NewDec(int64(1)).String(),
-			sdk.NewDec(int64(2)).String(),
+			math.LegacyNewDec(int64(1)).String(),
+			math.LegacyNewDec(int64(2)).String(),
 			10,
 		),
 	}
@@ -166,16 +166,16 @@ func (suite *DbTestSuite) TestSaveValidators() {
 			"cosmosvalcons1qqqqrezrl53hujmpdch6d805ac75n220ku09rl",
 			"cosmosvaloper1rcp29q3hpd246n6qak7jluqep4v006cdsc2kkl",
 			"cosmos1z4hfrxvlgl4s8u4n5ngjcw8kdqrcv43599amxs",
-			sdk.NewDec(int64(1)).String(),
-			sdk.NewDec(int64(2)).String(),
+			math.LegacyNewDec(int64(1)).String(),
+			math.LegacyNewDec(int64(2)).String(),
 			10,
 		),
 		dbtypes.NewValidatorInfoRow(
 			"cosmosvalcons1qq92t2l4jz5pt67tmts8ptl4p0jhr6utx5xa8y",
 			"cosmosvaloper1000ya26q2cmh399q4c5aaacd9lmmdqp90kw2jn",
 			"cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a",
-			sdk.NewDec(int64(10)).String(),
-			sdk.NewDec(int64(5)).String(),
+			math.LegacyNewDec(int64(10)).String(),
+			math.LegacyNewDec(int64(5)).String(),
 			11,
 		),
 	}
@@ -203,8 +203,8 @@ func (suite *DbTestSuite) TestSaveValidators() {
 func (suite *DbTestSuite) TestGetValidator() {
 	var i int64 = 1
 	var ii int64 = 2
-	maxRate := sdk.NewDec(i)
-	maxChangeRate := sdk.NewDec(ii)
+	maxRate := math.LegacyNewDec(i)
+	maxChangeRate := math.LegacyNewDec(ii)
 	suite.getAccount("cosmos184ma3twcfjqef6k95ne8w2hk80x2kah7vcwy4a")
 	// Insert test data
 	_, err := suite.database.SQL.Exec(`

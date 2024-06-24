@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -77,7 +78,7 @@ func (coin *DbCoin) Scan(src interface{}) error {
 
 // ToCoin converts this DbCoin to sdk.Coin
 func (coin DbCoin) ToCoin() sdk.Coin {
-	amount, _ := sdk.NewIntFromString(coin.Amount)
+	amount, _ := math.NewIntFromString(coin.Amount)
 	return sdk.NewCoin(coin.Denom, amount)
 }
 
@@ -189,7 +190,7 @@ func (coin *DbDecCoin) Scan(src interface{}) error {
 
 // ToDecCoin converts this DbDecCoin to sdk.DecCoin
 func (coin DbDecCoin) ToDecCoin() sdk.DecCoin {
-	amount, _ := sdk.NewDecFromStr(coin.Amount)
+	amount, _ := math.LegacyNewDecFromStr(coin.Amount)
 	return sdk.NewDecCoinFromDec(coin.Denom, amount)
 }
 

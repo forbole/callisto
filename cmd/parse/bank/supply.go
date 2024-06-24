@@ -4,9 +4,10 @@ import (
 	"fmt"
 
 	modulestypes "github.com/forbole/callisto/v4/modules/types"
+	"github.com/forbole/callisto/v4/utils"
 
-	parsecmdtypes "github.com/forbole/juno/v5/cmd/parse/types"
-	"github.com/forbole/juno/v5/types/config"
+	parsecmdtypes "github.com/forbole/juno/v6/cmd/parse/types"
+	"github.com/forbole/juno/v6/types/config"
 	"github.com/spf13/cobra"
 
 	"github.com/forbole/callisto/v4/database"
@@ -24,7 +25,7 @@ func supplyCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 				return err
 			}
 
-			sources, err := modulestypes.BuildSources(config.Cfg.Node, parseCtx.EncodingConfig)
+			sources, err := modulestypes.BuildSources(config.Cfg.Node, utils.GetCodec())
 			if err != nil {
 				return err
 			}
@@ -33,7 +34,7 @@ func supplyCmd(parseConfig *parsecmdtypes.Config) *cobra.Command {
 			db := database.Cast(parseCtx.Database)
 
 			// Build bank module
-			bankModule := bank.NewModule(nil, sources.BankSource, parseCtx.EncodingConfig.Codec, db)
+			bankModule := bank.NewModule(nil, sources.BankSource, utils.GetCodec(), db)
 
 			err = bankModule.UpdateSupply()
 			if err != nil {

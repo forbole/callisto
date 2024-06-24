@@ -3,7 +3,7 @@ package database_test
 import (
 	"encoding/json"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	"cosmossdk.io/math"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 
 	"github.com/forbole/callisto/v4/types"
@@ -14,7 +14,7 @@ import (
 func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 
 	// Save the data
-	err := suite.database.SaveInflation(sdk.NewDecWithPrec(10050, 2), 100)
+	err := suite.database.SaveInflation(math.LegacyNewDecWithPrec(10050, 2), 100)
 	suite.Require().NoError(err)
 
 	// Verify the data
@@ -29,7 +29,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 	// ---------------------------------------------------------------------------------------------------------------
 
 	// Try updating with lower height
-	err = suite.database.SaveInflation(sdk.NewDecWithPrec(20000, 2), 90)
+	err = suite.database.SaveInflation(math.LegacyNewDecWithPrec(20000, 2), 90)
 	suite.Require().NoError(err, "double inflation insertion should return no error")
 
 	// Verify the data
@@ -44,7 +44,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 	// ---------------------------------------------------------------------------------------------------------------
 
 	// Try updating with same height
-	err = suite.database.SaveInflation(sdk.NewDecWithPrec(30000, 2), 100)
+	err = suite.database.SaveInflation(math.LegacyNewDecWithPrec(30000, 2), 100)
 	suite.Require().NoError(err, "double inflation insertion should return no error")
 
 	// Verify the data
@@ -59,7 +59,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 	// ---------------------------------------------------------------------------------------------------------------
 
 	// Try updating with higher height
-	err = suite.database.SaveInflation(sdk.NewDecWithPrec(40000, 2), 110)
+	err = suite.database.SaveInflation(math.LegacyNewDecWithPrec(40000, 2), 110)
 	suite.Require().NoError(err, "double inflation insertion should return no error")
 
 	// Verify the data
@@ -75,10 +75,10 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveInflation() {
 func (suite *DbTestSuite) TestBigDipperDb_SaveMintParams() {
 	mintParams := minttypes.NewParams(
 		"udaric",
-		sdk.NewDecWithPrec(4, 1),
-		sdk.NewDecWithPrec(8, 1),
-		sdk.NewDecWithPrec(4, 1),
-		sdk.NewDecWithPrec(8, 1),
+		math.LegacyNewDecWithPrec(4, 1),
+		math.LegacyNewDecWithPrec(8, 1),
+		math.LegacyNewDecWithPrec(4, 1),
+		math.LegacyNewDecWithPrec(8, 1),
 		5006000,
 	)
 	err := suite.database.SaveMintParams(types.NewMintParams(mintParams, 10))

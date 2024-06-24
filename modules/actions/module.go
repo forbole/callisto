@@ -1,12 +1,13 @@
 package actions
 
 import (
-	"github.com/forbole/juno/v5/modules"
-	"github.com/forbole/juno/v5/node"
-	"github.com/forbole/juno/v5/node/builder"
-	nodeconfig "github.com/forbole/juno/v5/node/config"
-	"github.com/forbole/juno/v5/types/config"
-	"github.com/forbole/juno/v5/types/params"
+	"github.com/cosmos/cosmos-sdk/codec"
+	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
+	"github.com/forbole/juno/v6/modules"
+	"github.com/forbole/juno/v6/node"
+	"github.com/forbole/juno/v6/node/builder"
+	nodeconfig "github.com/forbole/juno/v6/node/config"
+	"github.com/forbole/juno/v6/types/config"
 
 	modulestypes "github.com/forbole/callisto/v4/modules/types"
 )
@@ -26,7 +27,7 @@ type Module struct {
 	sources *modulestypes.Sources
 }
 
-func NewModule(cfg config.Config, encodingConfig params.EncodingConfig) *Module {
+func NewModule(cfg config.Config, cdc codec.Codec) *Module {
 	bz, err := cfg.GetBytes()
 	if err != nil {
 		panic(err)
@@ -43,13 +44,14 @@ func NewModule(cfg config.Config, encodingConfig params.EncodingConfig) *Module 
 	}
 
 	// Build the node
-	junoNode, err := builder.BuildNode(nodeCfg, encodingConfig)
+	txConfig := authtx.NewTxConfig(cdc, authtx.DefaultSignModes)
+	junoNode, err := builder.BuildNode(nodeCfg, txConfig, cdc)
 	if err != nil {
 		panic(err)
 	}
 
 	// Build the sources
-	sources, err := modulestypes.BuildSources(nodeCfg, encodingConfig)
+	sources, err := modulestypes.BuildSources(nodeCfg, cdc)
 	if err != nil {
 		panic(err)
 	}
