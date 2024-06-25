@@ -1,7 +1,7 @@
 package actions
 
 import (
-	"fmt"
+	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
@@ -48,7 +48,10 @@ func NewModule(cfg config.Config, cdc codec.Codec, sources *modulestypes.Sources
 
 	var node node.Node
 	if cfg.Node.Type == nodeconfig.TypeLocal {
-		log.Err(fmt.Errorf("local node is not supported for actions module"))
+		log.Warn().Str("module", ModuleName).Msg("local node is not supported for actions module, please ensure actions module is removed from the configuration")
+
+		// Sleep for 3 seconds to allow the user to see the warning
+		time.Sleep(3 * time.Second)
 	} else {
 		// Build the node
 		txConfig := authtx.NewTxConfig(cdc, authtx.DefaultSignModes)
