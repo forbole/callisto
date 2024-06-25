@@ -7,7 +7,6 @@ import (
 	"time"
 
 	upgradetypes "cosmossdk.io/x/upgrade/types"
-	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	"github.com/lib/pq"
@@ -88,9 +87,8 @@ INSERT INTO proposal(
 			vi+1, vi+2, vi+3, vi+4, vi+5, vi+6, vi+7, vi+8, vi+9, vi+10, vi+11)
 
 		var jsonMessages []string
-		var protoCodec codec.ProtoCodec
 		for _, msg := range proposal.Messages {
-			contentBz, err := protoCodec.MarshalJSON(msg)
+			contentBz, err := db.cdc.MarshalJSON(msg)
 			if err != nil {
 				return fmt.Errorf("error while marshalling proposal msg: %s", err)
 			}

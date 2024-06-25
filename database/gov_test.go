@@ -186,7 +186,7 @@ func (suite *DbTestSuite) TestBigDipperDb_SaveProposals() {
 			"Proposal Title 1",
 			"Proposal Description 1",
 			"Proposal Metadata 1",
-			"[{\"@type\": \"/cosmos.gov.v1.MsgUpdateParams\", \"params\": {\"quorum\": \"0.5\", \"threshold\": \"0.3\", \"min_deposit\": [{\"denom\": \"uatom\", \"amount\": \"1000\"}], \"voting_period\": \"0.000300s\", \"burn_vote_veto\": false, \"veto_threshold\": \"0.15\", \"burn_vote_quorum\": false, \"max_deposit_period\": \"300s\", \"min_initial_deposit_ratio\": \"0\", \"burn_proposal_deposit_prevote\": false}, \"authority\": \"cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn\"}]",
+			"[{\"@type\": \"/cosmos.gov.v1.MsgUpdateParams\", \"params\": {\"quorum\": \"0.5\", \"threshold\": \"0.3\", \"min_deposit\": [{\"denom\": \"uatom\", \"amount\": \"1000\"}], \"voting_period\": \"0.000300s\", \"burn_vote_veto\": false, \"veto_threshold\": \"0.15\", \"burn_vote_quorum\": false, \"min_deposit_ratio\": \"\", \"max_deposit_period\": \"300s\", \"expedited_threshold\": \"\", \"proposal_cancel_dest\": \"\", \"expedited_min_deposit\": [], \"proposal_cancel_ratio\": \"\", \"expedited_voting_period\": null, \"min_initial_deposit_ratio\": \"0\", \"burn_proposal_deposit_prevote\": false}, \"authority\": \"cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn\"}]",
 			time.Date(2020, 1, 1, 00, 00, 00, 000, time.UTC),
 			time.Date(2020, 1, 1, 01, 00, 00, 000, time.UTC),
 			testutils.NewTimePointer(time.Date(2020, 1, 1, 02, 00, 00, 000, time.UTC)),
@@ -361,7 +361,7 @@ func (suite *DbTestSuite) TestBigDipperDb_UpdateProposal() {
 		"Proposal 1",
 		"Description of proposal 1",
 		"Metadata of proposal 1",
-		"[{\"@type\": \"/cosmos.gov.v1.MsgUpdateParams\", \"params\": {\"quorum\": \"0.5\", \"threshold\": \"0.3\", \"min_deposit\": [{\"denom\": \"uatom\", \"amount\": \"1000\"}], \"voting_period\": \"0.000300s\", \"burn_vote_veto\": false, \"veto_threshold\": \"0.15\", \"burn_vote_quorum\": false, \"max_deposit_period\": \"300s\", \"min_initial_deposit_ratio\": \"0\", \"burn_proposal_deposit_prevote\": false}, \"authority\": \"cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn\"}]",
+		"[{\"@type\": \"/cosmos.gov.v1.MsgUpdateParams\", \"params\": {\"quorum\": \"0.5\", \"threshold\": \"0.3\", \"min_deposit\": [{\"denom\": \"uatom\", \"amount\": \"1000\"}], \"voting_period\": \"0.000300s\", \"burn_vote_veto\": false, \"veto_threshold\": \"0.15\", \"burn_vote_quorum\": false, \"min_deposit_ratio\": \"\", \"max_deposit_period\": \"300s\", \"expedited_threshold\": \"\", \"proposal_cancel_dest\": \"\", \"expedited_min_deposit\": [], \"proposal_cancel_ratio\": \"\", \"expedited_voting_period\": null, \"min_initial_deposit_ratio\": \"0\", \"burn_proposal_deposit_prevote\": false}, \"authority\": \"cosmos10d07y265gmmuvt4z0w9aw880jnsr700j6zn9kn\"}]",
 		proposal.SubmitTime,
 		proposal.DepositEndTime,
 		timestamp1,
@@ -373,6 +373,7 @@ func (suite *DbTestSuite) TestBigDipperDb_UpdateProposal() {
 	var stored dbtypes.ProposalRow
 	err = suite.database.SQL.Get(&stored, `SELECT * FROM proposal LIMIT 1`)
 	suite.Require().NoError(err)
+	suite.T().Logf("actual: %v\nexpected: %v", stored, expected)
 	suite.Require().True(expected.Equals(stored))
 }
 
