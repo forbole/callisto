@@ -7,6 +7,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
@@ -23,6 +24,7 @@ import (
 	localbanksource "github.com/forbole/callisto/v4/modules/bank/source/local"
 	remotebanksource "github.com/forbole/callisto/v4/modules/bank/source/remote"
 	distrsource "github.com/forbole/callisto/v4/modules/distribution/source"
+	localdistrsource "github.com/forbole/callisto/v4/modules/distribution/source/local"
 	remotedistrsource "github.com/forbole/callisto/v4/modules/distribution/source/remote"
 	govsource "github.com/forbole/callisto/v4/modules/gov/source"
 	localgovsource "github.com/forbole/callisto/v4/modules/gov/source/local"
@@ -69,8 +71,8 @@ func buildLocalSources(cfg *local.Details, cdc codec.Codec) (*Sources, error) {
 	app := simapp.NewSimApp(cdc)
 
 	sources := &Sources{
-		BankSource: localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
-		// DistrSource:    localdistrsource.NewSource(source, distrtypes.QueryServer(app.DistrKeeper)),
+		BankSource:     localbanksource.NewSource(source, banktypes.QueryServer(app.BankKeeper)),
+		DistrSource:    localdistrsource.NewSource(source, distrkeeper.NewQuerier(app.DistrKeeper)),
 		GovSource:      localgovsource.NewSource(source, govkeeper.NewQueryServer(&app.GovKeeper)),
 		MintSource:     localmintsource.NewSource(source, mintkeeper.NewQueryServerImpl(app.MintKeeper)),
 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
@@ -79,16 +81,6 @@ func buildLocalSources(cfg *local.Details, cdc codec.Codec) (*Sources, error) {
 
 	// Mount and initialize the stores
 	err = source.MountKVStores(app, "keys")
-	if err != nil {
-		return nil, err
-	}
-
-	err = source.MountTransientStores(app, "tkeys")
-	if err != nil {
-		return nil, err
-	}
-
-	err = source.MountMemoryStores(app, "memKeys")
 	if err != nil {
 		return nil, err
 	}

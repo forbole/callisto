@@ -77,7 +77,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		panic(err)
 	}
 
-	actionsModule := actions.NewModule(ctx.JunoConfig, r.cdc)
+	actionsModule := actions.NewModule(ctx.JunoConfig, r.cdc, sources)
 	authModule := auth.NewModule(r.parser, r.cdc, db)
 	bankModule := bank.NewModule(r.parser, sources.BankSource, r.cdc, db)
 	consensusModule := consensus.NewModule(db)
