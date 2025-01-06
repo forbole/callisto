@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	govtypesv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
@@ -286,8 +285,7 @@ func getParamChangeSubspace(msg sdk.Msg) (string, bool) {
 func (m *Module) handlePassedV1Beta1Proposal(proposal *govtypesv1.Proposal, msg *govtypesv1.MsgExecLegacyContent, height int64) error {
 	// Unpack proposal
 	var content govtypesv1beta1.Content
-	var protoCodec codec.ProtoCodec
-	err := protoCodec.UnpackAny(msg.Content, &content)
+	err := m.cdc.UnpackAny(msg.Content, &content)
 	if err != nil {
 		return fmt.Errorf("error while handling ParamChangeProposal: %s", err)
 	}
